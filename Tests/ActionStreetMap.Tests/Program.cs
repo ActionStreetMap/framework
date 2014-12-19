@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reactive.Linq;
 using System.Threading;
@@ -6,6 +8,9 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Osm.Formats;
+using ActionStreetMap.Osm.Formats.O5m;
+using ActionStreetMap.Osm.Index.Search;
 
 namespace ActionStreetMap.Tests
 {
@@ -32,11 +37,11 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            program.RunGame();
+            /*program.RunGame();
             program.RunMocker();
-            program.Wait();
+            program.Wait();*/
 
-            program.IndexExperiments();
+            program.ReadTextIndex();
         }
 
         public void RunMocker()
@@ -73,9 +78,60 @@ namespace ActionStreetMap.Tests
             _logger.Stop();
         }
 
-        public void IndexExperiments()
+        #region Index experiments
+
+        private void CreateTextIndex()
         {
-            
+            var logger = new PerformanceLogger();
+            logger.Start();
+
+            var builder = new SearchIndexBuilder("Index");
+            var reader = new O5mReader(new ReaderContext()
+            {
+                SourceStream = new FileStream(@"g:\__ASM\_other_projects\splitter\berlin2.o5m", FileMode.Open),
+                Builder = builder,
+                ReuseEntities = false,
+                SkipTags = false,
+            });
+
+            reader.Parse();
+            builder.Clear();
+            builder.Complete();
+            logger.Stop();
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            sw.Stop();
         }
+
+        private void ReadTextIndex()
+        {
+            var logger = new PerformanceLogger();
+            logger.Start();
+            var indexPath = Path.GetFullPath("Index");
+            var hoot = new SearchEngine(indexPath, "index", true);
+
+            hoot.Index(GetTestNodeDocument(5, new Dictionary<string, string>() {{"eichendorff","2"}}), false);
+            hoot.Index(GetTestNodeDocument(5, new Dictionary<string, string>() { { "invaliden", "3" } }), false);
+            hoot.Save();
+
+            foreach (var d in hoot.FindDocuments("Eichendorf*"))
+                Console.WriteLine(d.Element);
+            
+            logger.Stop();
+        }
+
+        private static Document GetTestNodeDocument(long id, Dictionary<string, string> tags)
+        {
+            return new Document(new ActionStreetMap.Osm.Entities.Node()
+            {
+                Id = id,
+                Coordinate = new GeoCoordinate(53.1, 13.1),
+                Tags = tags
+            });
+        }
+
+        #endregion
     }
 }

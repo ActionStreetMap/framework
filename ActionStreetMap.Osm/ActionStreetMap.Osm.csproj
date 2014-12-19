@@ -87,6 +87,7 @@
     <Compile Include="Index\Search\mylogger.cs" />
     <Compile Include="Index\Search\Operation.cs" />
     <Compile Include="Index\Search\SafeDictionary.cs" />
+    <Compile Include="Index\Search\SearchIndexBuilder.cs" />
     <Compile Include="Index\Spatial\SpatialIndexBuilder.cs" />
     <Compile Include="Index\Spatial\Envelops.cs" />
     <Compile Include="Index\Spatial\RTree.cs" />
