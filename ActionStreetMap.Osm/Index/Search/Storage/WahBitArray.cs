@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ActionStreetMap.Osm.Index.Search.MGIndex
+namespace ActionStreetMap.Osm.Index.Search.Storage
 {
     public class WahBitArray
     {

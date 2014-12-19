@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ActionStreetMap.Osm.Index.Search.MGIndex
+namespace ActionStreetMap.Osm.Index.Search.Storage
 {
     internal class StorageData
     {

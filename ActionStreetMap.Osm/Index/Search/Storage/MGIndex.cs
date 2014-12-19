@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ActionStreetMap.Osm.Index.Search.MGIndex
+namespace ActionStreetMap.Osm.Index.Search.Storage
 {
     #region [ internal classes ]
     internal struct PageInfo  // FEATURE : change back to class for count access for query caching

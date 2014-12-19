@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ActionStreetMap.Osm.Index.Search.MGIndex
+namespace ActionStreetMap.Osm.Index.Search.Storage
 {
     internal interface IGetBytes<T>
     {

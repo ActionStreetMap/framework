@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ActionStreetMap.Osm.Index.Search.MGIndex
+namespace ActionStreetMap.Osm.Index.Search.Storage
 {
     #region [   KeyStoreString   ]
     internal class KeyStoreString : IDisposable

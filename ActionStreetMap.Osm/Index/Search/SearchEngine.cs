@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using ActionStreetMap.Osm.Index.Search.MGIndex;
+using ActionStreetMap.Osm.Index.Search.Storage;
 
 namespace ActionStreetMap.Osm.Index.Search
 {
-    public class Hoot
+    public class SearchEngine
     {
-        public Hoot(string IndexPath, string FileName, bool DocMode)
+        public SearchEngine(string IndexPath, string FileName, bool DocMode)
         {
             _Path = IndexPath;
             _FileName = FileName;
@@ -35,7 +35,7 @@ namespace ActionStreetMap.Osm.Index.Search
         private SafeDictionary<string, int> _words = new SafeDictionary<string, int>();
         private BitmapIndex _bitmaps;
         private BoolIndex _deleted;
-        private ILog _log = LogManager.GetLogger(typeof(Hoot));
+        private ILog _log = LogManager.GetLogger(typeof(SearchEngine));
         private int _lastDocNum = 0;
         private string _FileName = "words";
         private string _Path = "";
