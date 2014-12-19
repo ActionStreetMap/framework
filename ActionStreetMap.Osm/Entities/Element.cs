@@ -19,6 +19,18 @@ namespace ActionStreetMap.Osm.Entities
         public Dictionary<string, string> Tags { get; set; }
 
         /// <summary>
+        ///     Adds tag to collection.
+        /// </summary>
+        /// <param name="key">Tag key.</param>
+        /// <param name="value">Tag value.</param>
+        public virtual void AddTag(string key, string value)
+        {
+            if (Tags == null)
+                Tags = new Dictionary<string, string>();
+            Tags.Add(key, value);
+        }
+
+        /// <summary>
         ///     Accepts visitor.
         /// </summary>
         /// <param name="elementVisitor">Element visitor.</param>

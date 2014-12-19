@@ -18,6 +18,11 @@ namespace ActionStreetMap.Osm.Entities
         public long MemberId { get; set; }
 
         /// <summary>
+        ///     Type id.
+        /// </summary>
+        public int TypeId { get; set; }
+
+        /// <summary>
         ///     Member role.
         /// </summary>
         public string Role { get; set; }

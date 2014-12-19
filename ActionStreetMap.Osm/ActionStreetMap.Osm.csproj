@@ -60,6 +60,9 @@
     <Compile Include="Extensions\TagExtensions.cs" />
     <Compile Include="Entities\Node.cs" />
     <Compile Include="Entities\Element.cs" />
+    <Compile Include="Formats\O5m\O5mExtensions.cs" />
+    <Compile Include="Formats\O5m\O5mReader.cs" />
+    <Compile Include="Formats\ReaderContext.cs" />
     <Compile Include="Helpers\AddressExtractor.cs" />
     <Compile Include="Formats\Xml\v0_6\osm.cs">
       <DependentUpon>osm.xsd</DependentUpon>
@@ -67,6 +70,13 @@
     <Compile Include="Data\XmlElementSource.cs" />
     <Compile Include="Formats\Xml\XmlSimpleConverter.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
+    <Compile Include="Index\IIndexBuilder.cs" />
+    <Compile Include="Index\Spatial\SpatialIndexBuilder.cs" />
+    <Compile Include="Index\Spatial\Envelops.cs" />
+    <Compile Include="Index\Spatial\RTree.cs" />
+    <Compile Include="Index\Spatial\SpatialIndex.cs" />
+    <Compile Include="Index\Spatial\SpatialIndexSerializer.cs" />
+    <Compile Include="Index\Spatial\StackExtensions.cs" />
     <Compile Include="OsmTileLoader.cs" />
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
@@ -82,7 +92,9 @@
     <Compile Include="ElementManager.cs" />
     <Compile Include="Entities\Way.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Index\Search\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ActionStreetMap.Infrastructure\ActionStreetMap.Infrastructure.csproj">
       <Project>{c77a889a-90d7-4787-a6bc-35772473639e}</Project>
