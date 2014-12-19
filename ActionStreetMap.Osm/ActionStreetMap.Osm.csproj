@@ -70,13 +70,30 @@
     <Compile Include="Data\XmlElementSource.cs" />
     <Compile Include="Formats\Xml\XmlSimpleConverter.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
+    <Compile Include="Index\ScaledGeoCoordinate.cs" />
     <Compile Include="Index\IIndexBuilder.cs" />
+    <Compile Include="Index\Search\Document.cs" />
+    <Compile Include="Index\Search\DocumentSerializer.cs" />
+    <Compile Include="Index\Search\Global.cs" />
+    <Compile Include="Index\Search\Hoot.cs" />
+    <Compile Include="Index\Search\MGIndex\BitmapIndex.cs" />
+    <Compile Include="Index\Search\MGIndex\BoolIndex.cs" />
+    <Compile Include="Index\Search\MGIndex\DataTypes.cs" />
+    <Compile Include="Index\Search\MGIndex\IndexFile.cs" />
+    <Compile Include="Index\Search\MGIndex\KeyStore.cs" />
+    <Compile Include="Index\Search\MGIndex\MGIndex.cs" />
+    <Compile Include="Index\Search\MGIndex\StorageFile.cs" />
+    <Compile Include="Index\Search\MGIndex\WAHBitarray2.cs" />
+    <Compile Include="Index\Search\mylogger.cs" />
+    <Compile Include="Index\Search\Operation.cs" />
+    <Compile Include="Index\Search\SafeDictionary.cs" />
     <Compile Include="Index\Spatial\SpatialIndexBuilder.cs" />
     <Compile Include="Index\Spatial\Envelops.cs" />
     <Compile Include="Index\Spatial\RTree.cs" />
     <Compile Include="Index\Spatial\SpatialIndex.cs" />
     <Compile Include="Index\Spatial\SpatialIndexSerializer.cs" />
     <Compile Include="Index\Spatial\StackExtensions.cs" />
+    <Compile Include="Index\Utils.cs" />
     <Compile Include="OsmTileLoader.cs" />
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
@@ -92,9 +109,7 @@
     <Compile Include="ElementManager.cs" />
     <Compile Include="Entities\Way.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Index\Search\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ActionStreetMap.Infrastructure\ActionStreetMap.Infrastructure.csproj">
       <Project>{c77a889a-90d7-4787-a6bc-35772473639e}</Project>

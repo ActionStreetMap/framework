@@ -11,7 +11,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
     /// </summary>
     internal class SpatialIndexBuilder : IIndexBuilder
     {
-        private SortedList<long, PackedGeoCoordinate> _nodes = new SortedList<long, PackedGeoCoordinate>();
+        private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Envelop> _ways = new SortedList<long, Envelop>(10240);
         private List<Relation> _unresolvedRelations = new List<Relation>(4096);
 
@@ -22,7 +22,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
             if (node.Id < 0)
                 return;
 
-            _nodes.Add(node.Id, new PackedGeoCoordinate(node.Coordinate));
+            _nodes.Add(node.Id, new ScaledGeoCoordinate(node.Coordinate));
            // if (tagCount > 0)
            //     Tree.Insert((uint) node.Id, new PointEnvelop(node.Coordinate));
         }
@@ -150,21 +150,5 @@ namespace ActionStreetMap.Osm.Index.Spatial
             GC.Collect();
             GC.WaitForFullGCComplete();
         }
-
-        #region Nested
-
-        private struct PackedGeoCoordinate
-        {
-            public int Latitude;
-            public int Longitude;
-
-            public PackedGeoCoordinate(GeoCoordinate coordinate)
-            {
-                Latitude = (int)(coordinate.Latitude * Envelop.ScaleFactor);
-                Longitude = (int)(coordinate.Longitude * Envelop.ScaleFactor);
-            }
-        }
-
-        #endregion
     }
 }

@@ -35,6 +35,8 @@ namespace ActionStreetMap.Tests
             program.RunGame();
             program.RunMocker();
             program.Wait();
+
+            program.IndexExperiments();
         }
 
         public void RunMocker()
@@ -69,6 +71,11 @@ namespace ActionStreetMap.Tests
         {
             _waitEvent.WaitOne(TimeSpan.FromSeconds(60));
             _logger.Stop();
+        }
+
+        public void IndexExperiments()
+        {
+            
         }
     }
 }

@@ -23,8 +23,6 @@ namespace ActionStreetMap.Osm.Index.Spatial
     [Serializable]
     public class Envelop : IEnvelop
     {
-        public const uint ScaleFactor = 10000000;
-
         public int MinPointLatitude { get; set; }
         public int MinPointLongitude { get; set; }
         public int MaxPointLatitude { get; set; }
@@ -43,11 +41,11 @@ namespace ActionStreetMap.Osm.Index.Spatial
 
         public Envelop(GeoCoordinate minPoint, GeoCoordinate maxPoint)
         {
-            MinPointLatitude = (int)(minPoint.Latitude * ScaleFactor);
-            MinPointLongitude = (int)(minPoint.Longitude * ScaleFactor);
+            MinPointLatitude = (int)(minPoint.Latitude * Utils.ScaleFactor);
+            MinPointLongitude = (int)(minPoint.Longitude * Utils.ScaleFactor);
 
-            MaxPointLatitude = (int)(maxPoint.Latitude * ScaleFactor);
-            MaxPointLongitude = (int)(maxPoint.Longitude * ScaleFactor);
+            MaxPointLatitude = (int)(maxPoint.Latitude * Utils.ScaleFactor);
+            MaxPointLongitude = (int)(maxPoint.Longitude * Utils.ScaleFactor);
         }
 
         public long Area { get { return ((long)(MaxPointLongitude - MinPointLongitude)) * (MaxPointLatitude - MinPointLatitude); } }
@@ -102,8 +100,8 @@ namespace ActionStreetMap.Osm.Index.Spatial
 
         public PointEnvelop(GeoCoordinate point)
         {
-            _pointLatitude = (int)(point.Latitude * Envelop.ScaleFactor);
-            _pointLongitude = (int)(point.Longitude * Envelop.ScaleFactor);
+            _pointLatitude = (int)(point.Latitude * Utils.ScaleFactor);
+            _pointLongitude = (int)(point.Longitude * Utils.ScaleFactor);
         }
 
         public int MinPointLatitude { get { return _pointLatitude; } }
