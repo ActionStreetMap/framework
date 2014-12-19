@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections;
 
-namespace RaptorDB
+namespace ActionStreetMap.Osm.Index.Search.MGIndex
 {
-    public class WAHBitArray
+    public class WahBitArray
     {
         public enum TYPE
         {
@@ -14,12 +12,12 @@ namespace RaptorDB
             Indexes = 2
         }
 
-        public WAHBitArray()
+        public WahBitArray()
         {
             _state = TYPE.Indexes;
         }
 
-        public WAHBitArray(TYPE type, uint[] ints)
+        public WahBitArray(TYPE type, uint[] ints)
         {
             _state = type;
             switch (type)
@@ -48,12 +46,12 @@ namespace RaptorDB
         private TYPE _state;
         public bool isDirty = false;
 
-        public WAHBitArray Copy()
+        public WahBitArray Copy()
         {
             lock (_lock)
             {
                 uint[] i = GetBitArray();
-                return new WAHBitArray(TYPE.Bitarray, i);
+                return new WahBitArray(TYPE.Bitarray, i);
             }
         }
 
@@ -147,7 +145,7 @@ namespace RaptorDB
         }
 
         #region [  B I T    O P E R T A I O N S  ]
-        public WAHBitArray And(WAHBitArray op)
+        public WahBitArray And(WahBitArray op)
         {
             lock (_lock)
             {
@@ -158,11 +156,11 @@ namespace RaptorDB
                 for (int i = 0; i < left.Length; i++)
                     left[i] &= right[i];
 
-                return new WAHBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(TYPE.Bitarray, left);
             }
         }
 
-        public WAHBitArray AndNot(WAHBitArray op)
+        public WahBitArray AndNot(WahBitArray op)
         {
             lock (_lock)
             {
@@ -173,11 +171,11 @@ namespace RaptorDB
                 for (int i = 0; i < left.Length; i++)
                     left[i] &= ~right[i];
 
-                return new WAHBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(TYPE.Bitarray, left);
             }
         }
 
-        public WAHBitArray Or(WAHBitArray op)
+        public WahBitArray Or(WahBitArray op)
         {
             lock (_lock)
             {
@@ -188,11 +186,11 @@ namespace RaptorDB
                 for (int i = 0; i < left.Length; i++)
                     left[i] |= right[i];
 
-                return new WAHBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(TYPE.Bitarray, left);
             }
         }
 
-        public WAHBitArray Not(int size)
+        public WahBitArray Not(int size)
         {
             lock (_lock)
             {
@@ -212,11 +210,11 @@ namespace RaptorDB
                 for (int i = 0; i < c; i++)
                     left[i] = ~left[i];
 
-                return new WAHBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(TYPE.Bitarray, left);
             }
         }
 
-        public WAHBitArray Xor(WAHBitArray op)
+        public WahBitArray Xor(WahBitArray op)
         {
             lock (_lock)
             {
@@ -227,7 +225,7 @@ namespace RaptorDB
                 for (int i = 0; i < left.Length; i++)
                     left[i] ^= right[i];
 
-                return new WAHBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(TYPE.Bitarray, left);
             }
         }
         #endregion
@@ -342,7 +340,7 @@ namespace RaptorDB
             return k;
         }
 
-        private void prelogic(WAHBitArray op, out uint[] left, out uint[] right)
+        private void prelogic(WahBitArray op, out uint[] left, out uint[] right)
         {
             this.CheckBitArray();
 

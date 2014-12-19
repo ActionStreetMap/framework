@@ -1,13 +1,8 @@
 using System;
-using System.Diagnostics;
-using System.Collections;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
-using RaptorDB.Common;
+using System.IO;
 
-namespace RaptorDB
+namespace ActionStreetMap.Osm.Index.Search.MGIndex
 {
     internal class StorageData
     {

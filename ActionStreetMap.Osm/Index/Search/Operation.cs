@@ -1,4 +1,4 @@
-﻿namespace hOOt
+﻿namespace ActionStreetMap.Osm.Index.Search
 {
     internal enum Operation
     {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ActionStreetMap.Osm.Entities;
-using hOOt;
 
 namespace ActionStreetMap.Osm.Index.Search
 {

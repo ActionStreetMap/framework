@@ -83,7 +83,7 @@
     <Compile Include="Index\Search\MGIndex\KeyStore.cs" />
     <Compile Include="Index\Search\MGIndex\MGIndex.cs" />
     <Compile Include="Index\Search\MGIndex\StorageFile.cs" />
-    <Compile Include="Index\Search\MGIndex\WAHBitarray2.cs" />
+    <Compile Include="Index\Search\MGIndex\WAHBitArray.cs" />
     <Compile Include="Index\Search\mylogger.cs" />
     <Compile Include="Index\Search\Operation.cs" />
     <Compile Include="Index\Search\SafeDictionary.cs" />

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using RaptorDB.Common;
-using System.Threading;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 
-namespace RaptorDB
+namespace ActionStreetMap.Osm.Index.Search.MGIndex
 {
     internal class BitmapIndex
     {
@@ -45,7 +43,7 @@ namespace RaptorDB
         private BufferedStream _recordFileWrite;
         private long _lastBitmapOffset = 0;
         private int _lastRecordNumber = 0;
-        private SafeDictionary<int, WAHBitArray> _cache = new SafeDictionary<int, WAHBitArray>();
+        private SafeDictionary<int, WahBitArray> _cache = new SafeDictionary<int, WahBitArray>();
         private SafeDictionary<int, long> _offsetCache = new SafeDictionary<int, long>();
         private ILog log = LogManager.GetLogger(typeof(BitmapIndex));
         private bool _optimizing = false;
@@ -69,7 +67,7 @@ namespace RaptorDB
             {
                 int i = _lastRecordNumber++;
 
-                _cache.Add(i, new WAHBitArray());
+                _cache.Add(i, new WahBitArray());
                 return i;
             }
         }
@@ -94,7 +92,7 @@ namespace RaptorDB
                 Flush();
                 if (freeMemory)
                 {
-                    _cache = new SafeDictionary<int, WAHBitArray>();
+                    _cache = new SafeDictionary<int, WahBitArray>();
                 }
             }
         }
@@ -103,7 +101,7 @@ namespace RaptorDB
         {
             using (new L(this))
             {
-                WAHBitArray ba = null;
+                WahBitArray ba = null;
 
                 ba = GetBitmap(bitmaprecno);
 
@@ -111,7 +109,7 @@ namespace RaptorDB
             }
         }
 
-        public WAHBitArray GetBitmap(int recno)
+        public WahBitArray GetBitmap(int recno)
         {
             using (new L(this))
             {
@@ -260,11 +258,11 @@ namespace RaptorDB
         }
 
         private object _readlock = new object();
-        private WAHBitArray internalGetBitmap(int recno)
+        private WahBitArray internalGetBitmap(int recno)
         {
             lock (_readlock)
             {
-                WAHBitArray ba = new WAHBitArray();
+                WahBitArray ba = new WahBitArray();
                 if (recno == -1)
                     return ba;
 
@@ -290,7 +288,7 @@ namespace RaptorDB
         }
 
         private object _writelock = new object();
-        private void SaveBitmap(int recno, WAHBitArray bmp)
+        private void SaveBitmap(int recno, WahBitArray bmp)
         {
             lock (_writelock)
             {
@@ -320,10 +318,10 @@ namespace RaptorDB
         //    7  '0'
         //    8  uint data
         //-----------------------------------------------------------------
-        private long SaveBitmapToFile(WAHBitArray bmp)
+        private long SaveBitmapToFile(WahBitArray bmp)
         {
             long off = _lastBitmapOffset;
-            WAHBitArray.TYPE t;
+            WahBitArray.TYPE t;
             uint[] bits = bmp.GetCompressed(out t);
 
             byte[] b = new byte[bits.Length * 4 + 8];
@@ -345,14 +343,14 @@ namespace RaptorDB
             return off;
         }
 
-        private WAHBitArray LoadBitmap(long offset)
+        private WahBitArray LoadBitmap(long offset)
         {
-            WAHBitArray bc = new WAHBitArray();
+            WahBitArray bc = new WahBitArray();
             if (offset == -1)
                 return bc;
 
             List<uint> ar = new List<uint>();
-            WAHBitArray.TYPE type = WAHBitArray.TYPE.WAH;
+            WahBitArray.TYPE type = WahBitArray.TYPE.WAH;
             FileStream bmp = _bitmapFileRead;
             {
                 bmp.Seek(offset, SeekOrigin.Begin);
@@ -362,7 +360,7 @@ namespace RaptorDB
                 bmp.Read(b, 0, 8);
                 if (b[0] == (byte)'B' && b[1] == (byte)'M' && b[7] == 0)
                 {
-                    type = (WAHBitArray.TYPE)Enum.ToObject(typeof(WAHBitArray.TYPE), b[6]);
+                    type = (WahBitArray.TYPE)Enum.ToObject(typeof(WahBitArray.TYPE), b[6]);
                     int c = Helper.ToInt32(b, 2);
                     byte[] buf = new byte[c * 4];
                     bmp.Read(buf, 0, c * 4);
@@ -372,7 +370,7 @@ namespace RaptorDB
                     }
                 }
             }
-            bc = new WAHBitArray(type, ar.ToArray());
+            bc = new WahBitArray(type, ar.ToArray());
 
             return bc;
         }

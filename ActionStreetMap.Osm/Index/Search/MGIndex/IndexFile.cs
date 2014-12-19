@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Collections;
-using RaptorDB.Common;
 
-namespace RaptorDB
+namespace ActionStreetMap.Osm.Index.Search.MGIndex
 {
     internal class IndexFile<T>
     {
@@ -88,7 +85,7 @@ namespace RaptorDB
             return GetDuplicateBitmap(recno).GetBitIndexes();
         }
 
-        public WAHBitArray GetDuplicateBitmap(int recno)
+        public WahBitArray GetDuplicateBitmap(int recno)
         {
             return _bitmap.GetBitmap(recno);
         }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+namespace ActionStreetMap.Osm.Index.Search
+{
     public class Global
     {
         public static int BitmapOffsetSwitchOverCount = 10;
@@ -17,3 +19,4 @@ using System.Text;
         public static bool FreeBitmapMemoryOnSave = false;
     }
 
+}

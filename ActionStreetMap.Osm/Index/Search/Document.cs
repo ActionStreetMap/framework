@@ -1,6 +1,6 @@
 ﻿using ActionStreetMap.Osm.Entities;
 
-namespace hOOt
+namespace ActionStreetMap.Osm.Index.Search
 {
     public class Document
     {

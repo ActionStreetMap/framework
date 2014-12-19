@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using RaptorDB.Common;
+using System.Text;
 
-namespace RaptorDB
+namespace ActionStreetMap.Osm.Index.Search.MGIndex
 {
     #region [   KeyStoreString   ]
     internal class KeyStoreString : IDisposable

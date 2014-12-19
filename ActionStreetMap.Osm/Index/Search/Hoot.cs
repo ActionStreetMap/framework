@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections;
 using System.IO;
-using System.Xml.Serialization;
-using System.Threading;
+using System.Text;
 using System.Text.RegularExpressions;
-using ActionStreetMap.Osm.Index.Search;
-using RaptorDB.Common;
-using RaptorDB;
+using ActionStreetMap.Osm.Index.Search.MGIndex;
 
-namespace hOOt
+namespace ActionStreetMap.Osm.Index.Search
 {
     public class Hoot
     {
@@ -67,7 +62,7 @@ namespace hOOt
             AddtoIndex(recordnumber, text);
         }
 
-        public WAHBitArray Query(string filter, int maxsize)
+        public WahBitArray Query(string filter, int maxsize)
         {
             return ExecutionPlan(filter, maxsize);
         }
@@ -102,14 +97,14 @@ namespace hOOt
 
         public IEnumerable<int> FindRows(string filter)
         {
-            WAHBitArray bits = ExecutionPlan(filter, _docs.RecordCount());
+            WahBitArray bits = ExecutionPlan(filter, _docs.RecordCount());
             // enumerate records
             return bits.GetBitIndexes();
         }
 
         public IEnumerable<Document> FindDocuments(string filter)
         {
-            WAHBitArray bits = ExecutionPlan(filter, _docs.RecordCount());
+            WahBitArray bits = ExecutionPlan(filter, _docs.RecordCount());
             // enumerate documents
             foreach (int i in bits.GetBitIndexes())
             {
@@ -124,7 +119,7 @@ namespace hOOt
 
        /* public IEnumerable<string> FindDocumentFileNames(string filter)
         {
-            WAHBitArray bits = ExecutionPlan(filter, _docs.RecordCount());
+            WahBitArray bits = ExecutionPlan(filter, _docs.RecordCount());
             // enumerate documents
             foreach (int i in bits.GetBitIndexes())
             {
@@ -170,7 +165,7 @@ namespace hOOt
 
         #region [  P R I V A T E   M E T H O D S  ]
 
-        private WAHBitArray ExecutionPlan(string filter, int maxsize)
+        private WahBitArray ExecutionPlan(string filter, int maxsize)
         {
             _log.Debug("query : " + filter);
             DateTime dt = FastDateTime.Now;
@@ -180,7 +175,7 @@ namespace hOOt
             if (filter.IndexOfAny(new char[] { '+', '-' }, 0) > 0)
                 defaulttoand = false;
 
-            WAHBitArray bits = null;
+            WahBitArray bits = null;
 
             foreach (string s in words)
             {
@@ -206,7 +201,7 @@ namespace hOOt
 
                 if (s.Contains("*") || s.Contains("?"))
                 {
-                    WAHBitArray wildbits = null;
+                    WahBitArray wildbits = null;
                     // do wildcard search
                     Regex reg = new Regex("^" + s.Replace("*", ".*").Replace("?", "."), RegexOptions.IgnoreCase);
                     foreach (string key in _words.Keys())
@@ -214,7 +209,7 @@ namespace hOOt
                         if (reg.IsMatch(key))
                         {
                             _words.TryGetValue(key, out c);
-                            WAHBitArray ba = _bitmaps.GetBitmap(c);
+                            WahBitArray ba = _bitmaps.GetBitmap(c);
 
                             wildbits = DoBitOperation(wildbits, ba, Operation.Or, maxsize);
                         }
@@ -232,15 +227,15 @@ namespace hOOt
                 else if (_words.TryGetValue(word.ToLowerInvariant(), out c))
                 {
                     // bits logic
-                    WAHBitArray ba = _bitmaps.GetBitmap(c);
+                    WahBitArray ba = _bitmaps.GetBitmap(c);
                     bits = DoBitOperation(bits, ba, op, maxsize);
                 }
             }
             if (bits == null)
-                return new WAHBitArray();
+                return new WahBitArray();
 
             // remove deleted docs
-            WAHBitArray ret ;
+            WahBitArray ret ;
             if (_docMode)
                 ret = bits.AndNot(_deleted.GetBits());
             else
@@ -249,7 +244,7 @@ namespace hOOt
             return ret;
         }
 
-        private static WAHBitArray DoBitOperation(WAHBitArray bits, WAHBitArray c, Operation op, int maxsize)
+        private static WahBitArray DoBitOperation(WahBitArray bits, WahBitArray c, Operation op, int maxsize)
         {
             if (bits != null)
             {

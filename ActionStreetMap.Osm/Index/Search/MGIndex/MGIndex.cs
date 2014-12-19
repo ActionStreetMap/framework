@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.IO;
-using RaptorDB.Common;
 
-namespace RaptorDB
+namespace ActionStreetMap.Osm.Index.Search.MGIndex
 {
     #region [ internal classes ]
     internal struct PageInfo  // FEATURE : change back to class for count access for query caching

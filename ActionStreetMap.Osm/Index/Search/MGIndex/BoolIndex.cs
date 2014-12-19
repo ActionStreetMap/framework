@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using RaptorDB.Common;
 
-namespace RaptorDB
+namespace ActionStreetMap.Osm.Index.Search.MGIndex
 {
     internal class BoolIndex
     {
@@ -22,13 +19,13 @@ namespace RaptorDB
                 ReadFile();
         }
 
-        private WAHBitArray _bits = new WAHBitArray();
+        private WahBitArray _bits = new WahBitArray();
         private string _filename;
         private string _path;
         private object _lock = new object();
         private bool _inMemory = false;
 
-        public WAHBitArray GetBits()
+        public WahBitArray GetBits()
         {
             return _bits.Copy();
         }
@@ -57,14 +54,14 @@ namespace RaptorDB
                 WriteFile();
         }
 
-        public void InPlaceOR(WAHBitArray left)
+        public void InPlaceOR(WahBitArray left)
         {
             _bits = _bits.Or(left);
         }
 
         private void WriteFile()
         {
-            WAHBitArray.TYPE t;
+            WahBitArray.TYPE t;
             uint[] ints = _bits.GetCompressed(out t);
             MemoryStream ms = new MemoryStream();
             BinaryWriter bw = new BinaryWriter(ms);
@@ -79,11 +76,11 @@ namespace RaptorDB
         private void ReadFile()
         {
             byte[] b = File.ReadAllBytes(_path + _filename);
-            WAHBitArray.TYPE t = WAHBitArray.TYPE.WAH;
+            WahBitArray.TYPE t = WahBitArray.TYPE.WAH;
             int j = 0;
             if (b.Length % 4 > 0) // new format with the data type byte
             {
-                t = (WAHBitArray.TYPE)Enum.ToObject(typeof(WAHBitArray.TYPE), b[0]);
+                t = (WahBitArray.TYPE)Enum.ToObject(typeof(WahBitArray.TYPE), b[0]);
                 j = 1;
             }
             List<uint> ints = new List<uint>();
@@ -91,7 +88,7 @@ namespace RaptorDB
             {
                 ints.Add((uint)Helper.ToInt32(b, (i * 4) + j));
             }
-            _bits = new WAHBitArray(t, ints.ToArray());
+            _bits = new WahBitArray(t, ints.ToArray());
         }
 
         internal void FixSize(int size)

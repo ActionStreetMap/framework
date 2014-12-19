@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using System.Threading;
 using System.IO;
+using System.Text;
+using System.Threading;
 
-namespace RaptorDB.Common
+namespace ActionStreetMap.Osm.Index.Search
 {
     internal interface ILog
     {
