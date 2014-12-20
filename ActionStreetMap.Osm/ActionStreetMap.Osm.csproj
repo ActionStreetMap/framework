@@ -77,7 +77,6 @@
     <Compile Include="Index\Search\Global.cs" />
     <Compile Include="Index\Search\SearchEngine.cs" />
     <Compile Include="Index\Search\Storage\BitmapIndex.cs" />
-    <Compile Include="Index\Search\Storage\BoolIndex.cs" />
     <Compile Include="Index\Search\Storage\DataTypes.cs" />
     <Compile Include="Index\Search\Storage\IndexFile.cs" />
     <Compile Include="Index\Search\Storage\KeyStore.cs" />

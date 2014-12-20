@@ -5,33 +5,33 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 {
     public class WahBitArray
     {
-        public enum TYPE
+        public enum Type
         {
-            WAH = 1,
-            Bitarray = 0,
-            Indexes = 2
+            Wah = 1,
+            BitArray = 0,
+            Index = 2
         }
 
         public WahBitArray()
         {
-            _state = TYPE.Indexes;
+            _state = Type.Index;
         }
 
-        public WahBitArray(TYPE type, uint[] ints)
+        public WahBitArray(Type type, uint[] ints)
         {
             _state = type;
             switch (type)
             {
-                case TYPE.WAH:
+                case Type.Wah:
                     _compressed = ints;
                     Uncompress();
-                    _state = TYPE.Bitarray;
+                    _state = Type.BitArray;
                     _compressed = null;
                     break;
-                case TYPE.Bitarray:
+                case Type.BitArray:
                     _uncompressed = ints;
                     break;
-                case TYPE.Indexes:
+                case Type.Index:
                     _offsets = new Dictionary<uint, bool>();
                     foreach (var i in ints)
                         _offsets.Add(i, true);
@@ -43,7 +43,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         private uint[] _uncompressed;
         private Dictionary<uint, bool> _offsets = new Dictionary<uint, bool>();
         private uint _curMax = 0;
-        private TYPE _state;
+        private Type _state;
         public bool isDirty = false;
 
         public WahBitArray Copy()
@@ -51,7 +51,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
             lock (_lock)
             {
                 uint[] i = GetBitArray();
-                return new WahBitArray(TYPE.Bitarray, i);
+                return new WahBitArray(Type.BitArray, i);
             }
         }
 
@@ -59,7 +59,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         {
             lock (_lock)
             {
-                if (_state == TYPE.Indexes)
+                if (_state == Type.Index)
                 {
                     bool b = false;
                     var f = _offsets.TryGetValue((uint)index, out b);
@@ -81,7 +81,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         {
             lock (_lock)
             {
-                if (_state == TYPE.Indexes)
+                if (_state == Type.Index)
                 {
                     isDirty = true;
 
@@ -114,7 +114,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         {
             set
             {
-                if (_state == TYPE.Indexes)
+                if (_state == Type.Index)
                 {
                     // ignore
                     return;
@@ -131,7 +131,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
             }
             get
             {
-                if (_state == TYPE.Indexes)
+                if (_state == Type.Index)
                 {
                     if (_offsets.Count == 0) return 0;
                     uint[] k = GetOffsets();
@@ -156,7 +156,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 for (int i = 0; i < left.Length; i++)
                     left[i] &= right[i];
 
-                return new WahBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(Type.BitArray, left);
             }
         }
 
@@ -171,7 +171,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 for (int i = 0; i < left.Length; i++)
                     left[i] &= ~right[i];
 
-                return new WahBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(Type.BitArray, left);
             }
         }
 
@@ -186,7 +186,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 for (int i = 0; i < left.Length; i++)
                     left[i] |= right[i];
 
-                return new WahBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(Type.BitArray, left);
             }
         }
 
@@ -210,7 +210,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 for (int i = 0; i < c; i++)
                     left[i] = ~left[i];
 
-                return new WahBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(Type.BitArray, left);
             }
         }
 
@@ -225,7 +225,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 for (int i = 0; i < left.Length; i++)
                     left[i] ^= right[i];
 
-                return new WahBitArray(TYPE.Bitarray, left);
+                return new WahBitArray(Type.BitArray, left);
             }
         }
         #endregion
@@ -240,7 +240,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
         public long CountOnes()
         {
-            if (_state == TYPE.Indexes)
+            if (_state == Type.Index)
             {
                 return _offsets.Count;
             }
@@ -256,7 +256,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
         public long CountZeros()
         {
-            if (_state == TYPE.Indexes)
+            if (_state == Type.Index)
             {
                 long ones = _offsets.Count;
                 uint[] k = GetOffsets();
@@ -273,26 +273,26 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
         public void FreeMemory()
         {
-            if (_state == TYPE.Bitarray)
+            if (_state == Type.BitArray)
             {
                 if (_uncompressed != null)
                 {
                     Compress(_uncompressed);
                     _uncompressed = null;
-                    _state = TYPE.WAH;
+                    _state = Type.Wah;
                 }
             }
         }
 
-        public uint[] GetCompressed(out TYPE type)
+        public uint[] GetCompressed(out Type type)
         {
-            type = TYPE.WAH;
+            type = Type.Wah;
 
             ChangeTypeIfNeeded();
-            if (_state == TYPE.Indexes)
+            if (_state == Type.Index)
             {
                 //data = UnpackOffsets();
-                type = TYPE.Indexes;
+                type = Type.Index;
                 return GetOffsets();
             }
             else if (_uncompressed == null)
@@ -306,7 +306,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
         public IEnumerable<int> GetBitIndexes()
         {
-            if (_state == TYPE.Indexes)
+            if (_state == Type.Index)
             {
                 foreach (int i in GetOffsets())
                     yield return i;
@@ -366,7 +366,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         {
             lock (_lock)
             {
-                if (_state == TYPE.Indexes)
+                if (_state == Type.Index)
                     return UnpackOffsets();
 
                 this.CheckBitArray();
@@ -401,7 +401,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
         private void ChangeTypeIfNeeded()
         {
-            if (_state != TYPE.Indexes)
+            if (_state != Type.Index)
                 return;
 
             uint T = (_curMax >> 5) + 1;
@@ -409,7 +409,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
             if (c > T && c > Global.BitmapOffsetSwitchOverCount)
             {
                 // change type to WAH
-                _state = TYPE.Bitarray;
+                _state = Type.BitArray;
                 _uncompressed = new uint[0];
                 // create bitmap
                 foreach (var i in _offsets.Keys)
@@ -421,7 +421,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
         private void Resize(int index)
         {
-            if (_state == TYPE.Indexes)
+            if (_state == Type.Index)
                 return;
             int c = index >> 5;
             c++;
@@ -468,14 +468,14 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
         private void CheckBitArray()
         {
-            if (_state == TYPE.Bitarray)
+            if (_state == Type.BitArray)
                 return;
 
-            if (_state == TYPE.WAH)
+            if (_state == Type.Wah)
             {
                 _uncompressed = new uint[0];
                 Uncompress();
-                _state = TYPE.Bitarray;
+                _state = Type.BitArray;
                 _compressed = null;
                 return;
             }

@@ -5,10 +5,9 @@ using System.Text;
 
 namespace ActionStreetMap.Osm.Index.Search.Storage
 {
-    #region [   KeyStoreString   ]
-    internal class KeyStoreString : IDisposable
+    internal class KeyStoreLong : IDisposable
     {
-        public KeyStoreString(string filename, bool caseSensitve)
+        public KeyStoreLong(string filename, bool caseSensitve)
         {
             _db = KeyStore<long>.Open(filename, true);
             _caseSensitive = caseSensitve;
@@ -41,18 +40,6 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
             _db.Set(key, val);
         }
 
-        public bool Get(long key, out string val)
-        {
-            val = null;
-            byte[] bval;
-            bool b = Get(key, out bval);
-            if (b)
-            {
-                val = Encoding.Unicode.GetString(bval);
-            }
-            return b;
-        }
-
         public bool Get(long key, out byte[] val)
         {
             /*string str = (_caseSensitive ? key : key.ToLower());
@@ -60,12 +47,13 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
             byte[] bkey = Encoding.Unicode.GetBytes(str);
             int hc = (int)Helper.MurMur.Hash(bkey);*/
 
-            byte[] bkey = Helper.GetBytes(key, false);
+            //byte[] bkey = Helper.GetBytes(key, false);
 
             if (_db.Get(key, out val))
             {
+                return true;
                 // unpack data
-                byte[] g = null;
+                /*byte[] g = null;
                 if (UnpackData(val, out val, out g))
                 {
                     if (!Helper.CompareMemCmp(bkey, g))
@@ -85,7 +73,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                         return false;
                     }
                     return true;
-                }
+                }*/
             }
             return false;
         }
@@ -151,7 +139,6 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
             _db.FreeMemory();
         }
     }
-    #endregion
 
     internal class KeyStore<T> : IDisposable where T : IComparable<T>
     {
@@ -176,7 +163,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         private string _idxExtension = ".mgidx";
         IGetBytes<T> _T = null;
         private System.Timers.Timer _savetimer;
-        private BoolIndex _deleted;
+        //private BoolIndex _deleted;
 
 
         public static KeyStore<T> Open(string Filename, bool AllowDuplicateKeys)
@@ -198,7 +185,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
             {
                 log.Debug("saving to disk");
                 _index.SaveIndex();
-                _deleted.SaveIndex();
+                //_deleted.SaveIndex();
                 log.Debug("index saved");
             }
         }
@@ -227,7 +214,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         public long Count()
         {
             int c = _archive.Count();
-            return c - _deleted.GetBits().CountOnes() * 2;
+            return c /*- _deleted.GetBits().CountOnes() * 2*/;
         }
 
         public bool Get(T key, out string val)
@@ -282,15 +269,15 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 SaveIndex();
                 SaveLastRecord();
 
-                if (_deleted != null)
-                    _deleted.Shutdown();
+                //if (_deleted != null)
+                //    _deleted.Shutdown();
                 if (_index != null)
                     _index.Shutdown();
                 if (_archive != null)
                     _archive.Shutdown();
                 _index = null;
                 _archive = null;
-                _deleted = null;
+                //_deleted = null;
                 log.Debug("Shutting down log");
                 LogManager.Shutdown();
             }
@@ -326,7 +313,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
 
             _archive = new StorageFile<T>(db);
 
-            _deleted = new BoolIndex(_Path, _FileName + "_deleted.idx");
+            //_deleted = new BoolIndex(_Path, _FileName + "_deleted.idx");
 
             _archive.SkipDateTime = true;
 
@@ -401,7 +388,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         {
             // write a delete record
             int rec = _archive.WriteData(id, data, true);
-            _deleted.Set(true, rec);
+            //_deleted.Set(true, rec);
             return _index.RemoveKey(id);
         }
 

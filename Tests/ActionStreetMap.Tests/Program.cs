@@ -42,6 +42,7 @@ namespace ActionStreetMap.Tests
             program.Wait();*/
 
             program.ReadTextIndex();
+            //program.CreateTextIndex();
         }
 
         public void RunMocker()
@@ -110,16 +111,30 @@ namespace ActionStreetMap.Tests
             var logger = new PerformanceLogger();
             logger.Start();
             var indexPath = Path.GetFullPath("Index");
-            var hoot = new SearchEngine(indexPath, "index", true);
+            Directory.Delete(indexPath, true);
+            var engine = new SearchEngine(indexPath, "index");
 
-            hoot.Index(GetTestNodeDocument(5, new Dictionary<string, string>() {{"eichendorff","2"}}), false);
-            hoot.Index(GetTestNodeDocument(5, new Dictionary<string, string>() { { "invaliden", "3" } }), false);
-            hoot.Save();
+            engine.Index(GetTestNodeDocument(5, new Dictionary<string, string>() {{"eichendorff","2"}}), false);
+            engine.Index(GetTestNodeDocument(6, new Dictionary<string, string>() { { "invaliden", "3" } }), false);
+            engine.Save();
 
-            foreach (var d in hoot.FindDocuments("Eichendorf*"))
-                Console.WriteLine(d.Element);
-            
+            InvokeAndMeasure(() =>
+            {
+                 foreach (var d in engine.FindDocuments("Eichendorf*"))
+                    Console.WriteLine(d.Element);
+                //Console.WriteLine(engine.FindById(1552051826).Element); //1552051826
+            });
+
             logger.Stop();
+        }
+
+        private static void InvokeAndMeasure(Action action)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            action.Invoke();
+            sw.Stop();
+            Console.WriteLine("Action completed in {0}ms", sw.ElapsedMilliseconds);
         }
 
         private static Document GetTestNodeDocument(long id, Dictionary<string, string> tags)

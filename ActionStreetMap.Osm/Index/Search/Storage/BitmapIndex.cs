@@ -321,7 +321,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
         private long SaveBitmapToFile(WahBitArray bmp)
         {
             long off = _lastBitmapOffset;
-            WahBitArray.TYPE t;
+            WahBitArray.Type t;
             uint[] bits = bmp.GetCompressed(out t);
 
             byte[] b = new byte[bits.Length * 4 + 8];
@@ -350,7 +350,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 return bc;
 
             List<uint> ar = new List<uint>();
-            WahBitArray.TYPE type = WahBitArray.TYPE.WAH;
+            WahBitArray.Type type = WahBitArray.Type.Wah;
             FileStream bmp = _bitmapFileRead;
             {
                 bmp.Seek(offset, SeekOrigin.Begin);
@@ -360,7 +360,7 @@ namespace ActionStreetMap.Osm.Index.Search.Storage
                 bmp.Read(b, 0, 8);
                 if (b[0] == (byte)'B' && b[1] == (byte)'M' && b[7] == 0)
                 {
-                    type = (WahBitArray.TYPE)Enum.ToObject(typeof(WahBitArray.TYPE), b[6]);
+                    type = (WahBitArray.Type)Enum.ToObject(typeof(WahBitArray.Type), b[6]);
                     int c = Helper.ToInt32(b, 2);
                     byte[] buf = new byte[c * 4];
                     bmp.Read(buf, 0, c * 4);

@@ -9,38 +9,30 @@ namespace ActionStreetMap.Osm.Index.Search
 {
     public class SearchEngine
     {
-        public SearchEngine(string IndexPath, string FileName, bool DocMode)
+        private readonly SafeDictionary<string, int> _words = new SafeDictionary<string, int>();
+        private readonly BitmapIndex _bitmaps;
+        private readonly ILog _log = LogManager.GetLogger(typeof(SearchEngine));
+        private int _lastDocNum;
+        private readonly string _fileName = "words";
+        private readonly string _path = "";
+        private readonly KeyStoreLong _docs;
+
+        public SearchEngine(string IndexPath, string FileName)
         {
-            _Path = IndexPath;
-            _FileName = FileName;
-            _docMode = DocMode;
-            if (_Path.EndsWith(Path.DirectorySeparatorChar.ToString()) == false) _Path += Path.DirectorySeparatorChar;
+            _path = IndexPath;
+            _fileName = FileName;
+            if (_path.EndsWith(Path.DirectorySeparatorChar.ToString()) == false) _path += Path.DirectorySeparatorChar;
             Directory.CreateDirectory(IndexPath);
-            LogManager.Configure(_Path + "log.txt", 200, false);
+            LogManager.Configure(_path + "log.txt", 200, false);
             _log.Debug("\r\n\r\n");
             _log.Debug("Starting hOOt....");
-            _log.Debug("Storage Folder = " + _Path);
+            _log.Debug("Storage Folder = " + _path);
 
-            if (DocMode)
-                _docs = new KeyStoreString(_Path + "files.docs", false);
-            _bitmaps = new BitmapIndex(_Path, _FileName + ".mgbmp");
-            if (DocMode)
-                _lastDocNum = (int)_docs.Count();
-            // read words
+            _docs = new KeyStoreLong(_path + "files.docs", false);
+            _bitmaps = new BitmapIndex(_path, _fileName + ".mgbmp");
+            _lastDocNum = _docs.Count();
             LoadWords();
-            // read deleted
-            _deleted = new BoolIndex(_Path, "_deleted.idx");
         }
-
-        private SafeDictionary<string, int> _words = new SafeDictionary<string, int>();
-        private BitmapIndex _bitmaps;
-        private BoolIndex _deleted;
-        private ILog _log = LogManager.GetLogger(typeof(SearchEngine));
-        private int _lastDocNum = 0;
-        private string _FileName = "words";
-        private string _Path = "";
-        private KeyStoreString _docs;
-        private bool _docMode = false;
 
         public int WordCount
         {
@@ -49,7 +41,7 @@ namespace ActionStreetMap.Osm.Index.Search
 
         public int DocumentCount
         {
-            get { return _lastDocNum - (int)_deleted.GetBits().CountOnes(); }
+            get { return _lastDocNum; }
         }
 
         public void Save()
@@ -72,10 +64,7 @@ namespace ActionStreetMap.Osm.Index.Search
             _log.Debug("indexing doc : " + document.Element.Id);
             DateTime dt = FastDateTime.Now;
 
-            if (deleteold && document.DocNumber > -1)
-                _deleted.Set(true, document.DocNumber);
-
-            if (deleteold == true || document.DocNumber == -1)
+            if (deleteold || document.DocNumber == -1)
                 document.DocNumber = _lastDocNum++;
 
             _docs.Set(document.Element.Id, DocumentSerializer.Serialize(document));
@@ -84,7 +73,7 @@ namespace ActionStreetMap.Osm.Index.Search
 
             dt = FastDateTime.Now;
 
-            var builder = new StringBuilder(document.Element.Tags.Count * 16);
+            var builder = new StringBuilder(document.Element.Tags.Count*16);
             foreach (KeyValuePair<string, string> pair in document.Element.Tags)
                 builder.AppendFormat("{0} {1}", pair.Key, pair.Value);
 
@@ -117,7 +106,14 @@ namespace ActionStreetMap.Osm.Index.Search
             }
         }
 
-       /* public IEnumerable<string> FindDocumentFileNames(string filter)
+        public Document FindById(long id)
+        {
+            byte[] data;
+            _docs.Get(id, out data);
+            return DocumentSerializer.Deserialize(data);
+        }
+
+        /* public IEnumerable<string> FindDocumentFileNames(string filter)
         {
             WahBitArray bits = ExecutionPlan(filter, _docs.RecordCount());
             // enumerate documents
@@ -135,10 +131,10 @@ namespace ActionStreetMap.Osm.Index.Search
         public void RemoveDocument(int number)
         {
             // add number to deleted bitmap
-            _deleted.Set(true, number);
+            //_deleted.Set(true, number);
         }
 
-       /* public bool RemoveDocument(string filename)
+        /* public bool RemoveDocument(string filename)
         {
             // remove doc based on filename
             byte[] b;
@@ -171,9 +167,7 @@ namespace ActionStreetMap.Osm.Index.Search
             DateTime dt = FastDateTime.Now;
             // query indexes
             string[] words = filter.Split(' ');
-            bool defaulttoand = true;
-            if (filter.IndexOfAny(new char[] { '+', '-' }, 0) > 0)
-                defaulttoand = false;
+            bool defaultToAnd = !(filter.IndexOfAny(new[] {'+', '-'}, 0) > 0);
 
             WahBitArray bits = null;
 
@@ -184,7 +178,7 @@ namespace ActionStreetMap.Osm.Index.Search
                 if (s == "") continue;
 
                 Operation op = Operation.Or;
-                if (defaulttoand)
+                if (defaultToAnd)
                     op = Operation.And;
 
                 if (s.StartsWith("+"))
@@ -235,11 +229,11 @@ namespace ActionStreetMap.Osm.Index.Search
                 return new WahBitArray();
 
             // remove deleted docs
-            WahBitArray ret ;
-            if (_docMode)
-                ret = bits.AndNot(_deleted.GetBits());
-            else
-                ret = bits;
+            WahBitArray ret = bits;
+            // if (_docMode)
+            //    ret = bits.AndNot(_deleted.GetBits());
+            // else
+            //     ret = bits;
             _log.Debug("query time (ms) = " + FastDateTime.Now.Subtract(dt).TotalMilliseconds);
             return ret;
         }
@@ -266,7 +260,8 @@ namespace ActionStreetMap.Osm.Index.Search
             return bits;
         }
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
+
         private void InternalSave()
         {
             lock (_lock)
@@ -274,18 +269,17 @@ namespace ActionStreetMap.Osm.Index.Search
                 _log.Debug("saving index...");
                 DateTime dt = FastDateTime.Now;
                 // save deleted
-                _deleted.SaveIndex();
+                //_deleted.SaveIndex();
 
                 // save docs 
-                if (_docMode)
-                    _docs.SaveIndex();
+                _docs.SaveIndex();
                 _bitmaps.Commit(false);
 
                 MemoryStream ms = new MemoryStream();
                 BinaryWriter bw = new BinaryWriter(ms, Encoding.UTF8);
 
                 // save words and bitmaps
-                using (FileStream words = new FileStream(_Path + _FileName + ".words", FileMode.Create))
+                using (FileStream words = new FileStream(_path + _fileName + ".words", FileMode.Create))
                 {
                     foreach (string key in _words.Keys())
                     {
@@ -303,10 +297,10 @@ namespace ActionStreetMap.Osm.Index.Search
 
         private void LoadWords()
         {
-            if (File.Exists(_Path + _FileName + ".words") == false)
+            if (File.Exists(_path + _fileName + ".words") == false)
                 return;
             // load words
-            byte[] b = File.ReadAllBytes(_Path + _FileName + ".words");
+            byte[] b = File.ReadAllBytes(_path + _fileName + ".words");
             if (b.Length == 0)
                 return;
             MemoryStream ms = new MemoryStream(b);
@@ -320,7 +314,10 @@ namespace ActionStreetMap.Osm.Index.Search
                 {
                     s = br.ReadString();
                 }
-                catch { s = ""; }
+                catch
+                {
+                    s = "";
+                }
             }
             _log.Debug("Word Count = " + _words.Count);
         }
@@ -330,7 +327,7 @@ namespace ActionStreetMap.Osm.Index.Search
             if (text == "" || text == null)
                 return;
             string[] keys;
-            if (_docMode)
+            //if (_docMode)
             {
                 _log.Debug("text size = " + text.Length);
                 Dictionary<string, int> wordfreq = GenerateWordFreq(text);
@@ -339,10 +336,7 @@ namespace ActionStreetMap.Osm.Index.Search
                 keys = new string[kk.Count];
                 kk.CopyTo(keys, 0);
             }
-            else
-            {
-                keys = text.Split(' ');
-            }
+
 
             foreach (string key in keys)
             {
@@ -382,9 +376,8 @@ namespace ActionStreetMap.Osm.Index.Search
                         run = -1;
                     }
                 }
-                else
-                    if (run == -1)
-                        run = index - 1;
+                else if (run == -1)
+                    run = index - 1;
             }
 
             if (run != -1)
@@ -454,14 +447,13 @@ namespace ActionStreetMap.Osm.Index.Search
             else
                 dic.Add(word, 1);
         }
+
         #endregion
 
         public void Shutdown()
         {
             Save();
-            _deleted.Shutdown();
-            if (_docMode)
-                _docs.Shutdown();
+            _docs.Shutdown();
         }
 
         public void FreeMemory()
@@ -471,6 +463,5 @@ namespace ActionStreetMap.Osm.Index.Search
             if (_docs != null)
                 _docs.FreeMemory();
         }
-
     }
 }

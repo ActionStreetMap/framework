@@ -41,7 +41,7 @@ namespace ActionStreetMap.Osm.Index.Search
         {
             var indexPath = Path.GetFullPath(_indexPath);
             Directory.Delete(indexPath, true);
-            _engine = new SearchEngine(indexPath, "index", true);
+            _engine = new SearchEngine(indexPath, "index");
         }
 
         public void Complete()
