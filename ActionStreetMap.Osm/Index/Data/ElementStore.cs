@@ -34,7 +34,7 @@ namespace ActionStreetMap.Osm.Index.Data
         /// <returns>Offset.</returns>
         public uint Insert(Element element)
         {
-            _stream.Seek(0, SeekOrigin.End);
+            // NOTE should be at correct position 
             if (_writer == null)
                 _writer = new BinaryWriter(_stream);
 
@@ -49,8 +49,13 @@ namespace ActionStreetMap.Osm.Index.Data
             if (_reader == null)
                 _reader = new BinaryReader(_stream);
 
-            _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-            return ReadElement(_reader);
+            // TODO read and restore previous position to support write/read sessions
+            // NOTE see relation processing inside index builder
+            var previousPosition = _stream.Position;
+            _stream.Seek(offset, SeekOrigin.Begin);
+            var element =  ReadElement(_reader);
+            _stream.Seek(previousPosition, SeekOrigin.Begin);
+            return element;
         }
 
         #endregion

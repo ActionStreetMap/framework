@@ -46,7 +46,7 @@ namespace ActionStreetMap.Tests
             program.Wait();*/
 
             program.CreateIndex();
-             //program.ReadIndex();
+            // program.ReadIndex();
         }
 
         public void RunMocker()
@@ -95,18 +95,15 @@ namespace ActionStreetMap.Tests
         #region Final experiments
 
         private const string Directory = "Index";
-        private const string KeyValueStoreFile = Directory + @"\keyValueStore.bytes";
-        private const string KeyValueIndexFile = Directory + @"\keyValueIndex.bytes";
-        private const string ElementStoreFile = Directory + @"\elementStore.bytes";
-        private const string SpatialIndexFile = Directory + @"\spatialIndex.bytes";
+
 
         private void CreateIndex()
         {
-            var keyValueStoreFile = new FileStream(KeyValueStoreFile, FileMode.Create);
+            var keyValueStoreFile = new FileStream(String.Format(Consts.KeyValueStorePathFormat, Directory), FileMode.Create);
             var index = new KeyValueIndex(300000, 4);
             var keyValueStore = new KeyValueStore(index, keyValueStoreFile);
 
-            var storeFile = new FileStream(ElementStoreFile, FileMode.Create);
+            var storeFile = new FileStream(String.Format(Consts.ElementStorePathFormat, Directory), FileMode.Create);
             var store = new ElementStore(keyValueStore, storeFile);
 
             var logger = new PerformanceLogger();
@@ -127,8 +124,8 @@ namespace ActionStreetMap.Tests
             builder.Complete();
             logger.Stop();
 
-            KeyValueIndex.Save(index, new FileStream(KeyValueIndexFile, FileMode.Create));
-            SpatialIndexSerializer.Serialize(tree, new BinaryWriter(new FileStream(SpatialIndexFile, FileMode.Create)));
+            KeyValueIndex.Save(index, new FileStream(String.Format(Consts.KeyValueIndexPathFormat, Directory), FileMode.Create));
+            SpatialIndex<uint>.Save(tree, new FileStream(String.Format(Consts.SpatialIndexPathFormat, Directory), FileMode.Create));
             
             InvokeAndMeasure(() =>
             {
@@ -139,7 +136,6 @@ namespace ActionStreetMap.Tests
                     var element = store.Get(result.Data);
                     Console.WriteLine(element);
                 }
-
             });
         }
 
@@ -148,10 +144,10 @@ namespace ActionStreetMap.Tests
             var logger = new PerformanceLogger();
             logger.Start();
 
-            var tree = SpatialIndexSerializer.Deserialize(new BinaryReader(new FileStream(SpatialIndexFile, FileMode.Open)));
-            var index = KeyValueIndex.Load(new FileStream(KeyValueIndexFile, FileMode.Open));
-            var keyValueStore = new KeyValueStore(index, new FileStream(KeyValueStoreFile, FileMode.Open));
-            var store = new ElementStore(keyValueStore, new FileStream(ElementStoreFile, FileMode.Open));
+            var tree = SpatialIndex<uint>.Load(new FileStream(String.Format(Consts.SpatialIndexPathFormat, Directory), FileMode.Open));
+            var index = KeyValueIndex.Load(new FileStream(String.Format(Consts.KeyValueIndexPathFormat, Directory), FileMode.Open));
+            var keyValueStore = new KeyValueStore(index, new FileStream(String.Format(Consts.KeyValueStorePathFormat, Directory), FileMode.Open));
+            var store = new ElementStore(keyValueStore, new FileStream(String.Format(Consts.ElementStorePathFormat, Directory), FileMode.Open));
 
             InvokeAndMeasure(() =>
             {

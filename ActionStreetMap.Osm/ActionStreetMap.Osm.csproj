@@ -80,9 +80,8 @@
     <Compile Include="Index\Spatial\Envelops.cs" />
     <Compile Include="Index\Spatial\RTree.cs" />
     <Compile Include="Index\Spatial\SpatialIndex.cs" />
-    <Compile Include="Index\Spatial\SpatialIndexSerializer.cs" />
     <Compile Include="Index\Spatial\StackExtensions.cs" />
-    <Compile Include="Index\Utils.cs" />
+    <Compile Include="Index\Consts.cs" />
     <Compile Include="OsmTileLoader.cs" />
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
