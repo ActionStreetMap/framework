@@ -10,6 +10,7 @@ using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm.Formats;
 using ActionStreetMap.Osm.Formats.O5m;
+using ActionStreetMap.Osm.Index.Data;
 using ActionStreetMap.Osm.Index.Search;
 
 namespace ActionStreetMap.Tests
@@ -108,24 +109,19 @@ namespace ActionStreetMap.Tests
 
         private void ReadTextIndex()
         {
-            var logger = new PerformanceLogger();
-            logger.Start();
-            var indexPath = Path.GetFullPath("Index");
-            Directory.Delete(indexPath, true);
-            var engine = new SearchEngine(indexPath, "index");
+            var buffer = new byte[256];
+            var stream = new MemoryStream(buffer);
+            stream.WriteByte(4);
+            stream.WriteByte(7);
 
-            engine.Index(GetTestNodeDocument(5, new Dictionary<string, string>() {{"eichendorff","2"}}), false);
-            engine.Index(GetTestNodeDocument(6, new Dictionary<string, string>() { { "invaliden", "3" } }), false);
-            engine.Save();
+            var store = new KeyValueStore(stream);
 
-            InvokeAndMeasure(() =>
-            {
-                 foreach (var d in engine.FindDocuments("Eichendorf*"))
-                    Console.WriteLine(d.Element);
-                //Console.WriteLine(engine.FindById(1552051826).Element); //1552051826
-            });
+            store.Add(new KeyValuePair<string, string>("addr", "eic"));
+            store.Add(new KeyValuePair<string, string>("addr", "inv"));
+            store.Add(new KeyValuePair<string, string>("addr", "inc"));
 
-            logger.Stop();
+            var ggg = store.GetOffset(new KeyValuePair<string, string>("addr", "inc"));
+            Console.WriteLine(ggg);
         }
 
         private static void InvokeAndMeasure(Action action)
@@ -135,16 +131,6 @@ namespace ActionStreetMap.Tests
             action.Invoke();
             sw.Stop();
             Console.WriteLine("Action completed in {0}ms", sw.ElapsedMilliseconds);
-        }
-
-        private static Document GetTestNodeDocument(long id, Dictionary<string, string> tags)
-        {
-            return new Document(new ActionStreetMap.Osm.Entities.Node()
-            {
-                Id = id,
-                Coordinate = new GeoCoordinate(53.1, 13.1),
-                Tags = tags
-            });
         }
 
         #endregion

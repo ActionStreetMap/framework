@@ -1,5 +1,4 @@
-﻿using System.IO;
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
 
 namespace ActionStreetMap.Osm.Index.Search
@@ -18,7 +17,7 @@ namespace ActionStreetMap.Osm.Index.Search
         {
             if (node.Tags != null)
             {
-                _engine.Index(new Document(node), false);
+                //_engine.Index(new Document(node), false);
             }
         }
 
@@ -39,14 +38,11 @@ namespace ActionStreetMap.Osm.Index.Search
 
         public void ProcessBoundingBox(BoundingBox bbox)
         {
-            var indexPath = Path.GetFullPath(_indexPath);
-            Directory.Delete(indexPath, true);
-            _engine = new SearchEngine(indexPath, "index");
         }
 
         public void Complete()
         {
-            _engine.Save();
+            
         }
 
         public void Clear()
