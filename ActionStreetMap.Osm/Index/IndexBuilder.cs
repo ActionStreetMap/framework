@@ -11,52 +11,53 @@ namespace ActionStreetMap.Osm.Index
     internal class IndexBuilder: IIndexBuilder
     {
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
-        private SortedList<long, Envelop> _ways = new SortedList<long, Envelop>(10240);
-        //private SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
-
-        private List<Relation> _unresolvedRelations = new List<Relation>(4096);
+        private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
+        private SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
 
         private readonly RTree<uint> _tree;
-        private readonly ElementStore _elementStore;
+        private readonly ElementStore _store;
         
-        private int _processedCount;
+        private int _processedNodesCount;
+        private int _processedWaysCount;
+        private int _processedRelationsCount;
+        private int _skippedRelationsCount = 0;
 
-        public IndexBuilder(RTree<uint> tree, ElementStore elementStore)
+        public IndexBuilder(RTree<uint> tree, ElementStore store)
         {
             _tree = tree;
-            _elementStore = elementStore;
+            _store = store;
         }
 
         public void ProcessNode(Node node, int tagCount)
         {
             if (node.Id < 0)
                 return;
+
             _nodes.Add(node.Id, new ScaledGeoCoordinate(node.Coordinate));
 
             if (tagCount > 0)
             {
                 // TODO define nodes which should be added as elements
-                bool found = node.Tags.Any(tag => tag.Key.StartsWith("addr:street"));
+                bool found = node.Tags.Any(tag => tag.Key.StartsWith("addr:"));
                 if (found)
                 {
-                    var offset = _elementStore.Insert(node);
+                    var offset = _store.Insert(node);
                     _tree.Insert(offset, new PointEnvelop(node.Coordinate));
                 }
             }
 
-            _processedCount++;
-            if (_processedCount % 10000 == 0)
-                Console.WriteLine("processed {0}", _processedCount);
+            _processedNodesCount++;
+            if (_processedNodesCount % 10000 == 0)
+                Console.WriteLine("processed nodes {0}", _processedNodesCount);
         }
 
         public void ProcessWay(Way way, int tagCount)
         {
-            return;
-
             if (way.Id < 0)
                 return;
 
             var envelop = new Envelop();
+            way.Coordinates = new List<GeoCoordinate>(way.NodeIds.Count);
             foreach (var nodeId in way.NodeIds)
             {
                 if (!_nodes.ContainsKey(nodeId))
@@ -65,11 +66,23 @@ namespace ActionStreetMap.Osm.Index
                     return;
                 }
                 var coordinate = _nodes[nodeId];
+                way.Coordinates.Add(coordinate.Unscale());
                 envelop.Extend(coordinate.Latitude, coordinate.Longitude);
             }
 
-            uint offset = 0;
-            _tree.Insert(offset, envelop);
+            if (tagCount > 0)
+            {
+                 uint offset = _store.Insert(way);
+                 _tree.Insert(offset, envelop);
+                 _wayOffsets.Add(way.Id, offset);
+            }
+            else
+                // keep it as it may be used by relation
+                _ways.Add(way.Id, way);
+
+            _processedWaysCount++;
+            if (_processedWaysCount % 10000 == 0)
+                Console.WriteLine("processed ways {0}", _processedWaysCount);
         }
 
         public void ProcessRelation(Relation relation, int tagCount)
@@ -82,66 +95,64 @@ namespace ActionStreetMap.Osm.Index
 
         public void ProcessRelation(Relation relation, bool storeUnresolved)
         {
-            /* var envelop = new Envelope();
-            bool isValid = false;
+            var envelop = new Envelop();
+            _processedRelationsCount++;
+
+            // this cicle prevents us to insert ways which are part of unresolved relation
             foreach (var member in relation.Members)
             {
-                if (member.TypeId == 0)
+                if (!_wayOffsets.ContainsKey(member.MemberId) && !_ways.ContainsKey(member.MemberId))
                 {
-                    if (!_nodes.ContainsKey(member.MemberId))
-                    {
-                        _trace.Output(String.Format("Relation {0} has unresolved node: {1} and will be skipped.", 
-                            relation.Id, member.MemberId));
-                        return;
-                    }
-                    var coordinate = _nodes[member.MemberId];
-                    envelop.Extend(coordinate.Longitude, coordinate.Latitude);
-                    isValid = true;
-                } 
-                else if (member.TypeId == 1)
-                {
-                    // TODO investigate why we cannot find way here
-                    if (!_ways.ContainsKey(member.MemberId))
-                    {
-                        _trace.Output(String.Format("Relation {0} has unresolved way: {1} and will be skipped.", relation.Id, member.MemberId));
-                        return;
-                    }
-                    envelop.Extend(_ways[member.MemberId]);
-                    isValid = true;
-                }
-                else if (member.TypeId == 2)
-                {
-                    // TODO use try or indexof to avoid double search
-                    if (!_relations.ContainsKey(member.MemberId))
-                    {
-                        if (storeUnresolved)
-                            _unresolvedRelations.Insert(relation);
-                        else
-                            _trace.Output(String.Format("Relation {0} has unresolved relation: {1}!", relation.Id, member.MemberId));
-                        return;
-                    }
-                    envelop.Extend(_relations[member.MemberId]);
-                    isValid = true;
-                    // TODO process this case!
-                    // NOTE relation can be unprocessed yet
-                    //envelop.Extend(_relations[member.MemberId]);
+                    Console.WriteLine("Relation {0} has unresolved way: {1} and will be skipped.", relation.Id, member.MemberId);
+                    _skippedRelationsCount++;
+                    return;
                 }
             }
-            if (isValid)
+
+            foreach (var member in relation.Members)
             {
-                Tree.Insert(new RTreeData()
+                var type = (ElementType) member.TypeId;
+                uint memberOffset = 0;
+                switch (type)
                 {
-                    Type = 2,
-                    Id = relation.Id,
-                    RelRefs = relation.Members.Select(m => new Tuple<byte, long>((byte)m.TypeId, m.MemberId)).ToList()
-                }, envelop);
+                    case ElementType.Node:
+                        // TODO not supported yet
+                        _skippedRelationsCount++;
+                        return;
+                    case ElementType.Way:
+                        Way way = null;
+                        if (_wayOffsets.ContainsKey(member.MemberId))
+                        {
+                            memberOffset = _wayOffsets[member.MemberId];
+                            way = _store.Get(memberOffset) as Way;
+                        }
+                        else if (_ways.ContainsKey(member.MemberId))
+                        {
+                            way = _ways[member.MemberId];
+                            memberOffset = _store.Insert(way);
+                            _wayOffsets.Add(member.MemberId, memberOffset);
+                        }
+
+                        for (int i = 0; i < way.Coordinates.Count; i++)
+                            envelop.Extend(new PointEnvelop(way.Coordinates[i]));
+                        break;
+                    case ElementType.Relation:
+                        // TODO not supported yet
+                        _skippedRelationsCount++;
+                        return;
+                    default:
+                        throw new InvalidOperationException("Unknown element type!");
+                }
+                // TODO merge tags?
+                member.Offset = memberOffset;
             }
-            else
-            {
-                // TODO possibly consists of points
-                _trace.Output(String.Format("Relation {0} has invalid envelop!", relation.Id));
-            }*/
-        }
+
+            var offset = _store.Insert(relation);
+            _tree.Insert(offset, envelop);
+
+            if (_processedRelationsCount % 1000 == 0)
+                Console.WriteLine("processed relations {0}", _processedRelationsCount);
+       }
 
         public void ProcessBoundingBox(BoundingBox bbox)
         {
@@ -149,10 +160,7 @@ namespace ActionStreetMap.Osm.Index
 
         public void Complete()
         {
-            /*foreach (var relation in _unresolvedRelations)
-            {
-                ProcessRelation(relation, false);
-            }*/
+            Console.WriteLine("Total relations: {0} including skipped:{1}", _processedRelationsCount, _skippedRelationsCount);
         }
 
         public void Clear()
@@ -160,13 +168,8 @@ namespace ActionStreetMap.Osm.Index
             //Tree = null;
             _nodes.Clear();
             _nodes = null;
-            //_relations.Clear();
-            //_relations = null;
-            _unresolvedRelations.Clear();
-            _unresolvedRelations = null;
             _ways.Clear();
             _ways = null;
-
             GC.Collect();
             GC.WaitForFullGCComplete();
         }

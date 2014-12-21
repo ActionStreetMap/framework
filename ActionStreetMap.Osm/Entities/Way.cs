@@ -10,7 +10,6 @@ namespace ActionStreetMap.Osm.Entities
     /// </summary>
     public class Way : Element
     {
-        [Obsolete]
         /// <summary>
         ///     Holds the list of nodes.
         /// </summary>
@@ -21,7 +20,6 @@ namespace ActionStreetMap.Osm.Entities
         ///     Nodes.
         /// </summary>
         public List<Node> Nodes { get; set; }
-
 
         public List<GeoCoordinate> Coordinates { get; set; }
 

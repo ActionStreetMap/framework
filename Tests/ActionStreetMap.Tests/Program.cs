@@ -46,7 +46,7 @@ namespace ActionStreetMap.Tests
             program.Wait();*/
 
             //program.CreateIndex();
-            program.ReadIndex();
+             program.ReadIndex();
         }
 
         public void RunMocker()
@@ -157,10 +157,11 @@ namespace ActionStreetMap.Tests
 
         #region Final experiments
 
-        private const string KeyValueStoreFile = @"Index\keyValueStore.bytes";
-        private const string KeyValueIndexFile = @"Index\keyValueIndex.bytes";
-        private const string ElementStoreFile = @"Index\elementStore.bytes";
-        private const string SpatialIndexFile = @"Index\spatialIndex.bytes";
+        private const string Directory = "FullIndex";
+        private const string KeyValueStoreFile = Directory + @"\keyValueStore.bytes";
+        private const string KeyValueIndexFile = Directory + @"\keyValueIndex.bytes";
+        private const string ElementStoreFile = Directory + @"\elementStore.bytes";
+        private const string SpatialIndexFile = Directory + @"\spatialIndex.bytes";
 
         private void CreateIndex()
         {
@@ -215,7 +216,7 @@ namespace ActionStreetMap.Tests
             var keyValueStore = new KeyValueStore(index, new FileStream(KeyValueStoreFile, FileMode.Open));
             var store = new ElementStore(keyValueStore, new FileStream(ElementStoreFile, FileMode.Open));
 
-            /*InvokeAndMeasure(() =>
+            InvokeAndMeasure(() =>
             {
                 var results = tree.Search(new Envelop(new GeoCoordinate(52.5281163, 13.3848696),
                         new GeoCoordinate(52.5357719, 13.3896976)));
@@ -224,12 +225,11 @@ namespace ActionStreetMap.Tests
                     var element = store.Get(result);
                     Console.WriteLine(element);
                 }
-            });*/
+            });
 
             logger.Stop();
         }
 
         #endregion
-
     }
 }

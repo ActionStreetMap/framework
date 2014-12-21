@@ -9,13 +9,6 @@ namespace ActionStreetMap.Osm.Index.Data
 {
     internal sealed class ElementStore: IDisposable
     {
-        private enum ElementType : byte
-        {
-            Node = 0,
-            Way = 1,
-            Relation = 2
-        }
-
         private readonly KeyValueStore _keyValueStore;
         private readonly Stream _stream;
 
@@ -41,6 +34,7 @@ namespace ActionStreetMap.Osm.Index.Data
         /// <returns>Offset.</returns>
         public uint Insert(Element element)
         {
+            _stream.Seek(0, SeekOrigin.End);
             if (_writer == null)
                 _writer = new BinaryWriter(_stream);
 
@@ -78,8 +72,11 @@ namespace ActionStreetMap.Osm.Index.Data
                 _offsetBuffer = new List<uint>(128);
             _offsetBuffer.Clear();
 
-            foreach (KeyValuePair<string, string> pair in element.Tags)
-                _offsetBuffer.Add(_keyValueStore.Insert(pair));
+            if (element.Tags != null)
+            {
+                foreach (KeyValuePair<string, string> pair in element.Tags)
+                    _offsetBuffer.Add(_keyValueStore.Insert(pair));
+            }
 
             WriteTags(_offsetBuffer, writer);
         }
