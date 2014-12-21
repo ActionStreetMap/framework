@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Osm.Entities;
 using ActionStreetMap.Osm.Index.Data;
 using ActionStreetMap.Osm.Index.Spatial;
 
 namespace ActionStreetMap.Osm.Index
 {
-    internal class IndexBuilder: IIndexBuilder
+    internal class IndexBuilder
     {
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
@@ -16,22 +17,23 @@ namespace ActionStreetMap.Osm.Index
 
         private readonly RTree<uint> _tree;
         private readonly ElementStore _store;
-        
-        private int _processedNodesCount;
-        private int _processedWaysCount;
-        private int _processedRelationsCount;
-        private int _skippedRelationsCount = 0;
+        private readonly Statistics _statistics;
 
-        public IndexBuilder(RTree<uint> tree, ElementStore store)
+        public IndexBuilder(RTree<uint> tree, ElementStore store, ITrace trace)
         {
             _tree = tree;
             _store = store;
+            _statistics = new Statistics(trace);
         }
 
         public void ProcessNode(Node node, int tagCount)
         {
+            _statistics.IncrementTotal(ElementType.Node);
             if (node.Id < 0)
+            {
+                _statistics.Skip(node.Id, ElementType.Node);
                 return;
+            }
 
             _nodes.Add(node.Id, new ScaledGeoCoordinate(node.Coordinate));
 
@@ -43,18 +45,21 @@ namespace ActionStreetMap.Osm.Index
                 {
                     var offset = _store.Insert(node);
                     _tree.Insert(offset, new PointEnvelop(node.Coordinate));
+                    _statistics.Increment(ElementType.Node);
                 }
+                else
+                    _statistics.Skip(node.Id, ElementType.Node);
             }
-
-            _processedNodesCount++;
-            if (_processedNodesCount % 10000 == 0)
-                Console.WriteLine("processed nodes {0}", _processedNodesCount);
         }
 
         public void ProcessWay(Way way, int tagCount)
         {
+            _statistics.IncrementTotal(ElementType.Way);
             if (way.Id < 0)
+            {
+                _statistics.Skip(way.Id, ElementType.Way);
                 return;
+            }
 
             var envelop = new Envelop();
             way.Coordinates = new List<GeoCoordinate>(way.NodeIds.Count);
@@ -62,7 +67,7 @@ namespace ActionStreetMap.Osm.Index
             {
                 if (!_nodes.ContainsKey(nodeId))
                 {
-                    Console.WriteLine("Skipped:{0}", way.Id);
+                    _statistics.Skip(way.Id, ElementType.Way);
                     return;
                 }
                 var coordinate = _nodes[nodeId];
@@ -75,36 +80,34 @@ namespace ActionStreetMap.Osm.Index
                  uint offset = _store.Insert(way);
                  _tree.Insert(offset, envelop);
                  _wayOffsets.Add(way.Id, offset);
+                _statistics.Increment(ElementType.Way);
             }
             else
                 // keep it as it may be used by relation
                 _ways.Add(way.Id, way);
-
-            _processedWaysCount++;
-            if (_processedWaysCount % 10000 == 0)
-                Console.WriteLine("processed ways {0}", _processedWaysCount);
         }
 
         public void ProcessRelation(Relation relation, int tagCount)
         {
+            _statistics.IncrementTotal(ElementType.Relation);
             if (relation.Id < 0)
+            {
+                _statistics.Skip(relation.Id, ElementType.Relation);
                 return;
+            }
 
-            ProcessRelation(relation, true);
-        }
-
-        public void ProcessRelation(Relation relation, bool storeUnresolved)
-        {
             var envelop = new Envelop();
-            _processedRelationsCount++;
+           
 
             // this cicle prevents us to insert ways which are part of unresolved relation
             foreach (var member in relation.Members)
             {
-                if (!_wayOffsets.ContainsKey(member.MemberId) && !_ways.ContainsKey(member.MemberId))
+                var type = (ElementType)member.TypeId;
+
+                if (type == ElementType.Node || type == ElementType.Relation ||  // TODO not supported yet
+                    (!_wayOffsets.ContainsKey(member.MemberId) && !_ways.ContainsKey(member.MemberId)))
                 {
-                    Console.WriteLine("Relation {0} has unresolved way: {1} and will be skipped.", relation.Id, member.MemberId);
-                    _skippedRelationsCount++;
+                    _statistics.Skip(relation.Id, ElementType.Relation);
                     return;
                 }
             }
@@ -115,10 +118,6 @@ namespace ActionStreetMap.Osm.Index
                 uint memberOffset = 0;
                 switch (type)
                 {
-                    case ElementType.Node:
-                        // TODO not supported yet
-                        _skippedRelationsCount++;
-                        return;
                     case ElementType.Way:
                         Way way = null;
                         if (_wayOffsets.ContainsKey(member.MemberId))
@@ -136,10 +135,7 @@ namespace ActionStreetMap.Osm.Index
                         for (int i = 0; i < way.Coordinates.Count; i++)
                             envelop.Extend(new PointEnvelop(way.Coordinates[i]));
                         break;
-                    case ElementType.Relation:
-                        // TODO not supported yet
-                        _skippedRelationsCount++;
-                        return;
+
                     default:
                         throw new InvalidOperationException("Unknown element type!");
                 }
@@ -149,9 +145,7 @@ namespace ActionStreetMap.Osm.Index
 
             var offset = _store.Insert(relation);
             _tree.Insert(offset, envelop);
-
-            if (_processedRelationsCount % 1000 == 0)
-                Console.WriteLine("processed relations {0}", _processedRelationsCount);
+            _statistics.Increment(ElementType.Relation);
        }
 
         public void ProcessBoundingBox(BoundingBox bbox)
@@ -160,7 +154,7 @@ namespace ActionStreetMap.Osm.Index
 
         public void Complete()
         {
-            Console.WriteLine("Total relations: {0} including skipped:{1}", _processedRelationsCount, _skippedRelationsCount);
+            _statistics.Summary();
         }
 
         public void Clear()
@@ -173,5 +167,100 @@ namespace ActionStreetMap.Osm.Index
             GC.Collect();
             GC.WaitForFullGCComplete();
         }
+
+        #region Nested
+
+        internal class Statistics
+        {
+            private readonly ITrace _trace;
+            private int _processedNodesCount;
+            private int _processedWaysCount;
+            private int _processedRelationsCount;
+
+            private int _addedNodesCount;
+            private int _addedWaysCount;
+            private int _addedRelationsCount;
+
+            private int _skippedNodesCount;
+            private int _skippedWaysCount;
+            private int _skippedRelationsCount;
+
+            public Statistics(ITrace trace)
+            {
+                _trace = trace;
+            }
+
+            public void Increment(ElementType type)
+            {
+                switch (type)
+                {
+                    case ElementType.Node:
+                        _addedNodesCount++;
+                        break;
+                    case ElementType.Way:
+                        _addedWaysCount++;
+                        break;
+                    case ElementType.Relation:
+                        _addedRelationsCount++;
+                        break;
+                }
+            }
+
+            public void IncrementTotal(ElementType type)
+            {
+                switch (type)
+                {
+                    case ElementType.Node:
+                        PrintProgress(++_processedNodesCount, "node");
+                        break;
+                    case ElementType.Way:
+                        PrintProgress(++_processedWaysCount, "way");
+                        break;
+                    case ElementType.Relation:
+                        PrintProgress(++_processedRelationsCount, "relation");
+                        break;
+                }
+            }
+
+            private void PrintProgress(int value, string typeName)
+            {
+                if (value % 10000 == 0)
+                    _trace.Output(String.Format("processed {0}: {1}", typeName, value));
+            }
+
+            public void Skip(long id, ElementType type)
+            {
+                switch (type)
+                {
+                    case ElementType.Node:
+                        _skippedNodesCount++;
+                        break;
+                    case ElementType.Way:
+                        _skippedWaysCount++;
+                        break;
+                    case ElementType.Relation:
+                        _skippedRelationsCount++;
+                        break;
+                }
+            }
+
+            public void Summary()
+            {
+                PrintSummary("PROCESSED", _processedNodesCount, _processedWaysCount, _processedRelationsCount);
+                PrintSummary("ADDED", _addedNodesCount, _addedWaysCount, _addedRelationsCount);
+                PrintSummary("SKIPPED", _skippedNodesCount, _skippedWaysCount, _skippedRelationsCount);
+            }
+
+            private void PrintSummary(string totalText, int nodes, int ways, int relations)
+            {
+                _trace.Output(String.Format("Total {0} elements: {1}", totalText, nodes + ways + relations));
+                _trace.Output(String.Format("\tnodes: {0}", nodes));
+                _trace.Output(String.Format("\tways: {0}", ways));
+                _trace.Output(String.Format("\trelations: {0}", relations));
+                _trace.Output(String.Format(""));
+            }
+        }
+
+        #endregion
     }
 }

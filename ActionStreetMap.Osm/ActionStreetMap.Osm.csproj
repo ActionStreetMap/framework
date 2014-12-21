@@ -75,11 +75,8 @@
     <Compile Include="Index\Data\KeyValueStore.cs" />
     <Compile Include="Index\IndexBuilder.cs" />
     <Compile Include="Index\ScaledGeoCoordinate.cs" />
-    <Compile Include="Index\IIndexBuilder.cs" />
     <Compile Include="Index\Data\KeyValueIndex.cs" />
     <Compile Include="Index\Search\SearchEngine.cs" />
-    <Compile Include="Index\Search\SearchIndexBuilder.cs" />
-    <Compile Include="Index\Spatial\SpatialIndexBuilder.cs" />
     <Compile Include="Index\Spatial\Envelops.cs" />
     <Compile Include="Index\Spatial\RTree.cs" />
     <Compile Include="Index\Spatial\SpatialIndex.cs" />

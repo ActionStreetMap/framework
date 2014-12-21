@@ -45,8 +45,8 @@ namespace ActionStreetMap.Tests
             program.RunMocker();
             program.Wait();*/
 
-            //program.CreateIndex();
-             program.ReadIndex();
+            program.CreateIndex();
+             //program.ReadIndex();
         }
 
         public void RunMocker()
@@ -81,68 +81,7 @@ namespace ActionStreetMap.Tests
         {
             _waitEvent.WaitOne(TimeSpan.FromSeconds(60));
             _logger.Stop();
-        }
-
-        #region Index experiments
-
-        private void CreateTextIndex()
-        {
-            var logger = new PerformanceLogger();
-            logger.Start();
-
-            var builder = new SearchIndexBuilder("Index");
-            var reader = new O5mReader(new ReaderContext()
-            {
-                SourceStream = new FileStream(@"g:\__ASM\_other_projects\splitter\berlin2.o5m", FileMode.Open),
-                Builder = builder,
-                ReuseEntities = false,
-                SkipTags = false,
-            });
-
-            reader.Parse();
-            builder.Clear();
-            builder.Complete();
-            logger.Stop();
-
-            InvokeAndMeasure(() =>
-            {
-                //var pairs = builder._store.Search(new KeyValuePair<string, string>("addr:street", "Eichen"));
-                //foreach (var pair in pairs)
-                //    Console.WriteLine(pair);
-
-            });
-        }
-
-        private void ReadTextIndex()
-        {
-            var buffer = new byte[256];
-            var stream = new MemoryStream(buffer);
-            stream.WriteByte(4);
-            stream.WriteByte(7);
-
-            var index = new KeyValueIndex(100, 3);
-            var store = new KeyValueStore(index, stream);
-
-            store.Insert(new KeyValuePair<string, string>("addr", "eic"));
-            store.Insert(new KeyValuePair<string, string>("addr", "inv"));
-            store.Insert(new KeyValuePair<string, string>("addr", "inc"));
-            store.Insert(new KeyValuePair<string, string>("addr", "ina"));
-            store.Insert(new KeyValuePair<string, string>("addr", "inb"));
-            store.Insert(new KeyValuePair<string, string>("addr", "eif"));
-            store.Insert(new KeyValuePair<string, string>("addr", "eic"));
-
-            //eichendorffstraße
-            //store.Insert(new KeyValuePair<string, string>("addr", "eichendorffstraße"));
-            //store.Insert(new KeyValuePair<string, string>("addr", "eichendor"));
-
-            var pairs = store.Search(new KeyValuePair<string, string>("addr", "eic"));
-            foreach (var pair in pairs)
-                Console.WriteLine(pair);
-
-           
-            stream.Flush();
-            stream.Close();
-        }
+        }      
 
         private static void InvokeAndMeasure(Action action)
         {
@@ -153,11 +92,9 @@ namespace ActionStreetMap.Tests
             Console.WriteLine("Action completed in {0}ms", sw.ElapsedMilliseconds);
         }
 
-        #endregion
-
         #region Final experiments
 
-        private const string Directory = "FullIndex";
+        private const string Directory = "Index";
         private const string KeyValueStoreFile = Directory + @"\keyValueStore.bytes";
         private const string KeyValueIndexFile = Directory + @"\keyValueIndex.bytes";
         private const string ElementStoreFile = Directory + @"\elementStore.bytes";
@@ -176,7 +113,7 @@ namespace ActionStreetMap.Tests
             logger.Start();
 
             var tree = new RTree<uint>(65);
-            var builder = new IndexBuilder(tree, store);
+            var builder = new IndexBuilder(tree, store, new ConsoleTrace());
             var reader = new O5mReader(new ReaderContext()
             {
                 SourceStream = new FileStream(@"g:\__ASM\_other_projects\splitter\berlin2.o5m", FileMode.Open),

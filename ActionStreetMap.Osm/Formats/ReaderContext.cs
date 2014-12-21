@@ -7,7 +7,7 @@ namespace ActionStreetMap.Osm.Formats
     {
         public Stream SourceStream;
 
-        public IIndexBuilder Builder;
+        public IndexBuilder Builder;
 
         public bool SkipTags;
         public bool SkipNodes;
