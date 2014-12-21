@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
@@ -114,6 +113,14 @@ namespace ActionStreetMap.Tests.Osm.Index
             Assert.AreEqual(2, result.Members.Count);
             AssertWays(way1, result.Members[0].Member as Way);
             AssertWays(way2, result.Members[1].Member as Way);
+        }
+
+        [Test]
+        public void CanProcessSeveral()
+        {
+            CanInsertAndGetWay();
+            CanInsertAndGetRelation();
+            CanInsertAndGetNode();
         }
 
         #region Helpers

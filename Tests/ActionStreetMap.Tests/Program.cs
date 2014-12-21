@@ -43,8 +43,8 @@ namespace ActionStreetMap.Tests
             program.RunMocker();
             program.Wait();*/
 
-            program.ReadTextIndex();
-           // program.CreateTextIndex();
+            //program.ReadTextIndex();
+            program.CreateTextIndex();
         }
 
         public void RunMocker()
@@ -104,9 +104,10 @@ namespace ActionStreetMap.Tests
 
             InvokeAndMeasure(() =>
             {
-                var pairs = builder._store.Search(new KeyValuePair<string, string>("addr:street", "Eichen"));
-                foreach (var pair in pairs)
-                    Console.WriteLine(pair);
+                //var pairs = builder._store.Search(new KeyValuePair<string, string>("addr:street", "Eichen"));
+                //foreach (var pair in pairs)
+                //    Console.WriteLine(pair);
+
             });
         }
 
