@@ -72,6 +72,7 @@
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
     <Compile Include="Index\Data\ElementStore.cs" />
     <Compile Include="Index\Data\KeyValueStore.cs" />
+    <Compile Include="Index\IndexBuilder.cs" />
     <Compile Include="Index\ScaledGeoCoordinate.cs" />
     <Compile Include="Index\IIndexBuilder.cs" />
     <Compile Include="Index\Data\KeyValueIndex.cs" />

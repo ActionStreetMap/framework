@@ -11,8 +11,10 @@ using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm.Formats;
 using ActionStreetMap.Osm.Formats.O5m;
+using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Index.Data;
 using ActionStreetMap.Osm.Index.Search;
+using ActionStreetMap.Osm.Index.Spatial;
 
 namespace ActionStreetMap.Tests
 {
@@ -43,8 +45,8 @@ namespace ActionStreetMap.Tests
             program.RunMocker();
             program.Wait();*/
 
-            //program.ReadTextIndex();
-            program.CreateTextIndex();
+            //program.CreateIndex();
+            program.ReadIndex();
         }
 
         public void RunMocker()
@@ -152,5 +154,82 @@ namespace ActionStreetMap.Tests
         }
 
         #endregion
+
+        #region Final experiments
+
+        private const string KeyValueStoreFile = @"Index\keyValueStore.bytes";
+        private const string KeyValueIndexFile = @"Index\keyValueIndex.bytes";
+        private const string ElementStoreFile = @"Index\elementStore.bytes";
+        private const string SpatialIndexFile = @"Index\spatialIndex.bytes";
+
+        private void CreateIndex()
+        {
+            var keyValueStoreFile = new FileStream(KeyValueStoreFile, FileMode.Create);
+            var index = new KeyValueIndex(300000, 4);
+            var keyValueStore = new KeyValueStore(index, keyValueStoreFile);
+
+            var storeFile = new FileStream(ElementStoreFile, FileMode.Create);
+            var store = new ElementStore(keyValueStore, storeFile);
+
+            var logger = new PerformanceLogger();
+            logger.Start();
+
+            var tree = new RTree<uint>(65);
+            var builder = new IndexBuilder(tree, store);
+            var reader = new O5mReader(new ReaderContext()
+            {
+                SourceStream = new FileStream(@"g:\__ASM\_other_projects\splitter\berlin2.o5m", FileMode.Open),
+                Builder = builder,
+                ReuseEntities = false,
+                SkipTags = false,
+            });
+
+            reader.Parse();
+            builder.Clear();
+            builder.Complete();
+            logger.Stop();
+
+            KeyValueIndex.Save(index, new FileStream(KeyValueIndexFile, FileMode.Create));
+            SpatialIndexSerializer.Serialize(tree, new BinaryWriter(new FileStream(SpatialIndexFile, FileMode.Create)));
+            
+            InvokeAndMeasure(() =>
+            {
+                var results = tree.Search(new Envelop(new GeoCoordinate(52.531620, 13.386042),
+                        new GeoCoordinate(52.53343, 13.387700)));
+                foreach (var result in results)
+                {
+                    var element = store.Get(result.Data);
+                    Console.WriteLine(element);
+                }
+
+            });
+        }
+
+        private void ReadIndex()
+        {
+            var logger = new PerformanceLogger();
+            logger.Start();
+
+            var tree = SpatialIndexSerializer.Deserialize(new BinaryReader(new FileStream(SpatialIndexFile, FileMode.Open)));
+            var index = KeyValueIndex.Load(new FileStream(KeyValueIndexFile, FileMode.Open));
+            var keyValueStore = new KeyValueStore(index, new FileStream(KeyValueStoreFile, FileMode.Open));
+            var store = new ElementStore(keyValueStore, new FileStream(ElementStoreFile, FileMode.Open));
+
+            /*InvokeAndMeasure(() =>
+            {
+                var results = tree.Search(new Envelop(new GeoCoordinate(52.5281163, 13.3848696),
+                        new GeoCoordinate(52.5357719, 13.3896976)));
+                foreach (var result in results)
+                {
+                    var element = store.Get(result);
+                    Console.WriteLine(element);
+                }
+            });*/
+
+            logger.Stop();
+        }
+
+        #endregion
+
     }
 }
