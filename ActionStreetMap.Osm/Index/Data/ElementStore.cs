@@ -1,0 +1,202 @@
+﻿
+using System;
+using System.Collections.Generic;
+using System.IO;
+using ActionStreetMap.Core;
+using ActionStreetMap.Osm.Entities;
+
+namespace ActionStreetMap.Osm.Index.Data
+{
+    internal sealed class ElementStore: IDisposable
+    {
+        private enum ElementType : byte
+        {
+            Node = 0,
+            Way = 1,
+            Relation = 2
+        }
+
+        private readonly KeyValueStore _keyValueStore;
+        private readonly Stream _stream;
+
+        // serialize specific
+        private BinaryWriter _writer;
+        private List<uint> _offsetBuffer;
+
+        // deserialize specific
+        private BinaryReader _reader;
+        
+        public ElementStore(KeyValueStore keyValueStore, Stream stream)
+        {
+            _keyValueStore = keyValueStore;
+            _stream = stream;
+        }
+
+        #region Public methods
+
+        /// <summary>
+        ///     Inserts element into store and returns offset
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns>Offset.</returns>
+        public uint Insert(Element element)
+        {
+            if (_writer == null)
+                _writer = new BinaryWriter(_stream);
+
+            var offset = (uint) _stream.Position;
+            WriteElement(element, _writer);
+
+            return offset;
+        }
+
+        public Element Get(uint offset)
+        {
+            if (_reader == null)
+                _reader = new BinaryReader(_stream);
+
+            _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+            return ReadElement(_reader);
+        }
+
+        #endregion
+
+        #region Private: Write
+
+        private void WriteElement(Element element, BinaryWriter writer)
+        {
+            writer.Write(element.Id);
+            if (element is Way)
+                WriteWay(element as Way, writer);
+            else if (element is Relation)
+                WriteRelation(element as Relation, writer);
+            else
+                WriteNode(element as Node, writer);
+
+            // prepare tag offset buffer
+            if(_offsetBuffer == null)
+                _offsetBuffer = new List<uint>(128);
+            _offsetBuffer.Clear();
+
+            foreach (KeyValuePair<string, string> pair in element.Tags)
+                _offsetBuffer.Add(_keyValueStore.Insert(pair));
+
+            WriteTags(_offsetBuffer, writer);
+        }
+
+        private static void WriteNode(Node node, BinaryWriter writer)
+        {
+            writer.Write((byte)ElementType.Node);
+            WriteCoordinate(node.Coordinate, writer);
+        }
+
+        private static void WriteWay(Way way, BinaryWriter writer)
+        {
+            writer.Write((byte)ElementType.Way);
+            var count = (ushort)way.Coordinates.Count;
+            writer.Write(count);
+            foreach (var coordinate in way.Coordinates)
+                WriteCoordinate(coordinate, writer);
+        }
+
+        private static void WriteRelation(Relation relation, BinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void WriteTags(List<uint> tagOffsets, BinaryWriter writer)
+        {
+            var count = (ushort)tagOffsets.Count;
+            writer.Write(count);
+            foreach (uint offset in tagOffsets)
+                writer.Write(offset);
+        }
+
+        private static void WriteCoordinate(GeoCoordinate coordinate, BinaryWriter writer)
+        {
+            var scaled = new ScaledGeoCoordinate(coordinate);
+            writer.Write(scaled.Latitude);
+            writer.Write(scaled.Longitude);
+        }
+
+        #endregion
+
+        #region Private: Read
+
+        private Element ReadElement(BinaryReader reader)
+        {
+            var elementId = reader.ReadInt64();
+            var type = (ElementType) reader.ReadByte();
+            Element element;
+            switch (type)
+            {
+                 case ElementType.Node:
+                    element = ReadNode(reader);
+                    break;
+                 case ElementType.Way:
+                    element = ReadWay(reader);
+                    break;
+                 case ElementType.Relation:
+                    element = ReadRelation(reader);
+                    break;
+                default:
+                    throw new InvalidOperationException(String.Format("Unknown element type: {0}", type));
+            }
+
+            element.Id = elementId;
+            var tags = ReadTags(_keyValueStore, reader);
+            element.Tags = tags;
+            return element;
+        }
+
+        private static Node ReadNode(BinaryReader reader)
+        {
+            return new Node { Coordinate = ReadCoordinate(reader)};
+        }
+
+        private static Way ReadWay(BinaryReader reader)
+        {
+            Way way = new Way();
+            var count = reader.ReadUInt16();
+            // TODO use object pool
+            var coordinates = new List<GeoCoordinate>(count);
+            for (int i = 0; i < count; i++)
+                coordinates.Add(ReadCoordinate(reader));
+            way.Coordinates = coordinates;
+            return way;
+        }
+
+        private static Relation ReadRelation(BinaryReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Dictionary<string, string> ReadTags(KeyValueStore keyValueStore, BinaryReader reader)
+        {
+            var count = reader.ReadUInt16();
+            var tags = new Dictionary<string, string>(count);
+            for (int i = 0; i < count; i++)
+            {
+                var offset = reader.ReadUInt32();
+                var tag = keyValueStore.Get(offset);
+                tags.Add(tag.Key, tag.Value);
+            }
+            return tags;
+        }
+
+        private static GeoCoordinate ReadCoordinate(BinaryReader reader)
+        {
+            var scaled = new ScaledGeoCoordinate(reader.ReadInt32(), reader.ReadInt32());
+            return scaled.Unscale();
+        }
+
+        #endregion
+
+        public void Dispose()
+        {
+            if (_writer != null)
+                _writer.Close();
+            _stream.Dispose();
+        }
+    }
+}

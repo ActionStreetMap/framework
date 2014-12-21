@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Visitors;
 
@@ -9,15 +10,20 @@ namespace ActionStreetMap.Osm.Entities
     /// </summary>
     public class Way : Element
     {
+        [Obsolete]
         /// <summary>
         ///     Holds the list of nodes.
         /// </summary>
         public List<long> NodeIds { get; set; }
 
+        [Obsolete]
         /// <summary>
         ///     Nodes.
         /// </summary>
         public List<Node> Nodes { get; set; }
+
+
+        public List<GeoCoordinate> Coordinates { get; set; }
 
         /// <inheritdoc />
         public override void Accept(IElementVisitor elementVisitor)

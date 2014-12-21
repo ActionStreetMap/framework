@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ActionStreetMap.Osm.Index.Data
 {
-    internal class KeyValueIndex
+    internal sealed class KeyValueIndex
     {
         private readonly int _capacity;
 
@@ -31,6 +31,11 @@ namespace ActionStreetMap.Osm.Index.Data
             _buckets[index] = offset;
         }
 
+        /// <summary>
+        ///     Gets offset for given pair.
+        /// </summary>
+        /// <param name="pair">Pair.</param>
+        /// <returns>Offset.</returns>
         public uint GetOffset(KeyValuePair<string, string> pair)
         {
             var index = GetIndex(pair);
@@ -64,6 +69,7 @@ namespace ActionStreetMap.Osm.Index.Data
                 hash += (hash << 10);
                 hash ^= (hash >> 6);
             }
+
             return hash;
         }
 

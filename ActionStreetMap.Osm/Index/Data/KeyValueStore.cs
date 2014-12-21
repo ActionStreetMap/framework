@@ -4,7 +4,7 @@ using System.IO;
 
 namespace ActionStreetMap.Osm.Index.Data
 {
-    internal class KeyValueStore: IDisposable
+    internal sealed class KeyValueStore: IDisposable
     {
         private readonly Stream _stream;
         private readonly byte[] _byteBuffer;
@@ -42,6 +42,7 @@ namespace ActionStreetMap.Osm.Index.Data
             var offset = _index.GetOffset(pair);
             if (offset == 0)
             {
+                // TODO hash is calculated twice here
                 _index.Add(pair, _nextOffset);
                 return InsertNew(pair);
             }
