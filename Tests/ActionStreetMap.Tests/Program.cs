@@ -42,8 +42,8 @@ namespace ActionStreetMap.Tests
             program.RunMocker();
             program.Wait();*/
 
-            program.ReadTextIndex();
-            //program.CreateTextIndex();
+           // program.ReadTextIndex();
+            program.CreateTextIndex();
         }
 
         public void RunMocker()
@@ -119,8 +119,13 @@ namespace ActionStreetMap.Tests
             store.Add(new KeyValuePair<string, string>("addr", "eic"));
             store.Add(new KeyValuePair<string, string>("addr", "inv"));
             store.Add(new KeyValuePair<string, string>("addr", "inc"));
+            store.Add(new KeyValuePair<string, string>("addr", "ina"));
+            store.Add(new KeyValuePair<string, string>("addr", "inb"));
+            store.Add(new KeyValuePair<string, string>("addr", "eif"));
 
-            var ggg = store.GetOffset(new KeyValuePair<string, string>("addr", "inc"));
+
+
+            var ggg = store.GetOffset(new KeyValuePair<string, string>("addr", "inv"));
             Console.WriteLine(ggg);
         }
 

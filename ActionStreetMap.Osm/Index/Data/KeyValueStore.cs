@@ -19,7 +19,7 @@ namespace ActionStreetMap.Osm.Index.Data
             _stream = stream;
 
             // TODO configure consts
-            _index = new KeyValueIndex(10, 2);
+            _index = new KeyValueIndex(60000, 5);
 
             // NOTE buffer size limited to byte.MaxValue which affect max string size
             _buffer = new byte[256];
@@ -58,6 +58,10 @@ namespace ActionStreetMap.Osm.Index.Data
 
         private void InsertNew(KeyValuePair<string, string> pair)
         {
+            // maybe seek zero from end?
+            if (_stream.Position != _nextOffset)
+                _stream.Seek(_nextOffset, SeekOrigin.Begin);
+
             var entry = new Entry()
             {
                 Key = pair.Key,
@@ -102,7 +106,7 @@ namespace ActionStreetMap.Osm.Index.Data
 
         private void WriteString(string s)
         {
-            byte toWrite = (byte) Math.Min(_buffer.Length, s.Length);
+            byte toWrite = (byte) Math.Min(_buffer.Length / 2, s.Length);
             Encoding.UTF8.GetBytes(s, 0, toWrite, _buffer, 0);
             _stream.WriteByte(toWrite);
             _stream.Write(_buffer, 0, toWrite);
@@ -155,7 +159,8 @@ namespace ActionStreetMap.Osm.Index.Data
         {
             var count = _stream.ReadByte();
             _stream.Read(_buffer, 0, count);
-            return Encoding.UTF8.GetString(_buffer, 0, count);
+            var str = Encoding.UTF8.GetString(_buffer, 0, count);
+            return str;
         }
 
         private uint ReadUint()

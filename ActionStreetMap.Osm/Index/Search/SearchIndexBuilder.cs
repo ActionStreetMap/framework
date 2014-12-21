@@ -1,5 +1,8 @@
-﻿using ActionStreetMap.Core;
+﻿using System;
+using System.IO;
+using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
+using ActionStreetMap.Osm.Index.Data;
 
 namespace ActionStreetMap.Osm.Index.Search
 {
@@ -7,6 +10,9 @@ namespace ActionStreetMap.Osm.Index.Search
     {
         private readonly string _indexPath;
         private SearchEngine _engine;
+
+        private KeyValueStore _store;
+        private int _count;
 
         public SearchIndexBuilder(string indexPath)
         {
@@ -18,6 +24,17 @@ namespace ActionStreetMap.Osm.Index.Search
             if (node.Tags != null)
             {
                 //_engine.Index(new Document(node), false);
+                foreach (var tag in node.Tags)
+                {
+                    if (tag.Key.StartsWith("addr"))
+                    {
+                        _store.Add(tag);
+                        _count++;
+
+                        if (_count%10000 == 0)
+                            Console.WriteLine("added {0}", _count);
+                    }
+                }
             }
         }
 
@@ -38,6 +55,7 @@ namespace ActionStreetMap.Osm.Index.Search
 
         public void ProcessBoundingBox(BoundingBox bbox)
         {
+            _store = new KeyValueStore(new MemoryStream(10000000));
         }
 
         public void Complete()
