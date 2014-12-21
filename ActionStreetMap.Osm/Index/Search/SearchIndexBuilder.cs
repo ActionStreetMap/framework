@@ -11,7 +11,7 @@ namespace ActionStreetMap.Osm.Index.Search
         private readonly string _indexPath;
         private SearchEngine _engine;
 
-        private KeyValueStore _store;
+        internal KeyValueStore _store;
         private int _count;
 
         public SearchIndexBuilder(string indexPath)
@@ -26,7 +26,7 @@ namespace ActionStreetMap.Osm.Index.Search
                 //_engine.Index(new Document(node), false);
                 foreach (var tag in node.Tags)
                 {
-                    if (tag.Key.StartsWith("addr"))
+                    if (tag.Key.StartsWith("addr:street"))
                     {
                         _store.Add(tag);
                         _count++;

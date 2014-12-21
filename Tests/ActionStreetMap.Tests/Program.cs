@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using ActionStreetMap.Core;
@@ -42,7 +43,7 @@ namespace ActionStreetMap.Tests
             program.RunMocker();
             program.Wait();*/
 
-           // program.ReadTextIndex();
+            //program.ReadTextIndex();
             program.CreateTextIndex();
         }
 
@@ -101,10 +102,12 @@ namespace ActionStreetMap.Tests
             builder.Complete();
             logger.Stop();
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            sw.Stop();
+            InvokeAndMeasure(() =>
+            {
+                var pairs = builder._store.Get(new KeyValuePair<string, string>("addr:street", "Eichen"));
+                foreach (var pair in pairs)
+                    Console.WriteLine(pair);
+            });
         }
 
         private void ReadTextIndex()
@@ -116,17 +119,24 @@ namespace ActionStreetMap.Tests
 
             var store = new KeyValueStore(stream);
 
-            store.Add(new KeyValuePair<string, string>("addr", "eic"));
+            /*store.Add(new KeyValuePair<string, string>("addr", "eic"));
             store.Add(new KeyValuePair<string, string>("addr", "inv"));
             store.Add(new KeyValuePair<string, string>("addr", "inc"));
             store.Add(new KeyValuePair<string, string>("addr", "ina"));
             store.Add(new KeyValuePair<string, string>("addr", "inb"));
             store.Add(new KeyValuePair<string, string>("addr", "eif"));
+            store.Add(new KeyValuePair<string, string>("addr", "eic"));*/
 
+            //eichendorffstraße
+            store.Add(new KeyValuePair<string, string>("addr", "eichendorffstraße"));
+            store.Add(new KeyValuePair<string, string>("addr", "eichendor"));
+            store.Add(new KeyValuePair<string, string>("addr", "eichendorffstraße"));
 
-
-            var ggg = store.GetOffset(new KeyValuePair<string, string>("addr", "inv"));
-            Console.WriteLine(ggg);
+            var pairs = store.Get(new KeyValuePair<string, string>("addr", "eichend"));
+            foreach (var pair in pairs)
+                Console.WriteLine(pair);
+            
+            
         }
 
         private static void InvokeAndMeasure(Action action)

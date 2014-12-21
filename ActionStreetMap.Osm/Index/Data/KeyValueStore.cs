@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ActionStreetMap.Osm.Index.Data
@@ -10,19 +11,23 @@ namespace ActionStreetMap.Osm.Index.Data
     {
         private readonly Stream _stream;
         private readonly KeyValueIndex _index;
+        private readonly int _prefixLength;
 
         private uint _nextOffset;
-        private byte[] _buffer;
+        private byte[] _byteBuffer;
+        private char[] _charBuffer;
 
         public KeyValueStore(Stream stream)
         {
+            _prefixLength = 5;
             _stream = stream;
 
             // TODO configure consts
-            _index = new KeyValueIndex(60000, 5);
+            _index = new KeyValueIndex(60000, _prefixLength);
 
             // NOTE buffer size limited to byte.MaxValue which affect max string size
-            _buffer = new byte[256];
+            _byteBuffer = new byte[256];
+            _charBuffer = new char[256];
 
             // NOTE skip header
             _nextOffset = 2;
@@ -40,18 +45,27 @@ namespace ActionStreetMap.Osm.Index.Data
                 InsertNext(pair, offset);
         }
 
-        public uint GetOffset(KeyValuePair<string, string> pair)
+        public IEnumerable<KeyValuePair<string,string>> Get(KeyValuePair<string, string> query)
         {
-            var offset = _index.GetOffset(pair);
-            var entry = new Entry();
+            foreach (var result in GetEntries(query))
+                yield return new KeyValuePair<string, string>(result.Key, result.Value);
+        }
+
+        private IEnumerable<Entry> GetEntries(KeyValuePair<string, string> query)
+        {
+            var offset = _index.GetOffset(query);
+            if (offset == 0) yield break;
+
             do
             {
-                offset = entry.Next == 0 ? offset : entry.Next;
-                entry = ReadEntry(offset);
-                
-            } while (entry.Key != pair.Key || entry.Value != pair.Value);
+                var entry = ReadEntry(offset);
+                var subStringLength = Math.Min(entry.Value.Length, _prefixLength);
+                if (entry.Key == query.Key ||
+                    entry.Value.Substring(0, subStringLength) == query.Value.Substring(0, subStringLength))
+                    yield return entry;
+                offset = entry.Next;
 
-            return offset;
+            } while (offset != 0);
         }
 
         #region Private members
@@ -77,9 +91,14 @@ namespace ActionStreetMap.Osm.Index.Data
             uint lastCollisionEntryOffset = offset;
             while (offset != 0)
             {
-                SkipEntryData(offset);
+                //SkipEntryData(offset);
+                var entry = ReadEntry(offset);
+                // Do not insert duplicates
+                if (entry.Key == pair.Key && entry.Value == pair.Value)
+                    return;
+
                 lastCollisionEntryOffset = offset;
-                offset = ReadUint();
+                offset = entry.Next;
             }
 
             // write entry
@@ -106,21 +125,26 @@ namespace ActionStreetMap.Osm.Index.Data
 
         private void WriteString(string s)
         {
-            byte toWrite = (byte) Math.Min(_buffer.Length / 2, s.Length);
-            Encoding.UTF8.GetBytes(s, 0, toWrite, _buffer, 0);
+            byte toWrite = (byte) (Math.Min(_byteBuffer.Length / sizeof(char), s.Length) * sizeof(char));
+            
+            for (int i = 0; i < s.Length; i++)
+                _charBuffer[i] = s[i];
+
+            Buffer.BlockCopy(_charBuffer, 0, _byteBuffer, 0, toWrite);
+
             _stream.WriteByte(toWrite);
-            _stream.Write(_buffer, 0, toWrite);
+            _stream.Write(_byteBuffer, 0, toWrite);
             _nextOffset += (uint) (toWrite + 1);
         }
 
         private void WriteUint(uint value)
         {
-            _buffer[0] = (byte) (0x000000FF & value);
-            _buffer[1] = (byte)(0x000000FF & value >> 8);
-            _buffer[2] = (byte)(0x000000FF & value >> 16);
-            _buffer[3] = (byte)(0x000000FF & value >> 24);
+            _byteBuffer[0] = (byte) (0x000000FF & value);
+            _byteBuffer[1] = (byte)(0x000000FF & value >> 8);
+            _byteBuffer[2] = (byte)(0x000000FF & value >> 16);
+            _byteBuffer[3] = (byte)(0x000000FF & value >> 24);
 
-            _stream.Write(_buffer, 0, 4);
+            _stream.Write(_byteBuffer, 0, 4);
             _nextOffset += 4;
         }
 
@@ -158,18 +182,19 @@ namespace ActionStreetMap.Osm.Index.Data
         private string ReadString()
         {
             var count = _stream.ReadByte();
-            _stream.Read(_buffer, 0, count);
-            var str = Encoding.UTF8.GetString(_buffer, 0, count);
+            _stream.Read(_byteBuffer, 0, count);
+            Buffer.BlockCopy(_byteBuffer, 0, _charBuffer, 0, count);
+            var str = new string(_charBuffer, 0, count/2);
             return str;
         }
 
         private uint ReadUint()
         {
-            _stream.Read(_buffer, 0, 4);
-            uint value = _buffer[0];
-            value += (uint) (_buffer[1] << 8);
-            value += (uint)(_buffer[2] << 16);
-            value += (uint)(_buffer[3] << 24);
+            _stream.Read(_byteBuffer, 0, 4);
+            uint value = _byteBuffer[0];
+            value += (uint) (_byteBuffer[1] << 8);
+            value += (uint)(_byteBuffer[2] << 16);
+            value += (uint)(_byteBuffer[3] << 24);
 
             return value;
         }
