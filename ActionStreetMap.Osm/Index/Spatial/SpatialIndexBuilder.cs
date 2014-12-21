@@ -94,7 +94,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
                     if (!_relations.ContainsKey(member.MemberId))
                     {
                         if (storeUnresolved)
-                            _unresolvedRelations.Add(relation);
+                            _unresolvedRelations.Insert(relation);
                         else
                             _trace.Output(String.Format("Relation {0} has unresolved relation: {1}!", relation.Id, member.MemberId));
                         return;

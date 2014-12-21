@@ -28,7 +28,7 @@ namespace ActionStreetMap.Osm.Index.Search
                 {
                     if (tag.Key.StartsWith("addr:street"))
                     {
-                        _store.Add(tag);
+                        _store.Insert(tag);
                         _count++;
 
                         if (_count%10000 == 0)

@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace ActionStreetMap.Osm.Index.Data
 {
     internal class KeyValueStore: IDisposable
     {
         private readonly Stream _stream;
+        private readonly byte[] _byteBuffer;
+        private readonly char[] _charBuffer;
+
         private readonly KeyValueIndex _index;
         private readonly int _prefixLength;
 
         private uint _nextOffset;
-        private byte[] _byteBuffer;
-        private char[] _charBuffer;
 
         public KeyValueStore(Stream stream)
         {
@@ -33,23 +31,45 @@ namespace ActionStreetMap.Osm.Index.Data
             _nextOffset = 2;
         }
 
-        public void Add(KeyValuePair<string, string> pair)
+        /// <summary>
+        ///     Inserts pair into store if it's not there
+        /// </summary>
+        /// <param name="pair">Pair.</param>
+        /// <returns>Pair offset.</returns>
+        public uint Insert(KeyValuePair<string, string> pair)
         {
             var offset = _index.GetOffset(pair);
             if (offset == 0)
             {
                 _index.Add(pair, _nextOffset);
-                InsertNew(pair);
+                return InsertNew(pair);
             }
-            else
-                InsertNext(pair, offset);
+            return InsertNext(pair, offset);
         }
 
-        public IEnumerable<KeyValuePair<string,string>> Get(KeyValuePair<string, string> query)
+        /// <summary>
+        ///     Searches pairs by given query.
+        /// </summary>
+        /// <param name="query">Query.</param>
+        /// <returns>List of matched pairs.</returns>
+        public IEnumerable<KeyValuePair<string,string>> Search(KeyValuePair<string, string> query)
         {
             foreach (var result in GetEntries(query))
                 yield return new KeyValuePair<string, string>(result.Key, result.Value);
         }
+
+        /// <summary>
+        ///     Gets pair by given offset.
+        /// </summary>
+        /// <param name="offset">Offset.</param>
+        /// <returns>Pair.</returns>
+        public KeyValuePair<string, string> Get(uint offset)
+        {
+            var entry = ReadEntry(offset);
+            return new KeyValuePair<string, string>(entry.Key, entry.Value);
+        }
+
+        #region Private members
 
         private IEnumerable<Entry> GetEntries(KeyValuePair<string, string> query)
         {
@@ -68,24 +88,23 @@ namespace ActionStreetMap.Osm.Index.Data
             } while (offset != 0);
         }
 
-        #region Private members
-
-        private void InsertNew(KeyValuePair<string, string> pair)
+        private uint InsertNew(KeyValuePair<string, string> pair)
         {
             // maybe seek zero from end?
             if (_stream.Position != _nextOffset)
                 _stream.Seek(_nextOffset, SeekOrigin.Begin);
-
-            var entry = new Entry()
+            var offset = _nextOffset;
+            var entry = new Entry
             {
                 Key = pair.Key,
                 Value = pair.Value,
                 Next = 0
             };
             WriteEntry(entry);
+            return offset;
         }
 
-        private void InsertNext(KeyValuePair<string, string> pair, uint offset)
+        private uint InsertNext(KeyValuePair<string, string> pair, uint offset)
         {
             // seek for last item
             uint lastCollisionEntryOffset = offset;
@@ -95,20 +114,20 @@ namespace ActionStreetMap.Osm.Index.Data
                 var entry = ReadEntry(offset);
                 // Do not insert duplicates
                 if (entry.Key == pair.Key && entry.Value == pair.Value)
-                    return;
+                    return offset;
 
                 lastCollisionEntryOffset = offset;
                 offset = entry.Next;
             }
 
             // write entry
-            var lastEntryOffset = _nextOffset;
-            InsertNew(pair);
-
+            var lastEntryOffset = InsertNew(pair);
+            
             // let previous entry to point to newly created one
             SkipEntryData(lastCollisionEntryOffset);
             WriteUint(lastEntryOffset);
             _nextOffset -= 4; // revert change
+            return lastEntryOffset;
         }
 
         #endregion
@@ -139,7 +158,7 @@ namespace ActionStreetMap.Osm.Index.Data
 
         private void WriteUint(uint value)
         {
-            _byteBuffer[0] = (byte) (0x000000FF & value);
+            _byteBuffer[0] = (byte)(0x000000FF & value);
             _byteBuffer[1] = (byte)(0x000000FF & value >> 8);
             _byteBuffer[2] = (byte)(0x000000FF & value >> 16);
             _byteBuffer[3] = (byte)(0x000000FF & value >> 24);
@@ -170,7 +189,7 @@ namespace ActionStreetMap.Osm.Index.Data
         private Entry ReadEntry(uint offset)
         {
             _stream.Seek(offset, SeekOrigin.Begin);
-            return new Entry()
+            return new Entry
             {
                 Key = ReadString(),
                 Value = ReadString(),

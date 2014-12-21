@@ -43,8 +43,8 @@ namespace ActionStreetMap.Tests
             program.RunMocker();
             program.Wait();*/
 
-            //program.ReadTextIndex();
-            program.CreateTextIndex();
+            program.ReadTextIndex();
+           // program.CreateTextIndex();
         }
 
         public void RunMocker()
@@ -104,7 +104,7 @@ namespace ActionStreetMap.Tests
 
             InvokeAndMeasure(() =>
             {
-                var pairs = builder._store.Get(new KeyValuePair<string, string>("addr:street", "Eichen"));
+                var pairs = builder._store.Search(new KeyValuePair<string, string>("addr:street", "Eichen"));
                 foreach (var pair in pairs)
                     Console.WriteLine(pair);
             });
@@ -119,24 +119,25 @@ namespace ActionStreetMap.Tests
 
             var store = new KeyValueStore(stream);
 
-            /*store.Add(new KeyValuePair<string, string>("addr", "eic"));
-            store.Add(new KeyValuePair<string, string>("addr", "inv"));
-            store.Add(new KeyValuePair<string, string>("addr", "inc"));
-            store.Add(new KeyValuePair<string, string>("addr", "ina"));
-            store.Add(new KeyValuePair<string, string>("addr", "inb"));
-            store.Add(new KeyValuePair<string, string>("addr", "eif"));
-            store.Add(new KeyValuePair<string, string>("addr", "eic"));*/
+            store.Insert(new KeyValuePair<string, string>("addr", "eic"));
+            store.Insert(new KeyValuePair<string, string>("addr", "inv"));
+            store.Insert(new KeyValuePair<string, string>("addr", "inc"));
+            store.Insert(new KeyValuePair<string, string>("addr", "ina"));
+            store.Insert(new KeyValuePair<string, string>("addr", "inb"));
+            store.Insert(new KeyValuePair<string, string>("addr", "eif"));
+            store.Insert(new KeyValuePair<string, string>("addr", "eic"));
 
             //eichendorffstraße
-            store.Add(new KeyValuePair<string, string>("addr", "eichendorffstraße"));
-            store.Add(new KeyValuePair<string, string>("addr", "eichendor"));
-            store.Add(new KeyValuePair<string, string>("addr", "eichendorffstraße"));
+            //store.Insert(new KeyValuePair<string, string>("addr", "eichendorffstraße"));
+            //store.Insert(new KeyValuePair<string, string>("addr", "eichendor"));
 
-            var pairs = store.Get(new KeyValuePair<string, string>("addr", "eichend"));
+            var pairs = store.Search(new KeyValuePair<string, string>("addr", "eic"));
             foreach (var pair in pairs)
                 Console.WriteLine(pair);
-            
-            
+
+           
+            stream.Flush();
+            stream.Close();
         }
 
         private static void InvokeAndMeasure(Action action)
