@@ -93,15 +93,20 @@ namespace ActionStreetMap.Osm.Index.Data
         private static void WriteWay(Way way, BinaryWriter writer)
         {
             writer.Write((byte)ElementType.Way);
-            var count = (ushort)way.Coordinates.Count;
-            writer.Write(count);
+            writer.Write((ushort)way.Coordinates.Count);
             foreach (var coordinate in way.Coordinates)
                 WriteCoordinate(coordinate, writer);
         }
 
         private static void WriteRelation(Relation relation, BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write((byte)ElementType.Relation);
+            writer.Write((ushort)relation.Members.Count);
+            foreach (var relationMember in relation.Members)
+            {
+                writer.Write(relationMember.Role);
+                writer.Write(relationMember.Offset);
+            }
         }
 
         private static void WriteTags(List<uint> tagOffsets, BinaryWriter writer)
@@ -166,9 +171,26 @@ namespace ActionStreetMap.Osm.Index.Data
             return way;
         }
 
-        private static Relation ReadRelation(BinaryReader reader)
+        private Relation ReadRelation(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            var relation = new Relation();
+            var count = reader.ReadUInt16();
+            relation.Members = new List<RelationMember>(count);
+            
+            for (int i = 0; i < count; i++)
+            {
+                var role = reader.ReadString();
+                var offset = reader.ReadUInt32();
+                var position = reader.BaseStream.Position;
+                Element element = Get(offset);
+                reader.BaseStream.Seek(position, SeekOrigin.Begin);
+                relation.Members.Add(new RelationMember()
+                {
+                    Role = role,
+                    Member = element
+                });
+            }
+            return relation;
         }
 
         private static Dictionary<string, string> ReadTags(KeyValueStore keyValueStore, BinaryReader reader)

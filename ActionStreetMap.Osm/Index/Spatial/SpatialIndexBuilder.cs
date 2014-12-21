@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
 
@@ -13,6 +12,8 @@ namespace ActionStreetMap.Osm.Index.Spatial
     {
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Envelop> _ways = new SortedList<long, Envelop>(10240);
+        private SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
+
         private List<Relation> _unresolvedRelations = new List<Relation>(4096);
 
         public RTree<uint> Tree { get; private set; }

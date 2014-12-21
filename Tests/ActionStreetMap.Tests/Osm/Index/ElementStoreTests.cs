@@ -65,6 +65,57 @@ namespace ActionStreetMap.Tests.Osm.Index
             AssertWays(way, result);
         }
 
+        [Test]
+        public void CanInsertAndGetRelation()
+        {
+            // ARRANGE
+            var way1 = new Way()
+            {
+                Id = 1,
+                Coordinates = new List<GeoCoordinate>() {new GeoCoordinate(52, 13), new GeoCoordinate(52.1f, 13.1f)},
+                Tags = new Dictionary<string, string>() {{"key11", "value11"}, {"key12", "value12"}}
+            };
+            var offset1 = _store.Insert(way1);
+            var way2 = new Way()
+            {
+                Id = 2,
+                Coordinates = new List<GeoCoordinate>() {new GeoCoordinate(53, 14), new GeoCoordinate(53.1f, 14.1f)},
+                Tags = new Dictionary<string, string>() {{"key21", "value21"}, {"key22", "value22"}}
+            };
+            var offset2 = _store.Insert(way2);
+
+            var relation = new Relation()
+            {
+                Id = 3,
+                Members = new List<RelationMember>()
+                {
+                    new RelationMember()
+                    {
+                        Role = "inner",
+                        Offset = offset1
+                    },
+                    new RelationMember()
+                    {
+                        Role = "outer",
+                        Offset = offset2
+                    }
+                },
+                Tags = new Dictionary<string, string>() { { "type", "multipolygon"} }
+            };
+
+            // ACT
+            var offset = _store.Insert(relation);
+            var result = _store.Get(offset) as Relation;
+
+            // ASSERT
+            Assert.IsNotNull(result);
+            Assert.AreEqual(relation.Id, result.Id);
+            Assert.AreEqual(relation.Tags, result.Tags);
+            Assert.AreEqual(2, result.Members.Count);
+            AssertWays(way1, result.Members[0].Member as Way);
+            AssertWays(way2, result.Members[1].Member as Way);
+        }
+
         #region Helpers
 
         private static void AssertNodes(Node expected, Node actual)
