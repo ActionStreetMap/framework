@@ -15,13 +15,13 @@ namespace ActionStreetMap.Osm.Index.Data
 
         private uint _nextOffset;
 
-        public KeyValueStore(Stream stream)
+        public KeyValueStore(KeyValueIndex index, Stream stream)
         {
-            _prefixLength = 5;
+            _prefixLength = index.PrefixLength;
             _stream = stream;
 
             // TODO configure consts
-            _index = new KeyValueIndex(60000, _prefixLength);
+            _index = index;
 
             // NOTE buffer size limited to byte.MaxValue which affect max string size
             _byteBuffer = new byte[256];
@@ -29,6 +29,7 @@ namespace ActionStreetMap.Osm.Index.Data
 
             // NOTE skip header
             _nextOffset = 2;
+            stream.Seek(_nextOffset, SeekOrigin.Begin);
         }
 
         /// <summary>

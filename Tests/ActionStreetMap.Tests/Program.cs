@@ -117,7 +117,8 @@ namespace ActionStreetMap.Tests
             stream.WriteByte(4);
             stream.WriteByte(7);
 
-            var store = new KeyValueStore(stream);
+            var index = new KeyValueIndex(100, 3);
+            var store = new KeyValueStore(index, stream);
 
             store.Insert(new KeyValuePair<string, string>("addr", "eic"));
             store.Insert(new KeyValuePair<string, string>("addr", "inv"));

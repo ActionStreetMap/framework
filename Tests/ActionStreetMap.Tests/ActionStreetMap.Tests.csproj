@@ -85,6 +85,8 @@
     <Compile Include="Core\MapCss\RuleEvalTests.cs" />
     <Compile Include="Models\BuildingMapCssTests.cs" />
     <Compile Include="Osm\ElementManagerTests.cs" />
+    <Compile Include="Osm\Index\KeyValueIndexTests.cs" />
+    <Compile Include="Osm\Index\KeyValueStoreTests.cs" />
     <Compile Include="Osm\LocationInfoTests.cs" />
     <Compile Include="Osm\NodeTests.cs" />
     <Compile Include="Osm\PbfIndexListElementSourceTests.cs" />

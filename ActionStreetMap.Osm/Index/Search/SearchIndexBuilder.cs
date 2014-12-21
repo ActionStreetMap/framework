@@ -55,7 +55,8 @@ namespace ActionStreetMap.Osm.Index.Search
 
         public void ProcessBoundingBox(BoundingBox bbox)
         {
-            _store = new KeyValueStore(new MemoryStream(10000000));
+            var index = new KeyValueIndex(10000, 5);
+            _store = new KeyValueStore(index, new MemoryStream(10000000));
         }
 
         public void Complete()

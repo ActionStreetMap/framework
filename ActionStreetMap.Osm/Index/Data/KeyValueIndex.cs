@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ActionStreetMap.Osm.Index.Data
 {
     internal class KeyValueIndex
     {
         private readonly int _capacity;
-        private readonly int _prefixLength;
+
         private readonly uint[] _buckets;
 
         #region Constructors
@@ -14,11 +15,13 @@ namespace ActionStreetMap.Osm.Index.Data
         public KeyValueIndex(int capacity, int prefixLength)
         {
             _capacity = capacity;
-            _prefixLength = prefixLength;
             _buckets = new uint[capacity];
+            PrefixLength = prefixLength;
         }
 
         #endregion
+
+        public int PrefixLength { get; private set; }
 
         #region Public members
 
@@ -41,7 +44,7 @@ namespace ActionStreetMap.Osm.Index.Data
         private int GetIndex(KeyValuePair<string, string> pair)
         {
             int hash = HashString(pair.Key, 0, pair.Key.Length);
-            hash = HashString(pair.Value, hash, Math.Min(pair.Value.Length, _prefixLength));
+            hash = HashString(pair.Value, hash, Math.Min(pair.Value.Length, PrefixLength));
 
             hash += (hash << 3);
             hash ^= (hash >> 11);
@@ -62,6 +65,39 @@ namespace ActionStreetMap.Osm.Index.Data
                 hash ^= (hash >> 6);
             }
             return hash;
+        }
+
+        #endregion
+
+        #region Static members
+
+        public static void Save(KeyValueIndex index, Stream stream)
+        {
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(index._capacity);
+                writer.Write(index.PrefixLength);
+
+                var buckets = index._buckets;
+                for (int i = 0; i < buckets.Length; i++)
+                    writer.Write(buckets[i]);
+            }
+        }
+
+        public static KeyValueIndex Load(Stream stream)
+        {
+            using (var reader = new BinaryReader(stream))
+            {
+                var capacity = reader.ReadInt32();
+                var prefixLength = reader.ReadInt32();
+                var index = new KeyValueIndex(capacity, prefixLength);
+                
+                var buckets = index._buckets;
+                for (int i = 0; i < buckets.Length; i++)
+                    buckets[i] = reader.ReadUInt32();
+
+                return index;
+            }
         }
 
         #endregion
