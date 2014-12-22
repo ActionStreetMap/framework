@@ -4,8 +4,10 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Osm.Entities;
-using ActionStreetMap.Osm.Index.Data;
+using ActionStreetMap.Osm.Helpers;
+using ActionStreetMap.Osm.Index.Helpers;
 using ActionStreetMap.Osm.Index.Spatial;
+using ActionStreetMap.Osm.Index.Storage;
 
 namespace ActionStreetMap.Osm.Index
 {

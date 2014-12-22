@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ActionStreetMap.Osm.Index.Data
+namespace ActionStreetMap.Osm.Index.Storage
 {
     internal sealed class KeyValueStore: IDisposable
     {

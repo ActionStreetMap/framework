@@ -2,7 +2,7 @@
 using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
-using ActionStreetMap.Osm.Index.Data;
+using ActionStreetMap.Osm.Index.Storage;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Osm.Index

@@ -52,11 +52,6 @@
     <Compile Include="..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
-    <Compile Include="Data\IElementSourceProvider.cs" />
-    <Compile Include="Data\PbfElementSource.cs" />
-    <Compile Include="Data\PbfIndexListElementSource.cs" />
-    <Compile Include="Data\StatefulElementSource.cs" />
-    <Compile Include="Data\IElementSource.cs" />
     <Compile Include="Extensions\TagExtensions.cs" />
     <Compile Include="Entities\Node.cs" />
     <Compile Include="Entities\Element.cs" />
@@ -67,22 +62,24 @@
     <Compile Include="Formats\Xml\v0_6\osm.cs">
       <DependentUpon>osm.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Data\XmlElementSource.cs" />
     <Compile Include="Formats\Xml\XmlSimpleConverter.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
-    <Compile Include="Index\Data\ElementStore.cs" />
-    <Compile Include="Index\ElementType.cs" />
-    <Compile Include="Index\Data\KeyValueStore.cs" />
-    <Compile Include="Index\IndexBuilder.cs" />
-    <Compile Include="Index\ScaledGeoCoordinate.cs" />
-    <Compile Include="Index\Data\KeyValueIndex.cs" />
+    <Compile Include="Index\Import\HeightMapBuilder.cs" />
+    <Compile Include="Extensions\StackExtensions.cs" />
+    <Compile Include="Index\ElementSource.cs" />
+    <Compile Include="Index\ElementSourceProvider.cs" />
+    <Compile Include="Index\Storage\ElementStore.cs" />
+    <Compile Include="Index\Helpers\ElementType.cs" />
+    <Compile Include="Index\Storage\KeyValueStore.cs" />
+    <Compile Include="Index\Import\IndexBuilder.cs" />
+    <Compile Include="Index\Helpers\ScaledGeoCoordinate.cs" />
+    <Compile Include="Index\Storage\KeyValueIndex.cs" />
     <Compile Include="Index\Search\SearchEngine.cs" />
     <Compile Include="Index\Spatial\Envelops.cs" />
     <Compile Include="Index\Spatial\RTree.cs" />
     <Compile Include="Index\Spatial\SpatialIndex.cs" />
-    <Compile Include="Index\Spatial\StackExtensions.cs" />
     <Compile Include="Index\Consts.cs" />
-    <Compile Include="OsmTileLoader.cs" />
+    <Compile Include="MapTileLoader.cs" />
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
     <Compile Include="Visitors\WayVisitor.cs" />
@@ -94,7 +91,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\Relation.cs" />
     <Compile Include="Entities\RelationMember.cs" />
-    <Compile Include="ElementManager.cs" />
     <Compile Include="Entities\Way.cs" />
   </ItemGroup>
   <ItemGroup />

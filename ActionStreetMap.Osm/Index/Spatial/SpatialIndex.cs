@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ActionStreetMap.Infrastructure.Utilities;
+
+using ActionStreetMap.Osm.Extensions;
 
 namespace ActionStreetMap.Osm.Index.Spatial
 {
-    [Serializable]
-    public class SpatialIndex<T>
+    /// <summary>
+    ///     Represents spatial index.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    internal class SpatialIndex<T>
     {
-        private SpatialIndexNode _root;
-        public SpatialIndexNode Root { get { return _root; } }
+        private readonly SpatialIndexNode _root;
 
         public SpatialIndex(SpatialIndexNode root)
 	    {
 	        _root = root;
 	    }
 
-        public IEnumerable<T> Search(IEnvelop envelope)
+        public IEnumerable<T> Search(Envelop envelope)
         {
             var node = _root;
 
@@ -156,8 +158,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
 
         #region Nested 
 
-        [Serializable]
-        public struct SpatialIndexNode
+        internal struct SpatialIndexNode
         {
             public T Data;
             public IEnvelop Envelope;

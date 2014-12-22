@@ -6,10 +6,11 @@
 
         #region Path consts
 
+        public const string HeaderFileName = @"header.txt";
         /// <summary>
         ///     Path to header file which stores information about bounding box, city name, etc.
         /// </summary>
-        public const string HeaderPathFormat = @"{0}/header.txt";
+        public const string HeaderPathFormat = @"{0}/" + HeaderFileName;
         /// <summary>
         ///     Path to tag usage file which
         /// </summary>

@@ -23,7 +23,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         /// <inheritdoc />
         public override bool Run()
         {
-            Container.Register(Component.For<ITileLoader>().Use<OsmTileLoader>().Singleton());
+            Container.Register(Component.For<ITileLoader>().Use<MapTileLoader>().Singleton());
 
             // activates/deactivates tiles during the game based on distance to player
             Container.Register(Component.For<ITileActivator>().Use<TileActivator>().Singleton());

@@ -44,9 +44,7 @@ namespace ActionStreetMap.Osm.Entities
             {
                 tags = "tags:{";
                 foreach (var tag in Tags)
-                {
                     tags += string.Format("{0}:{1},", tag.Key, tag.Value);
-                }
                 tags += "}";
             }
             return string.Format("{0}[{1}]{2}", GetType().Name, Id, tags);

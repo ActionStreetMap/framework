@@ -27,6 +27,9 @@ namespace ActionStreetMap.Osm.Entities
         /// </summary>
         public string Role { get; set; }
 
+        /// <summary>
+        ///     Offset in external storage
+        /// </summary>
         public uint Offset { get; set; }
 
         /// <inheritdoc />

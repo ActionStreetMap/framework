@@ -1,4 +1,4 @@
-﻿namespace ActionStreetMap.Osm.Index
+﻿namespace ActionStreetMap.Osm.Index.Helpers
 {
     internal enum ElementType : byte
     {

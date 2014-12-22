@@ -4,7 +4,6 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Osm.Helpers;
 using NUnit.Framework;
-using Node = ActionStreetMap.Osm.Entities.Node;
 using Way = ActionStreetMap.Osm.Entities.Way;
 using Relation = ActionStreetMap.Osm.Entities.Relation;
 using RelationMember = ActionStreetMap.Osm.Entities.RelationMember;
@@ -254,11 +253,7 @@ namespace ActionStreetMap.Tests.Osm
             {
                 Member = new Way()
                 {
-                    Nodes = points.Select(p => new Node()
-                    {
-                        // just map point coordinates to geo coordinates
-                        Coordinate = new GeoCoordinate(p.X, p.Y)
-                    }).ToList()
+                    Coordinates = points.Select(p => new GeoCoordinate(p.X, p.Y)).ToList()
                 },
                 Role = role,
             };

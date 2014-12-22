@@ -3,7 +3,7 @@ using ActionStreetMap.Core;
 
 namespace ActionStreetMap.Osm.Index.Spatial
 {
-    public interface IEnvelop
+    internal interface IEnvelop
     {
         int MinPointLatitude { get; }
         int MinPointLongitude { get; }
@@ -20,8 +20,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
         bool Contains(IEnvelop b);
     }
 
-    [Serializable]
-    public class Envelop : IEnvelop
+    internal class Envelop : IEnvelop
     {
         public int MinPointLatitude { get; set; }
         public int MinPointLongitude { get; set; }
@@ -86,8 +85,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
         }
     }
 
-    [Serializable]
-    public class PointEnvelop : IEnvelop
+    internal class PointEnvelop : IEnvelop
     {
         private readonly int _pointLatitude;
         private readonly int _pointLongitude;

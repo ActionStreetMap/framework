@@ -24,11 +24,11 @@ namespace ActionStreetMap.Osm.Helpers
             int memberCount = relation.Members.Count;
             var outerIndecies = new List<int>(memberCount/2);
             var innerIndecies = new List<int>(memberCount/2);
-            var sequences = new List<NodeSequence>(relation.Members.Count / 2);
+            var sequences = new List<CoordinateSequence>(relation.Members.Count / 2);
             foreach (var member in relation.Members)
             {
                 var way = member.Member as Way;
-                if (way == null || !way.Nodes.Any())
+                if (way == null || !way.Coordinates.Any())
                     continue;
 
                 if (member.Role == "outer")
@@ -39,7 +39,7 @@ namespace ActionStreetMap.Osm.Helpers
                     continue;
               
                 // TODO what should be used as Id?
-                var sequence = new NodeSequence(relation.Id, way);
+                var sequence = new CoordinateSequence(relation.Id, way);
                 if (!sequence.IsClosed)
                     allClosed = false;
                 sequences.Add(sequence);
@@ -51,7 +51,7 @@ namespace ActionStreetMap.Osm.Helpers
                 ComplexCase(relation, areas, sequences);
         }
 
-        private static void SimpleCase(Relation relation, List<Area> areas, List<NodeSequence> sequences,
+        private static void SimpleCase(Relation relation, List<Area> areas, List<CoordinateSequence> sequences,
             List<int> outerIndecies, List<int> innerIndecies)
         {
             // TODO set correct tags!
@@ -71,7 +71,7 @@ namespace ActionStreetMap.Osm.Helpers
             });
         }
 
-        private static void ComplexCase(Relation relation, List<Area> areas, List<NodeSequence> sequences)
+        private static void ComplexCase(Relation relation, List<Area> areas, List<CoordinateSequence> sequences)
         {
             var rings = CreateRings(sequences);
             if (rings == null)
@@ -79,10 +79,10 @@ namespace ActionStreetMap.Osm.Helpers
             FillAreas(relation, rings, areas);
         }
 
-        private static List<NodeSequence> CreateRings(List<NodeSequence> sequences)
+        private static List<CoordinateSequence> CreateRings(List<CoordinateSequence> sequences)
         {
-            var closedRings = new List<NodeSequence>();
-            NodeSequence currentRing = null;
+            var closedRings = new List<CoordinateSequence>();
+            CoordinateSequence currentRing = null;
             while (sequences.Any())
             {
                 if (currentRing == null)
@@ -95,8 +95,8 @@ namespace ActionStreetMap.Osm.Helpers
                 else
                 {
                     // try to continue the ring by appending a node sequence
-                    NodeSequence assignedSequence = null;
-                    foreach (NodeSequence sequence in sequences)
+                    CoordinateSequence assignedSequence = null;
+                    foreach (CoordinateSequence sequence in sequences)
                     {
                         if (!currentRing.TryAdd(sequence)) continue;
                         assignedSequence = sequence;
@@ -113,7 +113,7 @@ namespace ActionStreetMap.Osm.Helpers
                 if (currentRing != null && currentRing.IsClosed)
                 {
                     // TODO check that it isn't self-intersecting!
-                    closedRings.Add(new NodeSequence(currentRing));
+                    closedRings.Add(new CoordinateSequence(currentRing));
                     currentRing = null;
                 }
             }
@@ -121,16 +121,16 @@ namespace ActionStreetMap.Osm.Helpers
             return currentRing != null ? null : closedRings;
         }
 
-        private static void FillAreas(Relation relation, List<NodeSequence> rings, List<Area> areas)
+        private static void FillAreas(Relation relation, List<CoordinateSequence> rings, List<Area> areas)
         {
             while (rings.Any())
             {
                 // find an outer ring
-                NodeSequence outer = null;
-                foreach (NodeSequence candidate in rings)
+                CoordinateSequence outer = null;
+                foreach (CoordinateSequence candidate in rings)
                 {
                     bool containedInOtherRings = false;
-                    foreach (NodeSequence other in rings)
+                    foreach (CoordinateSequence other in rings)
                     {
                         if (other != candidate && other.ContainsRing(candidate))
                         {
@@ -146,13 +146,13 @@ namespace ActionStreetMap.Osm.Helpers
                 }
 
                 // find inner rings of that ring
-                var inners = new List<NodeSequence>();
-                foreach (NodeSequence ring in rings)
+                var inners = new List<CoordinateSequence>();
+                foreach (CoordinateSequence ring in rings)
                 {
                     if (ring != outer && outer.ContainsRing(ring))
                     {
                         bool containedInOthers = false;
-                        foreach (NodeSequence other in rings)
+                        foreach (CoordinateSequence other in rings)
                         {
                             if (other != ring && other != outer && other.ContainsRing(ring))
                             {
@@ -167,7 +167,7 @@ namespace ActionStreetMap.Osm.Helpers
 
                 // create a new area and remove the used rings
                 var holes = new List<List<GeoCoordinate>>(inners.Count);
-                foreach (NodeSequence innerRing in inners)
+                foreach (CoordinateSequence innerRing in inners)
                     holes.Add(innerRing.Coordinates);
 
                 // TODO investigate case of null/empty tags
@@ -190,7 +190,7 @@ namespace ActionStreetMap.Osm.Helpers
             }
         }
 
-        private static Dictionary<string, string> GetTags(Relation relation, NodeSequence outer)
+        private static Dictionary<string, string> GetTags(Relation relation, CoordinateSequence outer)
         {
             // TODO tag processing
             return relation.Tags.Count > 1 ? relation.Tags : outer.Tags;
@@ -198,30 +198,30 @@ namespace ActionStreetMap.Osm.Helpers
 
         #region Nested classes
 
-        private class NodeSequence
+        private class CoordinateSequence
         {
-            private readonly List<Node> _nodes;
+            private readonly List<GeoCoordinate> _nodes;
             private List<GeoCoordinate> _coordinates;
             private long _id;
 
             public Dictionary<string, string> Tags { get; set; } 
 
-            public NodeSequence(long id, Way way)
+            public CoordinateSequence(long id, Way way)
             {
-                _nodes = new List<Node>(way.Nodes);
+                _nodes = new List<GeoCoordinate>(way.Coordinates);
                 _id = id;
                 Tags = way.Tags;
             }
 
-            public NodeSequence(NodeSequence sequence)
+            public CoordinateSequence(CoordinateSequence sequence)
             {
                 _id = sequence.Id;
-                _nodes = new List<Node>(sequence._nodes);
+                _nodes = new List<GeoCoordinate>(sequence._nodes);
             }
 
-            private void AddAll(NodeSequence other) { _nodes.AddRange(other._nodes); }
+            private void AddAll(CoordinateSequence other) { _nodes.AddRange(other._nodes); }
 
-            private void AddAll(int index, NodeSequence other) { _nodes.InsertRange(index, other._nodes); }
+            private void AddAll(int index, CoordinateSequence other) { _nodes.InsertRange(index, other._nodes); }
 
             private void Reverse() { _nodes.Reverse(); }
 
@@ -230,10 +230,10 @@ namespace ActionStreetMap.Osm.Helpers
             ///  If it succeeds, the other sequence may also be modified and
             ///  should be considered "spent".
             /// </summary>
-            /// <param name="other">NodeSequence.</param>
-            public bool TryAdd(NodeSequence other)
+            /// <param name="other">CoordinateSequence.</param>
+            public bool TryAdd(CoordinateSequence other)
             {
-                if (LastNode.Coordinate == other.FirstNode.Coordinate)
+                if (LastNode == other.FirstNode)
                 {
                     //add the sequence at the end
                     _nodes.RemoveAt(_nodes.Count - 1);
@@ -241,7 +241,7 @@ namespace ActionStreetMap.Osm.Helpers
                     MergeTags(other.Tags);
                     return true;
                 }
-                if (LastNode.Coordinate == other.LastNode.Coordinate)
+                if (LastNode == other.LastNode)
                 {
                     //add the sequence backwards at the end
                     _nodes.RemoveAt(_nodes.Count - 1);
@@ -250,7 +250,7 @@ namespace ActionStreetMap.Osm.Helpers
                     MergeTags(other.Tags);
                     return true;
                 }
-                if (FirstNode.Coordinate == other.LastNode.Coordinate)
+                if (FirstNode == other.LastNode)
                 {
                     //add the sequence at the beginning
                     _nodes.RemoveAt(0);
@@ -258,7 +258,7 @@ namespace ActionStreetMap.Osm.Helpers
                     MergeTags(other.Tags);
                     return true;
                 }
-                if (FirstNode.Coordinate == other.FirstNode.Coordinate)
+                if (FirstNode == other.FirstNode)
                 {
                     //add the sequence backwards at the beginning
                     _nodes.RemoveAt(0);
@@ -270,20 +270,20 @@ namespace ActionStreetMap.Osm.Helpers
                 return false;
             }
 
-            private Node FirstNode { get { return _nodes.First(); } }
+            private GeoCoordinate FirstNode { get { return _nodes.First(); } }
 
-            private Node LastNode { get { return _nodes.Last(); } }
+            private GeoCoordinate LastNode { get { return _nodes.Last(); } }
 
-            public bool IsClosed { get { return _nodes.First().Coordinate == _nodes.Last().Coordinate; } }
+            public bool IsClosed { get { return _nodes.First() == _nodes.Last(); } }
 
             public long Id { get { return _id; }}
 
             public List<GeoCoordinate> Coordinates
             {
-                get { return _coordinates ?? (_coordinates = _nodes.Select(n => n.Coordinate).ToList()); }
+                get { return _coordinates ?? (_coordinates = _nodes.Select(n => n).ToList()); }
             }
 
-            public bool ContainsRing(NodeSequence other)
+            public bool ContainsRing(CoordinateSequence other)
             {
                 return other.Coordinates.All(c => IsPointInPolygon(c, Coordinates));
             }

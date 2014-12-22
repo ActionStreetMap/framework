@@ -1,11 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
+using ActionStreetMap.Osm.Helpers;
+using ActionStreetMap.Osm.Index.Helpers;
 
-namespace ActionStreetMap.Osm.Index.Data
+namespace ActionStreetMap.Osm.Index.Storage
 {
     internal sealed class ElementStore: IDisposable
     {

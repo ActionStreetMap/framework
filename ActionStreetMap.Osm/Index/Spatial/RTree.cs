@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Osm.Extensions;
 
 namespace ActionStreetMap.Osm.Index.Spatial
 {
-    [Serializable]
-	public class RTree<T>
+	internal class RTree<T>
 	{
 		// per-bucket
 		private readonly int _maxEntries;
@@ -340,7 +339,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
 			return margin;
 		}
 
-        public class RTreeNode
+        internal class RTreeNode
         {
             public T Data { get; private set; }
             public IEnvelop Envelope { get; set; }

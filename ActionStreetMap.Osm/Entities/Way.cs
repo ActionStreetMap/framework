@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Visitors;
 
@@ -15,12 +14,9 @@ namespace ActionStreetMap.Osm.Entities
         /// </summary>
         public List<long> NodeIds { get; set; }
 
-        [Obsolete]
         /// <summary>
-        ///     Nodes.
+        ///     GeoCoordinates of way.
         /// </summary>
-        public List<Node> Nodes { get; set; }
-
         public List<GeoCoordinate> Coordinates { get; set; }
 
         /// <inheritdoc />
@@ -34,13 +30,11 @@ namespace ActionStreetMap.Osm.Entities
         /// </summary>
         public void FillPoints(List<GeoCoordinate> coordinates)
         {
-            for (int idx = 0; idx < Nodes.Count; idx++)
+            for (int idx = 0; idx < Coordinates.Count; idx++)
             {
-                if (idx > 0 && Nodes[idx - 1].Coordinate == Nodes[idx].Coordinate)
-                {
+                if (idx > 0 && Coordinates[idx - 1] == Coordinates[idx])
                     continue;
-                }
-                coordinates.Add(Nodes[idx].Coordinate);
+                coordinates.Add(Coordinates[idx]);
             }
         }
 
@@ -49,23 +43,7 @@ namespace ActionStreetMap.Osm.Entities
         /// </summary>
         public bool IsPolygon
         {
-            get { return Nodes.Count > 2; }
-        }
-
-        /// <summary>
-        ///     True if way is fully loaded.
-        /// </summary>
-        public bool IsComplete
-        {
-            get { return Nodes.Count == NodeIds.Count; }
-        }
-
-        /// <summary>
-        ///     True if way is closed polygon.
-        /// </summary>
-        public bool IsClosed
-        {
-            get { return Nodes[0].Id == Nodes[Nodes.Count - 1].Id; }
+            get { return Coordinates.Count > 2; }
         }
     }
 }

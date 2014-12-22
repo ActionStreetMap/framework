@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Diagnostic;
-using ActionStreetMap.Osm;
-using ActionStreetMap.Osm.Data;
 using ActionStreetMap.Osm.Visitors;
 using ActionStreetMap.Tests.Osm;
 using ActionStreetMap.Models.Geometry;
@@ -39,7 +38,8 @@ namespace ActionStreetMap.Tests.Core.Algorithms
         [Test]
         public void CanTriangulateAreasAndWays()
         {
-            // ARRANGE
+            throw new NotImplementedException();
+           /* // ARRANGE
             var dataSource = new PbfIndexListElementSource(TestHelper.TestBigPbfIndexListPath,
                 TestHelper.GetFileSystemService(), new DefaultTrace());
 
@@ -64,7 +64,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
                 var verticies = new List<MapPoint>();
                 PointUtils.GetPolygonPoints(TestHelper.BerlinGeoCenter, way.Points, verticies);
                 var triangles = PointUtils.GetTriangles3D(verticies);
-            }
+            }*/
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Osm;
-using ActionStreetMap.Osm.Data;
+using ActionStreetMap.Osm.Index;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
@@ -20,14 +19,9 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         {
             Container.Register(Component
                .For<IElementSourceProvider>()
-               .Use<DefaultElementSourceProvider>()
+               .Use<ElementSourceProvider>()
                .Singleton()
                .SetConfig(GlobalConfigSection.GetSection(DataSourceProviderKey)));
-
-            Container.Register(Component
-                .For<ElementManager>()
-                .Use<ElementManager>()
-                .Singleton());
 
             return true;
         }

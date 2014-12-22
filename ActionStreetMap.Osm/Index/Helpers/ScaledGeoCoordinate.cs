@@ -1,8 +1,8 @@
 ﻿using ActionStreetMap.Core;
 
-namespace ActionStreetMap.Osm.Index
+namespace ActionStreetMap.Osm.Index.Helpers
 {
-    public struct ScaledGeoCoordinate
+    internal struct ScaledGeoCoordinate
     {
         public int Latitude;
         public int Longitude;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ActionStreetMap.Osm.Index.Spatial
+namespace ActionStreetMap.Osm.Extensions
 {
 	internal static class StackExtensions
 	{

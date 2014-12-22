@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene;
@@ -85,7 +86,7 @@ namespace ActionStreetMap.Osm.Visitors
         /// </summary>
         private Dictionary<string, string> GetMergedTags(Entities.Way way)
         {
-            var tags = way.Tags == null
+           /* var tags = way.Tags == null
                 ? new Dictionary<string, string>()
                 : new Dictionary<string, string>(way.Tags);
             foreach (var node in way.Nodes)
@@ -98,7 +99,8 @@ namespace ActionStreetMap.Osm.Visitors
                         tags.Add(tag.Key, tag.Value);
                 }
             }
-            return tags;
+            return tags;*/
+            throw new NotImplementedException();
         }
 
         private bool IsMergeTag(KeyValuePair<string, string> tag)

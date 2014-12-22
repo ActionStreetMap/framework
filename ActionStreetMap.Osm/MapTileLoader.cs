@@ -4,34 +4,31 @@ using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Osm.Data;
+using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Visitors;
 
 namespace ActionStreetMap.Osm
 {
     /// <summary>
-    ///     Loads tile from OSM element source.
+    ///     Loads tile from given element source.
     /// </summary>
-    public class OsmTileLoader: ITileLoader
+    public class MapTileLoader: ITileLoader
     {
         private readonly IElementSourceProvider _elementSourceProvider;
-        private readonly ElementManager _elementManager;
         private readonly IModelVisitor _modelVisitor;
         private readonly CompositeVisitor _compositeVisitor;
 
         /// <summary>
-        ///     Creates OsmTileLoader.
+        ///     Creates MapTileLoader.
         /// </summary>
         /// <param name="elementSourceProvider">Element source provider.</param>
-        /// <param name="elementManager">Element manager.</param>
         /// <param name="modelVisitor">model visitor.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
-        public OsmTileLoader(IElementSourceProvider elementSourceProvider, ElementManager elementManager, 
+        public MapTileLoader(IElementSourceProvider elementSourceProvider, 
             IModelVisitor modelVisitor, IObjectPool objectPool)
         {
             _elementSourceProvider = elementSourceProvider;
-            _elementManager = elementManager;
             _modelVisitor = modelVisitor;
 
             _compositeVisitor = new CompositeVisitor(new List<IElementVisitor>
@@ -51,8 +48,8 @@ namespace ActionStreetMap.Osm
             // prepare tile
             tile.Accept(_modelVisitor);
 
-            // get and visit areas, ways, relations
-            _elementManager.VisitBoundingBox(tile.BoundingBox, elementSource, _compositeVisitor);
+            foreach (var element in elementSource.Get(tile.BoundingBox))
+                element.Accept(_compositeVisitor);
 
             // finalize by canvas visiting
             (new Canvas()).Accept(_modelVisitor);
