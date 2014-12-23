@@ -12,6 +12,8 @@ namespace ActionStreetMap.Osm.Index.Spatial
     /// <typeparam name="T"></typeparam>
     internal class SpatialIndex<T>
     {
+        private const uint Marker = uint.MaxValue;
+
         private readonly SpatialIndexNode _root;
 
         public SpatialIndex(SpatialIndexNode root)
@@ -70,8 +72,6 @@ namespace ActionStreetMap.Osm.Index.Spatial
                 node = nodesToSearch.TryPop();
             }
         }
-
-        public const uint Marker = uint.MaxValue;
 
         #region Static: Save
 

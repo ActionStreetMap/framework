@@ -35,10 +35,10 @@ namespace ActionStreetMap.Osm.Index
         {
             _fileService = fileService;
 
-            _spatialIndexTree = SpatialIndex<uint>.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
             var kvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
             var kvStore = new KeyValueStore(kvIndex, fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
             _elementStore = new ElementStore(kvStore, fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)));
+            _spatialIndexTree = SpatialIndex<uint>.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
         }
 
         public IEnumerable<Element> Get(BoundingBox bbox)

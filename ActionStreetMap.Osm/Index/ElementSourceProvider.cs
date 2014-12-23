@@ -32,14 +32,16 @@ namespace ActionStreetMap.Osm.Index
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
         private readonly string[] _splitString= { " " };
 
+        private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
         private RTree<string> _tree;
         private Tuple<string, IElementSource> _elementSourceCache;
 
         public ITrace Trace { get; set; }
 
-        public ElementSourceProvider(IFileSystemService fileSystemService)
+        public ElementSourceProvider(IPathResolver pathResolver, IFileSystemService fileSystemService)
         {
+            _pathResolver = pathResolver;
             _fileSystemService = fileSystemService;
         }
 
@@ -91,7 +93,7 @@ namespace ActionStreetMap.Osm.Index
                 var maxPoint = GetCoordinateFromString(coordinateStrings[1]);
 
                 var envelop = new Envelop(minPoint, maxPoint);
-                _tree.Insert(headerPath, envelop);
+                _tree.Insert(Path.GetDirectoryName(headerPath), envelop);
             }
         }
 
@@ -109,7 +111,7 @@ namespace ActionStreetMap.Osm.Index
         {
             _tree = new RTree<string>();
             var rootFolder = configSection.GetString(MapPathKey);
-            SearchAndReadMapIndexHeaders(rootFolder);
+            SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
         }
     }
 }

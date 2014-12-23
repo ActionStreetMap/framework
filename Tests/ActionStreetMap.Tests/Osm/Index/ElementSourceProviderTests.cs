@@ -19,23 +19,26 @@ namespace ActionStreetMap.Tests.Osm.Index
         {
             // ARRANGE
             var configSection = new Mock<IConfigSection>();
+            var directory = "index";
+            var fileSystemService = Utils.GetFileSystemServiceMock(directory);
+            var pathResolver = new Mock<IPathResolver>();
+            pathResolver.Setup(p => p.Resolve(It.IsAny<string>())).Returns<string>(s => s);
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes("52.0,13.0 52.4,13.4"));
 
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes("52.529760,13.387997 52.533688,13.388490"));
-            var fileSystemService = new Mock<IFileSystemService>();
             fileSystemService.Setup(fs => fs.GetFiles(It.IsAny<string>(), Consts.HeaderFileName))
-                .Returns(new[] {Consts.HeaderFileName});
-            fileSystemService.Setup(fs => fs.ReadStream(It.IsAny<string>()))
+                .Returns(new[] { directory + @"\" + Consts.HeaderFileName });
+            fileSystemService.Setup(fs => fs.ReadStream(directory + @"\" + Consts.HeaderFileName))
                 .Returns(stream);
 
-            var provider = new ElementSourceProvider(fileSystemService.Object);
+            var provider = new ElementSourceProvider(pathResolver.Object, fileSystemService.Object);
             provider.Trace = new Mock<ITrace>().Object;
 
             // ACT
             provider.Configure(configSection.Object);
             var elementSource1 = provider.Get(new BoundingBox(
-                new GeoCoordinate(52.52f, 13.38f), new GeoCoordinate(52.54f, 13.39f)));
+                new GeoCoordinate(52.0f, 13.0f), new GeoCoordinate(52.1f, 13.1f)));
             var elementSource2 = provider.Get(new BoundingBox(
-                new GeoCoordinate(52.1f, 13.2f), new GeoCoordinate(52.2f, 13.3f)));
+                new GeoCoordinate(52.5f, 13.5f), new GeoCoordinate(52.6f, 13.6f)));
 
             // ARRANGE
             Assert.IsNotNull(elementSource1);
