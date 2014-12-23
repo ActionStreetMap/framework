@@ -69,7 +69,6 @@
     <Compile Include="Infrastructure\GameObjectFactory.cs" />
     <Compile Include="GameRunner.cs" />
     <Compile Include="Bootstrappers\InfrastructureBootstrapper.cs" />
-    <Compile Include="Bootstrappers\OsmBootstrapper.cs" />
     <Compile Include="Bootstrappers\SceneBootstrapper.cs" />
     <Compile Include="Helpers\CommonRuleExtensions.cs" />
     <Compile Include="IGameRunner.cs" />

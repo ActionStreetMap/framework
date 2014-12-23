@@ -60,7 +60,7 @@ namespace ActionStreetMap.Osm.Visitors
                 {
                     Id = way.Id,
                     Points = points,
-                    Tags = GetMergedTags(way)
+                    Tags = way.Tags
                 });
 
                 return;
@@ -75,37 +75,9 @@ namespace ActionStreetMap.Osm.Visitors
                 {
                     Id = way.Id,
                     Points = points,
-                    Tags = GetMergedTags(way)
+                    Tags = way.Tags
                 });
             }
-        }
-
-        /// <summary>
-        ///     Returns merged tags. We cannot do this in place as Way can be reused
-        ///     in case of cross tile processing logic is applied
-        /// </summary>
-        private Dictionary<string, string> GetMergedTags(Entities.Way way)
-        {
-           /* var tags = way.Tags == null
-                ? new Dictionary<string, string>()
-                : new Dictionary<string, string>(way.Tags);
-            foreach (var node in way.Nodes)
-            {
-                if (node.Tags == null)
-                    continue;
-                foreach (var tag in node.Tags)
-                {
-                    if (IsMergeTag(tag) && !tags.ContainsKey(tag.Key))
-                        tags.Add(tag.Key, tag.Value);
-                }
-            }
-            return tags;*/
-            throw new NotImplementedException();
-        }
-
-        private bool IsMergeTag(KeyValuePair<string, string> tag)
-        {
-            return tag.Key.StartsWith("addr:");
         }
 
         private bool IsArea(Dictionary<string, string> tags)

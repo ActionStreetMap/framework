@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using ActionStreetMap.Osm.Index;
+using ActionStreetMap.Osm.Index.Import;
 
 namespace ActionStreetMap.Osm.Formats
 {

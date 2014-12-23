@@ -4,12 +4,11 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Osm.Entities;
-using ActionStreetMap.Osm.Helpers;
 using ActionStreetMap.Osm.Index.Helpers;
 using ActionStreetMap.Osm.Index.Spatial;
 using ActionStreetMap.Osm.Index.Storage;
 
-namespace ActionStreetMap.Osm.Index
+namespace ActionStreetMap.Osm.Index.Import
 {
     internal class IndexBuilder
     {
@@ -152,6 +151,7 @@ namespace ActionStreetMap.Osm.Index
 
         public void ProcessBoundingBox(BoundingBox bbox)
         {
+
         }
 
         public void Complete()

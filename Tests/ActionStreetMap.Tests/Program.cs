@@ -12,6 +12,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm.Formats;
 using ActionStreetMap.Osm.Formats.O5m;
 using ActionStreetMap.Osm.Index;
+using ActionStreetMap.Osm.Index.Import;
 using ActionStreetMap.Osm.Index.Search;
 using ActionStreetMap.Osm.Index.Spatial;
 using ActionStreetMap.Osm.Index.Storage;

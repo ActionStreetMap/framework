@@ -28,7 +28,7 @@ namespace ActionStreetMap.Osm.Index
     /// </summary>
     public class ElementSourceProvider : IElementSourceProvider, IConfigurable
     {
-        private const string MapPathKey = "mapdata";
+        private const string MapPathKey = "";
 
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
         private readonly string[] _splitString= { " " };

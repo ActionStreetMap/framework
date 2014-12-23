@@ -50,8 +50,11 @@ namespace ActionStreetMap.Tests
         public static GameRunner GetGameRunner(IContainer container, MessageBus messageBus)
         {
             // these items are used during boot process
-            var fileSystemService = GetFileSystemService();
+            var pathResolver = new TestPathResolver();
+            container.RegisterInstance<IPathResolver>(pathResolver);
+            var fileSystemService = new FileSystemService(pathResolver);
             container.RegisterInstance<IFileSystemService>(GetFileSystemService());
+
             container.RegisterInstance<IConfigSection>(new ConfigSection(ConfigAppRootFile, fileSystemService));
 
             // actual boot service
@@ -59,7 +62,6 @@ namespace ActionStreetMap.Tests
 
             // boot plugins
             container.Register(Component.For<IBootstrapperPlugin>().Use<InfrastructureBootstrapper>().Named("infrastructure"));
-            container.Register(Component.For<IBootstrapperPlugin>().Use<OsmBootstrapper>().Named("osm"));
             container.Register(Component.For<IBootstrapperPlugin>().Use<TileBootstrapper>().Named("tile"));
             container.Register(Component.For<IBootstrapperPlugin>().Use<SceneBootstrapper>().Named("scene"));
             container.Register(Component.For<IBootstrapperPlugin>().Use<TestBootstrapperPlugin>().Named("test"));
