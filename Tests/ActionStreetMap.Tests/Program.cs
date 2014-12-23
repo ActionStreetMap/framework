@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using ActionStreetMap.Core;
@@ -41,11 +39,11 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            /*program.RunGame();
+            program.RunGame();
             program.RunMocker();
-            program.Wait();*/
+            program.Wait();
 
-            program.CreateIndex();
+            // program.CreateIndex();
             // program.ReadIndex();
         }
 
@@ -92,10 +90,9 @@ namespace ActionStreetMap.Tests
             Console.WriteLine("Action completed in {0}ms", sw.ElapsedMilliseconds);
         }
 
-        #region Final experiments
+        #region Index experiments
 
         private const string Directory = "Index";
-
 
         private void CreateIndex()
         {
@@ -113,7 +110,7 @@ namespace ActionStreetMap.Tests
             var builder = new IndexBuilder(tree, store, new ConsoleTrace());
             var reader = new O5mReader(new ReaderContext()
             {
-                SourceStream = new FileStream(@"g:\__ASM\_other_projects\splitter\berlin2.o5m", FileMode.Open),
+                SourceStream = new FileStream(@"g:\__ASM\_other_projects\osmconvert\1.o5m", FileMode.Open),
                 Builder = builder,
                 ReuseEntities = false,
                 SkipTags = false,
