@@ -21,17 +21,9 @@ namespace ActionStreetMap.Tests
         public const string ConfigTestRootFile = "test.json";
         public const string ConfigAppRootFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\settings.json";
 
-        public const string TestPbfFilePath = @"..\..\..\..\Tests\TestAssets\Osm\kempen.osm.pbf";
-        public const string TestMulitplyOuterWaysInRelationPbf = @"..\..\..\..\Tests\TestAssets\Osm\test_mulitply_outer_ways_in_relation.pbf";
-        public const string TestOneWayCrossTilePbf = @"..\..\..\..\Tests\TestAssets\Osm\test_one_way_cross_tile.pbf";
-        public const string TestOneWayCrossIndexDir = @"..\..\..\..\Tests\TestAssets\Osm\testOneWayCrossFile";
-
-        //52.53057 13.38687 52.52940 13.39022
-        public const string TestXmlFilePath = @"..\..\..\..\Tests\TestAssets\Osm\berlin_house.osm.xml";
-
         public const string TestNmeaFilePath = @"..\..\..\..\Tests\TestAssets\Nmea\berlin_seestr_speed_increasing.nme";
 
-        public const string TestBigPbfIndexListPath = @"Maps";
+        public const string MapDataPath = @"Maps\osm";
 
         public const string TestThemeFile = @"..\..\..\..\Tests\TestAssets\Themes\theme.json";
         public const string TestBaseMapcssFile = @"..\..\..\..\Tests\TestAssets\Mapcss\base.mapcss";

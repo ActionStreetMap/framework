@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
+using ActionStreetMap.Osm.Index;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Tiles
@@ -9,18 +10,32 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
     [TestFixture]
     public class RealTileManagerTests
     {
+        private Container _container;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _container = new Container();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            // free resources: this class opens various file streams
+            _container.Resolve<IElementSourceProvider>().Dispose();
+        }
+
         [Test]
         public void CanLoadTileDynamically()
         {
             // ARRANGE
             var logger = new PerformanceLogger();
             logger.Start();
-            var container = new Container();
-            var componentRoot = TestHelper.GetGameRunner(container);
+            var componentRoot = TestHelper.GetGameRunner(_container);
             componentRoot.RunGame(new GeoCoordinate(52.5280173, 13.3739963));
 
             // ACT
-            var tileLoader = container.Resolve<IPositionListener>() as TileManager;
+            var tileLoader = _container.Resolve<IPositionListener>() as TileManager;
             tileLoader.OnMapPositionChanged(new MapPoint(0, 0));
             logger.Stop();
 
@@ -37,17 +52,15 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
         public void CanLoadTileWithProxy()
         {
             // ARRANGE
-            var container = new Container();
+            _container.AllowProxy = true;
+            _container.AutoGenerateProxy = true;
+            _container.AddGlobalBehavior(new ExecuteBehavior());
 
-            container.AllowProxy = true;
-            container.AutoGenerateProxy = true;
-            container.AddGlobalBehavior(new ExecuteBehavior());
-
-            var componentRoot = TestHelper.GetGameRunner(container);
+            var componentRoot = TestHelper.GetGameRunner(_container);
             componentRoot.RunGame(TestHelper.BerlinInvalidenStr);
 
             // ACT
-            var tileLoader = container.Resolve<IPositionListener>();
+            var tileLoader = _container.Resolve<IPositionListener>();
             tileLoader.OnMapPositionChanged(new MapPoint(0, 0));
 
             // ASSERT

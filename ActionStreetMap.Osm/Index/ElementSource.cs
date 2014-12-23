@@ -26,6 +26,7 @@ namespace ActionStreetMap.Osm.Index
     public class ElementSource : IElementSource
     {
         private readonly SpatialIndex<uint> _spatialIndexTree;
+        private readonly KeyValueStore _kvStore;
         private readonly ElementStore _elementStore;
 
         /// <summary>
@@ -38,9 +39,9 @@ namespace ActionStreetMap.Osm.Index
             // load map data from streams
             var kvIndex =
                 KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
-            var kvStore = new KeyValueStore(kvIndex,
+            _kvStore = new KeyValueStore(kvIndex,
                 fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
-            _elementStore = new ElementStore(kvStore,
+            _elementStore = new ElementStore(_kvStore,
                 fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)));
             _spatialIndexTree =
                 SpatialIndex<uint>.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
@@ -57,6 +58,7 @@ namespace ActionStreetMap.Osm.Index
         /// <inheritdoc />
         public void Dispose()
         {
+            _kvStore.Dispose();
             _elementStore.Dispose();
         }
     }

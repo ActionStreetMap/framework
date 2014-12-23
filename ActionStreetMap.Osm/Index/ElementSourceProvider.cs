@@ -15,7 +15,7 @@ namespace ActionStreetMap.Osm.Index
     /// <summary>
     ///     Provides the way to get the corresponding element source by geocoordinate.
     /// </summary>
-    public interface IElementSourceProvider
+    public interface IElementSourceProvider: IDisposable
     {
         /// <summary>
         ///     Returns element source by query represented by bounding box.
@@ -117,6 +117,12 @@ namespace ActionStreetMap.Osm.Index
             // convert to search tree and release insert tree
             _searchTree = SpatialIndex<string>.ToReadOnly(_insertTree);
             _insertTree = null;
+        }
+
+        public void Dispose()
+        {
+            if(_elementSourceCache != null)
+                _elementSourceCache.Item2.Dispose();
         }
     }
 }

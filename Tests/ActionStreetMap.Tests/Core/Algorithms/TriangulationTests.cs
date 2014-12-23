@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.IO;
+using ActionStreetMap.Osm;
+using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Visitors;
 using ActionStreetMap.Tests.Osm;
 using ActionStreetMap.Models.Geometry;
+using Moq;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.Algorithms
@@ -38,33 +44,35 @@ namespace ActionStreetMap.Tests.Core.Algorithms
         [Test]
         public void CanTriangulateAreasAndWays()
         {
-            throw new NotImplementedException();
-           /* // ARRANGE
-            var dataSource = new PbfIndexListElementSource(TestHelper.TestBigPbfIndexListPath,
-                TestHelper.GetFileSystemService(), new DefaultTrace());
+            // ARRANGE
+            var sceneVisitor = new TestModelVisitor();
+            var pathResolver = new TestPathResolver();
+            var config = new Mock<IConfigSection>();
+            config.Setup(c => c.GetString("")).Returns(TestHelper.MapDataPath);
+            var elementSourceProvider = new ElementSourceProvider(pathResolver, new FileSystemService(pathResolver));
+            elementSourceProvider.Configure(config.Object);
+            var loader = new MapTileLoader(elementSourceProvider, sceneVisitor, new ObjectPool());
 
-            var bbox = BoundingBox.CreateBoundingBox(TestHelper.BerlinGeoCenter, 1000);
+            var tile = new Tile(TestHelper.BerlinGeoCenter, new MapPoint(0, 0), 1000);
 
-            var scene = new TestModelVisitor();
-
-            var elementManager = new ElementManager();
-
-            elementManager.VisitBoundingBox(bbox, dataSource, new WayVisitor(scene, new ObjectPool()));
+            loader.Load(tile);
 
             // ACT & ARRANGE
-            foreach (var area in scene.Areas)
+            Assert.Greater(sceneVisitor.Areas.Count, 0);
+            foreach (var area in sceneVisitor.Areas)
             {
                 var verticies = new List<MapPoint>();
                 PointUtils.GetClockwisePolygonPoints(TestHelper.BerlinGeoCenter, area.Points, verticies);
                 PointUtils.GetTriangles3D(verticies);
             }
 
-            foreach (var way in scene.Ways)
+            Assert.Greater(sceneVisitor.Ways.Count, 0);
+            foreach (var way in sceneVisitor.Ways)
             {
                 var verticies = new List<MapPoint>();
                 PointUtils.GetPolygonPoints(TestHelper.BerlinGeoCenter, way.Points, verticies);
                 var triangles = PointUtils.GetTriangles3D(verticies);
-            }*/
+            }
         }
     }
 }
