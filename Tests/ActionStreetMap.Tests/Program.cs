@@ -126,17 +126,6 @@ namespace ActionStreetMap.Tests
 
             KeyValueIndex.Save(index, new FileStream(String.Format(Consts.KeyValueIndexPathFormat, Directory), FileMode.Create));
             SpatialIndex<uint>.Save(tree, new FileStream(String.Format(Consts.SpatialIndexPathFormat, Directory), FileMode.Create));
-            
-            InvokeAndMeasure(() =>
-            {
-                var results = tree.Search(new Envelop(new GeoCoordinate(52.531620, 13.386042),
-                        new GeoCoordinate(52.53343, 13.387700)));
-                foreach (var result in results)
-                {
-                    var element = store.Get(result.Data);
-                    Console.WriteLine(element);
-                }
-            });
         }
 
         private void ReadIndex()

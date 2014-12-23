@@ -19,28 +19,34 @@ namespace ActionStreetMap.Osm.Index
         IEnumerable<Element> Get(BoundingBox bbox);
     }
 
-    internal class ElementSource: IElementSource
+    /// <summary>
+    ///     Default implementation of <see cref="IElementSource" />. It uses custom map data format which should created using
+    ///     ASM framework's importer.
+    /// </summary>
+    public class ElementSource : IElementSource
     {
-        private readonly IFileSystemService _fileService;
-
         private readonly SpatialIndex<uint> _spatialIndexTree;
         private readonly ElementStore _elementStore;
 
         /// <summary>
-        ///     Creates instance of <see cref="ElementSource"/>.
+        ///     Creates instance of <see cref="ElementSource" />.
         /// </summary>
         /// <param name="directory">Already resolved directory which contains all indecies.</param>
         /// <param name="fileService">File system service.</param>
         public ElementSource(string directory, IFileSystemService fileService)
         {
-            _fileService = fileService;
-
-            var kvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
-            var kvStore = new KeyValueStore(kvIndex, fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
-            _elementStore = new ElementStore(kvStore, fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)));
-            _spatialIndexTree = SpatialIndex<uint>.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
+            // load map data from streams
+            var kvIndex =
+                KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
+            var kvStore = new KeyValueStore(kvIndex,
+                fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
+            _elementStore = new ElementStore(kvStore,
+                fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)));
+            _spatialIndexTree =
+                SpatialIndex<uint>.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
         }
 
+        /// <inheritdoc />
         public IEnumerable<Element> Get(BoundingBox bbox)
         {
             var results = _spatialIndexTree.Search(new Envelop(bbox.MinPoint, bbox.MaxPoint));
@@ -48,6 +54,7 @@ namespace ActionStreetMap.Osm.Index
                 yield return _elementStore.Get(result);
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _elementStore.Dispose();

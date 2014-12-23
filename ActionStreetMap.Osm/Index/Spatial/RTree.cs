@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ActionStreetMap.Osm.Extensions;
 
 namespace ActionStreetMap.Osm.Index.Spatial
 {
+    /// <summary>
+    ///     Implements R-Tree data structure which is used to index spatial data.
+    /// </summary>
+    /// <typeparam name="T">Data type which is associated with envelop.</typeparam>
 	internal class RTree<T>
 	{
 		// per-bucket
 		private readonly int _maxEntries;
 		private readonly int _minEntries;
 
-        private RTreeNode _root;
-        public RTreeNode Root { get { return _root; } }
+        public RTreeNode Root { get; private set; }
 
-		public RTree(int maxEntries = 9)
+        public RTree(int maxEntries = 9)
 		{
 			_maxEntries = Math.Max(4, maxEntries);
 			_minEntries = (int) Math.Max(2, Math.Ceiling(_maxEntries * 0.4));
@@ -25,70 +27,17 @@ namespace ActionStreetMap.Osm.Index.Spatial
 
 	    public RTree(RTreeNode root)
 	    {
-	        _root = root;
+	        Root = root;
 	    }
 
-        public IEnumerable<RTreeNode> Search(IEnvelop envelope)
+        public void Clear()
 		{
-			var node = _root;
-
-			if (!envelope.Intersects(node.Envelope))
-                return Enumerable.Empty<RTreeNode>();
-
-            var retval = new List<RTreeNode>();
-            var nodesToSearch = new Stack<RTreeNode>();
-
-			while (node != null)
-			{
-			    if (node.HasChildren)
-			    {
-                    foreach (var child in node.Children)
-                    {
-                        if (envelope.Intersects(child.Envelope))
-                        {
-                            if (node.IsLeaf)
-                                retval.Add(child);
-                            else if (envelope.Contains(child.Envelope))
-                                Collect(child, retval);
-                            else
-                                nodesToSearch.Push(child);
-                        }
-                    }
-			    }
-			    node = nodesToSearch.TryPop();
-			}
-
-		    return retval;
-		}
-
-        private static void Collect(RTreeNode node, List<RTreeNode> result)
-		{
-            var nodesToSearch = new Stack<RTreeNode>();
-			while (node != null)
-			{
-			    if (node.HasChildren)
-			    {
-			        if (node.IsLeaf)
-			            result.AddRange(node.Children);
-			        else
-			        {
-			            foreach (var n in node.Children)
-			                nodesToSearch.Push(n);
-			        }
-			    }
-
-			    node = nodesToSearch.TryPop();
-			}
-		}
-
-		public void Clear()
-		{
-            _root = new RTreeNode { IsLeaf = true, Height = 1 };
+            Root = new RTreeNode { IsLeaf = true, Height = 1 };
 		}
 
         public void Insert(RTreeNode item)
 		{
-			Insert(item, _root.Height - 1);
+			Insert(item, Root.Height - 1);
 		}
 
 		public void Insert(T data, IEnvelop bounds)
@@ -102,7 +51,7 @@ namespace ActionStreetMap.Osm.Index.Spatial
             var insertPath = new List<RTreeNode>();
 
 			// find the best node for accommodating the item, saving all nodes along the path too
-			var node = ChooseSubtree(envelope, _root, level, insertPath);
+			var node = ChooseSubtree(envelope, Root, level, insertPath);
 
 			// put the item into the node
 			node.Children.Add(item);
@@ -220,13 +169,13 @@ namespace ActionStreetMap.Osm.Index.Spatial
         private void SplitRoot(RTreeNode node, RTreeNode newNode)
 		{
 			// split root node
-			_root = new RTreeNode
+			Root = new RTreeNode
 			{
 				Children = { node, newNode },
 				Height = (ushort) (node.Height + 1)
 			};
 
-			RefreshEnvelope(_root);
+			RefreshEnvelope(Root);
 		}
 
         private int ChooseSplitIndex(RTreeNode node, int minEntries, int totalCount)

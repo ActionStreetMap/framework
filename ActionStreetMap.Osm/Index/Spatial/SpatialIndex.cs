@@ -7,9 +7,9 @@ using ActionStreetMap.Osm.Extensions;
 namespace ActionStreetMap.Osm.Index.Spatial
 {
     /// <summary>
-    ///     Represents spatial index.
+    ///     Represents readonly spatial index.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Data type which is associated with envelop.</typeparam>
     internal class SpatialIndex<T>
     {
         private const uint Marker = uint.MaxValue;
@@ -156,7 +156,28 @@ namespace ActionStreetMap.Osm.Index.Spatial
 
         #endregion
 
-        #region Nested 
+        #region Static: Convert
+
+        public static SpatialIndex<T> ToReadOnly(RTree<T> rTree)
+        {
+            return new SpatialIndex<T>(VisitTree(rTree.Root));
+        }
+
+        private static SpatialIndexNode VisitTree(RTree<T>.RTreeNode rNode)
+        {
+            var children = new SpatialIndexNode[rNode.Children.Count];
+            for (int i = 0; i < rNode.Children.Count; i++)
+                children[i] = VisitTree(rNode.Children[i]);
+
+            return new SpatialIndexNode(rNode.Data, rNode.Envelope, children)
+            {
+                IsLeaf = rNode.IsLeaf
+            };
+        }
+
+        #endregion
+
+        #region Nested
 
         internal struct SpatialIndexNode
         {

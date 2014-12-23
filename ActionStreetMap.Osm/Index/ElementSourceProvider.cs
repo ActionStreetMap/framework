@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Config;
+using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Primitives;
@@ -34,11 +35,13 @@ namespace ActionStreetMap.Osm.Index
 
         private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
-        private RTree<string> _tree;
+        private SpatialIndex<string> _searchTree;
+        private RTree<string> _insertTree;
         private Tuple<string, IElementSource> _elementSourceCache;
 
         public ITrace Trace { get; set; }
 
+        [Dependency]
         public ElementSourceProvider(IPathResolver pathResolver, IFileSystemService fileSystemService)
         {
             _pathResolver = pathResolver;
@@ -47,9 +50,8 @@ namespace ActionStreetMap.Osm.Index
 
         public IElementSource Get(BoundingBox query)
         {
-            var sourcePaths = _tree
-                .Search(new Envelop(query.MinPoint, query.MaxPoint))
-                .Select(n => n.Data).ToArray();
+            var sourcePaths = _searchTree
+                .Search(new Envelop(query.MinPoint, query.MaxPoint)).ToArray();
 
             if (!sourcePaths.Any())
             {
@@ -93,7 +95,7 @@ namespace ActionStreetMap.Osm.Index
                 var maxPoint = GetCoordinateFromString(coordinateStrings[1]);
 
                 var envelop = new Envelop(minPoint, maxPoint);
-                _tree.Insert(Path.GetDirectoryName(headerPath), envelop);
+                _insertTree.Insert(Path.GetDirectoryName(headerPath), envelop);
             }
         }
 
@@ -109,9 +111,12 @@ namespace ActionStreetMap.Osm.Index
 
         public void Configure(IConfigSection configSection)
         {
-            _tree = new RTree<string>();
+            _insertTree = new RTree<string>();
             var rootFolder = configSection.GetString(MapPathKey);
             SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
+            // convert to search tree and release insert tree
+            _searchTree = SpatialIndex<string>.ToReadOnly(_insertTree);
+            _insertTree = null;
         }
     }
 }
