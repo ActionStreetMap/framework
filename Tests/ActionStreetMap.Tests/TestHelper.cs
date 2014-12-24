@@ -12,7 +12,7 @@ namespace ActionStreetMap.Tests
 {
     public static class TestHelper
     {
-        public static readonly GeoCoordinate BerlinGeoCenter = new GeoCoordinate(52.529814, 13.388015);
+        public static readonly GeoCoordinate BerlinTestFilePoint = new GeoCoordinate(52.54994964,13.35064315);
         public static readonly GeoCoordinate BerlinInvalidenStr = new GeoCoordinate(52.531036, 13.384866);
         public static readonly GeoCoordinate BerlinHauptBanhoff = new GeoCoordinate(52.5254967, 13.3733636);
         public static readonly GeoCoordinate BerlinTiergarten = new GeoCoordinate(52.516809, 13.367598);

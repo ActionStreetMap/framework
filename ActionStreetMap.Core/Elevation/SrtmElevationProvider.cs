@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
@@ -9,7 +6,10 @@ using ActionStreetMap.Infrastructure.IO;
 
 namespace ActionStreetMap.Core.Elevation.Srtm
 {
-    public class SrtmElevationProvider2: IElevationProvider, IConfigurable
+    /// <summary>
+    ///     Implementation of <see cref="IElevationProvider"/> which uses SRTM data files.
+    /// </summary>
+    public class SrtmElevationProvider: IElevationProvider, IConfigurable
     {
         private readonly IFileSystemService _fileSystemService;
         private const string PathKey = "";
@@ -30,17 +30,23 @@ namespace ActionStreetMap.Core.Elevation.Srtm
         [Dependency]
         public ITrace Trace { get; set; }
 
+        /// <summary>
+        ///     Creates SRTM specific implementation of <see cref="IElevationProvider"/>
+        /// </summary>
+        /// <param name="fileSystemService">File system service.</param>
         [Dependency]
-        public SrtmElevationProvider2(IFileSystemService fileSystemService)
+        public SrtmElevationProvider(IFileSystemService fileSystemService)
         {
             _fileSystemService = fileSystemService;
         }
 
+        /// <inheritdoc />
         public float GetElevation(GeoCoordinate coordinate)
         {
             return GetElevation(coordinate.Latitude, coordinate.Longitude);
         }
 
+        /// <inheritdoc />
         public float GetElevation(double latitude, double longitude)
         {
             int latDec = (int)latitude;

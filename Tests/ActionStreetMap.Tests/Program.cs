@@ -110,7 +110,7 @@ namespace ActionStreetMap.Tests
             var builder = new IndexBuilder(tree, store, new ConsoleTrace());
             var reader = new O5mReader(new ReaderContext()
             {
-                SourceStream = new FileStream(@"g:\__ASM\_other_projects\osmconvert\1.o5m", FileMode.Open),
+                SourceStream = new FileStream(@"f:\Downloads\berlin.o5m", FileMode.Open),
                 Builder = builder,
                 ReuseEntities = false,
                 SkipTags = false,

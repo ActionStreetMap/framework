@@ -32,7 +32,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             var logger = new PerformanceLogger();
             logger.Start();
             var componentRoot = TestHelper.GetGameRunner(_container);
-            componentRoot.RunGame(new GeoCoordinate(52.5280173, 13.3739963));
+            componentRoot.RunGame(TestHelper.BerlinTestFilePoint);
 
             // ACT
             var tileLoader = _container.Resolve<IPositionListener>() as TileManager;
@@ -57,7 +57,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             _container.AddGlobalBehavior(new ExecuteBehavior());
 
             var componentRoot = TestHelper.GetGameRunner(_container);
-            componentRoot.RunGame(TestHelper.BerlinInvalidenStr);
+            componentRoot.RunGame(TestHelper.BerlinTestFilePoint);
 
             // ACT
             var tileLoader = _container.Resolve<IPositionListener>();

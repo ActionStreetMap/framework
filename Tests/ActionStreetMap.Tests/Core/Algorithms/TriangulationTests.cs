@@ -53,7 +53,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             elementSourceProvider.Configure(config.Object);
             var loader = new MapTileLoader(elementSourceProvider, sceneVisitor, new ObjectPool());
 
-            var tile = new Tile(TestHelper.BerlinGeoCenter, new MapPoint(0, 0), 1000);
+            var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), 1000);
 
             loader.Load(tile);
 
@@ -62,7 +62,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             foreach (var area in sceneVisitor.Areas)
             {
                 var verticies = new List<MapPoint>();
-                PointUtils.GetClockwisePolygonPoints(TestHelper.BerlinGeoCenter, area.Points, verticies);
+                PointUtils.GetClockwisePolygonPoints(TestHelper.BerlinTestFilePoint, area.Points, verticies);
                 PointUtils.GetTriangles3D(verticies);
             }
 
@@ -70,7 +70,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             foreach (var way in sceneVisitor.Ways)
             {
                 var verticies = new List<MapPoint>();
-                PointUtils.GetPolygonPoints(TestHelper.BerlinGeoCenter, way.Points, verticies);
+                PointUtils.GetPolygonPoints(TestHelper.BerlinTestFilePoint, way.Points, verticies);
                 var triangles = PointUtils.GetTriangles3D(verticies);
             }
         }

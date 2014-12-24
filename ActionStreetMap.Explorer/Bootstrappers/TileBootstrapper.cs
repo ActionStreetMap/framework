@@ -42,7 +42,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .Singleton()
                 .SetConfig(GlobalConfigSection.GetSection(TileKey)));
 
-            Container.Register(Component.For<IElevationProvider>().Use<SrtmElevationProvider2>().Singleton()
+            Container.Register(Component.For<IElevationProvider>().Use<SrtmElevationProvider>().Singleton()
                 .SetConfig(GlobalConfigSection.GetSection(ElevationKey)));
             
             Container.Register(Component
