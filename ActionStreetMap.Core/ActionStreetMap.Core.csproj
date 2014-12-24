@@ -52,6 +52,7 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="AlgorithmException.cs" />
+    <Compile Include="Elevation\Srtm\SrtmElevationProvider2.cs" />
     <Compile Include="Positioning\Nmea\ActualNmeaValueType.cs" />
     <Compile Include="Positioning\Nmea\Error.cs" />
     <Compile Include="Positioning\Nmea\GGA.cs" />
