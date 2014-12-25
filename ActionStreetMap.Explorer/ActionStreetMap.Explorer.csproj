@@ -51,7 +51,6 @@
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
     <Compile Include="Helpers\ModelRuleExtensions.cs" />
     <Compile Include="Helpers\TerrainRuleExtensions.cs" />
-    <Compile Include="Scene\RelationBuilder.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="Infrastructure\ObjectPool.cs" />
     <Compile Include="Scene\Builders\BarrierModelBuilder.cs" />

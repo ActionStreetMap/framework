@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Osm.Entities;
 using ActionStreetMap.Osm.Index.Helpers;
 using ActionStreetMap.Osm.Index.Spatial;
@@ -15,6 +16,9 @@ namespace ActionStreetMap.Osm.Index.Import
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
         private SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
+
+        private List<Tuple<Relation, Envelop>> _relations = new List<Tuple<Relation, Envelop>>(10240);
+        private HashSet<long> _skippedRelations = new HashSet<long>();
 
         private readonly RTree<uint> _tree;
         private readonly ElementStore _store;
@@ -97,17 +101,20 @@ namespace ActionStreetMap.Osm.Index.Import
                 return;
             }
 
-            var envelop = new Envelop();
-           
-
+            var envelop = new Envelop();          
             // this cicle prevents us to insert ways which are part of unresolved relation
             foreach (var member in relation.Members)
             {
                 var type = (ElementType)member.TypeId;
 
-                if (type == ElementType.Node || type == ElementType.Relation ||  // TODO not supported yet
+                if (type == ElementType.Node || type == ElementType.Relation || // TODO not supported yet
                     (!_wayOffsets.ContainsKey(member.MemberId) && !_ways.ContainsKey(member.MemberId)))
                 {
+                    // outline relations should be ignored
+                    if (type == ElementType.Relation && member.Role == "outline")
+                        _skippedRelations.Add(member.MemberId);
+
+                    _skippedRelations.Add(relation.Id);
                     _statistics.Skip(relation.Id, ElementType.Relation);
                     return;
                 }
@@ -143,11 +150,20 @@ namespace ActionStreetMap.Osm.Index.Import
                 // TODO merge tags?
                 member.Offset = memberOffset;
             }
-
-            var offset = _store.Insert(relation);
-            _tree.Insert(offset, envelop);
-            _statistics.Increment(ElementType.Relation);
+            _relations.Add(new Tuple<Relation, Envelop>(relation, envelop));
        }
+
+        private void FinishRelaitonProcessing()
+        {
+            foreach (var relationTuple in _relations)
+            {
+                if (_skippedRelations.Contains(relationTuple.Item1.Id))
+                    continue;
+                var offset = _store.Insert(relationTuple.Item1);
+                _tree.Insert(offset, relationTuple.Item2);
+                _statistics.Increment(ElementType.Relation);
+            }
+        }
 
         public void ProcessBoundingBox(BoundingBox bbox)
         {
@@ -156,6 +172,7 @@ namespace ActionStreetMap.Osm.Index.Import
 
         public void Complete()
         {
+            FinishRelaitonProcessing();
             _statistics.Summary();
         }
 

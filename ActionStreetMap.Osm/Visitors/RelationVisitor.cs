@@ -33,25 +33,7 @@ namespace ActionStreetMap.Osm.Visitors
                 // TODO use object pool
                 modelRelation.Areas = new List<Area>(relation.Members.Count);
                 MultipolygonProcessor.FillAreas(relation, modelRelation.Areas);
-            }
-            else
-            {
-                // NOTE we have to remember relation memebers and their roles
-                // this is necessary to detect:
-                // 1. building parts
-                // 2. outline areas which have building-specific tags but shouldn't be rendered
-                // ...
-                var roleMap = new Dictionary<string, HashSet<long>>(relation.Members.Count);
-                foreach (var relationMember in relation.Members)
-                {
-                    if (!roleMap.ContainsKey(relationMember.Role))
-                        roleMap.Add(relationMember.Role, new HashSet<long>());
-                    roleMap[relationMember.Role].Add(relationMember.MemberId);
-                }
-
-                modelRelation.RoleMap = roleMap;
-            }     
-    
+            }    
             ModelVisitor.VisitRelation(modelRelation);
         }
     }
