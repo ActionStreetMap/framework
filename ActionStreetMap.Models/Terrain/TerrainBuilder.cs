@@ -182,7 +182,7 @@ namespace ActionStreetMap.Models.Terrain
             // process elevations
             // NOTE We have to do this in the last order. Otherwise, new height
             // value can affect other models (e.g. water vs road)
-             if (!heightMap.IsFlat && _elevations.Any())
+            if (_elevations.Any())
             {
                 _heightMapProcessor.Recycle(heightMap);
 

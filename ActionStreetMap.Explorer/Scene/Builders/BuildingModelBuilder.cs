@@ -13,7 +13,6 @@ using ActionStreetMap.Models.Buildings;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Models.Geometry.Polygons;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {

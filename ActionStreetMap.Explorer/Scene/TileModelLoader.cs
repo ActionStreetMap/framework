@@ -129,9 +129,6 @@ namespace ActionStreetMap.Explorer.Scene
 
             var rule = _stylesheet.GetCanvasRule(canvas);
 
-            if (_tile.HeightMap.IsFlat)
-                _tile.HeightMap.MaxElevation = rule.GetHeight();
-
             _terrainBuilder.Build(_tile.GameObject, new TerrainSettings
             {
                 Tile = _tile,

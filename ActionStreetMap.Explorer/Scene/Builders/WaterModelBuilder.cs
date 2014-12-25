@@ -69,7 +69,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 Points = verticies2D
             });
 
-            var vector3Ds = verticies2D.GetVerticies(elevation - 1f);
+            var vector3Ds = verticies2D.GetVerticies(elevation - 2.5f);
             var triangles = PointUtils.GetTriangles(verticies2D);
 
             //ObjectPool.Store(verticies2D);

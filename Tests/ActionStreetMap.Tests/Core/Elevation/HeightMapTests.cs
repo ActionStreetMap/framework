@@ -31,7 +31,6 @@ namespace ActionStreetMap.Tests.Core.Elevation
             });
 
             var provider = new HeightMapProvider(elevationProvider.Object);
-            provider.DoSmooth = false;
             
             // ACT
             var heightMap = provider.Get(new Tile(center, new MapPoint(), tileSize), resolution);

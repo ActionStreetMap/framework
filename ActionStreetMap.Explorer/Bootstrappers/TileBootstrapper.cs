@@ -1,6 +1,5 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Elevation;
-using ActionStreetMap.Core.Elevation.Srtm;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Infrastructure.Bootstrap;

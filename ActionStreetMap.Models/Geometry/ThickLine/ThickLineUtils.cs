@@ -149,7 +149,10 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
 
             return new MapPoint(
                 isVertical ? sideProjectionPoint.X + distance : sideProjectionPoint.X,
-                isVertical ? sideProjectionPoint.Y : sideProjectionPoint.Y + distance);
+                isVertical ? sideProjectionPoint.Y : sideProjectionPoint.Y + distance,
+                // NOTE Elevation is set only for flat mode. 
+                // However, is it possible that this logic is ignored completely for flat mode?
+                tilePoint.Elevation);
         }
 
         #endregion

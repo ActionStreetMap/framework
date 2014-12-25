@@ -34,8 +34,6 @@ namespace ActionStreetMap.Core.Elevation
         private bool _isFlat = false;
         private float[,] _map;
 
-        internal bool DoSmooth { get; set; }
-
         /// <summary>
         ///     Creates HeightMapProvider.
         /// </summary>
@@ -44,7 +42,6 @@ namespace ActionStreetMap.Core.Elevation
         public HeightMapProvider(IElevationProvider elevationProvider)
         {
             _elevationProvider = elevationProvider;
-            DoSmooth = true;
         }
 
         /// <inheritdoc />
@@ -56,15 +53,15 @@ namespace ActionStreetMap.Core.Elevation
 
             var bbox = tile.BoundingBox;
 
-            float maxElevation = 0;
-            float minElevation = 0;
-
+            float maxElevation;
+            float minElevation;
             // resolve height
             if (!_isFlat)
             {
                 minElevation = MaxHeight;
-                var latStep = (bbox.MaxPoint.Latitude - bbox.MinPoint.Latitude) / resolution;
-                var lonStep = (bbox.MaxPoint.Longitude - bbox.MinPoint.Longitude) / resolution;
+                maxElevation = -MaxHeight;
+                var latStep = (bbox.MaxPoint.Latitude - bbox.MinPoint.Latitude)/resolution;
+                var lonStep = (bbox.MaxPoint.Longitude - bbox.MinPoint.Longitude)/resolution;
 
                 // NOTE Assume that [0,0] is bottom left corner
                 var lat = bbox.MinPoint.Latitude + latStep/2;
@@ -87,13 +84,24 @@ namespace ActionStreetMap.Core.Elevation
                     lat += latStep;
                 }
             }
+            else
+            {
+                // NOTE values for non-flat mode
+                // TODO make them configurable?
+                maxElevation = 30;
+                minElevation = 10;
+                var middleValue = (maxElevation + minElevation)/2;
+                for (int j = 0; j < resolution; j++)
+                    for (int i = 0; i < resolution; i++)
+                        _map[j, i] = middleValue;
+            }
 
             return new HeightMap
             {
                 LeftBottomCorner = tile.BottomLeft,
                 RightUpperCorner = tile.TopRight,
                 AxisOffset = tile.Size / resolution,
-                IsFlat = false,
+                IsFlat = _isFlat,
                 Size = tile.Size,
                 Data = _map,
                 MinElevation = minElevation,

@@ -4,7 +4,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 
-namespace ActionStreetMap.Core.Elevation.Srtm
+namespace ActionStreetMap.Core.Elevation
 {
     /// <summary>
     ///     Implementation of <see cref="IElevationProvider"/> which uses SRTM data files.
@@ -19,7 +19,8 @@ namespace ActionStreetMap.Core.Elevation.Srtm
         private int _totalPx;
         private string _dataDirectory;
 
-        private int _srtmLat = 255; //default never valid
+        //default never valid
+        private int _srtmLat = 255;
         private int _srtmLon = 255;
 
         private byte[] _hgtData;
