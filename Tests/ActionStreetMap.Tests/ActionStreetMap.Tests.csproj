@@ -89,6 +89,8 @@
     <Compile Include="Osm\Index\ElementStoreTests.cs" />
     <Compile Include="Osm\Index\KeyValueIndexTests.cs" />
     <Compile Include="Osm\Index\KeyValueStoreTests.cs" />
+    <Compile Include="Osm\Index\KeyValueUsageTests.cs" />
+    <Compile Include="Osm\Index\SearchEngineTests.cs" />
     <Compile Include="Osm\Index\Utils.cs" />
     <Compile Include="Osm\LocationInfoTests.cs" />
     <Compile Include="Osm\MultipolygonProcessorTests.cs" />

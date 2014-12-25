@@ -39,7 +39,7 @@ namespace ActionStreetMap.Osm.Index.Storage
                 _writer = new BinaryWriter(_stream);
 
             var offset = (uint) _stream.Position;
-            WriteElement(element, _writer);
+            WriteElement(element, offset, _writer);
 
             return offset;
         }
@@ -62,7 +62,7 @@ namespace ActionStreetMap.Osm.Index.Storage
 
         #region Private: Write
 
-        private void WriteElement(Element element, BinaryWriter writer)
+        private void WriteElement(Element element, uint offset, BinaryWriter writer)
         {
             writer.Write(element.Id);
             if (element is Way)
@@ -80,7 +80,7 @@ namespace ActionStreetMap.Osm.Index.Storage
             if (element.Tags != null)
             {
                 foreach (KeyValuePair<string, string> pair in element.Tags)
-                    _offsetBuffer.Add(_keyValueStore.Insert(pair));
+                    _offsetBuffer.Add(_keyValueStore.Insert(pair, offset));
             }
 
             WriteTags(_offsetBuffer, writer);

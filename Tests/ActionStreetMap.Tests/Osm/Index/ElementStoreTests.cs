@@ -19,8 +19,9 @@ namespace ActionStreetMap.Tests.Osm.Index
             keyValueStream.WriteByte(4);
             keyValueStream.WriteByte(7);
 
+            var kvUsage = new KeyValueUsage(new MemoryStream(1000));
             var index = new KeyValueIndex(100, 3);
-            var keyValueStore = new KeyValueStore(index, keyValueStream);
+            var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStream);
 
             var elementStoreStream = new MemoryStream(new byte[10000]);
             _store = new ElementStore(keyValueStore, elementStoreStream);

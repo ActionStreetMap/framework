@@ -25,9 +25,12 @@ namespace ActionStreetMap.Osm.Index
     /// </summary>
     public class ElementSource : IElementSource
     {
-        private readonly SpatialIndex<uint> _spatialIndexTree;
-        private readonly KeyValueStore _kvStore;
-        private readonly ElementStore _elementStore;
+        // these values are used by search
+        internal readonly SpatialIndex<uint> SpatialIndexTree;
+        internal readonly KeyValueIndex KvIndex;
+        internal readonly KeyValueStore KvStore;
+        internal readonly KeyValueUsage KvUsage;
+        internal readonly ElementStore ElementStore;
 
         /// <summary>
         ///     Creates instance of <see cref="ElementSource" />.
@@ -37,29 +40,32 @@ namespace ActionStreetMap.Osm.Index
         public ElementSource(string directory, IFileSystemService fileService)
         {
             // load map data from streams
-            var kvIndex =
+            KvUsage = 
+                KeyValueUsage.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
+            KvIndex =
                 KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
-            _kvStore = new KeyValueStore(kvIndex,
+            KvStore = new KeyValueStore(KvIndex, KvUsage,
                 fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
-            _elementStore = new ElementStore(_kvStore,
+            ElementStore = new ElementStore(KvStore,
                 fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)));
-            _spatialIndexTree =
+            SpatialIndexTree =
                 SpatialIndex<uint>.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
         }
 
         /// <inheritdoc />
         public IEnumerable<Element> Get(BoundingBox bbox)
         {
-            var results = _spatialIndexTree.Search(new Envelop(bbox.MinPoint, bbox.MaxPoint));
+            var results = SpatialIndexTree.Search(new Envelop(bbox.MinPoint, bbox.MaxPoint));
             foreach (var result in results)
-                yield return _elementStore.Get(result);
+                yield return ElementStore.Get(result);
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            _kvStore.Dispose();
-            _elementStore.Dispose();
+            KvUsage.Dispose();
+            KvStore.Dispose();
+            ElementStore.Dispose();
         }
     }
 }

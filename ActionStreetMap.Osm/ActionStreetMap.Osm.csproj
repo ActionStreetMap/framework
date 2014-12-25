@@ -79,7 +79,9 @@
     <Compile Include="Index\Spatial\RTree.cs" />
     <Compile Include="Index\Spatial\SpatialIndex.cs" />
     <Compile Include="Index\Consts.cs" />
+    <Compile Include="Index\Storage\KeyValueUsage.cs" />
     <Compile Include="MapTileLoader.cs" />
+    <Compile Include="Strings.cs" />
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
     <Compile Include="Visitors\WayVisitor.cs" />

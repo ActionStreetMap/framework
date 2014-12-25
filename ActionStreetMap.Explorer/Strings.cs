@@ -7,5 +7,11 @@
         public static string InvalidPolyline = "Attempt to render polyline with less than 2 points";
         public static string InvalidUvMappingDefinition = "Cannot read uv mapping: '{0}'. Something is wrong with theme files?";
         public static string CannotChangeRelativeNullPoint = "You cannot change relative null point dynamically!";
+
+        #region Commands
+
+        public static string TagCommand = "Tag search";
+
+        #endregion
     }
 }

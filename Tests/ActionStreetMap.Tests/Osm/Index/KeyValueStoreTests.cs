@@ -19,8 +19,9 @@ namespace ActionStreetMap.Tests.Osm.Index
             stream.WriteByte(4);
             stream.WriteByte(7);
 
+            var kvUsage = new KeyValueUsage(new MemoryStream(1000));
             var index = new KeyValueIndex(100, 3);
-            _store = new KeyValueStore(index, stream);
+            _store = new KeyValueStore(index, kvUsage, stream);
         }
 
         [Test]
@@ -31,8 +32,8 @@ namespace ActionStreetMap.Tests.Osm.Index
             var pair2 = new KeyValuePair<string, string>("addr", "inv");
 
             // ACT
-            _store.Insert(pair1);
-            var offset = _store.Insert(pair2);
+            _store.Insert(pair1, 0);
+            var offset = _store.Insert(pair2, 0);
             var result = _store.Get(offset);
 
             // ASSERT
@@ -47,8 +48,8 @@ namespace ActionStreetMap.Tests.Osm.Index
             var pair2 = new KeyValuePair<string, string>("addr", "inv");
 
             // ACT
-            _store.Insert(pair1);
-            _store.Insert(pair2);
+            _store.Insert(pair1, 0);
+            _store.Insert(pair2, 0);
             var result = _store.Search(pair2);
 
             // ASSERT
@@ -64,8 +65,8 @@ namespace ActionStreetMap.Tests.Osm.Index
             var pair2 = new KeyValuePair<string, string>("addr", "eic");
 
             // ACT
-            var offset1 = _store.Insert(pair1);
-            var offset2 = _store.Insert(pair2);
+            var offset1 = _store.Insert(pair1, 0);
+            var offset2 = _store.Insert(pair2, 0);
 
             // ASSERT
             Assert.AreEqual(offset1, offset2);
@@ -75,12 +76,12 @@ namespace ActionStreetMap.Tests.Osm.Index
         public void CanInsertMultiplyWithCollision()
         {
             // ARRANGE
-            _store.Insert(new KeyValuePair<string, string>("addr", "eic"));
-            _store.Insert(new KeyValuePair<string, string>("addr", "inv"));
-            _store.Insert(new KeyValuePair<string, string>("addr", "eic")); //  the same
-            _store.Insert(new KeyValuePair<string, string>("addr", "eic1")); // collision
-            _store.Insert(new KeyValuePair<string, string>("addr", "inv1")); // collision
-            _store.Insert(new KeyValuePair<string, string>("addr", "eic2")); // collision
+            _store.Insert(new KeyValuePair<string, string>("addr", "eic"), 0);
+            _store.Insert(new KeyValuePair<string, string>("addr", "inv"), 0);
+            _store.Insert(new KeyValuePair<string, string>("addr", "eic"), 0); //  the same
+            _store.Insert(new KeyValuePair<string, string>("addr", "eic1"), 0); // collision
+            _store.Insert(new KeyValuePair<string, string>("addr", "inv1"), 0); // collision
+            _store.Insert(new KeyValuePair<string, string>("addr", "eic2"), 0); // collision
 
             // ACT
             var result1 = _store.Search(new KeyValuePair<string, string>("addr", "eic")).ToList();

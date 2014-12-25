@@ -4,24 +4,29 @@ using System.IO;
 
 namespace ActionStreetMap.Osm.Index.Storage
 {
+    /// <summary>
+    ///     Stores key value pairs.
+    /// </summary>
     internal sealed class KeyValueStore: IDisposable
     {
         private readonly Stream _stream;
         private readonly byte[] _byteBuffer;
         private readonly char[] _charBuffer;
 
+        private readonly KeyValueUsage _usage;
         private readonly KeyValueIndex _index;
         private readonly int _prefixLength;
 
         private uint _nextOffset;
 
-        public KeyValueStore(KeyValueIndex index, Stream stream)
+        public KeyValueStore(KeyValueIndex index, KeyValueUsage usage, Stream stream)
         {
             _prefixLength = index.PrefixLength;
             _stream = stream;
 
             // TODO configure consts
             _index = index;
+            _usage = usage;
 
             // NOTE buffer size limited to byte.MaxValue which affect max string size
             _byteBuffer = new byte[256];
@@ -36,17 +41,18 @@ namespace ActionStreetMap.Osm.Index.Storage
         ///     Inserts pair into store if it's not there
         /// </summary>
         /// <param name="pair">Pair.</param>
+        /// <param name="usageOffset">Element usage offset.</param>
         /// <returns>Pair offset.</returns>
-        public uint Insert(KeyValuePair<string, string> pair)
+        public uint Insert(KeyValuePair<string, string> pair, uint usageOffset)
         {
             var offset = _index.GetOffset(pair);
             if (offset == 0)
             {
                 // TODO hash is calculated twice here
                 _index.Add(pair, _nextOffset);
-                return InsertNew(pair);
+                return InsertNew(pair, usageOffset);
             }
-            return InsertNext(pair, offset);
+            return InsertNext(pair, offset, usageOffset);
         }
 
         /// <summary>
@@ -71,6 +77,16 @@ namespace ActionStreetMap.Osm.Index.Storage
             return new KeyValuePair<string, string>(entry.Key, entry.Value);
         }
 
+        /// <summary>
+        ///     Gets usage offset by given key value offset.
+        /// </summary>
+        /// <param name="offset">Offset.</param>
+        /// <returns>Usage offset.</returns>
+        public uint GetUsage(uint offset)
+        {
+            return ReadEntry(offset).Usage;
+        }
+
         #region Private members
 
         private IEnumerable<Entry> GetEntries(KeyValuePair<string, string> query)
@@ -90,23 +106,25 @@ namespace ActionStreetMap.Osm.Index.Storage
             } while (offset != 0);
         }
 
-        private uint InsertNew(KeyValuePair<string, string> pair)
+        private uint InsertNew(KeyValuePair<string, string> pair, uint usageOffset)
         {
             // maybe seek zero from end?
             if (_stream.Position != _nextOffset)
                 _stream.Seek(_nextOffset, SeekOrigin.Begin);
             var offset = _nextOffset;
+            var firstUsageOffset = _usage.Insert(usageOffset);
             var entry = new Entry
             {
                 Key = pair.Key,
                 Value = pair.Value,
+                Usage = firstUsageOffset,
                 Next = 0
             };
             WriteEntry(entry);
             return offset;
         }
 
-        private uint InsertNext(KeyValuePair<string, string> pair, uint offset)
+        private uint InsertNext(KeyValuePair<string, string> pair, uint offset, uint usageOffset)
         {
             // seek for last item
             uint lastCollisionEntryOffset = offset;
@@ -116,14 +134,17 @@ namespace ActionStreetMap.Osm.Index.Storage
                 var entry = ReadEntry(offset);
                 // Do not insert duplicates
                 if (entry.Key == pair.Key && entry.Value == pair.Value)
+                {
+                    _usage.Insert(entry.Usage, usageOffset);
                     return offset;
+                }
 
                 lastCollisionEntryOffset = offset;
                 offset = entry.Next;
             }
 
             // write entry
-            var lastEntryOffset = InsertNew(pair);
+            var lastEntryOffset = InsertNew(pair, usageOffset);
             
             // let previous entry to point to newly created one
             SkipEntryData(lastCollisionEntryOffset);
@@ -226,10 +247,10 @@ namespace ActionStreetMap.Osm.Index.Storage
 
         private struct Entry
         {
-            public string Key;
-            public string Value;
-            public uint Usage;
-            public uint Next;
+            public string Key;   // Key 
+            public string Value; // Value
+            public uint Usage;   // Link to first usage entry in usage stream.
+            public uint Next;    // Link to next kv entry in store stream.
         }
 
         #endregion

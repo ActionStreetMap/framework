@@ -20,7 +20,14 @@ namespace ActionStreetMap.Osm.Index
         /// <summary>
         ///     Returns element source by query represented by bounding box.
         /// </summary>
+        /// <returns>Element source.</returns>
         IElementSource Get(BoundingBox query);
+
+        /// <summary>
+        ///     Returns active element source.
+        /// </summary>
+        /// <returns>Element source.</returns>
+        IElementSource Get();
     }
 
     /// <summary>
@@ -48,6 +55,13 @@ namespace ActionStreetMap.Osm.Index
             _fileSystemService = fileSystemService;
         }
 
+        /// <inheritdoc />
+        public IElementSource Get()
+        {
+            return _elementSourceCache != null ? _elementSourceCache.Item2 : null;
+        }
+
+        /// <inheritdoc />
         public IElementSource Get(BoundingBox query)
         {
             var sourcePaths = _searchTree
