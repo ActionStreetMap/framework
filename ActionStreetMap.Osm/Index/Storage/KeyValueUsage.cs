@@ -17,8 +17,6 @@ namespace ActionStreetMap.Osm.Index.Storage
         public KeyValueUsage(Stream stream)
         {
             _stream = stream;
-            _nextOffset = 2;
-            _stream.Seek(_nextOffset, SeekOrigin.Begin);
         }
 
         /// <summary>
@@ -90,22 +88,9 @@ namespace ActionStreetMap.Osm.Index.Storage
 
         #endregion
 
-        #region Static methods
-
-        public static KeyValueUsage Load(Stream stream)
-        {
-            return null;
-        }
-
-        public static void Save(KeyValueUsage usage)
-        {
-        }
-
-        #endregion
-
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _stream.Dispose();
         }
     }
 }

@@ -41,7 +41,7 @@ namespace ActionStreetMap.Osm.Index
         {
             // load map data from streams
             KvUsage = 
-                KeyValueUsage.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
+                new KeyValueUsage(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
             KvIndex =
                 KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
             KvStore = new KeyValueStore(KvIndex, KvUsage,
