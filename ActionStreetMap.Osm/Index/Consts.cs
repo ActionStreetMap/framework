@@ -14,7 +14,7 @@
         /// <summary>
         ///     Path to tag usage file which
         /// </summary>
-        public const string KeyValueUsagePathFormat = @"{0}/tags.usg.txt";
+        public const string KeyValueUsagePathFormat = @"{0}/tags.usg.bytes";
         public const string KeyValueStorePathFormat = @"{0}/tags.dat.bytes";
         public const string KeyValueIndexPathFormat = @"{0}/tags.idx.bytes";
         public const string ElementStorePathFormat = @"{0}/elements.dat.bytes";

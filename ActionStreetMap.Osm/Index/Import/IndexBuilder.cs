@@ -31,6 +31,8 @@ namespace ActionStreetMap.Osm.Index.Import
         private IndexSettings _settings;
         private IndexStatistic _indexStatistic;
 
+        private string _outputDirectory;
+
         [Dependency]
         public ITrace Trace { get; set; }
 
@@ -46,6 +48,7 @@ namespace ActionStreetMap.Osm.Index.Import
             if(String.IsNullOrEmpty(extension) || extension.ToLower() != ".o5m")
                 throw new NotSupportedException(Strings.NotSupportedMapFormat);
 
+            _outputDirectory = outputDirectory;
             _indexStatistic = new IndexStatistic(Trace);
 
             var kvUsageMemoryStream = new MemoryStream();
@@ -215,6 +218,11 @@ namespace ActionStreetMap.Osm.Index.Import
         public void ProcessBoundingBox(BoundingBox bbox)
         {
             // TODO save header file
+            using (var writer = new StreamWriter(new FileStream(String.Format(Consts.HeaderPathFormat, _outputDirectory),
+                    FileMode.Create)))
+            {
+                writer.Write("{0} {1}", bbox.MinPoint, bbox.MaxPoint);
+            }
         }
 
         public void Complete()

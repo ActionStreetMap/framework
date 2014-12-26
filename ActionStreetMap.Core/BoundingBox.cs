@@ -35,41 +35,6 @@ namespace ActionStreetMap.Core
         }
 
         /// <summary>
-        ///     Checks whether point with given latitude and longitude is in bounding box
-        /// </summary>
-        /// <param name="latitude">Latitude</param>
-        /// <param name="longitude">Longitude</param>
-        /// <returns>True if point in bounding box</returns>
-        public bool Contains(double latitude, double longitude)
-        {
-            return (MaxPoint.Latitude > latitude && latitude >= MinPoint.Latitude) &&
-                   (MaxPoint.Longitude > longitude && longitude >= MinPoint.Longitude);
-        }
-
-        /// <summary>
-        ///     Checks whether given geo coordinate is in bounding box
-        /// </summary>
-        /// <param name="point">Geocoordinate</param>
-        /// <returns>True if point in bounding box</returns>
-        public bool Contains(GeoCoordinate point)
-        {
-            return Contains(point.Latitude, point.Longitude);
-        }
-
-        /// <summary>
-        ///     Checks whether given bounding box and current are intersecting
-        /// </summary>
-        /// <param name="bbox">Bounding box</param>
-        /// <returns>True if intersect</returns>
-        public bool Intersect(BoundingBox bbox)
-        {
-            //return this.MaxPoint
-            //(X2' >= X1 && X1' <= X2) && (Y2' >= Y1 && Y1' <= Y2)
-            return (bbox.MaxPoint.Latitude >= MinPoint.Latitude && bbox.MinPoint.Latitude <= MaxPoint.Latitude) &&
-                   (bbox.MaxPoint.Longitude >= MinPoint.Longitude && bbox.MinPoint.Longitude <= MaxPoint.Longitude);
-        }
-
-        /// <summary>
         ///     Gets size of bbox's side
         /// </summary>
         public double Size()

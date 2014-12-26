@@ -46,6 +46,7 @@ namespace ActionStreetMap.Osm.Index
         private RTree<string> _insertTree;
         private Tuple<string, IElementSource> _elementSourceCache;
 
+        [Dependency]
         public ITrace Trace { get; set; }
 
         [Dependency]
