@@ -139,6 +139,7 @@ namespace ActionStreetMap.Core.Elevation
             return (_hgtData[pos]) << 8 | _hgtData[pos + 1];
         }
 
+        /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
             var path = configSection.GetString(PathKey);

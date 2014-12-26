@@ -17,7 +17,7 @@ using ActionStreetMap.Osm.Index.Storage;
 
 namespace ActionStreetMap.Osm.Index.Import
 {
-    internal class IndexBuilder : IConfigurable
+    internal sealed class IndexBuilder : IConfigurable, IDisposable
     {
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
@@ -82,6 +82,8 @@ namespace ActionStreetMap.Osm.Index.Import
             KeyValueIndex.Save(index, new FileStream(String.Format(Consts.KeyValueIndexPathFormat, outputDirectory), FileMode.Create));
             SpatialIndex<uint>.Save(_tree, new FileStream(String.Format(Consts.SpatialIndexPathFormat, outputDirectory), FileMode.Create));
             _store.Dispose();
+            _store = null;
+            _tree = null;
         }
 
         public void ProcessNode(Node node, int tagCount)
@@ -250,6 +252,12 @@ namespace ActionStreetMap.Osm.Index.Import
             var importNode = rootNode["import"];
             _settings = new IndexSettings();
             _settings.ReadFromJson(importNode);
+        }
+
+        public void Dispose()
+        {
+            if(_store != null)
+                _store.Dispose();
         }
     }
 }

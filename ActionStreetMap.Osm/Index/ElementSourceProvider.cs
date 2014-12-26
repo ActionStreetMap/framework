@@ -33,7 +33,7 @@ namespace ActionStreetMap.Osm.Index
     /// <summary>
     ///     Default implementation of <see cref="IElementSourceProvider"/>
     /// </summary>
-    public class ElementSourceProvider : IElementSourceProvider, IConfigurable
+    public sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
     {
         private const string MapPathKey = "";
 
@@ -46,9 +46,17 @@ namespace ActionStreetMap.Osm.Index
         private RTree<string> _insertTree;
         private Tuple<string, IElementSource> _elementSourceCache;
 
+        /// <summary>
+        ///     Trace.
+        /// </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 
+        /// <summary>
+        ///     Creates instance of <see cref="ElementSourceProvider"/>.
+        /// </summary>
+        /// <param name="pathResolver">Path resolver.</param>
+        /// <param name="fileSystemService">File system service.</param>
         [Dependency]
         public ElementSourceProvider(IPathResolver pathResolver, IFileSystemService fileSystemService)
         {
@@ -124,6 +132,7 @@ namespace ActionStreetMap.Osm.Index
             return new GeoCoordinate(latitude, longitude);
         }
 
+        /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
             _insertTree = new RTree<string>();
@@ -134,6 +143,7 @@ namespace ActionStreetMap.Osm.Index
             _insertTree = null;
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             if(_elementSourceCache != null)

@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Scene
         private Tile _tile;
 
         /// <summary>
-        ///     Creates TileModelLoader.
+        ///     Creates <see cref="TileModelLoader"/>
         /// </summary>
         [Dependency]
         public TileModelLoader(IGameObjectFactory gameObjectFactory, IThemeProvider themeProvider,

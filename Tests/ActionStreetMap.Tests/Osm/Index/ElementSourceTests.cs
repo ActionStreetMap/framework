@@ -1,13 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Osm.Entities;
 using ActionStreetMap.Osm.Index;
-using ActionStreetMap.Osm.Index.Spatial;
-using ActionStreetMap.Osm.Index.Storage;
-using Moq;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Osm.Index

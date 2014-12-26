@@ -23,7 +23,7 @@ namespace ActionStreetMap.Osm.Index
     ///     Default implementation of <see cref="IElementSource" />. It uses custom map data format which should created using
     ///     ASM framework's importer.
     /// </summary>
-    public class ElementSource : IElementSource
+    public sealed class ElementSource : IElementSource
     {
         // these values are used by search
         internal readonly SpatialIndex<uint> SpatialIndexTree;

@@ -218,8 +218,11 @@ namespace ActionStreetMap.Osm.Index.Storage
 
         public void Dispose()
         {
+            _keyValueStore.Dispose();
             if (_writer != null)
                 _writer.Close();
+            if(_reader != null)
+                _reader.Close();
             _stream.Dispose();
         }
     }

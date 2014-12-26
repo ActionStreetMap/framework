@@ -8,8 +8,6 @@ using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Osm.Formats;
-using ActionStreetMap.Osm.Formats.O5m;
 using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Index.Import;
 using ActionStreetMap.Osm.Index.Spatial;
@@ -19,7 +17,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(55.7537315, 37.6198537);
+        private readonly GeoCoordinate _startGeoCoordinate = TestHelper.BerlinTestFilePoint;
         private readonly string _nmeaFilePath = TestHelper.TestNmeaFilePath;
 
         private readonly Container _container = new Container();
@@ -40,12 +38,15 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            //program.RunGame();
-            //program.RunMocker();
-            //program.Wait();
+            program.RunGame();
+            program.RunMocker();
+            program.Wait();
 
-            //program.CreateIndex();
-             program.ReadIndex();
+            /*program.CreateIndex(
+                @"g:\__ASM\_other_projects\osmconvert\1.o5m",
+                @"g:\__ASM\__repository\framework\Tests\TestAssets\DemoResources\Config\themes\default\index.json",
+                "Index");*/
+           // program.ReadIndex("Index");
         }
 
         public void RunMocker()
@@ -93,31 +94,29 @@ namespace ActionStreetMap.Tests
 
         #region Index experiments
 
-        private const string Directory = "Index_test";
-
-        private void CreateIndex()
+        private void CreateIndex(string o5mFile, string settingsFile, string outputDirectory)
         {
             var builder = new IndexBuilder();
             builder.Trace = new ConsoleTrace();
-            builder.Configure(new ConfigSection("{\"index\":\"g:/__ASM/__repository/framework/Tests/TestAssets/DemoResources/Config/themes/default/index.json\"}"));
-            builder.Build(@"g:\__ASM\_other_projects\osmconvert\moscow.o5m", Directory);
+            builder.Configure(new ConfigSection(String.Format("{{\"index\":\"{0}\"}}", settingsFile.Replace("\\","/"))));
+            builder.Build(o5mFile, outputDirectory);
         }
 
-        private void ReadIndex()
+        private void ReadIndex(string indexDirectory)
         {
             var logger = new PerformanceLogger();
             logger.Start();
 
-            var usage = new KeyValueUsage(new FileStream(String.Format(Consts.KeyValueUsagePathFormat, Directory),FileMode.Open));
-            var tree = SpatialIndex<uint>.Load(new FileStream(String.Format(Consts.SpatialIndexPathFormat, Directory), FileMode.Open));
-            var index = KeyValueIndex.Load(new FileStream(String.Format(Consts.KeyValueIndexPathFormat, Directory), FileMode.Open));
-            var keyValueStore = new KeyValueStore(index, usage, new FileStream(String.Format(Consts.KeyValueStorePathFormat, Directory), FileMode.Open));
-            var store = new ElementStore(keyValueStore, new FileStream(String.Format(Consts.ElementStorePathFormat, Directory), FileMode.Open));
+            var usage = new KeyValueUsage(new FileStream(String.Format(Consts.KeyValueUsagePathFormat, indexDirectory),FileMode.Open));
+            var tree = SpatialIndex<uint>.Load(new FileStream(String.Format(Consts.SpatialIndexPathFormat, indexDirectory), FileMode.Open));
+            var index = KeyValueIndex.Load(new FileStream(String.Format(Consts.KeyValueIndexPathFormat, indexDirectory), FileMode.Open));
+            var keyValueStore = new KeyValueStore(index, usage, new FileStream(String.Format(Consts.KeyValueStorePathFormat, indexDirectory), FileMode.Open));
+            var store = new ElementStore(keyValueStore, new FileStream(String.Format(Consts.ElementStorePathFormat, indexDirectory), FileMode.Open));
 
             InvokeAndMeasure(() =>
             {
-                var results = tree.Search(new Envelop(new GeoCoordinate(52.5281163, 13.3848696),
-                        new GeoCoordinate(52.5357719, 13.3896976)));
+                var results = tree.Search(new Envelop(new GeoCoordinate(52.54,13.346),
+                        new GeoCoordinate(52.552, 13.354)));
                 foreach (var result in results)
                 {
                     var element = store.Get(result);
