@@ -18,7 +18,10 @@ namespace ActionStreetMap.Tests.Osm.Index
         [SetUp]
         public void Setup()
         {
-            _kvUsage = new KeyValueUsage(new MemoryStream(1026));
+            var kvUsagesream = new MemoryStream(1026);
+            kvUsagesream.WriteByte(4);
+            kvUsagesream.WriteByte(7);
+            _kvUsage = new KeyValueUsage(kvUsagesream);
 
             var keyValueStream = new MemoryStream(new byte[256]);
             keyValueStream.WriteByte(4);
@@ -59,8 +62,8 @@ namespace ActionStreetMap.Tests.Osm.Index
             // ASSERT
             Assert.IsNotNull(results1);
             Assert.AreEqual(2, results1.Length);
-            Assert.AreEqual(offset1, results1[0]);
-            Assert.AreEqual(offset2, results1[1]);
+            Assert.AreEqual(offset1, results1[1]);
+            Assert.AreEqual(offset2, results1[0]);
 
             Assert.IsNotNull(results2);
             Assert.AreEqual(1, results2.Length);

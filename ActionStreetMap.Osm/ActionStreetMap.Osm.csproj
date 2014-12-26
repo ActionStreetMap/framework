@@ -64,10 +64,11 @@
     </Compile>
     <Compile Include="Formats\Xml\XmlSimpleConverter.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
-    <Compile Include="Index\Import\HeightMapBuilder.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
     <Compile Include="Index\ElementSource.cs" />
     <Compile Include="Index\ElementSourceProvider.cs" />
+    <Compile Include="Index\Import\IndexSettings.cs" />
+    <Compile Include="Index\Import\IndexStatistic.cs" />
     <Compile Include="Index\Storage\ElementStore.cs" />
     <Compile Include="Index\Helpers\ElementType.cs" />
     <Compile Include="Index\Storage\KeyValueStore.cs" />

@@ -67,6 +67,19 @@ namespace ActionStreetMap.Tests.Infrastructure
             Assert.AreEqual(1, node.GetInt("k"));
         }
 
+        [Test]
+        public void CanReadValueFromString()
+        {
+            // ARRANGE
+            var config = new ConfigSection("{\"k\":\"ggg\"}");
+
+            // ACT
+            var value = config.GetString("k");
+
+            // ASSERT
+            Assert.AreEqual("ggg", value);
+        }
+
         #endregion
 
         #region Helpers

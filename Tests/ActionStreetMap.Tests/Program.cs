@@ -6,6 +6,7 @@ using System.Threading;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
+using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm.Formats;
 using ActionStreetMap.Osm.Formats.O5m;
@@ -18,7 +19,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(52.5499766666667, 13.350695);
+        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(55.7537315, 37.6198537);
         private readonly string _nmeaFilePath = TestHelper.TestNmeaFilePath;
 
         private readonly Container _container = new Container();
@@ -39,12 +40,12 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            program.RunGame();
-            program.RunMocker();
-            program.Wait();
+            //program.RunGame();
+            //program.RunMocker();
+            //program.Wait();
 
-            // program.CreateIndex();
-            // program.ReadIndex();
+            //program.CreateIndex();
+             program.ReadIndex();
         }
 
         public void RunMocker()
@@ -92,37 +93,14 @@ namespace ActionStreetMap.Tests
 
         #region Index experiments
 
-        private const string Directory = "Index";
+        private const string Directory = "Index_test";
 
         private void CreateIndex()
         {
-            var keyValueStoreFile = new FileStream(String.Format(Consts.KeyValueStorePathFormat, Directory), FileMode.Create);
-            var index = new KeyValueIndex(300000, 4);
-            var keyValueStore = new KeyValueStore(index, keyValueStoreFile);
-
-            var storeFile = new FileStream(String.Format(Consts.ElementStorePathFormat, Directory), FileMode.Create);
-            var store = new ElementStore(keyValueStore, storeFile);
-
-            var logger = new PerformanceLogger();
-            logger.Start();
-
-            var tree = new RTree<uint>(65);
-            var builder = new IndexBuilder(tree, store, new ConsoleTrace());
-            var reader = new O5mReader(new ReaderContext()
-            {
-                SourceStream = new FileStream(@"f:\Downloads\berlin.o5m", FileMode.Open),
-                Builder = builder,
-                ReuseEntities = false,
-                SkipTags = false,
-            });
-
-            reader.Parse();
-            builder.Clear();
-            builder.Complete();
-            logger.Stop();
-
-            KeyValueIndex.Save(index, new FileStream(String.Format(Consts.KeyValueIndexPathFormat, Directory), FileMode.Create));
-            SpatialIndex<uint>.Save(tree, new FileStream(String.Format(Consts.SpatialIndexPathFormat, Directory), FileMode.Create));
+            var builder = new IndexBuilder();
+            builder.Trace = new ConsoleTrace();
+            builder.Configure(new ConfigSection("{\"index\":\"g:/__ASM/__repository/framework/Tests/TestAssets/DemoResources/Config/themes/default/index.json\"}"));
+            builder.Build(@"g:\__ASM\_other_projects\osmconvert\moscow.o5m", Directory);
         }
 
         private void ReadIndex()
@@ -130,9 +108,10 @@ namespace ActionStreetMap.Tests
             var logger = new PerformanceLogger();
             logger.Start();
 
+            var usage = new KeyValueUsage(new FileStream(String.Format(Consts.KeyValueUsagePathFormat, Directory),FileMode.Open));
             var tree = SpatialIndex<uint>.Load(new FileStream(String.Format(Consts.SpatialIndexPathFormat, Directory), FileMode.Open));
             var index = KeyValueIndex.Load(new FileStream(String.Format(Consts.KeyValueIndexPathFormat, Directory), FileMode.Open));
-            var keyValueStore = new KeyValueStore(index, new FileStream(String.Format(Consts.KeyValueStorePathFormat, Directory), FileMode.Open));
+            var keyValueStore = new KeyValueStore(index, usage, new FileStream(String.Format(Consts.KeyValueStorePathFormat, Directory), FileMode.Open));
             var store = new ElementStore(keyValueStore, new FileStream(String.Format(Consts.ElementStorePathFormat, Directory), FileMode.Open));
 
             InvokeAndMeasure(() =>

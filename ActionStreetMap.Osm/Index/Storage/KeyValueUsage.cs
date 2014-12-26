@@ -17,45 +17,29 @@ namespace ActionStreetMap.Osm.Index.Storage
         public KeyValueUsage(Stream stream)
         {
             _stream = stream;
-        }
-
-        /// <summary>
-        ///     Inserts new entry into stream.
-        /// </summary>
-        /// <param name="usageOffset">Usage offset.</param>
-        /// <returns>Entry offset.</returns>
-        public uint Insert(uint usageOffset)
-        {
-            _stream.Seek(_nextOffset, SeekOrigin.Begin);
-            var position = _stream.Position;
-            WriteUint(usageOffset);
-            WriteUint(0);
-            _nextOffset += 8;
-            return (uint) position;
+            _nextOffset = 2;
         }
 
         /// <summary>
         ///     Inserts new and update last reference to point to it
         /// </summary>
-        /// <param name="firstEntryOffset"></param>
+        /// <param name="previousEntryOffset"></param>
         /// <param name="usageOffset"></param>
-        public uint Insert(uint firstEntryOffset, uint usageOffset)
+        public uint Insert(uint previousEntryOffset, uint usageOffset)
         {
-            uint offset = 1;
-            while (offset != 0)
-            {
-                _stream.Seek(firstEntryOffset, SeekOrigin.Begin);
-                ReadUint();
-                offset = ReadUint();
-            }
-
-            // go back to link position
-            _stream.Seek(-4, SeekOrigin.Current);
-            WriteUint(_nextOffset);
-
-            return Insert(usageOffset);
+            _stream.Seek(_nextOffset, SeekOrigin.Begin);
+            var position = _stream.Position;
+            WriteUint(usageOffset);
+            WriteUint(previousEntryOffset);
+            _nextOffset += 8;
+            return (uint)position;
         }
 
+        /// <summary>
+        ///     Gets element offsets which use given entry.
+        /// </summary>
+        /// <param name="offset">Entry offset.</param>
+        /// <returns>Element offset collection.</returns>
         public IEnumerable<uint> Get(uint offset)
         {
             uint next = offset;

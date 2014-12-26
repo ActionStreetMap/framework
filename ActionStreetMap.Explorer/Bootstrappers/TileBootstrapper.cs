@@ -6,6 +6,7 @@ using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm;
 using ActionStreetMap.Osm.Index;
+using ActionStreetMap.Osm.Index.Search;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
@@ -49,6 +50,9 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .Use<TileManager>()
                 .Singleton()
                 .SetConfig(GlobalConfigSection.GetSection(TileKey)));
+
+            // provides text search feature
+            Container.Register(Component.For<SearchEngine>().Use<SearchEngine>().Singleton());
             
             return true;
         }

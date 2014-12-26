@@ -13,26 +13,33 @@ namespace ActionStreetMap.Osm.Index.Search
     {
         private readonly IElementSourceProvider _elementSourceProvider;
 
+        /// <summary>
+        ///     Creates instance of <see cref="SearchEngine"/>
+        /// </summary>
+        /// <param name="elementSourceProvider">Element source provider.</param>
         [Dependency]
-        public SearchEngine(IElementSourceProvider elementSourceProvider
-            /*KeyValueIndex index, KeyValueStore kvStore, ElementStore elementStore*/)
+        public SearchEngine(IElementSourceProvider elementSourceProvider)
         {
             _elementSourceProvider = elementSourceProvider;
         }
 
         /// <summary>
-        ///     Lookups elements with given key/value in current active element source.
+        ///     Searches all elements with given key and similiar value in current active element source.
         /// </summary>
         /// <param name="key">Tag key.</param>
         /// <param name="value">Tag value.</param>
-        /// <returns>Elements.</returns>
-        public IEnumerable<Element> LookupByTag(string key, string value)
+        /// <returns>Element collection.</returns>
+        public IEnumerable<Element> SearchByTag(string key, string value)
         {
             var elementSource = GetElementSource();
-
-            //var offset = elementSource.KvIndex.GetOffset(new KeyValuePair<string, string>(key, value));
-
-            return null;
+            foreach (var pair in elementSource.KvStore.Search(new KeyValuePair<string, string>(key, value)))
+            {
+                var kvOffset = elementSource.KvIndex.GetOffset(pair);
+                var usageOffset = elementSource.KvStore.GetUsage(kvOffset);
+                var offsets = elementSource.KvUsage.Get(usageOffset);
+                foreach (var offset in offsets)
+                    yield return elementSource.ElementStore.Get(offset);
+            }
         }
 
         private ElementSource GetElementSource()

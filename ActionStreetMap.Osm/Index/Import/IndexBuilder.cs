@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Config;
+using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Osm.Entities;
+using ActionStreetMap.Osm.Formats;
+using ActionStreetMap.Osm.Formats.O5m;
 using ActionStreetMap.Osm.Index.Helpers;
 using ActionStreetMap.Osm.Index.Spatial;
 using ActionStreetMap.Osm.Index.Storage;
 
 namespace ActionStreetMap.Osm.Index.Import
 {
-    internal class IndexBuilder
+    internal class IndexBuilder : IConfigurable
     {
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
@@ -20,23 +26,67 @@ namespace ActionStreetMap.Osm.Index.Import
         private List<Tuple<Relation, Envelop>> _relations = new List<Tuple<Relation, Envelop>>(10240);
         private HashSet<long> _skippedRelations = new HashSet<long>();
 
-        private readonly RTree<uint> _tree;
-        private readonly ElementStore _store;
-        private readonly Statistics _statistics;
+        private RTree<uint> _tree;
+        private ElementStore _store;
+        private IndexSettings _settings;
+        private IndexStatistic _indexStatistic;
 
-        public IndexBuilder(RTree<uint> tree, ElementStore store, ITrace trace)
+        [Dependency]
+        public ITrace Trace { get; set; }
+
+        [Dependency]
+        public IndexBuilder()
         {
-            _tree = tree;
-            _store = store;
-            _statistics = new Statistics(trace);
+        }
+
+        public void Build(string filePath, string outputDirectory)
+        {
+            var extension = Path.GetExtension(filePath);
+            // TODO support different formats
+            if(String.IsNullOrEmpty(extension) || extension.ToLower() != ".o5m")
+                throw new NotSupportedException(Strings.NotSupportedMapFormat);
+
+            _indexStatistic = new IndexStatistic(Trace);
+
+            var kvUsageMemoryStream = new MemoryStream();
+            var kvUsage = new KeyValueUsage(kvUsageMemoryStream);
+
+            var keyValueStoreFile = new FileStream(String.Format(Consts.KeyValueStorePathFormat, outputDirectory), FileMode.Create);
+            var index = new KeyValueIndex(300000, 4);
+            var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStoreFile);
+
+            var storeFile = new FileStream(String.Format(Consts.ElementStorePathFormat, outputDirectory), FileMode.Create);
+            _store = new ElementStore(keyValueStore, storeFile);
+            _tree = new RTree<uint>(65);
+
+            var reader = new O5mReader(new ReaderContext
+            {
+                SourceStream = new FileStream(filePath, FileMode.Open),
+                Builder = this,
+                ReuseEntities = false,
+                SkipTags = false,
+            });
+            reader.Parse();
+            Clear();
+            Complete();
+
+            using (var kvFileStream = new FileStream(String.Format(Consts.KeyValueUsagePathFormat, outputDirectory), FileMode.Create))
+            {
+                var buffer = kvUsageMemoryStream.GetBuffer();
+                kvFileStream.Write(buffer, 0, (int)kvUsageMemoryStream.Length);
+            }
+
+            KeyValueIndex.Save(index, new FileStream(String.Format(Consts.KeyValueIndexPathFormat, outputDirectory), FileMode.Create));
+            SpatialIndex<uint>.Save(_tree, new FileStream(String.Format(Consts.SpatialIndexPathFormat, outputDirectory), FileMode.Create));
+            _store.Dispose();
         }
 
         public void ProcessNode(Node node, int tagCount)
         {
-            _statistics.IncrementTotal(ElementType.Node);
+            _indexStatistic.IncrementTotal(ElementType.Node);
             if (node.Id < 0)
             {
-                _statistics.Skip(node.Id, ElementType.Node);
+                _indexStatistic.Skip(node.Id, ElementType.Node);
                 return;
             }
 
@@ -44,25 +94,23 @@ namespace ActionStreetMap.Osm.Index.Import
 
             if (tagCount > 0)
             {
-                // TODO define nodes which should be added as elements
-                bool found = node.Tags.Any(tag => tag.Key.StartsWith("addr:"));
-                if (found)
+                if (node.Tags.Any( tag => _settings.Spatial.Include.Nodes.Contains(tag.Key)))
                 {
                     var offset = _store.Insert(node);
                     _tree.Insert(offset, new PointEnvelop(node.Coordinate));
-                    _statistics.Increment(ElementType.Node);
+                    _indexStatistic.Increment(ElementType.Node);
                 }
                 else
-                    _statistics.Skip(node.Id, ElementType.Node);
+                    _indexStatistic.Skip(node.Id, ElementType.Node);
             }
         }
 
         public void ProcessWay(Way way, int tagCount)
         {
-            _statistics.IncrementTotal(ElementType.Way);
+            _indexStatistic.IncrementTotal(ElementType.Way);
             if (way.Id < 0)
             {
-                _statistics.Skip(way.Id, ElementType.Way);
+                _indexStatistic.Skip(way.Id, ElementType.Way);
                 return;
             }
 
@@ -72,7 +120,7 @@ namespace ActionStreetMap.Osm.Index.Import
             {
                 if (!_nodes.ContainsKey(nodeId))
                 {
-                    _statistics.Skip(way.Id, ElementType.Way);
+                    _indexStatistic.Skip(way.Id, ElementType.Way);
                     return;
                 }
                 var coordinate = _nodes[nodeId];
@@ -85,7 +133,7 @@ namespace ActionStreetMap.Osm.Index.Import
                  uint offset = _store.Insert(way);
                  _tree.Insert(offset, envelop);
                  _wayOffsets.Add(way.Id, offset);
-                _statistics.Increment(ElementType.Way);
+                _indexStatistic.Increment(ElementType.Way);
             }
             else
                 // keep it as it may be used by relation
@@ -94,10 +142,10 @@ namespace ActionStreetMap.Osm.Index.Import
 
         public void ProcessRelation(Relation relation, int tagCount)
         {
-            _statistics.IncrementTotal(ElementType.Relation);
+            _indexStatistic.IncrementTotal(ElementType.Relation);
             if (relation.Id < 0)
             {
-                _statistics.Skip(relation.Id, ElementType.Relation);
+                _indexStatistic.Skip(relation.Id, ElementType.Relation);
                 return;
             }
 
@@ -115,7 +163,7 @@ namespace ActionStreetMap.Osm.Index.Import
                         _skippedRelations.Add(member.MemberId);
 
                     _skippedRelations.Add(relation.Id);
-                    _statistics.Skip(relation.Id, ElementType.Relation);
+                    _indexStatistic.Skip(relation.Id, ElementType.Relation);
                     return;
                 }
             }
@@ -139,9 +187,8 @@ namespace ActionStreetMap.Osm.Index.Import
                             memberOffset = _store.Insert(way);
                             _wayOffsets.Add(member.MemberId, memberOffset);
                         }
-
-                        for (int i = 0; i < way.Coordinates.Count; i++)
-                            envelop.Extend(new PointEnvelop(way.Coordinates[i]));
+                        foreach (GeoCoordinate t in way.Coordinates)
+                            envelop.Extend(new PointEnvelop(t));
                         break;
 
                     default:
@@ -161,24 +208,23 @@ namespace ActionStreetMap.Osm.Index.Import
                     continue;
                 var offset = _store.Insert(relationTuple.Item1);
                 _tree.Insert(offset, relationTuple.Item2);
-                _statistics.Increment(ElementType.Relation);
+                _indexStatistic.Increment(ElementType.Relation);
             }
         }
 
         public void ProcessBoundingBox(BoundingBox bbox)
         {
-
+            // TODO save header file
         }
 
         public void Complete()
         {
             FinishRelaitonProcessing();
-            _statistics.Summary();
+            _indexStatistic.Summary();
         }
 
         public void Clear()
         {
-            //Tree = null;
             _nodes.Clear();
             _nodes = null;
             _ways.Clear();
@@ -187,99 +233,15 @@ namespace ActionStreetMap.Osm.Index.Import
             GC.WaitForFullGCComplete();
         }
 
-        #region Nested
-
-        internal class Statistics
+        public void Configure(IConfigSection configSection)
         {
-            private readonly ITrace _trace;
-            private int _processedNodesCount;
-            private int _processedWaysCount;
-            private int _processedRelationsCount;
+            var settingsPath = configSection.GetString("index");
 
-            private int _addedNodesCount;
-            private int _addedWaysCount;
-            private int _addedRelationsCount;
-
-            private int _skippedNodesCount;
-            private int _skippedWaysCount;
-            private int _skippedRelationsCount;
-
-            public Statistics(ITrace trace)
-            {
-                _trace = trace;
-            }
-
-            public void Increment(ElementType type)
-            {
-                switch (type)
-                {
-                    case ElementType.Node:
-                        _addedNodesCount++;
-                        break;
-                    case ElementType.Way:
-                        _addedWaysCount++;
-                        break;
-                    case ElementType.Relation:
-                        _addedRelationsCount++;
-                        break;
-                }
-            }
-
-            public void IncrementTotal(ElementType type)
-            {
-                switch (type)
-                {
-                    case ElementType.Node:
-                        PrintProgress(++_processedNodesCount, "node");
-                        break;
-                    case ElementType.Way:
-                        PrintProgress(++_processedWaysCount, "way");
-                        break;
-                    case ElementType.Relation:
-                        PrintProgress(++_processedRelationsCount, "relation");
-                        break;
-                }
-            }
-
-            private void PrintProgress(int value, string typeName)
-            {
-                if (value % 10000 == 0)
-                    _trace.Output(String.Format("processed {0}: {1}", typeName, value));
-            }
-
-            public void Skip(long id, ElementType type)
-            {
-                switch (type)
-                {
-                    case ElementType.Node:
-                        _skippedNodesCount++;
-                        break;
-                    case ElementType.Way:
-                        _skippedWaysCount++;
-                        break;
-                    case ElementType.Relation:
-                        _skippedRelationsCount++;
-                        break;
-                }
-            }
-
-            public void Summary()
-            {
-                PrintSummary("PROCESSED", _processedNodesCount, _processedWaysCount, _processedRelationsCount);
-                PrintSummary("ADDED", _addedNodesCount, _addedWaysCount, _addedRelationsCount);
-                PrintSummary("SKIPPED", _skippedNodesCount, _skippedWaysCount, _skippedRelationsCount);
-            }
-
-            private void PrintSummary(string totalText, int nodes, int ways, int relations)
-            {
-                _trace.Output(String.Format("Total {0} elements: {1}", totalText, nodes + ways + relations));
-                _trace.Output(String.Format("\tnodes: {0}", nodes));
-                _trace.Output(String.Format("\tways: {0}", ways));
-                _trace.Output(String.Format("\trelations: {0}", relations));
-                _trace.Output(String.Format(""));
-            }
+            var jsonString = File.ReadAllText(settingsPath);
+            var rootNode = JSON.Parse(jsonString);
+            var importNode = rootNode["import"];
+            _settings = new IndexSettings();
+            _settings.ReadFromJson(importNode);
         }
-
-        #endregion
     }
 }

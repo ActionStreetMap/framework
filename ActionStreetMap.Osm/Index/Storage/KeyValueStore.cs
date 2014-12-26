@@ -112,7 +112,7 @@ namespace ActionStreetMap.Osm.Index.Storage
             if (_stream.Position != _nextOffset)
                 _stream.Seek(_nextOffset, SeekOrigin.Begin);
             var offset = _nextOffset;
-            var firstUsageOffset = _usage.Insert(usageOffset);
+            var firstUsageOffset = _usage.Insert(0, usageOffset);
             var entry = new Entry
             {
                 Key = pair.Key,
@@ -130,12 +130,14 @@ namespace ActionStreetMap.Osm.Index.Storage
             uint lastCollisionEntryOffset = offset;
             while (offset != 0)
             {
-                //SkipEntryData(offset);
                 var entry = ReadEntry(offset);
                 // Do not insert duplicates
                 if (entry.Key == pair.Key && entry.Value == pair.Value)
                 {
-                    _usage.Insert(entry.Usage, usageOffset);
+                    // point always to the last usage to increase speed of index building
+                    usageOffset = _usage.Insert(entry.Usage, usageOffset);
+                    _stream.Seek(-8, SeekOrigin.Current);
+                    WriteUint(usageOffset);
                     return offset;
                 }
 
@@ -257,6 +259,7 @@ namespace ActionStreetMap.Osm.Index.Storage
 
         public void Dispose()
         {
+            _usage.Dispose();
             _stream.Dispose();
         }
     }
