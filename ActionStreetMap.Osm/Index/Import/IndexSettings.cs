@@ -23,6 +23,10 @@ namespace ActionStreetMap.Osm.Index.Import
             Spatial.Include = ReadTagList(spatialNode["include"]);
             Spatial.Exclude = ReadTagList(spatialNode["exclude"]);
             Spatial.RemoveTags = ReadStringList(spatialNode["remove_tags"]);
+
+            var searchNode = node["search"];
+            Search.PrefixLength = searchNode["prefix_length"].AsInt;
+            Search.KvIndexCapacity = searchNode["keyvalue_index_capacity"].AsInt;
         }
 
         private TagList ReadTagList(JSONNode node)
@@ -60,7 +64,8 @@ namespace ActionStreetMap.Osm.Index.Import
         // TODO
         public class SearchOptions
         {
-
+            public int PrefixLength { get; set; }
+            public int KvIndexCapacity { get; set; }
         }
 
         public class TagList

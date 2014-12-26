@@ -22,6 +22,7 @@ namespace ActionStreetMap.Tests
         public const string ConfigAppRootFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\settings.json";
 
         public const string TestNmeaFilePath = @"..\..\..\..\Tests\TestAssets\Nmea\berlin_seestr_speed_increasing.nme";
+        public const string TestIndexSettingsPath = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\themes\default\index.json";
 
         public const string MapDataPath = @"Maps\osm";
 

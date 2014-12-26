@@ -55,7 +55,7 @@ namespace ActionStreetMap.Osm.Index.Import
             var kvUsage = new KeyValueUsage(kvUsageMemoryStream);
 
             var keyValueStoreFile = new FileStream(String.Format(Consts.KeyValueStorePathFormat, outputDirectory), FileMode.Create);
-            var index = new KeyValueIndex(300000, 4);
+            var index = new KeyValueIndex(_settings.Search.KvIndexCapacity, _settings.Search.PrefixLength);
             var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStoreFile);
 
             var storeFile = new FileStream(String.Format(Consts.ElementStorePathFormat, outputDirectory), FileMode.Create);
@@ -248,10 +248,9 @@ namespace ActionStreetMap.Osm.Index.Import
             var settingsPath = configSection.GetString("index");
 
             var jsonString = File.ReadAllText(settingsPath);
-            var rootNode = JSON.Parse(jsonString);
-            var importNode = rootNode["import"];
+            var node = JSON.Parse(jsonString);
             _settings = new IndexSettings();
-            _settings.ReadFromJson(importNode);
+            _settings.ReadFromJson(node);
         }
 
         public void Dispose()
