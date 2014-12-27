@@ -55,6 +55,7 @@
     <Compile Include="Extensions\TagExtensions.cs" />
     <Compile Include="Entities\Node.cs" />
     <Compile Include="Entities\Element.cs" />
+    <Compile Include="Formats\IReader.cs" />
     <Compile Include="Formats\O5m\O5mExtensions.cs" />
     <Compile Include="Formats\O5m\O5mReader.cs" />
     <Compile Include="Formats\ReaderContext.cs" />

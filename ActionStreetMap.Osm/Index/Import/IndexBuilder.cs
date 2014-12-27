@@ -8,12 +8,15 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.Primitives;
-using ActionStreetMap.Osm.Entities;
 using ActionStreetMap.Osm.Formats;
 using ActionStreetMap.Osm.Formats.O5m;
+using ActionStreetMap.Osm.Formats.Pbf;
 using ActionStreetMap.Osm.Index.Helpers;
 using ActionStreetMap.Osm.Index.Spatial;
 using ActionStreetMap.Osm.Index.Storage;
+using Node = ActionStreetMap.Osm.Entities.Node;
+using Relation = ActionStreetMap.Osm.Entities.Relation;
+using Way = ActionStreetMap.Osm.Entities.Way;
 
 namespace ActionStreetMap.Osm.Index.Import
 {
@@ -43,11 +46,8 @@ namespace ActionStreetMap.Osm.Index.Import
 
         public void Build(string filePath, string outputDirectory)
         {
-            var extension = Path.GetExtension(filePath);
-            // TODO support different formats
-            if(String.IsNullOrEmpty(extension) || extension.ToLower() != ".o5m")
-                throw new NotSupportedException(Strings.NotSupportedMapFormat);
-
+            var reader = GetReader(filePath);
+            
             _outputDirectory = outputDirectory;
             _indexStatistic = new IndexStatistic(Trace);
 
@@ -62,14 +62,7 @@ namespace ActionStreetMap.Osm.Index.Import
             _store = new ElementStore(keyValueStore, storeFile);
             _tree = new RTree<uint>(65);
 
-            var reader = new O5mReader(new ReaderContext
-            {
-                SourceStream = new FileStream(filePath, FileMode.Open),
-                Builder = this,
-                ReuseEntities = false,
-                SkipTags = false,
-            });
-            reader.Parse();
+            reader.Read();
             Clear();
             Complete();
 
@@ -86,8 +79,31 @@ namespace ActionStreetMap.Osm.Index.Import
             _tree = null;
         }
 
+        private IReader GetReader(string filePath)
+        {
+            var extension = Path.GetExtension(filePath);
+            // TODO support different formats
+            if (String.IsNullOrEmpty(extension) ||
+                (extension.ToLower() != ".o5m" && extension.ToLower() != ".pbf"))
+                throw new NotSupportedException(Strings.NotSupportedMapFormat);
+
+            var readerContext = new ReaderContext
+            {
+                SourceStream = new FileStream(filePath, FileMode.Open),
+                Builder = this,
+                ReuseEntities = false,
+                SkipTags = false,
+            };
+            return extension == ".o5m" ? (IReader) new O5mReader(readerContext) : 
+                new PbfReader(readerContext);
+        }
+
         public void ProcessNode(Node node, int tagCount)
         {
+            // happens in pbf processing
+            if (_nodes.ContainsKey(node.Id))
+                return;
+
             _indexStatistic.IncrementTotal(ElementType.Node);
             if (node.Id < 0)
             {

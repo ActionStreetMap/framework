@@ -78,7 +78,7 @@ namespace ActionStreetMap.Osm.Index
 
             if (!sourcePaths.Any())
             {
-                Trace.Warn("Maps", String.Format("No element found for given query:{0}", query));
+                Trace.Warn("Maps", String.Format("No element source is found for given query:{0}", query));
                 return null;
             }
 

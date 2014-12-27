@@ -13,7 +13,7 @@ namespace ActionStreetMap.Osm.Formats.O5m
     ///     Reads o5m format. Ported from spliter utility written on Java. 
     ///     NOTE: refactor it first if you want to expose it as part of fwk
     /// </summary>
-    internal class O5mReader : IDisposable
+    internal class O5mReader : IReader, IDisposable
     {
         // O5M data set constants
         private const int NodeDataset = 0x10;
@@ -99,7 +99,7 @@ namespace ActionStreetMap.Osm.Formats.O5m
             }
         }
 
-        public void Parse()
+        public void Read()
         {
             int start = _fis.ReadByte();
             ++_countBytes;

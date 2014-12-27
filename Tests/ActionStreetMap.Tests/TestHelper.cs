@@ -18,6 +18,8 @@ namespace ActionStreetMap.Tests
         public static readonly GeoCoordinate BerlinTiergarten = new GeoCoordinate(52.516809, 13.367598);
         public static readonly GeoCoordinate BerlinVolksPark = new GeoCoordinate(52.526437, 13.432122);
 
+        public static readonly GeoCoordinate MoscowRedSquare = new GeoCoordinate(55.7537315, 37.6198537);
+
         public const string ConfigTestRootFile = "test.json";
         public const string ConfigAppRootFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\settings.json";
 
