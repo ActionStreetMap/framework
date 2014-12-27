@@ -60,10 +60,6 @@
     <Compile Include="Formats\O5m\O5mReader.cs" />
     <Compile Include="Formats\ReaderContext.cs" />
     <Compile Include="Helpers\AddressExtractor.cs" />
-    <Compile Include="Formats\Xml\v0_6\osm.cs">
-      <DependentUpon>osm.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Formats\Xml\XmlSimpleConverter.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
     <Compile Include="Index\ElementSource.cs" />
@@ -109,9 +105,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Formats\Xml\v0_6\osm.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Formats\Pbf\osmformat.proto" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
