@@ -19,10 +19,6 @@ namespace ActionStreetMap.Core
         /// </summary>
         public GeoCoordinate MaxPoint { get; set; }
 
-        // Semi-axes of WGS-84 geoidal reference
-        private const double WGS84_a = 6378137.0; // Major semiaxis [m]
-        private const double WGS84_b = 6356752.3; // Minor semiaxis [m]
-
         /// <summary>
         ///     Creates bounding box from given min and max points
         /// </summary>
@@ -32,28 +28,13 @@ namespace ActionStreetMap.Core
         {
             MinPoint = minPoint;
             MaxPoint = maxPoint;
+            Size = GeoProjection.Distance(minPoint, maxPoint)/Math.Sqrt(2);
         }
 
         /// <summary>
-        ///     Gets size of bbox's side
+        ///     Gets size of bounding box. Assume that it's created as square.
         /// </summary>
-        public double Size()
-        {
-            var dLat = MathUtility.Deg2Rad((MaxPoint.Latitude - MinPoint.Latitude));
-            var dLon = MathUtility.Deg2Rad((MaxPoint.Longitude - MinPoint.Longitude));
-
-            var lat1 = MathUtility.Deg2Rad(MaxPoint.Latitude);
-            var lat2 = MathUtility.Deg2Rad(MinPoint.Latitude);
-
-            var a = Math.Sin(dLat/2)*Math.Sin(dLat/2) +
-                    Math.Sin(dLon/2)*Math.Sin(dLon/2)*Math.Cos(lat1)*Math.Cos(lat2);
-
-            var c = 2*Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-            var radius = WGS84EarthRadius(dLat);
-
-            return (radius*c)/Math.Sqrt(2);
-        }
+        public double Size { get; private set; }
 
         #region Operations
 
@@ -62,11 +43,11 @@ namespace ActionStreetMap.Core
         /// </summary>
         public static BoundingBox operator +(BoundingBox a, GeoCoordinate b)
         {
-            GeoCoordinate minPoint = new GeoCoordinate(
+            var minPoint = new GeoCoordinate(
                 a.MinPoint.Latitude < b.Latitude ? a.MinPoint.Latitude : b.Latitude,
                 a.MinPoint.Longitude < b.Longitude ? a.MinPoint.Longitude : b.Longitude);
 
-            GeoCoordinate maxPoint = new GeoCoordinate(
+            var maxPoint = new GeoCoordinate(
                 a.MaxPoint.Latitude > b.Latitude ? a.MaxPoint.Latitude : b.Latitude,
                 a.MaxPoint.Longitude > b.Longitude ? a.MaxPoint.Longitude : b.Longitude);
 
@@ -105,7 +86,7 @@ namespace ActionStreetMap.Core
             var lon = MathUtility.Deg2Rad(point.Longitude);
 
             // Radius of Earth at given latitude
-            var radius = WGS84EarthRadius(lat);
+            var radius = GeoProjection.WGS84EarthRadius(lat);
             // Radius of the parallel at given latitude
             var pradius = radius*Math.Cos(lat);
 
@@ -117,20 +98,6 @@ namespace ActionStreetMap.Core
             return new BoundingBox(
                 new GeoCoordinate(MathUtility.Rad2Deg(latMin), MathUtility.Rad2Deg(lonMin)),
                 new GeoCoordinate(MathUtility.Rad2Deg(latMax), MathUtility.Rad2Deg(lonMax)));
-        }
-
-
-        /// <summary>
-        ///     Earth radius at a given latitude, according to the WGS-84 ellipsoid [m]
-        /// </summary>
-        private static double WGS84EarthRadius(double lat)
-        {
-            // http://en.wikipedia.org/wiki/Earth_radius
-            var an = WGS84_a*WGS84_a*Math.Cos(lat);
-            var bn = WGS84_b*WGS84_b*Math.Sin(lat);
-            var ad = WGS84_a*Math.Cos(lat);
-            var bd = WGS84_b*Math.Sin(lat);
-            return Math.Sqrt((an*an + bn*bn)/(ad*ad + bd*bd));
         }
 
         #endregion

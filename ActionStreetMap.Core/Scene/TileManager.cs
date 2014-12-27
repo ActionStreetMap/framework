@@ -38,6 +38,9 @@ namespace ActionStreetMap.Core.Scene
         private readonly DoubleKeyDictionary<int, int, Tile> _allTiles = new DoubleKeyDictionary<int, int, Tile>();
         private readonly DoubleKeyDictionary<int, int, Tile> _activeTiles = new DoubleKeyDictionary<int, int, Tile>();
 
+        /// <inheritdoc />
+        public GeoCoordinate CurrentPosition { get; private set; }
+
         /// <summary>
         ///     Gets relative null point
         /// </summary>
@@ -79,6 +82,8 @@ namespace ActionStreetMap.Core.Scene
         /// <inheritdoc />
         public void OnMapPositionChanged(MapPoint position)
         {
+            CurrentPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, position);
+
             int i = Convert.ToInt32(position.X /_tileSize);
             int j = Convert.ToInt32(position.Y /_tileSize);
 
@@ -101,6 +106,7 @@ namespace ActionStreetMap.Core.Scene
         /// <inheritdoc />
         public void OnGeoPositionChanged(GeoCoordinate position)
         {
+            CurrentPosition = position;
             var mapPoint = GeoProjection.ToMapCoordinate(RelativeNullPoint, position);
             OnMapPositionChanged(mapPoint);
         }

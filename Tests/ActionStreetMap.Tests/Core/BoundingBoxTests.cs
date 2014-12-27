@@ -28,10 +28,10 @@ namespace ActionStreetMap.Tests.Core
             // ARRANGE
             const int expectedHalfSize = 1000;
             const int delta = 5;
-            var bbox = BoundingBox.CreateBoundingBox(new GeoCoordinate(52, 13), expectedHalfSize);
 
             // ACT
-            var calculatedSize = bbox.Size();
+            var bbox = BoundingBox.CreateBoundingBox(new GeoCoordinate(52, 13), expectedHalfSize);
+            var calculatedSize = bbox.Size;
 
             // ASSERT
             Assert.LessOrEqual(Math.Abs(expectedHalfSize*2 - calculatedSize), delta);

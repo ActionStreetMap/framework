@@ -6,6 +6,11 @@
     public interface IPositionListener
     {
         /// <summary>
+        ///     Gets last updated geo position
+        /// </summary>
+        GeoCoordinate CurrentPosition { get; }
+
+        /// <summary>
         ///     This geo coordinate is mapped to (0, 0, 0) map coordinate.
         /// </summary>
         GeoCoordinate RelativeNullPoint { get; set; }

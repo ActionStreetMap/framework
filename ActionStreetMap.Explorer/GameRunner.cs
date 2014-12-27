@@ -25,9 +25,10 @@ namespace ActionStreetMap.Explorer
         /// </summary>
         private IPositionListener _positionListener;
 
-        /// <summary>
-        ///     Returns relative null geo coordinate point which is used as center for calculation
-        /// </summary>
+        /// <inheritdoc />
+        public GeoCoordinate CurrentPosition { get { return _positionListener.CurrentPosition; } }
+
+        /// <inheritdoc />
         public GeoCoordinate RelativeNullPoint
         {
             get { return _positionListener.RelativeNullPoint; }
@@ -35,7 +36,7 @@ namespace ActionStreetMap.Explorer
         }
 
         /// <summary>
-        ///     Creates GameRunner
+        ///     Creates instance of <see cref="GameRunner"/>.
         /// </summary>
         /// <param name="container">DI container.</param>
         /// <param name="messageBus">Message bus.</param>
