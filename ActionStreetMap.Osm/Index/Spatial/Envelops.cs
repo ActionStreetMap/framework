@@ -27,6 +27,24 @@ namespace ActionStreetMap.Osm.Index.Spatial
         public int MaxPointLatitude { get; set; }
         public int MaxPointLongitude { get; set; }
 
+        public GeoCoordinate MinPoint
+        {
+            get
+            {
+                return new GeoCoordinate(((double)MinPointLatitude) / Consts.ScaleFactor,
+                    ((double)MinPointLongitude) / Consts.ScaleFactor);
+            }
+        }
+
+        public GeoCoordinate MaxPoint
+        {
+            get
+            {
+                return new GeoCoordinate(((double)MaxPointLatitude) / Consts.ScaleFactor,
+                    ((double)MaxPointLongitude) / Consts.ScaleFactor);
+            }
+        }
+
         public Envelop() : this(int.MaxValue, int.MaxValue, int.MinValue, int.MinValue) { }
 
         public Envelop(int minPointLatitude, int minPointLongitude,
@@ -57,6 +75,11 @@ namespace ActionStreetMap.Osm.Index.Spatial
 
             MaxPointLatitude = Math.Max(MaxPointLatitude, by.MaxPointLatitude);
             MaxPointLongitude = Math.Max(MaxPointLongitude, by.MaxPointLongitude);
+        }
+
+        public void Extend(GeoCoordinate coordinate)
+        {
+            Extend((int) (coordinate.Latitude * Consts.ScaleFactor), (int)(coordinate.Longitude * Consts.ScaleFactor));
         }
 
         public void Extend(int scaledLatitude, int scaleddLongitude)

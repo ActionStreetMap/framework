@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
+using ActionStreetMap.Osm.Index.Spatial;
 using Ionic.Zlib;
 using ProtoBuf;
 using ProtoBuf.Meta;
@@ -26,8 +27,8 @@ namespace ActionStreetMap.Osm.Formats.Pbf
         private readonly Type _blobType = typeof(Blob);
         private readonly Type _primitiveBlockType = typeof(PrimitiveBlock);
         private readonly Type _headerBlockType = typeof(HeaderBlock);
-
         private PrimitiveBlock _block;
+        private Envelop _envelop;
 
         /// <summary>
         ///     Creates a new PBF reader.
@@ -47,6 +48,7 @@ namespace ActionStreetMap.Osm.Formats.Pbf
         /// </summary>
         public void Read()
         {
+            _envelop = new Envelop();
             while (MoveNext())
             {
                 var block = Current;
@@ -71,6 +73,7 @@ namespace ActionStreetMap.Osm.Formats.Pbf
                     }
                 }
             }
+            _context.Builder.ProcessBoundingBox(new BoundingBox(_envelop.MinPoint, _envelop.MaxPoint));
         }
 
         #region Process elements
@@ -98,6 +101,7 @@ namespace ActionStreetMap.Osm.Formats.Pbf
                     elementNode.Tags.Add(key, value);
                 }
             }
+            _envelop.Extend(elementNode.Coordinate);
             _context.Builder.ProcessNode(elementNode, node.keys.Count);
         }
 
@@ -126,7 +130,6 @@ namespace ActionStreetMap.Osm.Formats.Pbf
                     elementWay.Tags.Add(key, value);
                 }
             }
-
             _context.Builder.ProcessWay(elementWay, way.keys.Count);
         }
 
