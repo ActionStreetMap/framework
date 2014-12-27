@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace ActionStreetMap.Explorer.CommandLine
+namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary>
     ///     Command line command.

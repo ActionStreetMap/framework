@@ -1,11 +1,8 @@
 ﻿using System.Text;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.CommandLine
+namespace ActionStreetMap.Explorer.Commands
 {
-    /// <summary>
-    ///     Gets information about environment
-    /// </summary>
     public class SysCommand : ICommand
     {
         /// <inheritdoc />

@@ -2,10 +2,10 @@
 using System.Text;
 using ActionStreetMap.Infrastructure.Dependencies;
 
-namespace ActionStreetMap.Explorer.CommandLine
+namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary>
-    ///     Provides the way to work with command line commands.
+    ///     Responsible for command registration.
     /// </summary>
     public class CommandController
     {
@@ -17,15 +17,21 @@ namespace ActionStreetMap.Explorer.CommandLine
         public IEnumerable<string> CommandNames { get { return _cmdTable.Keys; } }
 
         /// <summary>
+        ///     Gets command by name.
+        /// </summary>
+        /// <param name="name">Name of command.</param>
+        /// <returns>Command</returns>
+        public ICommand this[string name] { get { return _cmdTable[name]; } }
+
+        /// <summary>
         ///     Creates instance of <see cref="CommandController"/>.
         /// </summary>
-        /// <param name="commands">Collection of commands.</param>
         [Dependency]
         public CommandController(IEnumerable<ICommand> commands)
         {
             foreach (var command in commands)
                 Register(command);
-            // provide default implementation of help command
+            
             if(!Contains("help"))
                 Register(new Command("help", "prints help", CmdHelp));
         }
@@ -56,19 +62,6 @@ namespace ActionStreetMap.Explorer.CommandLine
         public bool Contains(string command)
         {
             return _cmdTable.ContainsKey(command);
-        }
-
-        /// <summary>
-        ///     Gets command by name.
-        /// </summary>
-        /// <param name="name">Name of command.</param>
-        /// <returns>Command</returns>
-        public ICommand this[string name]
-        {
-            get
-            {
-                return _cmdTable[name];
-            }
         }
 
         private string CmdHelp(params string[] args)

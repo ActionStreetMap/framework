@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 
-namespace ActionStreetMap.Explorer.CommandLine
+namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary>
     ///     Helper class to parse list of arguments.

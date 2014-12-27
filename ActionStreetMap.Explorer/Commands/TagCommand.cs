@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utilities;
@@ -7,7 +6,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm.Entities;
 using ActionStreetMap.Osm.Index.Search;
 
-namespace ActionStreetMap.Explorer.CommandLine
+namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary>
     ///     Tags search command.     

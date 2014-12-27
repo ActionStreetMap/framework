@@ -56,7 +56,6 @@
     <Compile Include="..\..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
-    <Compile Include="Explorer\CommandLine\GrepCommandTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="GeoCoordinateHelper.cs" />
     <Compile Include="ConsoleTrace.cs" />

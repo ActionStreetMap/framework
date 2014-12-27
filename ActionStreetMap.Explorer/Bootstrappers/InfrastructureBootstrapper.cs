@@ -1,4 +1,5 @@
 ﻿using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Commands;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -21,6 +22,12 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<ITrace>().Use<UnityConsoleTrace>().Singleton());
             Container.Register(Component.For<IGameObjectFactory>().Use<GameObjectFactory>().Singleton());
             Container.Register(Component.For<IObjectPool>().Use<ObjectPool>().Singleton());
+
+            // commands
+            Container.Register(Component.For<CommandController>().Use<CommandController>().Singleton());
+            Container.Register(Component.For<ICommand>().Use<SysCommand>().Singleton().Named("sys"));
+            Container.Register(Component.For<ICommand>().Use<TagCommand>().Singleton().Named("tag"));
+
             return true;
         }
     }
