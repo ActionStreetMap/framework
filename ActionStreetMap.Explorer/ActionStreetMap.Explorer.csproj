@@ -47,6 +47,7 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="Bootstrappers\TileBootstrapper.cs" />
+    <Compile Include="CommandLine\Arguments.cs" />
     <Compile Include="CommandLine\CommandController.cs" />
     <Compile Include="CommandLine\GrepCommand.cs" />
     <Compile Include="CommandLine\SysCommand.cs" />

@@ -31,7 +31,7 @@ namespace ActionStreetMap.Tests.Osm.Index
             // ARRANGE
             var componentRoot = TestHelper.GetGameRunner(_container);
             componentRoot.RunGame(TestHelper.BerlinTestFilePoint);
-            var searchEngine = _container.Resolve<SearchEngine>();
+            var searchEngine = _container.Resolve<ISearchEngine>();
 
             // ACT
             var elements = searchEngine.SearchByTag("amenity", "bar").ToArray();

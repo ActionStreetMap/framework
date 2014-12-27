@@ -6,10 +6,25 @@ using ActionStreetMap.Osm.Entities;
 
 namespace ActionStreetMap.Osm.Index.Search
 {
+
     /// <summary>
-    ///     Provides the way to find elements by given text parameters in default implementation of <see cref="IElementSource"/>.
+    ///     Provides the way to find elements by given text parameters.
     /// </summary>
-    public class SearchEngine
+    public interface ISearchEngine
+    {
+        /// <summary>
+        ///     Searches all elements with given key and similiar value in current active element source.
+        /// </summary>
+        /// <param name="key">Tag key.</param>
+        /// <param name="value">Tag value.</param>
+        /// <returns>Element collection.</returns>
+        IEnumerable<Element> SearchByTag(string key, string value);
+    }
+
+    /// <summary>
+    ///     Implementation of <see cref="ISearchEngine"/> which depends on default implementation of <see cref="IElementSource"/>.
+    /// </summary>
+    public class SearchEngine: ISearchEngine
     {
         private readonly IElementSourceProvider _elementSourceProvider;
 
@@ -23,12 +38,7 @@ namespace ActionStreetMap.Osm.Index.Search
             _elementSourceProvider = elementSourceProvider;
         }
 
-        /// <summary>
-        ///     Searches all elements with given key and similiar value in current active element source.
-        /// </summary>
-        /// <param name="key">Tag key.</param>
-        /// <param name="value">Tag value.</param>
-        /// <returns>Element collection.</returns>
+        /// <inheritdoc />
         public IEnumerable<Element> SearchByTag(string key, string value)
         {
             var elementSource = GetElementSource();

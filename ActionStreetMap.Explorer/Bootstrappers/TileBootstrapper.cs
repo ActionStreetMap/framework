@@ -52,7 +52,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .SetConfig(GlobalConfigSection.GetSection(TileKey)));
 
             // provides text search feature
-            Container.Register(Component.For<SearchEngine>().Use<SearchEngine>().Singleton());
+            Container.Register(Component.For<ISearchEngine>().Use<SearchEngine>().Singleton());
             
             return true;
         }
