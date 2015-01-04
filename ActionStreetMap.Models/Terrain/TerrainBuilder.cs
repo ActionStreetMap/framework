@@ -68,9 +68,9 @@ namespace ActionStreetMap.Models.Terrain
         private float[,,] _splatMapBuffer;
         private List<int[,]> _detailListBuffer;
 
+        private readonly RoadGraph _roadGraph = new RoadGraph();
         private readonly List<AreaSettings> _areas = new List<AreaSettings>();
         private readonly List<AreaSettings> _elevations = new List<AreaSettings>();
-        private readonly List<RoadElement> _roadElements = new List<RoadElement>();
         private readonly List<TreeDetail> _trees = new List<TreeDetail>();
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace ActionStreetMap.Models.Terrain
         /// <inheritdoc />
         public void AddRoadElement(RoadElement roadElement)
         {
-            _roadElements.Add(roadElement);
+            _roadGraph.Add(roadElement);
         }
 
         /// <inheritdoc />
@@ -164,13 +164,15 @@ namespace ActionStreetMap.Models.Terrain
             var heightMap = settings.Tile.HeightMap;
             var roadStyleProvider = settings.RoadStyleProvider;
 
-            // TODO this should be done by road composer
-             var roads = _roadElements.Select(re => new Road
+            // TODO merge road elements to road - should be done inside road graph
+            var roads = _roadGraph.Elements.Select(re => new Road
              {
                  Elements = new List<RoadElement> {re},
                  GameObject = _gameObjectFactory.CreateNew(String.Format("road [{0}] {1}/ ", re.Id, re.Address), 
                                                     settings.Tile.GameObject),
              }).ToList();
+
+            // TODO process road junctions
 
             // process roads
              foreach (var road in roads)
@@ -367,7 +369,7 @@ namespace ActionStreetMap.Models.Terrain
             // clear collections to reuse
             _areas.Clear();
             _elevations.Clear();
-            _roadElements.Clear();
+            _roadGraph.Clear();
             _trees.Clear();
         }
 

@@ -69,6 +69,8 @@
     <Compile Include="Positioning\Nmea\NmeaValueType.cs" />
     <Compile Include="Positioning\Nmea\RMC.cs" />
     <Compile Include="Scene\Models\Relation.cs" />
+    <Compile Include="Scene\World\Roads\RoadGraph.cs" />
+    <Compile Include="Scene\World\Roads\RoadJunction.cs" />
     <Compile Include="Utilities\GeoProjection.cs" />
     <Compile Include="BoundingBox.cs" />
     <Compile Include="Elevation\HeightMap.cs" />
@@ -98,7 +100,6 @@
     <Compile Include="Scene\TileRegistry.cs" />
     <Compile Include="Scene\World\Roads\Road.cs" />
     <Compile Include="Scene\World\Roads\RoadElement.cs" />
-    <Compile Include="Scene\World\Roads\RoadElementComposer.cs" />
     <Compile Include="MapCss\Domain\Declaration.cs" />
     <Compile Include="MapCss\Domain\Rule.cs" />
     <Compile Include="MapCss\Domain\Style.cs" />
