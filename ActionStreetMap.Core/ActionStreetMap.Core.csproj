@@ -71,6 +71,7 @@
     <Compile Include="Scene\Models\Relation.cs" />
     <Compile Include="Scene\World\Roads\RoadGraph.cs" />
     <Compile Include="Scene\World\Roads\RoadJunction.cs" />
+    <Compile Include="Scene\World\Roads\RoadType.cs" />
     <Compile Include="Utilities\GeoProjection.cs" />
     <Compile Include="BoundingBox.cs" />
     <Compile Include="Elevation\HeightMap.cs" />

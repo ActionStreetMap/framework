@@ -42,7 +42,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             /// <summary>
             ///     Gets road type.
             /// </summary>
-            public string Type { get; private set; }
+            public RoadType Type { get; private set; }
 
             /// <summary>
             ///     Gets road width.
@@ -55,7 +55,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             /// <param name="point">Connection point.</param>
             /// <param name="type">Road type.</param>
             /// <param name="width">Road width.</param>
-            public Connection(MapPoint point, string type, float width)
+            public Connection(MapPoint point, RoadType type, float width)
             {
                 Point = point;
                 Type = type;

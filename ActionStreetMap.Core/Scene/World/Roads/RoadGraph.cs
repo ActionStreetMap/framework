@@ -40,6 +40,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             //Contract.Requires(element.Points.Count > 1, "Cannot add road element with less that 2 points!");
 
             _elements.Add(element);
+
+            // TODO ignore for non-car types
+            if (element.Type != RoadType.Car)
+                return;
+
             RoadElement el = element;
             for (int i = 0; i < el.Points.Count; i++)
             {
@@ -145,6 +150,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             return new RoadElement
             {
                 Id = element.Id,
+                Type = element.Type,
                 Address = element.Address,
                 Width = element.Width,
                 ZIndex = element.ZIndex,

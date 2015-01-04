@@ -19,12 +19,14 @@ namespace ActionStreetMap.Tests.Core.World
             var roadElement1 = new RoadElement()
             {
                 Id = 1,
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(0, 0), junctionPoint, new MapPoint(20, 0),}
             };
 
             var roadElement2 = new RoadElement()
             {
                 Id = 2,
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(10, 10), junctionPoint, new MapPoint(10, -10)}
             };
 
@@ -47,22 +49,6 @@ namespace ActionStreetMap.Tests.Core.World
             // check elements
             var elements = graph.Elements.ToList();
             Assert.AreEqual(4, elements.Count());
-
-            /*Assert.AreEqual(2, elements[0].Points.Count);
-            Assert.AreEqual(roadElement1.Points[0], elements[0].Points[0]);
-            Assert.AreEqual(new MapPoint(junctionPoint.X - offset, 0), elements[0].Points[1]);
-
-            Assert.AreEqual(2, elements[1].Points.Count);
-            Assert.AreEqual(roadElement2.Points[0], elements[1].Points[0]);
-            Assert.AreEqual(new MapPoint(10, junctionPoint.Y + offset), elements[1].Points[1]);
-
-            Assert.AreEqual(2, elements[2].Points.Count);
-            Assert.AreEqual(new MapPoint(junctionPoint.X + offset, 0), elements[2].Points[0]);
-            Assert.AreEqual(new MapPoint(20, 0), elements[2].Points[1]);
-
-            Assert.AreEqual(2, elements[3].Points.Count);
-            Assert.AreEqual(new MapPoint(10, junctionPoint.Y - offset), elements[3].Points[0]);
-            Assert.AreEqual(new MapPoint(10, -10), elements[3].Points[1]);*/
         }
 
         [Test]
@@ -73,12 +59,14 @@ namespace ActionStreetMap.Tests.Core.World
             var roadElement1 = new RoadElement()
             {
                 Id = 1,
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), junctionPoint}
             };
 
             var roadElement2 = new RoadElement()
             {
                 Id = 2,
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { junctionPoint, new MapPoint(10, 10), new MapPoint(10, 20)}
             };
 
@@ -99,17 +87,20 @@ namespace ActionStreetMap.Tests.Core.World
             var roadElement1 = new RoadElement()
             {
                 Id = 1,
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), junctionPoint }
             };
 
             var roadElement2 = new RoadElement()
             {
                 Id = 2,
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { junctionPoint, new MapPoint(10, 10), new MapPoint(10, 20) }
             };
 
             var roadElement3 = new RoadElement() {
                 Id = 3,
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(10, -20), new MapPoint(10, -10), junctionPoint }
             };
 
@@ -130,9 +121,12 @@ namespace ActionStreetMap.Tests.Core.World
             var graph = new RoadGraph();
 
             // ACT
-            graph.Add(new RoadElement { Points = new List<MapPoint>() { new MapPoint(0, 10), new MapPoint(0, 0) }});
-            graph.Add(new RoadElement { Points = new List<MapPoint>() { new MapPoint(10, 10), new MapPoint(10, 0) }});
-            graph.Add(new RoadElement { Points = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(10, 0) }});
+            graph.Add(new RoadElement { Type = RoadType.Car, Points = new List<MapPoint>() 
+            { new MapPoint(0, 10), new MapPoint(0, 0) } });
+            graph.Add(new RoadElement { Type = RoadType.Car, Points = new List<MapPoint>() 
+            { new MapPoint(10, 10), new MapPoint(10, 0) } });
+            graph.Add(new RoadElement { Type = RoadType.Car, Points = new List<MapPoint>() 
+            { new MapPoint(0, 0), new MapPoint(10, 0) } });
 
             // ASSERT
             Assert.AreEqual(2, graph.Junctions.Count());
@@ -146,13 +140,13 @@ namespace ActionStreetMap.Tests.Core.World
             var graph = new RoadGraph();
 
             // ACT
-            graph.Add(new RoadElement { Points = new List<MapPoint>() 
+            graph.Add(new RoadElement {Type = RoadType.Car, Points = new List<MapPoint>() 
                 { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0) }});
 
-            graph.Add(new RoadElement { Points = 
+            graph.Add(new RoadElement {Type = RoadType.Car, Points = 
                 new List<MapPoint>() { new MapPoint(0, 20), new MapPoint(0, 10), new MapPoint(0, 0) }});
 
-            graph.Add(new RoadElement { Points = 
+            graph.Add(new RoadElement {Type = RoadType.Car, Points = 
                 new List<MapPoint>() { new MapPoint(10, 20), new MapPoint(10, 10), new MapPoint(10, 0) }});
           
             // ASSERT
@@ -169,12 +163,39 @@ namespace ActionStreetMap.Tests.Core.World
             // ACT
             graph.Add(new RoadElement
             {
+                Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0), new MapPoint(0, 0)}
             });
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
             Assert.AreEqual(1, graph.Elements.Count());
+        }
+
+        [Test]
+        public void CanSkipJunctionOfDifferentTypes()
+        {
+            // ARRANGE
+            var graph = new RoadGraph();
+
+            // ACT
+            graph.Add(new RoadElement()
+            {
+                Id = 0, 
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0) }
+            });
+
+            graph.Add(new RoadElement()
+            {
+                Id = 1,
+                Type = RoadType.Pedestrian,
+                Points = new List<MapPoint>() { new MapPoint(0, 10), new MapPoint(0, 0), new MapPoint(0, -10) }
+            });
+
+            // ASSERT
+            Assert.AreEqual(0, graph.Junctions.Count());
+            Assert.AreEqual(2, graph.Elements.Count());
         }
     }
 }

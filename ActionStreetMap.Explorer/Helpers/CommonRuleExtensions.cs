@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Core.Scene.World.Roads;
 using ActionStreetMap.Explorer.Scene;
 
 namespace ActionStreetMap.Explorer.Helpers
@@ -65,6 +66,23 @@ namespace ActionStreetMap.Explorer.Helpers
         public static float GetWidth(this Rule rule)
         {
             return rule.Evaluate<float>("width");
+        }
+
+        /// <summary>
+        ///     Gets road type.
+        /// </summary>
+        public static RoadType GetRoadType(this Rule rule)
+        {
+            var typeStr = rule.Evaluate<string>("type");
+            switch (typeStr)
+            {
+                case "pedestrian":
+                    return RoadType.Pedestrian;
+                case "bike":
+                    return RoadType.Bike;
+                default:
+                    return RoadType.Car;
+            }
         }
     }
 }

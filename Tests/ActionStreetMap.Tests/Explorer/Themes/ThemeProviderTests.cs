@@ -25,10 +25,7 @@ namespace ActionStreetMap.Tests.Explorer.Themes
             var theme = provider.Get();
             Assert.IsNotNull(theme);
 
-            var style = theme.GetBuildingStyle(new Building()
-            {
-                Type = "residential"
-            });
+            var style = theme.GetBuildingStyle(new Building() { Type = "residential" });
 
             // ASSERT
             Assert.IsNotNull(style);
@@ -65,16 +62,8 @@ namespace ActionStreetMap.Tests.Explorer.Themes
             var theme = provider.Get();
             Assert.IsNotNull(theme);
 
-            var style = theme.GetRoadStyle(new Road()
-            {
-                Elements = new List<RoadElement>()
-                {
-                    new RoadElement()
-                    {
-                        Type = "residental"
-                    }
-                }
-            });
+            var style = theme.GetRoadStyle(new Road() 
+                { Elements = new List<RoadElement>() { new RoadElement() { Type = RoadType.Car } }});
 
             // ASSERT
             Assert.AreEqual("Materials/Roads/default_1", style.Path);

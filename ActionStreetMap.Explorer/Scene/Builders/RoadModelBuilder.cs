@@ -20,10 +20,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         private readonly ITerrainBuilder _terrainBuilder;
 
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "road"; }
-        }
+        public override string Name { get { return "road"; } }
 
         /// <summary>
         ///     Creates RoadModelBuilder.
@@ -48,6 +45,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 Address = AddressExtractor.Extract(way.Tags),
                 Width = (int) Math.Round(rule.GetWidth() / 2),
                 ZIndex = rule.GetZIndex(),
+                Type = rule.GetRoadType(),
                 Points = points
             });
 

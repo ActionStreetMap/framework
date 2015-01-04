@@ -1,7 +1,6 @@
 canvas { 
 	z-index: 0; 
-	height: 10;
-	
+
 	pixelMapError: 1;
 	resolution: 512;
 	heightmapsize: 513;
@@ -172,6 +171,8 @@ area[roof:shape=dome]									{ roof-style: dome;}
 area[roof:shape=pyramidal]								{ roof-style: pyramidal;}
 area[roof:shape=gabled]									{ roof-style: gabled;}
 area[roof:shape=hipped]									{ roof-style: hipped;}
+/* checked on Eiffel tower, Paris */
+area[building:shape=pyramidal]							{ roof-style: pyramidal; height:0; roof-height: eval(num(tag('height')));}
 
 area[roof:height]										{roof-height: eval(num(tag('roof:height')))}
 
@@ -257,7 +258,7 @@ way[waterway][name]										{ z-index: 9; fill-color: #a3c3ec; builder: water; 
 /*way[barrier] :closed									{ z-index: 10; builder:flat; fill-color: #444444; width: 0.4;}*/
 
 /* roads */
-way[highway]											{ z-index: 10; builder:road; width:2 }
+way[highway]											{ z-index: 10; builder:road; width:2; type:car; }
 
 way[highway=tertiary],
 way[highway=residential],
@@ -282,11 +283,11 @@ way[highway=tertiary],
 way[highway=tertiary_link]								{ fill-color: #e7c930; width:11; }
 
 
-way[highway=path][foot=designated]						{ fill-color: #FA8072; width:3.5; }
+way[highway=path][foot=designated]						{ fill-color: #FA8072; width:3.5; type:pedestrian; }
 
-way[highway=service]									{ fill-color: #FFFFFF; width:3; }
+way[highway=service]									{ fill-color: #FFFFFF; width:3; type:pedestrian; }
 
-way[highway=footway] 									{width:2;}
+way[highway=footway] 									{width:2; type:pedestrian;}
 
 way[barrier]											{ builder: barrier; material: Roads/Road; texture:Roads/Road; height:2; width:0.2;  }
 
@@ -332,8 +333,8 @@ node[man_made=survey_point]							                { z-index:16; builder:info; ke
 node[amenity=telephone]							                { z-index:16; builder:info; key:amenity_telephone; collider:false; }
 node[amenity=toilets]							                { z-index:16; builder:info; key:amenity_toilets; collider:false; }
 /*node[amenity_toilets_disabled]							                { z-index:16; builder:info; key:amenity_toilets_disabled; collider:false; }
-node[amenity_toilets_men]							                { z-index:16; builder:info; key:amenity_toilets_men; collider:false; }
-node[amenity_toilets_women]							                { z-index:16; builder:info; key:amenity_toilets_women; collider:false; }*/
+node[amenity=toilets_men]							                { z-index:16; builder:info; key:amenity_toilets_men; collider:false; }
+node[amenity=toilets_women]							                { z-index:16; builder:info; key:amenity_toilets_women; collider:false; }*/
 node[amenity=townhall]							                { z-index:16; builder:info; key:amenity_town_hall; collider:false; }
 
 node[waste],node[amenity=waste_basket]							                { z-index:16; builder:info; key:amenity_waste_bin; collider:false; }
@@ -350,20 +351,20 @@ node[barrier=step]							                { z-index:16; builder:info; key:barrier
 node[barrier=stile]							                { z-index:16; builder:info; key:barrier_stile; collider:false; }
 node[barrier=toll_booth]							                { z-index:16; builder:info; key:barrier_toll_booth; collider:false; }
 node[amenity=college]							                { z-index:16; builder:info; key:education_college; collider:false; }
-/*node[education_college_vocational]							                { z-index:16; builder:info; key:education_college_vocational; collider:false; }*/
+/*node[education=college_vocational]							                { z-index:16; builder:info; key:education_college_vocational; collider:false; }*/
 node[amenity=nursery]							                { z-index:16; builder:info; key:education_nursery; collider:false; }
-/*node[education_nursery2]							                { z-index:16; builder:info; key:education_nursery2; collider:false; }
-node[education_nursery3]							                { z-index:16; builder:info; key:education_nursery3; collider:false; }*/
+/*node[education=nursery2]							                { z-index:16; builder:info; key:education_nursery2; collider:false; }
+node[education=nursery3]							                { z-index:16; builder:info; key:education_nursery3; collider:false; }*/
 node[amenity=school]							                { z-index:16; builder:info; key:education_school; collider:false; }
-/*node[education_school_primary]							                { z-index:16; builder:info; key:education_school_primary; collider:false; }
-node[education_school_secondary]							                { z-index:16; builder:info; key:education_school_secondary; collider:false; }*/
+/*node[education=school_primary]							                { z-index:16; builder:info; key:education_school_primary; collider:false; }
+node[education=school_secondary]							                { z-index:16; builder:info; key:education_school_secondary; collider:false; }*/
 node[amenity=university]							                { z-index:16; builder:info; key:education_university; collider:false; }
 node[amenity=bar]							                { z-index:16; builder:info; key:food_bar; collider:false; }
 node[amenity=biergarten]							                { z-index:16; builder:info; key:food_biergarten; collider:false; }
 node[amenity=cafe]							                { z-index:16; builder:info; key:food_cafe; collider:false; }
 node[amenity=drinking_water]							                { z-index:16; builder:info; key:food_drinkingtap; collider:false; }
 node[amenity=fast_food]							                { z-index:16; builder:info; key:food_fastfood; collider:false; }
-/*node[food_fastfood2]							                { z-index:16; builder:info; key:food_fastfood2; collider:false; }*/
+/*node[food=fastfood2]							                { z-index:16; builder:info; key:food_fastfood2; collider:false; }*/
 /*node[amenity=fastfood_pizza]							                { z-index:16; builder:info; key:food_fastfood_pizza; collider:false; }*/
 node[amenity=ice_cream]							                { z-index:16; builder:info; key:food_ice_cream; collider:false; }
 node[amenity=pizza]							                { z-index:16; builder:info; key:food_pizza; collider:false; }
@@ -376,10 +377,10 @@ node[amenity=hospital]							                { z-index:16; builder:info; key:hea
 
 node[shop=optician]							                { z-index:16; builder:info; key:health_opticians; collider:false; }
 node[amenity=pharmacy]							                { z-index:16; builder:info; key:health_pharmacy; collider:false; }
-/*node[health_pharmacy_dispencing]							                { z-index:16; builder:info; key:health_pharmacy_dispencing; collider:false; }*/
+/*node[health=pharmacy_dispencing]							                { z-index:16; builder:info; key:health_pharmacy_dispencing; collider:false; }*/
 node[amenity=veterinary]							                { z-index:16; builder:info; key:health_veterinary; collider:false; }
 node[wood=coniferous]							                { z-index:16; builder:info; key:landuse_coniferous; collider:false; }
-/*node[landuse_coniferous_and_deciduous]							                { z-index:16; builder:info; key:landuse_coniferous_and_deciduous; collider:false; }*/
+/*node[landuse=coniferous_and_deciduous]							                { z-index:16; builder:info; key:landuse_coniferous_and_deciduous; collider:false; }*/
 node[landuse=deciduous]							                { z-index:16; builder:info; key:landuse_deciduous; collider:false; }
 node[landuse=grass]							                { z-index:16; builder:info; key:landuse_grass; collider:false; }
 node[landuse_hills]							                { z-index:16; builder:info; key:landuse_hills; collider:false; }
@@ -435,8 +436,8 @@ node[power=substation]							                { z-index:16; builder:info; key:pow
 
 /*node[power_tower_high]							                { z-index:16; builder:info; key:power_tower_high; collider:false; }
 node[power_tower_high2]							                { z-index:16; builder:info; key:power_tower_high2; collider:false; }
-node[power_tower_low]							                { z-index:16; builder:info; key:power_tower_low; collider:false; }*/
-
+node[power_tower_low]							                { z-index:16; builder:info; key:power_tower_low; collider:false; }
+*/
 node[power=transformer]							                { z-index:16; builder:info; key:power_transformer; collider:false; }
 node[shop=alcohol]							                { z-index:16; builder:info; key:shopping_alcohol; collider:false; }
 node[shop=bakery]							                { z-index:16; builder:info; key:shopping_bakery; collider:false; }
