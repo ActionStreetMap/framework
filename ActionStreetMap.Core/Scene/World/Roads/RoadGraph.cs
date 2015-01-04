@@ -105,7 +105,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 
                 // insert offset point as last
                 element.Points = points.Take(splitPointIndex).ToList();
-                element.Points.Add(CalculatePoint(splitPoint, element.Points.Last(), Offset));
+                element.Points.Add(CalculatePoint(splitPoint, element.Points.Last(), element.Width));
                 junction.Connections.Add(new RoadJunction
                     .Connection(element.Points.Last(), element.Type, element.Width));
 
@@ -123,7 +123,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     usage.Item2 = i + 1;
                 }
 
-                secondElementPart.Points.Insert(0, CalculatePoint(splitPoint, secondElementPart.Points.First(), Offset));
+                secondElementPart.Points.Insert(0, CalculatePoint(splitPoint, secondElementPart.Points.First(), element.Width));
                 junction.Connections.Add(new RoadJunction
                     .Connection(secondElementPart.Points.First(), element.Type, element.Width));
 
@@ -135,7 +135,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             // replace first or last point with point which has some offset from junction
             var nextPointIndex = splitPointIndex == 0 ? 1 : element.Points.Count - 2;
             var nextPoint = element.Points[nextPointIndex];
-            var offsetPoint = CalculatePoint(splitPoint, nextPoint, Offset);
+            var offsetPoint = CalculatePoint(splitPoint, nextPoint, element.Width);
             element.Points[splitPointIndex] = offsetPoint;
 
             junction.Connections.Add(new RoadJunction
@@ -167,8 +167,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <summary>
         ///     Gets point along AB at given distance from A.
         /// </summary>
-        private static MapPoint CalculatePoint(MapPoint a, MapPoint b, float distance)
+        private static MapPoint CalculatePoint(MapPoint a, MapPoint b, float width)
         {
+            // TODO calculate distance based on width
+            var distance = width;
+
             // TODO ensure that generated point has valid direction:
             // AB' + B'B = AB It's possible that "distance" variable is greater than AB 
 

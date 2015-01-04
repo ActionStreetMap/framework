@@ -15,10 +15,11 @@ namespace ActionStreetMap.Tests.Core.World
             // ARRANGE
             var graph = new RoadGraph();
             var junctionPoint = new MapPoint(10, 0);
-            var offset = RoadGraph.Offset;
+            var offset = 2;
             var roadElement1 = new RoadElement()
             {
                 Id = 1,
+                Width = offset,
                 Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(0, 0), junctionPoint, new MapPoint(20, 0),}
             };
@@ -26,6 +27,7 @@ namespace ActionStreetMap.Tests.Core.World
             var roadElement2 = new RoadElement()
             {
                 Id = 2,
+                Width = offset,
                 Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(10, 10), junctionPoint, new MapPoint(10, -10)}
             };
