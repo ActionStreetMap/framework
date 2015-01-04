@@ -59,6 +59,15 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         private RoadElement ProcessJunction(RoadElement element, int junctionPointIndex)
         {
             var junctionPoint = element.Points[junctionPointIndex];
+
+            if (_pointsMap.ContainsKey(junctionPoint))
+            {
+                var pointUsage = _pointsMap[junctionPoint];
+                // NOTE road contains the same points
+                if (pointUsage.Item1 == element)
+                    return element;
+            }
+
             if (!_junctionsMap.ContainsKey(junctionPoint))
                 _junctionsMap.Add(junctionPoint, new RoadJunction(junctionPoint));
 
@@ -103,7 +112,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     if (!_pointsMap.ContainsKey(point)) break;
                     var usage = _pointsMap[point];
                     usage.Item1 = secondElementPart;
-                    usage.Item2 = i;
+                    usage.Item2 = i + 1;
                 }
 
                 secondElementPart.Points.Insert(0, CalculatePoint(splitPoint, secondElementPart.Points.First(), Offset));

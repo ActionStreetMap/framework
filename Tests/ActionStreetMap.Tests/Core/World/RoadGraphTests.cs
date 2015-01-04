@@ -108,8 +108,7 @@ namespace ActionStreetMap.Tests.Core.World
                 Points = new List<MapPoint>() { junctionPoint, new MapPoint(10, 10), new MapPoint(10, 20) }
             };
 
-            var roadElement3 = new RoadElement()
-            {
+            var roadElement3 = new RoadElement() {
                 Id = 3,
                 Points = new List<MapPoint>() { new MapPoint(10, -20), new MapPoint(10, -10), junctionPoint }
             };
@@ -159,6 +158,23 @@ namespace ActionStreetMap.Tests.Core.World
             // ASSERT
             var elements = graph.Elements.ToList();
             Assert.AreEqual(4, elements.Count);
+        }
+
+        [Test]
+        public void CanHandleRoadWithTheSamePoints()
+        {
+            // ARRANGE
+            var graph = new RoadGraph();
+
+            // ACT
+            graph.Add(new RoadElement
+            {
+                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0), new MapPoint(0, 0)}
+            });
+
+            // ASSERT
+            Assert.AreEqual(0, graph.Junctions.Count());
+            Assert.AreEqual(1, graph.Elements.Count());
         }
     }
 }
