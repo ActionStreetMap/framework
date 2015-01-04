@@ -16,6 +16,6 @@
         /// <summary>
         /// For pedestrian.
         /// </summary>
-        Pedestrian,
+        Pedestrian
     }
 }

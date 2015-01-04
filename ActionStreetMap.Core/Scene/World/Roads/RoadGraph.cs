@@ -33,7 +33,10 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// </summary>
         public IEnumerable<RoadJunction> Junctions { get { return _junctionsMap.Values; } }
 
-
+        /// <summary>
+        ///     Adds road element to graph.
+        /// </summary>
+        /// <param name="element">Road element.</param>
         public void Add(RoadElement element)
         {
             //Contract.Requires(element != null);
@@ -41,7 +44,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             _elements.Add(element);
 
-            // TODO ignore for non-car types
+            // NOTE ignore for non-car types
             if (element.Type != RoadType.Car)
                 return;
 
@@ -109,11 +112,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 // insert offset point as first
                 secondElementPart.Points = points.Skip(splitPointIndex + 1).ToList();
 
-                // TODO shift all indicies for secondElementPart references inside _pointsMap
+                // shift all indicies for secondElementPart references inside _pointsMap
                 for (int i = 0; i < secondElementPart.Points.Count; i++)
                 {
                     var point = secondElementPart.Points[i];
-                    // this situation happens when we process current adding element
+                    // this situation happens when we try to split current element
                     if (!_pointsMap.ContainsKey(point)) break;
                     var usage = _pointsMap[point];
                     usage.Item1 = secondElementPart;
@@ -145,6 +148,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
         #region Static methods
 
+        /// <summary>
+        ///     Creates clone of given road element.
+        /// </summary>
         private static RoadElement Clone(RoadElement element)
         {
             return new RoadElement
@@ -159,9 +165,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         }
 
         /// <summary>
-        ///     Gets point along AB at given distance from A
+        ///     Gets point along AB at given distance from A.
         /// </summary>
-        public static MapPoint CalculatePoint(MapPoint a, MapPoint b, float distance)
+        private static MapPoint CalculatePoint(MapPoint a, MapPoint b, float distance)
         {
             // TODO ensure that generated point has valid direction:
             // AB' + B'B = AB It's possible that "distance" variable is greater than AB 
@@ -183,6 +189,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
         #endregion
 
+        /// <summary>
+        ///     Clears internal buffers to make object ready for further usage.
+        /// </summary>
         public void Clear()
         {
             _elements.Clear();
