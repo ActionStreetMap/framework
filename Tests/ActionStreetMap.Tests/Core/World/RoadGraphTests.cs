@@ -2,6 +2,7 @@
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.World.Roads;
+
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.World
@@ -13,7 +14,7 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanJoinSimpleRoadCross()
         {
             // ARRANGE
-            var graph = new RoadGraph();
+            var builder = new RoadGraphBuilder();
             var junctionPoint = new MapPoint(10, 0);
             var offset = 2;
             var roadElement1 = new RoadElement()
@@ -21,7 +22,7 @@ namespace ActionStreetMap.Tests.Core.World
                 Id = 1,
                 Width = offset,
                 Type = RoadType.Car,
-                Points = new List<MapPoint>() { new MapPoint(0, 0), junctionPoint, new MapPoint(20, 0),}
+                Points = new List<MapPoint>() { new MapPoint(0, 0), junctionPoint, new MapPoint(20, 0), }
             };
 
             var roadElement2 = new RoadElement()
@@ -29,12 +30,13 @@ namespace ActionStreetMap.Tests.Core.World
                 Id = 2,
                 Width = offset,
                 Type = RoadType.Car,
-                Points = new List<MapPoint>() { new MapPoint(10, 10), junctionPoint, new MapPoint(10, -10)}
+                Points = new List<MapPoint>() { new MapPoint(10, 10), junctionPoint, new MapPoint(10, -10) }
             };
 
             // ACT
-            graph.Add(roadElement1);
-            graph.Add(roadElement2);
+            builder.Add(roadElement1);
+            builder.Add(roadElement2);
+            var graph = builder.Build();
 
             // ASSERT
 
@@ -49,42 +51,14 @@ namespace ActionStreetMap.Tests.Core.World
             Assert.AreEqual(new MapPoint(10, junctionPoint.Y - offset), connections[3].Point);
 
             // check elements
-            var elements = graph.Elements.ToList();
+            var elements = GetElements(graph).ToList();
             Assert.AreEqual(4, elements.Count());
         }
 
         [Test]
         public void CanJoinSimpleRoadCorner()
         {
-            var graph = new RoadGraph();
-            var junctionPoint = new MapPoint(10, 0);
-            var roadElement1 = new RoadElement()
-            {
-                Id = 1,
-                Type = RoadType.Car,
-                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), junctionPoint}
-            };
-
-            var roadElement2 = new RoadElement()
-            {
-                Id = 2,
-                Type = RoadType.Car,
-                Points = new List<MapPoint>() { junctionPoint, new MapPoint(10, 10), new MapPoint(10, 20)}
-            };
-
-            // ACT
-            graph.Add(roadElement1);
-            graph.Add(roadElement2);
-
-            // ASSERT
-            var elements = graph.Elements.ToList();
-            Assert.AreEqual(2, elements.Count());
-        }
-
-        [Test]
-        public void CanSimpleJoinThreePoints()
-        {
-            var graph = new RoadGraph();
+            var builder = new RoadGraphBuilder();
             var junctionPoint = new MapPoint(10, 0);
             var roadElement1 = new RoadElement()
             {
@@ -100,19 +74,50 @@ namespace ActionStreetMap.Tests.Core.World
                 Points = new List<MapPoint>() { junctionPoint, new MapPoint(10, 10), new MapPoint(10, 20) }
             };
 
-            var roadElement3 = new RoadElement() {
+            // ACT
+            builder.Add(roadElement1);
+            builder.Add(roadElement2);
+            var graph = builder.Build();
+
+            // ASSERT
+            var elements = GetElements(graph).ToList();
+            Assert.AreEqual(2, elements.Count());
+        }
+
+        [Test]
+        public void CanSimpleJoinThreePoints()
+        {
+            var builder = new RoadGraphBuilder();
+            var junctionPoint = new MapPoint(10, 0);
+            var roadElement1 = new RoadElement()
+            {
+                Id = 1,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), junctionPoint }
+            };
+
+            var roadElement2 = new RoadElement()
+            {
+                Id = 2,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { junctionPoint, new MapPoint(10, 10), new MapPoint(10, 20) }
+            };
+
+            var roadElement3 = new RoadElement()
+            {
                 Id = 3,
                 Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(10, -20), new MapPoint(10, -10), junctionPoint }
             };
 
             // ACT
-            graph.Add(roadElement1);
-            graph.Add(roadElement2);
-            graph.Add(roadElement3);
+            builder.Add(roadElement1);
+            builder.Add(roadElement2);
+            builder.Add(roadElement3);
+            var graph = builder.Build();
 
             // ASSERT
-            var elements = graph.Elements.ToList();
+            var elements = GetElements(graph).ToList();
             Assert.AreEqual(3, elements.Count());
         }
 
@@ -120,39 +125,67 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanJoinTwoCorners()
         {
             // ARRANGE
-            var graph = new RoadGraph();
+            var builder = new RoadGraphBuilder();
 
             // ACT
-            graph.Add(new RoadElement { Type = RoadType.Car, Points = new List<MapPoint>() 
-            { new MapPoint(0, 10), new MapPoint(0, 0) } });
-            graph.Add(new RoadElement { Type = RoadType.Car, Points = new List<MapPoint>() 
-            { new MapPoint(10, 10), new MapPoint(10, 0) } });
-            graph.Add(new RoadElement { Type = RoadType.Car, Points = new List<MapPoint>() 
-            { new MapPoint(0, 0), new MapPoint(10, 0) } });
+            builder.Add(new RoadElement
+            {
+                Id = 0,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(0, 10), new MapPoint(0, 0) }
+            });
+            builder.Add(new RoadElement
+            {
+                Id = 1,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(10, 10), new MapPoint(10, 0) }
+            });
+            builder.Add(new RoadElement
+            {
+                Id = 2,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(10, 0) }
+            });
+            var graph = builder.Build();
 
             // ASSERT
             Assert.AreEqual(2, graph.Junctions.Count());
-            Assert.AreEqual(3, graph.Elements.Count());
+            Assert.AreEqual(3, GetElements(graph).Count());
         }
 
         [Test]
         public void CanJoinSplitElementBug()
         {
             // ARRANGE
-            var graph = new RoadGraph();
+            var builder = new RoadGraphBuilder();
 
             // ACT
-            graph.Add(new RoadElement {Type = RoadType.Car, Points = new List<MapPoint>() 
-                { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0) }});
+            builder.Add(new RoadElement
+            {
+                Id = 0,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0) }
+            });
 
-            graph.Add(new RoadElement {Type = RoadType.Car, Points = 
-                new List<MapPoint>() { new MapPoint(0, 20), new MapPoint(0, 10), new MapPoint(0, 0) }});
+            builder.Add(new RoadElement
+            {
+                Id = 1,
+                Type = RoadType.Car,
+                Points =
+                    new List<MapPoint>() { new MapPoint(0, 20), new MapPoint(0, 10), new MapPoint(0, 0) }
+            });
 
-            graph.Add(new RoadElement {Type = RoadType.Car, Points = 
-                new List<MapPoint>() { new MapPoint(10, 20), new MapPoint(10, 10), new MapPoint(10, 0) }});
-          
+            builder.Add(new RoadElement
+            {
+                Id = 2,
+                Type = RoadType.Car,
+                Points =
+                    new List<MapPoint>() { new MapPoint(10, 20), new MapPoint(10, 10), new MapPoint(10, 0) }
+            });
+            var graph = builder.Build();
+
             // ASSERT
-            var elements = graph.Elements.ToList();
+            var elements = GetElements(graph).ToList();
             Assert.AreEqual(4, elements.Count);
         }
 
@@ -160,44 +193,52 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanHandleRoadWithTheSamePoints()
         {
             // ARRANGE
-            var graph = new RoadGraph();
+            var builder = new RoadGraphBuilder();
 
             // ACT
-            graph.Add(new RoadElement
+            builder.Add(new RoadElement
             {
+                Id = 0,
                 Type = RoadType.Car,
-                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0), new MapPoint(0, 0)}
+                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0), new MapPoint(0, 0) }
             });
+            var graph = builder.Build();
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
-            Assert.AreEqual(1, graph.Elements.Count());
+            Assert.AreEqual(1, GetElements(graph).Count());
         }
 
         [Test]
         public void CanSkipJunctionOfDifferentTypes()
         {
             // ARRANGE
-            var graph = new RoadGraph();
+            var builder = new RoadGraphBuilder();
 
             // ACT
-            graph.Add(new RoadElement()
+            builder.Add(new RoadElement()
             {
-                Id = 0, 
+                Id = 0,
                 Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0) }
             });
 
-            graph.Add(new RoadElement()
+            builder.Add(new RoadElement()
             {
                 Id = 1,
                 Type = RoadType.Pedestrian,
                 Points = new List<MapPoint>() { new MapPoint(0, 10), new MapPoint(0, 0), new MapPoint(0, -10) }
             });
+            var graph = builder.Build();
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
-            Assert.AreEqual(2, graph.Elements.Count());
+            Assert.AreEqual(2, GetElements(graph).Count());
+        }
+
+        private static IEnumerable<RoadElement> GetElements(RoadGraph graph)
+        {
+            return graph.Roads.Select(r => r.Elements).SelectMany(e => e);
         }
     }
 }

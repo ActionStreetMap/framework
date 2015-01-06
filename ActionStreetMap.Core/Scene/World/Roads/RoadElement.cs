@@ -8,7 +8,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
     public class RoadElement
     {
         /// <summary>
-        ///     Gets or sets road element id.
+        ///     Gets or sets original road element id.
         /// </summary>
         public long Id { get; set; }
 
@@ -46,5 +46,15 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         ///     Gets or sets height on terrain.
         /// </summary>
         public float ZIndex { get; set; }
+
+        /// <summary>
+        ///     Gets junction at start.
+        /// </summary>
+        public RoadJunction Start { get; set; }
+
+        /// <summary>
+        ///     Gets junction at end.
+        /// </summary>
+        public RoadJunction End { get; set; }
     }
 }

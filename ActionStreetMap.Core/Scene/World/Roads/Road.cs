@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Unity;
 namespace ActionStreetMap.Core.Scene.World.Roads
 {
     /// <summary>
-    ///     Represents road which can consist of different road elements. This is useful for smooth road rendering
+    ///     Represents a road including game object.
     /// </summary>
     public class Road
     {

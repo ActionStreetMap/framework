@@ -68,7 +68,7 @@ namespace ActionStreetMap.Models.Terrain
         private float[,,] _splatMapBuffer;
         private List<int[,]> _detailListBuffer;
 
-        private readonly RoadGraph _roadGraph = new RoadGraph();
+        private readonly RoadGraphBuilder _roadGraphBuilder = new RoadGraphBuilder();
         private readonly List<AreaSettings> _areas = new List<AreaSettings>();
         private readonly List<AreaSettings> _elevations = new List<AreaSettings>();
         private readonly List<TreeDetail> _trees = new List<TreeDetail>();
@@ -136,7 +136,7 @@ namespace ActionStreetMap.Models.Terrain
         /// <inheritdoc />
         public void AddRoadElement(RoadElement roadElement)
         {
-            _roadGraph.Add(roadElement);
+            _roadGraphBuilder.Add(roadElement);
         }
 
         /// <inheritdoc />
@@ -164,22 +164,17 @@ namespace ActionStreetMap.Models.Terrain
             var heightMap = settings.Tile.HeightMap;
             var roadStyleProvider = settings.RoadStyleProvider;
 
-            // TODO merge road elements to road - should be done inside road graph
-            var roads = _roadGraph.Elements.Select(re => new Road
-             {
-                 Elements = new List<RoadElement> {re},
-                 GameObject = _gameObjectFactory.CreateNew(String.Format("road [{0}] {1}/ ", re.Id, re.Address), 
-                                                    settings.Tile.GameObject),
-             }).ToList();
-
-            // TODO process road junctions
-
-            // process roads
-             foreach (var road in roads)
+            var roadGraph = _roadGraphBuilder.Build();
+            foreach (var road in roadGraph.Roads)
             {
+                var element = road.Elements.First();
+                road.GameObject = _gameObjectFactory.CreateNew(
+                    String.Format("road [{0}] {1}/ ", element.Id, element.Address), settings.Tile.GameObject);
                 var style = roadStyleProvider.Get(road);
                 _roadBuilder.Build(heightMap, road, style);
             }
+
+            // TODO process road junctions
 
             // process elevations
             // NOTE We have to do this in the last order. Otherwise, new height
@@ -369,7 +364,6 @@ namespace ActionStreetMap.Models.Terrain
             // clear collections to reuse
             _areas.Clear();
             _elevations.Clear();
-            _roadGraph.Clear();
             _trees.Clear();
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Unity;
 
 namespace ActionStreetMap.Core.Scene.World.Roads
 {
@@ -7,6 +8,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
     /// </summary>
     public class RoadJunction
     {
+        /// <summary>
+        ///     Gets or sets game object wrapper which holds game engine specific classes
+        /// </summary>
+        public IGameObject GameObject { get; set; }
+
         /// <summary>
         ///     Gets junction center point.
         /// </summary>
@@ -24,7 +30,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         public RoadJunction(MapPoint center)
         {
             Center = center;
-            Connections = new List<Connection>(4);
+            Connections = new List<Connection>(2);
         }
 
         #region Nested classes
@@ -42,24 +48,17 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             /// <summary>
             ///     Gets road type.
             /// </summary>
-            public RoadType Type { get; private set; }
-
-            /// <summary>
-            ///     Gets road width.
-            /// </summary>
-            public float Width { get; private set; }
+            public RoadElement Element { get; private set; }
 
             /// <summary>
             ///     Creates instance of <see cref="Connection"/>.
             /// </summary>
             /// <param name="point">Connection point.</param>
-            /// <param name="type">Road type.</param>
-            /// <param name="width">Road width.</param>
-            public Connection(MapPoint point, RoadType type, float width)
+            /// <param name="element">Road element.</param>
+            public Connection(MapPoint point, RoadElement element)
             {
                 Point = point;
-                Type = type;
-                Width = width;
+                Element = element;
             }
         }
 
