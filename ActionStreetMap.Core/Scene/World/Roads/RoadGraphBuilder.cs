@@ -26,7 +26,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <returns>Road graph.</returns>
         public RoadGraph Build()
         {
-            var roads = _elements.Select(kv => new Road() { Elements = kv.Value }).ToArray();
+            var roads = _elements.Select(kv => new Road { Elements = kv.Value }).ToArray();
             var junctions = _junctionsMap.Values.ToArray();
 
             // clear buffers
@@ -97,7 +97,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
         private RoadElement SplitElement(RoadElement element, int splitPointIndex, RoadJunction junction)
         {
-            var splitPoint = element.Points[splitPointIndex];
             // case 1: in the middle - need to split to two elements
             if (splitPointIndex != 0 && splitPointIndex != element.Points.Count - 1)
             {
@@ -106,26 +105,26 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 var secondElementPart = Clone(element);
 
                 // insert offset point as last
-                element.Points = points.Take(splitPointIndex).ToList();
-                element.Points.Add(CalculatePoint(splitPoint, element.Points.Last(), element.Width));
+                element.Points = points.Take(splitPointIndex + 1).ToList();
+                element.Points[element.Points.Count - 1] = RoadJunctionUtils.CalculateJointPoint(element.Points, element.Width, false);
                 junction.Connections.Add(new RoadJunction.Connection(element.Points.Last(), element));
                 element.End = junction;
 
                 // insert offset point as first
-                secondElementPart.Points = points.Skip(splitPointIndex + 1).ToList();
+                secondElementPart.Points = points.Skip(splitPointIndex).ToList();
 
                 // shift all indicies for secondElementPart references inside _pointsMap
-                for (int i = 0; i < secondElementPart.Points.Count; i++)
+                for (int i = 1; i < secondElementPart.Points.Count; i++)
                 {
                     var point = secondElementPart.Points[i];
                     // this situation happens when we try to split current element
                     if (!_pointsMap.ContainsKey(point)) break;
                     var usage = _pointsMap[point];
                     usage.Item1 = secondElementPart;
-                    usage.Item2 = i + 1;
+                    usage.Item2 = i;
                 }
 
-                secondElementPart.Points.Insert(0, CalculatePoint(splitPoint, secondElementPart.Points.First(), element.Width));
+                secondElementPart.Points[0] = RoadJunctionUtils.CalculateJointPoint(secondElementPart.Points, element.Width, true);
                 junction.Connections.Add(new RoadJunction.Connection(secondElementPart.Points.First(), secondElementPart));
                 secondElementPart.Start = junction;
 
@@ -134,21 +133,14 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             }
 
             // case 2: No need to split element
-            // replace first or last point with point which has some offset from junction
-            int nextPointIndex;
-            if (splitPointIndex == 0)
-            {
-                nextPointIndex = 1;
-                element.Start = junction;
-            }
-            else
-            {
-                nextPointIndex = element.Points.Count - 2;
-                element.End = junction;
-            }
 
-            var nextPoint = element.Points[nextPointIndex];
-            var offsetPoint = CalculatePoint(splitPoint, nextPoint, element.Width);
+            if (splitPointIndex == 0)
+                element.Start = junction;
+            else
+                element.End = junction;
+
+            // replace first or last point with point which has some offset from junction
+            var offsetPoint = RoadJunctionUtils.CalculateJointPoint(element.Points, element.Width, splitPointIndex == 0);
             element.Points[splitPointIndex] = offsetPoint;
 
             junction.Connections.Add(new RoadJunction.Connection(offsetPoint, element));
@@ -169,39 +161,13 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             {
                 Id = element.Id,
                 Type = element.Type,
-                //Address = element.Address,
+                Address = element.Address,
                 Width = element.Width,
                 ZIndex = element.ZIndex,
                 Points = element.Points,
                 Start = element.Start,
                 End = element.End
             };
-        }
-
-        /// <summary>
-        ///     Gets point along AB at given distance from A.
-        /// </summary>
-        private static MapPoint CalculatePoint(MapPoint a, MapPoint b, float width)
-        {
-            // TODO calculate distance based on width
-            var distance = width;
-
-            // TODO ensure that generated point has valid direction:
-            // AB' + B'B = AB It's possible that "distance" variable is greater than AB 
-
-            // a. calculate the vector from o to g:
-            float vectorX = b.X - a.X;
-            float vectorY = b.Y - a.Y;
-
-            // b. calculate the proportion of hypotenuse
-            var factor = (float)(distance / System.Math.Sqrt(vectorX * vectorX + vectorY * vectorY));
-
-            // c. factor the lengths
-            vectorX *= factor;
-            vectorY *= factor;
-
-            // d. calculate and Draw the new vector,
-            return new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
         }
 
         #endregion

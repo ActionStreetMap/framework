@@ -57,6 +57,7 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="Core\World\RoadGraphTests.cs" />
+    <Compile Include="Core\World\RoadJunctionUtilsTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="GeoCoordinateHelper.cs" />
     <Compile Include="ConsoleTrace.cs" />
