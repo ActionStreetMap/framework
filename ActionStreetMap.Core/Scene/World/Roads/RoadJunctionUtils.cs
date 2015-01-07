@@ -48,6 +48,35 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             // d. calculate and Draw the new vector,
             return new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
         }
+
+        /// <summary>
+        ///     Sorts segments by angle.
+        /// </summary>
+        /// <param name="original">Original point.</param>
+        /// <param name="pivot">Pivot point.</param>
+        /// <param name="choices">List of choice points.</param>
+        /// <returns>Sorted list.</returns>
+        public static IEnumerable<MapPoint> SortByAngle(MapPoint original, MapPoint pivot, List<MapPoint> choices)
+        {
+            choices.Sort((v1, v2) => GetTurnAngle(original, pivot, v1).CompareTo(GetTurnAngle(original, pivot, v2)));
+            return choices;
+        }
+
+        /// <summary>
+        ///     Gets angle between sigments created by points.
+        /// </summary>
+        public static double GetTurnAngle(MapPoint original, MapPoint pivot, MapPoint choice)
+        {
+            var angle1 = Math.Atan2(original.Y - pivot.Y, original.X - pivot.X);
+            var angle2 = Math.Atan2(choice.Y - pivot.Y, choice.X - pivot.X);
+            var angleDiff = (180 / Math.PI * (angle2 - angle1));
+
+            if (angleDiff > 0) //It went CCW so adjust
+            {
+                return 360 - angleDiff;
+            }
+            return -angleDiff; //I need the results to be always positive so flip sign
+        }
     }
 }
 ;
