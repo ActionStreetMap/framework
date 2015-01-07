@@ -46,8 +46,11 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
 
         private Tuple<Vector3, Vector3> _startPoints;
 
-        private int _elementIndex;
-        private bool _isLastElement;
+        //private int _elementIndex;
+        //private bool _isLastElement;
+
+        private LineElement _currentElement;
+        private LineElement _nextElement;
 
         private readonly HeightMapProcessor _heightMapProcessor = new HeightMapProcessor();
 
@@ -65,16 +68,11 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             var lineElements = ThickLineUtils.GetLineElementsInTile(heightMap.LeftBottomCorner, 
                 heightMap.RightUpperCorner, elements);
             var elementsCount = lineElements.Count;
-            for (_elementIndex = 0; _elementIndex < elementsCount; _elementIndex++)
+            for (var i = 0; i < elementsCount; i++)
             {
-                _isLastElement = _elementIndex == elementsCount - 1;
-
-                var lineElement = lineElements[_elementIndex];
-                // it means that there is no connection to previous line element
-                if (lineElement.IsNotContinuation)
-                    _startPoints = null;
-
-                ProcessLine(lineElement, lineElements);
+                _currentElement = lineElements[i];
+                _nextElement = i == elementsCount - 1 ? null : lineElements[i + 1];
+                ProcessLine(lineElements);
             }
 
             builder(Points, Triangles, Uv);
@@ -83,7 +81,8 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             _heightMap = null;
             TrisIndex = 0;
             _startPoints = null;
-            _isLastElement = false;
+            _currentElement = null;
+            _nextElement = null;
             Points.Clear();
             Triangles.Clear();
             Uv.Clear();
@@ -94,18 +93,17 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         /// <summary>
         ///     Process line segment.
         /// </summary>
-        /// <param name="lineElement">Line element.</param>
         /// <param name="lineElements">Line elements.</param>
-        protected void ProcessLine(LineElement lineElement, List<LineElement> lineElements)
+        protected void ProcessLine(List<LineElement> lineElements)
         {
-            var lineSegments = GetThickSegments(lineElement);
+            var lineSegments = GetThickSegments(_currentElement);
 
             // NOTE Sometimes the road has only one point (wrong pbf file?)
             if (lineSegments.Count == 0)
                 return;
 
             ProcessFirstSegments(lineSegments);
-            ProcessLastSegment(lineElements, lineSegments, lineElement.Width);
+            ProcessLastSegment(lineElements, lineSegments, _currentElement.Width);
         }
 
         /// <summary>
@@ -152,23 +150,25 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             var segmentsCount = lineSegments.Count;
 
             // We have to connect last segment with first segment of next road element
-            if (!_isLastElement)
+            if (_nextElement != null)
             {
                 var first = lineSegments[segmentsCount - 1];
-                var nextRoadElement = lineElements[_elementIndex + 1];
 
-                // NOTE we couldn't connect last segment of current element with next cause it's marked as not continuation
-                if (nextRoadElement.IsNotContinuation)
+                // we couldn't connect last segment of current element with next
+                if (!_currentElement.Points[_currentElement.Points.Count - 1].Equals(_nextElement.Points[0]))
+                {
+                    _startPoints = null;
                     return;
+                }
 
                 MapPoint secondPoint = _heightMap.IsFlat
-                    ? nextRoadElement.Points[1]
+                    ? _nextElement.Points[1]
                     // we split lineElement to smaller parts in non-flat mode
                     : ThickLineUtils.GetNextIntermediatePoint(_heightMap,
-                        nextRoadElement.Points[0],
-                        nextRoadElement.Points[1], MaxPointDistance);
+                        _nextElement.Points[0],
+                        _nextElement.Points[1], MaxPointDistance);
 
-                var second = ThickLineHelper.GetThickSegment(nextRoadElement.Points[0], secondPoint, width);
+                var second = ThickLineHelper.GetThickSegment(_nextElement.Points[0], secondPoint, width);
 
                 Vector3 nextIntersectionPoint;
                 switch (ThickLineHelper.GetDirection(first, second))

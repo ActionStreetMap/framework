@@ -42,8 +42,6 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
                             continue;
                         }
 
-                        // split element and continue with second part
-                        el.IsNotContinuation = true;
                         var points = PointBuffer.ToList(); // make copy
                         points.Add(GetIntersectionPoint(el.Points[i - 1], point, leftBottomCorner, rightUpperCorner));
                         

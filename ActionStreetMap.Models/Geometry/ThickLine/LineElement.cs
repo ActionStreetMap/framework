@@ -14,11 +14,6 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         public float Width { get; private set; }
 
         /// <summary>
-        ///     True if is not continuation. Used in processing of cross tile lines.
-        /// </summary>
-        public bool IsNotContinuation { get; set; }
-
-        /// <summary>
         ///     Gets or sets line points.
         /// </summary>
         public List<MapPoint> Points { get; set; }
