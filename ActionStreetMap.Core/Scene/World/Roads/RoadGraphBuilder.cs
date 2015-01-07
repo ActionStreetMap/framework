@@ -26,6 +26,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <returns>Road graph.</returns>
         public RoadGraph Build()
         {
+            MergeRoads();
+
             var roads = _elements.Select(kv => new Road { Elements = kv.Value }).ToArray();
             var junctions = _junctionsMap.Values.ToArray();
 
@@ -59,6 +61,60 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     if (el.Points.Count != pointCount) i = 0;
                 }
             }
+        }
+
+        #endregion
+
+        /// <summary>
+        ///     Merges roads from junctions with only two connection of same road
+        /// </summary>
+        private void MergeRoads()
+        {
+            List<MapPoint> toBeRemovedJunctionKeys = new List<MapPoint>();
+            foreach (var keyValuePair in _junctionsMap)
+            {
+                var junction = keyValuePair.Value;
+                if (junction.Connections.Count != 2)
+                    continue;
+
+                RoadElement start, end;
+                if (junction.Connections[0].Element.End == junction)
+                {
+                    start = junction.Connections[0].Element;
+                    end = junction.Connections[1].Element;
+                }
+                else
+                {
+                    start = junction.Connections[1].Element;
+                    end = junction.Connections[0].Element;
+                }
+
+                var elementStartList = _elements[start.Id];
+                var elementEndList = _elements[end.Id];
+                // insert
+                for (int i = 0; i < elementStartList.Count; i++)
+                {
+                    if (elementStartList[i] == start)
+                    {
+                        // should insert all
+                        // need reverse elementEndList if direction of elements is different
+                        if (end == elementEndList.Last())
+                            elementEndList.Reverse();
+                        elementStartList.AddRange(elementEndList);
+                        _elements.Remove(end.Id);
+                        // override original Id
+                        // TODO display debug message
+                        elementEndList.ForEach(e => e.Id = start.Id);
+                        break;
+                    }
+                }
+
+                toBeRemovedJunctionKeys.Add(keyValuePair.Key);
+                // remove junction from reference
+                start.End = null;
+                end.Start = null;
+            }
+            toBeRemovedJunctionKeys.ForEach(p => _junctionsMap.Remove(p));
         }
 
         private RoadElement GetRoadElement(MapPoint point)
@@ -147,8 +203,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             return element;
         }
-
-        #endregion
 
         #region Static methods
 

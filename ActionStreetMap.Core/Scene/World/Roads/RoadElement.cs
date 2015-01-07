@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 namespace ActionStreetMap.Core.Scene.World.Roads
 {
@@ -56,5 +57,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         ///     Gets junction at end.
         /// </summary>
         public RoadJunction End { get; set; }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return string.Format("{0}:[{1}..{2}]", Id, Points.First(), Points.Last());
+        }
     }
 }

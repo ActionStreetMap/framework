@@ -149,7 +149,8 @@ namespace ActionStreetMap.Tests.Core.World
             var graph = builder.Build();
 
             // ASSERT
-            Assert.AreEqual(2, graph.Junctions.Count());
+            Assert.AreEqual(0, graph.Junctions.Count());
+            Assert.AreEqual(1, graph.Roads.Count());
             Assert.AreEqual(3, GetElements(graph).Count());
         }
 
@@ -233,7 +234,33 @@ namespace ActionStreetMap.Tests.Core.World
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
-            Assert.AreEqual(2, GetElements(graph).Count());
+            Assert.AreEqual(2, graph.Roads.Count());
+        }
+
+        [Test]
+        public void CanMergeTwoSameRoadsJunction()
+        {
+            // ARRANGE
+            var builder = new RoadGraphBuilder();
+            builder.Add(new RoadElement()
+            {
+                Id = 0,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0) }
+            });
+            builder.Add(new RoadElement()
+            {
+                Id = 1,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>() { new MapPoint(10, 0), new MapPoint(20, 0), new MapPoint(30, 0) }
+            });
+
+            // ACT
+            var graph = builder.Build();
+
+            // ASSERT
+            Assert.AreEqual(0, graph.Junctions.Count());
+            Assert.AreEqual(1, graph.Roads.Count());
         }
 
         private static IEnumerable<RoadElement> GetElements(RoadGraph graph)
