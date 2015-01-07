@@ -4,6 +4,7 @@ using System.Linq;
 using ActionStreetMap.Core.Scene.World.Roads;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Details;
 using ActionStreetMap.Models.Roads;
@@ -68,26 +69,32 @@ namespace ActionStreetMap.Models.Terrain
         private float[,,] _splatMapBuffer;
         private List<int[,]> _detailListBuffer;
 
-        private readonly RoadGraphBuilder _roadGraphBuilder = new RoadGraphBuilder();
+        private readonly IRoadGraphBuilder _roadGraphBuilder;
+
         private readonly List<AreaSettings> _areas = new List<AreaSettings>();
         private readonly List<AreaSettings> _elevations = new List<AreaSettings>();
         private readonly List<TreeDetail> _trees = new List<TreeDetail>();
+
+        [Dependency]
+        public ITrace Trace { get; set; }
 
         /// <summary>
         ///     Creates TerrainBuilder.
         /// </summary>
         /// <param name="gameObjectFactory">Game object factory.</param>
         /// <param name="resourceProvider">Resource provider.</param>
+        /// <param name="roadGraphBuilder">Road graph builder.</param>
         /// <param name="roadBuilder">Road builder.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
         public TerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider, 
-            IRoadBuilder roadBuilder, IObjectPool objectPool)
+            IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool)
         {
             _gameObjectFactory = gameObjectFactory;
             _resourceProvider = resourceProvider;
             _roadBuilder = roadBuilder;
             _objectPool = objectPool;
+            _roadGraphBuilder = roadGraphBuilder;
         }
 
         #region ITerrainBuilder implementation

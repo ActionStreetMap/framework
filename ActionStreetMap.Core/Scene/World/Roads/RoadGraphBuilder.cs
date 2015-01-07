@@ -1,13 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Scene.World.Roads
 {
     /// <summary>
-    ///     Responsible for road graph building.
+    ///     Defines API for building road graph.
     /// </summary>
-    public sealed class RoadGraphBuilder
+    public interface IRoadGraphBuilder
+    {
+        /// <summary>
+        ///     Adds road element to graph.
+        /// </summary>
+        /// <param name="element">Road element.</param>
+        void Add(RoadElement element);
+
+        /// <summary>
+        ///    Builds road graph and cleanups internal buffers to make object ready to reuse.
+        /// </summary>
+        /// <returns>Road graph.</returns>
+        RoadGraph Build();
+    }
+
+    /// <summary>
+    ///     Default implementation of <see cref="IRoadGraphBuilder"/>.
+    /// </summary>
+    public sealed class RoadGraphBuilder: IRoadGraphBuilder
     {
         // map which is used for merging of split elements
         private readonly Dictionary<long, List<RoadElement>> _elements = new Dictionary<long, List<RoadElement>>(64);
@@ -18,12 +38,15 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         // point to index in RoadElement/index in Element.Points tuple
         private readonly Dictionary<MapPoint, Tuple<RoadElement, int>> _pointsMap = new Dictionary<MapPoint, Tuple<RoadElement, int>>(256);
 
+        /// <summary>
+        ///     Gets or sets trace.
+        /// </summary>
+        [Dependency]
+        public ITrace Trace { get; set; }
+
         #region Public methods
 
-        /// <summary>
-        ///    Builds road graph and cleanups internal buffers to make object ready to reuse.
-        /// </summary>
-        /// <returns>Road graph.</returns>
+        /// <inheritdoc />
         public RoadGraph Build()
         {
             MergeRoads();
@@ -39,10 +62,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             return new RoadGraph(roads, junctions);
         }
 
-        /// <summary>
-        ///     Adds road element to graph.
-        /// </summary>
-        /// <param name="element">Road element.</param>
+        /// <inheritdoc />
         public void Add(RoadElement element)
         {
             _elements.Add(element.Id, new List<RoadElement>(1) { element });

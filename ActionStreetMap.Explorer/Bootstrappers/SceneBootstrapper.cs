@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Core.Scene.World.Roads;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Themes;
@@ -68,8 +69,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             // facades
             Container.Register(Component.For<IBuildingBuilder>().Use<BuildingBuilder>().Singleton());
             Container.Register(Component.For<IFacadeBuilder>().Use<FlatFacadeBuilder>().Named("flat").Singleton());
+            
             // roofs
-
             Container.Register(Component.For<IRoofBuilder>().Use<GabledRoofBuilder>().Named("gabled").Singleton());
             Container.Register(Component.For<IRoofBuilder>().Use<HippedRoofBuilder>().Named("hipped").Singleton());
             Container.Register(Component.For<IRoofBuilder>().Use<DomeRoofBuilder>().Named("dome").Singleton());
@@ -81,6 +82,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<ITerrainBuilder>().Use<TerrainBuilder>().Singleton());
            
             // roads
+            Container.Register(Component.For<IRoadGraphBuilder>().Use<RoadGraphBuilder>().Singleton());
             Container.Register(Component.For<IRoadStyleProvider>().Use<RoadStyleProvider>().Singleton());
             Container.Register(Component.For<IRoadBuilder>().Use<RoadBuilder>().Singleton());
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Scene.World.Roads;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -13,8 +14,8 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders
     {
         [Dependency]
         public TestTerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider,
-            IRoadBuilder roadBuilder, IObjectPool objectPool)
-            : base(gameObjectFactory, resourceProvider, roadBuilder, objectPool)
+            IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool)
+            : base(gameObjectFactory, resourceProvider, roadGraphBuilder, roadBuilder, objectPool)
         {
         }
 
