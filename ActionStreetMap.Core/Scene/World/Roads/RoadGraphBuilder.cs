@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
@@ -90,10 +91,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// </summary>
         private void MergeRoads()
         {
-            List<MapPoint> toBeRemovedJunctionKeys = new List<MapPoint>();
-            foreach (var keyValuePair in _junctionsMap)
+            // TODO optimize memory allocations here
+            var toBeRemovedJunctionKeys = new List<MapPoint>();
+            foreach (var pair in _junctionsMap)
             {
-                var junction = keyValuePair.Value;
+                var junction = pair.Value;
                 if (junction.Connections.Count != 2)
                     continue;
 
@@ -109,27 +111,30 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     end = junction.Connections[0].Element;
                 }
 
+                // TODO do not calculate junction point in advance during junction split
+                start.Points[start.Points.Count - 1] = pair.Key;
+                end.Points[0] = pair.Key;
+
                 var elementStartList = _elements[start.Id];
                 var elementEndList = _elements[end.Id];
                 // insert
                 for (int i = 0; i < elementStartList.Count; i++)
                 {
-                    if (elementStartList[i] == start)
-                    {
-                        // should insert all
-                        // need reverse elementEndList if direction of elements is different
-                        if (end == elementEndList.Last())
-                            elementEndList.Reverse();
-                        elementStartList.AddRange(elementEndList);
-                        _elements.Remove(end.Id);
-                        // override original Id
-                        // TODO display debug message
-                        elementEndList.ForEach(e => e.Id = start.Id);
-                        break;
-                    }
+                    if (elementStartList[i] != start) continue;
+
+                    // should insert all
+                    // need reverse elementEndList if direction of elements is different
+                    if (end == elementEndList.Last())
+                        elementEndList.Reverse();
+                    elementStartList.AddRange(elementEndList);
+                    _elements.Remove(end.Id);
+                    // override original Id
+                    Trace.Output("road.graph", String.Format("merge {0} into {1}", end.Id, start.Id));
+                    elementEndList.ForEach(e => e.Id = start.Id);
+                    break;
                 }
 
-                toBeRemovedJunctionKeys.Add(keyValuePair.Key);
+                toBeRemovedJunctionKeys.Add(pair.Key);
                 // remove junction from reference
                 start.End = null;
                 end.Start = null;
@@ -209,7 +214,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             }
 
             // case 2: No need to split element
-
             if (splitPointIndex == 0)
                 element.Start = junction;
             else

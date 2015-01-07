@@ -14,7 +14,7 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanJoinSimpleRoadCross()
         {
             // ARRANGE
-            var builder = new RoadGraphBuilder();
+            var builder = GetBuilder();
             var junctionPoint = new MapPoint(10, 0);
             var offset = 2;
             var roadElement1 = new RoadElement()
@@ -58,7 +58,8 @@ namespace ActionStreetMap.Tests.Core.World
         [Test]
         public void CanJoinSimpleRoadCorner()
         {
-            var builder = new RoadGraphBuilder();
+            // ARRANGE
+            var builder = GetBuilder();
             var junctionPoint = new MapPoint(10, 0);
             var roadElement1 = new RoadElement()
             {
@@ -87,7 +88,8 @@ namespace ActionStreetMap.Tests.Core.World
         [Test]
         public void CanSimpleJoinThreePoints()
         {
-            var builder = new RoadGraphBuilder();
+            // ARRANGE
+            var builder = GetBuilder();
             var junctionPoint = new MapPoint(10, 0);
             var roadElement1 = new RoadElement()
             {
@@ -125,7 +127,7 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanJoinTwoCorners()
         {
             // ARRANGE
-            var builder = new RoadGraphBuilder();
+            var builder = GetBuilder();
 
             // ACT
             builder.Add(new RoadElement
@@ -158,7 +160,7 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanJoinSplitElementBug()
         {
             // ARRANGE
-            var builder = new RoadGraphBuilder();
+            var builder = GetBuilder();
 
             // ACT
             builder.Add(new RoadElement
@@ -194,7 +196,7 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanHandleRoadWithTheSamePoints()
         {
             // ARRANGE
-            var builder = new RoadGraphBuilder();
+            var builder = GetBuilder();
 
             // ACT
             builder.Add(new RoadElement
@@ -214,7 +216,7 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanSkipJunctionOfDifferentTypes()
         {
             // ARRANGE
-            var builder = new RoadGraphBuilder();
+            var builder = GetBuilder();
 
             // ACT
             builder.Add(new RoadElement()
@@ -241,7 +243,7 @@ namespace ActionStreetMap.Tests.Core.World
         public void CanMergeTwoSameRoadsJunction()
         {
             // ARRANGE
-            var builder = new RoadGraphBuilder();
+            var builder = GetBuilder();
             builder.Add(new RoadElement()
             {
                 Id = 0,
@@ -266,6 +268,11 @@ namespace ActionStreetMap.Tests.Core.World
         private static IEnumerable<RoadElement> GetElements(RoadGraph graph)
         {
             return graph.Roads.Select(r => r.Elements).SelectMany(e => e);
+        }
+
+        private static RoadGraphBuilder GetBuilder()
+        {
+            return new RoadGraphBuilder { Trace = new ConsoleTrace() };
         }
     }
 }
