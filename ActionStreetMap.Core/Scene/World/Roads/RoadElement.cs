@@ -29,11 +29,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         public float Width { get; set; }
 
         /// <summary>
-        ///     True if this road element isn't connected with previous one.
-        /// </summary>
-        public bool IsNotContinuation { get; set; }
-
-        /// <summary>
         ///     Gets or sets actual type of road element.
         /// </summary>
         public RoadType Type { get; set; }
