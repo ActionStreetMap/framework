@@ -187,8 +187,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
                 // insert offset point as last
                 element.Points = points.Take(splitPointIndex + 1).ToList();
-                element.Points[element.Points.Count - 1] = RoadJunctionUtils.CalculateJointPoint(element.Points, element.Width, false);
-                junction.Connections.Add(new RoadJunction.Connection(element.Points.Last(), element));
+                junction.Connections.Add(new RoadJunction.Connection(element.Points[element.Points.Count - 1], element));
                 element.End = junction;
 
                 // insert offset point as first
@@ -205,8 +204,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     usage.Item2 = i;
                 }
 
-                secondElementPart.Points[0] = RoadJunctionUtils.CalculateJointPoint(secondElementPart.Points, element.Width, true);
-                junction.Connections.Add(new RoadJunction.Connection(secondElementPart.Points.First(), secondElementPart));
+                junction.Connections.Add(new RoadJunction.Connection(secondElementPart.Points[0], secondElementPart));
                 secondElementPart.Start = junction;
 
                 _elements[secondElementPart.Id].Add(secondElementPart);
@@ -214,16 +212,10 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             }
 
             // case 2: No need to split element
-            if (splitPointIndex == 0)
-                element.Start = junction;
-            else
-                element.End = junction;
+            if (splitPointIndex == 0) element.Start = junction;
+            else element.End = junction;
 
-            // replace first or last point with point which has some offset from junction
-            var offsetPoint = RoadJunctionUtils.CalculateJointPoint(element.Points, element.Width, splitPointIndex == 0);
-            element.Points[splitPointIndex] = offsetPoint;
-
-            junction.Connections.Add(new RoadJunction.Connection(offsetPoint, element));
+            junction.Connections.Add(new RoadJunction.Connection(element.Points[splitPointIndex], element));
 
             return element;
         }
