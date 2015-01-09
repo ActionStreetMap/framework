@@ -43,9 +43,9 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             Assert.IsNotNull(tileLoader);
             Assert.AreEqual(1, tileLoader.Count);
 
-            Assert.Less(logger.Seconds, 3, "Loading took to long");
-            // NOTE However, we only check memory which is used after GC
-            Assert.Less(logger.Memory, 40, "Memory consumption is to hight!");
+            Assert.Less(logger.Seconds, 3, "Loading took too long");
+            // NOTE Actual value should be close to expected consumption for test data
+            Assert.Less(logger.Memory, 40, "Memory consumption is too high!");
         }
 
         [Test]
