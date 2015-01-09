@@ -11,6 +11,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
     internal class ThickLineUtils
     {
         private static readonly List<MapPoint> PointBuffer = new List<MapPoint>(64);
+        private static readonly List<LineElement> ResultElements = new List<LineElement>(8);
 
         #region Line elements in tile
 
@@ -21,10 +22,10 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         public static List<LineElement> GetLineElementsInTile(MapPoint leftBottomCorner, MapPoint rightUpperCorner,
             List<LineElement> elements)
         {
-            // Current implementation can filter long lines accidentally. Actually, if line which connects two points 
-            // crosses more than 1 tile border we can have problems
+            // NOTE Current implementation can filter long lines accidentally. Actually, if line which connects two points 
+            // crosses more than 1 tile border we will ignore it as we don't check segment-border intersections
 
-            var result = new List<LineElement>(elements.Count());
+            ResultElements.Clear();
             MapPoint? lastOutOfTilePoint = null;
             foreach (var lineElement in elements)
             {
@@ -44,8 +45,8 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
 
                         var points = PointBuffer.ToList(); // make copy
                         points.Add(GetIntersectionPoint(el.Points[i - 1], point, leftBottomCorner, rightUpperCorner));
-                        
-                        result.Add(el);
+
+                        ResultElements.Add(el);
                         var newEl = new LineElement(el.Points.Skip(i).ToList(), el.Width);
                         el.Points = points;
                         lastOutOfTilePoint = point;
@@ -66,14 +67,14 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
                 if (PointBuffer.Any())
                 {
                     el.Points = PointBuffer.ToList(); // assume that we create a copy of this array
-                    result.Add(el);
+                    ResultElements.Add(el);
                 }
 
                 // reuse _points array
                 PointBuffer.Clear();
             }
 
-            return result;
+            return ResultElements;
         }
 
         private static bool IsPointInTile(MapPoint point, MapPoint minPoint, MapPoint maxPoint)
