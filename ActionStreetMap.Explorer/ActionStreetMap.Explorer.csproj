@@ -49,6 +49,7 @@
     <Compile Include="Bootstrappers\TileBootstrapper.cs" />
     <Compile Include="Commands\Arguments.cs" />
     <Compile Include="Commands\CommandController.cs" />
+    <Compile Include="Commands\LocateCommand.cs" />
     <Compile Include="Commands\SysCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\TagCommand.cs" />
