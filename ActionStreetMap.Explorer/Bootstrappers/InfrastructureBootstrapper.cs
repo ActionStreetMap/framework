@@ -27,6 +27,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<CommandController>().Use<CommandController>().Singleton());
             Container.Register(Component.For<ICommand>().Use<SysCommand>().Singleton().Named("sys"));
             Container.Register(Component.For<ICommand>().Use<TagCommand>().Singleton().Named("tag"));
+            Container.Register(Component.For<ICommand>().Use<LocateCommand>().Singleton().Named("locate"));
 
             return true;
         }

@@ -29,6 +29,9 @@ namespace ActionStreetMap.Explorer
         public GeoCoordinate CurrentPosition { get { return _positionListener.CurrentPosition; } }
 
         /// <inheritdoc />
+        public MapPoint CurrentPoint { get { return _positionListener.CurrentPoint; } }
+
+        /// <inheritdoc />
         public GeoCoordinate RelativeNullPoint
         {
             get { return _positionListener.RelativeNullPoint; }

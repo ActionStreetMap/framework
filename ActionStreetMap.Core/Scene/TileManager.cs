@@ -44,6 +44,9 @@ namespace ActionStreetMap.Core.Scene
         /// <inheritdoc />
         public GeoCoordinate CurrentPosition { get; private set; }
 
+        /// <inheritdoc />
+        public MapPoint CurrentPoint { get; private set; }
+
         /// <summary>
         ///     Gets relative null point
         /// </summary>
@@ -79,12 +82,15 @@ namespace ActionStreetMap.Core.Scene
         /// <inheritdoc />
         public void OnMapPositionChanged(MapPoint position)
         {
+            CurrentPoint = position;
             CurrentPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, position);
 
             // call update logic only if threshold is reached
             if (Math.Abs(position.X - _lastUpdatePosition.X) > _moveSensitivity
                 || Math.Abs(position.Y - _lastUpdatePosition.Y) > _moveSensitivity)
             {
+                _lastUpdatePosition = position;
+
                 int i = Convert.ToInt32(position.X / _tileSize);
                 int j = Convert.ToInt32(position.Y / _tileSize);
 
@@ -103,16 +109,13 @@ namespace ActionStreetMap.Core.Scene
                 _currentTileIndex.Item1 = i;
                 _currentTileIndex.Item2 = j;
             }
-
-            _lastUpdatePosition = position;
         }
 
         /// <inheritdoc />
         public void OnGeoPositionChanged(GeoCoordinate position)
         {
             CurrentPosition = position;
-            var mapPoint = GeoProjection.ToMapCoordinate(RelativeNullPoint, position);
-            OnMapPositionChanged(mapPoint);
+            OnMapPositionChanged(GeoProjection.ToMapCoordinate(RelativeNullPoint, position));
         }
 
         #region Activation

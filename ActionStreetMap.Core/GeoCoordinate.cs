@@ -64,7 +64,7 @@ namespace ActionStreetMap.Core
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("{0},{1}", Latitude, Longitude);
+            return string.Format("{0:F7},{1:F7}", Latitude, Longitude);
         }
     }
 }

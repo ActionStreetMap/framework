@@ -1,10 +1,9 @@
-﻿using ActionStreetMap.Core;
+﻿using System;
+using System.Text;
+
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ActionStreetMap.Explorer.Commands
 {
@@ -42,12 +41,8 @@ namespace ActionStreetMap.Explorer.Commands
                 return response.ToString();
             }
 
-            // TODO
-            var mapPoint = GeoProjection.ToMapCoordinate(_positionListener.RelativeNullPoint, 
-                _positionListener.CurrentPosition);
-
-            response.AppendFormat("map: {0}", mapPoint);
-            response.AppendFormat("geo: {0}", _positionListener.CurrentPosition);
+            response.AppendLine(String.Format("map: {0}", _positionListener.CurrentPoint));
+            response.AppendLine(String.Format("geo: {0}", _positionListener.CurrentPosition));
 
             return response.ToString();
         }
