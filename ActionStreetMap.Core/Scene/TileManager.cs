@@ -26,8 +26,11 @@ namespace ActionStreetMap.Core.Scene
 
         private float _tileSize;
         private float _offset;
+        private float _moveSensitivity;
         private int _heightmapsize;
         private bool _allowAutoRemoval;
+        private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
+
         private readonly Tuple<int, int> _currentTileIndex = new Tuple<int, int>(0, 0);
 
         private readonly ITileLoader _tileLoader;
@@ -49,18 +52,12 @@ namespace ActionStreetMap.Core.Scene
         /// <summary>
         ///     Gets current tile.
         /// </summary>
-        public Tile Current
-        {
-            get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2]; }
-        }
+        public Tile Current { get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2]; } }
 
         /// <summary>
         ///     Gets all tile count.
         /// </summary>
-        public int Count
-        {
-            get { return _allTiles.Count(); }
-        }
+        public int Count { get { return _allTiles.Count(); } }
 
         /// <summary>
         ///     Creats TileManager.
@@ -84,23 +81,30 @@ namespace ActionStreetMap.Core.Scene
         {
             CurrentPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, position);
 
-            int i = Convert.ToInt32(position.X /_tileSize);
-            int j = Convert.ToInt32(position.Y /_tileSize);
+            // call update logic only if threshold is reached
+            if (Math.Abs(position.X - _lastUpdatePosition.X) > _moveSensitivity
+                || Math.Abs(position.Y - _lastUpdatePosition.Y) > _moveSensitivity)
+            {
+                int i = Convert.ToInt32(position.X / _tileSize);
+                int j = Convert.ToInt32(position.Y / _tileSize);
 
-            // TODO support setting of neighbors for Unity Terrain
+                // TODO support setting of neighbors for Unity Terrain
 
-            // NOTE it should be happened only once on start with (0,0)
-            // however it's possible if we skip offset detection zone somehow
-            if (!_allTiles.ContainsKey(i, j))
-                CreateTile(i, j);
-           
-            var tile = _allTiles[i, j];
+                // NOTE it should be happened only once on start with (0,0)
+                // however it's possible if we skip offset detection zone somehow
+                if (!_allTiles.ContainsKey(i, j))
+                    CreateTile(i, j);
 
-            if (ShouldPreload(tile, position))
-                PreloadNextTile(tile, position, i, j);
+                var tile = _allTiles[i, j];
 
-            _currentTileIndex.Item1 = i;
-            _currentTileIndex.Item2 = j;
+                if (ShouldPreload(tile, position))
+                    PreloadNextTile(tile, position, i, j);
+
+                _currentTileIndex.Item1 = i;
+                _currentTileIndex.Item2 = j;
+            }
+
+            _lastUpdatePosition = position;
         }
 
         /// <inheritdoc />
@@ -237,6 +241,7 @@ namespace ActionStreetMap.Core.Scene
         #endregion
 
         #region IConfigurable
+
         /// <summary>
         ///     Configures class
         /// </summary>
@@ -244,6 +249,7 @@ namespace ActionStreetMap.Core.Scene
         {
             _tileSize = configSection.GetFloat("size");
             _offset = configSection.GetFloat("offset");
+            _moveSensitivity = configSection.GetFloat("sensitivity", 10);
             _heightmapsize = configSection.GetInt("heightmap");
 
             RelativeNullPoint = new GeoCoordinate(
@@ -252,6 +258,7 @@ namespace ActionStreetMap.Core.Scene
 
             _allowAutoRemoval = configSection.GetBool("autoclean", true);
         }
+
         #endregion
     }
 }

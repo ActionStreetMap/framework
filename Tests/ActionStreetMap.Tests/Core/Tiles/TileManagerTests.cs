@@ -14,6 +14,7 @@ namespace ActionStreetMap.Tests.Core.Tiles
         private const float Size = 50;
         private const float Half = Size/2;
         private const float Offset = 5;
+        private const float Sensitivity = 0;
 
         [Test]
         public void CanMoveLeft()
@@ -171,6 +172,7 @@ namespace ActionStreetMap.Tests.Core.Tiles
             var configMock = new Mock<IConfigSection>();
             configMock.Setup(c => c.GetFloat("size")).Returns(Size);
             configMock.Setup(c => c.GetFloat("offset")).Returns(Offset);
+            configMock.Setup(c => c.GetFloat("sensitivity")).Returns(Sensitivity);
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
 
             var provider = new TileManager(sceneBuilderMock.Object, heightMapProvider, 

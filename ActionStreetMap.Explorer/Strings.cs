@@ -11,6 +11,7 @@
         #region Commands
 
         public static string TagCommand = "Tag search";
+        public static string LocateCommand = "Shows position of given object";
 
         #endregion
     }
