@@ -176,7 +176,7 @@ namespace ActionStreetMap.Models.Terrain
             {
                 var element = road.Elements.First();
                 road.GameObject = _gameObjectFactory.CreateNew(
-                    String.Format("road [{0}] {1}/ ", element.Id, element.Address), settings.Tile.GameObject);
+                    String.Format("road [{0}]:{1} {2}", element.Id, element.Type, element.Address), settings.Tile.GameObject);
                 var style = roadStyleProvider.Get(road);
                 _roadBuilder.Build(heightMap, road, style);
             }
