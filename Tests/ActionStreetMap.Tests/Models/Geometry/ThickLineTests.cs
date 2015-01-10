@@ -106,5 +106,31 @@ namespace ActionStreetMap.Tests.Models.Geometry
             Assert.AreEqual(new MapPoint(50, 100), result[2].Points[0]);
             Assert.AreEqual(new MapPoint(50, 50), result[2].Points[1]);
         }
+
+        [Test]
+        public void CanMergeTwoElementsWithSharedPoint()
+        {
+            // ARRANGE
+            var leftBottomCorner = new MapPoint(0, 0);
+            var rightUpperCorner = new MapPoint(100, 100);
+            var lineElements = new List<LineElement>()
+            {
+                new LineElement(new List<MapPoint>()
+                {
+                    new MapPoint(5, 5), new MapPoint(10, 10),
+                }, 5),
+                new LineElement(new List<MapPoint>()
+                {
+                    new MapPoint(10, 10), new MapPoint(0, 20),
+                }, 5)
+            };
+
+            // ACT
+            var result = ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner, lineElements);
+
+            // ASSERT
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(3, result[0].Points.Count);
+        }
     }
 }

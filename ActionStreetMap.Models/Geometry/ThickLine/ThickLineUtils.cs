@@ -27,10 +27,13 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
 
             ResultElements.Clear();
             MapPoint? lastOutOfTilePoint = null;
-            foreach (var lineElement in elements)
+            int startPointIndex = 0;
+            for (int z = 0; z < elements.Count; z++)  
+            //foreach (var lineElement in elements)
             {
+                var lineElement = elements[z];
                 var el = lineElement;
-                for (int i = 0; i < el.Points.Count; i++)
+                for (int i = startPointIndex; i < el.Points.Count; i++)
                 {
                     var point = el.Points[i];
                     // found point which is not in tile
@@ -66,12 +69,21 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
                 // if we find any points then we should keep this line element
                 if (PointBuffer.Any())
                 {
+                    // we want to connect two nearby elements which share the same point
+                    if (z != elements.Count - 1 &&
+                        lineElement.Points[lineElement.Points.Count - 1].Equals(elements[z + 1].Points[0]))
+                    {
+                        startPointIndex = 1;
+                        continue;
+                    }
+ 
                     el.Points = PointBuffer.ToList(); // assume that we create a copy of this array
                     ResultElements.Add(el);
                 }
 
-                // reuse _points array
+                // reuse buffer
                 PointBuffer.Clear();
+                startPointIndex = 0;
             }
 
             return ResultElements;

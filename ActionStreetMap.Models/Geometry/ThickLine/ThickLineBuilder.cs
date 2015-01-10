@@ -14,8 +14,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
     /// </summary>
     public class ThickLineBuilder
     {
-        // TODO this value depends on heightmap accuracy
-        private const float MaxPointDistance = 4f;
+        private const float MaxPointDistance = 8f;
 
         private HeightMap _heightMap;
 
