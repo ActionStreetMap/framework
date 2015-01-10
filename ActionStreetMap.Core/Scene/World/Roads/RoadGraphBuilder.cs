@@ -74,7 +74,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 var point = el.Points[i];
                 if (!_pointsMap.ContainsKey(point) && !_junctionsMap.ContainsKey(point))
                     _pointsMap.Add(point, new Tuple<RoadElement, int>(el, i));
-                else if (GetRoadElement(point).Type == element.Type)
+                else if (GetRoadElement(point).Type == el.Type)
                 {
                     var pointCount = el.Points.Count;
                     el = ProcessJunction(el, i);
@@ -200,8 +200,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     // this situation happens when we try to split current element
                     if (!_pointsMap.ContainsKey(point)) break;
                     var usage = _pointsMap[point];
-                    usage.Item1 = secondElementPart;
-                    usage.Item2 = i;
+                    if (usage.Item1 == element)
+                    {
+                        usage.Item1 = secondElementPart;
+                        usage.Item2 = i;
+                    }
                 }
 
                 junction.Connections.Add(new RoadJunction.Connection(secondElementPart.Points[0], secondElementPart));
