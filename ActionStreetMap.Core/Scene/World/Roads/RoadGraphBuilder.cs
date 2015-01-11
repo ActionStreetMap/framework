@@ -34,7 +34,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         private readonly Dictionary<long, List<RoadElement>> _elements = new Dictionary<long, List<RoadElement>>(64);
 
         // key is point which is shared between different road elements ("junction")
-        private readonly Dictionary<MapPoint, RoadJunction> _junctionsMap = new Dictionary<MapPoint, RoadJunction>(32);
+        private readonly Dictionary<MapPoint, SortedList<RoadType, RoadJunction>> _junctionsMap = new Dictionary<MapPoint, SortedList<RoadType, RoadJunction>>(32);
 
         // point to index in RoadElement/index in Element.Points tuple
         private readonly Dictionary<MapPoint, SortedList<RoadType, Tuple<RoadElement, int>>> _pointsMap = 
@@ -54,7 +54,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             MergeRoads();
 
             var roads = _elements.Select(kv => new Road { Elements = kv.Value }).ToArray();
-            var junctions = _junctionsMap.Values.ToArray();
+            var junctions = _junctionsMap.Values.SelectMany(j => j.Values).ToArray();
 
             // clear buffers
             _elements.Clear();
@@ -98,69 +98,73 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// </summary>
         private void MergeRoads()
         {
-            var toBeRemovedJunctionKeys = new List<MapPoint>();
+            var toBeRemovedJunctionKeys = new List<Tuple<MapPoint, RoadType>>();
             foreach (var pair in _junctionsMap)
             {
-                var junction = pair.Value;
-                if (junction.Connections.Count != 2)
-                    continue;
-
-                var first = junction.Connections[0].Element;
-                var second = junction.Connections[1].Element;
-
-                // modified junction
-                // NOTE: seems to happen in circular list
-                if (first.Id == second.Id)
+                var list = pair.Value;
+                foreach (var lPair in list)
                 {
-                    RemoveJunction(first, junction);
-                    RemoveJunction(second, junction);
+                    var type = lPair.Key;
+                    var junction = lPair.Value;
+                    if (junction.Connections.Count != 2)
+                        continue;
 
-                    toBeRemovedJunctionKeys.Add(pair.Key);
-                    continue;
+                    var first = junction.Connections[0].Element;
+                    var second = junction.Connections[1].Element;
+
+                    // modified junction
+                    // NOTE: seems to happen in circular list
+                    if (first.Id == second.Id)
+                    {
+                        RemoveJunction(first, junction);
+                        RemoveJunction(second, junction);
+                    }
+                    else
+                    {
+                        var elementFirstList = _elements[first.Id];
+                        var elementSecondList = _elements[second.Id];
+
+                        // <e---ss---e> 
+                        if (first.Start == junction && first.Start == second.Start)
+                        {
+                            ReverseElementList(elementSecondList);
+                            MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, true);
+                            first.Start = null;
+                            second.End = null;
+                        }
+                            // s---e><e---s
+                        else if (first.End == junction && first.End == second.End)
+                        {
+                            ReverseElementList(elementSecondList);
+                            MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, false);
+                            first.End = null;
+                            second.Start = null;
+                        }
+                            // s---e>s---e>
+                        else if (first.End == junction && first.End == second.Start)
+                        {
+                            MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, false);
+                            first.End = null;
+                            second.Start = null;
+                        }
+                        else if (first.Start == junction && first.Start == second.End)
+                        {
+                            MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, true);
+                            first.Start = null;
+                            second.End = null;
+                        }
+                        else
+                        {
+                            RemoveJunction(first, junction);
+                            RemoveJunction(second, junction);
+                        }
+                    }
+
+                    toBeRemovedJunctionKeys.Add(new Tuple<MapPoint, RoadType>(pair.Key, type));
                 }
-
-                var elementFirstList = _elements[first.Id];
-                var elementSecondList = _elements[second.Id];
-
-                // <e---ss---e> 
-                if (first.Start == junction && first.Start == second.Start)
-                {
-                    ReverseElementList(elementSecondList);
-                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, true);
-                    first.Start = null;
-                    second.End = null;
-                } 
-                // s---e><e---s
-                else if (first.End == junction && first.End == second.End)
-                {
-                    ReverseElementList(elementSecondList);
-                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, false);
-                    first.End = null;
-                    second.Start = null;
-                }
-                // s---e>s---e>
-                else if (first.End == junction && first.End == second.Start)
-                {
-                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, false);
-                    first.End = null;
-                    second.Start = null;
-                }
-                else if (first.Start == junction && first.Start == second.End)
-                {
-                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, true);
-                    first.Start = null;
-                    second.End = null;
-                }
-                else
-                {
-                    RemoveJunction(first, junction);
-                    RemoveJunction(second, junction);
-                }
-
-                toBeRemovedJunctionKeys.Add(pair.Key);
-
+               
             }
-            toBeRemovedJunctionKeys.ForEach(p => _junctionsMap.Remove(p));
+            toBeRemovedJunctionKeys.ForEach(p => _junctionsMap[p.Item1].Remove(p.Item2));
         }
 
         private void ReverseElementList(List<RoadElement> elements)
@@ -201,7 +205,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             if (_pointsMap.ContainsKey(point) && _pointsMap[point].ContainsKey(element.Type))
                 return true;
             // should be the same type
-            return _junctionsMap[point].Connections.First().Element.Type == element.Type;
+            return _junctionsMap[point].ContainsKey(element.Type);
         }
 
         private RoadElement ProcessJunction(RoadElement element, int junctionPointIndex)
@@ -217,9 +221,14 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             }
 
             if (!_junctionsMap.ContainsKey(junctionPoint))
-                _junctionsMap.Add(junctionPoint, new RoadJunction(junctionPoint));
+                _junctionsMap.Add(junctionPoint, new SortedList<RoadType, RoadJunction>());
 
-            var junction = _junctionsMap[junctionPoint];
+            var junctionMapList = _junctionsMap[junctionPoint];
+
+            if(!junctionMapList.ContainsKey(element.Type))
+                junctionMapList.Add(element.Type, new RoadJunction(junctionPoint));
+
+            var junction = junctionMapList[element.Type];
 
             // split old usage
             if (_pointsMap.ContainsKey(junctionPoint) && 
