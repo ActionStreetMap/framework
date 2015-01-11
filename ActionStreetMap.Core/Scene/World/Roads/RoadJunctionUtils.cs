@@ -11,7 +11,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         private static readonly List<int> Buffer = new List<int>(4);
 
         /// <summary>
-        ///     Gets point along AB at given distance from A.
+        ///     Gets point along AB at given distance from A and modifies points list to use it.
+        ///     width value should not be big in order not to affect direction.
         /// </summary>
         public static MapPoint TruncateToDistance(List<MapPoint> points, float width, bool fromFirst)
         {
@@ -40,7 +41,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             distance = distance < width ? distance : width;
 
-            // TODO ensure that generated point has valid direction:
             // AB' + B'B = AB It's possible that "distance" variable is greater than AB 
 
             // a. calculate the vector from o to g:
@@ -103,4 +103,3 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         }
     }
 }
-;

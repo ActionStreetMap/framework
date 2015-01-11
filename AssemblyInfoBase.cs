@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyCompany("ActionStreetMap Software")]
 [assembly: AssemblyProduct("ActionStreetMap")]
-[assembly: AssemblyCopyright("Copyright © 2014 Ilya Builuk")]
+[assembly: AssemblyCopyright("Copyright © 2014-2015 Ilya Builuk")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

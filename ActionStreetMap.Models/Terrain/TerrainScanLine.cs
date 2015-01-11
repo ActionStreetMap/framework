@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Models.Geometry.Primitives;
-using ActionStreetMap.Models.Geometry.Polygons;
 
 namespace ActionStreetMap.Models.Terrain
 {

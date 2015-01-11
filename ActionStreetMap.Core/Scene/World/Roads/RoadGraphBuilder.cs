@@ -112,8 +112,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     var first = junction.Connections[0].Element;
                     var second = junction.Connections[1].Element;
 
-                    // modified junction
-                    // NOTE: seems to happen in circular list
                     if (first.Id == second.Id)
                     {
                         RemoveJunction(first, junction);

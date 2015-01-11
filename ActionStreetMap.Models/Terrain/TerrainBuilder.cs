@@ -175,8 +175,8 @@ namespace ActionStreetMap.Models.Terrain
             foreach (var road in roadGraph.Roads)
             {
                 var element = road.Elements.First();
-                road.GameObject = _gameObjectFactory.CreateNew(
-                    String.Format("road [{0}]:{1} {2}", element.Id, element.Type, element.Address), settings.Tile.GameObject);
+                road.GameObject = _gameObjectFactory.CreateNew(String.Format("road [{0}]:{1}", element.Id, element.Type), 
+                    settings.Tile.GameObject);
                 var style = roadStyleProvider.Get(road);
                 _roadBuilder.Build(heightMap, road, style);
             }
