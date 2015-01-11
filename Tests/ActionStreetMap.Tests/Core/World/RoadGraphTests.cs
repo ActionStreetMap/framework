@@ -379,6 +379,85 @@ namespace ActionStreetMap.Tests.Core.World
             Assert.AreEqual(1, graph.Roads.Count());
         }
 
+        [TestCase(0, 1, 2, 3)]
+        [TestCase(0, 1, 3, 2)]
+        [TestCase(0, 3, 1, 2)]
+        [TestCase(0, 2, 1, 3)]
+        [TestCase(1, 0, 2, 3)]
+        [TestCase(1, 3, 2, 0)]
+        [TestCase(1, 2, 0, 3)]
+        [TestCase(1, 0, 3, 2)]
+        [TestCase(2, 1, 0, 3)]
+        [TestCase(2, 3, 0, 1)]
+        [TestCase(2, 0, 1, 3)]
+        [TestCase(2, 1, 3, 0)]
+        [TestCase(3, 1, 2, 0)]
+        [TestCase(3, 2, 1, 0)]
+        [TestCase(3, 0, 2, 1)]
+        [TestCase(3, 2, 0, 1)]
+        public void CanSplitElementIntersectSelfAndOthers(int first, int second, int third, int forth)
+        {
+            // ARRANGE
+            var builder = GetBuilder();
+            var elements = new List<RoadElement>()
+            {
+                new RoadElement(){
+                Id = 0,
+                Type = RoadType.Car,
+                Points = new List<MapPoint>()
+                    {
+                        new MapPoint(0, 0), new MapPoint(10, 0), new MapPoint(10, 10), new MapPoint(0, 10),
+                        new MapPoint(0, 0), new MapPoint(0, -10), new MapPoint(0, -20),
+                        new MapPoint(0, -30), new MapPoint(0, -40)
+                    }
+                },
+                new RoadElement()
+                {
+                    Id = 1,
+                    Type = RoadType.Car,
+                    Points = new List<MapPoint>() { new MapPoint(10, -10), new MapPoint(0, -10) }
+                },
+                new RoadElement()
+                {
+                    Id = 2,
+                    Type = RoadType.Car,
+                    Points = new List<MapPoint>() { new MapPoint(10, -20), new MapPoint(0, -20) }
+                },
+                new RoadElement()
+                {
+                    Id = 3,
+                    Type = RoadType.Car,
+                    Points = new List<MapPoint>() { new MapPoint(10, -30), new MapPoint(0, -30) }
+                }
+            };
+
+            builder.Add(elements.Single(e => e.Id == first));
+            builder.Add(elements.Single(e => e.Id == second));
+            builder.Add(elements.Single(e => e.Id == third));
+            builder.Add(elements.Single(e => e.Id == forth));
+
+            // ACT
+            var graph = builder.Build();
+
+            // ASSERT
+            Assert.AreEqual(4, graph.Roads.Count());
+            Assert.AreEqual(3, graph.Junctions.Count());
+
+            var roads = graph.Roads.ToList();
+            var testRoad = roads.Single(r => r.Elements[0].Id == 0);
+            AssertElementSequence(testRoad.Elements);
+        }
+
+        private void AssertElementSequence(List<RoadElement> elements)
+        {
+            for (int i = 0; i < elements.Count; i++)
+            {
+                if (i == elements.Count - 1)
+                    break;
+                Assert.AreEqual(elements[i].Points[elements[i].Points.Count - 1], elements[i + 1].Points[0]);
+            }
+        }
+
         private static IEnumerable<RoadElement> GetElements(RoadGraph graph)
         {
             return graph.Roads.Select(r => r.Elements).SelectMany(e => e);

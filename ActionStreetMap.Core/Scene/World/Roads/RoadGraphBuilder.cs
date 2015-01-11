@@ -235,8 +235,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 _pointsMap[junctionPoint].ContainsKey(element.Type))
             {
                 var pointUsage = _pointsMap[junctionPoint][element.Type];
-                _pointsMap[junctionPoint].Remove(element.Type);
-                SplitElement(pointUsage.Item1, pointUsage.Item2, junction);
+                if (pointUsage.Item1 != element)
+                {
+                    _pointsMap[junctionPoint].Remove(element.Type);
+                    SplitElement(pointUsage.Item1, pointUsage.Item2, junction);
+                }
             }
 
             // split source element
@@ -248,6 +251,10 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             // case 1: in the middle - need to split to two elements
             if (splitPointIndex != 0 && splitPointIndex != element.Points.Count - 1)
             {
+                var elements = _elements[element.Id];
+                int insertIndex = 0;
+                while (elements[insertIndex++] != element);
+
                 // TODO use object pools for point lists?
                 var points = new List<MapPoint>(element.Points);
                 var secondElementPart = Clone(element);
@@ -278,7 +285,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 junction.Connections.Add(new RoadJunction.Connection(secondElementPart.Points[0], secondElementPart));
                 secondElementPart.Start = junction;
 
-                _elements[secondElementPart.Id].Add(secondElementPart);
+                _elements[secondElementPart.Id].Insert(insertIndex, secondElementPart);
                 return secondElementPart;
             }
 
