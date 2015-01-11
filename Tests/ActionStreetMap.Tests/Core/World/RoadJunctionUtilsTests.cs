@@ -9,32 +9,91 @@ namespace ActionStreetMap.Tests.Core.World
     [TestFixture]
     public class RoadJunctionUtilsTests
     {
-        [Test]
-        public void CanDetectJoinPointEnd()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CanDetectJoinPoint(bool reversed)
         {
             // ARRANGE
             var width = 3;
-            var roadPoints = new List<MapPoint>() {new MapPoint(0, 0), new MapPoint(5, 0), new MapPoint(10, 0)};
+            var roadPoints = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(3, 0), 
+                new MapPoint(5, 0), new MapPoint(10, 0) };
+            if (reversed)
+                roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.CalculateJointPoint(roadPoints, width, false);
+            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
 
             // ASSERT
             Assert.AreEqual(new MapPoint(7, 0), result);
         }
 
-        [Test]
-        public void CanHandleCloseJoinPointEnd()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CanHandleCloseJoinPoint(bool reversed)
         {
             // ARRANGE
             var width = 3;
-            var roadPoints = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(8, 0), new MapPoint(10, 0) };
+            var roadPoints = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(5, 0), 
+                new MapPoint(9, 0), new MapPoint(10, 0) };
+            if (reversed)
+                roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.CalculateJointPoint(roadPoints, width, false);
+            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
 
             // ASSERT
-            Assert.AreEqual(new MapPoint(8, 0), result);
+            Assert.AreEqual(new MapPoint(7, 0), result);
+            Assert.AreEqual(4, roadPoints.Count);
+            if (reversed)
+                roadPoints.Reverse();
+            Assert.AreEqual(new MapPoint(0, 0), roadPoints[0]);
+            Assert.AreEqual(new MapPoint(5, 0), roadPoints[1]);
+            Assert.AreEqual(new MapPoint(7, 0), roadPoints[2]);
+            Assert.AreEqual(new MapPoint(10, 0), roadPoints[3]);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CanHandleCloseJoinPointSkipMoreThanOne(bool reversed)
+        {
+            // ARRANGE
+            var width = 3;
+            var roadPoints = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(5, 0), 
+                new MapPoint(8, 0), new MapPoint(8.5f, 0), new MapPoint(9, 0), 
+                new MapPoint(9.5f, 0), new MapPoint(10, 0) };
+            if (reversed)
+                roadPoints.Reverse();
+
+            // ACT
+            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
+
+            // ASSERT
+            Assert.AreEqual(new MapPoint(7, 0), result);
+            Assert.AreEqual(4, roadPoints.Count);
+            if (reversed)
+                roadPoints.Reverse();
+            Assert.AreEqual(new MapPoint(0, 0), roadPoints[0]);
+            Assert.AreEqual(new MapPoint(5, 0), roadPoints[1]);
+            Assert.AreEqual(new MapPoint(7, 0), roadPoints[2]);
+            Assert.AreEqual(new MapPoint(10, 0), roadPoints[3]);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CanHandleCloseTwoJoinPoint(bool reversed)
+        {
+            // ARRANGE
+            var width = 3;
+            var roadPoints = new List<MapPoint>() {new MapPoint(18, 20), new MapPoint(20, 20)};
+
+            if (reversed)
+                roadPoints.Reverse();
+
+            // ACT
+            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
+
+            // ASSERT
+            Assert.AreEqual(new MapPoint(18, 20), result);
         }
 
         [TestCase(-10, 0, 90)]
