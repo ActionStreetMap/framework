@@ -198,9 +198,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
         private bool ShouldBeSplit(MapPoint point, RoadElement element)
         {
-            if (_pointsMap.ContainsKey(point))
-                return _pointsMap[point].ContainsKey(element.Type);
-
+            if (_pointsMap.ContainsKey(point) && _pointsMap[point].ContainsKey(element.Type))
+                return true;
             // should be the same type
             return _junctionsMap[point].Connections.First().Element.Type == element.Type;
         }
@@ -210,8 +209,12 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             var junctionPoint = element.Points[junctionPointIndex];
 
             // road contains the same points
-            if (_pointsMap.ContainsKey(junctionPoint) && _pointsMap[junctionPoint][element.Type].Item1 == element)
-                return element;
+            if (_pointsMap.ContainsKey(junctionPoint))
+            {
+                var list = _pointsMap[junctionPoint];
+                if (list.ContainsKey(element.Type) && list[element.Type].Item1 == element)
+                    return element;
+            }
 
             if (!_junctionsMap.ContainsKey(junctionPoint))
                 _junctionsMap.Add(junctionPoint, new RoadJunction(junctionPoint));
@@ -223,7 +226,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 _pointsMap[junctionPoint].ContainsKey(element.Type))
             {
                 var pointUsage = _pointsMap[junctionPoint][element.Type];
-                _pointsMap.Remove(junctionPoint);
+                _pointsMap[junctionPoint].Remove(element.Type);
                 SplitElement(pointUsage.Item1, pointUsage.Item2, junction);
             }
 
