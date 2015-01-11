@@ -252,9 +252,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 for (int i = 1; i < secondElementPart.Points.Count; i++)
                 {
                     var point = secondElementPart.Points[i];
-                    // this situation happens when we try to split current element
+                    // this situation happens when we try to split current element (and, probably in other rare cases)
                     if (!_pointsMap.ContainsKey(point) || !_pointsMap[point].ContainsKey(element.Type)) 
-                        break;
+                        continue;
                     var usage = _pointsMap[point][element.Type];
                     if (usage.Item1 == element)
                     {
