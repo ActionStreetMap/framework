@@ -112,11 +112,9 @@ namespace ActionStreetMap.Models.Utils
 
         private MapPoint GetHeightMapPoint(float x, float y)
         {
-            return new MapPoint
-            {
-                X = (int)Math.Ceiling((x - _heightMap.LeftBottomCorner.X) / _ratio),
-                Y = (int)Math.Ceiling(((y - _heightMap.LeftBottomCorner.Y) / _ratio))
-            };
+            return new MapPoint(
+            (int)Math.Ceiling((x - _heightMap.LeftBottomCorner.X) / _ratio),
+            (int)Math.Ceiling(((y - _heightMap.LeftBottomCorner.Y) / _ratio)));
         }
 
         private void SetOffsetPoints(MapPoint point1, MapPoint point2, float offset)

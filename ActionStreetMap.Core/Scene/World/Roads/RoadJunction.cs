@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core.Unity;
 
 namespace ActionStreetMap.Core.Scene.World.Roads
@@ -63,5 +64,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return String.Format("{0} c={1}", Center, Connections.Count);
+        }
     }
 }

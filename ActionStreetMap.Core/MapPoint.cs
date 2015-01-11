@@ -10,12 +10,12 @@ namespace ActionStreetMap.Core
         /// <summary>
         ///     X-axis coordinate.
         /// </summary>
-        public float X;
+        public readonly float X;
 
         /// <summary>
         ///     Y-axis coordinate.
         /// </summary>
-        public float Y;
+        public readonly float Y;
         
         /// <summary>
         ///     Elevation (height on sea level in given point).
@@ -97,6 +97,22 @@ namespace ActionStreetMap.Core
         }
 
         /// <summary>
+        ///     Overloads == operation
+        /// </summary>
+        public static bool operator ==(MapPoint left, MapPoint right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        ///     Overloads != operation
+        /// </summary>
+        public static bool operator !=(MapPoint left, MapPoint right)
+        {
+            return !left.Equals(right);
+        }
+
+        /// <summary>
         ///     Gets normalized.
         /// </summary>
         public MapPoint Normalize()
@@ -111,6 +127,23 @@ namespace ActionStreetMap.Core
         public float Dot(MapPoint point)
         {
             return this.X * point.Y + this.Y * point.Y;
-        } 
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object other)
+        {
+            if (!(other is MapPoint))
+                return false;
+            var point = (MapPoint) other;
+            if (X.Equals(point.X) && Y.Equals(point.Y))
+                return Elevation.Equals(point.Elevation);
+            return false;
+        }
     }
 }

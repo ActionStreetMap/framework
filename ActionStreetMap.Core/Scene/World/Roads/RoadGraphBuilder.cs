@@ -37,7 +37,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         private readonly Dictionary<MapPoint, RoadJunction> _junctionsMap = new Dictionary<MapPoint, RoadJunction>(32);
 
         // point to index in RoadElement/index in Element.Points tuple
-        private readonly Dictionary<MapPoint, Tuple<RoadElement, int>> _pointsMap = new Dictionary<MapPoint, Tuple<RoadElement, int>>(256);
+        private readonly Dictionary<MapPoint, SortedList<RoadType, Tuple<RoadElement, int>>> _pointsMap = 
+            new Dictionary<MapPoint, SortedList<RoadType, Tuple<RoadElement, int>>>(256);
 
         /// <summary>
         ///     Gets or sets trace.
@@ -72,9 +73,13 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             for (int i = 0; i < el.Points.Count; i++)
             {
                 var point = el.Points[i];
-                if (!_pointsMap.ContainsKey(point) && !_junctionsMap.ContainsKey(point))
-                    _pointsMap.Add(point, new Tuple<RoadElement, int>(el, i));
-                else if (GetRoadElement(point).Type == el.Type)
+
+                if (!_pointsMap.ContainsKey(point))
+                    _pointsMap[point] = new SortedList<RoadType, Tuple<RoadElement, int>>();
+
+                if (!_pointsMap[point].ContainsKey(el.Type) && !_junctionsMap.ContainsKey(point))
+                    _pointsMap[point].Add(el.Type, new Tuple<RoadElement, int>(el, i));
+                else if (ShouldBeSplit(point, el))
                 {
                     var pointCount = el.Points.Count;
                     el = ProcessJunction(el, i);
@@ -86,12 +91,13 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
         #endregion
 
+        #region Merge roads
+
         /// <summary>
         ///     Merges roads from junctions with only two connection of same road
         /// </summary>
         private void MergeRoads()
         {
-            // TODO optimize memory allocations here
             var toBeRemovedJunctionKeys = new List<MapPoint>();
             foreach (var pair in _junctionsMap)
             {
@@ -99,56 +105,104 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 if (junction.Connections.Count != 2)
                     continue;
 
-                RoadElement start, end;
-                if (junction.Connections[0].Element.End == junction)
+                var first = junction.Connections[0].Element;
+                var second = junction.Connections[1].Element;
+
+                // modified junction
+                // NOTE: seems to happen in circular list
+                if (first.Id == second.Id)
                 {
-                    start = junction.Connections[0].Element;
-                    end = junction.Connections[1].Element;
+                    RemoveJunction(first, junction);
+                    RemoveJunction(second, junction);
+
+                    toBeRemovedJunctionKeys.Add(pair.Key);
+                    continue;
+                }
+
+                var elementFirstList = _elements[first.Id];
+                var elementSecondList = _elements[second.Id];
+
+                // <e---ss---e> 
+                if (first.Start == junction && first.Start == second.Start)
+                {
+                    ReverseElementList(elementSecondList);
+                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, true);
+                    first.Start = null;
+                    second.End = null;
+                } 
+                // s---e><e---s
+                else if (first.End == junction && first.End == second.End)
+                {
+                    ReverseElementList(elementSecondList);
+                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, false);
+                    first.End = null;
+                    second.Start = null;
+                }
+                // s---e>s---e>
+                else if (first.End == junction && first.End == second.Start)
+                {
+                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, false);
+                    first.End = null;
+                    second.Start = null;
+                }
+                else if (first.Start == junction && first.Start == second.End)
+                {
+                    MergeElementLists(first.Id, second.Id, elementFirstList, elementSecondList, true);
+                    first.Start = null;
+                    second.End = null;
                 }
                 else
                 {
-                    start = junction.Connections[1].Element;
-                    end = junction.Connections[0].Element;
-                }
-
-                // TODO do not calculate junction point in advance during junction split
-                start.Points[start.Points.Count - 1] = pair.Key;
-                end.Points[0] = pair.Key;
-
-                var elementStartList = _elements[start.Id];
-                var elementEndList = _elements[end.Id];
-                // insert
-                for (int i = 0; i < elementStartList.Count; i++)
-                {
-                    if (elementStartList[i] != start) continue;
-
-                    // should insert all
-                    // need reverse elementEndList if direction of elements is different
-                    if (end == elementEndList.Last())
-                        elementEndList.Reverse();
-                    elementStartList.AddRange(elementEndList);
-                    _elements.Remove(end.Id);
-                    // override original Id
-                    Trace.Output("road.graph", String.Format("merge {0} into {1}", end.Id, start.Id));
-                    elementEndList.ForEach(e => e.Id = start.Id);
-                    break;
+                    RemoveJunction(first, junction);
+                    RemoveJunction(second, junction);
                 }
 
                 toBeRemovedJunctionKeys.Add(pair.Key);
-                // remove junction from reference
-                start.End = null;
-                end.Start = null;
+
             }
             toBeRemovedJunctionKeys.ForEach(p => _junctionsMap.Remove(p));
         }
 
-        private RoadElement GetRoadElement(MapPoint point)
+        private void ReverseElementList(List<RoadElement> elements)
+        {
+            foreach (var roadElement in elements)
+            {
+                roadElement.Points.Reverse();
+                var tmp = roadElement.Start;
+                roadElement.Start = roadElement.End;
+                roadElement.End = tmp;
+            }
+            elements.Reverse();
+        }
+
+        private void MergeElementLists(long firstId, long secondId, List<RoadElement> firstList, List<RoadElement> secondList, bool shouldBeFirst)
+        {
+            if (shouldBeFirst)
+                firstList.InsertRange(0, secondList);
+            else
+                firstList.AddRange(secondList);
+            _elements.Remove(secondId);
+            Trace.Output("road.graph", String.Format("merge {0} with {1}", secondId, firstId));
+            secondList.ForEach(e => e.Id = firstId);
+        }
+
+        private void RemoveJunction(RoadElement element, RoadJunction junction)
+        {
+            if (element.Start == junction) element.Start = null;
+            else element.End = null;
+        }
+
+        #endregion
+
+        #region Split elements
+
+        private bool ShouldBeSplit(MapPoint point, RoadElement element)
         {
             if (_pointsMap.ContainsKey(point))
-                return _pointsMap[point].Item1;
+                return _pointsMap[point].ContainsKey(element.Type);
 
             // should be the same type
-            return _junctionsMap[point].Connections.First().Element;
+            return _junctionsMap[point].Connections.First().Element.Type == element.Type;
         }
 
         private RoadElement ProcessJunction(RoadElement element, int junctionPointIndex)
@@ -156,7 +210,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             var junctionPoint = element.Points[junctionPointIndex];
 
             // road contains the same points
-            if (_pointsMap.ContainsKey(junctionPoint) && _pointsMap[junctionPoint].Item1 == element)
+            if (_pointsMap.ContainsKey(junctionPoint) && _pointsMap[junctionPoint][element.Type].Item1 == element)
                 return element;
 
             if (!_junctionsMap.ContainsKey(junctionPoint))
@@ -164,10 +218,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             var junction = _junctionsMap[junctionPoint];
 
-            // split old usage: we expect only one
-            if (_pointsMap.ContainsKey(junctionPoint))
+            // split old usage
+            if (_pointsMap.ContainsKey(junctionPoint) && 
+                _pointsMap[junctionPoint].ContainsKey(element.Type))
             {
-                var pointUsage = _pointsMap[junctionPoint];
+                var pointUsage = _pointsMap[junctionPoint][element.Type];
                 _pointsMap.Remove(junctionPoint);
                 SplitElement(pointUsage.Item1, pointUsage.Item2, junction);
             }
@@ -198,8 +253,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 {
                     var point = secondElementPart.Points[i];
                     // this situation happens when we try to split current element
-                    if (!_pointsMap.ContainsKey(point)) break;
-                    var usage = _pointsMap[point];
+                    if (!_pointsMap.ContainsKey(point) || !_pointsMap[point].ContainsKey(element.Type)) 
+                        break;
+                    var usage = _pointsMap[point][element.Type];
                     if (usage.Item1 == element)
                     {
                         usage.Item1 = secondElementPart;
@@ -222,6 +278,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             return element;
         }
+
+        #endregion
 
         #region Static methods
 
