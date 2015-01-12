@@ -15,11 +15,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         public IGameObject GameObject { get; set; }
 
         /// <summary>
-        ///     Gest or sets polygon points
-        /// </summary>
-        public List<MapPoint> Polygon { get; internal set; }
-
-        /// <summary>
         ///     Gets junction center point.
         /// </summary>
         public MapPoint Center { get; private set; }
@@ -30,7 +25,17 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         public List<RoadElement> Connections { get; private set; }
 
         /// <summary>
-        ///     Creates the instance of <see cref="RoadJunction"/>
+        ///     Gest or sets polygon points.
+        /// </summary>
+        public List<MapPoint> Polygon { get; internal set; }
+
+        /// <summary>
+        ///     Gest or sets traffic lights.
+        /// </summary>
+        public List<TrafficLight> TrafficLights { get; internal set; }
+
+        /// <summary>
+        ///     Creates the instance of <see cref="RoadJunction"/>.
         /// </summary>
         /// <param name="center">Junction center point.</param>
         public RoadJunction(MapPoint center)
