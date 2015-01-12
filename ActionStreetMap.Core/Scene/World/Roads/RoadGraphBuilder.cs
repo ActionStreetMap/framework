@@ -109,8 +109,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     if (junction.Connections.Count != 2)
                         continue;
 
-                    var first = junction.Connections[0].Element;
-                    var second = junction.Connections[1].Element;
+                    var first = junction.Connections[0];
+                    var second = junction.Connections[1];
 
                     if (first.Id == second.Id)
                     {
@@ -259,7 +259,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
                 // insert offset point as last
                 element.Points = points.Take(splitPointIndex + 1).ToList();
-                junction.Connections.Add(new RoadJunction.Connection(element.Points[element.Points.Count - 1], element));
+                junction.Connections.Add(element);
                 element.End = junction;
 
                 // insert offset point as first
@@ -280,7 +280,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                     }
                 }
 
-                junction.Connections.Add(new RoadJunction.Connection(secondElementPart.Points[0], secondElementPart));
+                junction.Connections.Add(secondElementPart);
                 secondElementPart.Start = junction;
 
                 _elements[secondElementPart.Id].Insert(insertIndex, secondElementPart);
@@ -291,7 +291,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             if (splitPointIndex == 0) element.Start = junction;
             else element.End = junction;
 
-            junction.Connections.Add(new RoadJunction.Connection(element.Points[splitPointIndex], element));
+            junction.Connections.Add(element);
 
             return element;
         }

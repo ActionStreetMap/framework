@@ -15,6 +15,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         public IGameObject GameObject { get; set; }
 
         /// <summary>
+        ///     Gest or sets polygon points
+        /// </summary>
+        public List<MapPoint> Polygon { get; internal set; }
+
+        /// <summary>
         ///     Gets junction center point.
         /// </summary>
         public MapPoint Center { get; private set; }
@@ -22,7 +27,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <summary>
         ///     Gets junction connections.
         /// </summary>
-        public List<Connection> Connections { get; private set; }
+        public List<RoadElement> Connections { get; private set; }
 
         /// <summary>
         ///     Creates the instance of <see cref="RoadJunction"/>
@@ -31,39 +36,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         public RoadJunction(MapPoint center)
         {
             Center = center;
-            Connections = new List<Connection>(2);
+            Connections = new List<RoadElement>(2);
         }
-
-        #region Nested classes
-
-        /// <summary>
-        ///     Represents road connection which belongs to junction.
-        /// </summary>
-        public class Connection
-        {
-            /// <summary>
-            ///     Gets connection point.
-            /// </summary>
-            public MapPoint Point { get; private set; }
-
-            /// <summary>
-            ///     Gets road type.
-            /// </summary>
-            public RoadElement Element { get; private set; }
-
-            /// <summary>
-            ///     Creates instance of <see cref="Connection"/>.
-            /// </summary>
-            /// <param name="point">Connection point.</param>
-            /// <param name="element">Road element.</param>
-            public Connection(MapPoint point, RoadElement element)
-            {
-                Point = point;
-                Element = element;
-            }
-        }
-
-        #endregion
 
         /// <inheritdoc />
         public override string ToString()

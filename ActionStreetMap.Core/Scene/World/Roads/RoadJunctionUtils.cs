@@ -8,7 +8,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
     /// </summary>
     internal static class RoadJunctionUtils
     {
-        private static readonly List<int> Buffer = new List<int>(4);
+        private static readonly List<int> IndexBuffer = new List<int>(4);
 
         /// <summary>
         ///     Gets point along AB at given distance from A and modifies points list to use it.
@@ -35,7 +35,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 // NOTE actually, this can be replaced with simple RemoveAt(index), but
                 // this operation takes O(n) as it includes array copying at every interation
                 // and I want to avoid this
-                Buffer.Add(index);
+                IndexBuffer.Add(index);
 
             } while (--count > 1);
 
@@ -56,21 +56,30 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             var truncPoint = new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
 
-            if (Buffer.Count == 0)
+            if (IndexBuffer.Count == 0)
                 points[index] = truncPoint;
-            else if (Buffer.Count == 1)
-                points[Buffer[0]] = truncPoint;
+            else if (IndexBuffer.Count == 1)
+                points[IndexBuffer[0]] = truncPoint;
             else
             {
                 // now need to remove skipped items
-                var length = Buffer.Count;
-                var firstIndex = fromFirst ? Buffer[0] : Buffer[length - 1];
+                var length = IndexBuffer.Count;
+                var firstIndex = fromFirst ? IndexBuffer[0] : IndexBuffer[length - 1];
                 points.RemoveRange(firstIndex, length - 1);
                 points[firstIndex] = truncPoint;
             }
 
-            Buffer.Clear();
+            IndexBuffer.Clear();
             return truncPoint;
+        }
+
+        /// <summary>
+        ///     Generates polygon for given road junction.
+        /// </summary>
+        /// <param name="junction">Road junction.</param>
+        public static void GeneratePolygon(RoadJunction junction)
+        {
+
         }
 
         /// <summary>
@@ -96,9 +105,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             var angleDiff = (180 / Math.PI * (angle2 - angle1));
 
             if (angleDiff > 0) //It went CCW so adjust
-            {
                 return 360 - angleDiff;
-            }
+
             return -angleDiff; //I need the results to be always positive so flip sign
         }
     }

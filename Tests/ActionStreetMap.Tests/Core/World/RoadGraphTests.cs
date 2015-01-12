@@ -45,10 +45,6 @@ namespace ActionStreetMap.Tests.Core.World
             Assert.AreEqual(junctionPoint, graph.Junctions.First().Center);
             var connections = graph.Junctions.First().Connections.ToList();
             Assert.AreEqual(4, connections.Count);
-            Assert.AreEqual(new MapPoint(junctionPoint.X - offset, 0), connections[0].Point);
-            Assert.AreEqual(new MapPoint(junctionPoint.X + offset, 0), connections[1].Point);
-            Assert.AreEqual(new MapPoint(10, junctionPoint.Y + offset), connections[2].Point);
-            Assert.AreEqual(new MapPoint(10, junctionPoint.Y - offset), connections[3].Point);
 
             // check elements
             var elements = GetElements(graph).ToList();
