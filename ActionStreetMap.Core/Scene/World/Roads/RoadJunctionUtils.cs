@@ -12,10 +12,32 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         private static readonly List<int> IndexBuffer = new List<int>(4);
 
         /// <summary>
+        ///     Generates polygon for given road junction and modifies connected road elements.
+        /// </summary>
+        /// <param name="junction">Road junction.</param>
+        public static RoadJunction CompleteJunction(RoadJunction junction)
+        {
+            // TODO use thread pool
+            List<MapPoint> junctionPolygon = new List<MapPoint>(8);
+            foreach (var connection in junction.Connections)
+            {
+                // TODO merge these two methods: TruncateToJoinPoint and GetJoinSegment?
+                TruncateToJoinPoint(connection.Points, connection.Width, connection.Start == junction);
+                var segment = GetJoinSegment(connection.Points, connection.Width, connection.Start == junction);
+                junctionPolygon.Add(segment.Start);
+                junctionPolygon.Add(segment.End);
+            }
+            SortByAngle(junctionPolygon[0], junction.Center, junctionPolygon);
+            junction.Polygon = junctionPolygon;
+
+            return junction;
+        }
+
+        /// <summary>
         ///     Gets point along AB at given distance from A and modifies/truncates points list to use it.
         ///     threshold value should not be big in order not to affect direction.
         /// </summary>
-        public static MapPoint TruncateToJoinPoint(List<MapPoint> points, float threshold, bool fromFirst)
+        internal static MapPoint TruncateToJoinPoint(List<MapPoint> points, float threshold, bool fromFirst)
         {
             float distance;
             int count = points.Count;
@@ -70,7 +92,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 var firstIndex = (fromFirst ? IndexBuffer[0] - increment : IndexBuffer[length - 1]);
                 TruncatePoints(points, firstIndex, length);
                 points[firstIndex] = truncPoint;
-                // TODO check case if we get points count less than 2
             }
             IndexBuffer.Clear();
             return truncPoint;
@@ -79,7 +100,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <summary>
         ///     Truncates list.
         /// </summary>
-        private static void TruncatePoints(List<MapPoint> points, int index, int count)
+        internal static void TruncatePoints(List<MapPoint> points, int index, int count)
         {
 
             if (points.Count <= 2)
@@ -91,7 +112,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <summary>
         ///     Gets join segment orthogonal to last two points of road element's points.
         /// </summary>
-        public static Segment GetJoinSegment(List<MapPoint> points, float width, bool fromFirst)
+        internal static Segment GetJoinSegment(List<MapPoint> points, float width, bool fromFirst)
         {
             var count = points.Count;
             int increment = fromFirst ? 1 : -1;
@@ -110,33 +131,13 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         }
 
         /// <summary>
-        ///     Generates polygon for given road junction.
-        /// </summary>
-        /// <param name="junction">Road junction.</param>
-        public static void GeneratePolygon(RoadJunction junction)
-        {
-            // TODO use thread pool
-            List<MapPoint> junctionPolygon = new List<MapPoint>(8);
-            foreach (var connection in junction.Connections)
-            {
-                // TODO merge these two points?
-                TruncateToJoinPoint(connection.Points, connection.Width, connection.Start == junction);
-                var segment = GetJoinSegment(connection.Points, connection.Width, connection.Start == junction);
-                junctionPolygon.Add(segment.Start);
-                junctionPolygon.Add(segment.End);
-            }
-            SortByAngle(junctionPolygon[0], junction.Center, junctionPolygon);
-            junction.Polygon = junctionPolygon;
-        }
-
-        /// <summary>
         ///     Sorts segments by angle.
         /// </summary>
         /// <param name="original">Original point.</param>
         /// <param name="pivot">Pivot point.</param>
         /// <param name="choices">List of choice points.</param>
         /// <returns>Sorted list.</returns>
-        public static void SortByAngle(MapPoint original, MapPoint pivot, List<MapPoint> choices)
+        internal static void SortByAngle(MapPoint original, MapPoint pivot, List<MapPoint> choices)
         {
             choices.Sort((v1, v2) => GetTurnAngle(original, pivot, v1).CompareTo(GetTurnAngle(original, pivot, v2)));
         }
@@ -144,7 +145,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <summary>
         ///     Gets angle between sigments created by points.
         /// </summary>
-        public static double GetTurnAngle(MapPoint original, MapPoint pivot, MapPoint choice)
+        internal static double GetTurnAngle(MapPoint original, MapPoint pivot, MapPoint choice)
         {
             var angle1 = Math.Atan2(original.Y - pivot.Y, original.X - pivot.X);
             var angle2 = Math.Atan2(choice.Y - pivot.Y, choice.X - pivot.X);

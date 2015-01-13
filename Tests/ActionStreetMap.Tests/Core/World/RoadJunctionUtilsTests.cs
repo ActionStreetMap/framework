@@ -211,7 +211,7 @@ namespace ActionStreetMap.Tests.Core.World
             });
 
             // ACT
-            RoadJunctionUtils.GeneratePolygon(junction);
+            RoadJunctionUtils.CompleteJunction(junction);
 
             // ASSERT
             Assert.AreEqual(8, junction.Polygon.Count);

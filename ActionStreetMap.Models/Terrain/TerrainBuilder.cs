@@ -172,16 +172,22 @@ namespace ActionStreetMap.Models.Terrain
             var roadStyleProvider = settings.RoadStyleProvider;
 
             var roadGraph = _roadGraphBuilder.Build();
+            // build roads
             foreach (var road in roadGraph.Roads)
             {
                 var element = road.Elements.First();
-                road.GameObject = _gameObjectFactory.CreateNew(String.Format("road [{0}]:{1}", element.Id, element.Type), 
-                    settings.Tile.GameObject);
-                var style = roadStyleProvider.Get(road);
-                _roadBuilder.Build(heightMap, road, style);
+                road.GameObject = _gameObjectFactory
+                    .CreateNew(String.Format("road [{0}]:{1}", element.Id, element.Type), settings.Tile.GameObject);
+                _roadBuilder.Build(heightMap, road, roadStyleProvider.Get(road));               
             }
-
-            // TODO process road junctions
+            // build road junctions
+            foreach (var junction in roadGraph.Junctions)
+            {
+                junction.GameObject = _gameObjectFactory
+                    .CreateNew(String.Format("junction: {0}", junction.Connections[0]), settings.Tile.GameObject);
+                // TODO use road style?
+                _roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
+            }
 
             // process elevations
             // NOTE We have to do this in the last order. Otherwise, new height

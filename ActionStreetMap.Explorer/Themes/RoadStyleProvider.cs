@@ -32,5 +32,14 @@ namespace ActionStreetMap.Explorer.Themes
 
             return _roadTypeStyleMapping[type][0];
         }
+
+        /// <inheritdoc />
+        public RoadStyle Get(RoadJunction junction)
+        {
+            // NOTE use first element's type
+            // TODO use smart logic to choose road style
+            var type = _roadTypeStyleMapping.Keys.First();
+            return _roadTypeStyleMapping[type][0];
+        }
     }
 }

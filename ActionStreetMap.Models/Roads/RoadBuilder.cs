@@ -6,6 +6,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using ActionStreetMap.Models.Utils;
 using UnityEngine;
+using System;
 
 namespace ActionStreetMap.Models.Roads
 {
@@ -21,6 +22,14 @@ namespace ActionStreetMap.Models.Roads
         /// <param name="road">Road.</param>
         /// <param name="style">Style.</param>
         void Build(HeightMap heightMap, Road road, RoadStyle style);
+
+        /// <summary>
+        ///     Builds road junction.
+        /// </summary>
+        /// <param name="heightMap">Height map.</param>
+        /// <param name="junction">Road junction.</param>
+        /// <param name="style">Style.</param>
+        void Build(HeightMap heightMap, RoadJunction junction, RoadStyle style);
     }
 
     /// <summary>
@@ -46,6 +55,12 @@ namespace ActionStreetMap.Models.Roads
         {
             var lineElements = road.Elements.Select(e => new LineElement(e.Points, e.Width)).ToList();
             _lineBuilder.Build(heightMap, lineElements, (p, t, u) => CreateMesh(road, style, p, t, u));
+        }
+
+        /// <inheritdoc />
+        public void Build(HeightMap heightMap, RoadJunction junction, RoadStyle style)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
