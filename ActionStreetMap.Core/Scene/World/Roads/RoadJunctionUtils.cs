@@ -102,9 +102,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// </summary>
         internal static void TruncatePoints(List<MapPoint> points, int index, int count)
         {
-
-            if (points.Count <= 2)
-                return;
+            if (points.Count <= 2) return;
             // TODO check if points list is truncated to one or zero point count.
             points.RemoveRange(index, count);
         }
@@ -151,10 +149,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             var angle2 = Math.Atan2(choice.Y - pivot.Y, choice.X - pivot.X);
             var angleDiff = (180 / Math.PI * (angle2 - angle1));
 
-            if (angleDiff > 0) //It went CCW so adjust
-                return 360 - angleDiff;
-
-            return -angleDiff; //I need the results to be always positive so flip sign
+            return angleDiff > 0 ? 360 - angleDiff : -angleDiff;
         }
 
         #region Helpers
