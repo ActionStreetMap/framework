@@ -15,7 +15,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         ///     Gets point along AB at given distance from A and modifies/truncates points list to use it.
         ///     threshold value should not be big in order not to affect direction.
         /// </summary>
-        public static MapPoint SetJoinPoint(List<MapPoint> points, float threshold, bool fromFirst)
+        public static MapPoint TruncateToJoinPoint(List<MapPoint> points, float threshold, bool fromFirst)
         {
             float distance;
             int count = points.Count;
@@ -52,18 +52,20 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             vectorX *= factor;
             vectorY *= factor;
 
-            // TODO should remove join point as well
             var truncPoint = new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
             if (IndexBuffer.Count == 0)
                 points[index] = truncPoint;
             else if (IndexBuffer.Count == 1)
+            {
                 points[IndexBuffer[0]] = truncPoint;
+                points.RemoveAt(IndexBuffer[0] - increment);
+            }
             else
             {
-                // now need to remove skipped items
+                // now need to remove skipped items and replace trunc point
                 var length = IndexBuffer.Count;
-                var firstIndex = fromFirst ? IndexBuffer[0] : IndexBuffer[length - 1];
-                points.RemoveRange(firstIndex, length - 1);
+                var firstIndex = (fromFirst ? IndexBuffer[0] - increment : IndexBuffer[length - 1]);
+                points.RemoveRange(firstIndex, length);
                 points[firstIndex] = truncPoint;
             }
             IndexBuffer.Clear();
