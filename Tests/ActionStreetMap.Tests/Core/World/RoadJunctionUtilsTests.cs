@@ -21,7 +21,7 @@ namespace ActionStreetMap.Tests.Core.World
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.SetJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
             Assert.AreEqual(new MapPoint(7, 0), result);
@@ -39,7 +39,7 @@ namespace ActionStreetMap.Tests.Core.World
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.SetJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
             Assert.AreEqual(new MapPoint(7, 0), result);
@@ -65,7 +65,7 @@ namespace ActionStreetMap.Tests.Core.World
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.SetJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
             Assert.AreEqual(new MapPoint(7, 0), result);
@@ -90,7 +90,7 @@ namespace ActionStreetMap.Tests.Core.World
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToDistance(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.SetJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
             Assert.AreEqual(new MapPoint(18, 20), result);
@@ -135,6 +135,23 @@ namespace ActionStreetMap.Tests.Core.World
             CollectionAssert.AreEqual(new List<MapPoint>() {left, top, right}, sorted2);
             CollectionAssert.AreEqual(sorted1, sorted2);
             CollectionAssert.AreEqual(sorted1, sorted3);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CanGetJointSegment(bool reversed)
+        {
+            // ARRANGE
+            var points = new List<MapPoint>() {new MapPoint(0, 0), new MapPoint(10, 0), new MapPoint(20, 0)};
+            float width = 6;
+            if (reversed) points.Reverse();
+
+            // ACT
+            var result = RoadJunctionUtils.GetJoinSegment(points, width, reversed);
+
+            // ARRANGE
+            Assert.AreEqual(new MapPoint(20, 3), result.Start);
+            Assert.AreEqual(new MapPoint(20, -3), result.End);
         }
     }
 }

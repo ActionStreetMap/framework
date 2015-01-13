@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Scene.World.Roads
 {
@@ -11,17 +12,15 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         private static readonly List<int> IndexBuffer = new List<int>(4);
 
         /// <summary>
-        ///     Gets point along AB at given distance from A and modifies points list to use it.
-        ///     width value should not be big in order not to affect direction.
+        ///     Gets point along AB at given distance from A and modifies/truncates points list to use it.
+        ///     threshold value should not be big in order not to affect direction.
         /// </summary>
-        public static MapPoint TruncateToDistance(List<MapPoint> points, float width, bool fromFirst)
+        public static MapPoint SetJoinPoint(List<MapPoint> points, float threshold, bool fromFirst)
         {
-            float distance = 0;
-            int increment;
-            int index;
+            float distance;
             int count = points.Count;
-            if (fromFirst) { index = 0; increment = 1; }
-            else { index = count - 1; increment = -1; }
+            int increment = fromFirst ? 1 : -1;
+            int index = fromFirst ? 0 : count - 1;
 
             MapPoint a = points[index];
             MapPoint b;
@@ -30,7 +29,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 index += increment;
                 b = points[index];
                 distance = a.DistanceTo(b);
-                if (distance >= width)
+                if (distance >= threshold)
                     break;
                 // NOTE actually, this can be replaced with simple RemoveAt(index), but
                 // this operation takes O(n) as it includes array copying at every interation
@@ -39,10 +38,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             } while (--count > 1);
 
-            distance = distance < width ? distance : width;
+            distance = distance < threshold ? distance : threshold;
 
             // AB' + B'B = AB It's possible that "distance" variable is greater than AB 
-
             // a. calculate the vector from o to g:
             float vectorX = b.X - a.X;
             float vectorY = b.Y - a.Y;
@@ -54,8 +52,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             vectorX *= factor;
             vectorY *= factor;
 
+            // TODO should remove join point as well
             var truncPoint = new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
-
             if (IndexBuffer.Count == 0)
                 points[index] = truncPoint;
             else if (IndexBuffer.Count == 1)
@@ -68,9 +66,29 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 points.RemoveRange(firstIndex, length - 1);
                 points[firstIndex] = truncPoint;
             }
-
             IndexBuffer.Clear();
             return truncPoint;
+        }
+
+        /// <summary>
+        ///     Gets join segment orthogonal to last two points of road element's points.
+        /// </summary>
+        public static Segment GetJoinSegment(List<MapPoint> points, float width, bool fromFirst)
+        {
+            var count = points.Count;
+            int increment = fromFirst ? 1 : -1;
+            int index = fromFirst ? 0 : count - 1;
+            var halfWidth = width/2;
+
+            var a = points[index];
+            var b = points[index + increment];
+
+            float l = (float)Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
+            var dX = halfWidth * (b.Y - a.Y) / l;
+            var dY = halfWidth * (a.X - b.X) / l;
+
+            return new Segment(new MapPoint(a.X + dX, a.Y + dY, a.Elevation), 
+                new MapPoint(a.X - dX, a.Y - dY, a.Elevation));
         }
 
         /// <summary>
@@ -79,7 +97,6 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <param name="junction">Road junction.</param>
         public static void GeneratePolygon(RoadJunction junction)
         {
-
         }
 
         /// <summary>
@@ -109,5 +126,21 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             return -angleDiff; //I need the results to be always positive so flip sign
         }
+
+        #region Helpers
+
+        internal struct Segment
+        {
+            public MapPoint Start;
+            public MapPoint End;
+
+            public Segment(MapPoint start, MapPoint end)
+            {
+                Start = start;
+                End = end;
+            }
+        }
+
+        #endregion
     }
 }
