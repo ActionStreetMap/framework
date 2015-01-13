@@ -29,7 +29,7 @@ namespace ActionStreetMap.Models.Roads
         {
             if (collision.gameObject.tag == "osm.road")
             {
-                var road = collision.gameObject.GetComponent<RoadBehavior>().Road;
+                var road = collision.gameObject.GetComponent<RoadBehaviors>().Road;
 
                 // limit collision count
                 if (++_collisionCount == MaxCollisionCount)

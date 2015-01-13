@@ -38,10 +38,10 @@ namespace ActionStreetMap.Models.Roads
     /// </summary>
     public class RoadBuilder : IRoadBuilder
     {
+        private const string OsmTag = "osm.road";
+
         private readonly IResourceProvider _resourceProvider;
-
         private readonly HeightMapProcessor _heightMapProcessor = new HeightMapProcessor();
-
         private readonly ThickLineBuilder _lineBuilder = new ThickLineBuilder();
 
         /// <summary>
@@ -94,12 +94,11 @@ namespace ActionStreetMap.Models.Roads
             meshFilter.mesh = mesh;
 
             gameObject.AddComponent<MeshCollider>();
-            gameObject.AddComponent<RoadBehavior>().Road = road;
-            gameObject.tag = "osm.road";
+            gameObject.AddComponent<RoadBehaviors>().Road = road;
+            gameObject.tag = OsmTag;
 
-            var renderer = gameObject.AddComponent<MeshRenderer>();
-
-            renderer.sharedMaterial = _resourceProvider.GetMatertial(style.Path);
+            gameObject.AddComponent<MeshRenderer>()
+                .sharedMaterial = _resourceProvider.GetMatertial(style.Path);
         }
 
         /// <summary>
@@ -122,13 +121,11 @@ namespace ActionStreetMap.Models.Roads
             meshFilter.mesh = mesh;
 
             gameObject.AddComponent<MeshCollider>();
-            // TODO
-            //gameObject.AddComponent<RoadBehavior>().Road = road;
-            gameObject.tag = "osm.road";
+            gameObject.AddComponent<JunctionBehavior>().Junction = junction;
+            gameObject.tag = OsmTag;
 
-            var renderer = gameObject.AddComponent<MeshRenderer>();
-
-            renderer.sharedMaterial = _resourceProvider.GetMatertial(style.Path);
+            gameObject.AddComponent<MeshRenderer>()
+                .sharedMaterial = _resourceProvider.GetMatertial(style.Path);
         }
     }
 }
