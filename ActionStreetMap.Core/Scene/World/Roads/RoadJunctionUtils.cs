@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Scene.World.Roads
 {
@@ -21,9 +20,16 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             List<MapPoint> junctionPolygon = new List<MapPoint>(8);
             foreach (var connection in junction.Connections)
             {
-                // TODO merge these two methods: TruncateToJoinPoint and GetJoinSegment?
-                TruncateToJoinPoint(connection.Points, connection.Width, connection.Start == junction);
-                var segment = GetJoinSegment(connection.Points, connection.Width, connection.Start == junction);
+                bool fromStart = connection.Start == junction;
+                // TODO merge two methods: TruncateToJoinPoint and GetJoinSegment?
+                if (connection.Points[fromStart ? 0 : connection.Points.Count - 1].Equals(junction.Center))
+                    TruncateToJoinPoint(connection.Points, connection.Width, fromStart);
+                else
+                {
+                    // TODO looks like bug in junction detect algorithm
+                }
+
+                var segment = GetJoinSegment(connection.Points, connection.Width, fromStart);
                 junctionPolygon.Add(segment.Start);
                 junctionPolygon.Add(segment.End);
             }
@@ -77,8 +83,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
             var truncPoint = new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
             if (IndexBuffer.Count == 0)
             {
-                points[index] = truncPoint;
-                TruncatePoints(points, fromFirst ? 0 : count - 1, 1);
+                points[fromFirst ? 0 : count - 1] = truncPoint;
             }
             else if (IndexBuffer.Count == 1)
             {

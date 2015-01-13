@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.World.Roads;
@@ -24,7 +25,7 @@ namespace ActionStreetMap.Tests.Core.World
             var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
-            Assert.AreEqual(3, roadPoints.Count);
+            Assert.AreEqual(4, roadPoints.Count);
             Assert.AreEqual(new MapPoint(7, 0), result);
         }
 
@@ -42,7 +43,7 @@ namespace ActionStreetMap.Tests.Core.World
             var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
-            Assert.AreEqual(2, roadPoints.Count);
+            Assert.AreEqual(3, roadPoints.Count);
             Assert.AreEqual(new MapPoint(7, 0), result);
         }
 
@@ -113,6 +114,31 @@ namespace ActionStreetMap.Tests.Core.World
             // ASSERT
             Assert.AreEqual(2, roadPoints.Count);
             Assert.AreEqual(new MapPoint(18, 20), result);
+        }
+
+
+        [Test]
+        public void CanTruncateToPointCorrectDistance()
+        {
+            // ARRANGE
+            var threshold = 6;
+            var joinPoint = new MapPoint(-2.0f, 0.0f);
+            var points1 = new List<MapPoint> { new MapPoint(-39.2f, 112.4f), new MapPoint(-36.8f, 104.8f), new MapPoint(-17.6f, 43.6f), joinPoint };
+            var points2 = new List<MapPoint> { joinPoint,new MapPoint(38.7f, -116.9f) };
+            var points3 = new List<MapPoint> { new MapPoint(-186.9f, -125.1f), new MapPoint(-86.5f, -57.1f), joinPoint };
+            var points4 = new List<MapPoint> { joinPoint, new MapPoint(67.9f, 24.0f), new MapPoint(93.1f, 32.6f) };
+
+            // ACT
+            var point1 = RoadJunctionUtils.TruncateToJoinPoint(points1, threshold, false);
+            var point2 = RoadJunctionUtils.TruncateToJoinPoint(points2, threshold, true);
+            var point3 = RoadJunctionUtils.TruncateToJoinPoint(points3, threshold, false);
+            var point4 = RoadJunctionUtils.TruncateToJoinPoint(points4, threshold, true);
+
+            // ASSERT
+            Assert.IsTrue(Math.Abs(joinPoint.DistanceTo(point1) - joinPoint.DistanceTo(point2)) < 0.01);
+            Assert.IsTrue(Math.Abs(joinPoint.DistanceTo(point1) - threshold) < 0.01);
+            Assert.IsTrue(Math.Abs(joinPoint.DistanceTo(point3) - joinPoint.DistanceTo(point4)) < 0.01);
+            Assert.IsTrue(Math.Abs(joinPoint.DistanceTo(point3) - threshold) < 0.01);
         }
 
         [TestCase(-10, 0, 90)]

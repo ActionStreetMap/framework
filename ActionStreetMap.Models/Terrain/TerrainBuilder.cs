@@ -184,9 +184,8 @@ namespace ActionStreetMap.Models.Terrain
             foreach (var junction in roadGraph.Junctions)
             {
                 junction.GameObject = _gameObjectFactory
-                    .CreateNew(String.Format("junction: {0}", junction.Connections[0]), settings.Tile.GameObject);
-                // TODO use road style?
-                _roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
+                    .CreateNew(String.Format("junction: {0}", junction.Center), settings.Tile.GameObject);
+                //_roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
             }
 
             // process elevations

@@ -55,8 +55,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             var roads = _elements.Select(kv => new Road { Elements = kv.Value }).ToArray();
             var junctions = _junctionsMap.Values
-                .SelectMany(j => j.Values)
-                /*.Select(j => RoadJunctionUtils.CompleteJunction(j))*/.ToArray();
+                .SelectMany(j => j.Values).Select(RoadJunctionUtils.CompleteJunction).ToArray();
 
             // clear buffers
             _elements.Clear();
