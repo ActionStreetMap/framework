@@ -11,7 +11,7 @@ namespace ActionStreetMap.Tests.Core.World
     {
         [TestCase(false)]
         [TestCase(true)]
-        public void CanDetectJoinPoint(bool reversed)
+        public void CanTruncateToJoinFourPoints(bool reversed)
         {
             // ARRANGE
             var width = 3;
@@ -24,12 +24,31 @@ namespace ActionStreetMap.Tests.Core.World
             var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
+            Assert.AreEqual(3, roadPoints.Count);
             Assert.AreEqual(new MapPoint(7, 0), result);
         }
 
         [TestCase(false)]
         [TestCase(true)]
-        public void CanHandleCloseJoinPoint(bool reversed)
+        public void CanTruncateToJoinThreePoints(bool reversed)
+        {
+            // ARRANGE
+            var width = 3;
+            var roadPoints = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(5, 0), new MapPoint(10, 0) };
+            if (reversed)
+                roadPoints.Reverse();
+
+            // ACT
+            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
+
+            // ASSERT
+            Assert.AreEqual(2, roadPoints.Count);
+            Assert.AreEqual(new MapPoint(7, 0), result);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CanTruncateToJoinFourPointsWithClose(bool reversed)
         {
             // ARRANGE
             var width = 3;
@@ -53,7 +72,7 @@ namespace ActionStreetMap.Tests.Core.World
 
         [TestCase(false)]
         [TestCase(true)]
-        public void CanHandleCloseJoinPointSkipMoreThanOne(bool reversed)
+        public void CanTruncateToJoinPointSkipMoreThanOne(bool reversed)
         {
             // ARRANGE
             var width = 3;
@@ -79,7 +98,7 @@ namespace ActionStreetMap.Tests.Core.World
 
         [TestCase(false)]
         [TestCase(true)]
-        public void CanHandleCloseTwoJoinPoint(bool reversed)
+        public void CanTruncateToJoinPointCloseTwo(bool reversed)
         {
             // ARRANGE
             var width = 3;
@@ -92,6 +111,7 @@ namespace ActionStreetMap.Tests.Core.World
             var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
 
             // ASSERT
+            Assert.AreEqual(2, roadPoints.Count);
             Assert.AreEqual(new MapPoint(18, 20), result);
         }
 
@@ -124,11 +144,14 @@ namespace ActionStreetMap.Tests.Core.World
             var left = new MapPoint(-10, 0);
             var right = new MapPoint(10, 0);
             var top = new MapPoint(0, 10);
+            var sorted1 = new List<MapPoint>() { left, right, top };
+            var sorted2 = new List<MapPoint>() { top, right, left };
+            var sorted3 = new List<MapPoint>() { right, left, top };
 
             // ACT
-            var sorted1 = RoadJunctionUtils.SortByAngle(bottom, pivot, new List<MapPoint>() { left, right, top }).ToList();
-            var sorted2 = RoadJunctionUtils.SortByAngle(bottom, pivot, new List<MapPoint>() { top, right, left }).ToList();
-            var sorted3 = RoadJunctionUtils.SortByAngle(bottom, pivot, new List<MapPoint>() { right, left, top }).ToList();
+            RoadJunctionUtils.SortByAngle(bottom, pivot, sorted1);
+            RoadJunctionUtils.SortByAngle(bottom, pivot, sorted2);
+            RoadJunctionUtils.SortByAngle(bottom, pivot, sorted3);
 
             // ASSERT
             CollectionAssert.AreEqual(new List<MapPoint>() {left, top, right}, sorted2);
@@ -148,9 +171,50 @@ namespace ActionStreetMap.Tests.Core.World
             // ACT
             var result = RoadJunctionUtils.GetJoinSegment(points, width, reversed);
 
-            // ARRANGE
+            // ASSERT
             Assert.AreEqual(new MapPoint(20, 3), result.Start);
             Assert.AreEqual(new MapPoint(20, -3), result.End);
+        }
+
+        [Test]
+        public void CanGenerateJunctionPolygon()
+        {
+            // ARRANGE
+            var junction = new RoadJunction(new MapPoint(0, 0));
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 0,
+                Width = 3,
+                End = junction,
+                Points = new List<MapPoint>() { new MapPoint(-20, 0), new MapPoint(-10, 0), new MapPoint(0, 0), }
+            });
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 1,
+                Width = 3,
+                End = junction,
+                Points = new List<MapPoint>() { new MapPoint(20, 0), new MapPoint(10, 0), new MapPoint(0, 0), }
+            });
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 3,
+                Width = 3,
+                Start = junction,
+                Points = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(0, 10), new MapPoint(0, 20), }
+            });
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 4,
+                Width = 3,
+                Start = junction,
+                Points = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(0, -10), new MapPoint(0, -20), }
+            });
+
+            // ACT
+            RoadJunctionUtils.GeneratePolygon(junction);
+
+            // ASSERT
+            Assert.AreEqual(8, junction.Polygon.Count);
         }
     }
 }

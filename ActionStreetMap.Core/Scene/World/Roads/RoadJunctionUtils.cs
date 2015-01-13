@@ -54,22 +54,38 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             var truncPoint = new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
             if (IndexBuffer.Count == 0)
+            {
                 points[index] = truncPoint;
+                TruncatePoints(points, fromFirst ? 0 : count - 1, 1);
+            }
             else if (IndexBuffer.Count == 1)
             {
                 points[IndexBuffer[0]] = truncPoint;
-                points.RemoveAt(IndexBuffer[0] - increment);
+                TruncatePoints(points, IndexBuffer[0] - increment, 1);
             }
             else
             {
                 // now need to remove skipped items and replace trunc point
                 var length = IndexBuffer.Count;
                 var firstIndex = (fromFirst ? IndexBuffer[0] - increment : IndexBuffer[length - 1]);
-                points.RemoveRange(firstIndex, length);
+                TruncatePoints(points, firstIndex, length);
                 points[firstIndex] = truncPoint;
+                // TODO check case if we get points count less than 2
             }
             IndexBuffer.Clear();
             return truncPoint;
+        }
+
+        /// <summary>
+        ///     Truncates list.
+        /// </summary>
+        private static void TruncatePoints(List<MapPoint> points, int index, int count)
+        {
+
+            if (points.Count <= 2)
+                return;
+            // TODO check if points list is truncated to one or zero point count.
+            points.RemoveRange(index, count);
         }
 
         /// <summary>
@@ -99,6 +115,18 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <param name="junction">Road junction.</param>
         public static void GeneratePolygon(RoadJunction junction)
         {
+            // TODO use thread pool
+            List<MapPoint> junctionPolygon = new List<MapPoint>(8);
+            foreach (var connection in junction.Connections)
+            {
+                // TODO merge these two points?
+                TruncateToJoinPoint(connection.Points, connection.Width, connection.Start == junction);
+                var segment = GetJoinSegment(connection.Points, connection.Width, connection.Start == junction);
+                junctionPolygon.Add(segment.Start);
+                junctionPolygon.Add(segment.End);
+            }
+            SortByAngle(junctionPolygon[0], junction.Center, junctionPolygon);
+            junction.Polygon = junctionPolygon;
         }
 
         /// <summary>
@@ -108,10 +136,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// <param name="pivot">Pivot point.</param>
         /// <param name="choices">List of choice points.</param>
         /// <returns>Sorted list.</returns>
-        public static IEnumerable<MapPoint> SortByAngle(MapPoint original, MapPoint pivot, List<MapPoint> choices)
+        public static void SortByAngle(MapPoint original, MapPoint pivot, List<MapPoint> choices)
         {
             choices.Sort((v1, v2) => GetTurnAngle(original, pivot, v1).CompareTo(GetTurnAngle(original, pivot, v2)));
-            return choices;
         }
 
         /// <summary>
