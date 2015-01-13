@@ -15,7 +15,11 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders
 
         }
 
-        protected override void CreateMesh(Road road, RoadStyle style, List<Vector3> points, List<int> triangles, List<Vector2> uv)
+        protected override void CreateRoadMesh(Road road, RoadStyle style, List<Vector3> points, List<int> triangles, List<Vector2> uv)
+        {
+        }
+
+        protected override void CreateJunctionMesh(RoadJunction junction, RoadStyle style)
         {
         }
     }

@@ -1,4 +1,5 @@
-﻿using Color32 = ActionStreetMap.Core.Unity.Color32;
+﻿using ActionStreetMap.Core.Scene.World.Roads;
+using Color32 = ActionStreetMap.Core.Unity.Color32;
 using Rect = ActionStreetMap.Models.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Models.Roads
@@ -13,17 +14,15 @@ namespace ActionStreetMap.Models.Roads
         /// </summary>
         public string Path { get; set; }
 
-        // NOTE ignored so far by default RoadBuilder
-
         /// <summary>
-        ///     Gets or sets height (TODO: do we need this?)    
-        /// </summary>
-        public int Height { get; set; }
-
-        /// <summary>
-        ///     Gets or sets road width
+        ///     Gets or sets road width.
         /// </summary>
         public int Width { get; set; }
+
+        /// <summary>
+        ///     Gets or sets road type.
+        /// </summary>
+        public RoadType Type { get; set; }
 
         /// <summary>
         ///    Gets or sets material of road.

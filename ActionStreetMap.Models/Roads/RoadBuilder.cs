@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Scene.World.Roads;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using ActionStreetMap.Models.Utils;
 using UnityEngine;
-using System;
 
 namespace ActionStreetMap.Models.Roads
 {
@@ -38,6 +39,9 @@ namespace ActionStreetMap.Models.Roads
     public class RoadBuilder : IRoadBuilder
     {
         private readonly IResourceProvider _resourceProvider;
+
+        private readonly HeightMapProcessor _heightMapProcessor = new HeightMapProcessor();
+
         private readonly ThickLineBuilder _lineBuilder = new ThickLineBuilder();
 
         /// <summary>
@@ -54,24 +58,28 @@ namespace ActionStreetMap.Models.Roads
         public void Build(HeightMap heightMap, Road road, RoadStyle style)
         {
             var lineElements = road.Elements.Select(e => new LineElement(e.Points, e.Width)).ToList();
-            _lineBuilder.Build(heightMap, lineElements, (p, t, u) => CreateMesh(road, style, p, t, u));
+            _lineBuilder.Build(heightMap, lineElements, (p, t, u) => CreateRoadMesh(road, style, p, t, u));
         }
 
         /// <inheritdoc />
         public void Build(HeightMap heightMap, RoadJunction junction, RoadStyle style)
         {
-            throw new NotImplementedException();
+            _heightMapProcessor.Recycle(heightMap);
+            _heightMapProcessor.AdjustPolygon(junction.Polygon, junction.Center.Elevation);
+            _heightMapProcessor.Clear();
+
+            CreateJunctionMesh(junction, style);
         }
 
         /// <summary>
-        ///     Creates unity's mesh.
+        ///     Creates unity's mesh for road.
         /// </summary>
         /// <param name="road">Road.</param>
         /// <param name="style">Style.</param>
         /// <param name="points">Points.</param>
         /// <param name="triangles">Triangles.</param>
         /// <param name="uv">UV.</param>
-        protected virtual void CreateMesh(Road road, RoadStyle style,
+        protected virtual void CreateRoadMesh(Road road, RoadStyle style,
             List<Vector3> points, List<int> triangles, List<Vector2> uv)
         {
             Mesh mesh = new Mesh();
@@ -87,6 +95,35 @@ namespace ActionStreetMap.Models.Roads
 
             gameObject.AddComponent<MeshCollider>();
             gameObject.AddComponent<RoadBehavior>().Road = road;
+            gameObject.tag = "osm.road";
+
+            var renderer = gameObject.AddComponent<MeshRenderer>();
+
+            renderer.sharedMaterial = _resourceProvider.GetMatertial(style.Path);
+        }
+
+        /// <summary>
+        ///     Creates unity's mesh for road junction.
+        /// </summary>
+        /// <param name="junction">Road junction.</param>
+        /// <param name="style">Road style.</param>
+        protected virtual void CreateJunctionMesh(RoadJunction junction, RoadStyle style)
+        {
+            Mesh mesh = new Mesh();
+            mesh.vertices = junction.Polygon.Select(p => new Vector3(p.X, p.Elevation, p.Y)).ToArray();
+            mesh.triangles = Triangulator.Triangulate(junction.Polygon);
+            // TODO
+            //mesh.uv = style.MainUvMap;
+            mesh.RecalculateNormals();
+
+            var gameObject = junction.GameObject.GetComponent<GameObject>();
+            gameObject.isStatic = true;
+            var meshFilter = gameObject.AddComponent<MeshFilter>();
+            meshFilter.mesh = mesh;
+
+            gameObject.AddComponent<MeshCollider>();
+            // TODO
+            //gameObject.AddComponent<RoadBehavior>().Road = road;
             gameObject.tag = "osm.road";
 
             var renderer = gameObject.AddComponent<MeshRenderer>();

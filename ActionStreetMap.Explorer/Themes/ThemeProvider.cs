@@ -196,7 +196,6 @@ namespace ActionStreetMap.Explorer.Themes
                     var map = textureNode["map"];
                     roadStyles.Add(new RoadStyle
                     {
-                        Height = textureNode["height"].AsInt,
                         Material = textureNode["material"].Value,
                         Color = ColorUtility.FromUnknown(textureNode["color"].Value),
                         
