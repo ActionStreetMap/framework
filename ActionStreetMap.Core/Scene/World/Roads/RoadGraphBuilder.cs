@@ -247,7 +247,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
         private RoadElement SplitElement(RoadElement element, int splitPointIndex, RoadJunction junction)
         {
-            // case 1: in the middle - need to split to two elements
+            // case 1: in the middle - need to split to two elements and modify affected junction
             if (splitPointIndex != 0 && splitPointIndex != element.Points.Count - 1)
             {
                 var elements = _elements[element.Id];
@@ -261,6 +261,15 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 // insert offset point as last
                 element.Points = points.Take(splitPointIndex + 1).ToList();
                 junction.Connections.Add(element);
+
+                // we have to modify end junction: it should point to the second element part
+                if (element.End != null)
+                {
+                    var changeIndex = -1;
+                    while (element.End.Connections[++changeIndex] != element);
+                    element.End.Connections[changeIndex] = secondElementPart;
+                }
+
                 element.End = junction;
 
                 // insert offset point as first
