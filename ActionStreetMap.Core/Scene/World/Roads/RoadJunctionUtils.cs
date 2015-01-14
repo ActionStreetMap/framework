@@ -108,7 +108,11 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         internal static void TruncatePoints(List<MapPoint> points, int index, int count)
         {
             if (points.Count <= 2) return;
-            // TODO check if points list is truncated to one or zero point count.
+
+            // Do not truncate to one point
+            // TODO however it can lead to case when points are equal
+            if (count == points.Count - 1) count--;
+
             points.RemoveRange(index, count);
         }
 

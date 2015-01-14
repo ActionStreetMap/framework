@@ -141,6 +141,23 @@ namespace ActionStreetMap.Tests.Core.World
             Assert.IsTrue(Math.Abs(joinPoint.DistanceTo(point3) - threshold) < 0.01);
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CanTruncateClosePointsBug(bool reversed)
+        {
+            // ARRANGE
+            var threshold = 6;
+            var points = new List<MapPoint> { new MapPoint(-163.0f, 5913.2f), new MapPoint(-165.4f, 5912.4f), new MapPoint(-167.1f, 5911.2f) };
+
+            if (reversed) points.Reverse();
+
+            // ACT
+            RoadJunctionUtils.TruncateToJoinPoint(points, threshold, true);
+
+            // ASSERT
+            Assert.AreEqual(2, points.Count);
+        }
+
         [TestCase(-10, 0, 90)]
         [TestCase(-5, -5, 45)]
         [TestCase(-5, 5, 135)]
