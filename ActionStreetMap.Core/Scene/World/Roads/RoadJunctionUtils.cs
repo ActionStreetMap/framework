@@ -23,13 +23,9 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 bool fromStart = connection.Start == junction;
                 // TODO merge two methods: TruncateToJoinPoint and GetJoinSegment?
                 if (connection.Points[fromStart ? 0 : connection.Points.Count - 1].Equals(junction.Center))
-                    TruncateToJoinPoint(connection.Points, connection.Width, fromStart);
-                else
-                {
-                    // TODO looks like bug in junction detect algorithm
-                }
+                    TruncateToJoinPoint(connection.Points, connection.Width * 2, fromStart);
 
-                var segment = GetJoinSegment(connection.Points, connection.Width, fromStart);
+                var segment = GetJoinSegment(connection.Points, connection.Width * 2, fromStart);
                 junctionPolygon.Add(segment.Start);
                 junctionPolygon.Add(segment.End);
             }
