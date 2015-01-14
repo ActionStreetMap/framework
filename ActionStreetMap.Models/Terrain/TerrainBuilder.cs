@@ -185,7 +185,7 @@ namespace ActionStreetMap.Models.Terrain
             {
                 junction.GameObject = _gameObjectFactory
                     .CreateNew(String.Format("junction: {0}", junction.Center), settings.Tile.GameObject);
-                //_roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
+                _roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
             }
 
             // process elevations

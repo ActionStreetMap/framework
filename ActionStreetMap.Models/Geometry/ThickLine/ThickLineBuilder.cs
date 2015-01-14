@@ -102,7 +102,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
                 return;
 
             ProcessFirstSegments(lineSegments);
-            ProcessLastSegment(lineElements, lineSegments, _currentElement.Width);
+            ProcessLastSegment(lineSegments, _currentElement.Width);
         }
 
         /// <summary>
@@ -144,21 +144,15 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         /// <summary>
         ///     Processes last road segment of current RoadElement
         /// </summary>
-        private void ProcessLastSegment(List<LineElement> lineElements, List<ThickLineSegment> lineSegments, float width)
+        private void ProcessLastSegment(List<ThickLineSegment> lineSegments, float width)
         {
             var segmentsCount = lineSegments.Count;
 
             // We have to connect last segment with first segment of next road element
-            if (_nextElement != null)
+            if (_nextElement != null && 
+                _currentElement.Points[_currentElement.Points.Count - 1].Equals(_nextElement.Points[0]))
             {
                 var first = lineSegments[segmentsCount - 1];
-
-                // we couldn't connect last segment of current element with next
-                if (!_currentElement.Points[_currentElement.Points.Count - 1].Equals(_nextElement.Points[0]))
-                {
-                    _startPoints = null;
-                    return;
-                }
 
                 MapPoint secondPoint = _heightMap.IsFlat
                     ? _nextElement.Points[1]
@@ -192,10 +186,10 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             }
             else
             {
-                // TODO do I need this?
                 var lastSegment = lineSegments[segmentsCount - 1];
                 AddTrapezoid(_startPoints.Item1, _startPoints.Item2,
                     lastSegment.Left.End, lastSegment.Right.End);
+                _startPoints = null;
             }
         }
 
