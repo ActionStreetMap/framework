@@ -112,7 +112,7 @@ namespace ActionStreetMap.Models.Roads
             mesh.vertices = junction.Polygon.Select(p => new Vector3(p.X, p.Elevation, p.Y)).ToArray();
             mesh.triangles = Triangulator.Triangulate(junction.Polygon);
             // TODO
-            //mesh.uv = style.MainUvMap;
+            mesh.uv = junction.Polygon.Select(p => new Vector2()).ToArray();
             mesh.RecalculateNormals();
 
             var gameObject = junction.GameObject.GetComponent<GameObject>();
