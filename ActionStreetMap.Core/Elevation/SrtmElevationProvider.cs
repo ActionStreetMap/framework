@@ -53,8 +53,8 @@ namespace ActionStreetMap.Core.Elevation
             int latDec = (int)latitude;
             int lonDec = (int)longitude;
 
-            double secondsLat = (latitude - latDec) * 60 * 60;
-            double secondsLon = (longitude - lonDec) * 60 * 60;
+            float secondsLat = (float) (latitude - latDec) * 3600;
+            float secondsLon = (float)(longitude - lonDec) * 3600;
 
             LoadTile(latDec, lonDec);
 
@@ -80,8 +80,8 @@ namespace ActionStreetMap.Core.Elevation
             var height1 = ReadPx(y + 1, x + 1);
 
             //ratio where X lays
-            double dy = (secondsLat % _secondsPerPx) / _secondsPerPx;
-            double dx = (secondsLon % _secondsPerPx) / _secondsPerPx;
+            float dy = (secondsLat % _secondsPerPx) / _secondsPerPx;
+            float dx = (secondsLon % _secondsPerPx) / _secondsPerPx;
 
             // Bilinear interpolation
             // h0------------h1
@@ -91,10 +91,10 @@ namespace ActionStreetMap.Core.Elevation
             // |      dy
             // |       |
             // h2------------h3   
-            return (float)(height0 * dy * (1 - dx) +
-                            height1 * dy * (dx) +
-                            height2 * (1 - dy) * (1 - dx) +
-                            height3 * (1 - dy) * dx);
+            return (height0 * dy * (1 - dx) +
+                    height1 * dy * (dx) +
+                    height2 * (1 - dy) * (1 - dx) +
+                    height3 * (1 - dy) * dx);
         }
 
         private void LoadTile(int latDec, int lonDec)

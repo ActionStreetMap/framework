@@ -140,7 +140,8 @@ namespace ActionStreetMap.Osm.Index.Spatial
                 (IEnvelop)new PointEnvelop(reader.ReadInt32(), reader.ReadInt32()) :
                 new Envelop(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
-            var children = new List<SpatialIndex<uint>.SpatialIndexNode>();
+            // TODO use list from object pool
+            var children = new List<SpatialIndex<uint>.SpatialIndexNode>(64);
             while (true)
             {
                 SpatialIndex<uint>.SpatialIndexNode child;

@@ -107,9 +107,11 @@ namespace ActionStreetMap.Models.Terrain
             var htmap = settings.Tile.HeightMap.Data;
 
             // normalize
-            for (int i = 0; i < settings.Tile.HeightMap.Resolution; i++)
-                for (int j = 0; j < settings.Tile.HeightMap.Resolution; j++)
-                    htmap[i, j] /= settings.Tile.HeightMap.MaxElevation;
+            var resolution = settings.Tile.HeightMap.Resolution;
+            var maxElevation = settings.Tile.HeightMap.MaxElevation;
+            for (int i = 0; i < resolution; i++)
+                for (int j = 0; j < resolution; j++)
+                    htmap[i, j] /= maxElevation;
 
             var size = new Vector3(settings.Tile.Size, settings.Tile.HeightMap.MaxElevation, settings.Tile.Size);
             var layers = settings.SplatParams.Count;
