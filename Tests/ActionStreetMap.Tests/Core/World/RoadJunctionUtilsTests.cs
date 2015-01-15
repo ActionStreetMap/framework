@@ -259,5 +259,54 @@ namespace ActionStreetMap.Tests.Core.World
             // ASSERT
             Assert.AreEqual(8, junction.Polygon.Count);
         }
+
+        [Test]
+        public void CanGenerateValidPolygon()
+        {
+            // ARRANGE
+            var junction = new RoadJunction(new MapPoint(-242.0f, 2050.5f));
+            junction.Connections.Add(new RoadElement() 
+            { 
+                Id =25421492, Width = 6, Type = RoadType.Car,
+                Start = junction,
+                Points = new List<MapPoint>()
+                {
+                    new MapPoint(-242.0f, 2050.5f),
+                    new MapPoint(-241.2f, 2045.4f),
+                    new MapPoint(-238.7f, 2042.2f),
+                }
+            });
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 4215486, Width = 6, Type = RoadType.Car,
+                Points = new List<MapPoint>()
+                {
+                    new MapPoint(-144.3f, 2176.6f),
+                    new MapPoint(-157.4f, 2159.3f),
+                    new MapPoint(-193.4f, 2113.7f),
+                    new MapPoint(-242.0f, 2050.5f),
+                }
+            });
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 4215486, Width = 6, Type = RoadType.Car,
+                Start = junction,
+                Points = new List<MapPoint>()
+                {
+                    new MapPoint(-242.0f, 2050.5f),
+                    new MapPoint(-251.9f, 2038.6f),
+                }
+            });
+
+            // ACT
+            RoadJunctionUtils.CompleteJunction(junction);
+
+            // ASSERT
+            foreach (var point in junction.Polygon)
+            {
+                Assert.IsFalse(float.IsNaN(point.X));
+                Assert.IsFalse(float.IsNaN(point.Y));
+            }
+        }
     }
 }
