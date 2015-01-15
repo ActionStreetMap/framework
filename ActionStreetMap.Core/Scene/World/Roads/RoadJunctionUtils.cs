@@ -62,7 +62,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
 
             } while (--count > 1);
 
-            distance = distance < threshold ? distance : threshold;
+            // NOTE distance / 2 prevents truncation to the same point
+            distance = distance < threshold ? distance / 2 : threshold;
 
             // AB' + B'B = AB It's possible that "distance" variable is greater than AB 
             // a. calculate the vector from o to g:

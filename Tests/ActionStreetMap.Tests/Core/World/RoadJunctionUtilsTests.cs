@@ -113,7 +113,7 @@ namespace ActionStreetMap.Tests.Core.World
 
             // ASSERT
             Assert.AreEqual(2, roadPoints.Count);
-            Assert.AreEqual(new MapPoint(18, 20), result);
+            Assert.AreEqual(new MapPoint(19, 20), result);
         }
 
 
