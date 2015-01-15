@@ -67,6 +67,11 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             var lineElements = ThickLineUtils.GetLineElementsInTile(heightMap.LeftBottomCorner, 
                 heightMap.RightUpperCorner, elements);
             var elementsCount = lineElements.Count;
+
+            // TODO сurrent implementation of GetLineElementsInTile skip segment if its
+            // points are located outside given rectangle
+            if (elementsCount == 0) return;
+
             for (var i = 0; i < elementsCount; i++)
             {
                 _currentElement = lineElements[i];

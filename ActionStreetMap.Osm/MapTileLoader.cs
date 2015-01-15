@@ -1,5 +1,4 @@
 ﻿
-using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -16,7 +15,7 @@ namespace ActionStreetMap.Osm
     {
         private readonly IElementSourceProvider _elementSourceProvider;
         private readonly IModelVisitor _modelVisitor;
-        private readonly CompositeVisitor _compositeVisitor;
+        private readonly FilterElementVisitor _filterElementVisitor;
 
         /// <summary>
         ///     Creates MapTileLoader.
@@ -31,12 +30,10 @@ namespace ActionStreetMap.Osm
             _elementSourceProvider = elementSourceProvider;
             _modelVisitor = modelVisitor;
 
-            _compositeVisitor = new CompositeVisitor(new List<IElementVisitor>
-            {
+            _filterElementVisitor = new FilterElementVisitor(new NodeVisitor(modelVisitor, objectPool),
                 new WayVisitor(modelVisitor, objectPool),
-                new NodeVisitor(modelVisitor, objectPool),
                 new RelationVisitor(modelVisitor, objectPool)
-            });
+            );
         }
 
         /// <inheritdoc />
@@ -48,8 +45,9 @@ namespace ActionStreetMap.Osm
             // prepare tile
             tile.Accept(_modelVisitor);
 
+            _filterElementVisitor.BoundingBox = tile.BoundingBox;
             foreach (var element in elementSource.Get(tile.BoundingBox))
-                element.Accept(_compositeVisitor);
+                element.Accept(_filterElementVisitor);
 
             // finalize by canvas visiting
             (new Canvas()).Accept(_modelVisitor);
