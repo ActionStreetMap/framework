@@ -9,7 +9,7 @@ namespace ActionStreetMap.Core.Elevation
     /// <summary>
     ///     Implementation of <see cref="IElevationProvider"/> which uses SRTM data files.
     /// </summary>
-    public class SrtmElevationProvider: IElevationProvider, IConfigurable
+    public class SrtmElevationProvider : IElevationProvider, IConfigurable
     {
         private readonly IFileSystemService _fileSystemService;
         private const string PathKey = "";
@@ -17,6 +17,7 @@ namespace ActionStreetMap.Core.Elevation
         //arc seconds per pixel (3 equals cca 90m)
         private int _secondsPerPx;
         private int _totalPx;
+        private int _offset;
         private string _dataDirectory;
 
         //default never valid
@@ -50,13 +51,14 @@ namespace ActionStreetMap.Core.Elevation
         /// <inheritdoc />
         public float GetElevation(double latitude, double longitude)
         {
-            int latDec = (int)latitude;
-            int lonDec = (int)longitude;
+            int latDec = (int) latitude;
+            int lonDec = (int) longitude;
 
-            float secondsLat = (float) (latitude - latDec) * 3600;
-            float secondsLon = (float)(longitude - lonDec) * 3600;
+            float secondsLat = (float) (latitude - latDec)*3600;
+            float secondsLon = (float) (longitude - lonDec)*3600;
 
-            LoadTile(latDec, lonDec);
+            if (_srtmLat != latDec || _srtmLon != lonDec)
+                LoadTile(latDec, lonDec);
 
             // load tile
             //X coresponds to x/y values,
@@ -70,8 +72,8 @@ namespace ActionStreetMap.Core.Elevation
             // (sec)    0        3   x  (lon)
 
             //both values are [0; totalPx - 1] (totalPx reserved for interpolating)
-            int y = (int)(secondsLat / _secondsPerPx);
-            int x = (int)(secondsLon / _secondsPerPx);
+            int y = (int) (secondsLat/_secondsPerPx);
+            int x = (int) (secondsLon/_secondsPerPx);
 
             //get norther and easter points
             var height2 = ReadPx(y, x);
@@ -80,8 +82,8 @@ namespace ActionStreetMap.Core.Elevation
             var height1 = ReadPx(y + 1, x + 1);
 
             //ratio where X lays
-            float dy = (secondsLat % _secondsPerPx) / _secondsPerPx;
-            float dx = (secondsLon % _secondsPerPx) / _secondsPerPx;
+            float dy = (secondsLat%_secondsPerPx)/_secondsPerPx;
+            float dx = (secondsLon%_secondsPerPx)/_secondsPerPx;
 
             // Bilinear interpolation
             // h0------------h1
@@ -91,52 +93,50 @@ namespace ActionStreetMap.Core.Elevation
             // |      dy
             // |       |
             // h2------------h3   
-            return (height0 * dy * (1 - dx) +
-                    height1 * dy * (dx) +
-                    height2 * (1 - dy) * (1 - dx) +
-                    height3 * (1 - dy) * dx);
+
+            return height0*dy*(1 - dx) +
+                   height1*dy*(dx) +
+                   height2*(1 - dy)*(1 - dx) +
+                   height3*(1 - dy)*dx;
         }
 
         private void LoadTile(int latDec, int lonDec)
         {
-            if (_srtmLat != latDec || _srtmLon != lonDec)
+            _srtmLat = latDec;
+            _srtmLon = lonDec;
+
+            var filePath = String.Format("{0}/{1}{2:00}{3}{4:000}.hgt", _dataDirectory,
+                latDec > 0 ? 'N' : 'S', Math.Abs(latDec),
+                lonDec > 0 ? 'E' : 'W', Math.Abs(lonDec));
+
+            Trace.Output(String.Format(Strings.LoadElevationFrom, filePath));
+
+            if (!_fileSystemService.Exists(filePath))
+                throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));
+
+            _hgtData = _fileSystemService.ReadBytes(filePath);
+
+            switch (_hgtData.Length)
             {
-                _srtmLat = latDec;
-                _srtmLon = lonDec;
-
-                var filePath = String.Format("{0}/{1}{2:00}{3}{4:000}.hgt", _dataDirectory,
-                    latDec > 0 ? 'N' : 'S', Math.Abs(latDec),
-                    lonDec > 0 ? 'E' : 'W', Math.Abs(lonDec));
-
-                Trace.Output(String.Format(Strings.LoadElevationFrom, filePath));
-
-                if (!_fileSystemService.Exists(filePath))
-                    throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));
-
-                _hgtData = _fileSystemService.ReadBytes(filePath);
-
-                switch (_hgtData.Length)
-                {
-                    case 1201 * 1201 * 2: // SRTM-3
-                        _totalPx = 1201;
-                        _secondsPerPx = 3;
-                        break;
-                    case 3601 * 3601 * 2: // SRTM-1
-                        _totalPx = 3601;
-                        _secondsPerPx = 1;
-                        break;
-                    default:
-                        throw new ArgumentException("Invalid file size.", filePath);
-                }
+                case 1201*1201*2: // SRTM-3
+                    _totalPx = 1201;
+                    _secondsPerPx = 3;
+                    break;
+                case 3601*3601*2: // SRTM-1
+                    _totalPx = 3601;
+                    _secondsPerPx = 1;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid file size.", filePath);
             }
+            // NOTE this is just perfromance optimization
+            _offset = (_totalPx * _totalPx - _totalPx) * 2;
         }
 
         private int ReadPx(int y, int x)
         {
-            int row = (_totalPx - 1) - y;
-            int col = x;
-            int pos = (row * _totalPx + col) * 2;
-            return (_hgtData[pos]) << 8 | _hgtData[pos + 1];
+            var pos = _offset + 2*(x - _totalPx*y);
+            return _hgtData[pos] << 8 | _hgtData[pos + 1];
         }
 
         /// <inheritdoc />
