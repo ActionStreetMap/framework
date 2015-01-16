@@ -10,8 +10,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
     /// </summary>
     public class ObjectPool: IObjectPool
     {
-        private readonly ObjectListPool<MapPoint>  _mapPointListPool = new ObjectListPool<MapPoint>(64, 32);
-        private readonly ObjectListPool<GeoCoordinate> _geoCoordListPool = new ObjectListPool<GeoCoordinate>(64, 32);
+        private readonly Dictionary<Type, object> _listPoolMap = new Dictionary<Type, object>(8);
 
         /// <inheritdoc />
         public T New<T>()
@@ -28,13 +27,11 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <inheritdoc />
         public List<T> NewList<T>()
         {
-            if (typeof (T) == typeof (MapPoint))
-                return _mapPointListPool.New() as List<T>;
+            Type type = typeof(T);
+            if (!_listPoolMap.ContainsKey(type))
+                _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
 
-            if (typeof (T) == typeof (GeoCoordinate))
-                return _geoCoordListPool.New() as List<T>;
-            
-            throw new NotImplementedException();
+            return (_listPoolMap[type] as ObjectListPool<T>).New() as List<T>;
         }
 
         /// <inheritdoc />
@@ -47,12 +44,11 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <inheritdoc />
         public void Store<T>(List<T> list)
         {
-            if (typeof(T) == typeof(MapPoint))
-                _mapPointListPool.Store(list as List<MapPoint>);
-            else if (typeof(T) == typeof(GeoCoordinate))
-                _geoCoordListPool.Store(list as List<GeoCoordinate>);
-            else
-                throw new NotImplementedException();
+            Type type = typeof(T);
+            if (!_listPoolMap.ContainsKey(type))
+                _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
+
+            (_listPoolMap[type] as ObjectListPool<T>).Store(list);
         }
 
         /// <inheritdoc />
