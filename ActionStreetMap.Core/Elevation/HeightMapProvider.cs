@@ -65,20 +65,22 @@ namespace ActionStreetMap.Core.Elevation
 
                 // NOTE Assume that [0,0] is bottom left corner
                 var lat = bbox.MinPoint.Latitude + latStep/2;
+                var minPointLon = bbox.MinPoint.Longitude + lonStep/2;
                 for (int j = 0; j < resolution; j++)
                 {
-                    var lon = bbox.MinPoint.Longitude + lonStep/2;
+                    var lon = minPointLon;
                     for (int i = 0; i < resolution; i++)
                     {
                         var elevation = _elevationProvider.GetElevation(lat, lon);
-
-                        if (elevation > maxElevation && elevation < MaxHeight)
-                            maxElevation = elevation;
+                        if (elevation > maxElevation)
+                        {
+                            if (elevation < MaxHeight) maxElevation = elevation;
+                            else elevation = maxElevation;
+                        }
                         else if (elevation < minElevation)
                             minElevation = elevation;
 
-                        _map[j, i] = elevation > MaxHeight ? maxElevation : elevation;
-
+                        _map[j, i] = elevation;
                         lon += lonStep;
                     }
                     lat += latStep;
