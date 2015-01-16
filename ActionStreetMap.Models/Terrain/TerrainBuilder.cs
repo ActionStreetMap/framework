@@ -75,6 +75,9 @@ namespace ActionStreetMap.Models.Terrain
         private readonly List<AreaSettings> _elevations = new List<AreaSettings>();
         private readonly List<TreeDetail> _trees = new List<TreeDetail>();
 
+        /// <summary>
+        ///     Gets or sets trace.
+        /// </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 
@@ -187,6 +190,7 @@ namespace ActionStreetMap.Models.Terrain
             {
                 junction.GameObject = _gameObjectFactory
                     .CreateNew(String.Format("junction: {0}", junction.Center), settings.Tile.GameObject);
+                Console.WriteLine(String.Format("junction: {0}", junction.Center));
                 _roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
             }
 

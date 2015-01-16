@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Commands
 {
+    /// <summary>
+    ///     Creates commands which returns system environment information.
+    /// </summary>
     public class SysCommand : ICommand
     {
         /// <inheritdoc />

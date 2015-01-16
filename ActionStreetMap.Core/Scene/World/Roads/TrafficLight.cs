@@ -40,9 +40,21 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// </summary>
         public enum State
         {
+            /// <summary>
+            ///     State is undefined.
+            /// </summary>
             Undefined,
+            /// <summary>
+            ///     Allow state.
+            /// </summary>
             Green,
+            /// <summary>
+            ///     Warning state.
+            /// </summary>
             Yellow,
+            /// <summary>
+            ///     Block state.
+            /// </summary>
             Red
         }
     }
