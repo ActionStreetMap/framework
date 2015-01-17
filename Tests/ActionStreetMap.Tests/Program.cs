@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reactive.Linq;
@@ -17,7 +18,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        private readonly GeoCoordinate _startGeoCoordinate = TestHelper.BerlinTestFilePoint;
+        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(52.5304135, 13.3874218);
         private readonly string _nmeaFilePath = TestHelper.TestNmeaFilePath;
 
         private readonly Container _container = new Container();
@@ -38,15 +39,18 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            program.RunGame();
-            program.RunMocker();
-            program.Wait();
 
-            /*program.CreateIndex(
-                @"g:\__ASM\_other_projects\osmconvert\1.o5m",
+            program.RunGame();
+            //program.RunMocker();
+            //program.Wait();
+
+            program.DoContinuosMovements();
+
+            /* program.CreateIndex(
+                @"g:\__ASM\_other_projects\osmconvert\ile-de-france.o5m",
                 @"g:\__ASM\__repository\framework\Tests\TestAssets\DemoResources\Config\themes\default\index.json",
                 "Index");*/
-           // program.ReadIndex("Index");
+            //program.ReadIndex("Index");
         }
 
         public void RunMocker()
@@ -81,7 +85,7 @@ namespace ActionStreetMap.Tests
         {
             _waitEvent.WaitOne(TimeSpan.FromSeconds(60));
             _logger.Stop();
-        }      
+        }
 
         private static void InvokeAndMeasure(Action action)
         {
@@ -98,7 +102,7 @@ namespace ActionStreetMap.Tests
         {
             var builder = new IndexBuilder();
             builder.Trace = new ConsoleTrace();
-            builder.Configure(new ConfigSection(String.Format("{{\"index\":\"{0}\"}}", settingsFile.Replace("\\","/"))));
+            builder.Configure(new ConfigSection(String.Format("{{\"index\":\"{0}\"}}", settingsFile.Replace("\\", "/"))));
             builder.Build(o5mFile, outputDirectory);
         }
 
@@ -107,7 +111,7 @@ namespace ActionStreetMap.Tests
             var logger = new PerformanceLogger();
             logger.Start();
 
-            var usage = new KeyValueUsage(new FileStream(String.Format(Consts.KeyValueUsagePathFormat, indexDirectory),FileMode.Open));
+            var usage = new KeyValueUsage(new FileStream(String.Format(Consts.KeyValueUsagePathFormat, indexDirectory), FileMode.Open));
             var tree = SpatialIndex<uint>.Load(new FileStream(String.Format(Consts.SpatialIndexPathFormat, indexDirectory), FileMode.Open));
             var index = KeyValueIndex.Load(new FileStream(String.Format(Consts.KeyValueIndexPathFormat, indexDirectory), FileMode.Open));
             var keyValueStore = new KeyValueStore(index, usage, new FileStream(String.Format(Consts.KeyValueStorePathFormat, indexDirectory), FileMode.Open));
@@ -115,7 +119,7 @@ namespace ActionStreetMap.Tests
 
             InvokeAndMeasure(() =>
             {
-                var results = tree.Search(new Envelop(new GeoCoordinate(52.54,13.346),
+                var results = tree.Search(new Envelop(new GeoCoordinate(52.54, 13.346),
                         new GeoCoordinate(52.552, 13.354)));
                 foreach (var result in results)
                 {
@@ -125,6 +129,29 @@ namespace ActionStreetMap.Tests
             });
 
             logger.Stop();
+        }
+
+        #endregion
+
+        #region Performance analysis
+
+        public void DoContinuosMovements()
+        {
+            for (int i = 0; i < 15000; i++)
+            {
+                var newCoordinate = new GeoCoordinate(
+                    _startGeoCoordinate.Latitude + 0.00001 * i,
+                    _startGeoCoordinate.Longitude);
+                _positionListener.OnGeoPositionChanged(newCoordinate);
+            }
+
+            for (int i = 15000; i >= 0; i--)
+            {
+                var newCoordinate = new GeoCoordinate(
+                    _startGeoCoordinate.Latitude + 0.00001 * i,
+                    _startGeoCoordinate.Longitude);
+                _positionListener.OnGeoPositionChanged(newCoordinate);
+            }
         }
 
         #endregion
