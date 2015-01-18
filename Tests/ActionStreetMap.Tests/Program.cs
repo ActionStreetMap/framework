@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reactive.Linq;
 using System.Threading;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Index.Import;
 using ActionStreetMap.Osm.Index.Spatial;

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Core
 {
@@ -40,7 +39,7 @@ namespace ActionStreetMap.Core
         /// <inheritdoc />
         public IObservable<T> AsObservable<T>()
         {
-            return _messageSubject.OfType<T>();
+            return _messageSubject.OfType<object, T>();
         }
 
         /// <inheritdoc />

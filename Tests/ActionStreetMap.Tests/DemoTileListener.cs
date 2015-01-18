@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reactive.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Tests
 {

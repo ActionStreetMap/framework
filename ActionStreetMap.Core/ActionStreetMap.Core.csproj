@@ -43,9 +43,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reactive">
-      <HintPath>..\packages\Rx-Main.1.0.11226\lib\Net35\System.Reactive.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfoBase.cs">
@@ -145,7 +142,6 @@
   <ItemGroup>
     <None Include="MapCss\Parser\Mapcss.bnf" />
     <None Include="MapCss\Parser\MapCss.g" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
