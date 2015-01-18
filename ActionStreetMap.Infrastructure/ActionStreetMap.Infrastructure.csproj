@@ -82,7 +82,6 @@
     <Compile Include="Diagnostic\RecordType.cs" />
     <Compile Include="Formats\Json\SimpleJSON.cs" />
     <Compile Include="Primitives\DoubleKeyDictionary.cs" />
-    <Compile Include="Reactive\Bridge\AotSafeExtensions.cs" />
     <Compile Include="Reactive\Disposables\BooleanDisposable.cs" />
     <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
     <Compile Include="Reactive\Disposables\Disposable.cs" />

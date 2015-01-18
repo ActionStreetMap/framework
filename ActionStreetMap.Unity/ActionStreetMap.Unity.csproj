@@ -41,6 +41,7 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reactive\AotSafeExtensions.cs" />
     <Compile Include="Reactive\AsyncOperationExtensions.cs" />
     <Compile Include="Reactive\CancellationToken.cs" />
     <Compile Include="Reactive\LazyTask.cs" />
