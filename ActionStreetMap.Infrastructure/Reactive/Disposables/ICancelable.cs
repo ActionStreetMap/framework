@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public interface ICancelable : IDisposable
     {
-        /// <summary />
         bool IsDisposed { get; }
     }
 }

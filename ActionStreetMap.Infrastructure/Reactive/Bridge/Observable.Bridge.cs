@@ -1,5 +1,4 @@
-﻿
-namespace ActionStreetMap.Infrastructure.Reactive
+﻿namespace ActionStreetMap.Infrastructure.Reactive
 {
     public static partial class Observable
     {

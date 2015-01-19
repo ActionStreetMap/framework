@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public interface IScheduler
     {
-        /// <summary />
         DateTimeOffset Now { get; }
         
         // interface is changed from official Rx for avoid iOS AOT problem(state is dangerous).
-        /// <summary />
+
         IDisposable Schedule(Action action);
-        /// <summary />
         IDisposable Schedule(TimeSpan dueTime, Action action);
     }
 
@@ -19,11 +20,9 @@ namespace ActionStreetMap.Infrastructure.Reactive
     public static partial class Scheduler
     {
         // configurable defaults
-        /// <summary />
         public static class DefaultSchedulers
         {
             static IScheduler constantTime;
-            /// <summary />
             public static IScheduler ConstantTimeOperations
             {
                 get
@@ -37,7 +36,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
 
             static IScheduler tailRecursion;
-            /// <summary />
             public static IScheduler TailRecursion
             {
                 get
@@ -51,7 +49,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
 
             static IScheduler iteration;
-            /// <summary />
             public static IScheduler Iteration
             {
                 get
@@ -65,12 +62,11 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
 
             static IScheduler timeBasedOperations;
-            /// <summary />
             public static IScheduler TimeBasedOperations
             {
                 get
                 {
-                    return timeBasedOperations ?? (timeBasedOperations = Scheduler.CurrentThread); // MainThread as default for TimeBased Operation
+                    return timeBasedOperations ?? (timeBasedOperations = Scheduler.MainThread); // MainThread as default for TimeBased Operation
                 }
                 set
                 {
@@ -79,7 +75,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
 
             static IScheduler asyncConversions;
-            /// <summary />
             public static IScheduler AsyncConversions
             {
                 get
@@ -92,7 +87,15 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }
             }
 
-            /// <summary />
+            public static void SetDefaultForUnity()
+            {
+                ConstantTimeOperations = Scheduler.Immediate;
+                TailRecursion = Scheduler.Immediate;
+                Iteration = Scheduler.CurrentThread;
+                TimeBasedOperations = Scheduler.MainThread;
+                AsyncConversions = Scheduler.ThreadPool;
+            }
+
             public static void SetDotNetCompatible()
             {
                 ConstantTimeOperations = Scheduler.Immediate;
@@ -104,22 +107,22 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         // utils
-        /// <summary />
+
         public static DateTimeOffset Now
         {
             get { return DateTimeOffset.UtcNow; }
         }
-        /// <summary />
+
         public static TimeSpan Normalize(TimeSpan timeSpan)
         {
             return timeSpan >= TimeSpan.Zero ? timeSpan : TimeSpan.Zero;
         }
-        /// <summary />
+
         public static IDisposable Schedule(this IScheduler scheduler, DateTimeOffset dueTime, Action action)
         {
             return scheduler.Schedule(dueTime - scheduler.Now, action);
         }
-        /// <summary />
+
         public static IDisposable Schedule(this IScheduler scheduler, Action<Action> action)
         {
             // InvokeRec1
@@ -159,7 +162,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             return group;
         }
 
-        /// <summary />
         public static IDisposable Schedule(this IScheduler scheduler, TimeSpan dueTime, Action<Action<TimeSpan>> action)
         {
             // InvokeRec2
@@ -200,7 +202,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             return group;
         }
 
-        /// <summary />
         public static IDisposable Schedule(this IScheduler scheduler, DateTimeOffset dueTime, Action<Action<DateTimeOffset>> action)
         {
             // InvokeRec3

@@ -1,24 +1,24 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq; // in future, should remove LINQ(for avoid AOT)
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static partial class Observable
     {
-        /// <summary />
         public static IObservable<T> AsObservable<T>(this IObservable<T> source)
         {
             if (source == null) throw new ArgumentNullException("source");
 
             return Observable.Create<T>(observer => source.Subscribe(observer));
         }
-        /// <summary />
+
         public static IObservable<T> ToObservable<T>(this IEnumerable<T> source)
         {
             return source.ToObservable(Scheduler.DefaultSchedulers.Iteration);
         }
-        /// <summary />
+
         public static IObservable<T> ToObservable<T>(this IEnumerable<T> source, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>
@@ -73,7 +73,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return flag;
             });
         }
-        /// <summary />
+
         public static IObservable<TResult> Cast<TSource, TResult>(this IObservable<TSource> source)
         {
             return source.Select(x => (TResult)(object)x);
@@ -86,7 +86,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             return source.Select(x => (TResult)(object)x);
         }
-        /// <summary />
+
         public static IObservable<TResult> OfType<TSource, TResult>(this IObservable<TSource> source)
         {
             return source.Where(x => x is TResult).Select(x => (TResult)(object)x);

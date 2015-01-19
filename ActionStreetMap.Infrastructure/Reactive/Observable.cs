@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
@@ -14,12 +13,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
     public static partial class Observable
     {
         static readonly TimeSpan InfiniteTimeSpan = new TimeSpan(0, 0, 0, 0, -1); // from .NET 4.5
-        /// <summary />
+
         public static IObservable<TR> Select<T, TR>(this IObservable<T> source, Func<T, TR> selector)
         {
             return Select(source, (x, i) => selector(x));
         }
-        /// <summary />
+
         public static IObservable<TR> Select<T, TR>(this IObservable<T> source, Func<T, int, TR> selector)
         {
             return Observable.Create<TR>(observer =>
@@ -41,12 +40,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted));
             });
         }
-        /// <summary />
+
         public static IObservable<T> Where<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return Where(source, (x, i) => predicate(x));
         }
-        /// <summary />
+
         public static IObservable<T> Where<T>(this IObservable<T> source, Func<T, int, bool> predicate)
         {
             return Observable.Create<T>(observer =>
@@ -72,32 +71,31 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted));
             });
         }
-        /// <summary />
         public static IObservable<TR> SelectMany<T, TR>(this IObservable<T> source, IObservable<TR> other)
         {
             return SelectMany(source, _ => other);
         }
-        /// <summary />
+
         public static IObservable<TR> SelectMany<T, TR>(this IObservable<T> source, Func<T, IObservable<TR>> selector)
         {
             return source.Select(selector).Merge();
         }
-        /// <summary />
+
         public static IObservable<TResult> SelectMany<TSource, TResult>(this IObservable<TSource> source, Func<TSource, int, IObservable<TResult>> selector)
         {
             return source.Select(selector).Merge();
         }
-        /// <summary />
+
         public static IObservable<TR> SelectMany<T, TC, TR>(this IObservable<T> source, Func<T, IObservable<TC>> collectionSelector, Func<T, TC, TR> resultSelector)
         {
             return source.SelectMany(x => collectionSelector(x).Select(y => resultSelector(x, y)));
         }
-        /// <summary />
+
         public static IObservable<TResult> SelectMany<TSource, TCollection, TResult>(this IObservable<TSource> source, Func<TSource, int, IObservable<TCollection>> collectionSelector, Func<TSource, int, TCollection, int, TResult> resultSelector)
         {
             return source.SelectMany((x, i) => collectionSelector(x, i).Select((y, i2) => resultSelector(x, i, y, i2)));
         }
-        /// <summary />
+
         public static IObservable<TResult> SelectMany<TSource, TResult>(this IObservable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
         {
             return new AnonymousObservable<TResult>(observer =>
@@ -158,7 +156,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 )
             );
         }
-        /// <summary />
+
         public static IObservable<TResult> SelectMany<TSource, TResult>(this IObservable<TSource> source, Func<TSource, int, IEnumerable<TResult>> selector)
         {
             return Observable.Create<TResult>(observer =>
@@ -218,7 +216,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 );
             });
         }
-        /// <summary />
+
         public static IObservable<TResult> SelectMany<TSource, TCollection, TResult>(this IObservable<TSource> source, Func<TSource, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
         {
             return new AnonymousObservable<TResult>(observer =>
@@ -279,7 +277,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 )
             );
         }
-        /// <summary />
+
         public static IObservable<TResult> SelectMany<TSource, TCollection, TResult>(this IObservable<TSource> source, Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, int, TCollection, int, TResult> resultSelector)
         {
             return Observable.Create<TResult>(observer =>
@@ -338,7 +336,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 );
             });
         }
-        /// <summary />
+
         public static IObservable<T[]> ToArray<T>(this IObservable<T> source)
         {
             return Observable.Create<T[]>(observer =>
@@ -351,28 +349,28 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Do<T>(this IObservable<T> source, IObserver<T> observer)
         {
             return Do(source, observer.OnNext, observer.OnError, observer.OnCompleted);
         }
 
-        /// <summary />
+
         public static IObservable<T> Do<T>(this IObservable<T> source, Action<T> onNext)
         {
             return Do(source, onNext, Stubs.Throw, Stubs.Nop);
         }
-        /// <summary />
+
         public static IObservable<T> Do<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError)
         {
             return Do(source, onNext, onError, Stubs.Nop);
         }
-        /// <summary />
+
         public static IObservable<T> Do<T>(this IObservable<T> source, Action<T> onNext, Action onCompleted)
         {
             return Do(source, onNext, Stubs.Throw, onCompleted);
         }
-        /// <summary />
+
         public static IObservable<T> Do<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
         {
             return Observable.Create<T>(observer =>
@@ -419,7 +417,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<Notification<T>> Materialize<T>(this IObservable<T> source)
         {
             return Observable.Create<Notification<T>>(observer =>
@@ -438,7 +436,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                     });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Dematerialize<T>(this IObservable<Notification<T>> source)
         {
             return Observable.Create<T>(observer =>
@@ -460,12 +458,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<T> DefaultIfEmpty<T>(this IObservable<T> source)
         {
             return DefaultIfEmpty(source, default(T));
         }
-        /// <summary />
+
         public static IObservable<T> DefaultIfEmpty<T>(this IObservable<T> source, T defaultValue)
         {
             return Observable.Create<T>(observer =>
@@ -482,12 +480,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<TSource> Distinct<TSource>(this IObservable<TSource> source)
         {
             return Distinct<TSource>(source, (IEqualityComparer<TSource>)null);
         }
-        /// <summary />
+
         public static IObservable<TSource> Distinct<TSource>(this IObservable<TSource> source, IEqualityComparer<TSource> comparer)
         {
             // don't use x => x for avoid iOS AOT issue.
@@ -523,12 +521,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 );
             });
         }
-        /// <summary />
+
         public static IObservable<TSource> Distinct<TSource, TKey>(this IObservable<TSource> source, Func<TSource, TKey> keySelector)
         {
             return Distinct(source, keySelector, null);
         }
-        /// <summary />
+
         public static IObservable<TSource> Distinct<TSource, TKey>(this IObservable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
         {
             return Observable.Create<TSource>(observer =>
@@ -563,12 +561,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 );
             });
         }
-        /// <summary />
+
         public static IObservable<T> DistinctUntilChanged<T>(this IObservable<T> source)
         {
             return source.DistinctUntilChanged((IEqualityComparer<T>)null);
         }
-        /// <summary />
+
         public static IObservable<T> DistinctUntilChanged<T>(this IObservable<T> source, IEqualityComparer<T> comparer)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -599,9 +597,21 @@ namespace ActionStreetMap.Infrastructure.Reactive
                     {
                         try
                         {
-                            sameKey = (comparer == null)
-                                ? currentKey.Equals(prevKey)
-                                : comparer.Equals(currentKey, prevKey);
+                            if (comparer == null)
+                            {
+                                if (currentKey == null)
+                                {
+                                    sameKey = (prevKey == null);
+                                }
+                                else
+                                {
+                                    sameKey = currentKey.Equals(prevKey);
+                                }
+                            }
+                            else
+                            {
+                                sameKey = comparer.Equals(currentKey, prevKey);
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -617,12 +627,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<T> DistinctUntilChanged<T, TKey>(this IObservable<T> source, Func<T, TKey> keySelector)
         {
             return DistinctUntilChanged<T, TKey>(source, keySelector, null);
         }
-        /// <summary />
+
         public static IObservable<T> DistinctUntilChanged<T, TKey>(this IObservable<T> source, Func<T, TKey> keySelector, IEqualityComparer<TKey> comparer)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -671,7 +681,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<T> IgnoreElements<T>(this IObservable<T> source)
         {
             return Observable.Create<T>(observer =>

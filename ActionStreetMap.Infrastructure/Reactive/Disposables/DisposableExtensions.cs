@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static partial class DisposableExtensions
     {
         /// <summary>Add disposable(self) to CompositeDisposable(or other ICollection). Return value is self disposable.</summary>

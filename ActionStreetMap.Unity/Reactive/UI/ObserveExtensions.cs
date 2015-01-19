@@ -3,13 +3,11 @@ using System.Collections;
 
 namespace ActionStreetMap.Infrastructure.Reactive.UI
 {
-    /// <summary />
-    public static class ObserveExtensions
+    public static partial class ObserveExtensions
     {
-        /// <summary />
         public static IObservable<TProperty> ObserveEveryValueChanged<TSource, TProperty>(this TSource source, Func<TSource, TProperty> propertySelector)
         {
-            // same as : Observable.EveryUpdate().Select(_ => propertySelector(source)).DistinctUntilChanged();
+            // same as : ObservableUnity.EveryUpdate().Select(_ => propertySelector(source)).DistinctUntilChanged();
             var currentValue = propertySelector(source);
             var everyValueChanged = ObservableUnity.FromCoroutine<TProperty>((observer, cancellationToken) => PublishValueChanged(source, propertySelector, currentValue, observer, cancellationToken));
 

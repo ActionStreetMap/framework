@@ -3,12 +3,14 @@
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
 {
     /// <summary>
     /// Abstract base class for scheduled work items.
     /// </summary>
+    /// <typeparam name="TAbsolute">Absolute time representation type.</typeparam>
     public class ScheduledItem : IComparable<ScheduledItem>
     {
         private readonly BooleanDisposable _disposable = new BooleanDisposable();
@@ -18,8 +20,8 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
         /// <summary>
         /// Creates a new scheduled work item to run at the specified time.
         /// </summary>
-        /// <param name="action"></param>
         /// <param name="dueTime">Absolute time at which the work item has to be executed.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="comparer"/> is null.</exception>
         public ScheduledItem(Action action, TimeSpan dueTime)
         {
             _dueTime = dueTime;
@@ -159,9 +161,6 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
 
         #endregion
 
-        /// <summary>
-        /// 
-        /// </summary>
         public IDisposable Cancellation
         {
             get
@@ -182,6 +181,7 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
     /// <summary>
     /// Efficient scheduler queue that maintains scheduled items sorted by absolute time.
     /// </summary>
+    /// <typeparam name="TAbsolute">Absolute time representation type.</typeparam>
     /// <remarks>This type is not thread safe; users should ensure proper synchronization.</remarks>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = "But it *is* a queue!")]
     public class SchedulerQueue

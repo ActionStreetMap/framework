@@ -5,16 +5,18 @@
 using System.ComponentModel;
 using System.Threading;
 using ActionStreetMap.Infrastructure.Reactive.InternalUtil;
+using ActionStreetMap.Infrastructure.Reactive;
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
+
     public static partial class Scheduler
     {
-        /// <summary />
         public static readonly IScheduler CurrentThread = new CurrentThreadScheduler();
-        /// <summary />
+
         public static bool IsCurrentThreadSchedulerScheduleRequired { get { return CurrentThreadScheduler.IsScheduleRequired; } }
 
         /// <summary>

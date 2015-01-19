@@ -2,7 +2,6 @@
 
 namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
 {
-    /// <summary />
     public class ThreadSafeQueueWorker
     {
         const int InitialSize = 10;
@@ -16,7 +15,6 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
         int waitingListCount = 0;
         Action[] waitingList = new Action[InitialSize];
 
-        /// <summary />
         public void Enqueue(Action action)
         {
             lock (gate)
@@ -43,7 +41,7 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
                 }
             }
         }
-        /// <summary />
+
         public void ExecuteAll(Action<Exception> unhandledExceptionCallback)
         {
             lock (gate)

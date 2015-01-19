@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public interface IConnectableObservable<T> : IObservable<T>
     {
-        /// <summary />
         IDisposable Connect();
     }
-    /// <summary />
+
     public static partial class Observable
     {
         class ConnectableObservable<T> : IConnectableObservable<T>

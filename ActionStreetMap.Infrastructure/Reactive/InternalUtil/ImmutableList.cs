@@ -2,21 +2,20 @@
 
 namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
 {
-    /// <summary />
     public class ImmutableList<T>
     {
         T[] data;
-        /// <summary />
+
         public ImmutableList()
         {
             data = new T[0];
         }
-        /// <summary />
+
         public ImmutableList(T[] data)
         {
             this.data = data;
         }
-        /// <summary />
+
         public ImmutableList<T> Add(T value)
         {
             var newData = new T[data.Length + 1];
@@ -24,7 +23,7 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
             newData[data.Length] = value;
             return new ImmutableList<T>(newData);
         }
-        /// <summary />
+
         public ImmutableList<T> Remove(T value)
         {
             var i = IndexOf(value);
@@ -35,7 +34,7 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
             Array.Copy(data, i + 1, newData, i, data.Length - i - 1);
             return new ImmutableList<T>(newData);
         }
-        /// <summary />
+
         public int IndexOf(T value)
         {
             for (var i = 0; i < data.Length; ++i)
@@ -43,7 +42,7 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
                     return i;
             return -1;
         }
-        /// <summary />
+
         public T[] Data
         {
             get { return data; }

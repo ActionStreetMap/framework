@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
@@ -153,12 +152,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             return Throw<T>(error, scheduler);
         }
-        /// <summary />
+
         public static IObservable<int> Range(int start, int count)
         {
             return Range(start, count, Scheduler.DefaultSchedulers.Iteration);
         }
-        /// <summary />
+
         public static IObservable<int> Range(int start, int count, IScheduler scheduler)
         {
             return Observable.Create<int>(observer =>
@@ -180,12 +179,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Repeat<T>(T value)
         {
             return Repeat(value, Scheduler.DefaultSchedulers.Iteration);
         }
-        /// <summary />
+
         public static IObservable<T> Repeat<T>(T value, IScheduler scheduler)
         {
             if (scheduler == null) throw new ArgumentNullException("scheduler");
@@ -199,12 +198,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Repeat<T>(T value, int repeatCount)
         {
             return Repeat(value, repeatCount, Scheduler.DefaultSchedulers.Iteration);
         }
-        /// <summary />
+
         public static IObservable<T> Repeat<T>(T value, int repeatCount, IScheduler scheduler)
         {
             if (repeatCount < 0) throw new ArgumentOutOfRangeException("repeatCount");
@@ -231,7 +230,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Repeat<T>(this IObservable<T> source)
         {
             return RepeatInfinite(source).Concat();
@@ -244,7 +243,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 yield return source;
             }
         }
-        /// <summary />
+
         public static IObservable<T> Defer<T>(Func<IObservable<T>> observableFactory)
         {
             return Observable.Create<T>(observer =>
@@ -262,32 +261,32 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return source.Subscribe(observer);
             });
         }
-        /// <summary />
+
         public static IObservable<T> Start<T>(Func<T> function)
         {
             return Start(function, Scheduler.DefaultSchedulers.AsyncConversions);
         }
-        /// <summary />
+
         public static IObservable<T> Start<T>(Func<T> function, IScheduler scheduler)
         {
             return ToAsync(function, scheduler)();
         }
-        /// <summary />
+
         public static IObservable<Unit> Start(Action action)
         {
             return Start(action, Scheduler.DefaultSchedulers.AsyncConversions);
         }
-        /// <summary />
+
         public static IObservable<Unit> Start(Action action, IScheduler scheduler)
         {
             return ToAsync(action, scheduler)();
         }
-        /// <summary />
+
         public static Func<IObservable<T>> ToAsync<T>(Func<T> function)
         {
             return ToAsync(function, Scheduler.DefaultSchedulers.AsyncConversions);
         }
-        /// <summary />
+
         public static Func<IObservable<T>> ToAsync<T>(Func<T> function, IScheduler scheduler)
         {
             return () =>
@@ -313,12 +312,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return subject.AsObservable();
             };
         }
-        /// <summary />
+
         public static Func<IObservable<Unit>> ToAsync(Action action)
         {
             return ToAsync(action, Scheduler.DefaultSchedulers.AsyncConversions);
         }
-        /// <summary />
+
         public static Func<IObservable<Unit>> ToAsync(Action action, IScheduler scheduler)
         {
             return () =>

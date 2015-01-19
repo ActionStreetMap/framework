@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
     public static partial class Scheduler
     {
-        /// <summary />
         public static readonly IScheduler Immediate = new ImmediateScheduler();
 
         class ImmediateScheduler : IScheduler

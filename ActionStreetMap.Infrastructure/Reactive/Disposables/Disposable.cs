@@ -3,12 +3,10 @@ using System.Collections;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static class Disposable
     {
-        /// <summary />
         public static readonly IDisposable Empty = EmptyDisposable.Singleton;
-        /// <summary />
+
         public static IDisposable Create(Action disposeAction)
         {
             return new AnonymousDisposable(disposeAction);

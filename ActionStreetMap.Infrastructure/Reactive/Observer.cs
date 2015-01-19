@@ -1,18 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Threading;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static class Observer
     {
-        /// <summary />
         public static IObserver<T> Create<T>(Action<T> onNext, Action<Exception> onError, Action onCompleted)
         {
             return Create<T>(onNext, onError, onCompleted, Disposable.Empty);
         }
 
-        /// <summary />
         public static IObserver<T> Create<T>(Action<T> onNext, Action<Exception> onError, Action onCompleted, IDisposable disposable)
         {
             if (onNext == null) throw new ArgumentNullException("onNext");
@@ -147,30 +145,29 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
     }
-    /// <summary />
+
     public static partial class ObservableExtensions
     {
-        /// <summary />
         public static IDisposable Subscribe<T>(this IObservable<T> source)
         {
             return source.Subscribe(Observer.Create<T>(Stubs.Ignore<T>, Stubs.Throw, Stubs.Nop));
         }
-        /// <summary />
+
         public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext)
         {
             return source.Subscribe(Observer.Create(onNext, Stubs.Throw, Stubs.Nop));
         }
-        /// <summary />
+
         public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError)
         {
             return source.Subscribe(Observer.Create(onNext, onError, Stubs.Nop));
         }
-        /// <summary />
+
         public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action onCompleted)
         {
             return source.Subscribe(Observer.Create(onNext, Stubs.Throw, onCompleted));
         }
-        /// <summary />
+
         public static IDisposable Subscribe<T>(this IObservable<T> source, Action<T> onNext, Action<Exception> onError, Action onCompleted)
         {
             return source.Subscribe(Observer.Create(onNext, onError, onCompleted));

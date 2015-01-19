@@ -1,12 +1,14 @@
-﻿using System;
+﻿#if !UNITY_METRO
+
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static partial class Scheduler
     {
-        /// <summary />
         public static readonly IScheduler ThreadPool = new ThreadPoolScheduler();
 
         class ThreadPoolScheduler : IScheduler
@@ -125,3 +127,5 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
     }
 }
+
+#endif

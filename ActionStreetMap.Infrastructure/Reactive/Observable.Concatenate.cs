@@ -1,34 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; // memo, remove LINQ(for avoid AOT)
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
     // concatenate multiple observable
     // merge, concat, zip...
-    /// <summary />
     public static partial class Observable
     {
-        /// <summary />
         public static IObservable<TSource> Concat<TSource>(params IObservable<TSource>[] sources)
         {
             if (sources == null) throw new ArgumentNullException("sources");
 
             return ConcatCore(sources);
         }
-        /// <summary />
+
         public static IObservable<TSource> Concat<TSource>(this IEnumerable<IObservable<TSource>> sources)
         {
             if (sources == null) throw new ArgumentNullException("sources");
 
             return ConcatCore(sources);
         }
-        /// <summary />
+
         public static IObservable<TSource> Concat<TSource>(this IObservable<IObservable<TSource>> sources)
         {
             return sources.Merge(maxConcurrent: 1);
         }
-        /// <summary />
+
         public static IObservable<TSource> Concat<TSource>(this IObservable<TSource> first, IObservable<TSource> second)
         {
             if (first == null) throw new ArgumentNullException("first");
@@ -104,17 +103,16 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }));
             });
         }
-        /// <summary />
         public static IObservable<TSource> Merge<TSource>(this IEnumerable<IObservable<TSource>> sources)
         {
             return Merge(sources.ToObservable(Scheduler.DefaultSchedulers.ConstantTimeOperations));
         }
-        /// <summary />
+
         public static IObservable<TSource> Merge<TSource>(params IObservable<TSource>[] sources)
         {
             return Merge(sources.ToObservable(Scheduler.DefaultSchedulers.ConstantTimeOperations));
         }
-        /// <summary />
+
         public static IObservable<T> Merge<T>(this IObservable<IObservable<T>> sources)
         {
             // this code is borrwed from RxOfficial(rx.codeplex.com)
@@ -165,7 +163,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return group;
             });
         }
-        /// <summary />
+
         public static IObservable<T> Merge<T>(this IObservable<IObservable<T>> sources, int maxConcurrent)
         {
             // this code is borrwed from RxOfficial(rx.codeplex.com)
@@ -245,7 +243,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return group;
             });
         }
-        /// <summary />
+
         public static IObservable<TResult> Zip<TLeft, TRight, TResult>(this IObservable<TLeft> left, IObservable<TRight> right, Func<TLeft, TRight, TResult> selector)
         {
             return Observable.Create<TResult>(observer =>
@@ -318,19 +316,23 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 })};
             });
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Zip<T>(this IEnumerable<IObservable<T>> sources)
         {
             return Zip(sources.ToArray());
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Zip<T>(params IObservable<T>[] sources)
         {
             return Observable.Create<IList<T>>(observer =>
             {
                 var gate = new object();
                 var length = sources.Length;
-                var queues = Enumerable.Range(0, length).Select(_ => new Queue<T>()).ToArray();
+                var queues = new Queue<T>[length];
+                for (int i = 0; i < length; i++)
+                {
+                    queues[i] = new Queue<T>();
+                }
                 var isDone = new bool[length];
 
                 Action<int> dequeue = index =>
@@ -402,7 +404,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 })};
             });
         }
-        /// <summary />
+
         public static IObservable<TResult> CombineLatest<TLeft, TRight, TResult>(this IObservable<TLeft> left, IObservable<TRight> right, Func<TLeft, TRight, TResult> selector)
         {
             return Observable.Create<TResult>(observer =>
@@ -467,12 +469,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable { lsubscription, rsubscription };
             });
         }
-        /// <summary />
+
         public static IObservable<IList<T>> CombineLatest<T>(this IEnumerable<IObservable<T>> sources)
         {
             return CombineLatest(sources.ToArray());
         }
-        /// <summary />
+
         public static IObservable<IList<TSource>> CombineLatest<TSource>(params IObservable<TSource>[] sources)
         {
             // this code is borrwed from RxOfficial(rx.codeplex.com)
@@ -545,7 +547,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable(subscriptions);
             });
         }
-        /// <summary />
+
         public static IObservable<T> Switch<T>(this IObservable<IObservable<T>> sources)
         {
             // this code is borrwed from RxOfficial(rx.codeplex.com)
@@ -669,34 +671,35 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable(subscriptions);
             });
         }
-        /// <summary />
+
         public static IObservable<T> StartWith<T>(this IObservable<T> source, T value)
         {
             return StartWith(source, Scheduler.DefaultSchedulers.ConstantTimeOperations, value);
         }
-        /// <summary />
+
         public static IObservable<T> StartWith<T>(this IObservable<T> source, params T[] values)
         {
             return StartWith(source, Scheduler.DefaultSchedulers.ConstantTimeOperations, values);
         }
-        /// <summary />
+
         public static IObservable<T> StartWith<T>(this IObservable<T> source, IEnumerable<T> values)
         {
             return StartWith(source, Scheduler.DefaultSchedulers.ConstantTimeOperations, values);
         }
-        /// <summary />
+
         public static IObservable<T> StartWith<T>(this IObservable<T> source, IScheduler scheduler, T value)
         {
             return Observable.Return(value, scheduler).Concat(source);
         }
-        /// <summary />
+
         public static IObservable<T> StartWith<T>(this IObservable<T> source, IScheduler scheduler, params T[] values)
         {
             return values.ToObservable(scheduler).Concat(source);
         }
-        /// <summary />
+
         public static IObservable<T> StartWith<T>(this IObservable<T> source, IScheduler scheduler, IEnumerable<T> values)
         {
+            // TODO:bug!should use array!
             var array = values as T[];
             if (array != null)
             {

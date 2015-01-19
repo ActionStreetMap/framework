@@ -8,17 +8,14 @@ namespace ActionStreetMap.Infrastructure.Reactive
     // AOT...
     // use lock instead
 
-    /// <summary />
     public class SingleAssignmentDisposable : IDisposable, ICancelable
     {
         readonly object gate = new object();
         IDisposable current;
         bool disposed;
 
-        /// <summary />
         public bool IsDisposed { get { lock (gate) { return disposed; } } }
 
-        /// <summary />
         public IDisposable Disposable
         {
             get
@@ -50,7 +47,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
 
-        /// <summary />
+
         public void Dispose()
         {
             IDisposable old = null;

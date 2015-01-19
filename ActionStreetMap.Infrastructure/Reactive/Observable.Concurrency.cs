@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static partial class Observable
     {
-        /// <summary />
         public static IObservable<T> Synchronize<T>(this IObservable<T> source)
         {
             return source.Synchronize(new object());
         }
-        /// <summary />
+
         public static IObservable<T> Synchronize<T>(this IObservable<T> source, object gate)
         {
             return Observable.Create<T>(observer =>
@@ -24,7 +21,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                     () => { lock (gate) observer.OnCompleted(); });
             });
         }
-        /// <summary />
+
         public static IObservable<T> ObserveOn<T>(this IObservable<T> source, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>
@@ -50,7 +47,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return group;
             });
         }
-        /// <summary />
+
         public static IObservable<T> SubscribeOn<T>(this IObservable<T> source, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>
@@ -67,12 +64,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return d;
             });
         }
-        /// <summary />
+
         public static IObservable<T> DelaySubscription<T>(this IObservable<T> source, TimeSpan dueTime)
         {
             return source.DelaySubscription(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<T> DelaySubscription<T>(this IObservable<T> source, TimeSpan dueTime, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>
@@ -88,12 +85,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return d;
             });
         }
-        /// <summary />
+
         public static IObservable<T> DelaySubscription<T>(this IObservable<T> source, DateTimeOffset dueTime)
         {
             return source.DelaySubscription(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<T> DelaySubscription<T>(this IObservable<T> source, DateTimeOffset dueTime, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>
@@ -108,12 +105,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return d;
             });
         }
-        /// <summary />
+
         public static IObservable<T> Amb<T>(params IObservable<T>[] sources)
         {
-            return Amb(sources.AsEnumerable());
+            return Amb((IEnumerable<IObservable<T>>)sources);
         }
-        /// <summary />
+
         public static IObservable<T> Amb<T>(IEnumerable<IObservable<T>> sources)
         {
             var result = Observable.Never<T>();
@@ -124,7 +121,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
             return result;
         }
-        /// <summary />
+
         public static IObservable<T> Amb<T>(this IObservable<T> source, IObservable<T> second)
         {
             return Observable.Create<T>(observer =>

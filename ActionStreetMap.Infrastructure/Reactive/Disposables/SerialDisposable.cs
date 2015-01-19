@@ -1,18 +1,16 @@
 ﻿using System;
+using System.Collections;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public class SerialDisposable : IDisposable, ICancelable
     {
         readonly object gate = new object();
         IDisposable current;
         bool disposed;
 
-        /// <summary />
         public bool IsDisposed { get { lock (gate) { return disposed; } } }
 
-        /// <summary />
         public IDisposable Disposable
         {
             get
@@ -42,7 +40,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }
             }
         }
-        /// <summary />
+
         public void Dispose()
         {
             var old = default(IDisposable);

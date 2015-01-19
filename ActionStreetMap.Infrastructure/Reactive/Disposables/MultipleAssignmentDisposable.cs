@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public class MultipleAssignmentDisposable : IDisposable, ICancelable
     {
         static readonly BooleanDisposable True = new BooleanDisposable(true);
 
         object gate = new object();
         IDisposable current;
-        /// <summary />
+
         public bool IsDisposed
         {
             get
@@ -20,7 +20,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }
             }
         }
-        /// <summary />
+
         public IDisposable Disposable
         {
             get
@@ -28,7 +28,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 lock (gate)
                 {
                     return (current == True)
-                        ? ActionStreetMap.Infrastructure.Reactive.Disposable.Empty
+                        ? Reactive.Disposable.Empty
                         : current;
                 }
             }
@@ -49,7 +49,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }
             }
         }
-        /// <summary />
+
         public void Dispose()
         {
             IDisposable old = null;

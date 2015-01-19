@@ -3,7 +3,6 @@ using ActionStreetMap.Infrastructure.Reactive.InternalUtil;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public sealed class BehaviorSubject<T> : ISubject<T>, IDisposable
     {
         object observerLock = new object();
@@ -13,12 +12,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
         T lastValue;
         Exception lastError;
         IObserver<T> outObserver = new EmptyObserver<T>();
-        /// <summary />
+
         public BehaviorSubject(T defaultValue)
         {
             lastValue = defaultValue;
         }
-        /// <summary />
+
         public T Value
         {
             get
@@ -28,7 +27,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return lastValue;
             }
         }
-        /// <summary />
+
         public bool HasObservers
         {
             get
@@ -36,7 +35,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return !(outObserver is EmptyObserver<T>) && !isStopped && !isDisposed;
             }
         }
-        /// <summary />
+
         public void OnCompleted()
         {
             IObserver<T> old;
@@ -52,7 +51,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             old.OnCompleted();
         }
-        /// <summary />
+
         public void OnError(Exception error)
         {
             if (error == null) throw new ArgumentNullException("error");
@@ -71,7 +70,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             old.OnError(error);
         }
-        /// <summary />
+
         public void OnNext(T value)
         {
             IObserver<T> current;
@@ -85,7 +84,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             current.OnNext(value);
         }
-        /// <summary />
+
         public IDisposable Subscribe(IObserver<T> observer)
         {
             if (observer == null) throw new ArgumentNullException("observer");
@@ -142,7 +141,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             return Disposable.Empty;
         }
-        /// <summary />
+
         public void Dispose()
         {
             lock (observerLock)

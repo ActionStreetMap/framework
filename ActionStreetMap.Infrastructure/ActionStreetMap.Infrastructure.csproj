@@ -31,9 +31,10 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <DocumentationFile>bin\Release\ActionStreetMap.Infrastructure.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -83,6 +84,7 @@
     <Compile Include="Formats\Json\SimpleJSON.cs" />
     <Compile Include="Primitives\DoubleKeyDictionary.cs" />
     <Compile Include="Reactive\Bridge\AotSafeExtensions.cs" />
+    <Compile Include="Reactive\Bridge\CancellationToken.cs" />
     <Compile Include="Reactive\Bridge\MainThreadScheduler.cs" />
     <Compile Include="Reactive\Bridge\Observable.Bridge.cs" />
     <Compile Include="Reactive\Disposables\BooleanDisposable.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="Utilities\IObjectPool.cs" />
     <Compile Include="Utilities\ObjectListPool.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

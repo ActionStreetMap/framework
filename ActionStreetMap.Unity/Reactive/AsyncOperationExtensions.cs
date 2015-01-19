@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static partial class AsyncOperationExtensions
     {
-        /// <summary />
         public static IObservable<AsyncOperation> AsObservable(this AsyncOperation asyncOperation, IProgress<float> progress = null)
         {
             return ObservableUnity.FromCoroutine<AsyncOperation>((observer, cancellation) => AsObservableCore(asyncOperation, observer, progress, cancellation));

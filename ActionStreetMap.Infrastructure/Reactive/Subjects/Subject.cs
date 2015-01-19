@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using ActionStreetMap.Infrastructure.Reactive.InternalUtil;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public sealed class Subject<T> : ISubject<T>, IDisposable
     {
         object observerLock = new object();
@@ -12,7 +13,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         bool isDisposed;
         Exception lastError;
         IObserver<T> outObserver = new EmptyObserver<T>();
-        /// <summary />
+
         public bool HasObservers
         {
             get
@@ -21,7 +22,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
 
-        /// <summary />
         public void OnCompleted()
         {
             IObserver<T> old;
@@ -38,7 +38,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             old.OnCompleted();
         }
 
-        /// <summary />
         public void OnError(Exception error)
         {
             if (error == null) throw new ArgumentNullException("error");
@@ -58,13 +57,11 @@ namespace ActionStreetMap.Infrastructure.Reactive
             old.OnError(error);
         }
 
-        /// <summary />
         public void OnNext(T value)
         {
             outObserver.OnNext(value);
         }
 
-        /// <summary />
         public IDisposable Subscribe(IObserver<T> observer)
         {
             if (observer == null) throw new ArgumentNullException("observer");
@@ -111,7 +108,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             return Disposable.Empty;
         }
-        /// <summary />
+
         public void Dispose()
         {
             lock (observerLock)

@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
     public static partial class Observable
     {
-        /// <summary />
         public static IObservable<TSource> Scan<TSource>(this IObservable<TSource> source, Func<TSource, TSource, TSource> func)
         {
             return Observable.Create<TSource>(observer =>
@@ -36,7 +37,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<TAccumulate> Scan<TSource, TAccumulate>(this IObservable<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func)
         {
             return Observable.Create<TAccumulate>(observer =>

@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
 {
-    /// <summary />
     public class ListObserver<T> : IObserver<T>
     {
         private readonly ImmutableList<IObserver<T>> _observers;
-        /// <summary />
+
         public ListObserver(ImmutableList<IObserver<T>> observers)
         {
             _observers = observers;
         }
-        /// <summary />
+
         public void OnCompleted()
         {
             var targetObservers = _observers.Data;
@@ -20,7 +21,7 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
                 targetObservers[i].OnCompleted();
             }
         }
-        /// <summary />
+
         public void OnError(Exception error)
         {
             var targetObservers = _observers.Data;
@@ -29,7 +30,7 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
                 targetObservers[i].OnError(error);
             }
         }
-        /// <summary />
+
         public void OnNext(T value)
         {
             var targetObservers = _observers.Data;
@@ -61,50 +62,49 @@ namespace ActionStreetMap.Infrastructure.Reactive.InternalUtil
         }
     }
 
-    /// <summary />
     public class EmptyObserver<T> : IObserver<T>
     {
         // .Instance cause iOS AOT error
         // public static readonly EmptyObserver<T> Instance = new EmptyObserver<T>();
-        /// <summary />
+
         public EmptyObserver()
         {
 
         }
-        /// <summary />
+
         public void OnCompleted()
         {
         }
-        /// <summary />
+
         public void OnError(Exception error)
         {
         }
-        /// <summary />
+
         public void OnNext(T value)
         {
         }
     }
-    /// <summary />
+
     public class DisposedObserver<T> : IObserver<T>
     {
         // .Instance cause iOS AOT error
         // public static readonly DisposedObserver<T> Instance = new DisposedObserver<T>();
-        /// <summary />
+
         public DisposedObserver()
         {
 
         }
-        /// <summary />
+
         public void OnCompleted()
         {
             throw new ObjectDisposedException("");
         }
-        /// <summary />
+
         public void OnError(Exception error)
         {
             throw new ObjectDisposedException("");
         }
-        /// <summary />
+
         public void OnNext(T value)
         {
             throw new ObjectDisposedException("");

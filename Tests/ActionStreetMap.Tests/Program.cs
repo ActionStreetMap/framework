@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
@@ -17,7 +18,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(52.5304135, 13.3874218);
+        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(52.53176, 13.38702);
         private readonly string _nmeaFilePath = TestHelper.TestNmeaFilePath;
 
         private readonly Container _container = new Container();
@@ -43,13 +44,15 @@ namespace ActionStreetMap.Tests
             //program.RunMocker();
             //program.Wait();
 
-            program.DoContinuosMovements();
+            //program.DoContinuosMovements();
 
             /* program.CreateIndex(
                 @"g:\__ASM\_other_projects\osmconvert\ile-de-france.o5m",
                 @"g:\__ASM\__repository\framework\Tests\TestAssets\DemoResources\Config\themes\default\index.json",
                 "Index");*/
             //program.ReadIndex("Index");
+
+            //program.SubscribeOnMainThreadTest();
         }
 
         public void RunMocker()
@@ -151,6 +154,39 @@ namespace ActionStreetMap.Tests
                     _startGeoCoordinate.Longitude);
                 _positionListener.OnGeoPositionChanged(newCoordinate);
             }
+        }
+
+        #endregion
+
+        #region Rx test
+
+        public void SubscribeOnMainThreadTest()
+        {
+            Console.WriteLine("Main:{0}", Thread.CurrentThread.ManagedThreadId);
+            var heavyMethod = Observable.Start(() =>
+            {
+                // heavy method...
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                Console.WriteLine("heavyMethod:{0}", Thread.CurrentThread.ManagedThreadId);
+                return 10;
+            });
+
+            var heavyMethod2 = Observable.Start(() =>
+            {
+                // heavy method...
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
+                Console.WriteLine("heavyMethod2:{0}", Thread.CurrentThread.ManagedThreadId);
+                return 10;
+            });
+
+            // Join and await two other thread values
+            Observable.WhenAll(heavyMethod, heavyMethod2)
+                //.ObserveOnMainThread() // return to main thread
+                .Subscribe(xs =>
+                {
+                    Console.WriteLine("Subscribe:{0}", Thread.CurrentThread.ManagedThreadId);
+                });
+            Console.ReadKey();
         }
 
         #endregion

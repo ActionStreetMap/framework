@@ -4,7 +4,6 @@ using ActionStreetMap.Infrastructure.Reactive.InternalUtil;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public sealed class ReplaySubject<T> : ISubject<T>
     {
         object observerLock = new object();
@@ -20,39 +19,38 @@ namespace ActionStreetMap.Infrastructure.Reactive
         readonly IScheduler scheduler;
         Queue<TimeInterval<T>> queue = new Queue<TimeInterval<T>>();
 
-        /// <summary />
+
         public ReplaySubject()
             : this(int.MaxValue, TimeSpan.MaxValue, Scheduler.DefaultSchedulers.Iteration)
         {
         }
-        /// <summary />
+
         public ReplaySubject(IScheduler scheduler)
             : this(int.MaxValue, TimeSpan.MaxValue, scheduler)
         {
         }
-        /// <summary />
+
         public ReplaySubject(int bufferSize)
             : this(bufferSize, TimeSpan.MaxValue, Scheduler.DefaultSchedulers.Iteration)
         {
         }
-        /// <summary />
+
         public ReplaySubject(int bufferSize, IScheduler scheduler)
             : this(bufferSize, TimeSpan.MaxValue, scheduler)
         {
         }
-        /// <summary />
+
         public ReplaySubject(TimeSpan window)
             : this(int.MaxValue, window, Scheduler.DefaultSchedulers.Iteration)
         {
         }
-        /// <summary />
+
         public ReplaySubject(TimeSpan window, IScheduler scheduler)
             : this(int.MaxValue, window, scheduler)
         {
         }
 
         // full constructor
-        /// <summary />
         public ReplaySubject(int bufferSize, TimeSpan window, IScheduler scheduler)
         {
             if (bufferSize < 0) throw new ArgumentOutOfRangeException("bufferSize");
@@ -78,7 +76,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 queue.Dequeue();
             }
         }
-        /// <summary />
+
         public void OnCompleted()
         {
             IObserver<T> old;
@@ -95,7 +93,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             old.OnCompleted();
         }
-        /// <summary />
+
         public void OnError(Exception error)
         {
             if (error == null) throw new ArgumentNullException("error");
@@ -115,7 +113,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             old.OnError(error);
         }
-        /// <summary />
+
         public void OnNext(T value)
         {
             IObserver<T> current;
@@ -133,7 +131,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             current.OnNext(value);
         }
-        /// <summary />
+
         public IDisposable Subscribe(IObserver<T> observer)
         {
             if (observer == null) throw new ArgumentNullException("observer");
@@ -190,7 +188,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             return Disposable.Empty;
         }
-        /// <summary />
+
         public void Dispose()
         {
             lock (observerLock)

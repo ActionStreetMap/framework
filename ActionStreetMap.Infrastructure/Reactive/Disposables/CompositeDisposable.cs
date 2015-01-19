@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+// using System.Linq; do not use LINQ
 using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
     // copy, modified from Rx Official
-    /// <summary />
+
     public sealed class CompositeDisposable : ICollection<IDisposable>, IDisposable, ICancelable
     {
         private readonly object _gate = new object();
@@ -17,7 +17,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         private const int SHRINK_THRESHOLD = 64;
 
         /// <summary>
-        /// Initializes a new instance of the T:System.Reactive.Disposables.CompositeDisposable" class with no disposables contained by it initially.
+        /// Initializes a new instance of the <see cref="T:System.Reactive.Disposables.CompositeDisposable"/> class with no disposables contained by it initially.
         /// </summary>
         public CompositeDisposable()
         {
@@ -25,7 +25,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         /// <summary>
-        /// Initializes a new instance of the T:System.Reactive.Disposables.CompositeDisposable" class with the specified number of disposables.
+        /// Initializes a new instance of the <see cref="T:System.Reactive.Disposables.CompositeDisposable"/> class with the specified number of disposables.
         /// </summary>
         /// <param name="capacity">The number of disposables that the new CompositeDisposable can initially store.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less than zero.</exception>
@@ -38,7 +38,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         /// <summary>
-        /// Initializes a new instance of the T:System.Reactive.Disposables.CompositeDisposable" class from a group of disposables.
+        /// Initializes a new instance of the <see cref="T:System.Reactive.Disposables.CompositeDisposable"/> class from a group of disposables.
         /// </summary>
         /// <param name="disposables">Disposables that will be disposed together.</param>
         /// <exception cref="ArgumentNullException"><paramref name="disposables"/> is null.</exception>
@@ -52,7 +52,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         /// <summary>
-        /// Initializes a new instance of the T:System.Reactive.Disposables.CompositeDisposable" class from a group of disposables.
+        /// Initializes a new instance of the <see cref="T:System.Reactive.Disposables.CompositeDisposable"/> class from a group of disposables.
         /// </summary>
         /// <param name="disposables">Disposables that will be disposed together.</param>
         /// <exception cref="ArgumentNullException"><paramref name="disposables"/> is null.</exception>
@@ -226,7 +226,13 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             lock (_gate)
             {
-                Array.Copy(_disposables.Where(d => d != null).ToArray(), 0, array, arrayIndex, array.Length - arrayIndex);
+                var disArray = new List<IDisposable>();
+                foreach (var item in disArray)
+                {
+                    if (item != null) disArray.Add(item);
+                }
+
+                Array.Copy(disArray.ToArray(), 0, array, arrayIndex, array.Length - arrayIndex);
             }
         }
 
@@ -244,11 +250,14 @@ namespace ActionStreetMap.Infrastructure.Reactive
         /// <returns>An enumerator to iterate over the disposables.</returns>
         public IEnumerator<IDisposable> GetEnumerator()
         {
-            var res = default(IEnumerable<IDisposable>);
+            var res = new List<IDisposable>();
 
             lock (_gate)
             {
-                res = _disposables.Where(d => d != null).ToList();
+                foreach (var d in _disposables)
+                {
+                    if (d != null) res.Add(d);
+                }
             }
 
             return res.GetEnumerator();

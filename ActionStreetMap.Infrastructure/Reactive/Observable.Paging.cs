@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
@@ -9,7 +8,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
     public static partial class Observable
     {
         // needs timebase Take. Take(TimeSpan)
-        /// <summary />
+
         public static IObservable<T> Take<T>(this IObservable<T> source, int count)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -32,12 +31,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<T> TakeWhile<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return TakeWhile(source, (x, i) => predicate(x));
         }
-        /// <summary />
+
         public static IObservable<T> TakeWhile<T>(this IObservable<T> source, Func<T, int, bool> predicate)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -70,7 +69,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<T> TakeUntil<T, TOther>(this IObservable<T> source, IObservable<TOther> other)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -86,7 +85,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable { stopper, subscription };
             });
         }
-        /// <summary />
+
         public static IObservable<T> Skip<T>(this IObservable<T> source, int count)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -105,12 +104,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<T> SkipWhile<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return SkipWhile(source, (x, i) => predicate(x));
         }
-        /// <summary />
+
         public static IObservable<T> SkipWhile<T>(this IObservable<T> source, Func<T, int, bool> predicate)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -147,7 +146,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }, observer.OnError, observer.OnCompleted);
             });
         }
-        /// <summary />
+
         public static IObservable<T> SkipUntil<T, TOther>(this IObservable<T> source, IObservable<TOther> other)
         {
             return Observable.Create<T>(observer =>
@@ -184,7 +183,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable(sourceSubscription, otherSubscription);
             });
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, int count)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -212,7 +211,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, int count, int skip)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -257,12 +256,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, TimeSpan timeSpan)
         {
             return Buffer(source, timeSpan, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, TimeSpan timeSpan, IScheduler scheduler)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -305,12 +304,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return d;
             });
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, TimeSpan timeSpan, int count)
         {
             return Buffer(source, timeSpan, count, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, TimeSpan timeSpan, int count, IScheduler scheduler)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -388,12 +387,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return d;
             });
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, TimeSpan timeSpan, TimeSpan timeShift)
         {
             return Buffer(source, timeSpan, timeShift, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<IList<T>> Buffer<T>(this IObservable<T> source, TimeSpan timeSpan, TimeSpan timeShift, IScheduler scheduler)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -485,7 +484,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 );
             });
         }
-        /// <summary />
+
         public static IObservable<IList<TSource>> Buffer<TSource, TWindowBoundary>(this IObservable<TSource> source, IObservable<TWindowBoundary> windowBoundaries)
         {
             return Observable.Create<IList<TSource>>(observer =>
@@ -563,22 +562,21 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         // first, last, single
-        /// <summary />
+
         public static IObservable<T> Last<T>(this IObservable<T> source)
         {
             return LastCore<T>(source, false);
         }
-        /// <summary />
         public static IObservable<T> Last<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return LastCore<T>(source.Where(predicate), false);
         }
-        /// <summary />
+
         public static IObservable<T> LastOrDefault<T>(this IObservable<T> source)
         {
             return LastCore<T>(source, true);
         }
-        /// <summary />
+
         public static IObservable<T> LastOrDefault<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return LastCore<T>(source.Where(predicate), true);
@@ -612,22 +610,21 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> First<T>(this IObservable<T> source)
         {
             return FirstCore<T>(source, false);
         }
-        /// <summary />
         public static IObservable<T> First<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return FirstCore<T>(source.Where(predicate), false);
         }
-        /// <summary />
+
         public static IObservable<T> FirstOrDefault<T>(this IObservable<T> source)
         {
             return FirstCore<T>(source, true);
         }
-        /// <summary />
+
         public static IObservable<T> FirstOrDefault<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return FirstCore<T>(source.Where(predicate), true);
@@ -656,22 +653,21 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Single<T>(this IObservable<T> source)
         {
             return SingleCore<T>(source, false);
         }
-        /// <summary />
         public static IObservable<T> Single<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return SingleCore<T>(source.Where(predicate), false);
         }
-        /// <summary />
+
         public static IObservable<T> SingleOrDefault<T>(this IObservable<T> source)
         {
             return SingleCore<T>(source, true);
         }
-        /// <summary />
+
         public static IObservable<T> SingleOrDefault<T>(this IObservable<T> source, Func<T, bool> predicate)
         {
             return SingleCore<T>(source.Where(predicate), true);

@@ -1,13 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static partial class Observable
     {
-        /// <summary />
         public static IObservable<T> Finally<T>(this IObservable<T> source, Action finallyAction)
         {
             return Observable.Create<T>(observer =>
@@ -37,7 +35,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Catch<T, TException>(this IObservable<T> source, Func<TException, IObservable<T>> errorHandler)
             where TException : Exception
         {
@@ -85,7 +83,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return serialDisposable;
             });
         }
-        /// <summary />
+
         public static IObservable<TSource> Catch<TSource>(this IEnumerable<IObservable<TSource>> sources)
         {
             // this code is borrowed from RxOfficial(rx.codeplex.com) and modified
@@ -177,15 +175,15 @@ namespace ActionStreetMap.Infrastructure.Reactive
             });
             return result;
         }
-        /// <summary />
+
         public static IObservable<TSource> Retry<TSource>(this IObservable<TSource> source)
         {
             return RepeatInfinite(source).Catch();
         }
-        /// <summary />
+
         public static IObservable<TSource> Retry<TSource>(this IObservable<TSource> source, int retryCount)
         {
-            return Enumerable.Repeat(source, retryCount).Catch();
+            return System.Linq.Enumerable.Repeat(source, retryCount).Catch();
         }
 
         /// <summary>

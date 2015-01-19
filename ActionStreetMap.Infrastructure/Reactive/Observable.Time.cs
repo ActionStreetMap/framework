@@ -1,59 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
     // Timer, Interval, etc...
-    /// <summary />
     public static partial class Observable
     {
         // needs LongRunnning...
-        /// <summary />
+
         public static IObservable<long> Interval(TimeSpan period)
         {
             return TimerCore(period, period, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<long> Interval(TimeSpan period, IScheduler scheduler)
         {
             return TimerCore(period, period, scheduler);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(TimeSpan dueTime)
         {
             return TimerCore(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(DateTimeOffset dueTime)
         {
             return TimerCore(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(TimeSpan dueTime, TimeSpan period)
         {
             return TimerCore(dueTime, period, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(DateTimeOffset dueTime, TimeSpan period)
         {
             return TimerCore(dueTime, period, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(TimeSpan dueTime, IScheduler scheduler)
         {
             return TimerCore(dueTime, scheduler);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(DateTimeOffset dueTime, IScheduler scheduler)
         {
             return TimerCore(dueTime, scheduler);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(TimeSpan dueTime, TimeSpan period, IScheduler scheduler)
         {
             return TimerCore(dueTime, period, scheduler);
         }
-        /// <summary />
+
         public static IObservable<long> Timer(DateTimeOffset dueTime, TimeSpan period, IScheduler scheduler)
         {
             return TimerCore(dueTime, period, scheduler);
@@ -129,22 +129,22 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<Timestamped<TSource>> Timestamp<TSource>(this IObservable<TSource> source)
         {
             return Timestamp<TSource>(source, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<Timestamped<TSource>> Timestamp<TSource>(this IObservable<TSource> source, IScheduler scheduler)
         {
             return source.Select(x => new Timestamped<TSource>(x, scheduler.Now));
         }
-        /// <summary />
+
         public static IObservable<TimeInterval<TSource>> TimeInterval<TSource>(this IObservable<TSource> source)
         {
             return TimeInterval(source, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<TimeInterval<TSource>> TimeInterval<TSource>(this IObservable<TSource> source, IScheduler scheduler)
         {
             return Defer(() =>
@@ -159,12 +159,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 });
             });
         }
-        /// <summary />
+
         public static IObservable<T> Delay<T>(this IObservable<T> source, TimeSpan dueTime)
         {
             return source.Delay(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<TSource> Delay<TSource>(this IObservable<TSource> source, TimeSpan dueTime, IScheduler scheduler)
         {
             // This code is borrowed from Rx(rx.codeplex.com)
@@ -256,12 +256,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable(subscription, cancelable);
             });
         }
-        /// <summary />
+
         public static IObservable<T> Sample<T>(this IObservable<T> source, TimeSpan interval)
         {
             return source.Sample(interval, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<T> Sample<T>(this IObservable<T> source, TimeSpan interval, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>
@@ -316,12 +316,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable { scheduling, sourceSubscription };
             });
         }
-        /// <summary />
+
         public static IObservable<TSource> Throttle<TSource>(this IObservable<TSource> source, TimeSpan dueTime)
         {
             return source.Throttle(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<TSource> Throttle<TSource>(this IObservable<TSource> source, TimeSpan dueTime, IScheduler scheduler)
         {
             // this code is borrowed from Rx Official(rx.codeplex.com)
@@ -383,12 +383,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable(subscription, cancelable);
             });
         }
-        /// <summary />
+
         public static IObservable<T> Timeout<T>(this IObservable<T> source, TimeSpan dueTime)
         {
             return source.Timeout(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<T> Timeout<T>(this IObservable<T> source, TimeSpan dueTime, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>
@@ -418,12 +418,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return new CompositeDisposable { timerDisposable, sourceSubscription };
             });
         }
-        /// <summary />
+
         public static IObservable<T> Timeout<T>(this IObservable<T> source, DateTimeOffset dueTime)
         {
             return source.Timeout(dueTime, Scheduler.DefaultSchedulers.TimeBasedOperations);
         }
-        /// <summary />
+
         public static IObservable<T> Timeout<T>(this IObservable<T> source, DateTimeOffset dueTime, IScheduler scheduler)
         {
             return Observable.Create<T>(observer =>

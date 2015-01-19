@@ -1,35 +1,28 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; // in future, should remove LINQ
 using UnityEngine;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public abstract class LazyTask
     {
-        /// <summary />
         public enum TaskStatus
         {
-            /// <summary />
             WaitingToRun,
-            /// <summary />
             Running,
-            /// <summary />
             Completed,
-            /// <summary />
             Canceled,
-            /// <summary />
             Faulted
         }
-        /// <summary />
+
         public TaskStatus Status { get; protected set; }
 
         protected readonly BooleanDisposable cancellation = new BooleanDisposable();
-        /// <summary />
+
         public abstract Coroutine Start();
-        /// <summary />
+
         public void Cancel()
         {
             if (Status == TaskStatus.WaitingToRun || Status == TaskStatus.Running)
@@ -38,18 +31,18 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 cancellation.Dispose();
             }
         }
-        /// <summary />
+
         public static LazyTask<T> FromResult<T>(T value)
         {
             return LazyTask<T>.FromResult(value);
         }
 
-        /// <summary />
+
         public static Coroutine WhenAll(params LazyTask[] tasks)
         {
             return WhenAll(tasks.AsEnumerable());
         }
-        /// <summary />
+
         public static Coroutine WhenAll(IEnumerable<LazyTask> tasks)
         {
             var coroutines = tasks.Select(x => x.Start()).ToArray();
@@ -66,13 +59,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
     }
-    /// <summary />
+
     public class LazyTask<T> : LazyTask
     {
         readonly IObservable<T> source;
 
         T result;
-        /// <summary />
         public T Result
         {
             get
@@ -86,7 +78,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         /// If faulted stock error. If completed or canceld, returns null.
         /// </summary>
         public Exception Exception { get; private set; }
-        /// <summary />
+
         public LazyTask(IObservable<T> source)
         {
             this.source = source;
@@ -125,7 +117,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                     return "";
             }
         }
-        /// <summary />
+
         public static LazyTask<T> FromResult(T value)
         {
             var t = new LazyTask<T>(null);
@@ -134,10 +126,9 @@ namespace ActionStreetMap.Infrastructure.Reactive
             return t;
         }
     }
-    /// <summary />
+
     public static class LazyTaskExtensions
     {
-        /// <summary />
         public static LazyTask<T> ToLazyTask<T>(this IObservable<T> source)
         {
             return new LazyTask<T>(source);

@@ -8,10 +8,8 @@ using UnityEngine;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public sealed class UnityMainThreadDispatcher : MonoBehaviour
     {
-        /// <summary />
         public enum CullingMode
         {
             /// <summary>
@@ -29,7 +27,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             /// </summary>
             All
         }
-        /// <summary />
+
         public static CullingMode cullingMode = CullingMode.Self;
 
 #if UNITY_EDITOR
@@ -240,7 +238,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 Instance.queueWorker.Enqueue(() => Instance.StartCoroutine_Auto(routine));
             }
         }
-        /// <summary />
+
         new public static Coroutine StartCoroutine(IEnumerator routine)
         {
 #if UNITY_EDITOR
@@ -249,7 +247,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
             return Instance.StartCoroutine_Auto(routine);
         }
-        /// <summary />
+
         public static void RegisterUnhandledExceptionCallback(Action<Exception> exceptionCallback)
         {
             if (exceptionCallback == null)
@@ -268,7 +266,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
         static UnityMainThreadDispatcher instance;
         static bool initialized;
-        /// <summary />
+
         public static string InstanceName
         {
             get
@@ -280,7 +278,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return instance.name;
             }
         }
-        /// <summary />
+
         public static bool IsInitialized
         {
             get { return initialized && instance != null; }
@@ -298,14 +296,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
 
-#if CONSOLE
-        public static void Initialize()
-        {
-            initialized = true;
-            instance = new UnityMainThreadDispatcher();
-        }
-#else
-        /// <summary />
         public static void Initialize()
         {
             if (!initialized)
@@ -341,7 +331,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 initialized = true;
             }
         }
-#endif
+
         void Awake()
         {
             if (instance == null)
@@ -393,7 +383,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }
             }
         }
-        /// <summary />
+
         public static void CullAllExcessDispatchers()
         {
             var dispatchers = GameObject.FindObjectsOfType<UnityMainThreadDispatcher>();
@@ -444,7 +434,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             if (onApplicationFocus != null) onApplicationFocus.OnNext(focus);
         }
-        /// <summary />
+
         public static IObservable<bool> OnApplicationFocusAsObservable()
         {
             return Instance.onApplicationFocus ?? (Instance.onApplicationFocus = new Subject<bool>());
@@ -456,7 +446,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             if (onApplicationPause != null) onApplicationPause.OnNext(pause);
         }
-        /// <summary />
+
         public static IObservable<bool> OnApplicationPauseAsObservable()
         {
             return Instance.onApplicationPause ?? (Instance.onApplicationPause = new Subject<bool>());
@@ -468,7 +458,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             if (onApplicationQuit != null) onApplicationQuit.OnNext(Unit.Default);
         }
-        /// <summary />
+
         public static IObservable<Unit> OnApplicationQuitAsObservable()
         {
             return Instance.onApplicationQuit ?? (Instance.onApplicationQuit = new Subject<Unit>());

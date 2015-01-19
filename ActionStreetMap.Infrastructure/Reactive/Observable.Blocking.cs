@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    /// <summary />
     public static partial class Observable
     {
-        /// <summary />
         public static T Wait<T>(this IObservable<T> source)
         {
             return WaitCore(source, true, InfiniteTimeSpan);
         }
-        /// <summary />
+
         public static T Wait<T>(this IObservable<T> source, TimeSpan timeout)
         {
             return WaitCore(source, true, timeout);

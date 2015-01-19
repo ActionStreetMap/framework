@@ -1,6 +1,5 @@
 ﻿﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
@@ -26,9 +25,8 @@ namespace ActionStreetMap.Infrastructure.Reactive
         readonly object lockObject = new object();
         readonly Subject<CountChangedStatus> statusChanged = new Subject<CountChangedStatus>();
         readonly int max;
-        /// <summary />
+
         public int Max { get { return max; } }
-        /// <summary />
         public int Count { get; private set; }
 
         /// <summary>
