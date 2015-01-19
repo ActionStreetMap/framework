@@ -57,55 +57,11 @@ namespace ActionStreetMap.Core.Elevation
 
             float maxElevation;
             float minElevation;
-            // resolve height
-            if (!_isFlat)
-            {
-                // NOTE Assume that [0,0] is bottom left corner
-                var latStep = (bbox.MaxPoint.Latitude - bbox.MinPoint.Latitude)/resolution;
-                var lonStep = (bbox.MaxPoint.Longitude - bbox.MinPoint.Longitude)/resolution;
-                var startLat = bbox.MinPoint.Latitude + latStep / 2;
-                var minPointLon = bbox.MinPoint.Longitude + lonStep / 2;
-                var contexts = _map.Parallel((start, end) =>
-                {
-                    var context = new ElevationContext();
-                    for (int j = start; j < end; j++)
-                    {
-                        var lat = startLat + j * latStep;
-                        var lon = minPointLon;
-                        for (int i = 0; i < resolution; i++)
-                        {
-                            var elevation = _elevationProvider.GetElevation(lat, lon);
-                            if (elevation > context.MaxElevation)
-                            {
-                                if (elevation < MaxHeight) context.MaxElevation = elevation;
-                                else elevation = context.MaxElevation;
-                            }
-                            else if (elevation < context.MinElevation)
-                                context.MinElevation = elevation;
 
-                            _map[j, i] = elevation;
-                            lon += lonStep;
-                        }
-                    }
-                    return context;
-                });
-                minElevation = contexts.Min(c => c.MinElevation);
-                maxElevation = contexts.Max(c => c.MaxElevation);
-            }
-            else
-            {
-                // NOTE values for non-flat mode
-                // TODO make them configurable?
-                maxElevation = 30;
-                minElevation = 10;
-                var middleValue = (maxElevation + minElevation)/2;
-                _map.Parallel((start, end) =>
-                {
-                    for (int j = start; j < end; j++)
-                        for (int i = 0; i < resolution; i++)
-                            _map[j, i] = middleValue;
-                });
-            }
+            if (!_isFlat) 
+                BuildElevationMap(bbox, resolution, out minElevation, out maxElevation);
+            else 
+                BuildFlatMap(resolution, out minElevation, out maxElevation);
 
             return new HeightMap
             {
@@ -132,6 +88,59 @@ namespace ActionStreetMap.Core.Elevation
         {
             _isFlat = configSection.GetBool("flat", false);
         }
+
+        #region Private members
+
+        private void BuildElevationMap(BoundingBox bbox, int resolution, out float minElevation, out float maxElevation)
+        {
+            // NOTE Assume that [0,0] is bottom left corner
+            var latStep = (bbox.MaxPoint.Latitude - bbox.MinPoint.Latitude) / resolution;
+            var lonStep = (bbox.MaxPoint.Longitude - bbox.MinPoint.Longitude) / resolution;
+            var startLat = bbox.MinPoint.Latitude + latStep / 2;
+            var minPointLon = bbox.MinPoint.Longitude + lonStep / 2;
+            var contexts = _map.Parallel((start, end) =>
+            {
+                var context = new ElevationContext();
+                for (int j = start; j < end; j++)
+                {
+                    var lat = startLat + j * latStep;
+                    var lon = minPointLon;
+                    for (int i = 0; i < resolution; i++)
+                    {
+                        var elevation = _elevationProvider.GetElevation(lat, lon);
+                        if (elevation > context.MaxElevation)
+                        {
+                            if (elevation < MaxHeight) context.MaxElevation = elevation;
+                            else elevation = context.MaxElevation;
+                        }
+                        else if (elevation < context.MinElevation)
+                            context.MinElevation = elevation;
+
+                        _map[j, i] = elevation;
+                        lon += lonStep;
+                    }
+                }
+                return context;
+            });
+            minElevation = contexts.Min(c => c.MinElevation);
+            maxElevation = contexts.Max(c => c.MaxElevation);
+        }
+
+        private void BuildFlatMap(int resolution, out float minElevation, out float maxElevation)
+        {
+            // TODO make them configurable
+            maxElevation = 30;
+            minElevation = 10;
+            var middleValue = (maxElevation + minElevation) / 2;
+            _map.Parallel((start, end) =>
+            {
+                for (int j = start; j < end; j++)
+                    for (int i = 0; i < resolution; i++)
+                        _map[j, i] = middleValue;
+            });
+        }
+
+        #endregion
 
         #region Nested classes
 
