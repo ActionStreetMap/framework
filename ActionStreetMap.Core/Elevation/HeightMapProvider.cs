@@ -99,9 +99,12 @@ namespace ActionStreetMap.Core.Elevation
                 maxElevation = 30;
                 minElevation = 10;
                 var middleValue = (maxElevation + minElevation)/2;
-                for (int j = 0; j < resolution; j++)
-                    for (int i = 0; i < resolution; i++)
-                        _map[j, i] = middleValue;
+                _map.Parallel((start, end) =>
+                {
+                    for (int j = start; j < end; j++)
+                        for (int i = 0; i < resolution; i++)
+                            _map[j, i] = middleValue;
+                });
             }
 
             return new HeightMap

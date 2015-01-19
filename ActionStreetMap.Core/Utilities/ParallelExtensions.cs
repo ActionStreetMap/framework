@@ -4,9 +4,9 @@ using ActionStreetMap.Infrastructure.Reactive;
 namespace ActionStreetMap.Core.Utilities
 {
     /// <summary>
-    ///     Provides extensions for parallel computations
+    ///     Provides extensions for parallel computations.
     /// </summary>
-    internal static class ParallelExtensions
+    public static class ParallelExtensions
     {
         /// <summary>
         ///     Parallelize processing of quad matrix.

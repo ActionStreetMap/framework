@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Scene.World.Roads;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -112,9 +113,12 @@ namespace ActionStreetMap.Models.Terrain
             // normalize
             var resolution = settings.Tile.HeightMap.Resolution;
             var maxElevation = settings.Tile.HeightMap.MaxElevation;
-            for (int i = 0; i < resolution; i++)
-                for (int j = 0; j < resolution; j++)
-                    htmap[i, j] /= maxElevation;
+            htmap.Parallel((start, end) =>
+            {
+                for (int j = start; j < end; j++)
+                    for (int i = 0; i < resolution; i++)
+                        htmap[j, i] /= maxElevation;
+            });
 
             var size = new Vector3(settings.Tile.Size, settings.Tile.HeightMap.MaxElevation, settings.Tile.Size);
             var layers = settings.SplatParams.Count;
