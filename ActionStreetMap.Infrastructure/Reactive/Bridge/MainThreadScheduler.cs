@@ -4,5 +4,4 @@
     {
         public static IScheduler MainThread = new CurrentThreadScheduler();
     }
-
 }
