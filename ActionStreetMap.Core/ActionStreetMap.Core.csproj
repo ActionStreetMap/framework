@@ -125,6 +125,7 @@
     <Compile Include="Scene\Models\Node.cs" />
     <Compile Include="Scene\Models\Way.cs" />
     <Compile Include="Utilities\ColorUtility.cs" />
+    <Compile Include="Utilities\ParallelExtensions.cs" />
     <Compile Include="Utilities\TagExtensions.cs" />
     <Compile Include="Utilities\MathUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
