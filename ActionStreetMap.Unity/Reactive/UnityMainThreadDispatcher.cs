@@ -9,7 +9,7 @@ using UnityEngine;
 namespace ActionStreetMap.Infrastructure.Reactive
 {
     /// <summary />
-    public sealed class MainThreadDispatcher : MonoBehaviour
+    public sealed class UnityMainThreadDispatcher : MonoBehaviour
     {
         /// <summary />
         public enum CullingMode
@@ -20,7 +20,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             Disabled,
 
             /// <summary>
-            /// Checks if there is an existing MainThreadDispatcher on Awake(). If so, the new dispatcher removes itself.
+            /// Checks if there is an existing UnityMainThreadDispatcher on Awake(). If so, the new dispatcher removes itself.
             /// </summary>
             Self,
 
@@ -197,7 +197,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 }
                 catch (Exception ex)
                 {
-                    MainThreadDispatcher.Instance.unhandledExceptionCallback(ex);
+                    UnityMainThreadDispatcher.Instance.unhandledExceptionCallback(ex);
                 }
             }
             else
@@ -219,7 +219,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
             catch (Exception ex)
             {
-                MainThreadDispatcher.Instance.unhandledExceptionCallback(ex);
+                UnityMainThreadDispatcher.Instance.unhandledExceptionCallback(ex);
             }
         }
 
@@ -266,7 +266,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         ThreadSafeQueueWorker queueWorker = new ThreadSafeQueueWorker();
         Action<Exception> unhandledExceptionCallback = ex => Debug.LogException(ex); // default
 
-        static MainThreadDispatcher instance;
+        static UnityMainThreadDispatcher instance;
         static bool initialized;
         /// <summary />
         public static string InstanceName
@@ -275,7 +275,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             {
                 if (instance == null)
                 {
-                    throw new NullReferenceException("MainThreadDispatcher is not initialized.");
+                    throw new NullReferenceException("UnityMainThreadDispatcher is not initialized.");
                 }
                 return instance.name;
             }
@@ -289,7 +289,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         [ThreadStatic]
         static object mainThreadToken;
 
-        static MainThreadDispatcher Instance
+        static UnityMainThreadDispatcher Instance
         {
             get
             {
@@ -297,6 +297,14 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 return instance;
             }
         }
+
+#if CONSOLE
+        public static void Initialize()
+        {
+            initialized = true;
+            instance = new UnityMainThreadDispatcher();
+        }
+#else
         /// <summary />
         public static void Initialize()
         {
@@ -306,23 +314,23 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 // Don't try to add a GameObject when the scene is not playing. Only valid in the Editor, EditorView.
                 if (!ScenePlaybackDetector.IsPlaying) return;
 #endif
-                MainThreadDispatcher dispatcher = null;
+                UnityMainThreadDispatcher dispatcher = null;
 
                 try
                 {
-                    dispatcher = GameObject.FindObjectOfType<MainThreadDispatcher>();
+                    dispatcher = GameObject.FindObjectOfType<UnityMainThreadDispatcher>();
                 }
                 catch
                 {
                     // Throw exception when calling from a worker thread.
-                    var ex = new Exception("ActionStreetMap.Infrastructure.Reactive requires a MainThreadDispatcher component created on the main thread. Make sure it is added to the scene before calling ActionStreetMap.Infrastructure.Reactive from a worker thread.");
+                    var ex = new Exception("ActionStreetMap.Infrastructure.Reactive requires a UnityMainThreadDispatcher component created on the main thread. Make sure it is added to the scene before calling ActionStreetMap.Infrastructure.Reactive from a worker thread.");
                     UnityEngine.Debug.LogException(ex);
                     throw ex;
                 }
 
                 if (dispatcher == null)
                 {
-                    instance = new GameObject("MainThreadDispatcher").AddComponent<MainThreadDispatcher>();
+                    instance = new GameObject("UnityMainThreadDispatcher").AddComponent<UnityMainThreadDispatcher>();
                 }
                 else
                 {
@@ -333,7 +341,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 initialized = true;
             }
         }
-
+#endif
         void Awake()
         {
             if (instance == null)
@@ -349,23 +357,23 @@ namespace ActionStreetMap.Infrastructure.Reactive
             {
                 if (cullingMode == CullingMode.Self)
                 {
-                    Debug.LogWarning("There is already a MainThreadDispatcher in the scene. Removing myself...");
+                    Debug.LogWarning("There is already a UnityMainThreadDispatcher in the scene. Removing myself...");
                     // Destroy this dispatcher if there's already one in the scene.
                     DestroyDispatcher(this);
                 }
                 else if (cullingMode == CullingMode.All)
                 {
-                    Debug.LogWarning("There is already a MainThreadDispatcher in the scene. Cleaning up all excess dispatchers...");
+                    Debug.LogWarning("There is already a UnityMainThreadDispatcher in the scene. Cleaning up all excess dispatchers...");
                     CullAllExcessDispatchers();
                 }
                 else
                 {
-                    Debug.LogWarning("There is already a MainThreadDispatcher in the scene.");
+                    Debug.LogWarning("There is already a UnityMainThreadDispatcher in the scene.");
                 }
             }
         }
 
-        static void DestroyDispatcher(MainThreadDispatcher aDispatcher)
+        static void DestroyDispatcher(UnityMainThreadDispatcher aDispatcher)
         {
             if (aDispatcher != instance)
             {
@@ -373,7 +381,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 var components = aDispatcher.gameObject.GetComponents<Component>();
                 if (aDispatcher.gameObject.transform.childCount == 0 && components.Length == 2)
                 {
-                    if (components[0] is Transform && components[1] is MainThreadDispatcher)
+                    if (components[0] is Transform && components[1] is UnityMainThreadDispatcher)
                     {
                         Destroy(aDispatcher.gameObject);
                     }
@@ -388,7 +396,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         /// <summary />
         public static void CullAllExcessDispatchers()
         {
-            var dispatchers = GameObject.FindObjectsOfType<MainThreadDispatcher>();
+            var dispatchers = GameObject.FindObjectsOfType<UnityMainThreadDispatcher>();
             for (int i = 0; i < dispatchers.Length; i++)
             {
                 DestroyDispatcher(dispatchers[i]);
@@ -399,12 +407,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             if (instance == this)
             {
-                instance = GameObject.FindObjectOfType<MainThreadDispatcher>();
+                instance = GameObject.FindObjectOfType<UnityMainThreadDispatcher>();
                 initialized = instance != null;
 
                 /*
                 // Although `this` still refers to a gameObject, it won't be found.
-                var foundDispatcher = GameObject.FindObjectOfType<MainThreadDispatcher>();
+                var foundDispatcher = GameObject.FindObjectOfType<UnityMainThreadDispatcher>();
 
                 if (foundDispatcher != null)
                 {

@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;UNITY_4_5;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNITY_4_5; CONSOLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -44,8 +44,8 @@
     <Compile Include="Reactive\AsyncOperationExtensions.cs" />
     <Compile Include="Reactive\CancellationToken.cs" />
     <Compile Include="Reactive\LazyTask.cs" />
-    <Compile Include="Reactive\MainThreadDispatcher.cs" />
-    <Compile Include="Reactive\MainThreadScheduler.cs" />
+    <Compile Include="Reactive\UnityMainThreadDispatcher.cs" />
+    <Compile Include="Reactive\UnityMainThreadScheduler.cs" />
     <Compile Include="Reactive\Observable.Unity.cs" />
     <Compile Include="Reactive\ObservableMonoBehaviour.cs" />
     <Compile Include="Reactive\ObservableWWW.cs" />

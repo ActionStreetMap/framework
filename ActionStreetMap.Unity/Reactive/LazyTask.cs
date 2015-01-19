@@ -54,7 +54,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             var coroutines = tasks.Select(x => x.Start()).ToArray();
 
-            return MainThreadDispatcher.StartCoroutine(WhenAllCore(coroutines));
+            return UnityMainThreadDispatcher.StartCoroutine(WhenAllCore(coroutines));
         }
 
         static IEnumerator WhenAllCore(Coroutine[] coroutines)

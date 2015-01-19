@@ -182,7 +182,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             {
                 var cancel = new BooleanDisposable();
 
-                MainThreadDispatcher.SendStartCoroutine(coroutine(observer, new CancellationToken(cancel)));
+                UnityMainThreadDispatcher.SendStartCoroutine(coroutine(observer, new CancellationToken(cancel)));
 
                 return cancel;
             });
@@ -267,7 +267,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                         return;
                     }
 
-                    MainThreadDispatcher.StartCoroutine(DelayFrameCore(() => x.Accept(observer), frameCount, cancel));
+                    UnityMainThreadDispatcher.StartCoroutine(DelayFrameCore(() => x.Accept(observer), frameCount, cancel));
                 });
 
                 return cancel;
@@ -349,33 +349,23 @@ namespace ActionStreetMap.Infrastructure.Reactive
         /// <summary>AutoStart observable as coroutine.</summary>
         public static Coroutine StartAsCoroutine<T>(this IObservable<T> source, Action<T> onResult, Action<Exception> onError, CancellationToken cancel = default(CancellationToken))
         {
-            return MainThreadDispatcher.StartCoroutine(source.ToAwaitableEnumerator(onResult, onError, cancel));
-        }
-
-        public static IObservable<T> ObserveOnMainThread<T>(this IObservable<T> source)
-        {
-            return source.ObserveOn(SchedulerUnity.MainThread);
-        }
-
-        public static IObservable<T> SubscribeOnMainThread<T>(this IObservable<T> source)
-        {
-            return source.SubscribeOn(SchedulerUnity.MainThread);
+            return UnityMainThreadDispatcher.StartCoroutine(source.ToAwaitableEnumerator(onResult, onError, cancel));
         }
 
         public static IObservable<bool> EveryApplicationPause()
         {
-            return MainThreadDispatcher.OnApplicationPauseAsObservable().AsObservable();
+            return UnityMainThreadDispatcher.OnApplicationPauseAsObservable().AsObservable();
         }
 
         public static IObservable<bool> EveryApplicationFocus()
         {
-            return MainThreadDispatcher.OnApplicationFocusAsObservable().AsObservable();
+            return UnityMainThreadDispatcher.OnApplicationFocusAsObservable().AsObservable();
         }
 
         /// <summary>publish OnNext(Unit) and OnCompleted() on application quit.</summary>
         public static IObservable<Unit> OnceApplicationQuit()
         {
-            return MainThreadDispatcher.OnApplicationQuitAsObservable().Take(1);
+            return UnityMainThreadDispatcher.OnApplicationQuitAsObservable().Take(1);
         }
     }
 }

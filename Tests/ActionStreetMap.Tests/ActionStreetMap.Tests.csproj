@@ -150,6 +150,10 @@
       <Project>{960505d9-47c8-4123-ad1f-7eb663c33990}</Project>
       <Name>ActionStreetMap.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ActionStreetMap.Unity\ActionStreetMap.Unity.csproj">
+      <Project>{c6e485fe-e10f-4eb3-9792-0eab9a5d1457}</Project>
+      <Name>ActionStreetMap.Unity</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

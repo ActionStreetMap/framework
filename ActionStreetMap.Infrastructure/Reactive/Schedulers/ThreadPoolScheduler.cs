@@ -1,6 +1,4 @@
-﻿#if !UNITY_METRO
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Reactive
@@ -127,5 +125,3 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
     }
 }
-
-#endif

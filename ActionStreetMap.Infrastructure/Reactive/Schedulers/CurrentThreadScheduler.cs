@@ -10,7 +10,6 @@ using System.Diagnostics;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-
     public static partial class Scheduler
     {
         /// <summary />
