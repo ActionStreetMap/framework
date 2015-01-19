@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Core.Utilities
@@ -16,23 +13,41 @@ namespace ActionStreetMap.Core.Utilities
         /// </summary>
         /// <param name="matrix">Source matrix.</param>
         /// <param name="action">Action.</param>
-        public static void Parallel(this float[,] matrix, Action<int, int> action)
+        public static void Parallel<T>(this T[,] matrix, Action<int, int> action)
         {
             System.Diagnostics.Debug.Assert(matrix.GetLength(0) == matrix.GetLength(1));
+            Observable.WhenAll(GetChunks(matrix.GetLength(0), (start, end) =>
+            {
+                action(start, end);
+                return new Unit();
+            })).Wait();
+        }
 
-            int count = matrix.GetLength(0);
+        /// <summary>
+        ///     Parallelize processing of quad matrix.
+        /// </summary>
+        /// <param name="matrix">Source matrix.</param>
+        /// <param name="func">Function.</param>
+        public static TK[] Parallel<T, TK>(this T[,] matrix, Func<int, int, TK> func)
+        {
+            System.Diagnostics.Debug.Assert(matrix.GetLength(0) == matrix.GetLength(1));
+            return Observable.WhenAll(GetChunks(matrix.GetLength(0), func)).Wait();
+        }
+
+        private static IObservable<T>[] GetChunks<T>(int count, Func<int, int, T> func)
+        {
             int parallelDegree = Environment.ProcessorCount;
             int maxSize = (int)Math.Ceiling(count / (double)parallelDegree);
             int k = 0;
-            IObservable<Unit>[] chunks = new IObservable<Unit>[parallelDegree];
+            var chunks = new IObservable<T>[parallelDegree];
             for (int i = 0; i < parallelDegree; i++)
             {
                 var start = k;
-                var end = k + maxSize - 1;
-                chunks[i] = Observable.Start(() => action(start, end >= count ? count : end));
+                var end = k + maxSize;
+                chunks[i] = Observable.Start(() => func(start, end > count ? count : end));
                 k += maxSize;
             }
-            Observable.WhenAll(chunks).Wait();
+            return chunks;
         }
     }
 }

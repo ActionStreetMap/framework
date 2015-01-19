@@ -11,6 +11,7 @@ namespace ActionStreetMap.Core.Elevation
     /// </summary>
     public class SrtmElevationProvider : IElevationProvider, IConfigurable
     {
+        private readonly object _lockObj = new object();
         private readonly IFileSystemService _fileSystemService;
         private const string PathKey = "";
 
@@ -57,8 +58,7 @@ namespace ActionStreetMap.Core.Elevation
             float secondsLat = (float) (latitude - latDec)*3600;
             float secondsLon = (float) (longitude - lonDec)*3600;
 
-            if (_srtmLat != latDec || _srtmLon != lonDec)
-                LoadTile(latDec, lonDec);
+            LoadTile(latDec, lonDec);
 
             // load tile
             //X coresponds to x/y values,
@@ -102,35 +102,43 @@ namespace ActionStreetMap.Core.Elevation
 
         private void LoadTile(int latDec, int lonDec)
         {
-            _srtmLat = latDec;
-            _srtmLon = lonDec;
-
-            var filePath = String.Format("{0}/{1}{2:00}{3}{4:000}.hgt", _dataDirectory,
-                latDec > 0 ? 'N' : 'S', Math.Abs(latDec),
-                lonDec > 0 ? 'E' : 'W', Math.Abs(lonDec));
-
-            Trace.Output(String.Format(Strings.LoadElevationFrom, filePath));
-
-            if (!_fileSystemService.Exists(filePath))
-                throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));
-
-            _hgtData = _fileSystemService.ReadBytes(filePath);
-
-            switch (_hgtData.Length)
+            if (_srtmLat != latDec || _srtmLon != lonDec)
             {
-                case 1201*1201*2: // SRTM-3
-                    _totalPx = 1201;
-                    _secondsPerPx = 3;
-                    break;
-                case 3601*3601*2: // SRTM-1
-                    _totalPx = 3601;
-                    _secondsPerPx = 1;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid file size.", filePath);
+                lock (_lockObj)
+                {
+                    if (_srtmLat == latDec && _srtmLon == lonDec)
+                        return;
+
+                    var filePath = String.Format("{0}/{1}{2:00}{3}{4:000}.hgt", _dataDirectory,
+                        latDec > 0 ? 'N' : 'S', Math.Abs(latDec),
+                        lonDec > 0 ? 'E' : 'W', Math.Abs(lonDec));
+
+                    //Trace.Output(String.Format(Strings.LoadElevationFrom, filePath));
+
+                    if (!_fileSystemService.Exists(filePath))
+                        throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));
+
+                    _hgtData = _fileSystemService.ReadBytes(filePath);
+
+                    switch (_hgtData.Length)
+                    {
+                        case 1201*1201*2: // SRTM-3
+                            _totalPx = 1201;
+                            _secondsPerPx = 3;
+                            break;
+                        case 3601*3601*2: // SRTM-1
+                            _totalPx = 3601;
+                            _secondsPerPx = 1;
+                            break;
+                        default:
+                            throw new ArgumentException("Invalid file size.", filePath);
+                    }
+                    // NOTE this is just perfromance optimization
+                    _offset = (_totalPx*_totalPx - _totalPx)*2;
+                    _srtmLat = latDec;
+                    _srtmLon = lonDec;
+                }
             }
-            // NOTE this is just perfromance optimization
-            _offset = (_totalPx * _totalPx - _totalPx) * 2;
         }
 
         private int ReadPx(int y, int x)

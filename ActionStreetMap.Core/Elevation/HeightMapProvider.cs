@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 
@@ -27,7 +29,7 @@ namespace ActionStreetMap.Core.Elevation
     /// </summary>
     public class HeightMapProvider: IHeightMapProvider, IConfigurable
     {
-        private const int MaxHeight = 8000;
+        private const float MaxHeight = 8000;
 
         private readonly IElevationProvider _elevationProvider;
 
@@ -58,33 +60,37 @@ namespace ActionStreetMap.Core.Elevation
             // resolve height
             if (!_isFlat)
             {
-                minElevation = MaxHeight;
-                maxElevation = -MaxHeight;
+                // NOTE Assume that [0,0] is bottom left corner
                 var latStep = (bbox.MaxPoint.Latitude - bbox.MinPoint.Latitude)/resolution;
                 var lonStep = (bbox.MaxPoint.Longitude - bbox.MinPoint.Longitude)/resolution;
-
-                // NOTE Assume that [0,0] is bottom left corner
-                var lat = bbox.MinPoint.Latitude + latStep/2;
-                var minPointLon = bbox.MinPoint.Longitude + lonStep/2;
-                for (int j = 0; j < resolution; j++)
+                var startLat = bbox.MinPoint.Latitude + latStep / 2;
+                var minPointLon = bbox.MinPoint.Longitude + lonStep / 2;
+                var contexts = _map.Parallel((start, end) =>
                 {
-                    var lon = minPointLon;
-                    for (int i = 0; i < resolution; i++)
+                    var context = new ElevationContext();
+                    for (int j = start; j < end; j++)
                     {
-                        var elevation = _elevationProvider.GetElevation(lat, lon);
-                        if (elevation > maxElevation)
+                        var lat = startLat + j * latStep;
+                        var lon = minPointLon;
+                        for (int i = 0; i < resolution; i++)
                         {
-                            if (elevation < MaxHeight) maxElevation = elevation;
-                            else elevation = maxElevation;
-                        }
-                        else if (elevation < minElevation)
-                            minElevation = elevation;
+                            var elevation = _elevationProvider.GetElevation(lat, lon);
+                            if (elevation > context.MaxElevation)
+                            {
+                                if (elevation < MaxHeight) context.MaxElevation = elevation;
+                                else elevation = context.MaxElevation;
+                            }
+                            else if (elevation < context.MinElevation)
+                                context.MinElevation = elevation;
 
-                        _map[j, i] = elevation;
-                        lon += lonStep;
+                            _map[j, i] = elevation;
+                            lon += lonStep;
+                        }
                     }
-                    lat += latStep;
-                }
+                    return context;
+                });
+                minElevation = contexts.Min(c => c.MinElevation);
+                maxElevation = contexts.Max(c => c.MaxElevation);
             }
             else
             {
@@ -123,5 +129,15 @@ namespace ActionStreetMap.Core.Elevation
         {
             _isFlat = configSection.GetBool("flat", false);
         }
+
+        #region Nested classes
+
+        private class ElevationContext
+        {
+            public float MaxElevation = -MaxHeight;
+            public float MinElevation = MaxHeight;
+        }
+
+        #endregion
     }
 }
