@@ -5,6 +5,7 @@ using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Osm.Entities;
 using ActionStreetMap.Osm.Index.Spatial;
 using ActionStreetMap.Osm.Index.Storage;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Osm.Index
 {
@@ -16,7 +17,7 @@ namespace ActionStreetMap.Osm.Index
         /// <summary>
         ///     Returns elements which are located in the corresponding bbox.
         /// </summary>
-        IEnumerable<Element> Get(BoundingBox bbox);
+        IObservable<Element> Get(BoundingBox bbox);
     }
 
     /// <summary>
@@ -53,11 +54,11 @@ namespace ActionStreetMap.Osm.Index
         }
 
         /// <inheritdoc />
-        public IEnumerable<Element> Get(BoundingBox bbox)
+        public IObservable<Element> Get(BoundingBox bbox)
         {
-            var results = SpatialIndexTree.Search(new Envelop(bbox.MinPoint, bbox.MaxPoint));
-            foreach (var result in results)
-                yield return ElementStore.Get(result);
+            return SpatialIndexTree.Search(new Envelop(bbox.MinPoint, bbox.MaxPoint))
+                .ObserveOn(Scheduler.CurrentThread)
+                .Select(ElementStore.Get);
         }
 
         /// <inheritdoc />

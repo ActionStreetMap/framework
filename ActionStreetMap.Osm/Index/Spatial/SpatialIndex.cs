@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 
 using ActionStreetMap.Osm.Extensions;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Osm.Index.Spatial
 {
@@ -21,40 +22,44 @@ namespace ActionStreetMap.Osm.Index.Spatial
 	        _root = root;
 	    }
 
-        public IEnumerable<T> Search(Envelop envelope)
+        public IObservable<T> Search(Envelop envelope)
         {
-            var node = _root;
-
-            if (!envelope.Intersects(node.Envelope))
-                return Enumerable.Empty<T>();
-
-            var retval = new List<SpatialIndexNode>();
-            var nodesToSearch = new Stack<SpatialIndexNode>();
-
-            while (node.Envelope != null)
+            return Observable.Create<T>(observer =>
             {
-                if (node.Children != null)
+                var node = _root;
+                if (!envelope.Intersects(node.Envelope))
                 {
-                    foreach (var child in node.Children)
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
+
+                var nodesToSearch = new Stack<SpatialIndexNode>();
+
+                while (node.Envelope != null)
+                {
+                    if (node.Children != null)
                     {
-                        if (envelope.Intersects(child.Envelope))
+                        foreach (var child in node.Children)
                         {
-                            if (node.IsLeaf)
-                                retval.Add(child);
-                            else if (envelope.Contains(child.Envelope))
-                                Collect(child, retval);
-                            else
-                                nodesToSearch.Push(child);
+                            if (envelope.Intersects(child.Envelope))
+                            {
+                                if (node.IsLeaf)
+                                    observer.OnNext(child.Data);
+                                else if (envelope.Contains(child.Envelope))
+                                    Collect(child, observer);
+                                else
+                                    nodesToSearch.Push(child);
+                            }
                         }
                     }
+                    node = nodesToSearch.TryPop();
                 }
-                node = nodesToSearch.TryPop();
-            }
-
-            return retval.Select(n => n.Data);
+                observer.OnCompleted();
+                return Disposable.Empty;
+            });
         }
 
-        private static void Collect(SpatialIndexNode node, List<SpatialIndexNode> result)
+        private static void Collect(SpatialIndexNode node, IObserver<T> observer)
         {
             var nodesToSearch = new Stack<SpatialIndexNode>();
             while (node.Envelope != null)
@@ -62,12 +67,11 @@ namespace ActionStreetMap.Osm.Index.Spatial
                 if (node.Children != null)
                 {
                     if (node.IsLeaf)
-                        result.AddRange(node.Children);
+                        foreach(var child in node.Children)
+                            observer.OnNext(child.Data);
                     else
-                    {
                         foreach (var n in node.Children)
                             nodesToSearch.Push(n);
-                    }
                 }
                 node = nodesToSearch.TryPop();
             }

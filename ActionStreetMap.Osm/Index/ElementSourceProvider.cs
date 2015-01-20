@@ -8,6 +8,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Primitives;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Osm.Index.Spatial;
 
 namespace ActionStreetMap.Osm.Index
@@ -44,7 +45,7 @@ namespace ActionStreetMap.Osm.Index
         private readonly IFileSystemService _fileSystemService;
         private SpatialIndex<string> _searchTree;
         private RTree<string> _insertTree;
-        private Tuple<string, IElementSource> _elementSourceCache;
+        private ActionStreetMap.Infrastructure.Primitives.Tuple<string, IElementSource> _elementSourceCache;
 
         /// <summary>
         ///     Trace.
@@ -73,10 +74,11 @@ namespace ActionStreetMap.Osm.Index
         /// <inheritdoc />
         public IElementSource Get(BoundingBox query)
         {
-            var sourcePaths = _searchTree
-                .Search(new Envelop(query.MinPoint, query.MaxPoint)).ToArray();
+            string elementSourcePath = _searchTree
+               .Search(new Envelop(query.MinPoint, query.MaxPoint))
+               .Wait();
 
-            if (!sourcePaths.Any())
+            if (elementSourcePath == null)
             {
                 Trace.Warn("Maps", String.Format("No element source is found for given query:{0}", query));
                 return null;
@@ -84,16 +86,15 @@ namespace ActionStreetMap.Osm.Index
 
             // TODO so far, we support only one element source per query
             // but it can be extended to handle intersection cases
-            if (sourcePaths.Count() > 1)
-                Trace.Warn("Maps", "Current IElementSourceProvider doesn't support multiply element sources bbox match.");
+            //if (sourcePaths.Count() > 1)
+            //    Trace.Warn("Maps", "Current IElementSourceProvider doesn't support multiply element sources bbox match.");
 
-            var elementSourcePath = sourcePaths.First();
             if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
             {
-                if(_elementSourceCache != null)
+                if (_elementSourceCache != null)
                     _elementSourceCache.Item2.Dispose();
                 var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
-                _elementSourceCache = new Tuple<string, IElementSource>(elementSourcePath, elementSource);
+                _elementSourceCache = new ActionStreetMap.Infrastructure.Primitives.Tuple<string, IElementSource>(elementSourcePath, elementSource);
             }
 
             return _elementSourceCache.Item2;

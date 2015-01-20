@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Visitors;
@@ -46,11 +47,12 @@ namespace ActionStreetMap.Osm
             tile.Accept(_modelVisitor);
 
             _filterElementVisitor.BoundingBox = tile.BoundingBox;
-            foreach (var element in elementSource.Get(tile.BoundingBox))
-                element.Accept(_filterElementVisitor);
-
-            // finalize by canvas visiting
-            (new Canvas()).Accept(_modelVisitor);
+            elementSource.Get(tile.BoundingBox)
+             .SubscribeOn(Scheduler.ThreadPool)
+             .Subscribe(
+                    element => element.Accept(_filterElementVisitor),
+                    // finalize by canvas visiting
+                    () => (new Canvas()).Accept(_modelVisitor));
         }
     }
 }

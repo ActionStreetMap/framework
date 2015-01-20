@@ -9,7 +9,7 @@ namespace ActionStreetMap.Tests.Osm.Index
     [TestFixture]
     public class ElementSourceTests
     {
-        private ElementSource _source;
+        /*private ElementSource _source;
         [SetUp]
         public void Setup()
         {
@@ -47,6 +47,6 @@ namespace ActionStreetMap.Tests.Osm.Index
             Assert.AreEqual(2, way.Tags.Count);
             Assert.AreEqual("value1", way.Tags["key1"]);
             Assert.AreEqual("value2", way.Tags["key2"]);
-        }
+        }*/
     }
 }
