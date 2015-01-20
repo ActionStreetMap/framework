@@ -140,18 +140,25 @@ namespace ActionStreetMap.Core.MapCss.Domain
             public Rule New(Model model)
             {
                 if (_objectStack.Count > 0)
-                {
-                    var rule = _objectStack.Pop();
-                    rule.Model = model;
-                    rule.Declarations.Clear();
-                    return rule;
-                }
+                    lock (_objectStack)
+                    {
+                        if (_objectStack.Count > 0)
+                        {
+                            var rule = _objectStack.Pop();
+                            rule.Model = model;
+                            rule.Declarations.Clear();
+                            return rule;
+                        }
+                    }
                 return new Rule(model);
             }
 
             public void Store(Rule obj)
             {
-                _objectStack.Push(obj);
+                lock (_objectStack)
+                {
+                    _objectStack.Push(obj);
+                }
             }
         }
 
