@@ -50,7 +50,7 @@ namespace ActionStreetMap.Osm
             var source = elementSource.Get(tile.BoundingBox).ObserveOn(Scheduler.ThreadPool);
             source.Subscribe(
                 element => element.Accept(_filterElementVisitor),
-                _ => (new Canvas()).Accept(_modelVisitor));
+                () => (new Canvas()).Accept(_modelVisitor));
 
             // TODO block thread until we done or leave it?
             source.Wait();

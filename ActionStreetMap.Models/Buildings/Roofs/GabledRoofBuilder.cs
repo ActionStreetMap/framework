@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.World.Buildings;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -8,7 +7,6 @@ using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.Primitives;
-using ActionStreetMap.Models.Geometry.Polygons;
 using UnityEngine;
 
 namespace ActionStreetMap.Models.Buildings.Roofs
@@ -20,11 +18,12 @@ namespace ActionStreetMap.Models.Buildings.Roofs
     public class GabledRoofBuilder : IRoofBuilder
     {
         private readonly IObjectPool _objectPool;
-        private readonly List<Vector3> _points = new List<Vector3>(64);
-        private readonly List<int> _triangles = new List<int>(126);
-        private readonly List<Vector2> _uv = new List<Vector2>(64);
-        private int _trisIndex = 0;
-        private BuildingStyle _style;
+
+        /// <inheritdoc />
+        public string Name { get { return "gabled"; } }
+
+        /// <inheritdoc />
+        public bool CanBuild(Building building) { return true; }
 
         /// <summary>
         ///     Creates GabledRoofBuilder.
@@ -37,22 +36,9 @@ namespace ActionStreetMap.Models.Buildings.Roofs
         }
 
         /// <inheritdoc />
-        public string Name
-        {
-            get { return "gabled"; }
-        }
-
-        /// <inheritdoc />
-        public bool CanBuild(Building building)
-        {
-            return true;
-        }
-
-        /// <inheritdoc />
         public MeshData Build(Building building, BuildingStyle style)
         {
-            Reset();
-            _style = style;
+            var context = new Context(style, _objectPool);
             var roofOffset = building.Elevation + building.Height + building.MinHeight;
             var roofHeight = roofOffset + (building.RoofHeight > 0 ? building.RoofHeight : style.Roof.Height);
 
@@ -86,15 +72,17 @@ namespace ActionStreetMap.Models.Buildings.Roofs
             secondIntersect.Item2 = new Vector3(secondIntersect.Item2.x, roofHeight, secondIntersect.Item2.z);
 
             // 6. process all segments and create vertices
-            FillMeshData(polygon, firstIntersect, secondIntersect);
+            FillMeshData(polygon, firstIntersect, secondIntersect, context);
 
-            return new MeshData()
+            var result = new MeshData()
             {
-                Vertices = _points.ToArray(),
-                Triangles = _triangles.ToArray(),
-                UV = _uv.ToArray(),
+                Vertices = context.Points.ToArray(),
+                Triangles = context.Triangles.ToArray(),
+                UV = context.UV.ToArray(),
                 MaterialKey = style.Roof.Path,
             };
+            context.Dispose();
+            return result;
         }
 
         private Segment GetLongestSegment(List<MapPoint> footprint, out float length)
@@ -146,7 +134,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
         }
 
         private void FillMeshData(Polygon polygon, Tuple<int, Vector3> firstIntersect,
-            Tuple<int, Vector3> secondIntersect)
+            Tuple<int, Vector3> secondIntersect, Context context)
         {
             var count = polygon.Segments.Length;
             int i = secondIntersect.Item1;
@@ -160,7 +148,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
                 if (i == firstIntersect.Item1 || i == secondIntersect.Item1)
                 {
                     startRidgePoint = i == firstIntersect.Item1 ? firstIntersect.Item2 : secondIntersect.Item2;
-                    AddTriangle(segment.Start, segment.End, startRidgePoint);
+                    AddTriangle(segment.Start, segment.End, startRidgePoint, context);
                     i = nextIndex;
                     continue;
                 }
@@ -170,51 +158,51 @@ namespace ActionStreetMap.Models.Buildings.Roofs
                 else
                     endRidgePoint = GetPointOnLine(firstIntersect.Item2, secondIntersect.Item2, segment.End);
 
-                AddTrapezoid(segment.Start, segment.End, endRidgePoint, startRidgePoint);
+                AddTrapezoid(segment.Start, segment.End, endRidgePoint, startRidgePoint, context);
 
                 startRidgePoint = endRidgePoint;
                 i = nextIndex;
             } while (i != secondIntersect.Item1);
         }
 
-        private void AddTriangle(Vector3 first, Vector3 second, Vector3 third)
+        private void AddTriangle(Vector3 first, Vector3 second, Vector3 third, Context context)
         {
-            _points.Add(first);
-            _points.Add(second);
-            _points.Add(third);
+            context.Points.Add(first);
+            context.Points.Add(second);
+            context.Points.Add(third);
 
-            _triangles.Add(_trisIndex + 0);
-            _triangles.Add(_trisIndex + 1);
-            _triangles.Add(_trisIndex + 2);
+            context.Triangles.Add(context.TrisIndex + 0);
+            context.Triangles.Add(context.TrisIndex + 1);
+            context.Triangles.Add(context.TrisIndex + 2);
 
             // TODO process UV map different way
-            _uv.Add(_style.Roof.FrontUvMap.RightUpper);
-            _uv.Add(_style.Roof.FrontUvMap.RightUpper);
-            _uv.Add(_style.Roof.FrontUvMap.RightUpper);
+            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
 
-            _trisIndex += 3;
+            context.TrisIndex += 3;
         }
 
-        private void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd)
+        private void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd, Context context)
         {
-            _points.Add(rightStart);
-            _points.Add(leftStart);
-            _points.Add(leftEnd);
-            _points.Add(rightEnd);
+            context.Points.Add(rightStart);
+            context.Points.Add(leftStart);
+            context.Points.Add(leftEnd);
+            context.Points.Add(rightEnd);
 
-            _triangles.Add(_trisIndex + 0);
-            _triangles.Add(_trisIndex + 1);
-            _triangles.Add(_trisIndex + 2);
-            _triangles.Add(_trisIndex + 2);
-            _triangles.Add(_trisIndex + 3);
-            _triangles.Add(_trisIndex + 0);
-            _trisIndex += 4;
+            context.Triangles.Add(context.TrisIndex + 0);
+            context.Triangles.Add(context.TrisIndex + 1);
+            context.Triangles.Add(context.TrisIndex + 2);
+            context.Triangles.Add(context.TrisIndex + 2);
+            context.Triangles.Add(context.TrisIndex + 3);
+            context.Triangles.Add(context.TrisIndex + 0);
+            context.TrisIndex += 4;
 
             // TODO process UV map different way
-            _uv.Add(_style.Roof.FrontUvMap.RightUpper);
-            _uv.Add(_style.Roof.FrontUvMap.RightUpper);
-            _uv.Add(_style.Roof.FrontUvMap.RightUpper);
-            _uv.Add(_style.Roof.FrontUvMap.RightUpper);
+            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
         }
 
         /// <summary>
@@ -227,12 +215,36 @@ namespace ActionStreetMap.Models.Buildings.Roofs
             return x;
         }
 
-        private void Reset()
+        #region Nested classes
+
+        private sealed class Context: IDisposable
         {
-            _trisIndex = 0;
-            _points.Clear();
-            _triangles.Clear();
-            _uv.Clear();
+            private readonly IObjectPool _objectPool;
+
+            public readonly BuildingStyle Style;
+            public readonly List<Vector3> Points;
+            public readonly List<int> Triangles;
+            public readonly List<Vector2> UV;
+            
+            public int TrisIndex;          
+
+            public Context(BuildingStyle style, IObjectPool objectPool)
+            {
+                Style = style;
+                _objectPool = objectPool;
+                Points = objectPool.NewList<Vector3>(64);
+                Triangles = objectPool.NewList<int>(128);
+                UV = objectPool.NewList<Vector2>(64);
+            }
+
+            public void Dispose()
+            {
+                _objectPool.Store(Points);
+                _objectPool.Store(Triangles);
+                _objectPool.Store(UV);
+            }
         }
+
+        #endregion
     }
 }
