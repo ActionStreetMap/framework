@@ -67,9 +67,9 @@ namespace ActionStreetMap.Models.Utils
 
             var elevation = start.Elevation < end.Elevation ? start.Elevation : end.Elevation;
 
-            // TODO this is not good  idea to create instance of anonymous class for every small road chunk
             SimpleScanLine.Fill(mapPointBuffer, _size, (scanline, s, e) =>
-               Fill(scanline, s, e, elevation));
+               Fill(scanline, s, e, elevation), _objectPool);
+
             _objectPool.Store(mapPointBuffer);
         }
 
@@ -92,13 +92,15 @@ namespace ActionStreetMap.Models.Utils
             // to work with short road elements which are just rectangles
             if (PointUtils.IsConvex(polygonMapPointBuffer))
             {
+                var scanLineBuffer = _objectPool.NewList<int>();
                 SimpleScanLine.Fill(polygonMapPointBuffer, _size, (scanline, s, e) =>
-                    Fill(scanline, s, e, elevation));
+                    Fill(scanline, s, e, elevation), _objectPool);
+                _objectPool.Store(scanLineBuffer);
             }
             else
             {
                 ScanLine.FillPolygon(polygonMapPointBuffer, (scanline, s, e) =>
-                    Fill(scanline, s, e, elevation));
+                    Fill(scanline, s, e, elevation), _objectPool);
             }
             _objectPool.Store(polygonMapPointBuffer);
         }

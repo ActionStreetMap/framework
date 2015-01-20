@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Geometry.Polygons
 {
@@ -10,19 +11,17 @@ namespace ActionStreetMap.Models.Geometry.Polygons
     /// </summary>
     public class SimpleScanLine
     {
-        private static readonly List<int> ScanListBuffer = new List<int>(2);
-
         /// <summary>
         ///     Fills polygon using fill action provided.
         /// </summary>
         /// <param name="mapPointBuffer">Polygon points.</param>
         /// <param name="size"></param>
         /// <param name="fillAction">Fill action.</param>
-        public static void Fill(List<MapPoint> mapPointBuffer, int size, Action<int,int,int> fillAction)
+        public static void Fill(List<MapPoint> mapPointBuffer, int size, Action<int,int,int> fillAction, IObjectPool objectPool)
         {
             var scanLineStart = int.MaxValue;
             var scanLineEnd = int.MinValue;
-
+            var scanListBuffer = objectPool.NewList<int>();
             // search start and end values
             for (int i = 0; i < mapPointBuffer.Count; i++)
             {
@@ -76,17 +75,18 @@ namespace ActionStreetMap.Models.Geometry.Polygons
                     if (x >= size) x = size - 1;
                     if (x < 0) x = 0;
 
-                    ScanListBuffer.Add(x);
+                    scanListBuffer.Add(x);
                 }
 
-                if (ScanListBuffer.Count > 1)
+                if (scanListBuffer.Count > 1)
                 {
-                    ScanListBuffer.Sort();
-                    fillAction(z, ScanListBuffer[0], ScanListBuffer[ScanListBuffer.Count - 1]);
+                    scanListBuffer.Sort();
+                    fillAction(z, scanListBuffer[0], scanListBuffer[scanListBuffer.Count - 1]);
                 }
 
-                ScanListBuffer.Clear();
+                scanListBuffer.Clear();
             }
+            objectPool.Store(scanListBuffer);
         }
     }
 }

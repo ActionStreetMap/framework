@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Geometry.Polygons
 {
@@ -8,120 +9,119 @@ namespace ActionStreetMap.Models.Geometry.Polygons
     ///     Implements simple scan-line algorithm. Code ported from existing java code found in Internet.
     /// </summary>
     public sealed class ScanLine
-    {
-        private static readonly List<Edge> EdgeBuffer = new List<Edge>(16);
-        // Holds all cutpoints from current scanline with the polygon
-        private static readonly List<int> List = new List<int>(32);
-        
+    {       
         /// <summary>
         ///     Fills polygon using points.
         /// </summary>
         /// <param name="points">Polygon points.</param>
         /// <param name="fillAction">Fille action.</param>
-        public static void FillPolygon(List<MapPoint> points, Action<int, int, int> fillAction)
+        public static void FillPolygon(List<MapPoint> points, Action<int, int, int> fillAction, IObjectPool objectPool)
         {
+            var edges = objectPool.NewList<Edge>(16);
+            // Holds all cutpoints from current scanline with the polygon
+            var list = objectPool.NewList<int>(32); 
             // create edges array from polygon vertice vector
             // make sure that first vertice of an edge is the smaller one
-            CreateEdges(points);
+            CreateEdges(points, edges);
 
             // sort all edges by Y coordinate, smallest one first, lousy bubblesort
             Edge tmp;
 
-            for (int i = 0; i < EdgeBuffer.Count - 1; i++)
-                for (int j = 0; j < EdgeBuffer.Count - 1; j++)
+            for (int i = 0; i < edges.Count - 1; i++)
+                for (int j = 0; j < edges.Count - 1; j++)
                 {
-                    if (EdgeBuffer[j].StartY > EdgeBuffer[j + 1].StartY)
+                    if (edges[j].StartY > edges[j + 1].StartY)
                     {
                         // swap both edges
-                        tmp = EdgeBuffer[j];
-                        EdgeBuffer[j] = EdgeBuffer[j + 1];
-                        EdgeBuffer[j + 1] = tmp;
+                        tmp = edges[j];
+                        edges[j] = edges[j + 1];
+                        edges[j + 1] = tmp;
                     }
                 }
 
             // find biggest Y-coord of all vertices
             int scanlineEnd = 0;
-            for (int i = 0; i < EdgeBuffer.Count; i++)
+            for (int i = 0; i < edges.Count; i++)
             {
-                if (scanlineEnd < EdgeBuffer[i].EndY)
-                    scanlineEnd = EdgeBuffer[i].EndY;
+                if (scanlineEnd < edges[i].EndY)
+                    scanlineEnd = edges[i].EndY;
             }          
 
             // scanline starts at smallest Y coordinate
             // move scanline step by step down to biggest one
-            for (int scanline = EdgeBuffer[0].StartY; scanline <= scanlineEnd; scanline++)
+            for (int scanline = edges[0].StartY; scanline <= scanlineEnd; scanline++)
             {
-                List.Clear();
+                list.Clear();
 
                 // loop all edges to see which are cut by the scanline
-                for (int i = 0; i < EdgeBuffer.Count; i++)
+                for (int i = 0; i < edges.Count; i++)
                 {
                     // here the scanline intersects the smaller vertice
-                    if (scanline == EdgeBuffer[i].StartY)
+                    if (scanline == edges[i].StartY)
                     {
-                        if (scanline == EdgeBuffer[i].EndY)
+                        if (scanline == edges[i].EndY)
                         {
                             // the current edge is horizontal, so we add both vertices
-                            EdgeBuffer[i].Deactivate();
-                            List.Add((int)EdgeBuffer[i].CurrentX);
+                            edges[i].Deactivate();
+                            list.Add((int)edges[i].CurrentX);
                         }
                         else
                         {
-                            EdgeBuffer[i].Activate();
+                            edges[i].Activate();
                             // we don't insert it in the _reusableBuffer cause this vertice is also
                             // the (bigger) vertice of another edge and already handled
                         }
                     }
 
                     // here the scanline intersects the bigger vertice
-                    if (scanline == EdgeBuffer[i].EndY)
+                    if (scanline == edges[i].EndY)
                     {
-                        EdgeBuffer[i].Deactivate();
-                        List.Add((int)EdgeBuffer[i].CurrentX);
+                        edges[i].Deactivate();
+                        list.Add((int)edges[i].CurrentX);
                     }
 
                     // here the scanline intersects the edge, so calc intersection point
-                    if (scanline > EdgeBuffer[i].StartY && scanline < EdgeBuffer[i].EndY)
+                    if (scanline > edges[i].StartY && scanline < edges[i].EndY)
                     {
-                        EdgeBuffer[i].Update();
-                        List.Add((int)EdgeBuffer[i].CurrentX);
+                        edges[i].Update();
+                        list.Add((int)edges[i].CurrentX);
                     }
                 }
 
                 // now we have to sort our _reusableBuffer with our X-coordinates, ascendend
-                for (int i = 0; i < List.Count; i++)
-                    for (int j = 0; j < List.Count - 1; j++)
+                for (int i = 0; i < list.Count; i++)
+                    for (int j = 0; j < list.Count - 1; j++)
                     {
-                        if (List[j] > List[j + 1])
+                        if (list[j] > list[j + 1])
                         {
-                            int swaptmp = List[j];
-                            List[j] = List[j + 1];
-                            List[j + 1] = swaptmp;
+                            int swaptmp = list[j];
+                            list[j] = list[j + 1];
+                            list[j + 1] = swaptmp;
                         }
                     }
 
-                if (List.Count < 2 || List.Count % 2 != 0)
+                if (list.Count < 2 || list.Count % 2 != 0)
                     continue;
 
                 // so fill all line segments on current scanline
-                for (int i = 0; i < List.Count; i += 2)
-                    fillAction(scanline, List[i], List[i + 1]);
+                for (int i = 0; i < list.Count; i += 2)
+                    fillAction(scanline, list[i], list[i + 1]);
             }
 
-            EdgeBuffer.Clear();
+            objectPool.Store(edges);
+            objectPool.Store(list);
         }
 
         /// <summary>
         ///     Create from the polygon vertices an array of edges.
         ///     Note that the first vertice of an edge is always the one with the smaller Y coordinate one of both
         /// </summary>
-        private static void CreateEdges(List<MapPoint> polygon)
+        private static void CreateEdges(List<MapPoint> polygon, List<Edge> edges)
         {
-           //new Edge[polygon.Count];
             for (int i = 0; i < polygon.Count; i++)
             {
                 var nextIndex = i == polygon.Count - 1 ? 0 : i + 1;
-                EdgeBuffer.Add(polygon[i].Y < polygon[nextIndex].Y
+                edges.Add(polygon[i].Y < polygon[nextIndex].Y
                     ? new Edge(polygon[i], polygon[nextIndex])
                     : new Edge(polygon[nextIndex], polygon[i]));
             }
