@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Core.Scene.World.Infos;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Infos;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
@@ -42,7 +43,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var zIndex = rule.GetZIndex();
             mapPoint.Elevation = tile.HeightMap.LookupHeight(mapPoint);
 
-            BuildObject(tile, gameObjectWrapper, info, style, mapPoint, zIndex);
+            Scheduler.MainThread.Schedule(() => BuildObject(tile, gameObjectWrapper, info, style, mapPoint, zIndex));
 
             return gameObjectWrapper;
         }

@@ -8,10 +8,10 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.ModelBuilders
 {
     class TestDetailModelBuilder: DetailModelBuilder
     {
-        protected override IGameObject BuildObject(Tile tile, Rule rule, Node node, MapPoint mapPoint, float zIndex, string detail)
+        protected override void BuildObject(IGameObject gameObjectWrapper, Tile tile, Rule rule, Node node, 
+            MapPoint mapPoint, float zIndex, string detail)
         {
             // do nothing
-            return null;
         }
     }
 }

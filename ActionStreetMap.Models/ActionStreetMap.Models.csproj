@@ -96,7 +96,6 @@
     <Compile Include="Geometry\Polygons\SimpleScanLine.cs" />
     <Compile Include="Utils\RandomHelper.cs" />
     <Compile Include="Utils\ResourceProvider.cs" />
-    <Compile Include="Utils\GameObjectWrapper.cs" />
     <Compile Include="Utils\HeightMapProcessor.cs" />
     <Compile Include="Geometry\SegmentUtils.cs" />
   </ItemGroup>

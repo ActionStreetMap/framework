@@ -3,6 +3,7 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Roads;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
@@ -33,33 +34,28 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             // TODO check this
             //WorldManager.AddModel(node.Id);
+            var gameObjectWrapper = GameObjectFactory.CreateNew("detail " + node);
 
-            return BuildObject(tile, rule, node, mapPoint, zIndex, detail);
+            Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, tile, rule, node, mapPoint, zIndex, detail));
+
+            return gameObjectWrapper;
         }
 
         /// <summary>
         ///     Process unity specific data.
         /// </summary>
-        protected virtual IGameObject BuildObject(Tile tile, Rule rule, Node node, MapPoint mapPoint, 
+        protected virtual void BuildObject(IGameObject gameObjectWrapper, Tile tile, Rule rule, Node node, MapPoint mapPoint, 
             float zIndex, string detail)
         {
             var prefab = ResourceProvider.GetGameObject(detail);
             var gameObject = (GameObject)Object.Instantiate(prefab);
+            
+            // TODO do we need this workarounf?
             if (rule.IsRoadFix())
-            {
                 gameObject.AddComponent<RoadFixBehavior>().RotationOffset = rule.GetDetailRotation();
-            }
 
-            gameObject.transform.position = new Vector3(mapPoint.X, mapPoint.Elevation + zIndex, mapPoint.Y);
-
-            // TODO add detail to worldManager
-            // TODO actually, sometimes we have to rotate device correctly,
-            // need to find way how to do this
-
-            var gameObjectWrapper = GameObjectFactory.Wrap("detail " + node, gameObject);
+            gameObject.transform.position = new Vector3(mapPoint.X, mapPoint.Elevation + zIndex, mapPoint.Y);           
             gameObjectWrapper.Parent = tile.GameObject;
-
-            return gameObjectWrapper;
         }
     }
 }

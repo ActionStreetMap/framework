@@ -6,6 +6,7 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Details;
 using ActionStreetMap.Models.Roads;
@@ -144,8 +145,10 @@ namespace ActionStreetMap.Models.Terrain
                 t => t.SplatIndex);
 
             _areaBuilder.Build(settings, alphaMapElements, _splatMapBuffer, _detailListBuffer);
-            
-            var gameObject = CreateTerrainGameObject(parent, settings, size, _detailListBuffer);
+
+            var gameObject = _gameObjectFactory.CreateNew("terrain");
+            Scheduler.MainThread.Schedule(() => 
+                CreateTerrainGameObject(gameObject, parent, settings, size, _detailListBuffer));
 
             ClearBuffers();
 
@@ -226,7 +229,7 @@ namespace ActionStreetMap.Models.Terrain
         /// <summary>
         ///     Creates real game object
         /// </summary>
-        protected virtual IGameObject CreateTerrainGameObject(IGameObject parent, TerrainSettings settings,
+        protected virtual void CreateTerrainGameObject(IGameObject terrainWrapper, IGameObject parent, TerrainSettings settings,
             Vector3 size, List<int[,]> detailMapList)
         {
             // create TerrainData
@@ -264,7 +267,7 @@ namespace ActionStreetMap.Models.Terrain
 
             SetDetails(terrain, settings, detailMapList);
 
-            return new GameObjectWrapper("terrain", gameObject);
+            terrainWrapper.AddComponent(gameObject);
         }
 
         #region Alpha map splats

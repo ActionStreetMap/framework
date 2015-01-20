@@ -4,6 +4,7 @@ using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Scene.World.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Buildings.Roofs;
 using ActionStreetMap.Models.Utils;
@@ -56,8 +57,8 @@ namespace ActionStreetMap.Models.Buildings
                .Build(building, style);
 
             // NOTE use different gameObject only to support different materials
-            AttachChildGameObject(building.GameObject, "facade", facadeMeshData);
-            AttachChildGameObject(building.GameObject, "roof", roofMeshData);
+            Scheduler.MainThread.Schedule(() => AttachChildGameObject(building.GameObject, "facade", facadeMeshData));
+            Scheduler.MainThread.Schedule(() => AttachChildGameObject(building.GameObject, "roof", roofMeshData));
         }
 
         /// <summary>

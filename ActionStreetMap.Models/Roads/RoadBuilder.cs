@@ -4,6 +4,7 @@ using System.Linq;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Scene.World.Roads;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using ActionStreetMap.Models.Utils;
@@ -65,7 +66,8 @@ namespace ActionStreetMap.Models.Roads
             var lineElements = road.Elements.Select(e => new LineElement(e.Points, e.Width)).ToList();
 
             using(var lineBuilder = new ThickLineBuilder(_objectPool, _heightMapProcessor))
-                lineBuilder.Build(heightMap, lineElements, (p, t, u) => CreateRoadMesh(road, style, p, t, u));
+                lineBuilder.Build(heightMap, lineElements, (p, t, u) => 
+                    Scheduler.MainThread.Schedule(() => CreateRoadMesh(road, style, p, t, u)));
         }
 
         /// <inheritdoc />
@@ -77,7 +79,7 @@ namespace ActionStreetMap.Models.Roads
             var polygonTriangles = Triangulator.Triangulate(junction.Polygon, buffer);
             _objectPool.Store(buffer);
 
-            CreateJunctionMesh(junction, style, polygonTriangles);
+            Scheduler.MainThread.Schedule(() => CreateJunctionMesh(junction, style, polygonTriangles));
         }
 
         /// <summary>
@@ -97,7 +99,7 @@ namespace ActionStreetMap.Models.Roads
             mesh.uv = uv.ToArray();
             mesh.RecalculateNormals();
 
-            var gameObject = road.GameObject.GetComponent<GameObject>();
+            var gameObject = road.GameObject.AddComponent(new GameObject());
             gameObject.isStatic = true;
             var meshFilter = gameObject.AddComponent<MeshFilter>();
             meshFilter.mesh = mesh;
@@ -125,7 +127,7 @@ namespace ActionStreetMap.Models.Roads
             mesh.uv = junction.Polygon.Select(p => new Vector2()).ToArray();
             mesh.RecalculateNormals();
 
-            var gameObject = junction.GameObject.GetComponent<GameObject>();
+            var gameObject = junction.GameObject.AddComponent(new GameObject());
             gameObject.isStatic = true;
             var meshFilter = gameObject.AddComponent<MeshFilter>();
             meshFilter.mesh = mesh;

@@ -3,6 +3,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
@@ -39,13 +40,15 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             tile.Registry.RegisterGlobal(area.Id);
 
-            return BuildSphere(gameObjectWrapper, rule, area, sphereCenter, diameter, elevation + minHeight);
+            Scheduler.MainThread.Schedule(() => BuildSphere(gameObjectWrapper, rule, area, sphereCenter, diameter, elevation + minHeight));
+
+            return gameObjectWrapper;
         }
 
         /// <summary>
         ///     Process unity specific data.
         /// </summary>
-        protected virtual IGameObject BuildSphere(IGameObject gameObjectWrapper, Rule rule, Model model, 
+        protected virtual void BuildSphere(IGameObject gameObjectWrapper, Rule rule, Model model, 
             MapPoint sphereCenter, float diameter, float heightOffset)
         {
             var sphere = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Sphere));
@@ -61,8 +64,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             sphere.transform.localScale = new Vector3(diameter, diameter, diameter);
             sphere.transform.position = new Vector3(sphereCenter.X, heightOffset + diameter/2, sphereCenter.Y);
-
-            return gameObjectWrapper;
         }
     }
 }

@@ -6,6 +6,7 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Terrain;
 using ActionStreetMap.Explorer.Helpers;
@@ -72,7 +73,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             //ObjectPool.Store(verticies2D);
 
             IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("{0} {1}", Name, area));
-            BuildObject(gameObjectWrapper, rule, vector3Ds, triangles);
+            Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, rule, vector3Ds, triangles));
 
             return gameObjectWrapper;
         }

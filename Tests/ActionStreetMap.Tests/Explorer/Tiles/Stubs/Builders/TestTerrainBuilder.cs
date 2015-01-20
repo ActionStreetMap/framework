@@ -20,10 +20,9 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders
         {
         }
 
-        protected override IGameObject CreateTerrainGameObject(IGameObject parent, TerrainSettings settings, 
-            Vector3 size, List<int[,]> detailMapList)
+        protected override void CreateTerrainGameObject(IGameObject gameObject, IGameObject parent, 
+            TerrainSettings settings, Vector3 size, List<int[,]> detailMapList)
         {
-            return new TestGameObject();
         }
     }
 }

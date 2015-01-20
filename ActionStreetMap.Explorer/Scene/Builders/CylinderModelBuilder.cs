@@ -3,6 +3,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
@@ -43,13 +44,16 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             tile.Registry.RegisterGlobal(area.Id);
 
-            return BuildCylinder(gameObjectWrapper, rule, area, cylinderCenter, diameter, actualHeight, elevation+ minHeight);
+            Scheduler.MainThread.Schedule(() =>
+                BuildCylinder(gameObjectWrapper, rule, area, cylinderCenter, diameter, actualHeight, elevation+ minHeight));
+
+            return gameObjectWrapper;
         }
 
         /// <summary>
         ///     Process unity specific data.
         /// </summary>
-        protected virtual IGameObject BuildCylinder(IGameObject gameObjectWrapper, Rule rule, Model model,
+        protected virtual void BuildCylinder(IGameObject gameObjectWrapper, Rule rule, Model model,
             MapPoint cylinderCenter, float diameter, float actualHeight, float heightOffset)
         {
             var cylinder = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Cylinder));
@@ -66,8 +70,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             for (int i = 0; i < uv.Length; i++)
                 uv[i] = new Vector2(0, 0);
             mesh.uv = uv;
-
-            return gameObjectWrapper;
         }
     }
 }

@@ -4,6 +4,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Helpers;
@@ -54,7 +55,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             {
                 dimenLineBuilder.Height = rule.GetHeight();
                 dimenLineBuilder.Build(tile.HeightMap, lines,
-                    (p, t, u) => BuildObject(gameObjectWrapper, rule, p, t, u));
+                    (p, t, u) => Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, rule, p, t, u)));
             }
 
             ObjectPool.Store(lines);
