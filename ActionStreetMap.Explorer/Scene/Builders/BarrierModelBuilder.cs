@@ -8,6 +8,8 @@ using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -16,13 +18,15 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     /// </summary>
     public class BarrierModelBuilder: ModelBuilder
     {
-        private readonly DimenLineBuilder _dimenLineBuilder = new DimenLineBuilder(2);
-        private readonly List<LineElement> _lines = new List<LineElement>(1);
+        private readonly DimenLineBuilder _dimenLineBuilder;
 
         /// <inheritdoc />
-        public override string Name
+        public override string Name { get { return "barrier"; } }
+
+        [Dependency]
+        public BarrierModelBuilder(IObjectPool objectPool)
         {
-            get { return "barrier"; }
+            _dimenLineBuilder = new DimenLineBuilder(2, objectPool);
         }
 
         /// <inheritdoc />
@@ -38,16 +42,14 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var points = ObjectPool.NewList<MapPoint>();
             PointUtils.FillHeight(tile.HeightMap, tile.RelativeNullPoint, way.Points, points);
-            
-            // reuse lines
-            _lines.Clear();
-            _lines.Add(new LineElement(points, rule.GetWidth()));
 
+            var lines = ObjectPool.NewList<LineElement>(1);
+            lines.Add(new LineElement(points, rule.GetWidth()));
             _dimenLineBuilder.Height = rule.GetHeight();
-            _dimenLineBuilder.Build(tile.HeightMap, _lines, 
+            _dimenLineBuilder.Build(tile.HeightMap, lines, 
                 (p, t, u) => BuildObject(gameObjectWrapper, rule, p, t, u));
-            _lines.Clear();
 
+            ObjectPool.Store(lines);
             ObjectPool.Store(points);
 
             return gameObjectWrapper;

@@ -4,13 +4,15 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Models.Roads;
 using ActionStreetMap.Models.Utils;
 using UnityEngine;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders
 {
     public class TestRoadBuilder: RoadBuilder
     {
         [Dependency]
-        public TestRoadBuilder(IResourceProvider resourceProvider) : base(resourceProvider)
+        public TestRoadBuilder(IResourceProvider resourceProvider, IObjectPool objectPool)
+            : base(resourceProvider, objectPool)
         {
 
         }

@@ -62,7 +62,7 @@ namespace ActionStreetMap.Models.Terrain
         private readonly IRoadBuilder _roadBuilder;
         private readonly IObjectPool _objectPool;
         private readonly AreaBuilder _areaBuilder = new AreaBuilder();
-        private readonly HeightMapProcessor _heightMapProcessor = new HeightMapProcessor();
+        private readonly HeightMapProcessor _heightMapProcessor;
 
         private SplatPrototype[] _splatPrototypes;
         private DetailPrototype[] _detailPrototypes;
@@ -99,6 +99,7 @@ namespace ActionStreetMap.Models.Terrain
             _roadBuilder = roadBuilder;
             _objectPool = objectPool;
             _roadGraphBuilder = roadGraphBuilder;
+            _heightMapProcessor = new HeightMapProcessor(objectPool);
         }
 
         #region ITerrainBuilder implementation

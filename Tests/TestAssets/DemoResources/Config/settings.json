@@ -1,6 +1,6 @@
 {
-	"mapdata":"g:/__ASM/__repository/framework/Tests/ActionStreetMap.Tests/bin/Debug/Index_Berlin",
-	"elevationdata":"f:/___elevation/TestData/",
+	"mapdata":"c:/_asm/mapdata/Index_Berlin/",
+	"elevationdata":"c:/_asm/fwk/actionstreetmap/Tests/TestAssets/DemoResources/Maps/elevation/",
 	"theme":"Config/themes/default/theme.json",
 	"mapcss":"Config/themes/default/default.mapcss",
 	"tile": {

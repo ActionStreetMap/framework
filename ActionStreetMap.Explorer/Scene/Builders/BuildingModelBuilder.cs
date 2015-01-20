@@ -13,6 +13,7 @@ using ActionStreetMap.Models.Buildings;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Utils;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -23,21 +24,19 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     {
         private readonly IBuildingBuilder _builder;
 
-        private readonly HeightMapProcessor _heightMapProcessor = new HeightMapProcessor();
+        private readonly HeightMapProcessor _heightMapProcessor;
 
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "building"; }
-        }
+        public override string Name { get { return "building"; } }
 
         /// <summary>
         ///     Creates BuildingModelBuilder.
         /// </summary>
         [Dependency]
-        public BuildingModelBuilder(IBuildingBuilder builder)
+        public BuildingModelBuilder(IBuildingBuilder builder, IObjectPool objectPool)
         {
             _builder = builder;
+            _heightMapProcessor = new HeightMapProcessor(objectPool);
         }
 
         private const int NoValue = 0;

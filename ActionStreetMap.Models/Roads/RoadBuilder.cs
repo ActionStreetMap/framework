@@ -8,6 +8,7 @@ using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using ActionStreetMap.Models.Utils;
 using UnityEngine;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Roads
 {
@@ -41,17 +42,22 @@ namespace ActionStreetMap.Models.Roads
         private const string OsmTag = "osm.road";
 
         private readonly IResourceProvider _resourceProvider;
-        private readonly HeightMapProcessor _heightMapProcessor = new HeightMapProcessor();
-        private readonly ThickLineBuilder _lineBuilder = new ThickLineBuilder();
+        private readonly IObjectPool _objectPool;
+        private readonly HeightMapProcessor _heightMapProcessor;
+        private readonly ThickLineBuilder _lineBuilder;
 
         /// <summary>
         ///     Creates RoadBuilder.
         /// </summary>
         /// <param name="resourceProvider">Resource provider.</param>
+        /// /// <param name="objectPool"Object pool.</param>
         [Dependency]
-        public RoadBuilder(IResourceProvider resourceProvider)
+        public RoadBuilder(IResourceProvider resourceProvider, IObjectPool objectPool)
         {
             _resourceProvider = resourceProvider;
+            _objectPool = objectPool;
+            _heightMapProcessor = new HeightMapProcessor(objectPool);
+            _lineBuilder = new ThickLineBuilder(objectPool);
         }
 
         /// <inheritdoc />

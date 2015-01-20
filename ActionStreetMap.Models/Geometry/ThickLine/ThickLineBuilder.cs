@@ -6,6 +6,7 @@ using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Models.Geometry.Primitives;
 using ActionStreetMap.Models.Utils;
 using UnityEngine;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Geometry.ThickLine
 {
@@ -51,7 +52,16 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         private LineElement _currentElement;
         private LineElement _nextElement;
 
-        private readonly HeightMapProcessor _heightMapProcessor = new HeightMapProcessor();
+        private readonly HeightMapProcessor _heightMapProcessor;
+
+        /// <summary>
+        ///     Creates instance of <see cref="ThickLineBuilder"/>.
+        /// </summary>
+        /// <param name="objectPool"></param>
+        public ThickLineBuilder(IObjectPool objectPool)
+        {
+            _heightMapProcessor = new HeightMapProcessor(objectPool);
+        }
 
         /// <summary>
         ///     Builds line.
