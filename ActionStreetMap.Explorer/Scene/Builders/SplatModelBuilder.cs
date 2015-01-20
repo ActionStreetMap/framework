@@ -10,6 +10,7 @@ using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Terrain;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -21,10 +22,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         private readonly ITerrainBuilder _terrainBuilder;
 
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "splat"; }
-        }
+        public override string Name { get { return "splat"; } }
 
         /// <summary>
         ///     Creates TreeModelBuilder.
@@ -57,7 +55,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         private void GenerateTrees(List<MapPoint> points, int seed)
         {
             // triangulate polygon
-            var triangles = PolygonUtils.Triangulate(points);
+            var triangles = PolygonUtils.Triangulate(points, ObjectPool);
             
             var rnd = new Random(seed);
             // this cycle generate points inside each triangle

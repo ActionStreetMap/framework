@@ -47,12 +47,15 @@ namespace ActionStreetMap.Osm
             tile.Accept(_modelVisitor);
 
             _filterElementVisitor.BoundingBox = tile.BoundingBox;
-            elementSource.Get(tile.BoundingBox)
-             .SubscribeOn(Scheduler.ThreadPool)
-             .Subscribe(
-                    element => element.Accept(_filterElementVisitor),
-                    // finalize by canvas visiting
-                    () => (new Canvas()).Accept(_modelVisitor));
+            var source = elementSource.Get(tile.BoundingBox).ObserveOn(Scheduler.ThreadPool);
+            source.Subscribe(element =>
+            {
+                System.Console.WriteLine("accept:{0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
+                element.Accept(_filterElementVisitor);
+            },
+            () => (new Canvas()).Accept(_modelVisitor));
+            //source.Wait();
+            System.Console.ReadKey();
         }
     }
 }

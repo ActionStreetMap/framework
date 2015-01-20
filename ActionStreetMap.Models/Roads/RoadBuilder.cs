@@ -74,7 +74,11 @@ namespace ActionStreetMap.Models.Roads
             _heightMapProcessor.AdjustPolygon(junction.Polygon, junction.Center.Elevation);
             _heightMapProcessor.Clear();
 
-            CreateJunctionMesh(junction, style);
+            var buffer = _objectPool.NewList<int>();
+            var polygonTriangles = Triangulator.Triangulate(junction.Polygon, buffer);
+            _objectPool.Store(buffer);
+
+            CreateJunctionMesh(junction, style, polygonTriangles);
         }
 
         /// <summary>
@@ -112,11 +116,11 @@ namespace ActionStreetMap.Models.Roads
         /// </summary>
         /// <param name="junction">Road junction.</param>
         /// <param name="style">Road style.</param>
-        protected virtual void CreateJunctionMesh(RoadJunction junction, RoadStyle style)
+        protected virtual void CreateJunctionMesh(RoadJunction junction, RoadStyle style, int[] polygonTriangles)
         {
             Mesh mesh = new Mesh();
             mesh.vertices = junction.Polygon.Select(p => new Vector3(p.X, p.Elevation, p.Y)).ToArray();
-            mesh.triangles = Triangulator.Triangulate(junction.Polygon);
+            mesh.triangles = polygonTriangles;
             // TODO
             mesh.uv = junction.Polygon.Select(p => new Vector2()).ToArray();
             mesh.RecalculateNormals();

@@ -23,10 +23,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         private const int NoLayer = -1;
 
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "water"; }
-        }
+        public override string Name { get { return "water"; } }
 
         /// <summary>
         ///     Creates WaterModelBuilder.
@@ -70,7 +67,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             });
 
             var vector3Ds = verticies2D.GetVerticies(elevation - 2.5f);
-            var triangles = PointUtils.GetTriangles(verticies2D);
+            var triangles = PolygonUtils.Triangulate(verticies2D, ObjectPool);
 
             //ObjectPool.Store(verticies2D);
 

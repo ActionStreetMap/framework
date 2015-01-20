@@ -3,6 +3,8 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.World.Buildings;
 using ActionStreetMap.Models.Geometry;
 using UnityEngine;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Buildings.Facades
 {
@@ -13,6 +15,10 @@ namespace ActionStreetMap.Models.Buildings.Facades
     {
         /// <inheritdoc />
         public string Name { get { return "flat"; } }
+
+        /// <inheritdoc />
+        [Dependency]
+        public IObjectPool ObjectPool { get; set; }
 
         /// <inheritdoc />
         public MeshData Build(Building building, BuildingStyle style)
@@ -106,7 +112,11 @@ namespace ActionStreetMap.Models.Buildings.Facades
 
             // attach triangles
             var startTriangleIndex = length * 2 * 3;
-            var triangles = Triangulator.Triangulate(points, false);
+
+            var buffer = ObjectPool.NewList<int>();
+            var triangles = Triangulator.Triangulate(building.Footprint, buffer);
+            ObjectPool.Store(buffer);
+
             for (int i = 0; i < triangles.Length; i++)
                 meshData.Triangles[startTriangleIndex + i] = triangles[i] + startVertexIndex;
         }

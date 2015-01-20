@@ -8,21 +8,17 @@ namespace ActionStreetMap.Models.Geometry
     /// </summary>
     internal class Triangulator
     {
-        private static readonly List<int> Indices = new List<int>(256);
-
         /// <summary>
         ///     Triangulates given polygon.
         /// </summary>
         /// <param name="points">Points which represents polygon.</param>
         /// <param name="reverse">Reverse points.</param>
         /// <returns>Triangles.</returns>
-        public static int[] Triangulate(List<MapPoint> points, bool reverse = true)
+        public static int[] Triangulate(List<MapPoint> points, List<int> indices, bool reverse = true)
         {
-            Indices.Clear();
-
             int n = points.Count;
             if (n < 3)
-                return Indices.ToArray();
+                return indices.ToArray();
 
             int[] V = new int[n];
             if (Area(points) > 0)
@@ -41,7 +37,7 @@ namespace ActionStreetMap.Models.Geometry
             for (int v = nv - 1; nv > 2; )
             {
                 if ((count--) <= 0)
-                    return Indices.ToArray();
+                    return indices.ToArray();
 
                 int u = v;
                 if (nv <= u)
@@ -59,9 +55,9 @@ namespace ActionStreetMap.Models.Geometry
                     int a = V[u];
                     int b = V[v];
                     int c = V[w];
-                    Indices.Add(a);
-                    Indices.Add(b);
-                    Indices.Add(c);
+                    indices.Add(a);
+                    indices.Add(b);
+                    indices.Add(c);
 
                     for (s = v, t = v + 1; t < nv; s++, t++)
                         V[s] = V[t];
@@ -70,10 +66,9 @@ namespace ActionStreetMap.Models.Geometry
                 }
             }
 
-            if(reverse)
-                Indices.Reverse();
+            if(reverse) indices.Reverse();
 
-            return Indices.ToArray();
+            return indices.ToArray();
         }
 
         private static float Area(List<MapPoint> points)

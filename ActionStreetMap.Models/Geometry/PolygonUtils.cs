@@ -4,6 +4,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Models.Geometry.Polygons;
 using ActionStreetMap.Models.Geometry.Primitives;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Geometry
 {
@@ -16,11 +17,15 @@ namespace ActionStreetMap.Models.Geometry
         ///     Triangulates given polygon.
         /// </summary>
         /// <param name="points">Points which represents polygon.</param>
+        /// <param name="indices">Indecies.</param>
         /// <param name="reverse">Reverse points.</param>
         /// <returns>Triangles.</returns>
-        public static int[] Triangulate(List<MapPoint> points, bool reverse = true)
+        public static int[] Triangulate(List<MapPoint> points, IObjectPool objectPool, bool reverse = true)
         {
-            return Triangulator.Triangulate(points, reverse);
+            var indices = objectPool.NewList<int>();
+            var result = Triangulator.Triangulate(points, indices, reverse);
+            objectPool.Store(indices);
+            return result;
         }
 
         /// <summary>

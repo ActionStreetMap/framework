@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.World.Buildings;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.Primitives;
 using ActionStreetMap.Models.Geometry.Polygons;
@@ -18,6 +20,10 @@ namespace ActionStreetMap.Models.Buildings.Roofs
     {
         /// <inheritdoc />
         public string Name { get { return "mansard"; } }
+
+        /// <inheritdoc />
+        [Dependency]
+        public IObjectPool ObjectPool { get; set; }
 
         /// <inheritdoc />
         public bool CanBuild(Building building)
@@ -106,7 +112,10 @@ namespace ActionStreetMap.Models.Buildings.Roofs
                 });
             }
 
-            var topPartIndecies = Triangulator.Triangulate(footprint);
+            var buffer = ObjectPool.NewList<int>();
+            var topPartIndecies = Triangulator.Triangulate(footprint, buffer);
+            ObjectPool.Store(buffer);
+
             var vertCount = footprint.Count * 4;
             triangles.AddRange(topPartIndecies.Select(i => i + vertCount));
 

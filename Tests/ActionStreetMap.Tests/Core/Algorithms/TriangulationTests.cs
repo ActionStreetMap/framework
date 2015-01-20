@@ -38,7 +38,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             };
 
             // ACT & ASSERT
-            Triangulator.Triangulate(verticies);
+            Triangulator.Triangulate(verticies, new List<int>());
         }
 
         [Test]
@@ -48,6 +48,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             var sceneVisitor = new TestModelVisitor();
             var pathResolver = new TestPathResolver();
             var config = new Mock<IConfigSection>();
+            var objectPool = new ObjectPool();
             config.Setup(c => c.GetString("")).Returns(TestHelper.MapDataPath);
             var elementSourceProvider = new ElementSourceProvider(pathResolver, new FileSystemService(pathResolver));
             elementSourceProvider.Configure(config.Object);
@@ -63,7 +64,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             {
                 var verticies = new List<MapPoint>();
                 PointUtils.GetClockwisePolygonPoints(TestHelper.BerlinTestFilePoint, area.Points, verticies);
-                PointUtils.GetTriangles3D(verticies);
+                PolygonUtils.Triangulate(verticies, objectPool);
             }
 
             Assert.Greater(sceneVisitor.Ways.Count, 0);
@@ -71,7 +72,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             {
                 var verticies = new List<MapPoint>();
                 PointUtils.GetPolygonPoints(TestHelper.BerlinTestFilePoint, way.Points, verticies);
-                var triangles = PointUtils.GetTriangles3D(verticies);
+                var triangles = PolygonUtils.Triangulate(verticies, objectPool);
             }
         }
     }

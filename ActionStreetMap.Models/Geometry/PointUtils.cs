@@ -199,60 +199,6 @@ namespace ActionStreetMap.Models.Geometry
             return sum > 0.0 ? PolygonDirection.Clockwise : PolygonDirection.CountClockwise;
         }
 
-        /// <summary>
-        ///     Gets triangles.
-        /// </summary>
-        /// <param name="verticies2D">Verticies.</param>
-        /// <returns>Triangles.</returns>
-        public static int[] GetTriangles(List<MapPoint> verticies2D)
-        {
-            return Triangulator.Triangulate(verticies2D);
-        }
-
-        // TODO optimization: we needn't triangles for floor in case of building!
-        /// <summary>
-        ///     Gets triangles for 3D building.
-        /// </summary>
-        /// <param name="verticies2D">Verticies.</param>
-        /// <returns>Triangles.</returns>
-        public static int[] GetTriangles3D(List<MapPoint> verticies2D)
-        {
-            var verticiesLength = verticies2D.Count;
-            
-            var indecies = Triangulator.Triangulate(verticies2D);
-            
-            //var indecies = PolygonTriangulation.GetTriangles3D(verticies2D);
-            
-            var length = indecies.Length;
-
-            // add top
-            Array.Resize(ref indecies, length * 2);
-            for (var i = 0; i < length; i++)
-            {
-                indecies[i + length] = indecies[i] + verticiesLength;
-            }
-
-            // process square faces
-            var oldIndeciesLength = indecies.Length;
-            var faceTriangleCount = verticiesLength * 6;
-            Array.Resize(ref indecies, oldIndeciesLength + faceTriangleCount);
-
-            int j = 0;
-            for (var i = 0; i < verticiesLength; i++)
-            {
-                var nextPoint = i < (verticiesLength - 1) ? i + 1 : 0;
-                indecies[i + oldIndeciesLength + j] = i;
-                indecies[i + oldIndeciesLength + ++j] = nextPoint;
-                indecies[i + oldIndeciesLength + ++j] = i + verticiesLength;
-
-                indecies[i + oldIndeciesLength + ++j] = i + verticiesLength;
-                indecies[i + oldIndeciesLength + ++j] = nextPoint;
-                indecies[i + oldIndeciesLength + ++j] = nextPoint + verticiesLength;
-            }
-
-            return indecies;
-        }
-
         internal enum PolygonDirection
         {
             Unknown,

@@ -23,6 +23,8 @@ namespace ActionStreetMap.Infrastructure.Primitives
     public class DoubleKeyDictionary<K, T, V> : IEnumerable<DoubleKeyPairValue<K, T, V>>,
         IEquatable<DoubleKeyDictionary<K, T, V>>
     {
+        private readonly object _lockObj = new object();
+
         /// <summary>
         ///     The m_inner dictionary.
         /// </summary>
@@ -75,25 +77,26 @@ namespace ActionStreetMap.Infrastructure.Primitives
         ///     The value.
         /// </param>
         public void Add(K key1, T key2, V value)
-        {
-            if (OuterDictionary.ContainsKey(key1))
+        { 
+            lock (_lockObj)
             {
-                if (m_innerDictionary.ContainsKey(key2))
+                if (OuterDictionary.ContainsKey(key1))
                 {
-                    OuterDictionary[key1][key2] = value;
+                    if (m_innerDictionary.ContainsKey(key2))
+                        OuterDictionary[key1][key2] = value;
+                    else
+                    {
+                        m_innerDictionary = OuterDictionary[key1];
+                        m_innerDictionary.Add(key2, value);
+                        OuterDictionary[key1] = m_innerDictionary;
+                    }
                 }
                 else
                 {
-                    m_innerDictionary = OuterDictionary[key1];
-                    m_innerDictionary.Add(key2, value);
-                    OuterDictionary[key1] = m_innerDictionary;
+                    m_innerDictionary = new Dictionary<T, V>();
+                    m_innerDictionary[key2] = value;
+                    OuterDictionary.Add(key1, m_innerDictionary);
                 }
-            }
-            else
-            {
-                m_innerDictionary = new Dictionary<T, V>();
-                m_innerDictionary[key2] = value;
-                OuterDictionary.Add(key1, m_innerDictionary);
             }
         }
 
@@ -112,14 +115,10 @@ namespace ActionStreetMap.Infrastructure.Primitives
         public bool ContainsKey(K index1, T index2)
         {
             if (!OuterDictionary.ContainsKey(index1))
-            {
                 return false;
-            }
 
             if (!OuterDictionary[index1].ContainsKey(index2))
-            {
                 return false;
-            }
 
             return true;
         }
@@ -143,9 +142,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
             foreach (var outer in OuterDictionary)
             {
                 foreach (var inner in outer.Value)
-                {
-                    yield return new DoubleKeyPairValue<K, T, V>(outer.Key, inner.Key, inner.Value);
-                }
+                   yield return new DoubleKeyPairValue<K, T, V>(outer.Key, inner.Key, inner.Value);
             }
         }
 
@@ -162,9 +159,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
         {
             OuterDictionary[key1].Remove(key2);
             if (OuterDictionary[key1].Count == 0)
-            {
                 OuterDictionary.Remove(key1);
-            }
         }
 
         /// <summary>

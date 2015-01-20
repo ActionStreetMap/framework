@@ -21,7 +21,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders
         {
         }
 
-        protected override void CreateJunctionMesh(RoadJunction junction, RoadStyle style)
+        protected override void CreateJunctionMesh(RoadJunction junction, RoadStyle style, int[] polygonTriangles)
         {
         }
     }
