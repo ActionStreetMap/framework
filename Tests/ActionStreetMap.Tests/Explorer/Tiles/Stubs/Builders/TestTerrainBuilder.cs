@@ -14,8 +14,9 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders
     {
         [Dependency]
         public TestTerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider,
-            IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool)
-            : base(gameObjectFactory, resourceProvider, roadGraphBuilder, roadBuilder, objectPool)
+            IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool, 
+            HeightMapProcessor heightMapProcessor)
+            : base(gameObjectFactory, resourceProvider, roadGraphBuilder, roadBuilder, objectPool, heightMapProcessor)
         {
         }
 

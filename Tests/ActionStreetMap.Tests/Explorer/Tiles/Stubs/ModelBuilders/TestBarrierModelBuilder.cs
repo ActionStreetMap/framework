@@ -2,17 +2,19 @@
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Scene.Builders;
-using UnityEngine;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Models.Utils;
+
+using UnityEngine;
 
 namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.ModelBuilders
 {
     class TestBarrierModelBuilder: BarrierModelBuilder
     {
         [Dependency]
-        public TestBarrierModelBuilder(IObjectPool objectPool)
-            : base(objectPool)
+        public TestBarrierModelBuilder(HeightMapProcessor heightMapProcessor)
+            : base(heightMapProcessor)
         {
 
         }

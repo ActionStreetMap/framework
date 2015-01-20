@@ -44,7 +44,6 @@ namespace ActionStreetMap.Models.Roads
         private readonly IResourceProvider _resourceProvider;
         private readonly IObjectPool _objectPool;
         private readonly HeightMapProcessor _heightMapProcessor;
-        private readonly ThickLineBuilder _lineBuilder;
 
         /// <summary>
         ///     Creates RoadBuilder.
@@ -52,27 +51,26 @@ namespace ActionStreetMap.Models.Roads
         /// <param name="resourceProvider">Resource provider.</param>
         /// /// <param name="objectPool"Object pool.</param>
         [Dependency]
-        public RoadBuilder(IResourceProvider resourceProvider, IObjectPool objectPool)
+        public RoadBuilder(IResourceProvider resourceProvider, IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
         {
             _resourceProvider = resourceProvider;
             _objectPool = objectPool;
-            _heightMapProcessor = new HeightMapProcessor(objectPool);
-            _lineBuilder = new ThickLineBuilder(objectPool);
+            _heightMapProcessor = heightMapProcessor;
         }
 
         /// <inheritdoc />
         public void Build(HeightMap heightMap, Road road, RoadStyle style)
         {
             var lineElements = road.Elements.Select(e => new LineElement(e.Points, e.Width)).ToList();
-            _lineBuilder.Build(heightMap, lineElements, (p, t, u) => CreateRoadMesh(road, style, p, t, u));
+
+            using(var lineBuilder = new ThickLineBuilder(_objectPool, _heightMapProcessor))
+                lineBuilder.Build(heightMap, lineElements, (p, t, u) => CreateRoadMesh(road, style, p, t, u));
         }
 
         /// <inheritdoc />
         public void Build(HeightMap heightMap, RoadJunction junction, RoadStyle style)
         {
-            _heightMapProcessor.Recycle(heightMap);
             _heightMapProcessor.AdjustPolygon(junction.Polygon, junction.Center.Elevation);
-            _heightMapProcessor.Clear();
 
             var buffer = _objectPool.NewList<int>();
             var polygonTriangles = Triangulator.Triangulate(junction.Polygon, buffer);

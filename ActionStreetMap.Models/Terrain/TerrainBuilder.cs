@@ -92,14 +92,15 @@ namespace ActionStreetMap.Models.Terrain
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
         public TerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider, 
-            IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool)
+            IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool, 
+            HeightMapProcessor heightMapProcessor)
         {
             _gameObjectFactory = gameObjectFactory;
             _resourceProvider = resourceProvider;
             _roadBuilder = roadBuilder;
             _objectPool = objectPool;
             _roadGraphBuilder = roadGraphBuilder;
-            _heightMapProcessor = new HeightMapProcessor(objectPool);
+            _heightMapProcessor = heightMapProcessor;
         }
 
         #region ITerrainBuilder implementation
@@ -216,11 +217,8 @@ namespace ActionStreetMap.Models.Terrain
             // value can affect other models (e.g. water vs road)
             if (_elevations.Any())
             {
-                _heightMapProcessor.Recycle(heightMap);
-
                 foreach (var elevationArea in _elevations)
                     _heightMapProcessor.AdjustPolygon(elevationArea.Points, elevationArea.Elevation);
-                _heightMapProcessor.Clear();
             }
         }
 

@@ -13,7 +13,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
     /// <summary>
     ///     Builds thick 2D line in 3D space.
     /// </summary>
-    public class ThickLineBuilder
+    public class ThickLineBuilder: IDisposable
     {
         private const float MaxPointDistance = 8f;
 
@@ -22,17 +22,17 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         /// <summary>
         ///     Points.
         /// </summary>
-        protected List<Vector3> Points = new List<Vector3>(1024);
+        protected List<Vector3> Points;
 
         /// <summary>
         ///     Triangles.
         /// </summary>
-        protected List<int> Triangles = new List<int>(2048);
+        protected List<int> Triangles;
 
         /// <summary>
         ///     Uv map.
         /// </summary>
-        protected List<Vector2> Uv = new List<Vector2>(1024);
+        protected List<Vector2> Uv;
 
         /// <summary>
         ///     Current Triangle index.
@@ -52,15 +52,23 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         private LineElement _currentElement;
         private LineElement _nextElement;
 
+        private readonly IObjectPool _objectPool;
         private readonly HeightMapProcessor _heightMapProcessor;
 
         /// <summary>
         ///     Creates instance of <see cref="ThickLineBuilder"/>.
         /// </summary>
         /// <param name="objectPool"></param>
-        public ThickLineBuilder(IObjectPool objectPool)
+        /// <param name="heightMapProcessor"></param>
+        public ThickLineBuilder(IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
         {
-            _heightMapProcessor = new HeightMapProcessor(objectPool);
+            _objectPool = objectPool;
+            _heightMapProcessor = heightMapProcessor;
+
+            // TODO determine best initial size
+            Points = _objectPool.NewList<Vector3>(1024);
+            Triangles = _objectPool.NewList<int>(2048);
+            Uv = _objectPool.NewList<Vector2>(1024);
         }
 
         /// <summary>
@@ -90,16 +98,6 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             }
 
             builder(Points, Triangles, Uv);
-
-            // reset state defaults
-            _heightMap = null;
-            TrisIndex = 0;
-            _startPoints = null;
-            _currentElement = null;
-            _nextElement = null;
-            Points.Clear();
-            Triangles.Clear();
-            Uv.Clear();
         }
 
         #region Segment processing
@@ -303,12 +301,10 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
                 points = lineElement.Points;
             else
             {
-                _heightMapProcessor.Recycle(_heightMap);
                 // we should add intermediate points between given to follow elevation changes more smooth 
                 points = ThickLineUtils.GetIntermediatePoints(_heightMap, lineElement.Points, MaxPointDistance);
                 for (int i = 0; i < points.Count - 1; i++)
                     _heightMapProcessor.AdjustLine(points[i], points[i + 1], lineElement.Width);
-                _heightMapProcessor.Clear();
             }
 
             for (int i = 1; i < points.Count; i++)
@@ -318,5 +314,14 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            _heightMap = null;
+
+            _objectPool.Store(Points);
+            _objectPool.Store(Triangles);
+            _objectPool.Store(Uv);
+        }
     }
 }

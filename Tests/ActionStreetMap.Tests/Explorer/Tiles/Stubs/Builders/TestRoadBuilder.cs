@@ -11,8 +11,8 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders
     public class TestRoadBuilder: RoadBuilder
     {
         [Dependency]
-        public TestRoadBuilder(IResourceProvider resourceProvider, IObjectPool objectPool)
-            : base(resourceProvider, objectPool)
+        public TestRoadBuilder(IResourceProvider resourceProvider, IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
+            : base(resourceProvider, objectPool, heightMapProcessor)
         {
 
         }

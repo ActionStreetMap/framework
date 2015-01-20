@@ -33,10 +33,10 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         ///     Creates BuildingModelBuilder.
         /// </summary>
         [Dependency]
-        public BuildingModelBuilder(IBuildingBuilder builder, IObjectPool objectPool)
+        public BuildingModelBuilder(IBuildingBuilder builder, HeightMapProcessor heightMapProcessor)
         {
             _builder = builder;
-            _heightMapProcessor = new HeightMapProcessor(objectPool);
+            _heightMapProcessor = heightMapProcessor;
         }
 
         private const int NoValue = 0;
@@ -84,11 +84,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 footPrint[i].SetElevation(elevation);
             // NOTE do not adjust height map in case of positive minHeight
             if (!heightMap.IsFlat && Math.Abs(minHeight) < 0.5f)
-            {
-                _heightMapProcessor.Recycle(heightMap);
                 _heightMapProcessor.AdjustPolygon(footPrint, elevation);
-                _heightMapProcessor.Clear();
-            }
+
             return elevation;
         }
 

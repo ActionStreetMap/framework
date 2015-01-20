@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.Polygons;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Infrastructure.Dependencies;
 
 namespace ActionStreetMap.Models.Utils
 {
@@ -27,6 +28,7 @@ namespace ActionStreetMap.Models.Utils
         ///     Creates instace of <see cref="HeightMapProcessor" />.
         /// </summary>
         /// <param name="objectPool"></param>
+        [Dependency]
         public HeightMapProcessor(IObjectPool objectPool)
         {
             _objectPool = objectPool;

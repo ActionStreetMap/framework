@@ -14,6 +14,7 @@ using ActionStreetMap.Models.Roads;
 using ActionStreetMap.Models.Terrain;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
+using ActionStreetMap.Models.Utils;
 
 namespace ActionStreetMap.Explorer.Scene
 {
@@ -29,6 +30,7 @@ namespace ActionStreetMap.Explorer.Scene
         private readonly IModelBehaviour[] _behaviours;
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly IThemeProvider _themeProvider;
+        private readonly HeightMapProcessor _heightMapProcessor;
         private readonly Stylesheet _stylesheet;
 
         private Tile _tile;
@@ -40,7 +42,7 @@ namespace ActionStreetMap.Explorer.Scene
         public TileModelLoader(IGameObjectFactory gameObjectFactory, IThemeProvider themeProvider,
             IHeightMapProvider heighMapProvider, ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
             IEnumerable<IModelBuilder> builders, IEnumerable<IModelBehaviour> behaviours,
-            IObjectPool objectPool)
+            IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
         {
             _heighMapProvider = heighMapProvider;
             _terrainBuilder = terrainBuilder;
@@ -50,6 +52,7 @@ namespace ActionStreetMap.Explorer.Scene
             _behaviours = behaviours.ToArray();
             _gameObjectFactory = gameObjectFactory;
             _themeProvider = themeProvider;
+            _heightMapProcessor = heightMapProcessor;
             _stylesheet = stylesheetProvider.Get();
         }
 
@@ -60,6 +63,7 @@ namespace ActionStreetMap.Explorer.Scene
         {
             _tile = tile;
             _tile.GameObject = _gameObjectFactory.CreateNew("tile");
+            _heightMapProcessor.Recycle(_tile.HeightMap);
         }
 
         /// <inheritdoc />
@@ -139,6 +143,7 @@ namespace ActionStreetMap.Explorer.Scene
                 RoadStyleProvider = _themeProvider.Get().GetStyleProvider<IRoadStyleProvider>()
             });
 
+            _heightMapProcessor.Clear();
             _heighMapProvider.Store(_tile.HeightMap);
             _tile.HeightMap = null;
 

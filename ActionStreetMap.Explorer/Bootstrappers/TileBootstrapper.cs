@@ -4,6 +4,7 @@ using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Models.Utils;
 using ActionStreetMap.Osm;
 using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Index.Search;
@@ -53,6 +54,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
 
             // provides text search feature
             Container.Register(Component.For<ISearchEngine>().Use<SearchEngine>().Singleton());
+
+            Container.Register(Component.For<HeightMapProcessor>().Use<HeightMapProcessor>().Singleton());
             
             return true;
         }

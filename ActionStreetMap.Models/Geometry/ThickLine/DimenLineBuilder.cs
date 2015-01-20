@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ActionStreetMap.Core.Elevation;
 using UnityEngine;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Models.Utils;
 
 namespace ActionStreetMap.Models.Geometry.ThickLine
 {
@@ -21,8 +22,9 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         /// </summary>
         /// <param name="height">Line height.</param>
         /// <param name="objectPool">Object Pool.</param>
-        public DimenLineBuilder(float height, IObjectPool objectPool)
-            : base(objectPool)
+        /// <param name="heightMapProcessor">HeightMapProcessor.</param>
+        public DimenLineBuilder(float height, IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
+            : base(objectPool, heightMapProcessor)
         {
             Height = height;
         }

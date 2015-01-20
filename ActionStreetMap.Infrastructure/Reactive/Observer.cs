@@ -50,14 +50,14 @@ namespace ActionStreetMap.Infrastructure.Reactive
             {
                 if (isStopped == 0)
                 {
-                    try
+                    //try
                     {
                         onNext(value);
                     }
-                    catch
+                    //catch
                     {
-                        disposable.Dispose();
-                        throw;
+                    //    disposable.Dispose();
+                    //    throw;
                     }
                 }
             }
