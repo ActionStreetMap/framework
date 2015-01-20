@@ -5,11 +5,8 @@ using ActionStreetMap.Core.Scene.World.Buildings;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Models.Buildings;
 using ActionStreetMap.Models.Buildings.Roofs;
-using ActionStreetMap.Tests.Explorer.Tiles.Stubs;
-using ActionStreetMap.Tests.Explorer.Tiles.Stubs.Builders;
 using NUnit.Framework;
 using UnityEngine;
-using Rect = ActionStreetMap.Models.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Tests.Models.Buildings
 {
@@ -21,7 +18,7 @@ namespace ActionStreetMap.Tests.Models.Buildings
         {
             // ARRANGE
             var builder = new MansardRoofBuilder();
-
+            builder.ObjectPool = new ObjectPool();
             // ACT
             var meshData = builder.Build(new Building()
             {
