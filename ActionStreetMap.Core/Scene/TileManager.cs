@@ -31,7 +31,7 @@ namespace ActionStreetMap.Core.Scene
         private bool _allowAutoRemoval;
         private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
 
-        private readonly Tuple<int, int> _currentTileIndex = new Tuple<int, int>(0, 0);
+        private readonly MutableTuple<int, int> _currentTileIndex = new MutableTuple<int, int>(0, 0);
 
         private readonly ITileLoader _tileLoader;
         private readonly IMessageBus _messageBus;
@@ -205,7 +205,7 @@ namespace ActionStreetMap.Core.Scene
         /// <summary>
         ///     Gets next tile index. Also calls deactivate for tile which is adjusted from opposite site
         /// </summary>
-        private Tuple<int, int> GetNextTileIndex(Tile tile, MapPoint position, int i, int j)
+        private MutableTuple<int, int> GetNextTileIndex(Tile tile, MapPoint position, int i, int j)
         {
             // top
             if (GeometryUtils.IsPointInTreangle(position, tile.MapCenter, tile.TopLeft, tile.TopRight))
@@ -213,7 +213,7 @@ namespace ActionStreetMap.Core.Scene
                 Deactivate(i, j - 1);
                 Deactivate(i - 1, j - 1);
                 Deactivate(i + 1, j - 1);
-                return new Tuple<int, int>(i, j + 1);
+                return new MutableTuple<int, int>(i, j + 1);
             }
 
             // left
@@ -222,7 +222,7 @@ namespace ActionStreetMap.Core.Scene
                 Deactivate(i + 1, j);
                 Deactivate(i + 1, j + 1);
                 Deactivate(i + 1, j - 1);
-                return new Tuple<int, int>(i - 1, j);
+                return new MutableTuple<int, int>(i - 1, j);
             }
 
             // right
@@ -231,14 +231,14 @@ namespace ActionStreetMap.Core.Scene
                 Deactivate(i - 1, j);
                 Deactivate(i - 1, j + 1);
                 Deactivate(i - 1, j - 1);
-                return new Tuple<int, int>(i + 1, j);
+                return new MutableTuple<int, int>(i + 1, j);
             }
 
             // bottom
             Deactivate(i, j + 1);
             Deactivate(i - 1, j + 1);
             Deactivate(i + 1, j + 1);
-            return new Tuple<int, int>(i, j - 1);
+            return new MutableTuple<int, int>(i, j - 1);
         }
 
         #endregion

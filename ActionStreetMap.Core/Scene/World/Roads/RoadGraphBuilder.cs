@@ -37,8 +37,8 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         private readonly Dictionary<MapPoint, SortedList<RoadType, RoadJunction>> _junctionsMap = new Dictionary<MapPoint, SortedList<RoadType, RoadJunction>>(32);
 
         // point to index in RoadElement/index in Element.Points tuple
-        private readonly Dictionary<MapPoint, SortedList<RoadType, Tuple<RoadElement, int>>> _pointsMap = 
-            new Dictionary<MapPoint, SortedList<RoadType, Tuple<RoadElement, int>>>(256);
+        private readonly Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>> _pointsMap = 
+            new Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>>(256);
 
         /// <summary>
         ///     Gets or sets trace.
@@ -76,10 +76,10 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                 var point = el.Points[i];
 
                 if (!_pointsMap.ContainsKey(point))
-                    _pointsMap[point] = new SortedList<RoadType, Tuple<RoadElement, int>>();
+                    _pointsMap[point] = new SortedList<RoadType, MutableTuple<RoadElement, int>>();
 
                 if (!_pointsMap[point].ContainsKey(el.Type) && !_junctionsMap.ContainsKey(point))
-                    _pointsMap[point].Add(el.Type, new Tuple<RoadElement, int>(el, i));
+                    _pointsMap[point].Add(el.Type, new MutableTuple<RoadElement, int>(el, i));
                 else if (ShouldBeSplit(point, el))
                 {
                     var pointCount = el.Points.Count;
@@ -99,7 +99,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
         /// </summary>
         private void MergeRoads()
         {
-            var toBeRemovedJunctionKeys = new List<Tuple<MapPoint, RoadType>>();
+            var toBeRemovedJunctionKeys = new List<MutableTuple<MapPoint, RoadType>>();
             foreach (var pair in _junctionsMap)
             {
                 var list = pair.Value;
@@ -159,7 +159,7 @@ namespace ActionStreetMap.Core.Scene.World.Roads
                         }
                     }
 
-                    toBeRemovedJunctionKeys.Add(new Tuple<MapPoint, RoadType>(pair.Key, type));
+                    toBeRemovedJunctionKeys.Add(new MutableTuple<MapPoint, RoadType>(pair.Key, type));
                 }
                
             }

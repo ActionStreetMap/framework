@@ -20,7 +20,7 @@ namespace ActionStreetMap.Models.Geometry
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="points">Geo coordinates.</param>
         /// <returns>Tuple which represents circle: Item1 is diameter, Item2 is shpere center.</returns>
-        public static Tuple<float, MapPoint> GetCircle(GeoCoordinate relativeNullPoint, List<GeoCoordinate> points)
+        public static MutableTuple<float, MapPoint> GetCircle(GeoCoordinate relativeNullPoint, List<GeoCoordinate> points)
         {
             var minLat = points.Min(a => a.Latitude);
             var maxLat = points.Max(a => a.Latitude);
@@ -35,7 +35,7 @@ namespace ActionStreetMap.Models.Geometry
 
             var diameter = (float)((maxLat - minLat) * ConvertionCoefficient);
 
-            return new Tuple<float, MapPoint>(diameter, sphereCenter);
+            return new MutableTuple<float, MapPoint>(diameter, sphereCenter);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace ActionStreetMap.Models.Geometry
         /// </summary>
         /// <param name="points">Map points.</param>
         /// <returns>Tuple which represents circle: Item1 is diameter, Item2 is shpere center.</returns>
-        public static Tuple<float, MapPoint> GetCircle(List<MapPoint> points)
+        public static MutableTuple<float, MapPoint> GetCircle(List<MapPoint> points)
         {
             var minX = points.Min(a => a.X);
             var maxX = points.Max(a => a.X);
@@ -58,7 +58,7 @@ namespace ActionStreetMap.Models.Geometry
 
             var diameter = maxX - minX;
 
-            return new Tuple<float, MapPoint>(diameter, sphereCenter);
+            return new MutableTuple<float, MapPoint>(diameter, sphereCenter);
         }
     }
 }

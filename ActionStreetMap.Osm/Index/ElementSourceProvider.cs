@@ -45,7 +45,7 @@ namespace ActionStreetMap.Osm.Index
         private readonly IFileSystemService _fileSystemService;
         private SpatialIndex<string> _searchTree;
         private RTree<string> _insertTree;
-        private ActionStreetMap.Infrastructure.Primitives.Tuple<string, IElementSource> _elementSourceCache;
+        private ActionStreetMap.Infrastructure.Primitives.MutableTuple<string, IElementSource> _elementSourceCache;
 
         /// <summary>
         ///     Trace.
@@ -94,7 +94,7 @@ namespace ActionStreetMap.Osm.Index
                 if (_elementSourceCache != null)
                     _elementSourceCache.Item2.Dispose();
                 var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
-                _elementSourceCache = new ActionStreetMap.Infrastructure.Primitives.Tuple<string, IElementSource>(elementSourcePath, elementSource);
+                _elementSourceCache = new ActionStreetMap.Infrastructure.Primitives.MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
             }
 
             return _elementSourceCache.Item2;

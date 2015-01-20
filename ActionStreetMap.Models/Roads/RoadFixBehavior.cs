@@ -59,7 +59,7 @@ namespace ActionStreetMap.Models.Roads
         private Vector3 FindOutsidePoint(Road road, Vector3 collisionPoint)
         {
             // First, find indecies of road element and point which are the closest to collision point
-            var indecies = new Tuple<int, int>(0, 0);
+            var indecies = new MutableTuple<int, int>(0, 0);
             float minDistance = Single.MaxValue;
             for (int j = 0; j < road.Elements.Count; j++)
             {

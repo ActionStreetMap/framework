@@ -3,9 +3,9 @@
 namespace ActionStreetMap.Infrastructure.Primitives
 {
     /// <summary>
-    ///     Tuple implementation.
+    ///     MutableTuple implementation.
     /// </summary>
-    public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
+    public class MutableTuple<T1, T2> : IEquatable<MutableTuple<T1, T2>>
     {
         /// <summary>
         ///     Gets or sets first item.
@@ -18,11 +18,11 @@ namespace ActionStreetMap.Infrastructure.Primitives
         public T2 Item2 { get; set; }
 
         /// <summary>
-        ///     Creates Tuple.
+        ///     Creates MutableTuple.
         /// </summary>
         /// <param name="item1">First item.</param>
         /// <param name="item2">Second item.</param>
-        public Tuple(T1 item1, T2 item2)
+        public MutableTuple(T1 item1, T2 item2)
         {
             Item1 = item1;
             Item2 = item2;
@@ -41,11 +41,11 @@ namespace ActionStreetMap.Infrastructure.Primitives
             {
                 return false;
             }
-            return Equals((Tuple<T1, T2>)obj);
+            return Equals((MutableTuple<T1, T2>)obj);
         }
 
         /// <inheritdoc />
-        public bool Equals(Tuple<T1, T2> other)
+        public bool Equals(MutableTuple<T1, T2> other)
         {
             return other.Item1.Equals(Item1) && other.Item2.Equals(Item2);
         }

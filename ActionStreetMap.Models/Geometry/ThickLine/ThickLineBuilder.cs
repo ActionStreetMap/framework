@@ -44,7 +44,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         /// </summary>
         protected float Ratio = 20;
 
-        private Tuple<Vector3, Vector3> _startPoints;
+        private MutableTuple<Vector3, Vector3> _startPoints;
 
         private LineElement _currentElement;
         private LineElement _nextElement;
@@ -126,12 +126,12 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             if (segmentsCount == 1)
             {
                 AddTrapezoid(lineSegments[0].Left, lineSegments[0].Right);
-                _startPoints = new Tuple<Vector3, Vector3>(lineSegments[0].Right.End, lineSegments[0].Left.End);
+                _startPoints = new MutableTuple<Vector3, Vector3>(lineSegments[0].Right.End, lineSegments[0].Left.End);
             }
             else
             {
                 if (_startPoints == null)
-                    _startPoints = new Tuple<Vector3, Vector3>(lineSegments[0].Right.Start, lineSegments[0].Left.Start);
+                    _startPoints = new MutableTuple<Vector3, Vector3>(lineSegments[0].Right.Start, lineSegments[0].Left.Start);
 
                 for (int i = 1; i < segmentsCount; i++)
                 {
@@ -180,19 +180,19 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
                 {
                     case ThickLineHelper.Direction.Straight:
                         AddTrapezoid(second.Right.Start, second.Left.Start, second.Left.End, second.Right.End);
-                        _startPoints = new Tuple<Vector3, Vector3>(first.Right.End, first.Left.End);
+                        _startPoints = new MutableTuple<Vector3, Vector3>(first.Right.End, first.Left.End);
                         break;
                     case ThickLineHelper.Direction.Left:
                         nextIntersectionPoint = SegmentUtils.IntersectionPoint(first.Left, second.Left);
                         AddTrapezoid(_startPoints.Item1, _startPoints.Item2, nextIntersectionPoint, first.Right.End);
                         AddTriangle(first.Right.End, nextIntersectionPoint, second.Right.Start, true);
-                        _startPoints = new Tuple<Vector3, Vector3>(second.Right.Start, nextIntersectionPoint);
+                        _startPoints = new MutableTuple<Vector3, Vector3>(second.Right.Start, nextIntersectionPoint);
                         break;
                     case ThickLineHelper.Direction.Right:
                         nextIntersectionPoint = SegmentUtils.IntersectionPoint(first.Right, second.Right);
                         AddTrapezoid(_startPoints.Item1, _startPoints.Item2, first.Left.End, nextIntersectionPoint);
                         AddTriangle(first.Left.End, nextIntersectionPoint, second.Left.Start, false);
-                        _startPoints = new Tuple<Vector3, Vector3>(nextIntersectionPoint, second.Left.Start);
+                        _startPoints = new MutableTuple<Vector3, Vector3>(nextIntersectionPoint, second.Left.Start);
                         break;
                 }
             }
@@ -212,7 +212,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         private void StraightLineCase(ThickLineSegment first, ThickLineSegment second)
         {
             AddTrapezoid(_startPoints.Item1, _startPoints.Item2, first.Left.End, first.Right.End);
-            _startPoints = new Tuple<Vector3, Vector3>(first.Right.End, first.Left.End);
+            _startPoints = new MutableTuple<Vector3, Vector3>(first.Right.End, first.Left.End);
         }
 
         private void TurnRightCase(ThickLineSegment first, ThickLineSegment second)
@@ -220,7 +220,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             var intersectionPoint = SegmentUtils.IntersectionPoint(first.Right, second.Right);
             AddTrapezoid(_startPoints.Item1, _startPoints.Item2, first.Left.End, intersectionPoint);
             AddTriangle(first.Left.End, intersectionPoint, second.Left.Start, false);
-            _startPoints = new Tuple<Vector3, Vector3>(intersectionPoint, second.Left.Start);
+            _startPoints = new MutableTuple<Vector3, Vector3>(intersectionPoint, second.Left.Start);
         }
 
         private void TurnLeftCase(ThickLineSegment first, ThickLineSegment second)
@@ -228,7 +228,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             var intersectionPoint = SegmentUtils.IntersectionPoint(first.Left, second.Left);
             AddTrapezoid(_startPoints.Item1, _startPoints.Item2, intersectionPoint, first.Right.End);
             AddTriangle(first.Right.End, intersectionPoint, second.Right.Start, true);
-            _startPoints = new Tuple<Vector3, Vector3>(second.Right.Start, intersectionPoint);
+            _startPoints = new MutableTuple<Vector3, Vector3>(second.Right.Start, intersectionPoint);
         }
 
         #endregion

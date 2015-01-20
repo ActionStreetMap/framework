@@ -62,8 +62,8 @@ namespace ActionStreetMap.Models.Buildings.Roofs
             var centerSegment = new Segment(p1, p2);
 
             // 5. detect segments which have intesection with center line
-            Tuple<int, Vector3> firstIntersect;
-            Tuple<int, Vector3> secondIntersect;
+            MutableTuple<int, Vector3> firstIntersect;
+            MutableTuple<int, Vector3> secondIntersect;
             DetectIntersectSegments(polygon, centerSegment, out firstIntersect, out secondIntersect);
             if (firstIntersect.Item1 == -1 || secondIntersect.Item1 == -1)
                 throw new AlgorithmException(String.Format(Strings.GabledRoofGenFailed, building.Id));
@@ -107,11 +107,11 @@ namespace ActionStreetMap.Models.Buildings.Roofs
         }
 
         private void DetectIntersectSegments(Polygon polygon, Segment centerSegment, 
-            out Tuple<int, Vector3> firstIntersect, 
-            out Tuple<int, Vector3> secondIntersect)
+            out MutableTuple<int, Vector3> firstIntersect, 
+            out MutableTuple<int, Vector3> secondIntersect)
         {
-            firstIntersect = new Tuple<int, Vector3>(-1, new Vector3());
-            secondIntersect = new Tuple<int, Vector3>(-1, new Vector3());
+            firstIntersect = new MutableTuple<int, Vector3>(-1, new Vector3());
+            secondIntersect = new MutableTuple<int, Vector3>(-1, new Vector3());
             for (int i = 0; i < polygon.Segments.Length; i++)
             {
                 var segment = polygon.Segments[i];
@@ -133,8 +133,8 @@ namespace ActionStreetMap.Models.Buildings.Roofs
             }
         }
 
-        private void FillMeshData(Polygon polygon, Tuple<int, Vector3> firstIntersect,
-            Tuple<int, Vector3> secondIntersect, Context context)
+        private void FillMeshData(Polygon polygon, MutableTuple<int, Vector3> firstIntersect,
+            MutableTuple<int, Vector3> secondIntersect, Context context)
         {
             var count = polygon.Segments.Length;
             int i = secondIntersect.Item1;

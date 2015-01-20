@@ -11,7 +11,7 @@ namespace ActionStreetMap.Models.Geometry.Polygons
     /// </summary>
     internal class StraightSkeleton
     {
-        public static Tuple<List<Vector2>, List<Vector2>> Calculate(List<MapPoint> polygon)
+        public static MutableTuple<List<Vector2>, List<Vector2>> Calculate(List<MapPoint> polygon)
         {
             var context = new SkeletonContext();
             context.OriginalPoints = polygon;
@@ -36,7 +36,7 @@ namespace ActionStreetMap.Models.Geometry.Polygons
 
             CalculateTriangles(context);
 
-            return new Tuple<List<Vector2>, List<Vector2>>(context.ResultPoints, context.InteriorPoints);
+            return new MutableTuple<List<Vector2>, List<Vector2>>(context.ResultPoints, context.InteriorPoints);
         }
 
         private static void CalculateTriangles(SkeletonContext context)

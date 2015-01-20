@@ -26,7 +26,7 @@ namespace ActionStreetMap.Osm.Index.Import
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
         private SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
 
-        private List<Tuple<Relation, Envelop>> _relations = new List<Tuple<Relation, Envelop>>(10240);
+        private List<MutableTuple<Relation, Envelop>> _relations = new List<MutableTuple<Relation, Envelop>>(10240);
         private HashSet<long> _skippedRelations = new HashSet<long>();
 
         private RTree<uint> _tree;
@@ -218,7 +218,7 @@ namespace ActionStreetMap.Osm.Index.Import
                 // TODO merge tags?
                 member.Offset = memberOffset;
             }
-            _relations.Add(new Tuple<Relation, Envelop>(relation, envelop));
+            _relations.Add(new MutableTuple<Relation, Envelop>(relation, envelop));
        }
 
         private void FinishRelaitonProcessing()
