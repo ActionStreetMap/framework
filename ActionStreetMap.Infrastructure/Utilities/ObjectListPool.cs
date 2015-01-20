@@ -7,6 +7,7 @@ namespace ActionStreetMap.Infrastructure.Utilities
     /// </summary>
     public class ObjectListPool<T>
     {
+        private readonly object _lockObj = new object();
         private readonly Stack<List<T>> _objectStack;
         private readonly int _listSize;
 
@@ -27,10 +28,13 @@ namespace ActionStreetMap.Infrastructure.Utilities
         /// <returns>List.</returns>
         public List<T> New()
         {
-            if (_objectStack.Count > 0)
+            lock (_lockObj)
             {
-                var list = _objectStack.Pop();
-                return list;
+                if (_objectStack.Count > 0)
+                {
+                    var list = _objectStack.Pop();
+                    return list;
+                }
             }
             return new List<T>(_listSize);
         }
@@ -42,7 +46,10 @@ namespace ActionStreetMap.Infrastructure.Utilities
         public void Store(List<T> list)
         {
             list.Clear();
-            _objectStack.Push(list);
+            lock (_lockObj)
+            {
+                _objectStack.Push(list);
+            }
         }
     }
 }
