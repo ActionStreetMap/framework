@@ -9,10 +9,5 @@ namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs
         {
             return new TestGameObject();
         }
-
-        public override IGameObject CreatePrimitive(string name, UnityPrimitiveType type)
-        {
-            return new TestGameObject();
-        }
     }
 }

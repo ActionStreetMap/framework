@@ -1,25 +1,40 @@
-﻿using ActionStreetMap.Core.Unity;
+﻿using System;
+using ActionStreetMap.Core.Unity;
 using UnityEngine;
 
 namespace ActionStreetMap.Models.Utils
 {
     internal class GameObjectWrapper : IGameObject
     {
-        private readonly GameObject _gameObject;
+        private readonly string _name;
+        private GameObject _gameObject;
 
         public GameObjectWrapper(string name, GameObject gameObject)
         {
             _gameObject = gameObject;
             _gameObject.name = name;
+            _name = name;
+        }
+
+        public GameObjectWrapper(string name)
+        {
+            _name = name;
+        }
+
+        public T AddComponent<T>(T component)
+        {
+            if (typeof (T).IsAssignableFrom(typeof (GameObject)))
+            {
+                _gameObject = component as GameObject;
+                _gameObject.name = _name;
+            }
+
+            return component;
         }
 
         public T GetComponent<T>()
         {
-            if (!typeof(T).IsAssignableFrom(typeof (GameObject)))
-                return (T) (object)_gameObject.GetComponent(typeof(T));
-            
-            // This is workaround to make code unit-tesable outside Unity context
-            return (T) (object) _gameObject;
+            throw new NotSupportedException();
         }
 
         public string Name { get; set; }

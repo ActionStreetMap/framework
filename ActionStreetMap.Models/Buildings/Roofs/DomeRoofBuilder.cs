@@ -38,7 +38,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
         /// <inheritdoc />
         public MeshData Build(Building building, BuildingStyle style)
         {
-            IGameObject gameObjectWrapper = _gameObjectFactory.CreatePrimitive(Name, UnityPrimitiveType.Sphere);
+            IGameObject gameObjectWrapper = _gameObjectFactory.CreateNew(Name);
 
             var tuple = CircleUtils.GetCircle(building.Footprint);
 
@@ -70,7 +70,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
         /// <param name="style">Building style.</param>
         protected virtual void ProcessObject(IGameObject gameObjectWrapper, MapPoint center, float diameter, BuildingStyle style)
         {
-            var sphere = gameObjectWrapper.GetComponent<GameObject>();
+            var sphere = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Sphere));
             sphere.transform.localScale = new Vector3(diameter, diameter, diameter);
             sphere.transform.position = new Vector3(center.X, center.Elevation, center.Y);
 

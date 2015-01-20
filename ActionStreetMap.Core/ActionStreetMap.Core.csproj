@@ -95,7 +95,6 @@
     <Compile Include="Unity\IGameObjectFactory.cs" />
     <Compile Include="IPositionListener.cs" />
     <Compile Include="MapPoint.cs" />
-    <Compile Include="Unity\UnityPrimitiveType.cs" />
     <Compile Include="Scene\World\Buildings\Building.cs" />
     <Compile Include="Scene\World\Infos\Info.cs" />
     <Compile Include="Scene\TileRegistry.cs" />

@@ -1,12 +1,18 @@
-﻿using ActionStreetMap.Core.Unity;
+﻿using System;
+using ActionStreetMap.Core.Unity;
 
 namespace ActionStreetMap.Tests.Explorer.Tiles.Stubs
 {
     class TestGameObject: IGameObject
     {
+        public T AddComponent<T>(T component)
+        {
+            return component;
+        }
+
         public T GetComponent<T>()
         {
-            return default(T);
+            throw new NotSupportedException();
         }
 
         public string Name { get; set; }

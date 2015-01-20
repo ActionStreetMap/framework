@@ -39,8 +39,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var actualHeight = (height - minHeight) / 2;
 
-            var gameObjectWrapper = GameObjectFactory.CreatePrimitive(String.Format("Cylinder {0}", area),
-                UnityPrimitiveType.Cylinder);
+            var gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("Cylinder {0}", area));
 
             tile.Registry.RegisterGlobal(area.Id);
 
@@ -53,7 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         protected virtual IGameObject BuildCylinder(IGameObject gameObjectWrapper, Rule rule, Model model,
             MapPoint cylinderCenter, float diameter, float actualHeight, float heightOffset)
         {
-            var cylinder = gameObjectWrapper.GetComponent<GameObject>();
+            var cylinder = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Cylinder));
 
             cylinder.transform.localScale = new Vector3(diameter, actualHeight, diameter);
             cylinder.transform.position = new Vector3(cylinderCenter.X, heightOffset + actualHeight, cylinderCenter.Y);

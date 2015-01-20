@@ -35,8 +35,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var elevation = tile.HeightMap.LookupHeight(sphereCenter);
 
-            IGameObject gameObjectWrapper = GameObjectFactory.CreatePrimitive(String.Format("Sphere {0}", area),
-                UnityPrimitiveType.Sphere);
+            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("Sphere {0}", area));
 
             tile.Registry.RegisterGlobal(area.Id);
 
@@ -49,7 +48,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         protected virtual IGameObject BuildSphere(IGameObject gameObjectWrapper, Rule rule, Model model, 
             MapPoint sphereCenter, float diameter, float heightOffset)
         {
-            var sphere = gameObjectWrapper.GetComponent<GameObject>();
+            var sphere = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Sphere));
             sphere.isStatic = true;
             sphere.renderer.sharedMaterial = rule.GetMaterial(ResourceProvider);
 

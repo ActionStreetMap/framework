@@ -6,6 +6,14 @@
     public interface IGameObject
     {
         /// <summary>
+        ///     Adds component to game object.
+        /// </summary>
+        /// <typeparam name="T">Type of component</typeparam>
+        /// <param name="component">Component.</param>
+        /// <returns>Component.</returns>
+        T AddComponent<T>(T component);
+
+        /// <summary>
         ///     Gets component of given type.
         /// </summary>
         /// <typeparam name="T">Type.</typeparam>

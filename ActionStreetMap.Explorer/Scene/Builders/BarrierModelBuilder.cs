@@ -69,7 +69,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule,
             List<Vector3> p, List<int> t, List<Vector2> u)
         {
-            var gameObject = gameObjectWrapper.GetComponent<GameObject>();
+            var gameObject = gameObjectWrapper.AddComponent(new GameObject());
 
             Mesh mesh = new Mesh();
             mesh.vertices = p.ToArray();

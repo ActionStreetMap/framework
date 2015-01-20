@@ -37,8 +37,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             };
             var style = ThemeProvider.Get().GetInfoStyle(info);
 
-            var gameObjectWrapper = GameObjectFactory
-              .CreatePrimitive(String.Format("info {0}", node), UnityPrimitiveType.Cube);
+            var gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("info {0}", node));
 
             var zIndex = rule.GetZIndex();
             mapPoint.Elevation = tile.HeightMap.LookupHeight(mapPoint);
@@ -54,7 +53,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         protected virtual void BuildObject(Tile tile, IGameObject gameObjectWrapper, Info info, 
             InfoStyle style, MapPoint mapPoint, float zIndex)
         {
-            var gameObject = gameObjectWrapper.GetComponent<GameObject>();
+            var gameObject = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Cube));
             var transform = gameObject.transform;
             transform.position = new Vector3(mapPoint.X, mapPoint.Elevation + zIndex, mapPoint.Y);
             // TODO define size 

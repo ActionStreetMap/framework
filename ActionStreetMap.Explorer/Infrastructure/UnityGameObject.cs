@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Core.Unity;
+﻿using System;
+using ActionStreetMap.Core.Unity;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Infrastructure
@@ -8,7 +9,8 @@ namespace ActionStreetMap.Explorer.Infrastructure
     /// </summary>
     public class UnityGameObject : IGameObject
     {
-        private readonly GameObject _gameObject;
+        private readonly string _name;
+        private GameObject _gameObject;
 
         /// <summary>
         ///     Creates UnityGameObject. Internally creates Unity's GameObject with given name.
@@ -16,7 +18,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <param name="name">Name.</param>
         public UnityGameObject(string name)
         {
-            _gameObject = new GameObject(name);
+            _name = name;
         }
 
         /// <summary>
@@ -31,10 +33,21 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <inheritdoc />
+        public T AddComponent<T>(T component)
+        {
+            // work-around to run Unity-specific
+            if (typeof(T).IsAssignableFrom(typeof(GameObject)))
+            {
+                _gameObject = component as GameObject;
+                _gameObject.name = _name;
+            }
+            return component;
+        }
+
+        /// <inheritdoc />
         public T GetComponent<T>()
         {
-            // This is workaround to make code unit-tesable outside Unity context
-            return (T) (object) _gameObject;
+            throw new NotSupportedException();
         }
 
         /// <inheritdoc />

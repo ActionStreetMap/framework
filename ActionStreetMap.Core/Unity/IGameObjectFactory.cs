@@ -24,14 +24,6 @@ namespace ActionStreetMap.Core.Unity
         IGameObject CreateNew(string name, IGameObject parent);
 
         /// <summary>
-        ///     Creates new game object primitive with given name.
-        /// </summary>
-        /// <param name="name">Name.</param>
-        /// <param name="type">Primitive type.</param>
-        /// <returns>Game object wrapper.</returns>
-        IGameObject CreatePrimitive(string name, UnityPrimitiveType type);
-
-        /// <summary>
         ///     Wraps existing Unity's game object.
         /// </summary>
         /// <param name="name">Name.</param>
