@@ -153,25 +153,37 @@ namespace ActionStreetMap.Models.Terrain
         /// <inheritdoc />
         public void AddRoadElement(RoadElement roadElement)
         {
-            _roadGraphBuilder.Add(roadElement);
+            lock (_roadGraphBuilder)
+            {
+                _roadGraphBuilder.Add(roadElement);
+            }
         }
 
         /// <inheritdoc />
         public void AddArea(AreaSettings areaSettings)
         {
-            _areas.Add(areaSettings);
+            lock (_areas)
+            {
+                _areas.Add(areaSettings);
+            }
         }
 
         /// <inheritdoc />
         public void AddElevation(AreaSettings areaSettings)
         {
-           _elevations.Add(areaSettings);
+            lock (_elevations)
+            {
+                _elevations.Add(areaSettings);
+            }
         }
 
         /// <inheritdoc />
         public void AddTree(TreeDetail tree)
         {
-            _trees.Add(tree);
+            lock (_trees)
+            {
+                _trees.Add(tree);
+            }
         }
 
         #endregion
