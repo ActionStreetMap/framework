@@ -199,30 +199,39 @@ namespace ActionStreetMap.Models.Terrain
             var roadStyleProvider = settings.RoadStyleProvider;
 
             var roadGraph = _roadGraphBuilder.Build();
+
             // build roads
-            foreach (var road in roadGraph.Roads)
-            {
-                var element = road.Elements.First();
-                road.GameObject = _gameObjectFactory
-                    .CreateNew(String.Format("road [{0}]:{1}", element.Id, element.Type), settings.Tile.GameObject);
-                _roadBuilder.Build(heightMap, road, roadStyleProvider.Get(road));               
-            }
+            var roadObservable = roadGraph.Roads.ToObservable();
+            roadObservable.Subscribe(road =>
+                {
+                    var element = road.Elements.First();
+                    road.GameObject = _gameObjectFactory
+                        .CreateNew(String.Format("road [{0}]:{1}", element.Id, element.Type), settings.Tile.GameObject);
+                    _roadBuilder.Build(heightMap, road, roadStyleProvider.Get(road));
+                });
+
             // build road junctions
-            foreach (var junction in roadGraph.Junctions)
+            var junctionObservable = roadGraph.Junctions.ToObservable();
+            junctionObservable.Subscribe(junction =>
             {
                 junction.GameObject = _gameObjectFactory
                     .CreateNew(String.Format("junction: {0}", junction.Center), settings.Tile.GameObject);
-                Console.WriteLine(String.Format("junction: {0}", junction.Center));
+                Console.WriteLine("junction: {0}", junction.Center);
                 _roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
-            }
+            });
+
+            // TODO wait for junctions as well
+            roadObservable.Wait();
 
             // process elevations
             // NOTE We have to do this in the last order. Otherwise, new height
             // value can affect other models (e.g. water vs road)
             if (_elevations.Any())
             {
-                foreach (var elevationArea in _elevations)
-                    _heightMapProcessor.AdjustPolygon(elevationArea.Points, elevationArea.Elevation);
+                var elevationObservable = _elevations.ToObservable();
+                elevationObservable.Subscribe(elevationArea =>
+                    _heightMapProcessor.AdjustPolygon(elevationArea.Points, elevationArea.Elevation));
+                elevationObservable.Wait();
             }
         }
 
