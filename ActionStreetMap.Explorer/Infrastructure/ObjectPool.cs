@@ -29,7 +29,13 @@ namespace ActionStreetMap.Explorer.Infrastructure
         {
             Type type = typeof(T);
             if (!_listPoolMap.ContainsKey(type))
-                _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
+            {
+                lock (_listPoolMap)
+                {
+                    if (!_listPoolMap.ContainsKey(type))
+                        _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
+                }
+            }
 
             return (_listPoolMap[type] as ObjectListPool<T>).New() as List<T>;
         }
@@ -46,7 +52,13 @@ namespace ActionStreetMap.Explorer.Infrastructure
         {
             Type type = typeof(T);
             if (!_listPoolMap.ContainsKey(type))
-                _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
+            {
+                lock (_listPoolMap)
+                {
+                    if (!_listPoolMap.ContainsKey(type))
+                        _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
+                }
+            }
 
             (_listPoolMap[type] as ObjectListPool<T>).Store(list);
         }
