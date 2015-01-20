@@ -48,14 +48,12 @@ namespace ActionStreetMap.Osm
 
             _filterElementVisitor.BoundingBox = tile.BoundingBox;
             var source = elementSource.Get(tile.BoundingBox).ObserveOn(Scheduler.ThreadPool);
-            source.Subscribe(element =>
-            {
-                System.Console.WriteLine("accept:{0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
-                element.Accept(_filterElementVisitor);
-            },
-            () => (new Canvas()).Accept(_modelVisitor));
-            //source.Wait();
-            System.Console.ReadKey();
+            source.Subscribe(
+                element => element.Accept(_filterElementVisitor),
+                _ => (new Canvas()).Accept(_modelVisitor));
+
+            // TODO block thread until we done or leave it?
+            source.Wait();
         }
     }
 }

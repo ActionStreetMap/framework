@@ -58,11 +58,7 @@ namespace ActionStreetMap.Osm.Index
         {
             return SpatialIndexTree.Search(new Envelop(bbox.MinPoint, bbox.MaxPoint))
                 .ObserveOn(Scheduler.CurrentThread)
-                .Select((offset) =>
-                {
-                    Console.WriteLine("offset:{0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
-                    return ElementStore.Get(offset);
-                });
+                .Select((offset) => ElementStore.Get(offset));
         }
 
         /// <inheritdoc />

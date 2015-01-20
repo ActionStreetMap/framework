@@ -19,14 +19,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         private readonly List<Style>  _combinedStyles = new List<Style>(16);
 
         private int _count;
-
-        public int Count
-        {
-            get
-            {
-                return _count;
-            }
-        }
+        public int Count { get { return _count; } }
 
         public void Add(Style style)
         {

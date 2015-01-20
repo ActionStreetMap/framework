@@ -100,7 +100,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
         private Segment GetLongestSegment(List<MapPoint> footprint, out float length)
         {
             var result = _objectPool.NewList<MapPoint>();
-            PolygonUtils.Simplify(footprint, result, 1);
+            PolygonUtils.Simplify(footprint, result, 1, _objectPool);
             var polygon = new Polygon(result);
             Segment longestSegment = null;
             length = 0;

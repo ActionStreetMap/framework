@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Geometry.Polygons
 {
@@ -9,11 +10,10 @@ namespace ActionStreetMap.Models.Geometry.Polygons
     /// </summary>
     internal class DouglasPeuckerReduction
     {
-        private static List<Int32> _pointIndexsToKeep = new List<Int32>(128);
         /// <summary>
         ///     Reduces the number of points
         /// </summary>
-        public static void Reduce(List<MapPoint> source, List<MapPoint> destination, Double tolerance)
+        public static void Reduce(List<MapPoint> source, List<MapPoint> destination, Double tolerance, IObjectPool objectPool)
         {
             if (source == null || source.Count < 3)
             {
@@ -23,34 +23,35 @@ namespace ActionStreetMap.Models.Geometry.Polygons
 
             Int32 firstPoint = 0;
             Int32 lastPoint = source.Count - 1;
-            _pointIndexsToKeep.Clear();
+            var pointIndexsToKeep = objectPool.NewList<int>(128);
 
             //Add the first and last index to the keepers
-            _pointIndexsToKeep.Add(firstPoint);
-            _pointIndexsToKeep.Add(lastPoint);
+            pointIndexsToKeep.Add(firstPoint);
+            pointIndexsToKeep.Add(lastPoint);
 
             //The first and the last point can not be the same
             while (source[firstPoint].Equals(source[lastPoint]))
                 lastPoint--;
 
-            Reduce(source, firstPoint, lastPoint, tolerance);
+            Reduce(source, firstPoint, lastPoint, tolerance, pointIndexsToKeep);
 
-            _pointIndexsToKeep.Sort();
+            pointIndexsToKeep.Sort();
 
-            for (int i = 0; i < _pointIndexsToKeep.Count; i++)
+            for (int i = 0; i < pointIndexsToKeep.Count; i++)
             {
-                var index = _pointIndexsToKeep[i];
+                var index = pointIndexsToKeep[i];
                 // NOTE do not add items twice due to bug in implementation
-                if (i > 0 && _pointIndexsToKeep[i - 1] == _pointIndexsToKeep[i])
+                if (i > 0 && pointIndexsToKeep[i - 1] == pointIndexsToKeep[i])
                     continue;
                 destination.Add(source[index]);
             }
+            objectPool.Store(pointIndexsToKeep);
         }
 
         /// <summary>
         ///     Douglases the peucker reduction.
         /// </summary>
-        private static void Reduce(List<MapPoint> source, Int32 firstPoint, Int32 lastPoint, Double tolerance)
+        private static void Reduce(List<MapPoint> source, Int32 firstPoint, Int32 lastPoint, Double tolerance, List<int> pointIndexsToKeep)
         {
             Double maxDistance = 0;
             Int32 indexFarthest = 0;
@@ -68,13 +69,13 @@ namespace ActionStreetMap.Models.Geometry.Polygons
          
             if (maxDistance > tolerance && indexFarthest != 0
                 // NOTE second rule is perventing stack overflow due to bug in implementation
-                && _pointIndexsToKeep.Count <= source.Count) 
+                && pointIndexsToKeep.Count <= source.Count) 
             {
                 //Add the largest point that exceeds the tolerance
-                _pointIndexsToKeep.Add(indexFarthest);
+                pointIndexsToKeep.Add(indexFarthest);
 
-                Reduce(source, firstPoint, indexFarthest, tolerance);
-                Reduce(source, indexFarthest, lastPoint, tolerance);
+                Reduce(source, firstPoint, indexFarthest, tolerance, pointIndexsToKeep);
+                Reduce(source, indexFarthest, lastPoint, tolerance, pointIndexsToKeep);
             }
         }
 

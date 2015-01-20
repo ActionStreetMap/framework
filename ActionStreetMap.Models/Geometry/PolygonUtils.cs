@@ -149,9 +149,9 @@ namespace ActionStreetMap.Models.Geometry
         /// <param name="source">Source.</param>
         /// <param name="destination">Destination.</param>
         /// <param name="tolerance">Tolerance.</param>
-        public static void Simplify(List<MapPoint> source, List<MapPoint> destination, float tolerance)
+        public static void Simplify(List<MapPoint> source, List<MapPoint> destination, float tolerance, IObjectPool objectPool)
         {
-            DouglasPeuckerReduction.Reduce(source, destination, tolerance);
+            DouglasPeuckerReduction.Reduce(source, destination, tolerance, objectPool);
         }
     }
 }

@@ -21,13 +21,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         /// <summary>
         ///     Count of styles in collection.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _styles.Count;
-            }
-        }
+        public int Count { get { return _styles.Count; } }
 
         /// <summary>
         ///     Gets rule for model.

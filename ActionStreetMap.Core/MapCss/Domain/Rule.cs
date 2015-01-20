@@ -10,11 +10,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
     public class Rule
     {
         private Model _model;
-
-        internal Model Model
-        {
-            set { _model = value; }
-        }
+        internal Model Model { set { _model = value; } }
 
         /// <summary>
         ///     List of declarations.
@@ -34,10 +30,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         /// <summary>
         ///     Checks whether this rule can be used
         /// </summary>
-        public bool IsApplicable
-        {
-            get { return Declarations.Count > 0; }
-        }
+        public bool IsApplicable { get { return Declarations.Count > 0; } }
 
         /// <summary>
         ///     Evaluates value for gived qualifier. If not possible, returns default
