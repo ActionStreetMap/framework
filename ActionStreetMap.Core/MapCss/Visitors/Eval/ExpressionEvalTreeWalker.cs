@@ -16,6 +16,8 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
     /// </summary>
     public sealed class ExpressionEvalTreeWalker: ITreeWalker
     {
+        private readonly object _lockObj = new object();
+
         private OperationStack _opStack;
         private ParameterExpression _param = Expression.Parameter(typeof(Model), "model");
         private CommonTree _tree;
@@ -37,24 +39,30 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
             if (_compiledLambda != null)
                 return (_compiledLambda as Func<Model, T>).Invoke(model);
 
-            var operation = _tree.Children[0] as CommonTree;
+            lock (_lockObj)
+            {
+                 if (_compiledLambda != null)
+                     return (_compiledLambda as Func<Model, T>).Invoke(model);
 
-            VisitOperation(operation);
+                var operation = _tree.Children[0] as CommonTree;
 
-            var expression = _opStack.Pop();
+                VisitOperation(operation);
 
-            Expression<Func<Model, T>> lambda = Expression.Lambda<Func<Model, T>>(
-                    expression, new[] { _param });
+                var expression = _opStack.Pop();
 
-            var compiledLambda = lambda.Compile();
-            
-            // cache compiled lambda expression
-            _compiledLambda = compiledLambda;
-            // clear state
-            _tree = null;
-            _param = null;
-            _opStack = null;
-            return compiledLambda.Invoke(model);
+                Expression<Func<Model, T>> lambda = Expression.Lambda<Func<Model, T>>(
+                    expression, new[] {_param});
+
+                var compiledLambda = lambda.Compile();
+
+                // cache compiled lambda expression
+                _compiledLambda = compiledLambda;
+                // clear state
+                _tree = null;
+                _param = null;
+                _opStack = null;
+                return compiledLambda.Invoke(model);
+            }
         }
 
         private void VisitOperation(CommonTree tree)

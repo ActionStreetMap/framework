@@ -49,7 +49,8 @@ namespace ActionStreetMap.Models.Roads
         ///     Creates RoadBuilder.
         /// </summary>
         /// <param name="resourceProvider">Resource provider.</param>
-        /// /// <param name="objectPool"Object pool.</param>
+        /// <param name="objectPool">Object pool.</param>
+        /// <param name="heightMapProcessor">Height map processor.</param>
         [Dependency]
         public RoadBuilder(IResourceProvider resourceProvider, IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
         {
@@ -114,6 +115,7 @@ namespace ActionStreetMap.Models.Roads
         /// </summary>
         /// <param name="junction">Road junction.</param>
         /// <param name="style">Road style.</param>
+        /// <param name="polygonTriangles">Polygon triangles.</param>
         protected virtual void CreateJunctionMesh(RoadJunction junction, RoadStyle style, int[] polygonTriangles)
         {
             Mesh mesh = new Mesh();

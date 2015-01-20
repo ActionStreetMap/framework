@@ -90,6 +90,7 @@ namespace ActionStreetMap.Models.Terrain
         /// <param name="roadGraphBuilder">Road graph builder.</param>
         /// <param name="roadBuilder">Road builder.</param>
         /// <param name="objectPool">Object pool.</param>
+        /// <param name="heightMapProcessor">Heightmap processor.</param>
         [Dependency]
         public TerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider, 
             IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool, 

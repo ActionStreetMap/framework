@@ -17,7 +17,9 @@ namespace ActionStreetMap.Models.Geometry.Polygons
         /// <param name="mapPointBuffer">Polygon points.</param>
         /// <param name="size"></param>
         /// <param name="fillAction">Fill action.</param>
-        public static void Fill(List<MapPoint> mapPointBuffer, int size, Action<int,int,int> fillAction, IObjectPool objectPool)
+        /// <param name="objectPool"></param>
+        public static void Fill(List<MapPoint> mapPointBuffer, int size, Action<int,int,int> fillAction, 
+            IObjectPool objectPool)
         {
             var scanLineStart = int.MaxValue;
             var scanLineEnd = int.MinValue;

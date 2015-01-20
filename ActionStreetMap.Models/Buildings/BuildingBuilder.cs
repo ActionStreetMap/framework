@@ -4,6 +4,7 @@ using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Scene.World.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Buildings.Roofs;
 using ActionStreetMap.Models.Utils;
 using UnityEngine;
@@ -29,19 +30,19 @@ namespace ActionStreetMap.Models.Buildings
     /// </summary>
     public class BuildingBuilder : IBuildingBuilder
     {
-        // contains true for index of roof builder if it can build roof for given building
-        private List<int> _ids = new List<int>(4);
-
         private readonly IResourceProvider _resourceProvider;
+        private readonly IObjectPool _objectPool;
 
         /// <summary>
         ///     Creates BuildingBuilder.
         /// </summary>
         /// <param name="resourceProvider">Resource provider.</param>
+        /// <param name="objectPool">Object pool.</param>
         [Dependency]
-        public BuildingBuilder(IResourceProvider resourceProvider)
+        public BuildingBuilder(IResourceProvider resourceProvider, IObjectPool objectPool)
         {
             _resourceProvider = resourceProvider;
+            _objectPool = objectPool;
         }
 
         /// <inheritdoc />
@@ -97,7 +98,8 @@ namespace ActionStreetMap.Models.Buildings
         {
             // for most of buildings, roof type isn't defined, but we want to use different types
             // however, we have to check whether we can build roof using random roof builder
-            _ids.Clear();
+            // contains true for index of roof builder if it can build roof for given building
+            var ids = _objectPool.NewList<int>();
 
             int count = 0;
             for (int i = 0; i < roofBuildings.Length; i++)
@@ -107,13 +109,13 @@ namespace ActionStreetMap.Models.Buildings
                     // strong match
                     if (roofBuildings[i].Name == building.RoofType)
                     {
-                        _ids.Clear();
-                        _ids.Add(i);
+                        ids.Clear();
+                        ids.Add(i);
                         count = 1;
                         break;
                     }
 
-                    _ids.Add(i);
+                    ids.Add(i);
                     count++;
                 }
             }
@@ -122,7 +124,9 @@ namespace ActionStreetMap.Models.Buildings
                 throw new InvalidOperationException(String.Format(Strings.CannotFindRoofBuilder, building.Address));
 
             // however, we don't want to use first occurrence, use building Id as seed
-            var index = _ids[(int) building.Id % count];
+            var index = ids[(int) building.Id % count];
+
+            _objectPool.Store(ids);
             return roofBuildings[index];
         }
     }

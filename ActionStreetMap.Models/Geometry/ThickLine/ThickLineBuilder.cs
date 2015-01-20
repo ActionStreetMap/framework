@@ -11,7 +11,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 namespace ActionStreetMap.Models.Geometry.ThickLine
 {
     /// <summary>
-    ///     Builds thick 2D line in 3D space.
+    ///     Builds thick 2D line in 3D space. Not thread safe.
     /// </summary>
     public class ThickLineBuilder: IDisposable
     {
@@ -46,9 +46,6 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
 
         private Tuple<Vector3, Vector3> _startPoints;
 
-        //private int _elementIndex;
-        //private bool _isLastElement;
-
         private LineElement _currentElement;
         private LineElement _nextElement;
 
@@ -82,8 +79,9 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         {
             _heightMap = heightMap;
 
-            var lineElements = ThickLineUtils.GetLineElementsInTile(heightMap.LeftBottomCorner, 
-                heightMap.RightUpperCorner, elements);
+            var lineElements = _objectPool.NewList<LineElement>(8);
+            ThickLineUtils.GetLineElementsInTile(heightMap.LeftBottomCorner,
+                heightMap.RightUpperCorner, elements, lineElements, _objectPool);
             var elementsCount = lineElements.Count;
 
             // TODO сurrent implementation of GetLineElementsInTile skip segment if its
@@ -98,6 +96,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             }
 
             builder(Points, Triangles, Uv);
+            _objectPool.Store(lineElements);
         }
 
         #region Segment processing
@@ -315,6 +314,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
 
         #endregion
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _heightMap = null;

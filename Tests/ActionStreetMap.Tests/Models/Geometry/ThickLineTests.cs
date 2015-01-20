@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Elevation;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using Moq;
 using NUnit.Framework;
@@ -87,7 +88,8 @@ namespace ActionStreetMap.Tests.Models.Geometry
             };
 
             // ACT
-            var result = ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner, lineElements);
+            var result = new List<LineElement>();
+            ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner, lineElements, result, new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(3, result.Count);
@@ -126,7 +128,8 @@ namespace ActionStreetMap.Tests.Models.Geometry
             };
 
             // ACT
-            var result = ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner, lineElements);
+            var result = new List<LineElement>();
+            ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner, lineElements, result, new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(1, result.Count);

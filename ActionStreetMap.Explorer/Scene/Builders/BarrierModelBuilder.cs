@@ -7,10 +7,10 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Helpers;
-using UnityEngine;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Utils;
+
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -24,6 +24,10 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override string Name { get { return "barrier"; } }
 
+        /// <summary>
+        ///     Creates instance of <see cref="BarrierModelBuilder"/>.
+        /// </summary>
+        /// <param name="heightMapProcessor">Heightmap processor.</param>
         [Dependency]
         public BarrierModelBuilder(HeightMapProcessor heightMapProcessor)
         {

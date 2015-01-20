@@ -12,6 +12,7 @@ namespace ActionStreetMap.Models.Geometry
         ///     Triangulates given polygon.
         /// </summary>
         /// <param name="points">Points which represents polygon.</param>
+        /// <param name="indices">Indices.</param>
         /// <param name="reverse">Reverse points.</param>
         /// <returns>Triangles.</returns>
         public static int[] Triangulate(List<MapPoint> points, List<int> indices, bool reverse = true)

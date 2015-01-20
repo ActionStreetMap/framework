@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using ActionStreetMap.Core.Scene.World.Buildings;
 using ActionStreetMap.Core.Scene.World.Infos;
 using ActionStreetMap.Core.Scene.World.Roads;
+using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Scene
 {
@@ -12,21 +12,21 @@ namespace ActionStreetMap.Core.Scene
     public class TileRegistry : IDisposable
     {
         // so far, we store only Ids
-        private readonly HashSet<long> _localIds;
+        private readonly SafeHashSet<long> _localIds;
 
         // NOTE actually, this is workaround.
         // TODO should be designed better solution to prevent rendering of cross tile objects.
         /// <summary>
         ///     Contains global list of registered object ids
         /// </summary>
-        private static readonly HashSet<long> GlobalIds = new HashSet<long>();
+        private static readonly SafeHashSet<long> GlobalIds = new SafeHashSet<long>();
 
         /// <summary>
         ///     Creates ModelRegistry using global registered id hashset.
         /// </summary>
         internal TileRegistry()
         {
-            _localIds = new HashSet<long>();
+            _localIds = new SafeHashSet<long>();
         }
 
         #region Registrations
@@ -37,7 +37,7 @@ namespace ActionStreetMap.Core.Scene
         /// <param name="building">Building.</param>
         public void Register(Building building)
         {
-            _localIds.Add(building.Id);
+            _localIds.TryAdd(building.Id);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace ActionStreetMap.Core.Scene
         /// <param name="road">Road.</param>
         public void Register(Road road)
         {
-            road.Elements.ForEach(e => _localIds.Add(e.Id));
+            road.Elements.ForEach(e => _localIds.TryAdd(e.Id));
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace ActionStreetMap.Core.Scene
         /// <param name="info">Info.</param>
         public void Register(Info info)
         {
-            _localIds.Add(info.Id);
+            _localIds.TryAdd(info.Id);
         }
 
         /// <summary>
@@ -64,8 +64,8 @@ namespace ActionStreetMap.Core.Scene
         /// <param name="id">Id.</param>
         public void RegisterGlobal(long id)
         {
-            _localIds.Add(id);
-            GlobalIds.Add(id);
+            _localIds.TryAdd(id);
+            GlobalIds.TryAdd(id);
         }
 
         #endregion
@@ -97,7 +97,7 @@ namespace ActionStreetMap.Core.Scene
                 foreach (var id in _localIds)
                 {
                     if (GlobalIds.Contains(id))
-                        GlobalIds.Remove(id);
+                        GlobalIds.TryRemove(id);
                 }
 
                 _localIds.Clear();

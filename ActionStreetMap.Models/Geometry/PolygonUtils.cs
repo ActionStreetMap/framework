@@ -17,7 +17,7 @@ namespace ActionStreetMap.Models.Geometry
         ///     Triangulates given polygon.
         /// </summary>
         /// <param name="points">Points which represents polygon.</param>
-        /// <param name="indices">Indecies.</param>
+        /// <param name="objectPool">Object pool.</param>
         /// <param name="reverse">Reverse points.</param>
         /// <returns>Triangles.</returns>
         public static int[] Triangulate(List<MapPoint> points, IObjectPool objectPool, bool reverse = true)
@@ -149,7 +149,9 @@ namespace ActionStreetMap.Models.Geometry
         /// <param name="source">Source.</param>
         /// <param name="destination">Destination.</param>
         /// <param name="tolerance">Tolerance.</param>
-        public static void Simplify(List<MapPoint> source, List<MapPoint> destination, float tolerance, IObjectPool objectPool)
+        /// <param name="objectPool"></param>
+        public static void Simplify(List<MapPoint> source, List<MapPoint> destination, float tolerance, 
+            IObjectPool objectPool)
         {
             DouglasPeuckerReduction.Reduce(source, destination, tolerance, objectPool);
         }

@@ -9,12 +9,13 @@ namespace ActionStreetMap.Models.Geometry.Polygons
     ///     Implements simple scan-line algorithm. Code ported from existing java code found in Internet.
     /// </summary>
     public sealed class ScanLine
-    {       
+    {
         /// <summary>
         ///     Fills polygon using points.
         /// </summary>
         /// <param name="points">Polygon points.</param>
         /// <param name="fillAction">Fille action.</param>
+        /// <param name="objectPool">Object pool.</param>
         public static void FillPolygon(List<MapPoint> points, Action<int, int, int> fillAction, IObjectPool objectPool)
         {
             var edges = objectPool.NewList<Edge>(16);
