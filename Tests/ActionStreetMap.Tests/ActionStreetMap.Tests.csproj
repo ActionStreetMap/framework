@@ -56,6 +56,7 @@
     <Compile Include="Core\World\RoadGraphTests.cs" />
     <Compile Include="Core\World\RoadJunctionUtilsTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
+    <Compile Include="Explorer\TestScheduler.cs" />
     <Compile Include="GeoCoordinateHelper.cs" />
     <Compile Include="ConsoleTrace.cs" />
     <Compile Include="Core\Algorithms\PointHelperTests.cs" />
@@ -66,9 +67,6 @@
     <Compile Include="Core\Tiles\TileRegistryTests.cs" />
     <Compile Include="DemoTileListener.cs" />
     <Compile Include="Explorer\BootstrapperTests.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\Builders\TestDomeRoofBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\ModelBuilders\TestInfoModelBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\TestTileActivator.cs" />
     <Compile Include="Infrastructure\Stubs\PropertyClass.cs" />
     <Compile Include="Models\Buildings\RoofBuilderTests.cs" />
     <Compile Include="Models\Geometry\PolygonTests.cs" />
@@ -108,18 +106,7 @@
     <Compile Include="TestPathResolver.cs" />
     <Compile Include="Explorer\Themes\BuildingTextureBalancerTests.cs" />
     <Compile Include="Explorer\Themes\ThemeProviderTests.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\ModelBuilders\TestBarrierModelBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\ModelBuilders\TestDetailModelBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\Behaviours\TestModelBehaviour.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\TestBootstrapperPlugin.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\Builders\TestRoadBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\ModelBuilders\TestSphereModelBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\Builders\TestTerrainBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\Builders\TestBuildingBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\ModelBuilders\TestCylinderModelBuilder.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\TestGameObject.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\TestGameObjectFactory.cs" />
-    <Compile Include="Explorer\Tiles\Stubs\ModelBuilders\TestWaterModelBuilder.cs" />
+    <Compile Include="Explorer\Tiles\TestBootstrapperPlugin.cs" />
     <Compile Include="Core\Tiles\TileManagerTests.cs" />
     <Compile Include="Explorer\Tiles\RealTileManagerTests.cs" />
   </ItemGroup>

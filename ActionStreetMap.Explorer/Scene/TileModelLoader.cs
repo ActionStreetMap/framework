@@ -89,7 +89,6 @@ namespace ActionStreetMap.Explorer.Scene
 
             }
             _objectPool.Store(area.Points);
-            _stylesheet.StoreRule(rule);
         }
 
         /// <inheritdoc />
@@ -106,7 +105,6 @@ namespace ActionStreetMap.Explorer.Scene
                 }
             }
             _objectPool.Store(way.Points);
-            _stylesheet.StoreRule(rule);
         }
 
         /// <inheritdoc />
@@ -122,7 +120,6 @@ namespace ActionStreetMap.Explorer.Scene
                     AttachExtras(gameObject, rule, node);
                 }
             }
-            _stylesheet.StoreRule(rule);
         }
 
         /// <inheritdoc />

@@ -3,6 +3,7 @@ using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
@@ -24,14 +25,14 @@ namespace ActionStreetMap.Explorer.Scene
         public void Activate(Tile tile)
         {
             Trace.Output(Category, String.Format("Activate tile: {0}", tile.MapCenter));
-            ProcessWithChildren(tile, true);
+            Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, true));
         }
 
         /// <inheritdoc />
         public void Deactivate(Tile tile)
         {
             Trace.Output(Category, String.Format("Deactivate tile: {0}", tile.MapCenter));
-            ProcessWithChildren(tile, false);
+            Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, false));
         }
 
         /// <inheritdoc />
@@ -39,7 +40,7 @@ namespace ActionStreetMap.Explorer.Scene
         {
             Trace.Output(Category, String.Format("Destroy tile: {0}", tile.MapCenter));
             tile.Registry.Dispose();
-            DestroyWithChildren(tile);
+            Scheduler.MainThread.Schedule(() => DestroyWithChildren(tile));
         }
 
         /// <summary>

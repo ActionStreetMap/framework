@@ -6,7 +6,7 @@ using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.IO;
-using ActionStreetMap.Tests.Explorer.Tiles.Stubs;
+using ActionStreetMap.Tests.Explorer.Tiles;
 
 namespace ActionStreetMap.Tests
 {

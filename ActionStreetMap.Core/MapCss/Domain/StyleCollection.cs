@@ -9,8 +9,6 @@ namespace ActionStreetMap.Core.MapCss.Domain
     /// </summary>
     internal class StyleCollection
     {
-        private readonly RuleObjectPool _ruleObjectPool = new RuleObjectPool();
-
         private readonly List<Style> _canvasStyles = new List<Style>(1);
         private readonly List<Style> _areaStyles = new List<Style>(16);
         private readonly List<Style> _wayStyles = new List<Style>(16);
@@ -44,7 +42,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         public Rule GetMergedRule(Model model)
         {
             var styles = GetModelStyles(model);
-            var rule = _ruleObjectPool.New(model);
+            var rule = new Rule(model);
             for (int i = 0; i < styles.Count; i++)
                 MergeDeclarations(styles[i], rule, model);
 
@@ -57,7 +55,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         public Rule GetCollectedRule(Model model)
         {
             var styles = GetModelStyles(model);
-            var rule = _ruleObjectPool.New(model);
+            var rule = new Rule(model);
             for (int i = 0; i < styles.Count; i++)
                 CollectDeclarations(styles[i], rule, model);
 
@@ -65,11 +63,6 @@ namespace ActionStreetMap.Core.MapCss.Domain
                 CollectDeclarations(_combinedStyles[i], rule, model);
 
             return rule;
-        }
-
-        public void StoreRule(Rule rule)
-        {
-            _ruleObjectPool.Store(rule);
         }
 
         private List<Style> GetModelStyles(Model model)
@@ -127,39 +120,6 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
             foreach (var keyValue in style.Declarations)
                 rule.Declarations.Add(keyValue.Key, keyValue.Value);
-        }
-
-        #endregion
-
-        #region Rule pool
-
-        private class RuleObjectPool
-        {
-            private readonly Stack<Rule> _objectStack = new Stack<Rule>(2);
-
-            public Rule New(Model model)
-            {
-                if (_objectStack.Count > 0)
-                    lock (_objectStack)
-                    {
-                        if (_objectStack.Count > 0)
-                        {
-                            var rule = _objectStack.Pop();
-                            rule.Model = model;
-                            rule.Declarations.Clear();
-                            return rule;
-                        }
-                    }
-                return new Rule(model);
-            }
-
-            public void Store(Rule obj)
-            {
-                lock (_objectStack)
-                {
-                    _objectStack.Push(obj);
-                }
-            }
         }
 
         #endregion

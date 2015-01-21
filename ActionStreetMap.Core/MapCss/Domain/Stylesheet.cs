@@ -42,14 +42,5 @@ namespace ActionStreetMap.Core.MapCss.Domain
         {
             return _styles.GetCollectedRule(canvas);
         }
-
-        /// <summary>
-        ///     Returns Rule to object pool.
-        /// </summary>
-        /// <param name="rule">Rule.</param>
-        public void StoreRule(Rule rule)
-        {
-            _styles.StoreRule(rule);
-        }
     }
 }

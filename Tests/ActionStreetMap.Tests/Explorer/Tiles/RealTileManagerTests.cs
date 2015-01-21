@@ -45,7 +45,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
 
             Assert.Less(logger.Seconds, 3, "Loading took too long");
             // NOTE Actual value should be close to expected consumption for test data
-            Assert.Less(logger.Memory, 40, "Memory consumption is too high!");
+            Assert.Less(logger.Memory, 100, "Memory consumption is too high!");
         }
 
         [Test]

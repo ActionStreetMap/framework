@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Infrastructure
@@ -60,7 +61,11 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <inheritdoc />
         public IGameObject Parent
         {
-            set { _gameObject.transform.parent = value.GetComponent<GameObject>().transform; }
+            set
+            {
+                Scheduler.MainThread.Schedule(
+                    () => { _gameObject.transform.parent = value.GetComponent<GameObject>().transform; });
+            }
         }
     }
 }
