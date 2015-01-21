@@ -31,7 +31,8 @@ namespace ActionStreetMap.Osm
             _elementSourceProvider = elementSourceProvider;
             _modelVisitor = modelVisitor;
 
-            _filterElementVisitor = new FilterElementVisitor(new NodeVisitor(modelVisitor, objectPool),
+            _filterElementVisitor = new FilterElementVisitor(
+                new NodeVisitor(modelVisitor, objectPool),
                 new WayVisitor(modelVisitor, objectPool),
                 new RelationVisitor(modelVisitor, objectPool)
             );
@@ -40,19 +41,18 @@ namespace ActionStreetMap.Osm
         /// <inheritdoc />
         public IObservable<Unit> Load(Tile tile)
         {
-            // get element source for given bounding box
-            var elementSource = _elementSourceProvider.Get(tile.BoundingBox);
-
             // prepare tile
             tile.Accept(_modelVisitor);
-
             _filterElementVisitor.BoundingBox = tile.BoundingBox;
-            var source = elementSource.Get(tile.BoundingBox).ObserveOn(Scheduler.ThreadPool);
-            source.Subscribe(
-                element => element.Accept(_filterElementVisitor),
-                () => (new Canvas()).Accept(_modelVisitor));
 
-            return source.ContinueWith(() => { });
+            return _elementSourceProvider
+                .Get(tile.BoundingBox)
+                .SelectMany(elementSource => elementSource.Get(tile.BoundingBox)
+                    .ObserveOn(Scheduler.ThreadPool)
+                    .Do(element => element.Accept(_filterElementVisitor),
+                        () => (new Canvas()).Accept(_modelVisitor))
+                    .AsCompletion());
+                
         }
     }
 }

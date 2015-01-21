@@ -31,18 +31,5 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             return observable.AsCompletion().SelectMany(_ => selector());
         }
-
-        /// <summary>
-        ///     Executes action after the sequence is complete and not as things come in.
-        /// </summary>
-        public static IObservable<Unit> ContinueWith<T>(
-          this IObservable<T> observable, Action action)
-        {
-            return observable.AsCompletion().SelectMany(_ => 
-            {
-                action();
-                return Observable.Empty<Unit>();
-            });
-        }
     }
 }

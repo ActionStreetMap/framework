@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Osm.Entities;
 
 namespace ActionStreetMap.Osm.Index.Search
@@ -54,7 +55,7 @@ namespace ActionStreetMap.Osm.Index.Search
 
         private ElementSource GetElementSource()
         {
-            var elementSource = _elementSourceProvider.Get() as ElementSource;
+            var elementSource = _elementSourceProvider.Get().Wait() as ElementSource;
             if (elementSource == null)
                 throw new NotSupportedException(Strings.SearchNotSupported);
             return elementSource;

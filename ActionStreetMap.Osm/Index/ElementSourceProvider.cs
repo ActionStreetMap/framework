@@ -22,13 +22,13 @@ namespace ActionStreetMap.Osm.Index
         ///     Returns element source by query represented by bounding box.
         /// </summary>
         /// <returns>Element source.</returns>
-        IElementSource Get(BoundingBox query);
+        IObservable<IElementSource> Get(BoundingBox query);
 
         /// <summary>
         ///     Returns active element source.
         /// </summary>
         /// <returns>Element source.</returns>
-        IElementSource Get();
+        IObservable<IElementSource> Get();
     }
 
     /// <summary>
@@ -66,38 +66,41 @@ namespace ActionStreetMap.Osm.Index
         }
 
         /// <inheritdoc />
-        public IElementSource Get()
+        public IObservable<IElementSource> Get()
         {
-            return _elementSourceCache != null ? _elementSourceCache.Item2 : null;
+            return _elementSourceCache != null ? 
+                Observable.Return<IElementSource>(_elementSourceCache.Item2) : 
+                Observable.Empty<IElementSource>();
         }
 
         /// <inheritdoc />
-        public IElementSource Get(BoundingBox query)
+        public IObservable<IElementSource> Get(BoundingBox query)
         {
-            string elementSourcePath = _searchTree
+            return _searchTree
                .Search(new Envelop(query.MinPoint, query.MaxPoint))
-               .Wait();
+               .SelectMany(elementSourcePath =>
+               {
+                   if (elementSourcePath == null)
+                   {
+                       Trace.Warn("Maps", String.Format("No element source is found for given query:{0}", query));
+                       return null;
+                   }
 
-            if (elementSourcePath == null)
-            {
-                Trace.Warn("Maps", String.Format("No element source is found for given query:{0}", query));
-                return null;
-            }
+                   // TODO so far, we support only one element source per query
+                   // but it can be extended to handle intersection cases
+                   //if (sourcePaths.Count() > 1)
+                   //    Trace.Warn("Maps", "Current IElementSourceProvider doesn't support multiply element sources bbox match.");
 
-            // TODO so far, we support only one element source per query
-            // but it can be extended to handle intersection cases
-            //if (sourcePaths.Count() > 1)
-            //    Trace.Warn("Maps", "Current IElementSourceProvider doesn't support multiply element sources bbox match.");
+                   if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
+                   {
+                       if (_elementSourceCache != null)
+                           _elementSourceCache.Item2.Dispose();
+                       var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
+                       _elementSourceCache = new ActionStreetMap.Infrastructure.Primitives.MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
+                   }
 
-            if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
-            {
-                if (_elementSourceCache != null)
-                    _elementSourceCache.Item2.Dispose();
-                var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
-                _elementSourceCache = new ActionStreetMap.Infrastructure.Primitives.MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
-            }
-
-            return _elementSourceCache.Item2;
+                   return Observable.Return(_elementSourceCache.Item2);
+               });
         }
 
         private void SearchAndReadMapIndexHeaders(string folder)
