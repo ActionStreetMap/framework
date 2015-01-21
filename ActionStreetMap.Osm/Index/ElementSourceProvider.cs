@@ -19,13 +19,13 @@ namespace ActionStreetMap.Osm.Index
     public interface IElementSourceProvider: IDisposable
     {
         /// <summary>
-        ///     Returns element source by query represented by bounding box.
+        ///     Returns element sources by query represented by bounding box.
         /// </summary>
         /// <returns>Element source.</returns>
         IObservable<IElementSource> Get(BoundingBox query);
 
         /// <summary>
-        ///     Returns active element source.
+        ///     Returns active element sources.
         /// </summary>
         /// <returns>Element source.</returns>
         IObservable<IElementSource> Get();
@@ -45,7 +45,7 @@ namespace ActionStreetMap.Osm.Index
         private readonly IFileSystemService _fileSystemService;
         private SpatialIndex<string> _searchTree;
         private RTree<string> _insertTree;
-        private ActionStreetMap.Infrastructure.Primitives.MutableTuple<string, IElementSource> _elementSourceCache;
+        private MutableTuple<string, IElementSource> _elementSourceCache;
 
         /// <summary>
         ///     Trace.
@@ -83,20 +83,15 @@ namespace ActionStreetMap.Osm.Index
                    if (elementSourcePath == null)
                    {
                        Trace.Warn("Maps", String.Format("No element source is found for given query:{0}", query));
-                       return null;
+                       return Observable.Empty<IElementSource>();
                    }
-
-                   // TODO so far, we support only one element source per query
-                   // but it can be extended to handle intersection cases
-                   //if (sourcePaths.Count() > 1)
-                   //    Trace.Warn("Maps", "Current IElementSourceProvider doesn't support multiply element sources bbox match.");
 
                    if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
                    {
                        if (_elementSourceCache != null)
                            _elementSourceCache.Item2.Dispose();
                        var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
-                       _elementSourceCache = new ActionStreetMap.Infrastructure.Primitives.MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
+                       _elementSourceCache = new MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
                    }
 
                    return Observable.Return(_elementSourceCache.Item2);

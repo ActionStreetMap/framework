@@ -44,7 +44,7 @@ namespace ActionStreetMap.Osm
             // prepare tile
             tile.Accept(_modelVisitor);
             _filterElementVisitor.BoundingBox = tile.BoundingBox;
-
+            // NOTE Canvas.Accept should be called only once, but we call it for each element source
             return _elementSourceProvider
                 .Get(tile.BoundingBox)
                 .SelectMany(elementSource => elementSource.Get(tile.BoundingBox)
@@ -52,7 +52,6 @@ namespace ActionStreetMap.Osm
                     .Do(element => element.Accept(_filterElementVisitor),
                         () => (new Canvas()).Accept(_modelVisitor))
                     .AsCompletion());
-                
         }
     }
 }
