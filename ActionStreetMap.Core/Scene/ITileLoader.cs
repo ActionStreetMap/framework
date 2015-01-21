@@ -1,4 +1,5 @@
 ﻿using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Core.Scene
 {
@@ -11,6 +12,6 @@ namespace ActionStreetMap.Core.Scene
         ///     Loads given tile. This method triggers real loading and processing osm data.
         /// </summary>
         /// <param name="tile">Tile.</param>
-        void Load(Tile tile);
+        IObservable<Unit> Load(Tile tile);
     }
 }

@@ -89,6 +89,7 @@
     <Compile Include="Reactive\Bridge\CancellationToken.cs" />
     <Compile Include="Reactive\Bridge\MainThreadScheduler.cs" />
     <Compile Include="Reactive\Bridge\Observable.Bridge.cs" />
+    <Compile Include="Reactive\Bridge\Observable.Extensions.cs" />
     <Compile Include="Reactive\Disposables\BooleanDisposable.cs" />
     <Compile Include="Reactive\Disposables\CompositeDisposable.cs" />
     <Compile Include="Reactive\Disposables\Disposable.cs" />

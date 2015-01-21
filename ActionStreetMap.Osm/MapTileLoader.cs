@@ -38,7 +38,7 @@ namespace ActionStreetMap.Osm
         }
 
         /// <inheritdoc />
-        public void Load(Tile tile)
+        public IObservable<Unit> Load(Tile tile)
         {
             // get element source for given bounding box
             var elementSource = _elementSourceProvider.Get(tile.BoundingBox);
@@ -48,10 +48,11 @@ namespace ActionStreetMap.Osm
 
             _filterElementVisitor.BoundingBox = tile.BoundingBox;
             var source = elementSource.Get(tile.BoundingBox).ObserveOn(Scheduler.ThreadPool);
-            source.Subscribe(element => element.Accept(_filterElementVisitor));
-            source.Wait();
+            source.Subscribe(
+                element => element.Accept(_filterElementVisitor),
+                () => (new Canvas()).Accept(_modelVisitor));
 
-            (new Canvas()).Accept(_modelVisitor);
+            return source.ContinueWith(() => { });
         }
     }
 }

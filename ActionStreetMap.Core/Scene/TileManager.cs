@@ -6,6 +6,7 @@ using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Primitives;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Core.Scene
 {
@@ -154,7 +155,7 @@ namespace ActionStreetMap.Core.Scene
 
             var tile = new Tile(RelativeNullPoint, tileCenter, _tileSize);
             tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
-            _tileLoader.Load(tile);
+            _tileLoader.Load(tile).Wait();
 
             _messageBus.Send(new TileLoadFinishMessage(tile));
 
