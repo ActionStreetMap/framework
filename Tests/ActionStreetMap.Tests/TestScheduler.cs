@@ -1,7 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Infrastructure.Reactive;
 
-namespace ActionStreetMap.Tests.Explorer
+namespace ActionStreetMap.Tests
 {
     public class TestScheduler: IScheduler
     {

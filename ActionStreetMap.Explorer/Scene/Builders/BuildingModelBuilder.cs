@@ -13,7 +13,6 @@ using ActionStreetMap.Models.Buildings;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -92,7 +91,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         private IGameObject BuildGameObject(Tile tile, Rule rule, Model model, List<MapPoint> points,
             float elevation, float minHeight)
         {
-            var gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("Building {0}", model));
+            var gameObjectWrapper = GameObjectFactory
+                .CreateNew(String.Format("Building {0}", model), tile.GameObject);
 
             // NOTE observed that min_height should be subracted from height for building:part
             // TODO this should be done in mapcss, but stylesheet doesn't support multiply eval operations

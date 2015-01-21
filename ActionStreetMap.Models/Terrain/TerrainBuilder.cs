@@ -147,10 +147,11 @@ namespace ActionStreetMap.Models.Terrain
             _areaBuilder.Build(settings, alphaMapElements, _splatMapBuffer, _detailListBuffer);
 
             var gameObject = _gameObjectFactory.CreateNew("terrain");
-            Scheduler.MainThread.Schedule(() => 
-                CreateTerrainGameObject(gameObject, parent, settings, size, _detailListBuffer));
-
-            ClearBuffers();
+            Scheduler.MainThread.Schedule(() =>
+            {
+                CreateTerrainGameObject(gameObject, parent, settings, size, _detailListBuffer);
+                CleanUp();
+            });
 
             return gameObject;
         }
@@ -207,7 +208,7 @@ namespace ActionStreetMap.Models.Terrain
                     var element = road.Elements.First();
                     road.GameObject = _gameObjectFactory
                         .CreateNew(String.Format("road [{0}]:{1}", element.Id, element.Type), settings.Tile.GameObject);
-                    _roadBuilder.Build(heightMap, road, roadStyleProvider.Get(road));
+                    _roadBuilder.BuildRoad(heightMap, road, roadStyleProvider.Get(road));
                 });
 
             // build road junctions
@@ -216,8 +217,7 @@ namespace ActionStreetMap.Models.Terrain
             {
                 junction.GameObject = _gameObjectFactory
                     .CreateNew(String.Format("junction: {0}", junction.Center), settings.Tile.GameObject);
-                Console.WriteLine("junction: {0}", junction.Center);
-                _roadBuilder.Build(heightMap, junction, roadStyleProvider.Get(junction));
+                _roadBuilder.BuildJunction(heightMap, junction, roadStyleProvider.Get(junction));
             });
 
             // TODO wait for junctions as well
@@ -392,7 +392,7 @@ namespace ActionStreetMap.Models.Terrain
         }
         #endregion
 
-        private void ClearBuffers()
+        private void CleanUp()
         {
             // also we set [x,y,0] to 1 in AreaBuilder
             Array.Clear(_splatMapBuffer, 0, _splatMapBuffer.Length);
@@ -403,9 +403,6 @@ namespace ActionStreetMap.Models.Terrain
                 _objectPool.Store(area.Points);
             foreach (var elevation in _elevations)
                 _objectPool.Store(elevation.Points);
-
-            // NOTE do not return road element's points back to store as they will be used in future
-            // for unit behavior modeling
 
             // clear collections to reuse
             _areas.Clear();

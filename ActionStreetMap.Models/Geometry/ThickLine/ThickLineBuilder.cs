@@ -314,7 +314,9 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
 
         #endregion
 
-        /// <inheritdoc />
+        /// <summary>
+        ///     Returns back objects to pool.
+        /// </summary>
         public void Dispose()
         {
             _heightMap = null;

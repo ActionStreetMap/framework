@@ -14,10 +14,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
         public virtual string Name { get { return "hipped"; } }
 
         /// <inheritdoc />
-        public virtual bool CanBuild(Building building)
-        {
-            return true;
-        }
+        public virtual bool CanBuild(Building building) { return true; }
 
         /// <inheritdoc />
         public virtual MeshData Build(Building building, BuildingStyle style)

@@ -51,12 +51,16 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var lines = ObjectPool.NewList<LineElement>(1);
             lines.Add(new LineElement(points, rule.GetWidth()));
-            using (var dimenLineBuilder = new DimenLineBuilder(2, ObjectPool, _heightMapProcessor))
-            {
-                dimenLineBuilder.Height = rule.GetHeight();
-                dimenLineBuilder.Build(tile.HeightMap, lines,
-                    (p, t, u) => Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, rule, p, t, u)));
-            }
+            
+            var dimenLineBuilder = new DimenLineBuilder(2, ObjectPool, _heightMapProcessor);
+            dimenLineBuilder.Height = rule.GetHeight();
+            dimenLineBuilder.Build(tile.HeightMap, lines,
+                (p, t, u) => Scheduler.MainThread.Schedule(() =>
+                {
+                    BuildObject(gameObjectWrapper, rule, p, t, u);
+                    dimenLineBuilder.Dispose();
+                }));
+            
 
             ObjectPool.Store(lines);
             ObjectPool.Store(points);

@@ -21,9 +21,14 @@
         T GetComponent<T>();
 
         /// <summary>
+        ///     True, if gameobject has no components.
+        /// </summary>
+        bool IsEmpty { get; }
+
+        /// <summary>
         ///     Gets or sets name.
         /// </summary>
-        string Name { get; set; }
+        string Name { get; }
 
         /// <summary>
         ///     Sets parent game object.

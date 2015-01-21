@@ -128,9 +128,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
             var uv = new Vector2[count * 5];
 
             for (int i = 0; i < uv.Length; i++)
-            {
                 uv[i] = style.Roof.FrontUvMap.RightUpper;
-            }
 
             return uv;
         }

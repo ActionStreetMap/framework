@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Infrastructure
@@ -19,7 +20,18 @@ namespace ActionStreetMap.Explorer.Infrastructure
         public IGameObject CreateNew(string name, IGameObject parent)
         {
             var go = CreateNew(name);
-            go.Parent = parent;
+            if (go.IsEmpty)
+            {
+                Scheduler.MainThread.Schedule(() =>
+                {
+                    go.AddComponent(new GameObject());
+                    if (go is UnityGameObject)
+                        (go as UnityGameObject).SetParent(parent);
+                });
+            }
+            else
+                go.Parent = parent;
+
             return go;
         }
 

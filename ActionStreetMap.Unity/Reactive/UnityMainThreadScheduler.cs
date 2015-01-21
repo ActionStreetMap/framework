@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
-    internal class UnityMainThreadScheduler : IScheduler
+    public class UnityMainThreadScheduler : IScheduler
     {
         public UnityMainThreadScheduler()
         {

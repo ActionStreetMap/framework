@@ -78,7 +78,7 @@ namespace ActionStreetMap.Models.Buildings
         {
             // GameObject was created directly in builder, so we can use it and ignore other meshData properties.
             // also we expect that all components are defined
-            if (meshData.GameObject != null)
+            if (meshData.GameObject != null && !meshData.GameObject.IsEmpty)
                return meshData.GameObject.GetComponent<GameObject>();
 
             var gameObject = new GameObject();

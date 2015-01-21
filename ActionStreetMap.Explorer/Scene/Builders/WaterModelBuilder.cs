@@ -10,7 +10,6 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Terrain;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Models.Geometry.Polygons;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
@@ -83,7 +82,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// </summary>
         protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule, Vector3[] points, int[] triangles)
         {
-            var gameObject = gameObjectWrapper.GetComponent<GameObject>();
+            var gameObject = gameObjectWrapper.AddComponent(new GameObject());
             var mesh = new Mesh();
             mesh.vertices = points;
             //mesh.uv = verticies.GetUV();

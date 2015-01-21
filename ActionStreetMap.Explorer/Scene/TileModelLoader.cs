@@ -9,6 +9,7 @@ using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Themes;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Roads;
 using ActionStreetMap.Models.Terrain;
@@ -63,6 +64,7 @@ namespace ActionStreetMap.Explorer.Scene
         {
             _tile = tile;
             _tile.GameObject = _gameObjectFactory.CreateNew("tile");
+            Scheduler.MainThread.Schedule(() => _tile.GameObject.AddComponent(new GameObject()));
             _heightMapProcessor.Recycle(_tile.HeightMap);
         }
 
@@ -84,7 +86,7 @@ namespace ActionStreetMap.Explorer.Scene
                 if (modelBuilder != null)
                 {
                     var gameObject = modelBuilder.BuildArea(_tile, rule, area);
-                    AttachExtras(gameObject, rule, area);
+                    Scheduler.MainThread.Schedule(() => AttachExtras(gameObject, rule, area));
                 }
 
             }
@@ -101,7 +103,7 @@ namespace ActionStreetMap.Explorer.Scene
                 if (modelBuilder != null)
                 {
                     var gameObject = modelBuilder.BuildWay(_tile, rule, way);
-                    AttachExtras(gameObject, rule, way);
+                    Scheduler.MainThread.Schedule(() => AttachExtras(gameObject, rule, way));
                 }
             }
             _objectPool.Store(way.Points);
@@ -117,7 +119,7 @@ namespace ActionStreetMap.Explorer.Scene
                 if (modelBuilder != null)
                 {
                     var gameObject = modelBuilder.BuildNode(_tile, rule, node);
-                    AttachExtras(gameObject, rule, node);
+                    Scheduler.MainThread.Schedule(() => AttachExtras(gameObject, rule, node));
                 }
             }
         }
@@ -140,9 +142,13 @@ namespace ActionStreetMap.Explorer.Scene
                 RoadStyleProvider = _themeProvider.Get().GetStyleProvider<IRoadStyleProvider>()
             });
 
-            _heightMapProcessor.Clear();
-            _heighMapProvider.Store(_tile.HeightMap);
-            _tile.HeightMap = null;
+            // NOTE schedule cleanup on UI thread as data may be used
+            Scheduler.MainThread.Schedule(() =>
+            {
+                _heightMapProcessor.Clear();
+                _heighMapProvider.Store(_tile.HeightMap);
+                _tile.HeightMap = null;
+            });
 
             _objectPool.Shrink();
         }
@@ -154,19 +160,10 @@ namespace ActionStreetMap.Explorer.Scene
 
             if (rule.IsSkipped())
             {
-                CreateSkipped(_tile.GameObject, model);
+                _gameObjectFactory.CreateNew(String.Format("skip {0}", model), _tile.GameObject);
                 return false;
             }
-
             return true;
-        }
-
-        private void CreateSkipped(IGameObject parent, Model model)
-        {
-            // TODO this is useful only for debug, in release we should avoid creation of 
-            // additional objects due to performance reason
-            var skippedGameObject = _gameObjectFactory.CreateNew(String.Format("skip {0}", model));
-            skippedGameObject.Parent = parent;
         }
 
         private void AttachExtras(IGameObject gameObject, Rule rule, Model model)
