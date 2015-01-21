@@ -3,6 +3,7 @@ using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Scene.Models;
 using ActionStreetMap.Infrastructure.Config;
+using ActionStreetMap.Infrastructure.Reactive;
 using Moq;
 using NUnit.Framework;
 
@@ -166,6 +167,7 @@ namespace ActionStreetMap.Tests.Core.Tiles
         private TileManager GetManager()
         {
             var sceneBuilderMock = new Mock<ITileLoader>();
+            sceneBuilderMock.Setup(l => l.Load(It.IsAny<Tile>())).Returns(Observable.Empty<Unit>());
             var heightMapProvider = new HeightMapProvider(new Mock<IElevationProvider>().Object);
             var activatorMock = new Mock<ITileActivator>();
 

@@ -6,6 +6,7 @@ using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Osm;
 using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Visitors;
@@ -56,7 +57,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
 
             var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), 1000);
 
-            loader.Load(tile);
+            loader.Load(tile).Wait();
 
             // ACT & ARRANGE
             Assert.Greater(sceneVisitor.Areas.Count, 0);

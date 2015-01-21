@@ -20,27 +20,42 @@ namespace ActionStreetMap.Tests.Osm
 
         public void VisitRelation(Relation relation)
         {
-            Relations.Add(relation);
+            lock (Relations)
+            {
+                Relations.Add(relation);
+            }
         }
 
         public void VisitArea(Area area)
         {
-            Areas.Add(area);
+            lock (Areas)
+            {
+                Areas.Add(area);
+            }
         }
 
         public void VisitWay(Way way)
         {
-            Ways.Add(way);
+            lock (Ways)
+            {
+                Ways.Add(way);
+            }
         }
 
         public void VisitNode(Node node)
         {
-           Nodes.Add(node);
+            lock (Nodes)
+            {
+                Nodes.Add(node);
+            }
         }
 
         public void VisitCanvas(Canvas canvas)
         {
-            Canvases.Add(canvas);
+            lock (Canvases)
+            {
+                Canvases.Add(canvas);
+            }
         }
     }
 }

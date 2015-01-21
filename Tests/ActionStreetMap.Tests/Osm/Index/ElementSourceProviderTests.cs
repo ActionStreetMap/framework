@@ -5,6 +5,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Osm.Index;
 using Moq;
 using NUnit.Framework;
@@ -41,8 +42,8 @@ namespace ActionStreetMap.Tests.Osm.Index
                 new GeoCoordinate(52.5f, 13.5f), new GeoCoordinate(52.6f, 13.6f)));
 
             // ARRANGE
-            Assert.IsNotNull(elementSource1);
-            Assert.IsNull(elementSource2);
+            Assert.IsNotNull(elementSource1.Wait());
+            Assert.IsNull(elementSource2.DefaultIfEmpty().Wait());
         }
     }
 }
