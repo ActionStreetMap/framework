@@ -9,6 +9,26 @@ namespace ActionStreetMap.Core.Utilities
     public static class ParallelExtensions
     {
         /// <summary>
+        ///     Represents the completion of an observable sequence whether it’s empty or no.
+        /// </summary>
+        public static IObservable<Unit> AsCompletion<T>(this IObservable<T> observable)
+        {
+            return observable.Select(_ => Unit.Default)
+                .IgnoreElements()
+                .Concat(Observable.Return(Unit.Default));
+        }
+
+        /// <summary>
+        ///     Doing work after the sequence is complete and not as things come in.
+        /// </summary>
+        public static IObservable<TRet> ContinueAfter<T, TRet>(this IObservable<T> observable, Func<IObservable<TRet>> continuation)
+        {
+            return observable.Select(_ => default(TRet))
+              .IgnoreElements()
+              .Concat(continuation());
+        }
+
+        /// <summary>
         ///     Parallelize processing of quad matrix.
         /// </summary>
         /// <param name="matrix">Source matrix.</param>
