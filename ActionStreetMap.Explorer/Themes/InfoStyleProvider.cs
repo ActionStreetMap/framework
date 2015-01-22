@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core.Scene.World.Infos;
+using ActionStreetMap.Core.Scene.Infos;
 using ActionStreetMap.Models.Infos;
 
 namespace ActionStreetMap.Explorer.Themes

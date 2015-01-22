@@ -2,7 +2,7 @@
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Helpers;

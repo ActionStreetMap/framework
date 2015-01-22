@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Osm.Entities;
-using Area = ActionStreetMap.Core.Scene.Models.Area;
+using Area = ActionStreetMap.Core.Tiling.Models.Area;
 
 namespace ActionStreetMap.Osm.Helpers
 {

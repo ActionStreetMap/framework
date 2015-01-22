@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Core.Scene.World.Roads;
+﻿using ActionStreetMap.Core.Scene.Roads;
 using UnityEngine;
 
 namespace ActionStreetMap.Models.Roads

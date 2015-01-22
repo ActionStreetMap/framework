@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling.Models;
 using Antlr.Runtime.Tree;
 
 namespace ActionStreetMap.Core.MapCss.Visitors.Eval

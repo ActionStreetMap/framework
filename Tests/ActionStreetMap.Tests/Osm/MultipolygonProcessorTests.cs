@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Osm.Helpers;
 using NUnit.Framework;
 using Way = ActionStreetMap.Osm.Entities.Way;

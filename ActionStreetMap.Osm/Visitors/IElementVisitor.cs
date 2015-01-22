@@ -1,5 +1,5 @@
 ﻿using System;
-using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Osm.Entities;

@@ -1,5 +1,5 @@
 ﻿
-using ActionStreetMap.Core.Scene.World.Buildings;
+using ActionStreetMap.Core.Scene.Buildings;
 
 namespace ActionStreetMap.Models.Buildings.Facades
 {

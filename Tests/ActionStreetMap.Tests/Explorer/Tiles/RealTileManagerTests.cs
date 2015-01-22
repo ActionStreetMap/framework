@@ -1,5 +1,4 @@
-﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene;
+﻿using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
 using ActionStreetMap.Osm.Index;

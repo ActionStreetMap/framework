@@ -1,6 +1,4 @@
-﻿using ActionStreetMap.Core.Scene.World.Roads;
-using Color32 = ActionStreetMap.Core.Unity.Color32;
-using Rect = ActionStreetMap.Models.Geometry.Primitives.Rect;
+﻿using ActionStreetMap.Core.Scene.Roads;
 
 namespace ActionStreetMap.Models.Roads
 {

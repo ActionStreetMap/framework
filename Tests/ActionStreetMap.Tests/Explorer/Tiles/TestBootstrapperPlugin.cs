@@ -1,5 +1,5 @@
-﻿using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Core.Scene.Models;
+﻿using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;

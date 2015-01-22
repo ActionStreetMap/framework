@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using ActionStreetMap.Core.Scene.World.Buildings;
+using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Models.Geometry.Polygons;
 using UnityEngine;
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.MapCss.Domain
 {

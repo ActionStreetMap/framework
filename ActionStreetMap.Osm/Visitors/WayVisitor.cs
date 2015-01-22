@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Osm.Extensions;
-using Way = ActionStreetMap.Osm.Entities.Way;
 
 namespace ActionStreetMap.Osm.Visitors
 {
@@ -56,7 +55,7 @@ namespace ActionStreetMap.Osm.Visitors
             {
                 var points = ObjectPool.NewList<GeoCoordinate>();
                 way.FillPoints(points);
-                ModelVisitor.VisitWay(new Core.Scene.Models.Way
+                ModelVisitor.VisitWay(new Core.Tiling.Models.Way
                 {
                     Id = way.Id,
                     Points = points,

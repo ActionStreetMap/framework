@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling.Models;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.MapCss

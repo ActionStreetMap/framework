@@ -1,7 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Elevation;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling.Models;
 using Moq;
 using NUnit.Framework;
 

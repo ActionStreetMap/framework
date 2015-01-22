@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core.Scene.World.Buildings;
-using ActionStreetMap.Core.Scene.World.Infos;
-using ActionStreetMap.Core.Scene.World.Roads;
+using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Core.Scene.Infos;
+using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Models.Buildings;
 using ActionStreetMap.Models.Infos;
 using ActionStreetMap.Models.Roads;

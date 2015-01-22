@@ -5,7 +5,7 @@ using System.Reflection;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Scene.Models;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Config;
 using Moq;
 

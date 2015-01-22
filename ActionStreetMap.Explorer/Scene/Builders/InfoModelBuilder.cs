@@ -1,8 +1,8 @@
 ﻿using System;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Scene.Models;
-using ActionStreetMap.Core.Scene.World.Infos;
+using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Core.Scene.Infos;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Reactive;

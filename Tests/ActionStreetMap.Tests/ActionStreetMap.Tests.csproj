@@ -52,9 +52,9 @@
     <Compile Include="..\..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
-    <Compile Include="Core\World\RoadGraphBugFixTests.cs" />
-    <Compile Include="Core\World\RoadGraphTests.cs" />
-    <Compile Include="Core\World\RoadJunctionUtilsTests.cs" />
+    <Compile Include="Core\Scene\RoadGraphBugFixTests.cs" />
+    <Compile Include="Core\Scene\RoadGraphTests.cs" />
+    <Compile Include="Core\Scene\RoadJunctionUtilsTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="TestScheduler.cs" />
     <Compile Include="GeoCoordinateHelper.cs" />
@@ -64,7 +64,7 @@
     <Compile Include="Core\Algorithms\ProjectionTests.cs" />
     <Compile Include="Core\Algorithms\TriangulationTests.cs" />
     <Compile Include="Core\BoundingBoxTests.cs" />
-    <Compile Include="Core\Tiles\TileRegistryTests.cs" />
+    <Compile Include="Core\Tiling\TileRegistryTests.cs" />
     <Compile Include="DemoTileListener.cs" />
     <Compile Include="Explorer\BootstrapperTests.cs" />
     <Compile Include="Infrastructure\Stubs\PropertyClass.cs" />
@@ -107,7 +107,7 @@
     <Compile Include="Explorer\Themes\BuildingTextureBalancerTests.cs" />
     <Compile Include="Explorer\Themes\ThemeProviderTests.cs" />
     <Compile Include="Explorer\Tiles\TestBootstrapperPlugin.cs" />
-    <Compile Include="Core\Tiles\TileManagerTests.cs" />
+    <Compile Include="Core\Tiling\TileManagerTests.cs" />
     <Compile Include="Explorer\Tiles\RealTileManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>

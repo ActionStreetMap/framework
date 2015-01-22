@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Core.Scene.World.Infos;
+﻿using ActionStreetMap.Core.Scene.Infos;
 
 namespace ActionStreetMap.Models.Infos
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;

@@ -1,6 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Core.Scene.World.Roads;
+using ActionStreetMap.Core.Scene.Roads;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene;
 
 namespace ActionStreetMap.Explorer.Helpers

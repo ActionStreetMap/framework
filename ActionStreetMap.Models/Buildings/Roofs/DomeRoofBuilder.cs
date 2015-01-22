@@ -1,6 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene.World.Buildings;
+using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Models.Geometry;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core.Elevation;
-using ActionStreetMap.Core.Scene.World.Buildings;
+using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core.Scene.World.Buildings;
+using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Themes;
 using ActionStreetMap.Models.Buildings;

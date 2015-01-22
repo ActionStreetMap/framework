@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core.Scene.World;
+using ActionStreetMap.Core.Scene;
 
 namespace ActionStreetMap.Osm.Helpers
 {

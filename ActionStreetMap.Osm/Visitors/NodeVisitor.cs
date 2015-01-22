@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Core.Scene;
+﻿using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Osm.Entities;
 
@@ -20,7 +20,7 @@ namespace ActionStreetMap.Osm.Visitors
         {
             if (node.Tags != null)
             {
-                ModelVisitor.VisitNode(new Core.Scene.Models.Node
+                ModelVisitor.VisitNode(new Core.Tiling.Models.Node
                 {
                     Id = node.Id,
                     Point = node.Coordinate,
