@@ -11,9 +11,17 @@ using ActionStreetMap.Infrastructure.Reactive;
 namespace ActionStreetMap.Core.Scene
 {
     /// <summary>
+    ///     Defines position observer interface. Actually, it is workaround for DI container which doesn't 
+    ///     support multi interface registrations for one object instance.
+    /// </summary>
+    public interface ITilePositionObserver : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    {
+    }
+
+    /// <summary>
     ///     This class listens to position changes and manages tile processing
     /// </summary>
-    public class TileManager : IPositionListener, IConfigurable
+    public class TileManager : ITilePositionObserver, IConfigurable
     {
         /// <summary>
         ///     Maximum of loaded tiles including non-active
@@ -32,6 +40,9 @@ namespace ActionStreetMap.Core.Scene
         private bool _allowAutoRemoval;
         private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
 
+        private GeoCoordinate _currentPosition;
+        private MapPoint _currentMapPoint;
+
         private readonly MutableTuple<int, int> _currentTileIndex = new MutableTuple<int, int>(0, 0);
 
         private readonly ITileLoader _tileLoader;
@@ -42,16 +53,10 @@ namespace ActionStreetMap.Core.Scene
         private readonly DoubleKeyDictionary<int, int, Tile> _allTiles = new DoubleKeyDictionary<int, int, Tile>();
         private readonly DoubleKeyDictionary<int, int, Tile> _activeTiles = new DoubleKeyDictionary<int, int, Tile>();
 
-        /// <inheritdoc />
-        public GeoCoordinate CurrentPosition { get; private set; }
-
-        /// <inheritdoc />
-        public MapPoint CurrentPoint { get; private set; }
-
         /// <summary>
         ///     Gets relative null point
         /// </summary>
-        public GeoCoordinate RelativeNullPoint { get; set; }
+        public GeoCoordinate RelativeNullPoint { get; private set; }
 
         /// <summary>
         ///     Gets current tile.
@@ -78,45 +83,6 @@ namespace ActionStreetMap.Core.Scene
             _messageBus = messageBus;
             _heightMapProvider = heightMapProvider;
             _tileActivator = tileActivator;
-        }
-
-        /// <inheritdoc />
-        public void OnMapPositionChanged(MapPoint position)
-        {
-            CurrentPoint = position;
-            CurrentPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, position);
-
-            // call update logic only if threshold is reached
-            if (Math.Abs(position.X - _lastUpdatePosition.X) > _moveSensitivity
-                || Math.Abs(position.Y - _lastUpdatePosition.Y) > _moveSensitivity)
-            {
-                _lastUpdatePosition = position;
-
-                int i = Convert.ToInt32(position.X / _tileSize);
-                int j = Convert.ToInt32(position.Y / _tileSize);
-
-                // TODO support setting of neighbors for Unity Terrain
-
-                // NOTE it should be happened only once on start with (0,0)
-                // however it's possible if we skip offset detection zone somehow
-                if (!_allTiles.ContainsKey(i, j))
-                    CreateTile(i, j);
-
-                var tile = _allTiles[i, j];
-
-                if (ShouldPreload(tile, position))
-                    PreloadNextTile(tile, position, i, j);
-
-                _currentTileIndex.Item1 = i;
-                _currentTileIndex.Item2 = j;
-            }
-        }
-
-        /// <inheritdoc />
-        public void OnGeoPositionChanged(GeoCoordinate position)
-        {
-            CurrentPosition = position;
-            OnMapPositionChanged(GeoProjection.ToMapCoordinate(RelativeNullPoint, position));
         }
 
         #region Activation
@@ -244,6 +210,64 @@ namespace ActionStreetMap.Core.Scene
 
         #endregion
 
+        #region IObserver<MapPoint> implementation
+
+        MapPoint IPositionObserver<MapPoint>.Current { get { return _currentMapPoint; } }
+
+        void IObserver<MapPoint>.OnNext(MapPoint value)
+        {
+            _currentMapPoint = value;
+            _currentPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, value);
+
+            // call update logic only if threshold is reached
+            if (Math.Abs(value.X - _lastUpdatePosition.X) > _moveSensitivity
+                || Math.Abs(value.Y - _lastUpdatePosition.Y) > _moveSensitivity)
+            {
+                _lastUpdatePosition = value;
+
+                int i = Convert.ToInt32(value.X/_tileSize);
+                int j = Convert.ToInt32(value.Y/_tileSize);
+
+                // TODO support setting of neighbors for Unity Terrain
+
+                // NOTE it should be happened only once on start with (0,0)
+                // however it's possible if we skip offset detection zone somehow
+                if (!_allTiles.ContainsKey(i, j))
+                    CreateTile(i, j);
+
+                var tile = _allTiles[i, j];
+
+                if (ShouldPreload(tile, value))
+                    PreloadNextTile(tile, value, i, j);
+
+                _currentTileIndex.Item1 = i;
+                _currentTileIndex.Item2 = j;
+            }
+        }
+
+        void IObserver<MapPoint>.OnError(Exception error) { }
+        void IObserver<MapPoint>.OnCompleted() { }
+
+        #endregion
+
+        #region IObserver<GeoCoordinate> implementation
+
+        GeoCoordinate IPositionObserver<GeoCoordinate>.Current { get { return _currentPosition; } }
+
+        void IObserver<GeoCoordinate>.OnNext(GeoCoordinate value)
+        {
+            if (RelativeNullPoint == default(GeoCoordinate))
+                RelativeNullPoint = value;
+            _currentPosition = value;
+
+            (this as IPositionObserver<MapPoint>).OnNext(GeoProjection.ToMapCoordinate(RelativeNullPoint, value));
+        }
+
+        void IObserver<GeoCoordinate>.OnError(Exception error) { }
+        void IObserver<GeoCoordinate>.OnCompleted() { }
+
+        #endregion
+
         #region IConfigurable
 
         /// <summary>
@@ -255,10 +279,6 @@ namespace ActionStreetMap.Core.Scene
             _offset = configSection.GetFloat("offset");
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
             _heightmapsize = configSection.GetInt("heightmap");
-
-            RelativeNullPoint = new GeoCoordinate(
-              configSection.GetFloat(@"position/latitude"),
-              configSection.GetFloat(@"position/longitude"));
 
             _allowAutoRemoval = configSection.GetBool("autoclean", true);
         }

@@ -23,8 +23,8 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
                 new Relation() {Id = 3, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}, Members = new List<RelationMember>() { new RelationMember() { Member = new Node() { Coordinate = new GeoCoordinate(52.002, 13)}}}},
             });
 
-            var positionListener = new Mock<IPositionListener>();
-            positionListener.Setup(p => p.CurrentPosition).Returns(new GeoCoordinate(52, 13));
+            var positionListener = new Mock<IPositionObserver<GeoCoordinate>>();
+            positionListener.Setup(p => p.Current).Returns(new GeoCoordinate(52, 13));
             _command = new TagCommand(positionListener.Object, search.Object);
         }
 

@@ -2,7 +2,6 @@
 using System.Text;
 
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 
 namespace ActionStreetMap.Explorer.Commands
@@ -12,16 +11,19 @@ namespace ActionStreetMap.Explorer.Commands
     /// </summary>
     public class LocateCommand : ICommand
     {
-        private readonly IPositionListener _positionListener;
+        private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
+        private readonly IPositionObserver<MapPoint> _mapPositionObserver;
         
         /// <summary>
         ///     Creates instance of <see cref="LocateCommand"/>
         /// </summary>
-        /// <param name="positionListener">Position listener.</param>
+        /// <param name="geoPositionObserver">Position listener.</param>
         [Dependency]
-        public LocateCommand(IPositionListener positionListener)
+        public LocateCommand(IPositionObserver<GeoCoordinate> geoPositionObserver,
+            IPositionObserver<MapPoint> mapPositionObserver)
         {
-            _positionListener = positionListener;
+            _geoPositionObserver = geoPositionObserver;
+            _mapPositionObserver = mapPositionObserver;
         }
 
         /// <inheritdoc />
@@ -41,8 +43,8 @@ namespace ActionStreetMap.Explorer.Commands
                 return response.ToString();
             }
 
-            response.AppendLine(String.Format("map: {0}", _positionListener.CurrentPoint));
-            response.AppendLine(String.Format("geo: {0}", _positionListener.CurrentPosition));
+            response.AppendLine(String.Format("map: {0}", _geoPositionObserver.Current));
+            response.AppendLine(String.Format("geo: {0}", _mapPositionObserver.Current));
 
             return response.ToString();
         }

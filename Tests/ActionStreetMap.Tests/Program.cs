@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -25,7 +25,7 @@ namespace ActionStreetMap.Tests
         private readonly MessageBus _messageBus = new MessageBus();
         private readonly PerformanceLogger _logger = new PerformanceLogger();
         private readonly DemoTileListener _tileListener;
-        private IPositionListener _positionListener;
+        private IPositionObserver<GeoCoordinate> _positionObserver;
 
         private readonly ManualResetEvent _waitEvent = new ManualResetEvent(false);
 
@@ -39,19 +39,21 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-
+            var sw = new Stopwatch();
+            sw.Start();
             program.RunGame();
             //program.RunMocker();
             //program.Wait();
 
-            //program.DoContinuosMovements();
-
+            program.DoContinuosMovements();
+            
             /* program.CreateIndex(
                 @"g:\__ASM\_other_projects\osmconvert\ile-de-france.o5m",
                 @"g:\__ASM\__repository\framework\Tests\TestAssets\DemoResources\Config\themes\default\index.json",
                 "Index");*/
             //program.ReadIndex("Index");
-
+            sw.Stop();
+            Console.WriteLine("Took {0}ms", sw.ElapsedMilliseconds);
             //program.SubscribeOnMainThreadTest();
         }
 
@@ -74,12 +76,12 @@ namespace ActionStreetMap.Tests
             // start game on default position
             componentRoot.RunGame(_startGeoCoordinate);
 
-            _positionListener = _container.Resolve<IPositionListener>();
+            _positionObserver = _container.Resolve<ITilePositionObserver>();
 
             _messageBus.AsObservable<GeoPosition>().Do(position =>
             {
                 Console.WriteLine("GeoPosition: {0}", position);
-                _positionListener.OnGeoPositionChanged(position.Coordinate);
+                _positionObserver.OnNext(position.Coordinate);
             }).Subscribe();
         }
 
@@ -119,7 +121,7 @@ namespace ActionStreetMap.Tests
             var keyValueStore = new KeyValueStore(index, usage, new FileStream(String.Format(Consts.KeyValueStorePathFormat, indexDirectory), FileMode.Open));
             var store = new ElementStore(keyValueStore, new FileStream(String.Format(Consts.ElementStorePathFormat, indexDirectory), FileMode.Open));
 
-            InvokeAndMeasure(() =>
+            /*InvokeAndMeasure(() =>
             {
                 var results = tree.Search(new Envelop(new GeoCoordinate(52.54, 13.346),
                         new GeoCoordinate(52.552, 13.354)));
@@ -128,7 +130,7 @@ namespace ActionStreetMap.Tests
                     var element = store.Get(result);
                     Console.WriteLine(element);
                 }
-            });
+            });*/
 
             logger.Stop();
         }
@@ -144,7 +146,7 @@ namespace ActionStreetMap.Tests
                 var newCoordinate = new GeoCoordinate(
                     _startGeoCoordinate.Latitude + 0.00001 * i,
                     _startGeoCoordinate.Longitude);
-                _positionListener.OnGeoPositionChanged(newCoordinate);
+                _positionObserver.OnNext(newCoordinate);
             }
 
             for (int i = 15000; i >= 0; i--)
@@ -152,7 +154,7 @@ namespace ActionStreetMap.Tests
                 var newCoordinate = new GeoCoordinate(
                     _startGeoCoordinate.Latitude + 0.00001 * i,
                     _startGeoCoordinate.Longitude);
-                _positionListener.OnGeoPositionChanged(newCoordinate);
+                _positionObserver.OnNext(newCoordinate);
             }
         }
 

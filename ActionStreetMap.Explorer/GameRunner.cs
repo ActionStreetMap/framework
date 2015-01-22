@@ -1,42 +1,33 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Explorer
 {
     /// <summary>
-    ///     Represents application component root.
+    ///     Represents entry point class for ASM logic.
     /// </summary>
-    public class GameRunner : IGameRunner, IPositionListener
+    public interface IGameRunner
     {
         /// <summary>
-        ///     DI container.
+        ///      Runs game with provided coordinate as map center.
         /// </summary>
+        /// <param name="startCoordinate">Geo coordinate for (0,0) map point.</param>
+        void RunGame(GeoCoordinate startCoordinate);
+    }
+
+    /// <summary>
+    ///     Represents application component root.
+    /// </summary>
+    public class GameRunner : IGameRunner, IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    {
         private readonly IContainer _container;
-
-        /// <summary>
-        ///     Message bus.
-        /// </summary>
         private readonly IMessageBus _messageBus;
-
-        /// <summary>
-        ///     Actual zone loader.
-        /// </summary>
-        private IPositionListener _positionListener;
-
-        /// <inheritdoc />
-        public GeoCoordinate CurrentPosition { get { return _positionListener.CurrentPosition; } }
-
-        /// <inheritdoc />
-        public MapPoint CurrentPoint { get { return _positionListener.CurrentPoint; } }
-
-        /// <inheritdoc />
-        public GeoCoordinate RelativeNullPoint
-        {
-            get { return _positionListener.RelativeNullPoint; }
-            set { throw new InvalidOperationException(Strings.CannotChangeRelativeNullPoint); }
-        }
+        private IPositionObserver<MapPoint> _mapPositionObserver;
+        private IPositionObserver<GeoCoordinate> _geoPositionObserver;
 
         /// <summary>
         ///     Creates instance of <see cref="GameRunner"/>.
@@ -47,42 +38,45 @@ namespace ActionStreetMap.Explorer
         {
             _container = container;
             _messageBus = messageBus;
-            Initialize();
         } 
-
-        private void Initialize()
-        {
-            // run bootstrappers
-            _container.RegisterInstance(_messageBus);
-            _container.Resolve<IBootstrapperService>().Run();
-        }
-
-        /// <inheritdoc />
-        public void RunGame()
-        {
-            _positionListener = _container.Resolve<IPositionListener>();
-            OnMapPositionChanged(new MapPoint(0, 0));
-        }
 
         /// <inheritdoc />
         public void RunGame(GeoCoordinate coordinate)
         {
-            _positionListener = _container.Resolve<IPositionListener>();
-            _positionListener.RelativeNullPoint = coordinate;
+            // run bootstrappers
+            _container.RegisterInstance(_messageBus);
+            _container.Resolve<IBootstrapperService>().Run();
 
-            OnGeoPositionChanged(coordinate);
+            // resolve actual position observers
+            var tilePositionObserver = _container.Resolve<ITilePositionObserver>();
+            _mapPositionObserver = tilePositionObserver;
+            _geoPositionObserver = tilePositionObserver;
+            // notify about geo coordinate change
+            _geoPositionObserver.OnNext(coordinate);
         }
 
-        /// <inheritdoc />
-        public void OnMapPositionChanged(MapPoint position)
-        {
-            _positionListener.OnMapPositionChanged(position);
-        }
+        #region IObserver<MapPoint> implementation
 
-        /// <inheritdoc />
-        public void OnGeoPositionChanged(GeoCoordinate position)
-        {
-            _positionListener.OnGeoPositionChanged(position);
-        }
+        MapPoint IPositionObserver<MapPoint>.Current { get { return _mapPositionObserver.Current; } }
+
+        void IObserver<MapPoint>.OnNext(MapPoint value) { _mapPositionObserver.OnNext(value); }
+
+        void IObserver<MapPoint>.OnError(Exception error) { _mapPositionObserver.OnError(error); }
+
+        void IObserver<MapPoint>.OnCompleted() { _mapPositionObserver.OnCompleted(); }
+
+        #endregion
+
+        #region IObserver<GeoCoordinate> implementation
+
+        GeoCoordinate IPositionObserver<GeoCoordinate>.Current { get { return _geoPositionObserver.Current; } }
+
+        void IObserver<GeoCoordinate>.OnNext(GeoCoordinate value) { _geoPositionObserver.OnNext(value); }
+
+        void IObserver<GeoCoordinate>.OnError(Exception error) { _geoPositionObserver.OnError(error); }
+
+        void IObserver<GeoCoordinate>.OnCompleted() { _geoPositionObserver.OnCompleted(); }
+
+        #endregion
     }
 }

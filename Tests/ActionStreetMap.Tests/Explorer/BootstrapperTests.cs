@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Infrastructure.Dependencies;
 using NUnit.Framework;
@@ -14,8 +15,9 @@ namespace ActionStreetMap.Tests.Explorer
             // ARRANGE
             var container = new Container();
 
-            // it should fill container
+            // this should fill container
             var root = TestHelper.GetGameRunner(container);
+            root.RunGame(TestHelper.BerlinTestFilePoint);
 
             // ACT
             var modelBuilders = container.ResolveAll<IModelBuilder>().ToList();

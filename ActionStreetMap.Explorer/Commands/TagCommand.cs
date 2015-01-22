@@ -13,18 +13,18 @@ namespace ActionStreetMap.Explorer.Commands
     /// </summary>
     public class TagCommand: ICommand
     {
-        private readonly IPositionListener _positionListener;
+        private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
         private readonly ISearchEngine _searchEngine;
 
         /// <summary>
         ///     Creates instance of <see cref="TagCommand"/>
         /// </summary>
-        /// <param name="positionListener">Position listener.</param>
+        /// <param name="geoPositionObserver">Position listener.</param>
         /// <param name="searchEngine">Search engine instance.</param>
         [Dependency]
-        public TagCommand(IPositionListener positionListener, ISearchEngine searchEngine)
+        public TagCommand(IPositionObserver<GeoCoordinate> geoPositionObserver, ISearchEngine searchEngine)
         {
-            _positionListener = positionListener;
+            _geoPositionObserver = geoPositionObserver;
             _searchEngine = searchEngine;
         }
 
@@ -88,13 +88,13 @@ namespace ActionStreetMap.Explorer.Commands
 
         private bool Check(float radius, Node node)
         {
-            return GeoProjection.Distance(node.Coordinate, _positionListener.CurrentPosition) <= radius;
+            return GeoProjection.Distance(node.Coordinate, _geoPositionObserver.Current) <= radius;
         }
 
         private bool Check(float radius, Way way)
         {
-            return way.Coordinates.Any(geoCoordinate => 
-                GeoProjection.Distance(geoCoordinate, _positionListener.CurrentPosition) <= radius);
+            return way.Coordinates.Any(geoCoordinate =>
+                GeoProjection.Distance(geoCoordinate, _geoPositionObserver.Current) <= radius);
         }
 
         private bool Check(float radius, Relation relation)

@@ -21,14 +21,14 @@ namespace ActionStreetMap.Tests.Core.Tiles
         public void CanMoveLeft()
         {
             // ARRANGE
-            var provider = GetManager();
+            var observer = GetManager();
             var center = new MapPoint(0, 0);
 
             // ACT & ASSERT
-            provider.OnMapPositionChanged(center);
+            (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // left tile
-            var tile = CanLoadTile(provider, provider.Current,
+            var tile = CanLoadTile(observer, observer.Current,
                 new MapPoint(-(Half - Offset - 1), 0),
                 new MapPoint(-(Half - Offset), 0),
                 new MapPoint(-(Half * 2 - Offset - 1), 0), 0);
@@ -40,14 +40,14 @@ namespace ActionStreetMap.Tests.Core.Tiles
         public void CanMoveRight()
         {
             // ARRANGE
-            var provider = GetManager();
+            var observer = GetManager();
             var center = new MapPoint(0, 0);
 
             // ACT & ASSERT
-            provider.OnMapPositionChanged(center);
+            (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // right tile
-            var tile = CanLoadTile(provider, provider.Current,
+            var tile = CanLoadTile(observer, observer.Current,
                 new MapPoint(Half - Offset - 1, 0),
                 new MapPoint(Half - Offset, 0),
                 new MapPoint(Half * 2 - Offset - 1, 0), 0);
@@ -59,14 +59,14 @@ namespace ActionStreetMap.Tests.Core.Tiles
         public void CanMoveTop()
         {
             // ARRANGE
-            var provider = GetManager();
+            var observer = GetManager();
             var center = new MapPoint(0, 0);
 
             // ACT & ASSERT
-            provider.OnMapPositionChanged(center);
+            (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // top tile
-            var tile = CanLoadTile(provider, provider.Current,
+            var tile = CanLoadTile(observer, observer.Current,
                 new MapPoint(0, Half - Offset - 1),
                 new MapPoint(0, Half - Offset),
                 new MapPoint(0, Half * 2 - Offset - 1), 0);
@@ -78,14 +78,14 @@ namespace ActionStreetMap.Tests.Core.Tiles
         public void CanMoveBottom()
         {
             // ARRANGE
-            var provider = GetManager();
+            var observer = GetManager();
             var center = new MapPoint(0, 0);
 
             // ACT & ASSERT
-            provider.OnMapPositionChanged(center);
+            (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // bottom tile
-            var tile = CanLoadTile(provider, provider.Current,
+            var tile = CanLoadTile(observer, observer.Current,
                 new MapPoint(0, -(Half - Offset - 1)),
                 new MapPoint(0, -(Half - Offset)),
                 new MapPoint(0, -(Half * 2 - Offset - 1)), 0);
@@ -97,33 +97,33 @@ namespace ActionStreetMap.Tests.Core.Tiles
         public void CanMoveAround()
         {
             // ARRANGE
-            var provider = GetManager();
+            var observer = GetManager();
             var center = new MapPoint(0, 0);
 
             // ACT & ASSERT
-            provider.OnMapPositionChanged(center);
+            (observer as IPositionObserver<MapPoint>).OnNext(center);
 
-            var tileCenter = provider.Current;
+            var tileCenter = observer.Current;
             // left tile
-            CanLoadTile(provider, tileCenter,
+            CanLoadTile(observer, tileCenter,
                 new MapPoint(-(Half - Offset - 1), 0),
                 new MapPoint(-(Half - Offset), 0),
                 new MapPoint(-(Half*2 - Offset - 1), 0), 0);
 
             // right tile
-            CanLoadTile(provider, tileCenter,
+            CanLoadTile(observer, tileCenter,
                 new MapPoint(Half - Offset - 1, 0),
                 new MapPoint(Half - Offset, 0),
                 new MapPoint(Half*2 - Offset - 1, 0), 1);
 
             // top tile
-            CanLoadTile(provider, tileCenter,
+            CanLoadTile(observer, tileCenter,
                 new MapPoint(0, Half - Offset - 1),
                 new MapPoint(0, Half - Offset),
                 new MapPoint(0, Half*2 - Offset - 1), 2);
 
             // bottom tile
-            CanLoadTile(provider, tileCenter,
+            CanLoadTile(observer, tileCenter,
                 new MapPoint(0, -(Half - Offset - 1)),
                 new MapPoint(0, -(Half - Offset)),
                 new MapPoint(0, -(Half*2 - Offset - 1)), 3);
@@ -133,16 +133,16 @@ namespace ActionStreetMap.Tests.Core.Tiles
         public void CanMoveIntoDirection()
         {
             // ARRANGE
-            var provider = GetManager();
+            var observer = GetManager();
             var center = new MapPoint(0, 0);
-            
-            provider.OnMapPositionChanged(center);
+
+            (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // ACT & ASSERT
             for (int i = 0; i < 10; i++)
             {
-                provider.OnMapPositionChanged(new MapPoint(i* Size + Half - Offset, 0));
-                Assert.AreEqual(i+2, provider.Count);
+                (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i * Size + Half - Offset, 0));
+                Assert.AreEqual(i+2, observer.Count);
             }
         }
 
@@ -150,16 +150,15 @@ namespace ActionStreetMap.Tests.Core.Tiles
         public void CanMoveInTileWithoutPreload()
         {
             // ARRANGE
-            var provider = GetManager();
-            var center = new MapPoint(0, 0);
+            var observer = GetManager();
 
             // ACT & ASSERT
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    provider.OnMapPositionChanged(new MapPoint(i, j));
-                    Assert.AreEqual(1, provider.Count);
+                    (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i, j));
+                    Assert.AreEqual(1, observer.Count);
                 }
             }
         }
@@ -168,7 +167,7 @@ namespace ActionStreetMap.Tests.Core.Tiles
         {
             var sceneBuilderMock = new Mock<ITileLoader>();
             sceneBuilderMock.Setup(l => l.Load(It.IsAny<Tile>())).Returns(Observable.Empty<Unit>());
-            var heightMapProvider = new HeightMapProvider(new Mock<IElevationProvider>().Object);
+            var heightMapobserver = new HeightMapProvider(new Mock<IElevationProvider>().Object);
             var activatorMock = new Mock<ITileActivator>();
 
             var configMock = new Mock<IConfigSection>();
@@ -177,31 +176,33 @@ namespace ActionStreetMap.Tests.Core.Tiles
             configMock.Setup(c => c.GetFloat("sensitivity")).Returns(Sensitivity);
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
 
-            var provider = new TileManager(sceneBuilderMock.Object, heightMapProvider, 
+            var observer = new TileManager(sceneBuilderMock.Object, heightMapobserver, 
                 activatorMock.Object, new MessageBus());
-            provider.Configure(configMock.Object);
+            observer.Configure(configMock.Object);
             
-            return provider;
+            return observer;
         }
 
         private Tile CanLoadTile(TileManager manager, Tile tileCenter,
             MapPoint first, MapPoint second, MapPoint third, int tileCount)
         {
+            var observer = manager as IPositionObserver<MapPoint>;
+
             // this shouldn't load new tile
-            manager.OnMapPositionChanged(first);
+            observer.OnNext(first);
             Assert.AreSame(tileCenter, manager.Current);
 
             ++tileCount;
 
             // this force to load new tile but we still in first
-            manager.OnMapPositionChanged(second);
+            observer.OnNext(second);
             
             Assert.AreSame(tileCenter, manager.Current);
             Assert.AreEqual(++tileCount, manager.Count);
 
             var previous = manager.Current;
             // this shouldn't load new tile but we're in next now
-            manager.OnMapPositionChanged(third);
+            observer.OnNext(third);
             Assert.AreNotSame(previous, manager.Current);
             Assert.AreEqual(tileCount, manager.Count);
 

@@ -47,7 +47,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .SetConfig(GlobalConfigSection.GetSection(ElevationKey)));
             
             Container.Register(Component
-                .For<IPositionListener>()
+                .For<ITilePositionObserver>()
                 .Use<TileManager>()
                 .Singleton()
                 .SetConfig(GlobalConfigSection.GetSection(TileKey)));

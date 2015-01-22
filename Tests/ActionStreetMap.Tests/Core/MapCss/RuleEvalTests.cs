@@ -106,19 +106,21 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 Points = testPoints
             };
 
-            var container = new Container();
-            var componentRoot = TestHelper.GetGameRunner(container);
-            var provider = container.Resolve<IStylesheetProvider>() as StylesheetProvider;
-            var stylesheet = provider.Get();
+            using (var container = new Container())
+            {
+                var componentRoot = TestHelper.GetGameRunner(container);
+                componentRoot.RunGame(TestHelper.BerlinTestFilePoint);
+                var provider = container.Resolve<IStylesheetProvider>() as StylesheetProvider;
+                var stylesheet = provider.Get();
 
-            // ACT
-            var rule1 = stylesheet.GetModelRule(area1);
-            var rule2 = stylesheet.GetModelRule(area2);
+                // ACT
+                var rule1 = stylesheet.GetModelRule(area1);
+                var rule2 = stylesheet.GetModelRule(area2);
 
-            // ASSERT
-            Assert.AreEqual(237, rule1.GetHeight());
-            Assert.AreEqual(12f, rule2.GetHeight());
-            componentRoot = null;
+                // ASSERT
+                Assert.AreEqual(237, rule1.GetHeight());
+                Assert.AreEqual(12f, rule2.GetHeight());
+            }
         }
 
         [TestCase(TestHelper.TestBaseMapcssFile, true)]
