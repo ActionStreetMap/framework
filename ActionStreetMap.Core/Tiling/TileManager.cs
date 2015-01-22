@@ -11,10 +11,10 @@ using ActionStreetMap.Infrastructure.Reactive;
 namespace ActionStreetMap.Core.Tiling
 {
     /// <summary>
-    ///     Defines position observer interface. Actually, it is workaround for DI container which doesn't 
-    ///     support multi interface registrations for one object instance.
+    ///     This is workaround for DI container which doesn't support multi interface registrations for 
+    ///     one object instance.
     /// </summary>
-    public interface ITilePositionObserver : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    internal interface ITilePositionObserver : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
     }
 
