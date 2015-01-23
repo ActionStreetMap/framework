@@ -5,8 +5,8 @@ using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Themes;
 using ActionStreetMap.Infrastructure.Config;
-using ActionStreetMap.Models.Buildings.Facades;
-using ActionStreetMap.Models.Buildings.Roofs;
+using ActionStreetMap.Explorer.Scene.Buildings.Facades;
+using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Themes

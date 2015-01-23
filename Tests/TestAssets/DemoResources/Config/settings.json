@@ -1,6 +1,6 @@
 {
-	"mapdata":"c:/_asm/mapdata/Index_Berlin/",
-	"elevationdata":"c:/_asm/fwk/actionstreetmap/Tests/TestAssets/DemoResources/Maps/elevation/",
+	"mapdata":"g:/__ASM/__repository/framework/Tests/ActionStreetMap.Tests/bin/Debug/Index_Berlin",
+	"elevationdata":"f:/___elevation/TestData/",
 	"theme":"Config/themes/default/theme.json",
 	"mapcss":"Config/themes/default/default.mapcss",
 	"tile": {
@@ -9,7 +9,7 @@
 		"heightmap":1025,
 		"autoclean":true,
 		"flat":false,
-		"position": {"latitude":52.5304135, "longitude":13.3874218}
+        "position": {"latitude":52.53176, "longitude":13.38702}
 	},
 	"sandbox": false
 }

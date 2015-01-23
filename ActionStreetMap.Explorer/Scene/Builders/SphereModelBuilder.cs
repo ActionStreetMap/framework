@@ -4,7 +4,7 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Models.Geometry;
+using ActionStreetMap.Explorer.Scene.Geometry;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
 

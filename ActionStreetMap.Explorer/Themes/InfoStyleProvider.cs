@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene.Infos;
-using ActionStreetMap.Models.Infos;
+using ActionStreetMap.Explorer.Scene.Infos;
 
 namespace ActionStreetMap.Explorer.Themes
 {

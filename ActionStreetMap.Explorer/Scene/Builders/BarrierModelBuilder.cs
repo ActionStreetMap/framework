@@ -5,11 +5,11 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Models.Geometry;
-using ActionStreetMap.Models.Geometry.ThickLine;
+using ActionStreetMap.Explorer.Scene.Geometry;
+using ActionStreetMap.Explorer.Scene.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Models.Utils;
+using ActionStreetMap.Explorer.Scene.Utils;
 
 using UnityEngine;
 

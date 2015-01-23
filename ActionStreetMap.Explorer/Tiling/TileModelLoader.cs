@@ -13,9 +13,9 @@ using ActionStreetMap.Explorer.Themes;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Models.Roads;
-using ActionStreetMap.Models.Terrain;
-using ActionStreetMap.Models.Utils;
+using ActionStreetMap.Explorer.Scene.Roads;
+using ActionStreetMap.Explorer.Scene.Terrain;
+using ActionStreetMap.Explorer.Scene.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Tiling

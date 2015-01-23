@@ -9,9 +9,9 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm.Helpers;
-using ActionStreetMap.Models.Buildings;
-using ActionStreetMap.Models.Geometry;
-using ActionStreetMap.Models.Utils;
+using ActionStreetMap.Explorer.Scene.Buildings;
+using ActionStreetMap.Explorer.Scene.Geometry;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Helpers;
 
 namespace ActionStreetMap.Explorer.Scene.Builders

@@ -1,6 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Utilities;
-using ActionStreetMap.Models.Utils;
+using ActionStreetMap.Explorer.Scene.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Helpers

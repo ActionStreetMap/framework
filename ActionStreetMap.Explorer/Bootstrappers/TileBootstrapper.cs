@@ -4,7 +4,7 @@ using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Models.Utils;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Osm;
 using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Index.Search;

@@ -2,7 +2,7 @@
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utilities;
-using ActionStreetMap.Models.Geometry;
+using ActionStreetMap.Explorer.Scene.Geometry;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.Algorithms

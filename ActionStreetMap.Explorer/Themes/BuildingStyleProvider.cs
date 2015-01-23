@@ -4,7 +4,7 @@ using System.Linq;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Primitives;
-using ActionStreetMap.Models.Buildings;
+using ActionStreetMap.Explorer.Scene.Buildings;
 
 namespace ActionStreetMap.Explorer.Themes
 {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Scene.Infos;
 using ActionStreetMap.Core.Scene.Roads;
-using ActionStreetMap.Models.Buildings;
-using ActionStreetMap.Models.Infos;
-using ActionStreetMap.Models.Roads;
+using ActionStreetMap.Explorer.Scene.Buildings;
+using ActionStreetMap.Explorer.Scene.Infos;
+using ActionStreetMap.Explorer.Scene.Roads;
 
 namespace ActionStreetMap.Explorer.Themes
 {

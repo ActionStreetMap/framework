@@ -2,8 +2,7 @@
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Themes;
-using ActionStreetMap.Models.Buildings;
-using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Scene.Buildings;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Themes

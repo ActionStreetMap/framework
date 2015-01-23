@@ -6,15 +6,15 @@ using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.IO;
-using ActionStreetMap.Models.Buildings;
-using ActionStreetMap.Models.Buildings.Facades;
-using ActionStreetMap.Models.Buildings.Roofs;
-using ActionStreetMap.Models.Geometry.Primitives;
-using ActionStreetMap.Models.Infos;
-using ActionStreetMap.Models.Roads;
+using ActionStreetMap.Explorer.Scene.Buildings;
+using ActionStreetMap.Explorer.Scene.Buildings.Facades;
+using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
+using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
+using ActionStreetMap.Explorer.Scene.Infos;
+using ActionStreetMap.Explorer.Scene.Roads;
 using UnityEngine;
 
-using Rect = ActionStreetMap.Models.Geometry.Primitives.Rect;
+using Rect = ActionStreetMap.Explorer.Scene.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Explorer.Themes
 {
@@ -244,7 +244,7 @@ namespace ActionStreetMap.Explorer.Themes
             }
         }
 
-        private Models.Geometry.Primitives.Rect GetUvMap(string value, Size size)
+        private Rect GetUvMap(string value, Size size)
         {
             // expect x,y,width,height and (0,0) is left bottom corner
             if (value == null)
@@ -264,7 +264,7 @@ namespace ActionStreetMap.Explorer.Themes
             var leftBottom = new Vector2(x / size.Width, y / size.Height);
             var rightUpper = new Vector2((x + width) / size.Width, (y + height) / size.Height);
 
-            return new Models.Geometry.Primitives.Rect(leftBottom, rightUpper);
+            return new Rect(leftBottom, rightUpper);
         }
     }
 }

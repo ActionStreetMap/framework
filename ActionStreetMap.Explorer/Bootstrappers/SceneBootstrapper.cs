@@ -8,12 +8,12 @@ using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Models.Buildings;
-using ActionStreetMap.Models.Buildings.Facades;
-using ActionStreetMap.Models.Buildings.Roofs;
-using ActionStreetMap.Models.Roads;
-using ActionStreetMap.Models.Terrain;
-using ActionStreetMap.Models.Utils;
+using ActionStreetMap.Explorer.Scene.Buildings;
+using ActionStreetMap.Explorer.Scene.Buildings.Facades;
+using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
+using ActionStreetMap.Explorer.Scene.Roads;
+using ActionStreetMap.Explorer.Scene.Terrain;
+using ActionStreetMap.Explorer.Scene.Utils;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {

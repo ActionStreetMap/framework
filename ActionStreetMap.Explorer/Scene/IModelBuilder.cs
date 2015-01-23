@@ -5,7 +5,7 @@ using ActionStreetMap.Explorer.Themes;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Models.Utils;
+using ActionStreetMap.Explorer.Scene.Utils;
 
 namespace ActionStreetMap.Explorer.Scene
 {

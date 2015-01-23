@@ -6,8 +6,8 @@ using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Osm.Helpers;
-using ActionStreetMap.Models.Geometry;
-using ActionStreetMap.Models.Terrain;
+using ActionStreetMap.Explorer.Scene.Geometry;
+using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Explorer.Helpers;
 
 namespace ActionStreetMap.Explorer.Scene.Builders

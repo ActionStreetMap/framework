@@ -11,7 +11,7 @@ using ActionStreetMap.Osm;
 using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Visitors;
 using ActionStreetMap.Tests.Osm;
-using ActionStreetMap.Models.Geometry;
+using ActionStreetMap.Explorer.Scene.Geometry;
 using Moq;
 using NUnit.Framework;
 

@@ -6,7 +6,7 @@ using ActionStreetMap.Core.Scene.Infos;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Models.Infos;
+using ActionStreetMap.Explorer.Scene.Infos;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
 

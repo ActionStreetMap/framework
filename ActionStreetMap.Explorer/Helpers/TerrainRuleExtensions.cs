@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Models.Terrain;
+using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Core.Scene.Details;
 
 namespace ActionStreetMap.Explorer.Helpers

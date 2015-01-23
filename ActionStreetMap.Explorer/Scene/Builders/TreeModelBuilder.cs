@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Models.Terrain;
+using ActionStreetMap.Explorer.Scene.Terrain;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
