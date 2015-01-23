@@ -18,6 +18,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         public List<Surface> Elevations { get; private set; }
         public List<Tree> Trees { get; private set; }
 
+        public float[, ,] SplatMap { get; set; }
+        public List<int[,]> Details { get; set; }
+
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
 
@@ -92,9 +95,13 @@ namespace ActionStreetMap.Core.Tiling.Models
         {
             //Return lists to object pool
             foreach (var area in Areas)
-                _objectPool.Store(area.Points);
+                _objectPool.StoreList(area.Points);
             foreach (var elevation in Elevations)
-                _objectPool.Store(elevation.Points);
+                _objectPool.StoreList(elevation.Points);
+
+            Details.ForEach(array => Array.Clear(array, 0, array.Length));
+            _objectPool.StoreList(Details, true);
+            _objectPool.StoreArray(SplatMap);
         }
     }
 }

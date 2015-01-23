@@ -66,8 +66,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var gameObject = BuildGameObject(tile, rule, model, points, elevation, minHeight);
 
-            ObjectPool.Store(points);
-            //ObjectPool.Store(simplified);
+            ObjectPool.StoreList(points);
+            //ObjectPool.StoreList(simplified);
 
             return gameObject;
         }

@@ -127,7 +127,7 @@ namespace ActionStreetMap.Models.Buildings
             // however, we don't want to use first occurrence, use building Id as seed
             var index = ids[(int) building.Id % count];
 
-            _objectPool.Store(ids);
+            _objectPool.StoreList(ids);
             return roofBuildings[index];
         }
     }

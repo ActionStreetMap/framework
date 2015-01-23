@@ -35,7 +35,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
 
             var buffer = ObjectPool.NewList<int>();
             var triangles = Triangulator.Triangulate(building.Footprint, buffer);
-            ObjectPool.Store(buffer);
+            ObjectPool.StoreList(buffer);
 
             return new MeshData
             {

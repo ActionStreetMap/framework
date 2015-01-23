@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Infrastructure
@@ -11,18 +10,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
     public class ObjectPool: IObjectPool
     {
         private readonly Dictionary<Type, object> _listPoolMap = new Dictionary<Type, object>(8);
-
-        /// <inheritdoc />
-        public T New<T>()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public void Store<T>(T obj)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly ObjectArrayPool<float> _splatMapArrayPool = new ObjectArrayPool<float>(1);
 
         /// <inheritdoc />
         public List<T> NewList<T>()
@@ -37,7 +25,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 }
             }
 
-            return (_listPoolMap[type] as ObjectListPool<T>).New() as List<T>;
+            return (_listPoolMap[type] as ObjectListPool<T>).New();
         }
 
         /// <inheritdoc />
@@ -48,7 +36,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <inheritdoc />
-        public void Store<T>(List<T> list)
+        public void StoreList<T>(List<T> list, bool isClean = false)
         {
             Type type = typeof(T);
             if (!_listPoolMap.ContainsKey(type))
@@ -60,7 +48,21 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 }
             }
 
-            (_listPoolMap[type] as ObjectListPool<T>).Store(list);
+            (_listPoolMap[type] as ObjectListPool<T>).Store(list, isClean);
+        }
+
+        /// <inheritdoc />
+        public T[, ,] NewArray<T>(int length1, int length2, int length3)
+        {
+            // NOTE workaround to have splat map outside terrain builder
+            // TODO can be improved
+            return _splatMapArrayPool.New(length1, length2, length3) as T[, ,];
+        }
+
+        /// <inheritdoc />
+        public void StoreArray<T>(T[, ,] array)
+        {
+            _splatMapArrayPool.Store(array);
         }
 
         /// <inheritdoc />

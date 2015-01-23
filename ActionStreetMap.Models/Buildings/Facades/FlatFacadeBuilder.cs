@@ -115,7 +115,7 @@ namespace ActionStreetMap.Models.Buildings.Facades
 
             var buffer = ObjectPool.NewList<int>();
             var triangles = Triangulator.Triangulate(building.Footprint, buffer);
-            ObjectPool.Store(buffer);
+            ObjectPool.StoreList(buffer);
 
             for (int i = 0; i < triangles.Length; i++)
                 meshData.Triangles[startTriangleIndex + i] = triangles[i] + startVertexIndex;

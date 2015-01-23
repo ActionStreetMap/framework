@@ -114,7 +114,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
 
             var buffer = ObjectPool.NewList<int>();
             var topPartIndecies = Triangulator.Triangulate(footprint, buffer);
-            ObjectPool.Store(buffer);
+            ObjectPool.StoreList(buffer);
 
             var vertCount = footprint.Count * 4;
             triangles.AddRange(topPartIndecies.Select(i => i + vertCount));

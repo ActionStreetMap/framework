@@ -96,7 +96,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
             }
 
             builder(Points, Triangles, Uv);
-            _objectPool.Store(lineElements);
+            _objectPool.StoreList(lineElements);
         }
 
         #region Segment processing
@@ -321,9 +321,9 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
         {
             _heightMap = null;
 
-            _objectPool.Store(Points);
-            _objectPool.Store(Triangles);
-            _objectPool.Store(Uv);
+            _objectPool.StoreList(Points);
+            _objectPool.StoreList(Triangles);
+            _objectPool.StoreList(Uv);
         }
     }
 }

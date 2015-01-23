@@ -109,8 +109,8 @@ namespace ActionStreetMap.Models.Geometry.Polygons
                     fillAction(scanline, list[i], list[i + 1]);
             }
 
-            objectPool.Store(edges);
-            objectPool.Store(list);
+            objectPool.StoreList(edges);
+            objectPool.StoreList(list);
         }
 
         /// <summary>

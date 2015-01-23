@@ -83,7 +83,7 @@ namespace ActionStreetMap.Models.Roads
 
             var buffer = _objectPool.NewList<int>();
             var polygonTriangles = Triangulator.Triangulate(junction.Polygon, buffer);
-            _objectPool.Store(buffer);
+            _objectPool.StoreList(buffer);
 
             Scheduler.MainThread.Schedule(() => CreateJunctionMesh(junction, style, polygonTriangles));
         }

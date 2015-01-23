@@ -146,6 +146,7 @@
     <Compile Include="Primitives\MutableTuple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\IObjectPool.cs" />
+    <Compile Include="Utilities\ObjectArrayPool.cs" />
     <Compile Include="Utilities\ObjectListPool.cs" />
   </ItemGroup>
   <ItemGroup />

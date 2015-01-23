@@ -43,9 +43,10 @@ namespace ActionStreetMap.Infrastructure.Utilities
         ///     Stores list in pool.
         /// </summary>
         /// <param name="list">List to store.</param>
-        public void Store(List<T> list)
+        /// <param name="isClean"></param>
+        public void Store(List<T> list, bool isClean)
         {
-            list.Clear();
+            if (!isClean) list.Clear();
             lock (_lockObj)
             {
                 _objectStack.Push(list);

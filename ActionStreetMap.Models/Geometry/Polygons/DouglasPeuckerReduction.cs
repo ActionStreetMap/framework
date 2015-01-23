@@ -45,7 +45,7 @@ namespace ActionStreetMap.Models.Geometry.Polygons
                     continue;
                 destination.Add(source[index]);
             }
-            objectPool.Store(pointIndexsToKeep);
+            objectPool.StoreList(pointIndexsToKeep);
         }
 
         /// <summary>

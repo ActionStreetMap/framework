@@ -90,7 +90,7 @@ namespace ActionStreetMap.Explorer.Scene
                 }
 
             }
-            _objectPool.Store(area.Points);
+            _objectPool.StoreList(area.Points);
         }
 
         /// <inheritdoc />
@@ -106,7 +106,7 @@ namespace ActionStreetMap.Explorer.Scene
                     Scheduler.MainThread.Schedule(() => AttachExtras(gameObject, rule, way));
                 }
             }
-            _objectPool.Store(way.Points);
+            _objectPool.StoreList(way.Points);
         }
 
         /// <inheritdoc />

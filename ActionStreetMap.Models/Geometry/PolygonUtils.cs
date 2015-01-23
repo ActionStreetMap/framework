@@ -24,7 +24,7 @@ namespace ActionStreetMap.Models.Geometry
         {
             var indices = objectPool.NewList<int>();
             var result = Triangulator.Triangulate(points, indices, reverse);
-            objectPool.Store(indices);
+            objectPool.StoreList(indices);
             return result;
         }
 

@@ -85,7 +85,7 @@ namespace ActionStreetMap.Models.Geometry.ThickLine
                 startPointIndex = 0;
             }
 
-            objectPool.Store(pointBuffer);
+            objectPool.StoreList(pointBuffer);
         }
 
         private static bool IsPointInTile(MapPoint point, MapPoint minPoint, MapPoint maxPoint)

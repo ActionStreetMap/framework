@@ -88,7 +88,7 @@ namespace ActionStreetMap.Models.Geometry.Polygons
 
                 scanListBuffer.Clear();
             }
-            objectPool.Store(scanListBuffer);
+            objectPool.StoreList(scanListBuffer);
         }
     }
 }

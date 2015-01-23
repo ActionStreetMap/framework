@@ -102,7 +102,7 @@ namespace ActionStreetMap.Models.Buildings.Roofs
                     length = segmentLength;
                 }
             }
-            _objectPool.Store(result);
+            _objectPool.StoreList(result);
             return longestSegment;
         }
 
@@ -239,9 +239,9 @@ namespace ActionStreetMap.Models.Buildings.Roofs
 
             public void Dispose()
             {
-                _objectPool.Store(Points);
-                _objectPool.Store(Triangles);
-                _objectPool.Store(UV);
+                _objectPool.StoreList(Points);
+                _objectPool.StoreList(Triangles);
+                _objectPool.StoreList(UV);
             }
         }
 

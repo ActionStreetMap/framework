@@ -60,10 +60,9 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                     BuildObject(gameObjectWrapper, rule, p, t, u);
                     dimenLineBuilder.Dispose();
                 }));
-            
 
-            ObjectPool.Store(lines);
-            ObjectPool.Store(points);
+            ObjectPool.StoreList(lines);
+            ObjectPool.StoreList(points);
 
             return gameObjectWrapper;
         }

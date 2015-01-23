@@ -85,7 +85,7 @@ namespace ActionStreetMap.Models.Terrain
 
                 pointsBuffer.Clear();
             }
-            objectPool.Store(pointsBuffer);
+            objectPool.StoreList(pointsBuffer);
         }
     }
 }

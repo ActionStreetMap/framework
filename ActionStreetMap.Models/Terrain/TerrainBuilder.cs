@@ -45,8 +45,8 @@ namespace ActionStreetMap.Models.Terrain
         private DetailPrototype[] _detailPrototypes;
 
         // TODO should be moved to canvas and consumed using object pool
-        private float[,,] _splatMapBuffer;
-        private List<int[,]> _detailListBuffer;
+        /*private float[,,] _splatMapBuffer;
+        private List<int[,]> _detailListBuffer;*/
 
         /// <summary>
         ///     Gets or sets trace.
@@ -59,7 +59,6 @@ namespace ActionStreetMap.Models.Terrain
         /// </summary>
         /// <param name="gameObjectFactory">Game object factory.</param>
         /// <param name="resourceProvider">Resource provider.</param>
-        /// <param name="roadGraphBuilder">Road graph builder.</param>
         /// <param name="roadBuilder">Road builder.</param>
         /// <param name="objectPool">Object pool.</param>
         /// <param name="heightMapProcessor">Heightmap processor.</param>
@@ -71,8 +70,8 @@ namespace ActionStreetMap.Models.Terrain
             _resourceProvider = resourceProvider;
             _roadBuilder = roadBuilder;
             _objectPool = objectPool;
-            _heightMapProcessor = heightMapProcessor;
 
+            _heightMapProcessor = heightMapProcessor;
             _surfaceBuilder = new SurfaceBuilder(objectPool);
         }
 
@@ -99,34 +98,27 @@ namespace ActionStreetMap.Models.Terrain
             var size = new Vector3(settings.Tile.Size, settings.Tile.HeightMap.MaxElevation, settings.Tile.Size);
             var layers = settings.SplatParams.Count;
 
-            // TODO _splatMapBuffer and _detailListBuffer are NOT thread safe!
+            settings.Tile.Canvas.SplatMap = _objectPool
+                .NewArray<float>(settings.Resolution, settings.Resolution, layers);
 
-            // NOTE we don't expect buffer size changes after engine is initialized
-            if (_splatMapBuffer == null)
-                _splatMapBuffer = new float[settings.Resolution, settings.Resolution, layers];
-
-            if (_detailListBuffer == null)
-            {
-                _detailListBuffer = new List<int[,]>(settings.DetailParams.Count);
-                for (int i = 0; i < settings.DetailParams.Count; i++)
-                    _detailListBuffer.Add(new int[settings.Resolution, settings.Resolution]);
-            }
-
+            canvas.Details = _objectPool.NewList<int[,]>(settings.DetailParams.Count);
+            for (int i = 0; i < settings.DetailParams.Count; i++)
+                canvas.Details.Add(new int[settings.Resolution, settings.Resolution]);
+         
             // fill alphamap
             var alphaMapElements = CreateElements(settings, canvas.Areas,
                 settings.Resolution / size.x,
                 settings.Resolution / size.z,
                 t => t.SplatIndex);
 
-            _surfaceBuilder.Build(settings, alphaMapElements, _splatMapBuffer, _detailListBuffer);
+            _surfaceBuilder.Build(settings, alphaMapElements, settings.Tile.Canvas.SplatMap, canvas.Details);
 
             var gameObject = _gameObjectFactory.CreateNew("terrain");
             Scheduler.MainThread.Schedule(() =>
             {
-                CreateTerrainGameObject(gameObject, parent, settings, size, _detailListBuffer);
-                CleanUp();
+                CreateTerrainGameObject(gameObject, parent, settings, size, canvas.Details);
+                canvas.Dispose();
             });
-
             return gameObject;
         }
 
@@ -177,8 +169,8 @@ namespace ActionStreetMap.Models.Terrain
         /// <summary>
         ///     Creates real game object
         /// </summary>
-        protected virtual void CreateTerrainGameObject(IGameObject terrainWrapper, IGameObject parent, TerrainSettings settings,
-            Vector3 size, List<int[,]> detailMapList)
+        protected virtual void CreateTerrainGameObject(IGameObject terrainWrapper, IGameObject parent, 
+            TerrainSettings settings, Vector3 size, List<int[,]> detailMapList)
         {
             // create TerrainData
             var terrainData = new TerrainData();
@@ -209,7 +201,7 @@ namespace ActionStreetMap.Models.Terrain
             //disable this for better frame rate
             terrain.castShadows = false;
 
-            terrainData.SetAlphamaps(0, 0, _splatMapBuffer);
+            terrainData.SetAlphamaps(0, 0, settings.Tile.Canvas.SplatMap);
 
             SetTrees(terrain, settings, size);
 
@@ -331,13 +323,6 @@ namespace ActionStreetMap.Models.Terrain
             
         }
         #endregion
-
-        private void CleanUp()
-        {
-            // also we set [x,y,0] to 1 in AreaBuilder
-            Array.Clear(_splatMapBuffer, 0, _splatMapBuffer.Length);
-            _detailListBuffer.ForEach(array => Array.Clear(array, 0, array.Length));
-        }
 
         private TerrainElement[] CreateElements(TerrainSettings settings,
             IEnumerable<Surface> areas, float widthRatio, float heightRatio, Func<TerrainElement, float> orderBy)

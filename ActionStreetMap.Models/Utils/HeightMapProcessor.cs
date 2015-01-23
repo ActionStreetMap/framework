@@ -72,7 +72,7 @@ namespace ActionStreetMap.Models.Utils
             SimpleScanLine.Fill(mapPointBuffer, _size, (scanline, s, e) =>
                Fill(scanline, s, e, elevation), _objectPool);
 
-            _objectPool.Store(mapPointBuffer);
+            _objectPool.StoreList(mapPointBuffer);
         }
 
         /// <summary>
@@ -97,14 +97,14 @@ namespace ActionStreetMap.Models.Utils
                 var scanLineBuffer = _objectPool.NewList<int>();
                 SimpleScanLine.Fill(polygonMapPointBuffer, _size, (scanline, s, e) =>
                     Fill(scanline, s, e, elevation), _objectPool);
-                _objectPool.Store(scanLineBuffer);
+                _objectPool.StoreList(scanLineBuffer);
             }
             else
             {
                 ScanLine.FillPolygon(polygonMapPointBuffer, (scanline, s, e) =>
                     Fill(scanline, s, e, elevation), _objectPool);
             }
-            _objectPool.Store(polygonMapPointBuffer);
+            _objectPool.StoreList(polygonMapPointBuffer);
         }
 
         private void Fill(int line, int start, int end, float elevation)
