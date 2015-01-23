@@ -42,7 +42,7 @@ namespace ActionStreetMap.Tests
         public void OnTileBuildFinished(Tile tile)
         {
             _stopwatch.Stop();
-            System.Console.WriteLine("Tile of size {0} is loaded in {1} ms", tile.Size, _stopwatch.ElapsedMilliseconds);
+            System.Console.WriteLine("Tile build end: {0} size is loaded in {1} ms", tile.Size, _stopwatch.ElapsedMilliseconds);
             _logger.Report("DemoTileListener.OnTileBuildFinished: before GC");
             GC.Collect();
             _logger.Report("DemoTileListener.OnTileBuildFinished: after GC");

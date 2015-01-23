@@ -101,6 +101,7 @@ namespace ActionStreetMap.Core.Tiling
 
             _tileActivator.Activate(tile);
             entry.Item2 = TileState.Activated;
+            _messageBus.Send(new TileActivateMessage(tile));
         }
 
         private void Deactivate(int i, int j)
@@ -116,6 +117,7 @@ namespace ActionStreetMap.Core.Tiling
                 return;
             _tileActivator.Deactivate(tile);
             entry.Item2 = TileState.Deactivated;
+            _messageBus.Send(new TileDeactivateMessage(tile));
         }
 
         #endregion
@@ -132,12 +134,13 @@ namespace ActionStreetMap.Core.Tiling
             if (_allTiles.ContainsKey(i, j))
                 return;
             _allTiles.Add(i, j, entry);
-
+            _messageBus.Send(new TileLoadStartMessage(tileCenter));
             tile.Canvas = new Canvas(_objectPool);
             tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
             _tileLoader.Load(tile).Subscribe(_ => {}, () => 
             {
                 lock (_lockObj) { entry.Item2 = TileState.Activated; }
+                _messageBus.Send(new TileLoadFinishMessage(tile));
             });
         }
 
@@ -147,7 +150,8 @@ namespace ActionStreetMap.Core.Tiling
             if (entry.Item2 != TileState.Deactivated)
                 throw new AlgorithmException(Strings.TileDeactivationBug);
             _allTiles.Remove(i, j);
-            _tileActivator.Destroy(entry.Item1);           
+            _tileActivator.Destroy(entry.Item1);
+            _messageBus.Send(new TileDestroyMessage(entry.Item1));
         }
 
         #endregion
