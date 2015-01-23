@@ -6,7 +6,7 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Tiling
 {
     /// <summary>
     ///     Represents default tile activator. 

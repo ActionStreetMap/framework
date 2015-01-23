@@ -7,17 +7,18 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Themes;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Roads;
 using ActionStreetMap.Models.Terrain;
-using ActionStreetMap.Explorer.Helpers;
-using UnityEngine;
 using ActionStreetMap.Models.Utils;
+using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Tiling
 {
     /// <summary>
     ///     Represents class responsible to process all models for tile.

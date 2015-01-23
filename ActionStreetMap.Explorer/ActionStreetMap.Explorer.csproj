@@ -80,13 +80,13 @@
     <Compile Include="Interactions\CompositeModelBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\UnityConsoleTrace.cs" />
-    <Compile Include="Scene\TileActivator.cs" />
+    <Compile Include="Tiling\TileActivator.cs" />
     <Compile Include="Themes\BuildingStyleProvider.cs" />
     <Compile Include="Themes\InfoStyleProvider.cs" />
     <Compile Include="Themes\ThemeProvider.cs" />
     <Compile Include="Themes\RoadStyleProvider.cs" />
     <Compile Include="Themes\Theme.cs" />
-    <Compile Include="Scene\TileModelLoader.cs" />
+    <Compile Include="Tiling\TileModelLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ActionStreetMap.Core\ActionStreetMap.Core.csproj">
