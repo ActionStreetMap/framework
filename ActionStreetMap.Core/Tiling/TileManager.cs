@@ -128,14 +128,13 @@ namespace ActionStreetMap.Core.Tiling
         {
             var tileCenter = new MapPoint(i*_tileSize, j*_tileSize);
 
-            var tile = new Tile(RelativeNullPoint, tileCenter, _tileSize);
+            var tile = new Tile(RelativeNullPoint, tileCenter, new Canvas(_objectPool), _tileSize);
             var entry = new MutableTuple<Tile, TileState>(tile, TileState.IsLoading);
 
             if (_allTiles.ContainsKey(i, j))
                 return;
             _allTiles.Add(i, j, entry);
             _messageBus.Send(new TileLoadStartMessage(tileCenter));
-            tile.Canvas = new Canvas(_objectPool);
             tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
             _tileLoader.Load(tile).Subscribe(_ => {}, () => 
             {

@@ -33,7 +33,7 @@ namespace ActionStreetMap.Tests.Core.Elevation
             var provider = new HeightMapProvider(elevationProvider.Object);
             
             // ACT
-            var heightMap = provider.Get(new Tile(center, new MapPoint(), tileSize), resolution);
+            var heightMap = provider.Get(new Tile(center, new MapPoint(), null, tileSize), resolution);
                 
             // ASSERT
             Assert.IsNotNull(heightMap);

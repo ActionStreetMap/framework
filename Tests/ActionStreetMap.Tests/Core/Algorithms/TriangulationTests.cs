@@ -55,8 +55,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             elementSourceProvider.Configure(config.Object);
             var loader = new MapTileLoader(elementSourceProvider, sceneVisitor, new ObjectPool());
 
-            var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), 1000);
-
+            var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), new Canvas(new ObjectPool()), 1000);
             loader.Load(tile).Wait();
 
             // ACT & ARRANGE

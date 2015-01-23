@@ -10,11 +10,6 @@ namespace ActionStreetMap.Core.Tiling.Models
     public class Tile : Model
     {
         /// <summary>
-        ///     Gets or sets Canvas
-        /// </summary>
-        public Canvas Canvas { get; set; }
-
-        /// <summary>
         ///     Stores map center coordinate in lat/lon.
         /// </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
@@ -23,6 +18,11 @@ namespace ActionStreetMap.Core.Tiling.Models
         ///     Stores tile center coordinate in Unity metrics.
         /// </summary>
         public MapPoint MapCenter { get; private set; }
+
+        /// <summary>
+        ///     Gets or sets tile canvas.
+        /// </summary>
+        public Canvas Canvas { get; private set; }
 
         /// <summary>
         ///     Gets bounding box for current tile.
@@ -74,11 +74,13 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// </summary>
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="mapCenter">Center of map.</param>
+        /// <param name="canvas">Map canvas.</param>
         /// <param name="size">Tile size in meters.</param>
-        public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, float size)
+        public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, Canvas canvas, float size)
         {
             RelativeNullPoint = relativeNullPoint;
             MapCenter = mapCenter;
+            Canvas = canvas;
             Size = size;
 
             var geoCenter = GeoProjection.ToGeoCoordinate(relativeNullPoint, mapCenter);
