@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Reactive;
 using Moq;
@@ -177,7 +178,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
 
             var observer = new TileManager(sceneBuilderMock.Object, heightMapobserver, 
-                activatorMock.Object, new MessageBus());
+                activatorMock.Object, new MessageBus(), new ObjectPool());
             observer.Configure(configMock.Object);
             
             return observer;

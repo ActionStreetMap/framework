@@ -8,6 +8,7 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Config;
 using Moq;
+using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Core.MapCss
 {
@@ -59,7 +60,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
 
         public static Canvas GetCanvas()
         {
-            return new Canvas();
+            return new Canvas(new ObjectPool());
         }
 
         public static Area GetArea(Dictionary<string, string> tags)

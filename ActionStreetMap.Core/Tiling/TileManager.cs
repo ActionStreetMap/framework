@@ -7,6 +7,7 @@ using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Tiling
 {
@@ -49,6 +50,7 @@ namespace ActionStreetMap.Core.Tiling
         private readonly IMessageBus _messageBus;
         private readonly IHeightMapProvider _heightMapProvider;
         private readonly ITileActivator _tileActivator;
+        private readonly IObjectPool _objectPool;
 
         private readonly DoubleKeyDictionary<int, int, Tile> _allTiles = new DoubleKeyDictionary<int, int, Tile>();
         private readonly DoubleKeyDictionary<int, int, Tile> _activeTiles = new DoubleKeyDictionary<int, int, Tile>();
@@ -77,12 +79,13 @@ namespace ActionStreetMap.Core.Tiling
         /// <param name="messageBus">Message bus.</param>
         [Dependency]
         public TileManager(ITileLoader tileLoader, IHeightMapProvider heightMapProvider, 
-            ITileActivator tileActivator, IMessageBus messageBus)
+            ITileActivator tileActivator, IMessageBus messageBus, IObjectPool objectPool)
         {
             _tileLoader = tileLoader;
             _messageBus = messageBus;
             _heightMapProvider = heightMapProvider;
             _tileActivator = tileActivator;
+            _objectPool = objectPool;
         }
 
         #region Activation
@@ -120,6 +123,7 @@ namespace ActionStreetMap.Core.Tiling
             _messageBus.Send(new TileLoadStartMessage(tileCenter));
 
             var tile = new Tile(RelativeNullPoint, tileCenter, _tileSize);
+            tile.Canvas = new Canvas(_objectPool);
             tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
             _tileLoader.Load(tile).Wait();
 

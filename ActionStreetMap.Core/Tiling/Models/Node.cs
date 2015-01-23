@@ -12,10 +12,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public GeoCoordinate Point { get; set; }
 
         /// <inheritdoc />
-        public override bool IsClosed
-        {
-            get { return false; }
-        }
+        public override bool IsClosed { get { return false; } }
 
         /// <inheritdoc />
         public override void Accept(IModelVisitor visitor)

@@ -5,12 +5,12 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Models.Details;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Terrain;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Core.Scene.Details;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -19,26 +19,15 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     /// </summary>
     public class SplatModelBuilder : ModelBuilder
     {
-        private readonly ITerrainBuilder _terrainBuilder;
-
         /// <inheritdoc />
         public override string Name { get { return "splat"; } }
-
-        /// <summary>
-        ///     Creates TreeModelBuilder.
-        /// </summary>
-        [Dependency]
-        public SplatModelBuilder(ITerrainBuilder terrainBuilder)
-        {
-            _terrainBuilder = terrainBuilder;
-        }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
         {
             var points = ObjectPool.NewList<MapPoint>();
             PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, points);
-            _terrainBuilder.AddArea(new AreaSettings
+            tile.Canvas.AddArea(new Surface()
             {
                 ZIndex = rule.GetZIndex(),
                 SplatIndex = rule.GetSplatIndex(),
@@ -47,12 +36,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             });
 
             if (rule.IsForest())
-                GenerateTrees(points, (int) area.Id);
+                GenerateTrees(tile, points, (int) area.Id);
 
             return null;
         }
 
-        private void GenerateTrees(List<MapPoint> points, int seed)
+        private void GenerateTrees(Tile tile, List<MapPoint> points, int seed)
         {
             // triangulate polygon
             var triangles = PolygonUtils.Triangulate(points, ObjectPool);
@@ -72,8 +61,9 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 for (int j = 0; j < count; j++)
                 {
                     var point = TriangleUtils.GetRandomPoint(p1, p2, p3, rnd.NextDouble(), rnd.NextDouble());
-                    _terrainBuilder.AddTree(new TreeDetail()
+                    tile.Canvas.AddTree(new Tree()
                     {
+                        Type = 0, // TODO
                         Point = point
                     });
                 }

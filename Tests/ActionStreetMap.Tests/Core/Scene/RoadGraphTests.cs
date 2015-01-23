@@ -460,7 +460,7 @@ namespace ActionStreetMap.Tests.Core.Scene
 
         private static RoadGraphBuilder GetBuilder()
         {
-            return new RoadGraphBuilder { Trace = new ConsoleTrace() };
+            return new RoadGraphBuilder();
         }
     }
 }

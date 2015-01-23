@@ -50,7 +50,7 @@ namespace ActionStreetMap.Osm
                 .SelectMany(elementSource => elementSource.Get(tile.BoundingBox)
                     .ObserveOn(Scheduler.ThreadPool)
                     .Do(element => element.Accept(_filterElementVisitor),
-                        () => (new Canvas()).Accept(_modelVisitor))
+                        () => (tile.Canvas).Accept(_modelVisitor))
                     .AsCompletion());
         }
     }

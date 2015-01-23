@@ -57,8 +57,6 @@
     <Compile Include="Buildings\Roofs\IRoofBuilder.cs" />
     <Compile Include="Buildings\Roofs\MansardRoofBuilder.cs" />
     <Compile Include="Buildings\Roofs\PyramidalRoofBuilder.cs" />
-    <Compile Include="Details\ModelDetail.cs" />
-    <Compile Include="Details\TreeDetail.cs" />
     <Compile Include="Geometry\CircleUtils.cs" />
     <Compile Include="Geometry\PointUtils.cs" />
     <Compile Include="Geometry\Polygons\DouglasPeuckerReduction.cs" />

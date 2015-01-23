@@ -8,6 +8,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Helpers;
 using NUnit.Framework;
 using UnityEngine;
+using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Core.MapCss
 {
@@ -20,7 +21,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
         {
             // ARRANGE
             var stylesheet = MapCssHelper.GetStylesheetFromFile(path, canUseExprTree);
-            var canvas = new Canvas();
+            var canvas = new Canvas(new ObjectPool());
 
             // ACT
             var rule = stylesheet.GetModelRule(canvas);

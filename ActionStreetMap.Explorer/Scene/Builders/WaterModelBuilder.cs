@@ -10,6 +10,8 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Models.Geometry;
 using ActionStreetMap.Models.Terrain;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Core.Scene.Details;
+
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
@@ -19,20 +21,10 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     /// </summary>
     public class WaterModelBuilder : ModelBuilder
     {
-        private readonly ITerrainBuilder _terrainBuilder;
         private const int NoLayer = -1;
 
         /// <inheritdoc />
         public override string Name { get { return "water"; } }
-
-        /// <summary>
-        ///     Creates WaterModelBuilder.
-        /// </summary>
-        [Dependency]
-        public WaterModelBuilder(ITerrainBuilder terrainBuilder)
-        {
-            _terrainBuilder = terrainBuilder;
-        }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
@@ -59,10 +51,10 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             //PolygonUtils.MakeOffset(verticies2D, offsetPoints, -2f);
      
             // add elevation
-            _terrainBuilder.AddElevation(new AreaSettings
+            tile.Canvas.AddElevation(new Surface
             {
                 ZIndex = rule.GetZIndex(),
-                Elevation = elevation - 10,
+                AverageElevation = elevation - 10,
                 Points = verticies2D
             });
 

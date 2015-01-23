@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Models.Roads;
-using ActionStreetMap.Models.Details;
 using UnityEngine;
 
 namespace ActionStreetMap.Models.Terrain

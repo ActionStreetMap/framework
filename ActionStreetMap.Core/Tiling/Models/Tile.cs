@@ -10,6 +10,11 @@ namespace ActionStreetMap.Core.Tiling.Models
     public class Tile : Model
     {
         /// <summary>
+        ///     Gets or sets Canvas
+        /// </summary>
+        public Canvas Canvas { get; set; }
+
+        /// <summary>
         ///     Stores map center coordinate in lat/lon.
         /// </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }

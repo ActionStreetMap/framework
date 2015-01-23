@@ -31,20 +31,14 @@ namespace ActionStreetMap.Core.Scene.Roads
     public sealed class RoadGraphBuilder: IRoadGraphBuilder
     {
         // map which is used for merging of split elements
-        private readonly Dictionary<long, List<RoadElement>> _elements = new Dictionary<long, List<RoadElement>>(64);
+        private readonly Dictionary<long, List<RoadElement>> _elements = new Dictionary<long, List<RoadElement>>(128);
 
         // key is point which is shared between different road elements ("junction")
-        private readonly Dictionary<MapPoint, SortedList<RoadType, RoadJunction>> _junctionsMap = new Dictionary<MapPoint, SortedList<RoadType, RoadJunction>>(32);
+        private readonly Dictionary<MapPoint, SortedList<RoadType, RoadJunction>> _junctionsMap = new Dictionary<MapPoint, SortedList<RoadType, RoadJunction>>(54);
 
         // point to index in RoadElement/index in Element.Points tuple
         private readonly Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>> _pointsMap = 
             new Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>>(256);
-
-        /// <summary>
-        ///     Gets or sets trace.
-        /// </summary>
-        [Dependency]
-        public ITrace Trace { get; set; }
 
         #region Public methods
 
@@ -185,7 +179,7 @@ namespace ActionStreetMap.Core.Scene.Roads
             else
                 firstList.AddRange(secondList);
             _elements.Remove(secondId);
-            Trace.Output("road.graph", String.Format("merge {0} with {1}", secondId, firstId));
+            //Console.WriteLine(String.Format("merge {0} with {1}", secondId, firstId));
             secondList.ForEach(e => e.Id = firstId);
         }
 

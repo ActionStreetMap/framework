@@ -1,21 +1,24 @@
-﻿using ActionStreetMap.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace ActionStreetMap.Models.Details
+namespace ActionStreetMap.Core.Scene.Details
 {
     /// <summary>
     ///     Represents a tree. Actually, it can define additional info like height, description, type, etc. as OSM supports this
     /// </summary>
-    public class TreeDetail
+    public class Tree
     {
         /// <summary>
-        ///     Tree id.
+        ///     Tree id. Can be ignored?
         /// </summary>
-        public long Id;
+        public long Id { get; set; }
 
         /// <summary>
-        ///     Tree index.
+        ///     Type of tree.
         /// </summary>
-        public int Index;
+        public int Type { get; set; }
 
         /// <summary>
         ///     Gets or sets tree position

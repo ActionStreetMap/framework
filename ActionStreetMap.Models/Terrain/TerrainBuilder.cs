@@ -8,10 +8,10 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Models.Details;
 using ActionStreetMap.Models.Roads;
 using ActionStreetMap.Models.Utils;
 using UnityEngine;
+using ActionStreetMap.Core.Scene.Details;
 
 namespace ActionStreetMap.Models.Terrain
 {
@@ -27,30 +27,6 @@ namespace ActionStreetMap.Models.Terrain
         /// <param name="settings">Terrain settings.</param>
         /// <returns>Terrain game object.</returns>
         IGameObject Build(IGameObject parent, TerrainSettings settings);
-
-        /// <summary>
-        ///     Adds road element to terrain.
-        /// </summary>
-        /// <param name="roadElement">Road element</param>
-        void AddRoadElement(RoadElement roadElement);
-
-        /// <summary>
-        ///     Adds area which should be drawn using different splat index.
-        /// </summary>
-        /// <param name="areaSettings">Area settings.</param>
-        void AddArea(AreaSettings areaSettings);
-
-        /// <summary>
-        ///     Adds area which should be adjuested by height. Processed last.
-        /// </summary>
-        /// <param name="areaSettings">Area settings.</param>
-        void AddElevation(AreaSettings areaSettings);
-
-        /// <summary>
-        ///     Adds tree.
-        /// </summary>
-        /// <param name="tree">Tree.</param>
-        void AddTree(TreeDetail tree);
     }
 
     /// <summary>
@@ -71,11 +47,7 @@ namespace ActionStreetMap.Models.Terrain
         private float[,,] _splatMapBuffer;
         private List<int[,]> _detailListBuffer;
 
-        private readonly IRoadGraphBuilder _roadGraphBuilder;
 
-        private readonly List<AreaSettings> _areas = new List<AreaSettings>();
-        private readonly List<AreaSettings> _elevations = new List<AreaSettings>();
-        private readonly List<TreeDetail> _trees = new List<TreeDetail>();
 
         /// <summary>
         ///     Gets or sets trace.
@@ -93,15 +65,13 @@ namespace ActionStreetMap.Models.Terrain
         /// <param name="objectPool">Object pool.</param>
         /// <param name="heightMapProcessor">Heightmap processor.</param>
         [Dependency]
-        public TerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider, 
-            IRoadGraphBuilder roadGraphBuilder, IRoadBuilder roadBuilder, IObjectPool objectPool, 
-            HeightMapProcessor heightMapProcessor)
+        public TerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider,
+            IRoadBuilder roadBuilder, IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
         {
             _gameObjectFactory = gameObjectFactory;
             _resourceProvider = resourceProvider;
             _roadBuilder = roadBuilder;
             _objectPool = objectPool;
-            _roadGraphBuilder = roadGraphBuilder;
             _heightMapProcessor = heightMapProcessor;
         }
 
@@ -112,6 +82,7 @@ namespace ActionStreetMap.Models.Terrain
         {
             ProcessTerrainObjects(settings);
 
+            var canvas = settings.Tile.Canvas;
             var htmap = settings.Tile.HeightMap.Data;
 
             // normalize
@@ -139,7 +110,7 @@ namespace ActionStreetMap.Models.Terrain
             }
 
             // fill alphamap
-            var alphaMapElements = CreateElements(settings, _areas,
+            var alphaMapElements = CreateElements(settings, canvas.Areas,
                 settings.Resolution / size.x,
                 settings.Resolution / size.z,
                 t => t.SplatIndex);
@@ -156,50 +127,15 @@ namespace ActionStreetMap.Models.Terrain
             return gameObject;
         }
 
-        /// <inheritdoc />
-        public void AddRoadElement(RoadElement roadElement)
-        {
-            lock (_roadGraphBuilder)
-            {
-                _roadGraphBuilder.Add(roadElement);
-            }
-        }
-
-        /// <inheritdoc />
-        public void AddArea(AreaSettings areaSettings)
-        {
-            lock (_areas)
-            {
-                _areas.Add(areaSettings);
-            }
-        }
-
-        /// <inheritdoc />
-        public void AddElevation(AreaSettings areaSettings)
-        {
-            lock (_elevations)
-            {
-                _elevations.Add(areaSettings);
-            }
-        }
-
-        /// <inheritdoc />
-        public void AddTree(TreeDetail tree)
-        {
-            lock (_trees)
-            {
-                _trees.Add(tree);
-            }
-        }
-
         #endregion
 
         private void ProcessTerrainObjects(TerrainSettings settings)
         {
+            var canvas = settings.Tile.Canvas;
             var heightMap = settings.Tile.HeightMap;
             var roadStyleProvider = settings.RoadStyleProvider;
 
-            var roadGraph = _roadGraphBuilder.Build();
+            var roadGraph = canvas.BuildRoadGraph();
 
             // build roads
             var roadObservable = roadGraph.Roads.ToObservable();
@@ -226,11 +162,11 @@ namespace ActionStreetMap.Models.Terrain
             // process elevations
             // NOTE We have to do this in the last order. Otherwise, new height
             // value can affect other models (e.g. water vs road)
-            if (_elevations.Any())
+            if (canvas.Elevations.Any())
             {
-                var elevationObservable = _elevations.ToObservable();
+                var elevationObservable = canvas.Elevations.ToObservable();
                 elevationObservable.Subscribe(elevationArea =>
-                    _heightMapProcessor.AdjustPolygon(elevationArea.Points, elevationArea.Elevation));
+                    _heightMapProcessor.AdjustPolygon(elevationArea.Points, elevationArea.AverageElevation));
                 elevationObservable.Wait();
             }
         }
@@ -319,8 +255,9 @@ namespace ActionStreetMap.Models.Terrain
 
         private void SetTrees(UnityEngine.Terrain terrain, TerrainSettings settings, Vector3 size)
         {
+            var canvas = settings.Tile.Canvas;
             terrain.terrainData.treePrototypes = GetTreePrototypes();
-            foreach (var treeDetail in _trees)
+            foreach (var treeDetail in canvas.Trees)
             {
                 var position = new Vector3((treeDetail.Point.X - settings.CornerPosition.x) / size.x, 1,
                     (treeDetail.Point.Y - settings.CornerPosition.y) / size.z);
@@ -398,20 +335,10 @@ namespace ActionStreetMap.Models.Terrain
             Array.Clear(_splatMapBuffer, 0, _splatMapBuffer.Length);
             _detailListBuffer.ForEach(array => Array.Clear(array, 0, array.Length));
 
-            //Return lists to object pool
-            foreach (var area in _areas)
-                _objectPool.Store(area.Points);
-            foreach (var elevation in _elevations)
-                _objectPool.Store(elevation.Points);
-
-            // clear collections to reuse
-            _areas.Clear();
-            _elevations.Clear();
-            _trees.Clear();
         }
 
         private TerrainElement[] CreateElements(TerrainSettings settings,
-            IEnumerable<AreaSettings> areas, float widthRatio, float heightRatio, Func<TerrainElement, float> orderBy)
+            IEnumerable<Surface> areas, float widthRatio, float heightRatio, Func<TerrainElement, float> orderBy)
         {
             return areas.Select(a => new TerrainElement
             {

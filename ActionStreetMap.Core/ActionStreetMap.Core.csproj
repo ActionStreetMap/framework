@@ -66,6 +66,8 @@
     <Compile Include="Positioning\Nmea\NmeaUtils.cs" />
     <Compile Include="Positioning\Nmea\NmeaValueType.cs" />
     <Compile Include="Positioning\Nmea\RMC.cs" />
+    <Compile Include="Scene\Details\Surface.cs" />
+    <Compile Include="Scene\Details\Tree.cs" />
     <Compile Include="Tiling\Models\Relation.cs" />
     <Compile Include="Scene\Roads\RoadGraph.cs" />
     <Compile Include="Scene\Roads\RoadGraphBuilder.cs" />

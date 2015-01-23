@@ -17,19 +17,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     /// </summary>
     public class RoadModelBuilder: ModelBuilder
     {
-        private readonly ITerrainBuilder _terrainBuilder;
-
         /// <inheritdoc />
         public override string Name { get { return "road"; } }
-
-        /// <summary>
-        ///     Creates RoadModelBuilder.
-        /// </summary>
-        [Dependency]
-        public RoadModelBuilder(ITerrainBuilder terrainBuilder)
-        {
-            _terrainBuilder = terrainBuilder;
-        }
 
         /// <inheritdoc />
         public override IGameObject BuildWay(Tile tile, Rule rule, Way way)
@@ -39,7 +28,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             // road should be processed in one place: it's better to collect all 
             // roads and create connected road network
-            _terrainBuilder.AddRoadElement(new RoadElement
+            tile.Canvas.AddRoadElement(new RoadElement
             {
                 Id = way.Id,
                 Address = AddressExtractor.Extract(way.Tags),
