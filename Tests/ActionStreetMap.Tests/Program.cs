@@ -53,9 +53,8 @@ namespace ActionStreetMap.Tests
                 @"g:\__ASM\__repository\framework\Tests\TestAssets\DemoResources\Config\themes\default\index.json",
                 "Index");*/
             //program.ReadIndex("Index");
-            sw.Stop();
-            Console.WriteLine("Took {0}ms", sw.ElapsedMilliseconds);
             //program.SubscribeOnMainThreadTest();
+            Console.ReadKey();
         }
 
         public void RunMocker()

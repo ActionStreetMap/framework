@@ -34,6 +34,8 @@ namespace ActionStreetMap.Core.Tiling
         /// </summary>
         private const int ThresholdIndex = 4;
 
+        private readonly object _lockObj = new object();
+
         private float _tileSize;
         private float _offset;
         private float _moveSensitivity;
@@ -52,8 +54,8 @@ namespace ActionStreetMap.Core.Tiling
         private readonly ITileActivator _tileActivator;
         private readonly IObjectPool _objectPool;
 
-        private readonly DoubleKeyDictionary<int, int, Tile> _allTiles = new DoubleKeyDictionary<int, int, Tile>();
-        private readonly DoubleKeyDictionary<int, int, Tile> _activeTiles = new DoubleKeyDictionary<int, int, Tile>();
+        private readonly DoubleKeyDictionary<int, int, MutableTuple<Tile, TileState>> _allTiles = 
+            new DoubleKeyDictionary<int, int, MutableTuple<Tile, TileState>>();
 
         /// <summary>
         ///     Gets relative null point
@@ -63,7 +65,7 @@ namespace ActionStreetMap.Core.Tiling
         /// <summary>
         ///     Gets current tile.
         /// </summary>
-        public Tile Current { get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2]; } }
+        public Tile Current { get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2].Item1; } }
 
         /// <summary>
         ///     Gets all tile count.
@@ -92,24 +94,28 @@ namespace ActionStreetMap.Core.Tiling
 
         private void Activate(int i, int j)
         {
-            if (_activeTiles.ContainsKey(i, j))
+            var entry = _allTiles[i, j];
+            var tile = entry.Item1;
+            if (entry.Item2 == TileState.Activated)
                 return;
 
-            var tile = _allTiles[i, j];
             _tileActivator.Activate(tile);
-            _activeTiles.Add(i, j, tile);
-            _messageBus.Send(new TileActivateMessage(tile));
+            entry.Item2 = TileState.Activated;
         }
 
         private void Deactivate(int i, int j)
         {
-            if (!_activeTiles.ContainsKey(i, j))
+            if (!_allTiles.ContainsKey(i, j))
                 return;
 
-            var tile = _activeTiles[i, j];
+            var entry = _allTiles[i, j];
+            var tile = entry.Item1;
+
+            // NOTE or != Activated ?
+            if (entry.Item2 == TileState.Deactivated)
+                return;
             _tileActivator.Deactivate(tile);
-            _activeTiles.Remove(i, j);
-            _messageBus.Send(new TileDeactivateMessage(tile));
+            entry.Item2 = TileState.Deactivated;
         }
 
         #endregion
@@ -120,28 +126,28 @@ namespace ActionStreetMap.Core.Tiling
         {
             var tileCenter = new MapPoint(i*_tileSize, j*_tileSize);
 
-            _messageBus.Send(new TileLoadStartMessage(tileCenter));
-
             var tile = new Tile(RelativeNullPoint, tileCenter, _tileSize);
+            var entry = new MutableTuple<Tile, TileState>(tile, TileState.IsLoading);
+
+            if (_allTiles.ContainsKey(i, j))
+                return;
+            _allTiles.Add(i, j, entry);
+
             tile.Canvas = new Canvas(_objectPool);
             tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
-            _tileLoader.Load(tile).Wait();
-
-            _messageBus.Send(new TileLoadFinishMessage(tile));
-
-            _allTiles.Add(i, j, tile);
-
-            Activate(i, j);          
+            _tileLoader.Load(tile).Subscribe(_ => {}, () => 
+            {
+                lock (_lockObj) { entry.Item2 = TileState.Activated; }
+            });
         }
 
         private void Destroy(int i, int j)
         {
-            var tile = _allTiles[i, j];
-            _tileActivator.Destroy(tile);
-            _allTiles.Remove(i, j);
-            _messageBus.Send(new TileDestroyMessage(tile));
-            if (_activeTiles.ContainsKey(i, j))
+            var entry = _allTiles[i, j];
+            if (entry.Item2 != TileState.Deactivated)
                 throw new AlgorithmException(Strings.TileDeactivationBug);
+            _allTiles.Remove(i, j);
+            _tileActivator.Destroy(entry.Item1);           
         }
 
         #endregion
@@ -158,8 +164,8 @@ namespace ActionStreetMap.Core.Tiling
             var index = GetNextTileIndex(tile, position, i, j);
             if (!_allTiles.ContainsKey(index.Item1, index.Item2))
                 CreateTile(index.Item1, index.Item2);
-
-            Activate(i, j);
+            else
+                Activate(i, j);
 
             // NOTE We destroy tiles which are far away from us
             if (_allowAutoRemoval && _allTiles.Count() > TileCacheSize)
@@ -220,32 +226,36 @@ namespace ActionStreetMap.Core.Tiling
 
         void IObserver<MapPoint>.OnNext(MapPoint value)
         {
-            _currentMapPoint = value;
-            _currentPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, value);
-
-            // call update logic only if threshold is reached
-            if (Math.Abs(value.X - _lastUpdatePosition.X) > _moveSensitivity
-                || Math.Abs(value.Y - _lastUpdatePosition.Y) > _moveSensitivity)
+            var geoPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, value);
+            lock (_lockObj)
             {
-                _lastUpdatePosition = value;
+                _currentMapPoint = value;
+                _currentPosition = geoPosition;
 
-                int i = Convert.ToInt32(value.X/_tileSize);
-                int j = Convert.ToInt32(value.Y/_tileSize);
+                // call update logic only if threshold is reached
+                if (Math.Abs(value.X - _lastUpdatePosition.X) > _moveSensitivity
+                    || Math.Abs(value.Y - _lastUpdatePosition.Y) > _moveSensitivity)
+                {
+                    _lastUpdatePosition = value;
 
-                // TODO support setting of neighbors for Unity Terrain
+                    int i = Convert.ToInt32(value.X / _tileSize);
+                    int j = Convert.ToInt32(value.Y / _tileSize);
 
-                // NOTE it should be happened only once on start with (0,0)
-                // however it's possible if we skip offset detection zone somehow
-                if (!_allTiles.ContainsKey(i, j))
-                    CreateTile(i, j);
+                    // TODO support setting of neighbors for Unity Terrain
 
-                var tile = _allTiles[i, j];
+                    // NOTE it should be happened only once on start with (0,0)
+                    // however it's possible if we skip offset detection zone somehow
+                    if (!_allTiles.ContainsKey(i, j))
+                        CreateTile(i, j);
 
-                if (ShouldPreload(tile, value))
-                    PreloadNextTile(tile, value, i, j);
+                    var tileEntry = _allTiles[i, j];
 
-                _currentTileIndex.Item1 = i;
-                _currentTileIndex.Item2 = j;
+                    if (ShouldPreload(tileEntry.Item1, value))
+                        PreloadNextTile(tileEntry.Item1, value, i, j);
+
+                    _currentTileIndex.Item1 = i;
+                    _currentTileIndex.Item2 = j;
+                }
             }
         }
 
@@ -285,6 +295,17 @@ namespace ActionStreetMap.Core.Tiling
             _heightmapsize = configSection.GetInt("heightmap");
 
             _allowAutoRemoval = configSection.GetBool("autoclean", true);
+        }
+
+        #endregion
+
+        #region Nested classes
+
+        private enum TileState
+        {
+            IsLoading,
+            Activated,
+            Deactivated
         }
 
         #endregion
