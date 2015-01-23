@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core.Scene.Roads;
+using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -10,8 +10,8 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Models.Roads;
 using ActionStreetMap.Models.Utils;
+
 using UnityEngine;
-using ActionStreetMap.Core.Scene.Details;
 
 namespace ActionStreetMap.Models.Terrain
 {
@@ -43,10 +43,6 @@ namespace ActionStreetMap.Models.Terrain
 
         private SplatPrototype[] _splatPrototypes;
         private DetailPrototype[] _detailPrototypes;
-
-        // TODO should be moved to canvas and consumed using object pool
-        /*private float[,,] _splatMapBuffer;
-        private List<int[,]> _detailListBuffer;*/
 
         /// <summary>
         ///     Gets or sets trace.
@@ -102,8 +98,10 @@ namespace ActionStreetMap.Models.Terrain
                 .NewArray<float>(settings.Resolution, settings.Resolution, layers);
 
             canvas.Details = _objectPool.NewList<int[,]>(settings.DetailParams.Count);
-            for (int i = 0; i < settings.DetailParams.Count; i++)
-                canvas.Details.Add(new int[settings.Resolution, settings.Resolution]);
+            // this list should be kept untouched
+            if (!canvas.Details.Any())
+                for (int i = 0; i < settings.DetailParams.Count; i++)
+                    canvas.Details.Add(new int[settings.Resolution, settings.Resolution]);
          
             // fill alphamap
             var alphaMapElements = CreateElements(settings, canvas.Areas,
@@ -117,8 +115,10 @@ namespace ActionStreetMap.Models.Terrain
             Scheduler.MainThread.Schedule(() =>
             {
                 CreateTerrainGameObject(gameObject, parent, settings, size, canvas.Details);
+                // NOTE schedule cleanup on non-UI thread
                 canvas.Dispose();
             });
+
             return gameObject;
         }
 
@@ -279,7 +279,7 @@ namespace ActionStreetMap.Models.Terrain
         private DetailPrototype[] GetDetailPrototype(List<List<string>> detailParams)
         {
             // TODO make this configurable
-            DetailRenderMode detailMode = DetailRenderMode.GrassBillboard;
+            var detailMode = DetailRenderMode.GrassBillboard;
             Color grassHealthyColor = Color.white;
             Color grassDryColor = Color.white;
 

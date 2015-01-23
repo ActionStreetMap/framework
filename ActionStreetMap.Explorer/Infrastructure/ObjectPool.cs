@@ -15,24 +15,24 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <inheritdoc />
         public List<T> NewList<T>()
         {
-            Type type = typeof(T);
-            if (!_listPoolMap.ContainsKey(type))
-            {
-                lock (_listPoolMap)
-                {
-                    if (!_listPoolMap.ContainsKey(type))
-                        _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
-                }
-            }
-
-            return (_listPoolMap[type] as ObjectListPool<T>).New();
+            return NewList<T>(2);
         }
 
         /// <inheritdoc />
         public List<T> NewList<T>(int capacity)
         {
             // TODO choose the best list from pool based on provided capacity
-            return NewList<T>();
+            Type type = typeof(T);
+            if (!_listPoolMap.ContainsKey(type))
+            {
+                lock (_listPoolMap)
+                {
+                    if (!_listPoolMap.ContainsKey(type))
+                        _listPoolMap.Add(type, new ObjectListPool<T>(4));
+                }
+            }
+
+            return (_listPoolMap[type] as ObjectListPool<T>).New(capacity);
         }
 
         /// <inheritdoc />
@@ -44,7 +44,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 lock (_listPoolMap)
                 {
                     if (!_listPoolMap.ContainsKey(type))
-                        _listPoolMap.Add(type, new ObjectListPool<T>(64, 32));
+                        _listPoolMap.Add(type, new ObjectListPool<T>(64));
                 }
             }
 

@@ -9,24 +9,21 @@ namespace ActionStreetMap.Infrastructure.Utilities
     {
         private readonly object _lockObj = new object();
         private readonly Stack<List<T>> _objectStack;
-        private readonly int _listSize;
 
         /// <summary>
         ///     Creates ObjectListPool.
         /// </summary>
         /// <param name="initialBufferSize">Initial buffer size.</param>
-        /// <param name="listSize">List capacity.</param>
-        public ObjectListPool(int initialBufferSize, int listSize)
+        public ObjectListPool(int initialBufferSize)
         {
             _objectStack = new Stack<List<T>>(initialBufferSize);
-            _listSize = listSize;
         }
 
         /// <summary>
         ///     Returns list from pool or create new one.
         /// </summary>
         /// <returns>List.</returns>
-        public List<T> New()
+        public List<T> New(int capacity)
         {
             lock (_lockObj)
             {
@@ -36,7 +33,7 @@ namespace ActionStreetMap.Infrastructure.Utilities
                     return list;
                 }
             }
-            return new List<T>(_listSize);
+            return new List<T>(capacity);
         }
 
         /// <summary>
