@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Models.Geometry.Primitives;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Models.Terrain
 {
@@ -9,9 +10,9 @@ namespace ActionStreetMap.Models.Terrain
     /// </summary>
     internal class TerrainScanLine
     {
-        private static readonly List<int> PointsBuffer = new List<int>(8);
-        public static void ScanAndFill(Polygon polygon, int size, Action<int, int, int> fillAction)
+        public static void ScanAndFill(Polygon polygon, int size, Action<int, int, int> fillAction, IObjectPool objectPool)
         {
+            var pointsBuffer = objectPool.NewList<int>();
             for (int z = 0; z < size; z++)
             {
                 foreach (var segment in polygon.Segments)
@@ -47,43 +48,44 @@ namespace ActionStreetMap.Models.Terrain
                     if (x >= size) x = size - 1;
                     if (x < 0) x = 0;
 
-                    PointsBuffer.Add(x);
+                    pointsBuffer.Add(x);
                 }
 
-                if (PointsBuffer.Count > 1)
+                if (pointsBuffer.Count > 1)
                 {
                     // TODO use optimized data structure
-                    PointsBuffer.Sort();
+                    pointsBuffer.Sort();
                     //_pointsBuffer = _pointsBuffer.Distinct().ToList();
 
                     // merge connected ranges
-                    for (int i = PointsBuffer.Count - 1; i > 0; i--)
+                    for (int i = pointsBuffer.Count - 1; i > 0; i--)
                     {
-                        if (i != 0 && PointsBuffer[i] == PointsBuffer[i - 1])
+                        if (i != 0 && pointsBuffer[i] == pointsBuffer[i - 1])
                         {
-                            PointsBuffer.RemoveAt(i);
-                            if (PointsBuffer.Count % 2 != 0)
-                                PointsBuffer.RemoveAt(--i);
+                            pointsBuffer.RemoveAt(i);
+                            if (pointsBuffer.Count % 2 != 0)
+                                pointsBuffer.RemoveAt(--i);
                         }
                     }
                 }
 
                 // ignore single point
-                if (PointsBuffer.Count == 1)
+                if (pointsBuffer.Count == 1)
                     continue;
 
 
-                if (PointsBuffer.Count % 2 != 0)
+                if (pointsBuffer.Count % 2 != 0)
                 {
                     throw new InvalidOperationException(
                         "Bug in algorithm! We're expecting to have even number of intersection _pointsBuffer: (_pointsBuffer.Count % 2 != 0)");
                 }
 
-                for (int i = 0; i < PointsBuffer.Count; i += 2)
-                    fillAction(z, PointsBuffer[i], PointsBuffer[i + 1]);
+                for (int i = 0; i < pointsBuffer.Count; i += 2)
+                    fillAction(z, pointsBuffer[i], pointsBuffer[i + 1]);
 
-                PointsBuffer.Clear();
+                pointsBuffer.Clear();
             }
+            objectPool.Store(pointsBuffer);
         }
     }
 }

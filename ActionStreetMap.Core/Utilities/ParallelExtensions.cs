@@ -24,6 +24,21 @@ namespace ActionStreetMap.Core.Utilities
         }
 
         /// <summary>
+        ///     Specialized to parallelize processing of terrain map object.
+        /// </summary>
+        /// <param name="terrainMap">Source terrain map array.</param>
+        /// <param name="action">Action.</param>
+        public static void Parallel<T>(this T[,,] terrainMap, Action<int, int> action)
+        {
+            System.Diagnostics.Debug.Assert(terrainMap.GetLength(0) == terrainMap.GetLength(1));
+            Observable.WhenAll(GetChunks(terrainMap.GetLength(0), (start, end) =>
+            {
+                action(start, end);
+                return new Unit();
+            })).Wait();
+        }
+
+        /// <summary>
         ///     Parallelize processing of quad matrix.
         /// </summary>
         /// <param name="matrix">Source matrix.</param>
@@ -32,6 +47,21 @@ namespace ActionStreetMap.Core.Utilities
         {
             System.Diagnostics.Debug.Assert(matrix.GetLength(0) == matrix.GetLength(1));
             return Observable.WhenAll(GetChunks(matrix.GetLength(0), func)).Wait();
+        }
+
+        /// <summary>
+        ///     Parallelize processing of quad matrix.
+        /// </summary>
+        /// <param name="matrix">Source matrix.</param>
+        /// <param name="action">Action.</param>
+        public static void Parallel<T>(this T[] array, Action<int> action)
+        {
+            Observable.WhenAll(GetChunks(array.Length, (start, end) =>
+            {
+                for (int i = start; i < end; i++)
+                    action(i);
+                return new Unit();
+            })).Wait();
         }
 
         private static IObservable<T>[] GetChunks<T>(int count, Func<int, int, T> func)
