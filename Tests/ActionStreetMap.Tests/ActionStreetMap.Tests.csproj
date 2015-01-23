@@ -93,7 +93,7 @@
     <Compile Include="Osm\Index\Utils.cs" />
     <Compile Include="Osm\LocationInfoTests.cs" />
     <Compile Include="Osm\MultipolygonProcessorTests.cs" />
-    <Compile Include="Osm\TestModelVisitor.cs" />
+    <Compile Include="Osm\TestModelLoader.cs" />
     <Compile Include="PerformanceLogger.cs" />
     <Compile Include="Infrastructure\ConfigTests.cs" />
     <Compile Include="Infrastructure\ContainerTests.cs" />

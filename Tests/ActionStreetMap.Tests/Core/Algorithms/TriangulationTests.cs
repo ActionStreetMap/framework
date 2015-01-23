@@ -46,7 +46,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
         public void CanTriangulateAreasAndWays()
         {
             // ARRANGE
-            var sceneVisitor = new TestModelVisitor();
+            var sceneVisitor = new TestModelLoader();
             var pathResolver = new TestPathResolver();
             var config = new Mock<IConfigSection>();
             var objectPool = new ObjectPool();

@@ -3,44 +3,48 @@
 namespace ActionStreetMap.Core.Tiling
 {
     /// <summary>
-    ///     Defines visitor interface for model types.
+    ///     Defines behavior of class which should load given models into tile.
     /// </summary>
-    public interface IModelVisitor
+    public interface IModelLoader
     {
         /// <summary>
         ///     Visits tile. Called first.
         /// </summary>
         /// <param name="tile">Tile.</param>
-        void VisitTile(Tile tile);
+        void PrepareTile(Tile tile);
 
         /// <summary>
         ///     Visits relation.
         /// </summary>
+        /// <param name="tile">Tile.</param>
         /// <param name="relation">Relation.</param>
-        void VisitRelation(Relation relation);
+        void LoadRelation(Tile tile, Relation relation);
 
         /// <summary>
         ///     Visits area.
         /// </summary>
+        /// <param name="tile">Tile.</param>
         /// <param name="area">Area.</param>
-        void VisitArea(Area area);
+        void LoadArea(Tile tile, Area area);
 
         /// <summary>
         ///     Visits way.
         /// </summary>
+        /// <param name="tile">Tile.</param>
         /// <param name="way">Way.</param>
-        void VisitWay(Way way);
+        void LoadWay(Tile tile, Way way);
 
         /// <summary>
         ///     Visits node.
         /// </summary>
+        /// <param name="tile">Tile.</param>
         /// <param name="node">Node.</param>
-        void VisitNode(Node node);
+        void LoadNode(Tile tile, Node node);
 
         /// <summary>
         ///     Visits canvas. Called last.
         /// </summary>
-        /// <param name="canvas">Canvas.</param>
-        void VisitCanvas(Canvas canvas);
+        /// <param name="tile">Tile.</param>
+        void CompleteTile(Tile tile);
     }
 }

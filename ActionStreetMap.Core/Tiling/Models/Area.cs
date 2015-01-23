@@ -29,9 +29,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         }
 
         /// <inheritdoc />
-        public override void Accept(IModelVisitor visitor)
+        public override void Accept(Tile tile, IModelLoader loader)
         {
-            visitor.VisitArea(this);
+            loader.LoadArea(tile, this);
         }
     }
 }

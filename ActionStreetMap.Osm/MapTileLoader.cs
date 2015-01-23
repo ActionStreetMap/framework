@@ -15,42 +15,44 @@ namespace ActionStreetMap.Osm
     public class MapTileLoader: ITileLoader
     {
         private readonly IElementSourceProvider _elementSourceProvider;
-        private readonly IModelVisitor _modelVisitor;
-        private readonly FilterElementVisitor _filterElementVisitor;
+        private readonly IModelLoader _modelLoader;
+        private readonly IObjectPool _objectPool;
 
         /// <summary>
         ///     Creates MapTileLoader.
         /// </summary>
         /// <param name="elementSourceProvider">Element source provider.</param>
-        /// <param name="modelVisitor">model visitor.</param>
+        /// <param name="modelLoader">model visitor.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
         public MapTileLoader(IElementSourceProvider elementSourceProvider, 
-            IModelVisitor modelVisitor, IObjectPool objectPool)
+            IModelLoader modelLoader, IObjectPool objectPool)
         {
             _elementSourceProvider = elementSourceProvider;
-            _modelVisitor = modelVisitor;
-
-            _filterElementVisitor = new FilterElementVisitor(
-                new NodeVisitor(modelVisitor, objectPool),
-                new WayVisitor(modelVisitor, objectPool),
-                new RelationVisitor(modelVisitor, objectPool)
-            );
+            _modelLoader = modelLoader;
+            _objectPool = objectPool;
         }
 
         /// <inheritdoc />
         public IObservable<Unit> Load(Tile tile)
         {
+           var filterElementVisitor = new FilterElementVisitor(
+               tile.BoundingBox,
+                new NodeVisitor(tile, _modelLoader, _objectPool),
+                new WayVisitor(tile, _modelLoader, _objectPool),
+                new RelationVisitor(tile, _modelLoader, _objectPool)
+            );
+
             // prepare tile
-            tile.Accept(_modelVisitor);
-            _filterElementVisitor.BoundingBox = tile.BoundingBox;
+            tile.Accept(tile, _modelLoader);
+
             // NOTE Canvas.Accept should be called only once, but we call it for each element source
             return _elementSourceProvider
                 .Get(tile.BoundingBox)
                 .SelectMany(elementSource => elementSource.Get(tile.BoundingBox)
                     .ObserveOn(Scheduler.ThreadPool)
-                    .Do(element => element.Accept(_filterElementVisitor),
-                        () => (tile.Canvas).Accept(_modelVisitor))
+                    .Do(element => element.Accept(filterElementVisitor),
+                        () => (tile.Canvas).Accept(tile, _modelLoader))
                     .AsCompletion());
         }
     }

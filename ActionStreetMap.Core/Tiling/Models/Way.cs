@@ -7,21 +7,16 @@ namespace ActionStreetMap.Core.Tiling.Models
     /// </summary>
     public class Way: Model
     {
-        /// <summary>
-        ///     Gets or sets geo coordinates for this model
-        /// </summary>
+        /// <summary> Gets or sets geo coordinates for this model. </summary>
         public List<GeoCoordinate> Points { get; set; }
 
         /// <inheritdoc />
-        public override bool IsClosed
-        {
-            get { return Points[0] == Points[Points.Count - 1]; }
-        }
+        public override bool IsClosed { get { return Points[0] == Points[Points.Count - 1]; } }
 
         /// <inheritdoc />
-        public override void Accept(IModelVisitor visitor)
+        public override void Accept(Tile tile, IModelLoader loader)
         {
-            visitor.VisitWay(this);
+            loader.LoadWay(tile, this);
         }
     }
 }

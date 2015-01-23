@@ -69,6 +69,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// </summary>
         public MapPoint BottomRight { get; private set; }
 
+        /// <inheritdoc />
+        public override bool IsClosed { get { return false; } }
+
         /// <summary>
         ///     Creates tile.
         /// </summary>
@@ -108,15 +111,10 @@ namespace ActionStreetMap.Core.Tiling.Models
         }
 
         /// <inheritdoc />
-        public override bool IsClosed
+        public override void Accept(Tile tile, IModelLoader loader)
         {
-            get { return false; }
-        }
-
-        /// <inheritdoc />
-        public override void Accept(IModelVisitor visitor)
-        {
-            visitor.VisitTile(this);
+            System.Diagnostics.Debug.Assert(tile == this);
+            loader.PrepareTile(this);
         }
     }
 }

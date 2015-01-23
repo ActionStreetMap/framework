@@ -9,15 +9,15 @@ namespace ActionStreetMap.Osm.Visitors
     /// </summary>
     internal class FilterElementVisitor : IElementVisitor
     {
+        private readonly BoundingBox _boundingBox;
         private readonly IElementVisitor _nodeVisitor;
         private readonly IElementVisitor _wayVisitor;
         private readonly IElementVisitor _relationVisitor;
 
-        public BoundingBox BoundingBox { private get; set; }
-
-        public FilterElementVisitor(IElementVisitor nodeVisitor, IElementVisitor wayVisitor, 
-            IElementVisitor relationVisitor)
+        public FilterElementVisitor(BoundingBox boundingBox, IElementVisitor nodeVisitor, 
+            IElementVisitor wayVisitor, IElementVisitor relationVisitor)
         {
+            _boundingBox = boundingBox;
             _nodeVisitor = nodeVisitor;
             _wayVisitor = wayVisitor;
             _relationVisitor = relationVisitor;
@@ -61,10 +61,10 @@ namespace ActionStreetMap.Osm.Visitors
             var x2 = second.Longitude;
             var y2 = second.Latitude;
 
-            var minX = BoundingBox.MinPoint.Longitude;
-            var minY = BoundingBox.MinPoint.Latitude;
-            var maxX = BoundingBox.MaxPoint.Longitude;
-            var maxY = BoundingBox.MaxPoint.Latitude;
+            var minX = _boundingBox.MinPoint.Longitude;
+            var minY = _boundingBox.MinPoint.Latitude;
+            var maxX = _boundingBox.MaxPoint.Longitude;
+            var maxY = _boundingBox.MaxPoint.Latitude;
 
             // Completely outside.
             if ((x1 <= minX && x2 <= minX) || (y1 <= minY && y2 <= minY) || 

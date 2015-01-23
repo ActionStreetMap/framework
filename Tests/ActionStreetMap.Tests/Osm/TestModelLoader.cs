@@ -5,7 +5,7 @@ using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Tests.Osm
 {
-    public class TestModelVisitor: IModelVisitor
+    public class TestModelLoader: IModelLoader
     {
         public List<Relation> Relations = new List<Relation>();
         public List<Area> Areas = new List<Area>();
@@ -13,12 +13,12 @@ namespace ActionStreetMap.Tests.Osm
         public List<Node> Nodes = new List<Node>();
         public List<Canvas> Canvases = new List<Canvas>();
 
-        public void VisitTile(Tile tile)
+        public void PrepareTile(Tile tile)
         {
             
         }
 
-        public void VisitRelation(Relation relation)
+        public void LoadRelation(Tile tile, Relation relation)
         {
             lock (Relations)
             {
@@ -26,7 +26,7 @@ namespace ActionStreetMap.Tests.Osm
             }
         }
 
-        public void VisitArea(Area area)
+        public void LoadArea(Tile tile, Area area)
         {
             lock (Areas)
             {
@@ -34,7 +34,7 @@ namespace ActionStreetMap.Tests.Osm
             }
         }
 
-        public void VisitWay(Way way)
+        public void LoadWay(Tile tile, Way way)
         {
             lock (Ways)
             {
@@ -42,7 +42,7 @@ namespace ActionStreetMap.Tests.Osm
             }
         }
 
-        public void VisitNode(Node node)
+        public void LoadNode(Tile tile, Node node)
         {
             lock (Nodes)
             {
@@ -50,11 +50,11 @@ namespace ActionStreetMap.Tests.Osm
             }
         }
 
-        public void VisitCanvas(Canvas canvas)
+        public void CompleteTile(Tile tile)
         {
             lock (Canvases)
             {
-                Canvases.Add(canvas);
+                Canvases.Add(tile.Canvas);
             }
         }
     }

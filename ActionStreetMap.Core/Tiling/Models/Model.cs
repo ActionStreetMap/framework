@@ -28,10 +28,11 @@ namespace ActionStreetMap.Core.Tiling.Models
         public abstract bool IsClosed { get; }
 
         /// <summary>
-        ///     Accepts IModelVisitor (Visitor pattern).
+        ///     Accepts IModelLoader (Visitor pattern).
         /// </summary>
-        /// <param name="visitor">IModelVisitor instance.</param>
-        public abstract void Accept(IModelVisitor visitor);
+        /// <param name="tile">Tile.</param>
+        /// <param name="loader">IModelLoader instance.</param>
+        public abstract void Accept(Tile tile, IModelLoader loader);
 
         /// <summary>
         ///     Returns string representation of this object.

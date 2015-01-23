@@ -85,7 +85,7 @@
     <Compile Include="MapCss\Domain\StyleCollection.cs" />
     <Compile Include="MapCss\Visitors\Eval\StringEvalTreeWalker.cs" />
     <Compile Include="MessageBus.cs" />
-    <Compile Include="Tiling\IModelVisitor.cs" />
+    <Compile Include="Tiling\IModelLoader.cs" />
     <Compile Include="Tiling\ITileActivator.cs" />
     <Compile Include="Tiling\TileMessages.cs" />
     <Compile Include="Utilities\GeometryUtils.cs" />

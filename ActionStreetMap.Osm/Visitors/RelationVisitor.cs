@@ -6,14 +6,12 @@ using ActionStreetMap.Osm.Helpers;
 
 namespace ActionStreetMap.Osm.Visitors
 {
-    /// <summary>
-    ///     Relation visitor.
-    /// </summary>
-    public class RelationVisitor : ElementVisitor
+    /// <summary> Relation visitor.</summary>
+    internal class RelationVisitor : ElementVisitor
     {
         /// <inheritdoc />
-        public RelationVisitor(IModelVisitor modelVisitor, IObjectPool objectPool)
-            : base(modelVisitor, objectPool)
+        public RelationVisitor(Tile tile, IModelLoader modelLoader, IObjectPool objectPool)
+            : base(tile, modelLoader, objectPool)
         {
         }
 
@@ -34,7 +32,7 @@ namespace ActionStreetMap.Osm.Visitors
                 modelRelation.Areas = new List<Area>(relation.Members.Count);
                 MultipolygonProcessor.FillAreas(relation, modelRelation.Areas);
             }    
-            ModelVisitor.VisitRelation(modelRelation);
+            ModelLoader.LoadRelation(Tile, modelRelation);
         }
     }
 }

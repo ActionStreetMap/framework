@@ -9,8 +9,7 @@ using ActionStreetMap.Osm.Extensions;
 
 namespace ActionStreetMap.Osm.Visitors
 {
-    /// <inheritdoc />
-    public class WayVisitor : ElementVisitor
+    internal class WayVisitor : ElementVisitor
     {
         /// <summary>
         ///     Contains keys of osm tags which are markers of closed polygons ("area")
@@ -43,8 +42,8 @@ namespace ActionStreetMap.Osm.Visitors
         };
 
         /// <inheritdoc />
-        public WayVisitor(IModelVisitor modelVisitor, IObjectPool objectPool)
-            : base(modelVisitor, objectPool)
+        public WayVisitor(Tile tile, IModelLoader modelLoader, IObjectPool objectPool)
+            : base(tile, modelLoader, objectPool)
         {
         }
 
@@ -55,7 +54,7 @@ namespace ActionStreetMap.Osm.Visitors
             {
                 var points = ObjectPool.NewList<GeoCoordinate>();
                 way.FillPoints(points);
-                ModelVisitor.VisitWay(new Core.Tiling.Models.Way
+                ModelLoader.LoadWay(Tile, new Way
                 {
                     Id = way.Id,
                     Points = points,
@@ -70,7 +69,7 @@ namespace ActionStreetMap.Osm.Visitors
             {
                 var points = ObjectPool.NewList<GeoCoordinate>();
                 way.FillPoints(points);
-                ModelVisitor.VisitArea(new Area
+                ModelLoader.LoadArea(Tile, new Area
                 {
                     Id = way.Id,
                     Points = points,

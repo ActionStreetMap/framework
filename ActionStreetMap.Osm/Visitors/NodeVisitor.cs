@@ -1,17 +1,16 @@
 ﻿using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Osm.Entities;
+using Node = ActionStreetMap.Osm.Entities.Node;
 
 namespace ActionStreetMap.Osm.Visitors
 {
-    /// <summary>
-    ///     Node visitor.
-    /// </summary>
-    public class NodeVisitor: ElementVisitor
+    /// <summary> Node visitor. </summary>
+    internal class NodeVisitor: ElementVisitor
     {
         /// <inheritdoc />
-        public NodeVisitor(IModelVisitor modelVisitor, IObjectPool objectPool)
-            : base(modelVisitor, objectPool)
+        public NodeVisitor(Tile tile, IModelLoader modelLoader, IObjectPool objectPool)
+            : base(tile, modelLoader, objectPool)
         {
         }
 
@@ -20,7 +19,7 @@ namespace ActionStreetMap.Osm.Visitors
         {
             if (node.Tags != null)
             {
-                ModelVisitor.VisitNode(new Core.Tiling.Models.Node
+                ModelLoader.LoadNode(Tile, new Core.Tiling.Models.Node
                 {
                     Id = node.Id,
                     Point = node.Coordinate,

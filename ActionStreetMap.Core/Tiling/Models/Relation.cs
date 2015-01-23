@@ -14,21 +14,16 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// </summary>
         public Dictionary<string, HashSet<long>> RoleMap { get; set; }
 
-        /// <summary>
-        ///     Areas which are defined in relation.
-        /// </summary>
+        /// <summary> Areas which are defined in relation. </summary>
         public List<Area> Areas { get; set; }
 
         /// <inheritdoc />
-        public override bool IsClosed
-        {
-            get { return false; }
-        }
+        public override bool IsClosed { get { return false; } }
 
         /// <inheritdoc />
-        public override void Accept(IModelVisitor visitor)
+        public override void Accept(Tile tile, IModelLoader loader)
         {
-            visitor.VisitRelation(this);
+            loader.LoadRelation(tile, this);
         }
     }
 }

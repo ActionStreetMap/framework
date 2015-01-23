@@ -33,9 +33,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         } 
 
         /// <inheritdoc />
-        public override void Accept(IModelVisitor visitor)
+        public override void Accept(Tile tile, IModelLoader loader)
         {
-            visitor.VisitCanvas(this);
+            loader.CompleteTile(tile);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary>
         ///     Adds area which should be drawn using different splat index.
         /// </summary>
-        /// <param name="areaSettings">Area settings.</param>
+        /// <param name="surface">Area settings.</param>
         public void AddArea(Surface surface)
         {
             lock (Areas)
@@ -65,7 +65,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary>
         ///     Adds area which should be adjuested by height. Processed last.
         /// </summary>
-        /// <param name="areaSettings">Area settings.</param>
+        /// <param name="surface">Area settings.</param>
         public void AddElevation(Surface surface)
         {
             lock (Elevations)
@@ -74,9 +74,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             }
         }
 
-        /// <summary>
-        ///     Adds tree.
-        /// </summary>
+        /// <summary> Adds tree. </summary>
         /// <param name="tree">Tree.</param>
         public void AddTree(Tree tree)
         {
@@ -86,11 +84,14 @@ namespace ActionStreetMap.Core.Tiling.Models
             }
         }
 
+        /// <summary> Builds road graph. </summary>
+        /// <returns>Road graph.</returns>
         public RoadGraph BuildRoadGraph()
         {
             return _roadGraphBuilder.Build();
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             //Return lists to object pool

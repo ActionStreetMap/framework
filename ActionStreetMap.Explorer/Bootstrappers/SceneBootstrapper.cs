@@ -32,7 +32,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         {
             Container.Register(Component.For<IResourceProvider>().Use<UnityResourceProvider>().Singleton());
 
-            Container.Register(Component.For<IModelVisitor>().Use<TileModelLoader>().Singleton());
+            Container.Register(Component.For<IModelLoader>().Use<TileModelLoader>().Singleton());
 
             var themeConfigPath = GlobalConfigSection.GetString(ThemeKey);
             var themeConfig = new ConfigSection(themeConfigPath, FileSystemService);
