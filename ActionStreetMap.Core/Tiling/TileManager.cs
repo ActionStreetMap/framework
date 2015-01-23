@@ -247,12 +247,13 @@ namespace ActionStreetMap.Core.Tiling
 
                     // TODO support setting of neighbors for Unity Terrain
 
-                    // NOTE it should be happened only once on start with (0,0)
-                    // however it's possible if we skip offset detection zone somehow
-                    if (!_allTiles.ContainsKey(i, j))
+                    bool hasTile = _allTiles.ContainsKey(i, j);
+                    if (!hasTile)
                         CreateTile(i, j);
 
                     var tileEntry = _allTiles[i, j];
+                    if (hasTile) 
+                        _messageBus.Send(new TileFoundMessage(tileEntry.Item1, _currentMapPoint));
 
                     if (ShouldPreload(tileEntry.Item1, value))
                         PreloadNextTile(tileEntry.Item1, value, i, j);
