@@ -38,16 +38,15 @@ namespace ActionStreetMap.Models.Terrain
         private readonly IResourceProvider _resourceProvider;
         private readonly IRoadBuilder _roadBuilder;
         private readonly IObjectPool _objectPool;
-        private readonly AreaBuilder _areaBuilder = new AreaBuilder();
+        private readonly SurfaceBuilder _surfaceBuilder = new SurfaceBuilder();
         private readonly HeightMapProcessor _heightMapProcessor;
 
         private SplatPrototype[] _splatPrototypes;
         private DetailPrototype[] _detailPrototypes;
 
+        // TODO should be moved to canvas and consumed using object pool
         private float[,,] _splatMapBuffer;
         private List<int[,]> _detailListBuffer;
-
-
 
         /// <summary>
         ///     Gets or sets trace.
@@ -98,6 +97,8 @@ namespace ActionStreetMap.Models.Terrain
             var size = new Vector3(settings.Tile.Size, settings.Tile.HeightMap.MaxElevation, settings.Tile.Size);
             var layers = settings.SplatParams.Count;
 
+            // TODO _splatMapBuffer and _detailListBuffer are NOT thread safe!
+
             // NOTE we don't expect buffer size changes after engine is initialized
             if (_splatMapBuffer == null)
                 _splatMapBuffer = new float[settings.Resolution, settings.Resolution, layers];
@@ -115,7 +116,7 @@ namespace ActionStreetMap.Models.Terrain
                 settings.Resolution / size.z,
                 t => t.SplatIndex);
 
-            _areaBuilder.Build(settings, alphaMapElements, _splatMapBuffer, _detailListBuffer);
+            _surfaceBuilder.Build(settings, alphaMapElements, _splatMapBuffer, _detailListBuffer);
 
             var gameObject = _gameObjectFactory.CreateNew("terrain");
             Scheduler.MainThread.Schedule(() =>
@@ -334,7 +335,6 @@ namespace ActionStreetMap.Models.Terrain
             // also we set [x,y,0] to 1 in AreaBuilder
             Array.Clear(_splatMapBuffer, 0, _splatMapBuffer.Length);
             _detailListBuffer.ForEach(array => Array.Clear(array, 0, array.Length));
-
         }
 
         private TerrainElement[] CreateElements(TerrainSettings settings,

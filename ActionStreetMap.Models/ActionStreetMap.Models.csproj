@@ -86,8 +86,7 @@
     <Compile Include="Geometry\Polygons\ScanLine.cs" />
     <Compile Include="Geometry\Primitives\Segment.cs" />
     <Compile Include="Terrain\TerrainElement.cs" />
-    <Compile Include="Terrain\AreaBuilder.cs" />
-    <Compile Include="Terrain\AreaSettings.cs" />
+    <Compile Include="Terrain\SurfaceBuilder.cs" />
     <Compile Include="Terrain\TerrainScanLine.cs" />
     <Compile Include="Terrain\TerrainBuilder.cs" />
     <Compile Include="Terrain\TerrainSettings.cs" />

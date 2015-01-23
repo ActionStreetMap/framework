@@ -1,13 +1,21 @@
-﻿using ActionStreetMap.Core.Tiling.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.Scene.Details
 {
     public class Surface
     {
+        public const int DefaultDetailIndex = -1;
+
+        public Surface()
+        {
+            DetailIndex = DefaultDetailIndex;
+        }
+
         public float ZIndex { get; set; }
         public int SplatIndex { get; set; }
         public int DetailIndex { get; set; }

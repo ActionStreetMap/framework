@@ -2,16 +2,17 @@
 using System.Linq;
 using ActionStreetMap.Models.Geometry.Primitives;
 using ActionStreetMap.Models.Geometry.Polygons;
+using ActionStreetMap.Core.Scene.Details;
 
 namespace ActionStreetMap.Models.Terrain
 {
     /// <summary>
     ///     Fills alphamap and detail maps of TerrainData using TerrainSettings provided.
     /// </summary>
-    public class AreaBuilder
+    public class SurfaceBuilder
     {
         /// <summary>
-        ///     Builds area.
+        ///     Builds surface.
         /// </summary>
         /// <param name="settings">Terrain settings.</param>
         /// <param name="elements">Terrain elements.</param>
@@ -36,7 +37,7 @@ namespace ActionStreetMap.Models.Terrain
         private static void Fill(float[, ,] map, List<int[,]> detailMapList, int line, int start, int end, 
             int splatIndex, int detailIndex)
         {
-            var detailMap = detailIndex != AreaSettings.DefaultDetailIndex ? detailMapList[detailIndex] : null;
+            var detailMap = detailIndex != Surface.DefaultDetailIndex ? detailMapList[detailIndex] : null;
             for (int i = start; i <= end; i++)
             {
                 // TODO improve fill logic: which value to use for splat?

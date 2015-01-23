@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Models.Terrain;
+using ActionStreetMap.Core.Scene.Details;
 
 namespace ActionStreetMap.Explorer.Helpers
 {
@@ -38,7 +39,7 @@ namespace ActionStreetMap.Explorer.Helpers
 
         public static int GetTerrainDetailIndex(this Rule rule)
         {
-            return rule.EvaluateDefault<int>("terrainDetail", AreaSettings.DefaultDetailIndex);
+            return rule.EvaluateDefault<int>("terrainDetail", Surface.DefaultDetailIndex);
         }
 
         public static bool IsForest(this Rule rule)
