@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.2.0.*")]
+[assembly: AssemblyVersion("0.3.0.*")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]
 
 [assembly: InternalsVisibleTo("ActionStreetMap.Tests")]
