@@ -5,7 +5,6 @@ using System.Threading;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
-using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -104,8 +103,7 @@ namespace ActionStreetMap.Tests
 
         private void CreateIndex(string o5mFile, string settingsFile, string outputDirectory)
         {
-            var builder = new IndexBuilder();
-            builder.Trace = new ConsoleTrace();
+            var builder = new IndexBuilder(new ConsoleTrace());
             builder.Configure(new ConfigSection(String.Format("{{\"index\":\"{0}\"}}", settingsFile.Replace("\\", "/"))));
             builder.Build(o5mFile, outputDirectory);
         }

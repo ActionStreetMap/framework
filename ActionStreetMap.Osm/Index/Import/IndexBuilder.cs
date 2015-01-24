@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Config;
-using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.Primitives;
@@ -36,12 +35,11 @@ namespace ActionStreetMap.Osm.Index.Import
 
         private string _outputDirectory;
 
-        [Dependency]
-        public ITrace Trace { get; set; }
+        private ITrace _trace;
 
-        [Dependency]
-        public IndexBuilder()
+        public IndexBuilder(ITrace trace)
         {
+            _trace = trace;
         }
 
         public void Build(string filePath, string outputDirectory)
@@ -49,7 +47,7 @@ namespace ActionStreetMap.Osm.Index.Import
             var reader = GetReader(filePath);
             
             _outputDirectory = outputDirectory;
-            _indexStatistic = new IndexStatistic(Trace);
+            _indexStatistic = new IndexStatistic(_trace);
 
             var kvUsageMemoryStream = new MemoryStream();
             var kvUsage = new KeyValueUsage(kvUsageMemoryStream);
