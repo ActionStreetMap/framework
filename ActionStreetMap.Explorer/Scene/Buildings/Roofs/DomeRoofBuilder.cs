@@ -4,6 +4,7 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Geometry;
+using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
@@ -52,7 +53,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
             center.SetElevation(building.Elevation + building.Height + building.MinHeight + offset);
 
-            ProcessObject(gameObjectWrapper, center, diameter, style);
+            Scheduler.MainThread.Schedule(() => ProcessObject(gameObjectWrapper, center, diameter, style));
 
             return new MeshData()
             {

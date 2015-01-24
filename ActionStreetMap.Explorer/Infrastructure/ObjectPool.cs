@@ -60,6 +60,20 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <inheritdoc />
+        public void StoreArray<T>(T[,] array)
+        {
+            _splatMapArrayPool.Store(array);
+        }
+
+        /// <inheritdoc />
+        public T[,] NewArray<T>(int length1, int length2)
+        {
+            // NOTE workaround to have splat map outside terrain builder
+            // TODO can be improved
+            return _splatMapArrayPool.New(length1, length2) as T[,];
+        }
+
+        /// <inheritdoc />
         public void StoreArray<T>(T[, ,] array)
         {
             _splatMapArrayPool.Store(array);

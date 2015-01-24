@@ -51,8 +51,9 @@ namespace ActionStreetMap.Explorer
             var tilePositionObserver = _container.Resolve<ITilePositionObserver>();
             _mapPositionObserver = tilePositionObserver;
             _geoPositionObserver = tilePositionObserver;
+
             // notify about geo coordinate change
-            _geoPositionObserver.OnNext(coordinate);
+            Scheduler.ThreadPool.Schedule(() => _geoPositionObserver.OnNext(coordinate));
         }
 
         #region IObserver<MapPoint> implementation

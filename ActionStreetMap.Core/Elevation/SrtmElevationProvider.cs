@@ -44,9 +44,9 @@ namespace ActionStreetMap.Core.Elevation
         }
 
         /// <inheritdoc />
-        public float GetElevation(GeoCoordinate coordinate)
+        public bool HasElevation(double latitude, double longitude)
         {
-            return GetElevation(coordinate.Latitude, coordinate.Longitude);
+            return _fileSystemService.Exists(GetFilePath((int) latitude, (int) longitude));
         }
 
         /// <inheritdoc />
@@ -109,11 +109,9 @@ namespace ActionStreetMap.Core.Elevation
                     if (_srtmLat == latDec && _srtmLon == lonDec)
                         return;
 
-                    var filePath = String.Format("{0}/{1}{2:00}{3}{4:000}.hgt", _dataDirectory,
-                        latDec > 0 ? 'N' : 'S', Math.Abs(latDec),
-                        lonDec > 0 ? 'E' : 'W', Math.Abs(lonDec));
+                    var filePath = GetFilePath(latDec, lonDec);
 
-                    //Trace.Output(String.Format(Strings.LoadElevationFrom, filePath));
+                    Trace.Output(String.Format(Strings.LoadElevationFrom, filePath));
 
                     if (!_fileSystemService.Exists(filePath))
                         throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));
@@ -141,10 +139,18 @@ namespace ActionStreetMap.Core.Elevation
             }
         }
 
+        // NOTE inline instruction would be nice here, but current CLR version doesn't support it
         private int ReadPx(int y, int x)
         {
             var pos = _offset + 2*(x - _totalPx*y);
             return _hgtData[pos] << 8 | _hgtData[pos + 1];
+        }
+
+        private string GetFilePath(int latDec, int lonDec)
+        {
+            return String.Format("{0}/{1}{2:00}{3}{4:000}.hgt", _dataDirectory,
+                     latDec > 0 ? 'N' : 'S', Math.Abs(latDec),
+                     lonDec > 0 ? 'E' : 'W', Math.Abs(lonDec));
         }
 
         /// <inheritdoc />

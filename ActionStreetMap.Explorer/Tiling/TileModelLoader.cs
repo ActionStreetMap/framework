@@ -139,7 +139,6 @@ namespace ActionStreetMap.Explorer.Tiling
             {
                 _heightMapProcessor.Clear();
                 _heighMapProvider.Store(tile.HeightMap);
-                tile.HeightMap = null;
             });
 
             _objectPool.Shrink();

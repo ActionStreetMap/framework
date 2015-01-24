@@ -2,6 +2,7 @@
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Explorer.Infrastructure;
 using Moq;
 using NUnit.Framework;
 
@@ -30,7 +31,7 @@ namespace ActionStreetMap.Tests.Core.Elevation
                 return i + j;
             });
 
-            var provider = new HeightMapProvider(elevationProvider.Object);
+            var provider = new HeightMapProvider(elevationProvider.Object, new ObjectPool());
             
             // ACT
             var heightMap = provider.Get(new Tile(center, new MapPoint(), null, tileSize), resolution);

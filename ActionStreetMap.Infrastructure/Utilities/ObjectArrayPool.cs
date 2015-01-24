@@ -3,12 +3,11 @@ using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Utilities
 {
-    /// <summary>
-    ///     ObjectArrayPool
-    /// </summary>
-    public class ObjectArrayPool<T>
+    /// <summary> ObjectArrayPool. this is naive implementation. </summary>
+    internal class ObjectArrayPool<T>
     {
         private readonly object _lockObj = new object();
+        private readonly Stack<T[,]> _objectArray2Stack;
         private readonly Stack<T[,,]> _objectArray3Stack;
 
         /// <summary>
@@ -17,12 +16,11 @@ namespace ActionStreetMap.Infrastructure.Utilities
         /// <param name="initialBufferSize">Initial buffer size.</param>
         public ObjectArrayPool(int initialBufferSize)
         {
-            _objectArray3Stack = new Stack<T[, ,]>(initialBufferSize);
+            _objectArray2Stack = new Stack<T[,]>(initialBufferSize);
+            _objectArray3Stack = new Stack<T[,,]>(initialBufferSize);
         }
 
-        /// <summary>
-        ///     Returns list from pool or create new one.
-        /// </summary>
+        /// <summary> Returns list from pool or create new one. </summary>
         public T[, ,] New(int length1, int length2, int length3)
         {
             // TODO check length!
@@ -38,17 +36,48 @@ namespace ActionStreetMap.Infrastructure.Utilities
             return new T[length1, length2, length3];
         }
 
-        /// <summary>
-        ///     Stores list in pool.
-        /// </summary>
+        /// <summary> Returns list from pool or create new one. </summary>
+        public T[,] New(int length1, int length2)
+        {
+            // TODO check length!
+            // NOTE this is naive implementation used only for one purpose so far.
+            lock (_lockObj)
+            {
+                if (_objectArray2Stack.Count > 0)
+                {
+                    var array = _objectArray2Stack.Pop();
+                    return array;
+                }
+            }
+            return new T[length1, length2];
+        }
+
+        /// <summary> Stores list in pool. </summary>
         /// <param name="arrayObj">Array to store.</param>
         public void Store(object arrayObj)
         {
-            var array = arrayObj as T[,,];
-            Array.Clear(array, 0, array.Length);
-            lock (_lockObj)
+            // TODO this looks ugly
+
+            var array3 = arrayObj as T[,,];
+            if (array3 != null)
             {
-                _objectArray3Stack.Push(array);
+                Array.Clear(array3, 0, array3.Length);
+                lock (_lockObj)
+                {
+                    _objectArray3Stack.Push(array3);
+                    return;
+                }
+            }
+
+            var array2 = arrayObj as T[,];
+            if (array2 != null)
+            {
+                Array.Clear(array2, 0, array2.Length);
+                lock (_lockObj)
+                {
+                    _objectArray2Stack.Push(array2);
+                    return;
+                }
             }
         }
     }

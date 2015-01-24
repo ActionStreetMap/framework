@@ -4,6 +4,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Elevation
 {
@@ -32,36 +33,42 @@ namespace ActionStreetMap.Core.Elevation
         private const float MaxHeight = 8000;
 
         private readonly IElevationProvider _elevationProvider;
+        private readonly IObjectPool _objectPool;
 
-        private bool _isFlat = false;
-        private float[,] _map;
+        private bool _isFlat;
+        //private float[,] _map;
 
         /// <summary>
         ///     Creates HeightMapProvider.
         /// </summary>
         /// <param name="elevationProvider">Elevation provider.</param>
+        /// <param name="objectPool">Object pool.</param>
         [Dependency]
-        public HeightMapProvider(IElevationProvider elevationProvider)
+        public HeightMapProvider(IElevationProvider elevationProvider, IObjectPool objectPool)
         {
             _elevationProvider = elevationProvider;
+            _objectPool = objectPool;
         }
 
         /// <inheritdoc />
         public HeightMap Get(Tile tile, int resolution)
         {
-            // NOTE so far we do not expect resolution change without restarting app
-            if (_map == null)
-                _map = new float[resolution, resolution];
-
+            var map = _objectPool.NewArray<float>(resolution, resolution);
             var bbox = tile.BoundingBox;
+
+            // NOTE force to be flat if no elevation tile is defined
+            // TODO actually, this doesn't handle properly all the cases 
+            // (e.g. different integer part of latitude for given location)
+            var tileGeoCenter = GeoProjection.ToGeoCoordinate(tile.RelativeNullPoint, tile.MapCenter);
+            var isFlat = _isFlat && !_elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
 
             float maxElevation;
             float minElevation;
 
-            if (!_isFlat) 
-                BuildElevationMap(bbox, resolution, out minElevation, out maxElevation);
-            else 
-                BuildFlatMap(resolution, out minElevation, out maxElevation);
+            if (!isFlat)
+                BuildElevationMap(bbox, map, resolution, out minElevation, out maxElevation);
+            else
+                BuildFlatMap(map, resolution, out minElevation, out maxElevation);
 
             return new HeightMap
             {
@@ -70,7 +77,7 @@ namespace ActionStreetMap.Core.Elevation
                 AxisOffset = tile.Size / resolution,
                 IsFlat = _isFlat,
                 Size = tile.Size,
-                Data = _map,
+                Data = map,
                 MinElevation = minElevation,
                 MaxElevation = maxElevation,
                 Resolution = resolution,
@@ -80,7 +87,7 @@ namespace ActionStreetMap.Core.Elevation
         /// <inheritdoc />
         public void Store(HeightMap heightMap)
         {
-            Array.Clear(_map, 0, _map.Length);
+            _objectPool.StoreArray(heightMap.Data);
         }
 
         /// <inheritdoc />
@@ -91,14 +98,14 @@ namespace ActionStreetMap.Core.Elevation
 
         #region Private members
 
-        private void BuildElevationMap(BoundingBox bbox, int resolution, out float minElevation, out float maxElevation)
+        private void BuildElevationMap(BoundingBox bbox, float[,] map, int resolution, out float minElevation, out float maxElevation)
         {
             // NOTE Assume that [0,0] is bottom left corner
             var latStep = (bbox.MaxPoint.Latitude - bbox.MinPoint.Latitude) / resolution;
             var lonStep = (bbox.MaxPoint.Longitude - bbox.MinPoint.Longitude) / resolution;
             var startLat = bbox.MinPoint.Latitude + latStep / 2;
             var minPointLon = bbox.MinPoint.Longitude + lonStep / 2;
-            var contexts = _map.Parallel((start, end) =>
+            var contexts = map.Parallel((start, end) =>
             {
                 var context = new ElevationContext();
                 for (int j = start; j < end; j++)
@@ -116,7 +123,7 @@ namespace ActionStreetMap.Core.Elevation
                         else if (elevation < context.MinElevation)
                             context.MinElevation = elevation;
 
-                        _map[j, i] = elevation;
+                        map[j, i] = elevation;
                         lon += lonStep;
                     }
                 }
@@ -126,17 +133,17 @@ namespace ActionStreetMap.Core.Elevation
             maxElevation = contexts.Max(c => c.MaxElevation);
         }
 
-        private void BuildFlatMap(int resolution, out float minElevation, out float maxElevation)
+        private void BuildFlatMap(float[,] map, int resolution, out float minElevation, out float maxElevation)
         {
             // TODO make them configurable
             maxElevation = 30;
             minElevation = 10;
             var middleValue = (maxElevation + minElevation) / 2;
-            _map.Parallel((start, end) =>
+            map.Parallel((start, end) =>
             {
                 for (int j = start; j < end; j++)
                     for (int i = 0; i < resolution; i++)
-                        _map[j, i] = middleValue;
+                        map[j, i] = middleValue;
             });
         }
 

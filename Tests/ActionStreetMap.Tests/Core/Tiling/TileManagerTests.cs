@@ -168,7 +168,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             var sceneBuilderMock = new Mock<ITileLoader>();
             sceneBuilderMock.Setup(l => l.Load(It.IsAny<Tile>())).Returns(Observable.Empty<Unit>());
-            var heightMapobserver = new HeightMapProvider(new Mock<IElevationProvider>().Object);
+            var heightMapobserver = new HeightMapProvider(new Mock<IElevationProvider>().Object, new ObjectPool());
             var activatorMock = new Mock<ITileActivator>();
 
             var configMock = new Mock<IConfigSection>();
