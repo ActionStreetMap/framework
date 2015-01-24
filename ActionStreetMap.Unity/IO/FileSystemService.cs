@@ -3,9 +3,7 @@ using ActionStreetMap.Infrastructure.IO;
 
 namespace ActionStreetMap.Unity.IO
 {
-    /// <summary>
-    ///     Provides a way to interact with regular file system.
-    /// </summary>
+    /// <summary> Provides a way to interact with regular file system. </summary>
     public class FileSystemService: IFileSystemService
     {
         private readonly IPathResolver _pathResolver;
