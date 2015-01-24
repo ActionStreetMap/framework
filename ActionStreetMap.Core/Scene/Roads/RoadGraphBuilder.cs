@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Scene.Roads

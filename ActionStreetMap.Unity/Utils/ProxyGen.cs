@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using ActionStreetMap.Infrastructure.Dependencies.Interception;
-
-namespace ActionStreetMap.Unity.Utils
+﻿namespace ActionStreetMap.Unity.Utils
 {
     // TODO add other platforms which don't support this feature
-#if WEB_PLAYER
+#if UNITY_WEBPLAYER
     using System;
-    public static class ProxyGen
+    internal static class ProxyGen
     {
         public static Type Generate(Type interfaceType)
         {
@@ -18,7 +11,13 @@ namespace ActionStreetMap.Unity.Utils
         }
     }
 #else
-    
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using ActionStreetMap.Infrastructure.Dependencies.Interception;
+
     /// <summary>
     ///     Generates proxy class which is derived from ProxyBase and uses it's methods to
     ///     run attached behaviors.
@@ -108,7 +107,7 @@ namespace ActionStreetMap.Unity.Utils
             // NOTE this method builds interception logic related to ProxyBase class
             // TODO refactor this method to more userfriendly representation
             
-            #region MethodInfo stuff
+    #region MethodInfo stuff
 
             // TODO use static variables for them?
 

@@ -1,5 +1,8 @@
 ﻿using System.IO;
 using ActionStreetMap.Infrastructure.IO;
+#if UNITY_WEBPLAYER
+using UnityEngine;
+#endif
 
 namespace ActionStreetMap.Unity.IO
 {
@@ -63,9 +66,6 @@ namespace ActionStreetMap.Unity.IO
         public string[] GetFiles(string path, string searchPattern)
         {
 #if UNITY_WEBPLAYER
-            // NOTE hardcode default one so far as we can't list files in web player
-            if (searchPattern == "*.list")
-                return new[] { @"Maps/osm/berlin/areas.list.txt" };
             return new string[0];
 #else
             return Directory.GetFiles(_pathResolver.Resolve(path), searchPattern);
