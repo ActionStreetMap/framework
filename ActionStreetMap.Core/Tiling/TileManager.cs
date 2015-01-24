@@ -19,19 +19,13 @@ namespace ActionStreetMap.Core.Tiling
     {
     }
 
-    /// <summary>
-    ///     This class listens to position changes and manages tile processing
-    /// </summary>
+    /// <summary> This class listens to position changes and manages tile processing. </summary>
     public class TileManager : ITilePositionObserver, IConfigurable
     {
-        /// <summary>
-        ///     Maximum of loaded tiles including non-active
-        /// </summary>
+        /// <summary> Maximum of loaded tiles including non-active. </summary>
         private const int TileCacheSize = 4;
 
-        /// <summary>
-        ///     Max index distance in 2d space
-        /// </summary>
+        /// <summary> Max index distance in 2d space. </summary>
         private const int ThresholdIndex = 4;
 
         private readonly object _lockObj = new object();
@@ -57,28 +51,21 @@ namespace ActionStreetMap.Core.Tiling
         private readonly DoubleKeyDictionary<int, int, MutableTuple<Tile, TileState>> _allTiles = 
             new DoubleKeyDictionary<int, int, MutableTuple<Tile, TileState>>();
 
-        /// <summary>
-        ///     Gets relative null point
-        /// </summary>
+        /// <summary> Gets relative null point. </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
-        /// <summary>
-        ///     Gets current tile.
-        /// </summary>
+        /// <summary> Gets current tile. </summary>
         public Tile Current { get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2].Item1; } }
 
-        /// <summary>
-        ///     Gets all tile count.
-        /// </summary>
+        /// <summary> Gets all tile count. </summary>
         public int Count { get { return _allTiles.Count(); } }
 
-        /// <summary>
-        ///     Creats TileManager.
-        /// </summary>
+        /// <summary> Creats <see cref="TileManager"/>. </summary>
         /// <param name="tileLoader">Tile loeader.</param>
         /// <param name="heightMapProvider">Heightmap provider.</param>
         /// <param name="tileActivator">Tile activator.</param>
         /// <param name="messageBus">Message bus.</param>
+        /// <param name="objectPool">Object pool.</param>
         [Dependency]
         public TileManager(ITileLoader tileLoader, IHeightMapProvider heightMapProvider, 
             ITileActivator tileActivator, IMessageBus messageBus, IObjectPool objectPool)
@@ -288,9 +275,7 @@ namespace ActionStreetMap.Core.Tiling
 
         #region IConfigurable
 
-        /// <summary>
-        ///     Configures class
-        /// </summary>
+        /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
             _tileSize = configSection.GetFloat("size", 500);

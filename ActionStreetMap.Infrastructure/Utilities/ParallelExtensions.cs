@@ -1,16 +1,12 @@
 ﻿using System;
 using ActionStreetMap.Infrastructure.Reactive;
 
-namespace ActionStreetMap.Core.Utilities
+namespace ActionStreetMap.Infrastructure.Utilities
 {
-    /// <summary>
-    ///     Provides extensions for parallel computations.
-    /// </summary>
+    /// <summary> Provides extensions for parallel computations. </summary>
     public static class ParallelExtensions
     {
-        /// <summary>
-        ///     Parallelize processing of quad matrix.
-        /// </summary>
+        /// <summary> Parallelize processing of quad matrix.</summary>
         /// <param name="matrix">Source matrix.</param>
         /// <param name="action">Action.</param>
         public static void Parallel<T>(this T[,] matrix, Action<int, int> action)
@@ -23,9 +19,7 @@ namespace ActionStreetMap.Core.Utilities
             })).Wait();
         }
 
-        /// <summary>
-        ///     Specialized to parallelize processing of terrain map object.
-        /// </summary>
+        /// <summary> Specialized to parallelize processing of terrain map object. </summary>
         /// <param name="terrainMap">Source terrain map array.</param>
         /// <param name="action">Action.</param>
         public static void Parallel<T>(this T[,,] terrainMap, Action<int, int> action)
@@ -38,9 +32,7 @@ namespace ActionStreetMap.Core.Utilities
             })).Wait();
         }
 
-        /// <summary>
-        ///     Parallelize processing of quad matrix.
-        /// </summary>
+        /// <summary> Parallelize processing of quad matrix. </summary>
         /// <param name="matrix">Source matrix.</param>
         /// <param name="func">Function.</param>
         public static TK[] Parallel<T, TK>(this T[,] matrix, Func<int, int, TK> func)
@@ -49,10 +41,8 @@ namespace ActionStreetMap.Core.Utilities
             return Observable.WhenAll(GetChunks(matrix.GetLength(0), func)).Wait();
         }
 
-        /// <summary>
-        ///     Parallelize processing of quad matrix.
-        /// </summary>
-        /// <param name="matrix">Source matrix.</param>
+        /// <summary> Parallelize processing of quad matrix. </summary>
+        /// <param name="array">Source matrix.</param>
         /// <param name="action">Action.</param>
         public static void Parallel<T>(this T[] array, Action<int> action)
         {

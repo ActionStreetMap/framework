@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Text;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Commands
 {
-    /// <summary>
-    ///     Location command.
-    /// </summary>
+    /// <summary> Location command. </summary>
     public class LocateCommand : ICommand
     {
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
@@ -21,10 +18,9 @@ namespace ActionStreetMap.Explorer.Commands
         /// <inheritdoc />
         public string Description { get { return Strings.LocateCommand; } }
 
-        /// <summary>
-        ///     Creates instance of <see cref="LocateCommand" />
-        /// </summary>
-        /// <param name="geoPositionObserver">Position listener.</param>
+        /// <summary> Creates instance of <see cref="LocateCommand" />. </summary>
+        /// <param name="geoPositionObserver">Geo position listener.</param>
+        /// <param name="mapPositionObserver">Map position listener.</param>
         [Dependency]
         public LocateCommand(IPositionObserver<GeoCoordinate> geoPositionObserver,
             IPositionObserver<MapPoint> mapPositionObserver)

@@ -1,36 +1,44 @@
-﻿using ActionStreetMap.Core.Scene.Details;
+﻿using System;
+using System.Collections.Generic;
+using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Infrastructure.Utilities;
-using System;
-using System.Collections.Generic;
 
 namespace ActionStreetMap.Core.Tiling.Models
 {
-    /// <summary>
-    ///     Represents canvas (terrain).
-    /// </summary>
+    /// <summary> Represents canvas (terrain). </summary>
     public class Canvas : Model, IDisposable
     {
         private readonly IRoadGraphBuilder _roadGraphBuilder = new RoadGraphBuilder();
         private readonly IObjectPool _objectPool;
 
+        /// <summary> Flat areas which should be rendered with some texture. </summary>
         public List<Surface> Areas { get; private set; }
+
+        /// <summary> Fixed value elevation surface </summary>
         public List<Surface> Elevations { get; private set; }
+
+        /// <summary> Tree. </summary>
         public List<Tree> Trees { get; private set; }
 
-        public float[, ,] SplatMap { get; set; }
+        /// <summary> Splat array. </summary>
+        public float[,,] SplatMap { get; set; }
+        
+        /// <summary> Terrain details list.  </summary>
         public List<int[,]> Details { get; set; }
 
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
 
+        /// <summary> Creates instance of <see cref="Canvas"/>. </summary>
+        /// <param name="objectPool">Object pool.</param>
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
             Areas = new List<Surface>();
             Elevations = new List<Surface>();
             Trees = new List<Tree>();
-        } 
+        }
 
         /// <inheritdoc />
         public override void Accept(Tile tile, IModelLoader loader)

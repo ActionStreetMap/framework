@@ -126,7 +126,6 @@
     <Compile Include="Tiling\Models\Node.cs" />
     <Compile Include="Tiling\Models\Way.cs" />
     <Compile Include="Utilities\ColorUtility.cs" />
-    <Compile Include="Utilities\ParallelExtensions.cs" />
     <Compile Include="Utilities\TagExtensions.cs" />
     <Compile Include="Utilities\MathUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

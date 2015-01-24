@@ -147,6 +147,7 @@
     <Compile Include="Utilities\IObjectPool.cs" />
     <Compile Include="Utilities\ObjectArrayPool.cs" />
     <Compile Include="Utilities\ObjectListPool.cs" />
+    <Compile Include="Utilities\ParallelExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

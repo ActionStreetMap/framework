@@ -22,7 +22,7 @@ namespace ActionStreetMap.Explorer
     /// <summary>
     ///     Represents application component root.
     /// </summary>
-    public class GameRunner : IGameRunner, IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    public sealed class GameRunner : IGameRunner, IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
         private readonly IContainer _container;
         private readonly IMessageBus _messageBus;

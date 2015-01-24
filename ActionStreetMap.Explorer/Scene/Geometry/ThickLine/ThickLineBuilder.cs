@@ -314,16 +314,23 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         #endregion
 
-        /// <summary>
-        ///     Returns back objects to pool.
-        /// </summary>
+        /// <inheritdoc />
         public void Dispose()
         {
-            _heightMap = null;
+            Dispose(true);
+        }
 
-            _objectPool.StoreList(Points);
-            _objectPool.StoreList(Triangles);
-            _objectPool.StoreList(Uv);
+        /// <summary> Dispose pattern implementation. </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Returns objects back to pool.
+                _heightMap = null;
+                _objectPool.StoreList(Points);
+                _objectPool.StoreList(Triangles);
+                _objectPool.StoreList(Uv);
+            }
         }
     }
 }
