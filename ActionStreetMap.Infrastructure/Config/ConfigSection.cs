@@ -11,7 +11,8 @@ namespace ActionStreetMap.Infrastructure.Config
     /// </summary>
     public class ConfigSection : IConfigSection
     {
-        private readonly ConfigElement _element;
+        /// <summary> Gets root element of this section. </summary>
+        public ConfigElement RootElement { get; private set; }
 
         /// <summary>
         ///     Creates ConfigSection.
@@ -19,7 +20,7 @@ namespace ActionStreetMap.Infrastructure.Config
         /// <param name="element">Config element.</param>
         public ConfigSection(ConfigElement element)
         {
-            _element = element;
+            RootElement = element;
         }
 
         /// <summary>
@@ -31,103 +32,59 @@ namespace ActionStreetMap.Infrastructure.Config
         {
             var jsonStr = fileSystemService.ReadText(appConfigFileName);
             var json = JSON.Parse(jsonStr);
-            _element = new ConfigElement(json);
+            RootElement = new ConfigElement(json);
         }
 
-        /// <summary>
-        ///     Creates ConfigSection.
-        /// </summary>
+        /// <summary> Creates ConfigSection. </summary>
         /// <param name="content">Json content</param>
         public ConfigSection(string content)
         {
-            _element = new ConfigElement(JSON.Parse(content));
+            RootElement = new ConfigElement(JSON.Parse(content));
         }
 
         /// <inheritdoc />
         public IEnumerable<IConfigSection> GetSections(string xpath)
         {
-            return _element.GetElements(xpath).Select(e => (new ConfigSection(e)) as IConfigSection);
+            return RootElement.GetElements(xpath).Select(e => (new ConfigSection(e)) as IConfigSection);
         }
 
         /// <inheritdoc />
         public IConfigSection GetSection(string xpath)
         {
-            return new ConfigSection(new ConfigElement(_element.Node, xpath));
+            return new ConfigSection(new ConfigElement(RootElement.Node, xpath));
         }
 
         /// <inheritdoc />
-        public bool IsEmpty
-        {
-            get { return _element.IsEmpty; }
-        }
+        public bool IsEmpty { get { return RootElement.IsEmpty; } }
 
         /// <inheritdoc />
-        public string GetString(string xpath)
+        public string GetString(string xpath, string defaultValue)
         {
-            return new ConfigElement(_element.Node, xpath).GetString();
-        }
-
-        /// <inheritdoc />
-        public int GetInt(string xpath)
-        {
-            return new ConfigElement(_element.Node, xpath).GetInt();
+            return new ConfigElement(RootElement.Node, xpath).GetString(defaultValue);
         }
 
         /// <inheritdoc />
         public int GetInt(string xpath, int defaultValue)
         {
-            try
-            {
-                return GetInt(xpath);
-            }
-            catch
-            {
-                return defaultValue;
-            }
-        }
-
-        /// <inheritdoc />
-        public float GetFloat(string xpath)
-        {
-            return new ConfigElement(_element.Node, xpath).GetFloat();
+            return new ConfigElement(RootElement.Node, xpath).GetInt(defaultValue);
         }
 
         /// <inheritdoc />
         public float GetFloat(string xpath, float defaultValue)
         {
-            try
-            {
-                return GetFloat(xpath);
-            }
-            catch
-            {
-                return defaultValue;
-            }
-        }
-
-        /// <inheritdoc />
-        public bool GetBool(string xpath)
-        {
-            return new ConfigElement(_element.Node, xpath).GetBool();
+            return new ConfigElement(RootElement.Node, xpath).GetFloat(defaultValue);
         }
 
         /// <inheritdoc />
         public bool GetBool(string xpath, bool defaultValue)
         {
-            try
-            {
-                return GetBool(xpath);
-            }
-            catch
-            {
-                return defaultValue;
-            }
+            return new ConfigElement(RootElement.Node, xpath).GetBool(defaultValue);
         }
 
         /// <inheritdoc />
         public Type GetType(string xpath)
         {
-            return (new ConfigElement(_element.Node, xpath)).GetType();
+            return (new ConfigElement(RootElement.Node, xpath)).GetType();
         }
 
         /// <inheritdoc />

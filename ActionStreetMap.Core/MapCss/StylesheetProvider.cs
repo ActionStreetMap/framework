@@ -27,10 +27,10 @@ namespace ActionStreetMap.Core.MapCss
     {
         private readonly IFileSystemService _fileSystemService;
         private const string PathKey = "mapcss";
-        private const string SandboxKey = "sandbox";
+        private const string ExprTreeKey = "exprTreeAllowed";
 
         private string _path;
-        private bool _isSandbox;
+        private bool _isExprTreeAllowed;
         
         private Stylesheet _stylesheet;
 
@@ -65,23 +65,13 @@ namespace ActionStreetMap.Core.MapCss
             return _stylesheet ?? (_stylesheet = Create());
         }
 
-        /// <inheritdoc />
-        public void Configure(IConfigSection configSection)
-        {
-            _path = configSection.GetString(PathKey);
-            _isSandbox = configSection.GetBool(SandboxKey);
-            _stylesheet = null;
-        }
-
         private Stylesheet Create()
         {
             using (Stream inputStream = _fileSystemService.ReadStream(_path))
-            {
-                return Create(inputStream, _isSandbox);
-            }
+                return Create(inputStream, _isExprTreeAllowed);
         }
 
-        private static Stylesheet Create(Stream stream, bool isSandbox)
+        private static Stylesheet Create(Stream stream, bool isExprTreeAllowed)
         {
             var input = new ANTLRInputStream(stream);
             var lexer = new MapCssLexer(input);
@@ -90,10 +80,17 @@ namespace ActionStreetMap.Core.MapCss
 
             var styleSheet = parser.stylesheet();
             var tree = styleSheet.Tree as Antlr.Runtime.Tree.CommonTree;
-            // NOTE we cannot use expression trees in sandbox (e.g. web player)
-            bool canUseExprTree = !isSandbox;
-            var visitor = new MapCssVisitor(canUseExprTree);
+            // NOTE we cannot use expression trees on some platforms (e.g. web player)
+            var visitor = new MapCssVisitor(isExprTreeAllowed);
             return visitor.Visit(tree);
+        }
+
+        /// <inheritdoc />
+        public void Configure(IConfigSection configSection)
+        {
+            _path = configSection.GetString(PathKey, null);
+            _isExprTreeAllowed = configSection.GetBool(ExprTreeKey, true);
+            _stylesheet = null;
         }
     }
 }

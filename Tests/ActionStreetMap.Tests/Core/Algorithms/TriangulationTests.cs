@@ -12,6 +12,7 @@ using ActionStreetMap.Osm.Index;
 using ActionStreetMap.Osm.Visitors;
 using ActionStreetMap.Tests.Osm;
 using ActionStreetMap.Explorer.Scene.Geometry;
+using ActionStreetMap.Unity.IO;
 using Moq;
 using NUnit.Framework;
 
@@ -50,7 +51,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             var pathResolver = new TestPathResolver();
             var config = new Mock<IConfigSection>();
             var objectPool = new ObjectPool();
-            config.Setup(c => c.GetString("")).Returns(TestHelper.MapDataPath);
+            config.Setup(c => c.GetString("", null)).Returns(TestHelper.MapDataPath);
             var elementSourceProvider = new ElementSourceProvider(pathResolver, new FileSystemService(pathResolver));
             elementSourceProvider.Configure(config.Object);
             var loader = new MapTileLoader(elementSourceProvider, sceneVisitor, new ObjectPool());

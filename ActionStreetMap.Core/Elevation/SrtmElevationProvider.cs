@@ -150,7 +150,7 @@ namespace ActionStreetMap.Core.Elevation
         /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
-            var path = configSection.GetString(PathKey);
+            var path = configSection.GetString(PathKey, null);
             _dataDirectory = path;
         }
     }

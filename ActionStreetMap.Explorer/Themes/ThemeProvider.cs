@@ -84,7 +84,7 @@ namespace ActionStreetMap.Explorer.Themes
             var roofStyleMapping = new Dictionary<string, List<BuildingStyle.RoofStyle>>();
             foreach (var buildThemeConfig in configSection.GetSections(BuildingsThemeFile))
             {
-                var path = buildThemeConfig.GetString("path");
+                var path = buildThemeConfig.GetString("path", null);
 
                 var jsonStr = _fileSystemService.ReadText(path);
                 var json = JSON.Parse(jsonStr);
@@ -170,7 +170,7 @@ namespace ActionStreetMap.Explorer.Themes
             var roadTypeStyleMapping = new Dictionary<string, List<RoadStyle>>();
             foreach (var roadThemeConfig in configSection.GetSections(RoadsThemeFile))
             {
-                var path = roadThemeConfig.GetString("path");
+                var path = roadThemeConfig.GetString("path", null);
 
                 var jsonStr = _fileSystemService.ReadText(path);
                 var json = JSON.Parse(jsonStr);
@@ -217,7 +217,7 @@ namespace ActionStreetMap.Explorer.Themes
             var infoStyleMap = new Dictionary<string, InfoStyle>();
             foreach (var infoThemeConfig in configSection.GetSections(InfosThemeFile))
             {
-                var path = infoThemeConfig.GetString("path");
+                var path = infoThemeConfig.GetString("path", null);
 
                 var jsonStr = _fileSystemService.ReadText(path);
                 var json = JSON.Parse(jsonStr);

@@ -172,9 +172,9 @@ namespace ActionStreetMap.Tests.Core.Tiling
             var activatorMock = new Mock<ITileActivator>();
 
             var configMock = new Mock<IConfigSection>();
-            configMock.Setup(c => c.GetFloat("size")).Returns(Size);
-            configMock.Setup(c => c.GetFloat("offset")).Returns(Offset);
-            configMock.Setup(c => c.GetFloat("sensitivity")).Returns(Sensitivity);
+            configMock.Setup(c => c.GetFloat("size", It.IsAny<float>())).Returns(Size);
+            configMock.Setup(c => c.GetFloat("offset", It.IsAny<float>())).Returns(Offset);
+            configMock.Setup(c => c.GetFloat("sensitivity", It.IsAny<float>())).Returns(Sensitivity);
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
 
             var observer = new TileManager(sceneBuilderMock.Object, heightMapobserver, 

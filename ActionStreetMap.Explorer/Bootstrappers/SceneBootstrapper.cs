@@ -14,6 +14,8 @@ using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Explorer.Scene.Utils;
+using ActionStreetMap.Infrastructure.Formats.Json;
+using ActionStreetMap.Unity;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
@@ -34,7 +36,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
 
             Container.Register(Component.For<IModelLoader>().Use<TileModelLoader>().Singleton());
 
-            var themeConfigPath = GlobalConfigSection.GetString(ThemeKey);
+            var themeConfigPath = GlobalConfigSection.GetString(ThemeKey, null);
             var themeConfig = new ConfigSection(themeConfigPath, FileSystemService);
             // register theme provider
             Container.Register(Component
@@ -42,6 +44,11 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .Use<ThemeProvider>()
                 .Singleton()
                 .SetConfig(themeConfig));
+
+            // NOTE this is workaround to inject compilation dependend value
+            if (GlobalConfigSection is ConfigSection)
+                (GlobalConfigSection as ConfigSection).RootElement.Node["exprTreeAllowed"] = 
+                    new JSONData(Environment.IsExpressionTreeAllowed);
 
             // register stylesheet provider
             Container.Register(Component

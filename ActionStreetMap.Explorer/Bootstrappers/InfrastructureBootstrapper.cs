@@ -5,6 +5,7 @@ using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Unity.Utils;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {

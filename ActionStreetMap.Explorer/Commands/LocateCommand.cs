@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Text;
-
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary>
-    ///     Location command.     
+    ///     Location command.
     /// </summary>
     public class LocateCommand : ICommand
     {
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
         private readonly IPositionObserver<MapPoint> _mapPositionObserver;
-        
+
+        /// <inheritdoc />
+        public string Name { get { return "locate"; } }
+
+        /// <inheritdoc />
+        public string Description { get { return Strings.LocateCommand; } }
+
         /// <summary>
-        ///     Creates instance of <see cref="LocateCommand"/>
+        ///     Creates instance of <see cref="LocateCommand" />
         /// </summary>
         /// <param name="geoPositionObserver">Position listener.</param>
         [Dependency]
@@ -25,12 +32,6 @@ namespace ActionStreetMap.Explorer.Commands
             _geoPositionObserver = geoPositionObserver;
             _mapPositionObserver = mapPositionObserver;
         }
-
-        /// <inheritdoc />
-        public string Name { get { return "locate"; }}
-
-        /// <inheritdoc />
-        public string Description { get { return Strings.LocateCommand; } }
 
         /// <inheritdoc />
         public string Execute(params string[] args)

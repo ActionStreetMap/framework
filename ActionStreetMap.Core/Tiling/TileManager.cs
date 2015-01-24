@@ -293,10 +293,10 @@ namespace ActionStreetMap.Core.Tiling
         /// </summary>
         public void Configure(IConfigSection configSection)
         {
-            _tileSize = configSection.GetFloat("size");
-            _offset = configSection.GetFloat("offset");
+            _tileSize = configSection.GetFloat("size", 500);
+            _offset = configSection.GetFloat("offset", 50);
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
-            _heightmapsize = configSection.GetInt("heightmap");
+            _heightmapsize = configSection.GetInt("heightmap", 1025);
 
             _allowAutoRemoval = configSection.GetBool("autoclean", true);
         }

@@ -50,8 +50,6 @@
     <Compile Include="Commands\Arguments.cs" />
     <Compile Include="Commands\CommandController.cs" />
     <Compile Include="Commands\LocateCommand.cs" />
-    <Compile Include="Commands\SysCommand.cs" />
-    <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\TagCommand.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
@@ -149,6 +147,10 @@
     <ProjectReference Include="..\ActionStreetMap.Osm\ActionStreetMap.Osm.csproj">
       <Project>{f07af685-2554-4032-a35f-bb6d5632f1c2}</Project>
       <Name>ActionStreetMap.Osm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ActionStreetMap.Unity\ActionStreetMap.Unity.csproj">
+      <Project>{c6e485fe-e10f-4eb3-9792-0eab9a5d1457}</Project>
+      <Name>ActionStreetMap.Unity</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

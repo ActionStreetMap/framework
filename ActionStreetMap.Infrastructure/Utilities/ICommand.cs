@@ -1,34 +1,24 @@
 ﻿
 using System;
 
-namespace ActionStreetMap.Explorer.Commands
+namespace ActionStreetMap.Infrastructure.Utilities
 {
-    /// <summary>
-    ///     Command line command.
-    /// </summary>
+    /// <summary> Command line command. </summary>
     public interface ICommand
     {
-        /// <summary>
-        ///     Gets unique name of command.
-        /// </summary>
+        /// <summary> Gets unique name of command. </summary>
         string Name { get; }
 
-        /// <summary>
-        ///     Gets description of command.
-        /// </summary>
+        /// <summary> Gets description of command. </summary>
         string Description { get; }
 
-        /// <summary>
-        ///     Executes command.
-        /// </summary>
+        /// <summary> Executes command.</summary>
         /// <param name="args">Argument list.</param>
         /// <returns>Output string.</returns>
         string Execute(params string[] args);
     }
 
-    /// <summary>
-    ///     Provides the way to create command with given lambda to execute.
-    /// </summary>
+    /// <summary> Provides the way to create command with given lambda to execute. </summary>
     public class Command : ICommand
     {
         private readonly Func<string[], string> _functor;
@@ -39,9 +29,7 @@ namespace ActionStreetMap.Explorer.Commands
         /// <inheritdoc />
         public string Description { get; private set; }
 
-        /// <summary>
-        ///     Creates instance of <see cref="Command"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="Command"/>. </summary>
         /// <param name="name">Name of command.</param>
         /// <param name="description">Description of command.</param>
         /// <param name="functor">Func to be executed.</param>

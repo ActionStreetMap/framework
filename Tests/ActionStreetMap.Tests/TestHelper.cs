@@ -7,6 +7,7 @@ using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Tests.Explorer.Tiles;
+using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Tests
 {

@@ -3,104 +3,61 @@ using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Config
 {
-    /// <summary>
-    ///     Represens a config entry.
-    /// </summary>
+    /// <summary> Represens a config entry. </summary>
     public interface IConfigSection
     {
-        /// <summary>
-        ///     Returns the set of ConfigSections.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
+        /// <summary> Returns the set of ConfigSections. </summary>
+        /// <param name="xpath">xpath</param>
         IEnumerable<IConfigSection> GetSections(string xpath);
 
-        /// <summary>
-        ///     Returns ConfigSection.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
+        /// <summary> Returns ConfigSection. </summary>
+        /// <param name="xpath">xpath</param>
+        /// <returns>IConfigSection.</returns>
         IConfigSection GetSection(string xpath);
 
-        /// <summary>
-        ///     True if node is empty.
-        /// </summary>
+        /// <summary> True if node is empty. </summary>
         bool IsEmpty { get; }
 
-        /// <summary>
-        ///     Returns string.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
-        string GetString(string xpath);
+        /// <summary> Returns string.</summary>
+        /// <param name="xpath">xpath.</param>
+        /// <param name="defaultValue"></param>
+        /// <returns>String value.</returns>
+        string GetString(string xpath, string defaultValue);
 
-        /// <summary>
-        ///     Returns int.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
-        int GetInt(string xpath);
-
-        /// <summary>
-        ///     Returns int.
-        /// </summary>
+        /// <summary> Returns int. </summary>
         /// <param name="xpath"></param>
         /// <param name="defaultValue"></param>
-        /// <returns></returns>
+        /// <returns>Int value.</returns>
         int GetInt(string xpath, int defaultValue);
 
-        /// <summary>
-        ///     Returns float.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
-        float GetFloat(string xpath);
-
-        /// <summary>
-        ///     Returns float.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
+        /// <summary> Returns float. </summary>
+        /// <param name="xpath">xpath</param>
+        /// <param name="defaultValue">Default value.</param>
+        /// <returns>Float value.</returns>
         float GetFloat(string xpath, float defaultValue);
 
-        /// <summary>
-        ///     Returns bool.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
-        bool GetBool(string xpath);
-
-        /// <summary>
-        ///     Returns bool.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
+        /// <summary> Returns bool. </summary>
+        /// <param name="xpath">xpath</param>
+        /// <param name="defaultValue">Default value.</param>
+        /// <returns>Boolean.</returns>
         bool GetBool(string xpath, bool defaultValue);
 
-        /// <summary>
-        ///     Returns type object.
-        /// </summary>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
+        /// <summary> Returns type object. </summary>
+        /// <param name="xpath">xpath.</param>
+        /// <returns>Type.</returns>
         Type GetType(string xpath);
 
-        /// <summary>
-        ///     Returns the instance of T.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="xpath"></param>
-        /// <returns></returns>
+        /// <summary> Returns the instance of T. </summary>
+        /// <typeparam name="T">Type of instance.</typeparam>
+        /// <param name="xpath">xpath.</param>
+        /// <returns>Instance.</returns>
         T GetInstance<T>(string xpath);
 
-        /// <summary>
-        ///     Returns the instance of T.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="xpath"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <summary> Returns the instance of T. </summary>
+        /// <typeparam name="T">Instance type.</typeparam>
+        /// <param name="xpath">xpath</param>
+        /// <param name="args">Constructor parameters.</param>
+        /// <returns>Instance.</returns>
         T GetInstance<T>(string xpath, params object[] args);
     }
 }

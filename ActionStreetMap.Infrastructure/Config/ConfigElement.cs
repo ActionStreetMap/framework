@@ -13,18 +13,23 @@ namespace ActionStreetMap.Infrastructure.Config
         private readonly string _xpath;
         private JSONNode _node;
 
-        /// <summary>
-        ///     Creates ConfigElement.
-        /// </summary>
+        /// <summary> Returns current JSON node. </summary>
+        public JSONNode Node { get { return _node; } }
+
+        /// <summary> True if element represents json node. </summary>
+        public bool IsNode { get { return _node != null; } }
+
+        /// <summary> Trues if is empty. </summary>
+        public bool IsEmpty { get { return !IsNode; } }
+
+        /// <summary> Creates ConfigElement. </summary>
         /// <param name="node">Node.</param>
         public ConfigElement(JSONNode node)
         {
             _node = node;
         }
 
-        /// <summary>
-        ///     Creates ConfigElement.
-        /// </summary>
+        /// <summary> Creates ConfigElement.</summary>
         /// <param name="node">Node.</param>
         /// <param name="xpath">XPath</param>
         public ConfigElement(JSONNode node, string xpath)
@@ -62,9 +67,7 @@ namespace ActionStreetMap.Infrastructure.Config
             }
         }
 
-        /// <summary>
-        ///     Returns the set of elements
-        /// </summary>
+        /// <summary> Returns the set of elements. </summary>
         public IEnumerable<ConfigElement> GetElements(string xpath)
         {
             if (Node == null)
@@ -86,69 +89,37 @@ namespace ActionStreetMap.Infrastructure.Config
                 select new ConfigElement(node);
         }
 
-        /// <summary>
-        ///     Returns string
-        /// </summary>
-        public string GetString()
+        /// <summary> Returns string. </summary>
+        public string GetString(string defaultValue)
         {
-            return IsNode ? _node.Value : null;
+            return IsNode ? _node.Value : defaultValue;
         }
 
-        /// <summary>
-        ///     Returns int
-        /// </summary>
-        public int GetInt()
+        /// <summary> Returns int. </summary>
+        public int GetInt(int defaultValue)
         {
-            return int.Parse(GetString());
+            int value;
+            return int.TryParse(GetString(null), out value) ? value : defaultValue;
         }
 
-        /// <summary>
-        ///     Returns float
-        /// </summary>
-        public float GetFloat()
+        /// <summary> Returns float. </summary>
+        public float GetFloat(float defaultValue)
         {
-            return float.Parse(GetString());
+            float value;
+            return float.TryParse(GetString(null), out value) ? value : defaultValue;
         }
 
-        /// <summary>
-        ///     Returns boolean
-        /// </summary>
-        public bool GetBool()
+        /// <summary> Returns boolean. </summary>
+        public bool GetBool(bool defaultValue)
         {
-            return bool.Parse(GetString());
+            bool value;
+            return bool.TryParse(GetString(null), out value) ? value : defaultValue;
         }
 
-        /// <summary>
-        ///     Returns type
-        /// </summary>
+        /// <summary> Returns type. </summary>
         public new Type GetType()
         {
-            string typeName = GetString();
-            return Type.GetType(typeName);
+            return Type.GetType(GetString(null));
         }
-
-        /// <summary>
-        ///     Returns current XElement
-        /// </summary>
-        public JSONNode Node
-        {
-            get { return _node; }
-        }
-
-        /// <summary>
-        ///     true if element represents xml node
-        /// </summary>
-        public bool IsNode
-        {
-            get { return _node != null; }
-        }
-
-        /// <summary>
-        ///  Trues if is empty.
-        /// </summary>
-        public bool IsEmpty
-        {
-            get { return !IsNode; }
-        }
-    }
+   }
 }

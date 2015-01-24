@@ -3,21 +3,28 @@ using System.Text;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Osm.Entities;
 using ActionStreetMap.Osm.Index.Search;
 
 namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary>
-    ///     Tags search command.     
+    ///     Tags search command.
     /// </summary>
-    public class TagCommand: ICommand
+    public class TagCommand : ICommand
     {
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
         private readonly ISearchEngine _searchEngine;
 
+        /// <inheritdoc />
+        public string Name { get { return "tag"; } }
+
+        /// <inheritdoc />
+        public string Description { get { return Strings.TagCommand; } }
+
         /// <summary>
-        ///     Creates instance of <see cref="TagCommand"/>
+        ///     Creates instance of <see cref="TagCommand" />
         /// </summary>
         /// <param name="geoPositionObserver">Position listener.</param>
         /// <param name="searchEngine">Search engine instance.</param>
@@ -27,12 +34,6 @@ namespace ActionStreetMap.Explorer.Commands
             _geoPositionObserver = geoPositionObserver;
             _searchEngine = searchEngine;
         }
-
-        /// <inheritdoc />
-        public string Name { get { return "tag"; }}
-
-        /// <inheritdoc />
-        public string Description { get { return Strings.TagCommand; } }
 
         /// <inheritdoc />
         public string Execute(params string[] args)

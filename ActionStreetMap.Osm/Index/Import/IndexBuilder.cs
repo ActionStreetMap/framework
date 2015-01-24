@@ -261,7 +261,7 @@ namespace ActionStreetMap.Osm.Index.Import
 
         public void Configure(IConfigSection configSection)
         {
-            var settingsPath = configSection.GetString("index");
+            var settingsPath = configSection.GetString("index", null);
 
             var jsonString = File.ReadAllText(settingsPath);
             var node = JSON.Parse(jsonString);

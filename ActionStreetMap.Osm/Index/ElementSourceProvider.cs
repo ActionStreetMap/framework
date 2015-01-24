@@ -135,7 +135,7 @@ namespace ActionStreetMap.Osm.Index
         public void Configure(IConfigSection configSection)
         {
             _insertTree = new RTree<string>();
-            var rootFolder = configSection.GetString(MapPathKey);
+            var rootFolder = configSection.GetString(MapPathKey, null);
             SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
             // convert to search tree and release insert tree
             _searchTree = SpatialIndex<string>.ToReadOnly(_insertTree);

@@ -1,7 +1,8 @@
 ﻿using System.Text;
+using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Commands
+namespace ActionStreetMap.Unity.Utils
 {
     /// <summary>
     ///     Creates commands which returns system environment information.
