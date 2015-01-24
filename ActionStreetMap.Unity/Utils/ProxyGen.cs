@@ -1,21 +1,24 @@
-﻿namespace ActionStreetMap.Infrastructure.Dependencies.Interception
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using ActionStreetMap.Infrastructure.Dependencies.Interception;
+
+namespace ActionStreetMap.Unity.Utils
 {
-#if SANDBOX
+    // TODO add other platforms which don't support this feature
+#if WEB_PLAYER
     using System;
     public static class ProxyGen
     {
         public static Type Generate(Type interfaceType)
         {
-            throw new System.NotSupportedException("This code cannot be used with defined build symbols");
+            return null;
         }
     }
 #else
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Reflection.Emit;
-
+    
     /// <summary>
     ///     Generates proxy class which is derived from ProxyBase and uses it's methods to
     ///     run attached behaviors.

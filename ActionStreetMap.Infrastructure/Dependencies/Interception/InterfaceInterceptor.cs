@@ -44,8 +44,9 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception
         /// <inheritdoc />
         public void Register(Type type)
         {
-            if (!ProxyComponentMapping.ContainsKey(type))
-                ProxyComponentMapping.Add(type, new Component(type, ProxyGen.Generate(type)));
+            throw new NotSupportedException("Platform specific feature is disabled.");
+            //if (!ProxyComponentMapping.ContainsKey(type))
+            //    ProxyComponentMapping.Add(type, new Component(type, ProxyGen.Generate(type)));
         }
     }
 }

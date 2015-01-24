@@ -2,6 +2,7 @@
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
 using ActionStreetMap.Tests.Infrastructure.Stubs;
+using ActionStreetMap.Unity.Utils;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Infrastructure
@@ -60,7 +61,7 @@ namespace ActionStreetMap.Tests.Infrastructure
             {
                 container.Register(Component.For<IClassA>()
                                             .Use<ClassA1>()
-                                            .WithProxy()
+                                            .WithProxy(ProxyGen.Generate(typeof(IClassA)))
                                             .AddBehavior(new ExecuteBehavior())
                                             .Singleton());
                 // ACT
@@ -95,6 +96,7 @@ namespace ActionStreetMap.Tests.Infrastructure
         }
 
         [Test]
+        [Ignore("This feature was disabled after moving ProxyGen class to different package in order to incapsulate conditional compilation symbols in single package.")]
         public void CanAutogenerateProxy()
         {
             // ARRANGE

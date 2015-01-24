@@ -71,7 +71,6 @@
     <Compile Include="Dependencies\Interception\MethodInvocation.cs" />
     <Compile Include="Dependencies\Interception\MethodReturn.cs" />
     <Compile Include="Dependencies\Interception\ProxyBase.cs" />
-    <Compile Include="Dependencies\Interception\ProxyGen.cs" />
     <Compile Include="Dependencies\Lifetime\ExternalLifetimeManager.cs" />
     <Compile Include="Dependencies\Lifetime\ILifetimeManager.cs" />
     <Compile Include="Dependencies\Lifetime\SingletonLifetimeManager.cs" />

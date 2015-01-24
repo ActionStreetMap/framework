@@ -59,6 +59,7 @@
     <Compile Include="Reactive\UnityEventExtensions.cs" />
     <Compile Include="Reactive\UnityWinRTBridge\Thread.cs" />
     <Compile Include="Reactive\UnityWinRTBridge\ThreadPoolScheduler_UnityWinRT.cs" />
+    <Compile Include="Utils\ProxyGen.cs" />
     <Compile Include="Utils\SysCommand.cs" />
   </ItemGroup>
   <ItemGroup>

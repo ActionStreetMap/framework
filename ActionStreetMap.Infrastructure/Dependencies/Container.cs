@@ -32,7 +32,11 @@ namespace ActionStreetMap.Infrastructure.Dependencies
         /// <summary>
         ///     Autogenerate proxies.
         /// </summary>
-        public bool AutoGenerateProxy { get; set; }
+        public bool AutoGenerateProxy 
+        { 
+            get { return false; } 
+            set { throw new NotSupportedException("This feature is disabled due to platform specific nature. "); } 
+        }
 
         /// <inheritdoc />
         public IContainer AddGlobalBehavior(IBehavior behavior)
@@ -117,8 +121,10 @@ namespace ActionStreetMap.Infrastructure.Dependencies
                 lifetimeManager.CstorArgs = lifetimeManager.Constructor.GetParameters()
                     .Select(p=> Resolve(p.ParameterType)).ToArray();
 
-            if (AllowProxy && AutoGenerateProxy && lifetimeManager.InterfaceType != null)
-                InterceptionContext.GetInterceptor().Register(lifetimeManager.InterfaceType);
+            // NOTE ProxyGen was moved to platform specific package, so it cannot be used here
+            // that's why this feature was disabled
+            //if (AllowProxy && AutoGenerateProxy && lifetimeManager.InterfaceType != null)
+            //    InterceptionContext.GetInterceptor().Register(lifetimeManager.InterfaceType);
 
             return lifetimeManager;
         }
