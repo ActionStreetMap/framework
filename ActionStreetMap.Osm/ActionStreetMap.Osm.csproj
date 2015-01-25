@@ -59,6 +59,7 @@
     <Compile Include="Formats\O5m\O5mExtensions.cs" />
     <Compile Include="Formats\O5m\O5mReader.cs" />
     <Compile Include="Formats\ReaderContext.cs" />
+    <Compile Include="Geocoding\NominatimGeocoder.cs" />
     <Compile Include="Helpers\AddressExtractor.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Entities\Relation.cs" />
     <Compile Include="Entities\RelationMember.cs" />
     <Compile Include="Entities\Way.cs" />
+    <Compile Include="Geocoding\IGeocoder.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -102,6 +104,10 @@
     <ProjectReference Include="..\ActionStreetMap.Core\ActionStreetMap.Core.csproj">
       <Project>{78c3b696-0486-41f9-ba24-5e85f417d98f}</Project>
       <Name>ActionStreetMap.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ActionStreetMap.Unity\ActionStreetMap.Unity.csproj">
+      <Project>{c6e485fe-e10f-4eb3-9792-0eab9a5d1457}</Project>
+      <Name>ActionStreetMap.Unity</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

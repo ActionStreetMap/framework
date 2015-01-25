@@ -3,6 +3,7 @@
 	"elevationdata":"f:/___elevation/TestData/",
 	"theme":"Config/themes/default/theme.json",
 	"mapcss":"Config/themes/default/default.mapcss",
+	"geocoding":"http://nominatim.openstreetmap.org/search",
 	"tile": {
 		"size":1000,
 		"offset":300,
