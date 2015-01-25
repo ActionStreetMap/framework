@@ -7,8 +7,8 @@
     <ProjectGuid>{F07AF685-2554-4032-A35F-BB6D5632F1C2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ActionStreetMap.Osm</RootNamespace>
-    <AssemblyName>ActionStreetMap.Osm</AssemblyName>
+    <RootNamespace>ActionStreetMap.Maps</RootNamespace>
+    <AssemblyName>ActionStreetMap.Maps</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <DocumentationFile>bin\Release\ActionStreetMap.Osm.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\ActionStreetMap.Maps.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
