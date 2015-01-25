@@ -7,6 +7,11 @@ namespace ActionStreetMap.Maps.GeoCoding
     /// <summary> Defines reverse geocoder API. </summary>
     public interface IGeocoder
     {
+        /// <summary> Performs reverse geocoding for given string. </summary>
+        /// <param name="name">Search query.</param>
+        /// <returns>Results.</returns>
+        IObservable<GeocoderResult> Search(string name);
+
         /// <summary> Performas reverse geocoding for given string and area. </summary>
         /// <param name="name">Search query.</param>
         /// <param name="area">Bounding box.</param>

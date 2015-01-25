@@ -38,7 +38,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 ).Select(o => o.EventArgs.Result);
 
             webClient.DownloadStringAsync(new Uri(url));
-
             return query;
 #endif
         }

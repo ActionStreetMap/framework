@@ -6,9 +6,11 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Explorer.Commands;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Geocoding;
 using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Import;
 using ActionStreetMap.Maps.Index.Spatial;
@@ -41,7 +43,7 @@ namespace ActionStreetMap.Tests
             var program = new Program();
             var sw = new Stopwatch();
             sw.Start();
-             program.RunGame();
+            // program.RunGame();
             //program.RunMocker();
             //program.Wait();
 
@@ -53,6 +55,19 @@ namespace ActionStreetMap.Tests
                 "Index");*/
             //program.ReadIndex("Index");
             //program.SubscribeOnMainThreadTest();
+
+            //var geoCodingCommand = new GeocodeCommand(new NominatimGeocoder());
+            //Console.WriteLine(geoCodingCommand.Execute(new string[] {"/q=Berlin"}));
+
+            var geoCoder = new NominatimGeocoder();
+            geoCoder.Search("berlin").Subscribe(r =>
+            {
+                Console.WriteLine(r.DisplayName);
+            }, () =>
+            {
+                Console.WriteLine("Completed");
+            });
+
 
             Console.ReadKey();
         }

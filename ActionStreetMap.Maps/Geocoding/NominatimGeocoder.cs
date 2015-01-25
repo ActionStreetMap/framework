@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Formats.Json;
@@ -12,31 +13,38 @@ namespace ActionStreetMap.Maps.Geocoding
     /// <summary> Geocoder which uses osm nominatim. </summary>
     public class NominatimGeocoder: IGeocoder, IConfigurable
     {
-        private const string DefaultServer = @"http://nominatim.openstreetmap.org/search";
+        private const string DefaultServer = @"http://nominatim.openstreetmap.org/search?";
         private string _searchPath = DefaultServer;
-        private string _urlSchema = "q={0}&viewbox={1}&format=json";
 
+        /// <inheritdoc />
+        public IObservable<GeocoderResult> Search(string name)
+        {
+            return Search(name, null);
+        }
+
+        /// <inheritdoc />
         public IObservable<GeocoderResult> Search(string name, BoundingBox area)
         {
-            // TODO can be optimized with StringBuilder
-            string bounds = string.Format(CultureInfo.InvariantCulture,
-                "{0:f4},{1:f4},{2:f4},{3:f4}",
-                area.MinPoint.Longitude,
-                area.MinPoint.Latitude,
-                area.MaxPoint.Longitude,
-                area.MaxPoint.Latitude);
+            var sb = new StringBuilder(128);
+            sb.Append(_searchPath);
+            if (area != null)
+            {
+                sb.Append(Uri.EscapeDataString(String.Format(CultureInfo.InvariantCulture,
+                    "viewbox={0:f4},{1:f4},{2:f4},{3:f4}&",
+                    area.MinPoint.Longitude,
+                    area.MinPoint.Latitude,
+                    area.MaxPoint.Longitude,
+                    area.MaxPoint.Latitude)));
+            }
+            sb.AppendFormat("q={0}&format=json", Uri.EscapeDataString(name));
 
-            var queryString = String.Format(@"{0}?{1}", _searchPath,
-                String.Format(_urlSchema, Uri.EscapeDataString(name), Uri.EscapeDataString(bounds)));
-
-            return ObservableWWW.Get(queryString)
+            return ObservableWWW.Get(sb.ToString())
                 .ObserveOn(Scheduler.ThreadPool)
-                .SelectMany(r =>
-                {
-                    var jsonArray = JSON.Parse(r).AsArray;
-                    return (from JSONNode json in jsonArray 
-                            select ParseGeocoderResult(json));
-                });
+                // TODO this is needed by FromEventPatter which is used only for non-unity builds
+                .Take(1)
+                .SelectMany(r => (
+                    from JSONNode json in JSON.Parse(r).AsArray 
+                    select ParseGeocoderResult(json)));
         }
 
         private GeocoderResult ParseGeocoderResult(JSONNode resultNode)
@@ -66,12 +74,11 @@ namespace ActionStreetMap.Maps.Geocoding
         {
             double latitude, longitude;
             if (double.TryParse(latStr, out latitude) && double.TryParse(lonStr, out longitude))
-            {
                 return new GeoCoordinate(latitude, longitude);
-            }
             return default(GeoCoordinate);
         }
 
+        /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
             _searchPath = configSection.GetString("geocoding", DefaultServer);
