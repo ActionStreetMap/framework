@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionStreetMap.Core", "Act
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionStreetMap.Infrastructure", "ActionStreetMap.Infrastructure\ActionStreetMap.Infrastructure.csproj", "{C77A889A-90D7-4787-A6BC-35772473639E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionStreetMap.Osm", "ActionStreetMap.Osm\ActionStreetMap.Osm.csproj", "{F07AF685-2554-4032-A35F-BB6D5632F1C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionStreetMap.Maps", "ActionStreetMap.Maps\ActionStreetMap.Maps.csproj", "{F07AF685-2554-4032-A35F-BB6D5632F1C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionStreetMap.Explorer", "ActionStreetMap.Explorer\ActionStreetMap.Explorer.csproj", "{F931971C-D22F-436B-B1CB-ED4B941810E4}"
 EndProject

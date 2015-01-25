@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Commands;
-using ActionStreetMap.Osm.Entities;
-using ActionStreetMap.Osm.Index.Search;
+using ActionStreetMap.Maps.Entities;
+using ActionStreetMap.Maps.Index.Search;
 using Moq;
 using NUnit.Framework;
 

@@ -4,8 +4,8 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Osm.Entities;
-using ActionStreetMap.Osm.Index.Search;
+using ActionStreetMap.Maps.Entities;
+using ActionStreetMap.Maps.Index.Search;
 
 namespace ActionStreetMap.Explorer.Commands
 {

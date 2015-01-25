@@ -5,9 +5,9 @@ using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Utils;
-using ActionStreetMap.Osm;
-using ActionStreetMap.Osm.Index;
-using ActionStreetMap.Osm.Index.Search;
+using ActionStreetMap.Maps;
+using ActionStreetMap.Maps.Index;
+using ActionStreetMap.Maps.Index.Search;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {

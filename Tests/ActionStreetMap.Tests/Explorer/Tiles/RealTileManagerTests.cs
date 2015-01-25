@@ -1,7 +1,7 @@
 ﻿using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
-using ActionStreetMap.Osm.Index;
+using ActionStreetMap.Maps.Index;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Tiles

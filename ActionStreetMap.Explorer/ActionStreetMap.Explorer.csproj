@@ -144,9 +144,9 @@
       <Project>{c77a889a-90d7-4787-a6bc-35772473639e}</Project>
       <Name>ActionStreetMap.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ActionStreetMap.Osm\ActionStreetMap.Osm.csproj">
+    <ProjectReference Include="..\ActionStreetMap.Maps\ActionStreetMap.Maps.csproj">
       <Project>{f07af685-2554-4032-a35f-bb6d5632f1c2}</Project>
-      <Name>ActionStreetMap.Osm</Name>
+      <Name>ActionStreetMap.Maps</Name>
     </ProjectReference>
     <ProjectReference Include="..\ActionStreetMap.Unity\ActionStreetMap.Unity.csproj">
       <Project>{c6e485fe-e10f-4eb3-9792-0eab9a5d1457}</Project>

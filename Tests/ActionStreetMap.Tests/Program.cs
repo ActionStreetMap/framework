@@ -9,10 +9,10 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Osm.Index;
-using ActionStreetMap.Osm.Index.Import;
-using ActionStreetMap.Osm.Index.Spatial;
-using ActionStreetMap.Osm.Index.Storage;
+using ActionStreetMap.Maps.Index;
+using ActionStreetMap.Maps.Index.Import;
+using ActionStreetMap.Maps.Index.Spatial;
+using ActionStreetMap.Maps.Index.Storage;
 
 namespace ActionStreetMap.Tests
 {
@@ -41,18 +41,19 @@ namespace ActionStreetMap.Tests
             var program = new Program();
             var sw = new Stopwatch();
             sw.Start();
-            program.RunGame();
+             program.RunGame();
             //program.RunMocker();
             //program.Wait();
 
-            program.DoContinuosMovements();
-            
+            // program.DoContinuosMovements();
+
             /* program.CreateIndex(
                 @"g:\__ASM\_other_projects\osmconvert\ile-de-france.o5m",
                 @"g:\__ASM\__repository\framework\Tests\TestAssets\DemoResources\Config\themes\default\index.json",
                 "Index");*/
             //program.ReadIndex("Index");
             //program.SubscribeOnMainThreadTest();
+
             Console.ReadKey();
         }
 

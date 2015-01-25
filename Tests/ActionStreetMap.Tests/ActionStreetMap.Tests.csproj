@@ -82,18 +82,18 @@
     <Compile Include="Core\MapCss\StylesheetTests.cs" />
     <Compile Include="Core\MapCss\RuleEvalTests.cs" />
     <Compile Include="Explorer\BuildingMapCssTests.cs" />
-    <Compile Include="Osm\Index\ElementSourceProviderTests.cs" />
-    <Compile Include="Osm\Index\ElementSourceTests.cs" />
-    <Compile Include="Osm\Index\ElementStoreTests.cs" />
-    <Compile Include="Osm\Index\IndexSettingsTests.cs" />
-    <Compile Include="Osm\Index\KeyValueIndexTests.cs" />
-    <Compile Include="Osm\Index\KeyValueStoreTests.cs" />
-    <Compile Include="Osm\Index\KeyValueUsageTests.cs" />
-    <Compile Include="Osm\Index\SearchEngineTests.cs" />
-    <Compile Include="Osm\Index\Utils.cs" />
-    <Compile Include="Osm\LocationInfoTests.cs" />
-    <Compile Include="Osm\MultipolygonProcessorTests.cs" />
-    <Compile Include="Osm\TestModelLoader.cs" />
+    <Compile Include="Maps\Index\ElementSourceProviderTests.cs" />
+    <Compile Include="Maps\Index\ElementSourceTests.cs" />
+    <Compile Include="Maps\Index\ElementStoreTests.cs" />
+    <Compile Include="Maps\Index\IndexSettingsTests.cs" />
+    <Compile Include="Maps\Index\KeyValueIndexTests.cs" />
+    <Compile Include="Maps\Index\KeyValueStoreTests.cs" />
+    <Compile Include="Maps\Index\KeyValueUsageTests.cs" />
+    <Compile Include="Maps\Index\SearchEngineTests.cs" />
+    <Compile Include="Maps\Index\Utils.cs" />
+    <Compile Include="Maps\LocationInfoTests.cs" />
+    <Compile Include="Maps\MultipolygonProcessorTests.cs" />
+    <Compile Include="Maps\TestModelLoader.cs" />
     <Compile Include="PerformanceLogger.cs" />
     <Compile Include="Infrastructure\ConfigTests.cs" />
     <Compile Include="Infrastructure\ContainerTests.cs" />
@@ -125,9 +125,9 @@
       <Project>{c77a889a-90d7-4787-a6bc-35772473639e}</Project>
       <Name>ActionStreetMap.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ActionStreetMap.Osm\ActionStreetMap.Osm.csproj">
+    <ProjectReference Include="..\..\ActionStreetMap.Maps\ActionStreetMap.Maps.csproj">
       <Project>{f07af685-2554-4032-a35f-bb6d5632f1c2}</Project>
-      <Name>ActionStreetMap.Osm</Name>
+      <Name>ActionStreetMap.Maps</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ActionStreetMap.Core\ActionStreetMap.Core.csproj">
       <Project>{78C3B696-0486-41F9-BA24-5E85F417D98F}</Project>

@@ -27,7 +27,7 @@
 <ul>
 <li><b>ActionStreetMap.Infrastructure</b> - contains classes which helps to create framework.</li>
 <li><b>ActionStreetMap.Core</b> contains classes of core map logic (e.g. MapCSS parser, Scene classes).</li>
-<li><b>ActionStreetMap.Osm</b> contains OSM specific classes (e.g OSM parser, element visitors).</li>
+<li><b>ActionStreetMap.Maps</b> contains OSM specific classes (e.g OSM parser, element visitors).</li>
 <li><b>ActionStreetMap.Models</b> contains classes which builds unity game objects from real world abstractions.</li>
 <li><b>ActionStreetMap.Explorer</b> contains application specific logic (e.g. MapCSS declaration rules, model builders).</li>
 <li><b>ActionStreetMap.Tests</b> contains unit and integration tests. Also has Main function to run logic as console application (useful for profiling).</li>
