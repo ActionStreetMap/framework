@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Text;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Commands
@@ -19,31 +21,35 @@ namespace ActionStreetMap.Explorer.Commands
         public string Description { get { return Strings.LocateCommand; } }
 
         /// <summary> Creates instance of <see cref="LocateCommand" />. </summary>
-        /// <param name="geoPositionObserver">Geo position listener.</param>
-        /// <param name="mapPositionObserver">Map position listener.</param>
+        /// <param name="positionObserver">Position listener.</param>
         [Dependency]
-        public LocateCommand(IPositionObserver<GeoCoordinate> geoPositionObserver,
-            IPositionObserver<MapPoint> mapPositionObserver)
+        public LocateCommand(ITilePositionObserver positionObserver)
         {
-            _geoPositionObserver = geoPositionObserver;
-            _mapPositionObserver = mapPositionObserver;
+            _geoPositionObserver = positionObserver;
+            _mapPositionObserver = positionObserver;
         }
 
         /// <inheritdoc />
-        public string Execute(params string[] args)
+        public IObservable<string> Execute(params string[] args)
         {
-            var response = new StringBuilder();
-            var commandLine = new Arguments(args);
-            if (ShouldPrintHelp(commandLine))
+            return Observable.Create<string>(o =>
             {
-                PrintHelp(response);
-                return response.ToString();
-            }
+                var response = new StringBuilder();
+                var commandLine = new Arguments(args);
+                if (ShouldPrintHelp(commandLine))
+                {
+                    PrintHelp(response);
+                }
+                else
+                {
+                    response.AppendLine(String.Format("map: {0}", _geoPositionObserver.Current));
+                    response.AppendLine(String.Format("geo: {0}", _mapPositionObserver.Current));
+                }
 
-            response.AppendLine(String.Format("map: {0}", _geoPositionObserver.Current));
-            response.AppendLine(String.Format("geo: {0}", _mapPositionObserver.Current));
-
-            return response.ToString();
+                o.OnNext(response.ToString());
+                o.OnCompleted();
+                return Disposable.Empty;
+            });
         }
 
         private bool ShouldPrintHelp(Arguments commandLine)

@@ -6,6 +6,8 @@ using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Maps;
+using ActionStreetMap.Maps.GeoCoding;
+using ActionStreetMap.Maps.Geocoding;
 using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Search;
 
@@ -54,6 +56,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
 
             // provides text search feature
             Container.Register(Component.For<ISearchEngine>().Use<SearchEngine>().Singleton());
+
+            Container.Register(Component.For<IGeocoder>().Use<NominatimGeocoder>().Singleton());
 
             Container.Register(Component.For<HeightMapProcessor>().Use<HeightMapProcessor>().Singleton());
             

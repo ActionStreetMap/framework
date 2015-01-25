@@ -39,8 +39,6 @@ namespace ActionStreetMap.Maps.Geocoding
             sb.AppendFormat("q={0}&format=json", Uri.EscapeDataString(name));
 
             return ObservableWWW.Get(sb.ToString())
-                .ObserveOn(Scheduler.ThreadPool)
-                // TODO this is needed by FromEventPatter which is used only for non-unity builds
                 .Take(1)
                 .SelectMany(r => (
                     from JSONNode json in JSON.Parse(r).AsArray 

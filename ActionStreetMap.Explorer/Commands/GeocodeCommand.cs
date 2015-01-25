@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Maps.GeoCoding;
@@ -7,7 +8,7 @@ using ActionStreetMap.Maps.GeoCoding;
 namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary> Represents reverse geocoding command. </summary>
-    public class GeocodeCommand: ICommand
+    public class GeocodeCommand : ICommand
     {
         private readonly IGeocoder _geoCoder;
 
@@ -15,43 +16,49 @@ namespace ActionStreetMap.Explorer.Commands
         public string Name { get { return "geocode"; } }
 
         /// <inheritdoc />
-        public string Description { get { return "Preforms reverse geocoding."; } }
+        public string Description { get { return "Performs reverse geocoding."; } }
 
-        /// <summary>
-        ///     Creates instance of <see cref="GeocodeCommand"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="GeocodeCommand"/>. </summary>
         /// <param name="geoCoder">Geocoder.</param>
+        [Dependency]
         public GeocodeCommand(IGeocoder geoCoder)
         {
             _geoCoder = geoCoder;
         }
 
         /// <inheritdoc />
-        public string Execute(params string[] args)
+        public IObservable<string> Execute(params string[] args)
         {
-            var response = new StringBuilder();
-            var commandLine = new Arguments(args);
-            if (ShouldPrintHelp(commandLine))
+            return Observable.Create<string>(o =>
             {
-                PrintHelp(response);
-                return response.ToString();
-            }
-            var query = commandLine["q"];
-
-            var observable = _geoCoder.Search(query);
-            observable.Subscribe(r => response.AppendFormat("{0}:{1}\n", r.Coordinate, r.DisplayName));
-            observable.Wait();
-            return response.ToString();
+                var response = new StringBuilder();
+                if (ShouldPrintHelp(args))
+                {
+                    PrintHelp(response);
+                    o.OnNext(response.ToString());
+                    o.OnCompleted();
+                }
+                {
+                    _geoCoder.Search(args[1]).Subscribe(r =>
+                        response.AppendFormat("{0} {1}\n", r.Coordinate, r.DisplayName),
+                        () =>
+                        {
+                            o.OnNext(response.ToString());
+                            o.OnCompleted();
+                        });
+                }
+                return Disposable.Empty;
+            });
         }
 
-        private bool ShouldPrintHelp(Arguments commandLine)
+        private bool ShouldPrintHelp(string[] args)
         {
-            return commandLine["q"] == null;
+            return args.Length != 2;
         }
 
         private void PrintHelp(StringBuilder response)
         {
-            response.AppendLine("Usage: geocode /q=<place name>");
+            response.AppendLine("Usage: geocode <place name>");
         }
     }
 }

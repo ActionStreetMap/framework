@@ -29,6 +29,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<ICommand>().Use<SysCommand>().Singleton().Named("sys"));
             Container.Register(Component.For<ICommand>().Use<TagCommand>().Singleton().Named("tag"));
             Container.Register(Component.For<ICommand>().Use<LocateCommand>().Singleton().Named("locate"));
+            Container.Register(Component.For<ICommand>().Use<GeocodeCommand>().Singleton().Named("geocode"));
 
             return true;
         }

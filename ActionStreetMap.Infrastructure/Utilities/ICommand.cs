@@ -1,5 +1,6 @@
 ﻿
 using System;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Infrastructure.Utilities
 {
@@ -15,7 +16,7 @@ namespace ActionStreetMap.Infrastructure.Utilities
         /// <summary> Executes command.</summary>
         /// <param name="args">Argument list.</param>
         /// <returns>Output string.</returns>
-        string Execute(params string[] args);
+        IObservable<string> Execute(params string[] args);
     }
 
     /// <summary> Provides the way to create command with given lambda to execute. </summary>
@@ -41,9 +42,15 @@ namespace ActionStreetMap.Infrastructure.Utilities
         }
 
         /// <inheritdoc />
-        public string Execute(params string[] args)
+        public IObservable<string> Execute(params string[] args)
         {
-            return _functor.Invoke(args);
+            return Observable.Create<string>(o =>
+            {
+                var result = _functor.Invoke(args);
+                o.OnNext(result);
+                o.OnCompleted();
+                return Disposable.Empty;
+            });
         }
     }
 }

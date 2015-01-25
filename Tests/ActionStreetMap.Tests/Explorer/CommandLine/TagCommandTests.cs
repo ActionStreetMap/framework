@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Commands;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
 using ActionStreetMap.Maps.Index.Search;
 using Moq;
@@ -23,9 +25,9 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
                 new Relation() {Id = 3, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}, Members = new List<RelationMember>() { new RelationMember() { Member = new Node() { Coordinate = new GeoCoordinate(52.002, 13)}}}},
             });
 
-            var positionListener = new Mock<IPositionObserver<GeoCoordinate>>();
-            positionListener.Setup(p => p.Current).Returns(new GeoCoordinate(52, 13));
-            _command = new TagCommand(positionListener.Object, search.Object);
+            var geoPositionListener = new Mock<IPositionObserver<GeoCoordinate>>();
+            geoPositionListener.Setup(p => p.Current).Returns(new GeoCoordinate(52, 13));
+            _command = new TagCommand(geoPositionListener.As<ITilePositionObserver>().Object, search.Object);
         }
 
         [Test]
@@ -35,7 +37,7 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
             var result = _command.Execute(new[]
             {
                 "/q:amenity=bar",
-            });
+            }).Wait();
 
             // ASSERT
             Assert.IsNotNullOrEmpty(result);
@@ -52,7 +54,7 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
             {
                 "/q:amenity=bar",
                 "/f:w"
-            });
+            }).Wait();
 
             // ASSERT
             Assert.IsNotNullOrEmpty(result);
@@ -69,7 +71,7 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
             {
                 "/q:amenity=bar",
                 "/r:100"
-            });
+            }).Wait();
 
             // ASSERT
             Assert.IsNotNullOrEmpty(result);

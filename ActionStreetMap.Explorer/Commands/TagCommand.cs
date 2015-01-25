@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using System.Text;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Maps.Entities;
 using ActionStreetMap.Maps.Index.Search;
@@ -26,41 +28,45 @@ namespace ActionStreetMap.Explorer.Commands
         /// <summary>
         ///     Creates instance of <see cref="TagCommand" />
         /// </summary>
-        /// <param name="geoPositionObserver">Position listener.</param>
+        /// <param name="positionObserver">Position listener.</param>
         /// <param name="searchEngine">Search engine instance.</param>
         [Dependency]
-        public TagCommand(IPositionObserver<GeoCoordinate> geoPositionObserver, ISearchEngine searchEngine)
+        public TagCommand(ITilePositionObserver positionObserver, ISearchEngine searchEngine)
         {
-            _geoPositionObserver = geoPositionObserver;
+            _geoPositionObserver = positionObserver;
             _searchEngine = searchEngine;
         }
 
         /// <inheritdoc />
-        public string Execute(params string[] args)
+        public IObservable<string> Execute(params string[] args)
         {
-            var response = new StringBuilder();
-            var commandLine = new Arguments(args);
-            if (ShouldPrintHelp(commandLine))
+            return Observable.Create<string>(o =>
             {
-                PrintHelp(response);
-                return response.ToString();
-            }
+                var response = new StringBuilder();
+                var commandLine = new Arguments(args);
+                if (ShouldPrintHelp(commandLine))
+                    PrintHelp(response);
+                else
+                {
+                    var query = commandLine["q"].Split("=".ToCharArray());
+                    var key = query[0];
+                    var value = query[1];
+                    var type = commandLine["f"];
+                    var radius = commandLine["r"] == null ? 0 : float.Parse(commandLine["r"]);
+                    foreach (var element in _searchEngine.SearchByTag(key, value))
+                    {
+                        if (!IsElementMatch(type, element))
+                            continue;
 
-            var query = commandLine["q"].Split("=".ToCharArray());
-            var key = query[0];
-            var value = query[1];
-            var type = commandLine["f"];
-            var radius = commandLine["r"] == null ? 0 : float.Parse(commandLine["r"]);
-            foreach (var element in _searchEngine.SearchByTag(key, value))
-            {
-                if (!IsElementMatch(type, element))
-                    continue;
+                        if (radius <= 0 || IsInCircle(radius, element))
+                            response.AppendLine(element.ToString());
+                    }
+                }
 
-                if (radius <= 0 || IsInCircle(radius, element))
-                    response.AppendLine(element.ToString());
-            }
-
-            return response.ToString();
+                o.OnNext(response.ToString());
+                o.OnCompleted();
+                return Disposable.Empty;
+            });
         }
 
         private bool IsElementMatch(string type, Element element)
