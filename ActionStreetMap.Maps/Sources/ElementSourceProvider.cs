@@ -9,9 +9,10 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Spatial;
 
-namespace ActionStreetMap.Maps.Index
+namespace ActionStreetMap.Maps.Sources
 {
     /// <summary>
     ///     Provides the way to get the corresponding element source by geocoordinate.
@@ -90,7 +91,7 @@ namespace ActionStreetMap.Maps.Index
                    {
                        if (_elementSourceCache != null)
                            _elementSourceCache.Item2.Dispose();
-                       var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
+                       var elementSource = new LocalElementSource(elementSourcePath, _fileSystemService);
                        _elementSourceCache = new MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
                    }
 

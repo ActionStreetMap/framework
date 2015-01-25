@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
@@ -56,18 +57,10 @@ namespace ActionStreetMap.Tests
             //program.ReadIndex("Index");
             //program.SubscribeOnMainThreadTest();
 
-            //var geoCodingCommand = new GeocodeCommand(new NominatimGeocoder());
-            //Console.WriteLine(geoCodingCommand.Execute(new string[] {"/q=Berlin"}));
 
-            var geoCoder = new NominatimGeocoder();
-            geoCoder.Search("berlin").Subscribe(r =>
-            {
-                Console.WriteLine(r.DisplayName);
-            }, () =>
-            {
-                Console.WriteLine("Completed");
-            });
+            var command = new GeocodeCommand(new NominatimGeocoder());
 
+            var ggg = command.Execute("","slutsk").Subscribe(r =>Console.WriteLine(r));
 
             Console.ReadKey();
         }

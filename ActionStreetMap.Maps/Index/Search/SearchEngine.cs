@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
+using ActionStreetMap.Maps.Sources;
 
 namespace ActionStreetMap.Maps.Index.Search
 {
@@ -53,9 +54,9 @@ namespace ActionStreetMap.Maps.Index.Search
             }
         }
 
-        private ElementSource GetElementSource()
+        private LocalElementSource GetElementSource()
         {
-            var elementSource = _elementSourceProvider.Get().Wait() as ElementSource;
+            var elementSource = _elementSourceProvider.Get().Wait() as LocalElementSource;
             if (elementSource == null)
                 throw new NotSupportedException(Strings.SearchNotSupported);
             return elementSource;

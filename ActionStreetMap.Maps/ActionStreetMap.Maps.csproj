@@ -63,8 +63,8 @@
     <Compile Include="Helpers\AddressExtractor.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
-    <Compile Include="Index\ElementSource.cs" />
-    <Compile Include="Index\ElementSourceProvider.cs" />
+    <Compile Include="Sources\IElementSource.cs" />
+    <Compile Include="Sources\ElementSourceProvider.cs" />
     <Compile Include="Index\Import\IndexSettings.cs" />
     <Compile Include="Index\Import\IndexStatistic.cs" />
     <Compile Include="Index\Storage\ElementStore.cs" />
@@ -80,6 +80,8 @@
     <Compile Include="Index\Consts.cs" />
     <Compile Include="Index\Storage\KeyValueUsage.cs" />
     <Compile Include="MapTileLoader.cs" />
+    <Compile Include="Sources\LocalElementSource.cs" />
+    <Compile Include="Sources\OverpassElementSource.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
