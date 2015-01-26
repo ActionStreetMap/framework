@@ -52,6 +52,7 @@
     <Compile Include="Commands\GeocodeCommand.cs" />
     <Compile Include="Commands\LocateCommand.cs" />
     <Compile Include="Commands\TagCommand.cs" />
+    <Compile Include="Downloaders\SrtmDownloader.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
     <Compile Include="Helpers\ModelRuleExtensions.cs" />

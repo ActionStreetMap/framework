@@ -12,17 +12,20 @@ namespace ActionStreetMap.Maps.Sources
     /// </summary>
     public sealed class OverpassElementSource: IElementSource, IConfigurable
     {
+        /// <inheritdoc />
         public IObservable<Element> Get(BoundingBox bbox)
         {
             throw new NotImplementedException();
         }
 
-        public void Dispose()
+        /// <inheritdoc />
+        public void Configure(IConfigSection configSection)
         {
             throw new NotImplementedException();
         }
 
-        public void Configure(IConfigSection configSection)
+        /// <inheritdoc />
+        public void Dispose()
         {
             throw new NotImplementedException();
         }
