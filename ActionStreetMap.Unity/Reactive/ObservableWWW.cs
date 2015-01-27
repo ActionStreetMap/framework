@@ -42,10 +42,26 @@ namespace ActionStreetMap.Infrastructure.Reactive
 #endif
         }
 
-        public static IObservable<byte[]> GetAndGetBytes(string url, Hash headers = null, IProgress<float> progress = null)
+        public static IObservable<byte[]> GetAndGetBytes(string url, Hash headers = null,
+            IProgress<float> progress = null)
         {
+#if !CONSOLE
             return ObservableUnity.FromCoroutine<byte[]>((observer, cancellation) => FetchBytes(new WWW(url, null, (headers ?? new Hash())), observer, progress, cancellation));
+#else
+            var webClient = new WebClient();
+            var query = Observable
+                .FromEventPattern<DownloadDataCompletedEventHandler, DownloadDataCompletedEventArgs>
+                (
+                    eh => new DownloadDataCompletedEventHandler(eh),
+                    eh => webClient.DownloadDataCompleted += eh,
+                    eh => webClient.DownloadDataCompleted -= eh
+                ).Select(o => o.EventArgs.Result);
+
+            webClient.DownloadDataAsync(new Uri(url));
+            return query;
+#endif
         }
+
         public static IObservable<WWW> GetWWW(string url, Hash headers = null, IProgress<float> progress = null)
         {
             return ObservableUnity.FromCoroutine<WWW>((observer, cancellation) => Fetch(new WWW(url, null, (headers ?? new Hash())), observer, progress, cancellation));

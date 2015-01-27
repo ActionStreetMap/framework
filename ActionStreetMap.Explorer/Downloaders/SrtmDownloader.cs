@@ -11,6 +11,7 @@ namespace ActionStreetMap.Explorer.Downloaders
     public class SrtmDownloader: IConfigurable
     {
         private readonly IFileSystemService _fileSystemService;
+        private string _srtmServer;
         private string _srtmMapPath;
         private static readonly Dictionary<int, string> ContinentMap = new Dictionary<int, string>()
         {
@@ -41,9 +42,9 @@ namespace ActionStreetMap.Explorer.Downloaders
                 {
                     var parameters = line.Split(' ');
                     // NOTE some of files miss exptension point between name and .hgt.zip
-                    var url = String.Format("{0}/{1}/{2}", _srtmMapPath, ContinentMap[int.Parse(parameters[2])],
-                        parameters[1].EndsWith("zip") ? "" : parameters[1] + "hgt.zip");
-                    return ObservableWWW.GetAndGetBytes(url);
+                    var url = String.Format("{0}/{1}/{2}", _srtmServer, ContinentMap[int.Parse(parameters[1])],
+                        parameters[1].EndsWith("zip") ? "" : parameters[0] + ".hgt.zip");
+                    return ObservableWWW.GetAndGetBytes(url).Take(1);
                 }
             }
             return Observable.Throw<byte[]>(new ArgumentException(
@@ -68,7 +69,7 @@ namespace ActionStreetMap.Explorer.Downloaders
         public void Configure(IConfigSection configSection)
         {
             _srtmMapPath = configSection.GetString("map", null);
-            _srtmMapPath = configSection.GetString("server", @"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3");
+            _srtmServer = configSection.GetString("server", @"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3");
         }
     }
 }
