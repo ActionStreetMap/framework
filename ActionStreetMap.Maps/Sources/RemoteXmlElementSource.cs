@@ -7,11 +7,13 @@ using ActionStreetMap.Maps.Entities;
 namespace ActionStreetMap.Maps.Sources
 {
     /// <summary>
-    ///     This implementation uses Overpass API <see cref="http://wiki.openstreetmap.org/wiki/Overpass_API"/> to get
-    ///     map data.
+    ///     This implementation uses API v6 <see cref="http://wiki.openstreetmap.org/wiki/OSM_Protocol_Version_0.6"/> 
+    ///     to get map data from remote server.
     /// </summary>
-    public sealed class OverpassElementSource: IElementSource, IConfigurable
+    public sealed class RemoteXmlElementSource: IElementSource, IConfigurable
     {
+        // http://api.openstreetmap.org/api/0.6/map?bbox=left,bottom,right,top
+
         /// <inheritdoc />
         public IObservable<Element> Get(BoundingBox bbox)
         {

@@ -58,6 +58,7 @@
     <Compile Include="Formats\IReader.cs" />
     <Compile Include="Formats\O5m\O5mExtensions.cs" />
     <Compile Include="Formats\O5m\O5mReader.cs" />
+    <Compile Include="Formats\Xml\XmlResponseParser.cs" />
     <Compile Include="Formats\ReaderContext.cs" />
     <Compile Include="Geocoding\NominatimGeocoder.cs" />
     <Compile Include="Helpers\AddressExtractor.cs" />
@@ -81,7 +82,7 @@
     <Compile Include="Index\Storage\KeyValueUsage.cs" />
     <Compile Include="MapTileLoader.cs" />
     <Compile Include="Sources\LocalElementSource.cs" />
-    <Compile Include="Sources\OverpassElementSource.cs" />
+    <Compile Include="Sources\RemoteXmlElementSource.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
