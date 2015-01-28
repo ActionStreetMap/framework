@@ -30,6 +30,8 @@ namespace ActionStreetMap.Explorer.Downloaders
             _fileSystemService = fileSystemService;
         }
 
+        #region Public methods
+
         /// <summary> Download SRTM data for given coordinate. </summary>
         /// <param name="coordinate">Coordinate.</param>
         /// <returns>Stream.</returns>
@@ -58,6 +60,8 @@ namespace ActionStreetMap.Explorer.Downloaders
         {
             return Observable.Throw<byte[]>(new NotImplementedException());
         }
+
+        #endregion
 
         private string GetFileNamePrefix(GeoCoordinate coordinate)
         {
