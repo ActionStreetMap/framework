@@ -4,11 +4,10 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Spatial;
 using ActionStreetMap.Maps.Index.Storage;
 
-namespace ActionStreetMap.Maps.Sources
+namespace ActionStreetMap.Maps.Index
 {
     /// <summary> Represents an abstract source of Element objects. </summary>
     public interface IElementSource : IDisposable
@@ -28,7 +27,7 @@ namespace ActionStreetMap.Maps.Sources
         internal readonly ElementStore ElementStore;
 
         /// <summary>
-        ///     Creates instance of <see cref="ActionStreetMap.Maps.Sources.ElementSource" /> from persistent storage.
+        ///     Creates instance of <see cref="ElementSource" /> from persistent storage.
         /// </summary>
         /// <param name="directory">Already resolved directory which contains all indecies.</param>
         /// <param name="fileService">File system service.</param>
@@ -43,7 +42,7 @@ namespace ActionStreetMap.Maps.Sources
         }
 
         /// <summary>
-        ///     Creates instance of <see cref="ActionStreetMap.Maps.Sources.ElementSource" /> from streams and 
+        ///     Creates instance of <see cref="ElementSource" /> from streams and 
         ///     created spatial index.
         /// </summary>
         internal ElementSource(Stream keyValueUsageStream, Stream keyValueIndexStream, Stream keyValueStoreStream,

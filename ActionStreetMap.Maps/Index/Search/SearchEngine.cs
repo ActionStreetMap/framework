@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Sources;
 
 namespace ActionStreetMap.Maps.Index.Search
 {

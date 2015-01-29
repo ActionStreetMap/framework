@@ -5,7 +5,6 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Maps.Index;
-using ActionStreetMap.Maps.Sources;
 using ActionStreetMap.Maps.Visitors;
 
 namespace ActionStreetMap.Maps

@@ -3,7 +3,6 @@ using System.Linq;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Search;
-using ActionStreetMap.Maps.Sources;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Maps.Index

@@ -67,8 +67,8 @@
     <Compile Include="Index\Import\InMemoryIndexBuilder.cs" />
     <Compile Include="Index\Import\PersistentIndexBuilder.cs" />
     <Compile Include="Index\Spatial\ISpatialIndex.cs" />
-    <Compile Include="Sources\ElementSource.cs" />
-    <Compile Include="Sources\ElementSourceProvider.cs" />
+    <Compile Include="Index\ElementSource.cs" />
+    <Compile Include="Index\ElementSourceProvider.cs" />
     <Compile Include="Index\Import\IndexSettings.cs" />
     <Compile Include="Index\Import\IndexStatistic.cs" />
     <Compile Include="Index\Storage\ElementStore.cs" />

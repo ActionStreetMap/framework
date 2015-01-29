@@ -2,7 +2,7 @@
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Sources;
+using ActionStreetMap.Maps.Index;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Maps.Index

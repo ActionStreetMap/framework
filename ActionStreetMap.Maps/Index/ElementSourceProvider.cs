@@ -9,10 +9,9 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Spatial;
 
-namespace ActionStreetMap.Maps.Sources
+namespace ActionStreetMap.Maps.Index
 {
     /// <summary>
     ///     Provides the way to get the corresponding element source by geocoordinate.
@@ -44,7 +43,7 @@ namespace ActionStreetMap.Maps.Sources
 
         private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
-        private SpatialIndex<string> _searchTree;
+        private ISpatialIndex<string> _searchTree;
         private RTree<string> _insertTree;
         private MutableTuple<string, IElementSource> _elementSourceCache;
 
