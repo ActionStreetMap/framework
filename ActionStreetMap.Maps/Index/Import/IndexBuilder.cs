@@ -10,6 +10,7 @@ using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Maps.Formats;
 using ActionStreetMap.Maps.Formats.O5m;
 using ActionStreetMap.Maps.Formats.Pbf;
+using ActionStreetMap.Maps.Formats.Xml;
 using ActionStreetMap.Maps.Index.Helpers;
 using ActionStreetMap.Maps.Index.Spatial;
 using ActionStreetMap.Maps.Index.Storage;
@@ -21,45 +22,48 @@ namespace ActionStreetMap.Maps.Index.Import
 {
     internal abstract class IndexBuilder : IConfigurable, IDisposable
     {
-        protected SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
-        protected SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
-        protected SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
+        private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
+        private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
+        private readonly SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
 
-        protected List<MutableTuple<Relation, Envelop>> _relations = new List<MutableTuple<Relation, Envelop>>(10240);
-        protected HashSet<long> _skippedRelations = new HashSet<long>();
+        private readonly List<MutableTuple<Relation, Envelop>> _relations = new List<MutableTuple<Relation, Envelop>>(10240);
+        private readonly HashSet<long> _skippedRelations = new HashSet<long>();
 
-        protected RTree<uint> _tree;
-        protected ElementStore _store;
-        protected IndexSettings _settings;
-        protected IndexStatistic _indexStatistic;
+        protected RTree<uint> Tree;
+        protected ElementStore Store;
+        protected IndexSettings Settings;
+        protected IndexStatistic IndexStatistic;
 
-        protected ITrace _trace;
+        protected ITrace Trace;
 
-        public IndexBuilder(ITrace trace)
+        protected IndexBuilder(ITrace trace)
         {
-            _trace = trace;
-            _indexStatistic = new IndexStatistic(_trace);
+            Trace = trace;
+            IndexStatistic = new IndexStatistic(Trace);
         }
 
         public abstract void Build();
 
-        protected IReader GetReader(string filePath)
+        protected IReader GetReader(string extension, Stream sourceStream)
         {
-            var extension = Path.GetExtension(filePath);
-            // TODO support different formats
             if (String.IsNullOrEmpty(extension) ||
-                (extension.ToLower() != ".o5m" && extension.ToLower() != ".pbf"))
+                (extension.ToLower() != ".o5m" && extension.ToLower() != ".pbf" && extension.ToLower() != ".xml"))
                 throw new NotSupportedException(Strings.NotSupportedMapFormat);
 
             var readerContext = new ReaderContext
             {
-                SourceStream = new FileStream(filePath, FileMode.Open),
+                SourceStream = sourceStream,
                 Builder = this,
                 ReuseEntities = false,
                 SkipTags = false,
             };
-            return extension == ".o5m" ? (IReader) new O5mReader(readerContext) : 
-                new PbfReader(readerContext);
+
+            switch (extension)
+            {
+                case ".o5m": return new O5mReader(readerContext);
+                case ".pbf": return new PbfReader(readerContext);
+                default: return new XmlApiReader(readerContext);
+            }
         }
 
         public void ProcessNode(Node node, int tagCount)
@@ -68,10 +72,10 @@ namespace ActionStreetMap.Maps.Index.Import
             if (_nodes.ContainsKey(node.Id))
                 return;
 
-            _indexStatistic.IncrementTotal(ElementType.Node);
+            IndexStatistic.IncrementTotal(ElementType.Node);
             if (node.Id < 0)
             {
-                _indexStatistic.Skip(node.Id, ElementType.Node);
+                IndexStatistic.Skip(node.Id, ElementType.Node);
                 return;
             }
 
@@ -79,23 +83,23 @@ namespace ActionStreetMap.Maps.Index.Import
 
             if (tagCount > 0)
             {
-                if (node.Tags.Any( tag => _settings.Spatial.Include.Nodes.Contains(tag.Key)))
+                if (node.Tags.Any( tag => Settings.Spatial.Include.Nodes.Contains(tag.Key)))
                 {
-                    var offset = _store.Insert(node);
-                    _tree.Insert(offset, new PointEnvelop(node.Coordinate));
-                    _indexStatistic.Increment(ElementType.Node);
+                    var offset = Store.Insert(node);
+                    Tree.Insert(offset, new PointEnvelop(node.Coordinate));
+                    IndexStatistic.Increment(ElementType.Node);
                 }
                 else
-                    _indexStatistic.Skip(node.Id, ElementType.Node);
+                    IndexStatistic.Skip(node.Id, ElementType.Node);
             }
         }
 
         public void ProcessWay(Way way, int tagCount)
         {
-            _indexStatistic.IncrementTotal(ElementType.Way);
+            IndexStatistic.IncrementTotal(ElementType.Way);
             if (way.Id < 0)
             {
-                _indexStatistic.Skip(way.Id, ElementType.Way);
+                IndexStatistic.Skip(way.Id, ElementType.Way);
                 return;
             }
 
@@ -105,7 +109,7 @@ namespace ActionStreetMap.Maps.Index.Import
             {
                 if (!_nodes.ContainsKey(nodeId))
                 {
-                    _indexStatistic.Skip(way.Id, ElementType.Way);
+                    IndexStatistic.Skip(way.Id, ElementType.Way);
                     return;
                 }
                 var coordinate = _nodes[nodeId];
@@ -115,10 +119,10 @@ namespace ActionStreetMap.Maps.Index.Import
 
             if (tagCount > 0)
             {
-                 uint offset = _store.Insert(way);
-                 _tree.Insert(offset, envelop);
+                 uint offset = Store.Insert(way);
+                 Tree.Insert(offset, envelop);
                  _wayOffsets.Add(way.Id, offset);
-                _indexStatistic.Increment(ElementType.Way);
+                IndexStatistic.Increment(ElementType.Way);
             }
             else
                 // keep it as it may be used by relation
@@ -127,10 +131,10 @@ namespace ActionStreetMap.Maps.Index.Import
 
         public void ProcessRelation(Relation relation, int tagCount)
         {
-            _indexStatistic.IncrementTotal(ElementType.Relation);
+            IndexStatistic.IncrementTotal(ElementType.Relation);
             if (relation.Id < 0)
             {
-                _indexStatistic.Skip(relation.Id, ElementType.Relation);
+                IndexStatistic.Skip(relation.Id, ElementType.Relation);
                 return;
             }
 
@@ -148,7 +152,7 @@ namespace ActionStreetMap.Maps.Index.Import
                         _skippedRelations.Add(member.MemberId);
 
                     _skippedRelations.Add(relation.Id);
-                    _indexStatistic.Skip(relation.Id, ElementType.Relation);
+                    IndexStatistic.Skip(relation.Id, ElementType.Relation);
                     return;
                 }
             }
@@ -164,12 +168,12 @@ namespace ActionStreetMap.Maps.Index.Import
                         if (_wayOffsets.ContainsKey(member.MemberId))
                         {
                             memberOffset = _wayOffsets[member.MemberId];
-                            way = _store.Get(memberOffset) as Way;
+                            way = Store.Get(memberOffset) as Way;
                         }
                         else if (_ways.ContainsKey(member.MemberId))
                         {
                             way = _ways[member.MemberId];
-                            memberOffset = _store.Insert(way);
+                            memberOffset = Store.Insert(way);
                             _wayOffsets.Add(member.MemberId, memberOffset);
                         }
                         foreach (GeoCoordinate t in way.Coordinates)
@@ -193,16 +197,16 @@ namespace ActionStreetMap.Maps.Index.Import
             {
                 if (_skippedRelations.Contains(relationTuple.Item1.Id))
                     continue;
-                var offset = _store.Insert(relationTuple.Item1);
-                _tree.Insert(offset, relationTuple.Item2);
-                _indexStatistic.Increment(ElementType.Relation);
+                var offset = Store.Insert(relationTuple.Item1);
+                Tree.Insert(offset, relationTuple.Item2);
+                IndexStatistic.Increment(ElementType.Relation);
             }
         }
 
         public void Complete()
         {
             FinishRelaitonProcessing();
-            _indexStatistic.Summary();
+            IndexStatistic.Summary();
         }
 
         public void Clear()
@@ -221,14 +225,22 @@ namespace ActionStreetMap.Maps.Index.Import
 
             var jsonString = File.ReadAllText(settingsPath);
             var node = JSON.Parse(jsonString);
-            _settings = new IndexSettings();
-            _settings.ReadFromJson(node);
+            Settings = new IndexSettings();
+            Settings.ReadFromJson(node);
         }
 
         public void Dispose()
         {
-            if(_store != null)
-                _store.Dispose();
+            Dispose(true);
+        }
+
+        protected virtual  void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (Store != null)
+                    Store.Dispose();
+            }
         }
     }
 }

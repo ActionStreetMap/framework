@@ -62,24 +62,14 @@ namespace ActionStreetMap.Tests
             //program.ReadIndex("Index");
             //program.SubscribeOnMainThreadTest();
 
-            var settings = new IndexSettings();
-            var build = new ActionStreetMap.Maps.Index.Import.MemoryIndexBuilder(new ConsoleTrace());
+            var xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
+            var build = new InMemoryIndexBuilder(".xml", 
+                new MemoryStream(Encoding.UTF8.GetBytes(xmlContent)), new ConsoleTrace());
             var configMock = new Mock<IConfigSection>();
             configMock.Setup(c => c.GetString("index", null)).Returns(TestHelper.TestIndexSettingsPath);
             build.Configure(configMock.Object);
-            var xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
-            var readerContext = new ReaderContext
-            {
-                SourceStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlContent)),
-                Builder = build,
-                ReuseEntities = false,
-                SkipTags = false,
-            };
 
-            var parser = new XmlResponseParser(readerContext);
-            parser.Parse();
-
-            
+            build.Build();
         }
 
         public void RunMocker()
@@ -129,7 +119,7 @@ namespace ActionStreetMap.Tests
 
         private void CreateIndex(string o5mFile, string settingsFile, string outputDirectory)
         {
-            var builder = new FileIndexBuilder(o5mFile, outputDirectory, TestHelper.GetFileSystemService(), new ConsoleTrace());
+            var builder = new PersistentIndexBuilder(o5mFile, outputDirectory, TestHelper.GetFileSystemService(), new ConsoleTrace());
             builder.Configure(new ConfigSection(String.Format("{{\"index\":\"{0}\"}}", settingsFile.Replace("\\", "/"))));
             builder.Build();
         }

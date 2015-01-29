@@ -91,7 +91,7 @@ namespace ActionStreetMap.Maps.Sources
                    {
                        if (_elementSourceCache != null)
                            _elementSourceCache.Item2.Dispose();
-                       var elementSource = new LocalElementSource(elementSourcePath, _fileSystemService);
+                       var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
                        _elementSourceCache = new MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
                    }
 

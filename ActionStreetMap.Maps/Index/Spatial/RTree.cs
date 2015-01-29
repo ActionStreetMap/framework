@@ -54,7 +54,7 @@ namespace ActionStreetMap.Maps.Index.Spatial
 
                 var nodesToSearch = new Stack<RTreeNode>();
 
-                while (node.Envelope != null)
+                while (node != null && node.Envelope != null)
                 {
                     if (node.Children != null)
                     {
@@ -83,7 +83,7 @@ namespace ActionStreetMap.Maps.Index.Spatial
         private static void Collect(RTreeNode node, IObserver<T> observer)
         {
             var nodesToSearch = new Stack<RTreeNode>();
-            while (node.Envelope != null)
+            while (node != null && node.Envelope != null)
             {
                 if (node.Children != null)
                 {

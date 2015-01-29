@@ -2,7 +2,6 @@
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Sources;
 using NUnit.Framework;
 
@@ -11,12 +10,12 @@ namespace ActionStreetMap.Tests.Maps.Index
     [TestFixture]
     public class ElementSourceTests
     {
-        private LocalElementSource _source;
+        private ElementSource _source;
         [SetUp]
         public void Setup()
         {
             var directory = "index";
-            _source = new LocalElementSource(directory, Utils.GetFileSystemServiceMock(directory).Object);
+            _source = new ElementSource(directory, Utils.GetFileSystemServiceMock(directory).Object);
         }
 
         [Test]

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Xml;
 using ActionStreetMap.Core;
 using ActionStreetMap.Maps.Entities;
@@ -8,24 +7,23 @@ using ActionStreetMap.Maps.Index.Import;
 namespace ActionStreetMap.Maps.Formats.Xml
 {
     /// <summary> Provides API to parse response of Overpass API backend. </summary>
-    internal class XmlResponseParser
+    internal class XmlApiReader : IReader
     {
         private readonly ReaderContext _context;
         private readonly IndexBuilder _builder;
 
         private XmlReader _reader;
         private Element _currentElement;
-       
-        /// <summary> Creates instance of <see cref="XmlResponseParser"/>. </summary>
-        public XmlResponseParser(ReaderContext context)
+
+        /// <summary> Creates instance of <see cref="XmlApiReader" />. </summary>
+        public XmlApiReader(ReaderContext context)
         {
             _context = context;
             _builder = context.Builder;
         }
 
-        public void Parse()
+        public void Read()
         {
-            XmlReaderSettings settings = new XmlReaderSettings();
             using (_reader = XmlReader.Create(_context.SourceStream))
             {
                 _reader.MoveToContent();
@@ -46,14 +44,14 @@ namespace ActionStreetMap.Maps.Formats.Xml
             }
         }
 
-        private void ParseBounds() 
+        private void ParseBounds()
         {
             var minLat = double.Parse(_reader.GetAttribute("minlat"));
             var minLon = double.Parse(_reader.GetAttribute("minlon"));
             var maxLat = double.Parse(_reader.GetAttribute("maxlat"));
             var maxLon = double.Parse(_reader.GetAttribute("maxlon"));
-            //_builder.ProcessBoundingBox(new BoundingBox(new GeoCoordinate(minLat, minLon),
-            //    new GeoCoordinate(maxLat, maxLon)));
+            _builder.ProcessBoundingBox(new BoundingBox(new GeoCoordinate(minLat, minLon),
+                new GeoCoordinate(maxLat, maxLon)));
         }
 
         private void ParseNode()
@@ -63,7 +61,7 @@ namespace ActionStreetMap.Maps.Formats.Xml
             var lat = double.Parse(_reader.GetAttribute("lat"));
             var lon = double.Parse(_reader.GetAttribute("lon"));
 
-            var node = new Node()
+            var node = new Node
             {
                 Id = id,
                 Coordinate = new GeoCoordinate(lat, lon)
@@ -84,24 +82,26 @@ namespace ActionStreetMap.Maps.Formats.Xml
             var id = long.Parse(_reader.GetAttribute("id"));
             ProcessCurrent();
             // TODO use object pool
-            _currentElement = new Way() { Id = id, 
-                NodeIds = new List<long>() };
+            _currentElement = new Way
+            {
+                Id = id,
+                NodeIds = new List<long>()
+            };
         }
 
         private void ParseNd()
         {
-            var way = _currentElement as Way;
             var refId = long.Parse(_reader.GetAttribute("ref"));
-            way.NodeIds.Add(refId);
+            (_currentElement as Way).NodeIds.Add(refId);
         }
 
-        private void ParseRelation() 
+        private void ParseRelation()
         {
             var id = long.Parse(_reader.GetAttribute("id"));
 
             ProcessCurrent();
 
-            _currentElement = new Relation()
+            _currentElement = new Relation
             {
                 Id = id,
                 Members = new List<RelationMember>()
@@ -114,11 +114,9 @@ namespace ActionStreetMap.Maps.Formats.Xml
             var type = _reader.GetAttribute("type");
             var role = _reader.GetAttribute("role");
 
-            var relation = _currentElement as Relation;
-
-            relation.Members.Add(new RelationMember()
+            (_currentElement as Relation).Members.Add(new RelationMember
             {
-                TypeId = (type == "way" ? 1: (type == "node" ? 0 : 2)),
+                TypeId = (type == "way" ? 1 : (type == "node" ? 0 : 2)),
                 MemberId = refId,
                 Role = role,
             });

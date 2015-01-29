@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -8,15 +7,10 @@ using ActionStreetMap.Maps.Sources;
 
 namespace ActionStreetMap.Maps.Index.Search
 {
-
-    /// <summary>
-    ///     Provides the way to find elements by given text parameters.
-    /// </summary>
+    /// <summary> Provides the way to find elements by given text parameters. </summary>
     public interface ISearchEngine
     {
-        /// <summary>
-        ///     Searches all elements with given key and similiar value in current active element source.
-        /// </summary>
+        /// <summary> Searches all elements with given key and similiar value in current active element source. </summary>
         /// <param name="key">Tag key.</param>
         /// <param name="value">Tag value.</param>
         /// <returns>Element collection.</returns>
@@ -54,9 +48,9 @@ namespace ActionStreetMap.Maps.Index.Search
             }
         }
 
-        private LocalElementSource GetElementSource()
+        private ElementSource GetElementSource()
         {
-            var elementSource = _elementSourceProvider.Get().Wait() as LocalElementSource;
+            var elementSource = _elementSourceProvider.Get().Wait() as ElementSource;
             if (elementSource == null)
                 throw new NotSupportedException(Strings.SearchNotSupported);
             return elementSource;
