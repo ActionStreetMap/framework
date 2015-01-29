@@ -4,6 +4,7 @@ using System.Linq;
 
 using ActionStreetMap.Maps.Extensions;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Core;
 
 namespace ActionStreetMap.Maps.Index.Spatial
 {
@@ -11,7 +12,7 @@ namespace ActionStreetMap.Maps.Index.Spatial
     ///     Represents readonly spatial index.
     /// </summary>
     /// <typeparam name="T">Data type which is associated with envelop.</typeparam>
-    internal class SpatialIndex<T>
+    internal class SpatialIndex<T>: ISpatialIndex<T>
     {
         private const uint Marker = uint.MaxValue;
 
@@ -22,7 +23,12 @@ namespace ActionStreetMap.Maps.Index.Spatial
 	        _root = root;
 	    }
 
-        public IObservable<T> Search(Envelop envelope)
+        public IObservable<T> Search(BoundingBox query)
+        {
+            return Search(new Envelop(query.MinPoint, query.MaxPoint));
+        }
+
+        private IObservable<T> Search(IEnvelop envelope)
         {
             return Observable.Create<T>(observer =>
             {

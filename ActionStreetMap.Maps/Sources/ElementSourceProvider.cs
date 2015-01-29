@@ -78,7 +78,7 @@ namespace ActionStreetMap.Maps.Sources
         public IObservable<IElementSource> Get(BoundingBox query)
         {
             return _searchTree
-               .Search(new Envelop(query.MinPoint, query.MaxPoint))
+               .Search(query)
                .SelectMany(elementSourcePath =>
                {
                    if (elementSourcePath == null)

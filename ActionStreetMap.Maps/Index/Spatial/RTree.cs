@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using ActionStreetMap.Core;
+using ActionStreetMap.Maps.Extensions;
+using ActionStreetMap.Infrastructure.Reactive;
+
 namespace ActionStreetMap.Maps.Index.Spatial
 {
     /// <summary>
     ///     Implements R-Tree data structure which is used to index spatial data.
     /// </summary>
     /// <typeparam name="T">Data type which is associated with envelop.</typeparam>
-	internal class RTree<T>
+    internal class RTree<T> : ISpatialIndex<T>
 	{
 		// per-bucket
 		private readonly int _maxEntries;
@@ -22,7 +26,7 @@ namespace ActionStreetMap.Maps.Index.Spatial
 			_maxEntries = Math.Max(4, maxEntries);
 			_minEntries = (int) Math.Max(2, Math.Ceiling(_maxEntries * 0.4));
 
-			Clear();
+            Root = new RTreeNode { IsLeaf = true, Height = 1 };
 		}
 
 	    public RTree(RTreeNode root)
@@ -30,10 +34,69 @@ namespace ActionStreetMap.Maps.Index.Spatial
 	        Root = root;
 	    }
 
-        public void Clear()
-		{
-            Root = new RTreeNode { IsLeaf = true, Height = 1 };
-		}
+        #region ISpatialIndex implementate. The same as in optimized version.
+
+        public IObservable<T> Search(BoundingBox query)
+        {
+            return Search(new Envelop(query.MinPoint, query.MaxPoint));
+        }
+
+        private IObservable<T> Search(IEnvelop envelope)
+        {
+            return Observable.Create<T>(observer =>
+            {
+                var node = Root;
+                if (!envelope.Intersects(node.Envelope))
+                {
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
+
+                var nodesToSearch = new Stack<RTreeNode>();
+
+                while (node.Envelope != null)
+                {
+                    if (node.Children != null)
+                    {
+                        foreach (var child in node.Children)
+                        {
+                            if (envelope.Intersects(child.Envelope))
+                            {
+                                if (node.IsLeaf)
+                                    observer.OnNext(child.Data);
+                                else if (envelope.Contains(child.Envelope))
+                                    Collect(child, observer);
+                                else
+                                    nodesToSearch.Push(child);
+                            }
+                        }
+                    }
+                    node = nodesToSearch.TryPop();
+                }
+                observer.OnCompleted();
+                return Disposable.Empty;
+            });
+        }
+
+        #endregion
+
+        private static void Collect(RTreeNode node, IObserver<T> observer)
+        {
+            var nodesToSearch = new Stack<RTreeNode>();
+            while (node.Envelope != null)
+            {
+                if (node.Children != null)
+                {
+                    if (node.IsLeaf)
+                        foreach (var child in node.Children)
+                            observer.OnNext(child.Data);
+                    else
+                        foreach (var n in node.Children)
+                            nodesToSearch.Push(n);
+                }
+                node = nodesToSearch.TryPop();
+            }
+        }
 
         public void Insert(RTreeNode item)
 		{

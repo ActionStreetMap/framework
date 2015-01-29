@@ -64,6 +64,7 @@
     <Compile Include="Helpers\AddressExtractor.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
+    <Compile Include="Index\Spatial\ISpatialIndex.cs" />
     <Compile Include="Sources\IElementSource.cs" />
     <Compile Include="Sources\ElementSourceProvider.cs" />
     <Compile Include="Index\Import\IndexSettings.cs" />

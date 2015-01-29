@@ -38,7 +38,7 @@ namespace ActionStreetMap.Maps.Sources
         /// <inheritdoc />
         public IObservable<Element> Get(BoundingBox bbox)
         {
-            return SpatialIndexTree.Search(new Envelop(bbox.MinPoint, bbox.MaxPoint))
+            return SpatialIndexTree.Search(bbox)
                 .ObserveOn(Scheduler.CurrentThread)
                 .Select((offset) => ElementStore.Get(offset));
         }
