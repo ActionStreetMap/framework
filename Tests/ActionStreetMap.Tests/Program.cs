@@ -63,7 +63,7 @@ namespace ActionStreetMap.Tests
             //program.SubscribeOnMainThreadTest();
 
             var settings = new IndexSettings();
-            var build = new ActionStreetMap.Maps.Index.Import.IndexBuilder(new ConsoleTrace());
+            var build = new ActionStreetMap.Maps.Index.Import.MemoryIndexBuilder(new ConsoleTrace());
             var configMock = new Mock<IConfigSection>();
             configMock.Setup(c => c.GetString("index", null)).Returns(TestHelper.TestIndexSettingsPath);
             build.Configure(configMock.Object);
@@ -129,9 +129,9 @@ namespace ActionStreetMap.Tests
 
         private void CreateIndex(string o5mFile, string settingsFile, string outputDirectory)
         {
-            var builder = new IndexBuilder(new ConsoleTrace());
+            var builder = new FileIndexBuilder(o5mFile, outputDirectory, TestHelper.GetFileSystemService(), new ConsoleTrace());
             builder.Configure(new ConfigSection(String.Format("{{\"index\":\"{0}\"}}", settingsFile.Replace("\\", "/"))));
-            builder.Build(o5mFile, outputDirectory);
+            builder.Build();
         }
 
         private void ReadIndex(string indexDirectory)

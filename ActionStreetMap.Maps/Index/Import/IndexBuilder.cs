@@ -19,23 +19,21 @@ using Way = ActionStreetMap.Maps.Entities.Way;
 
 namespace ActionStreetMap.Maps.Index.Import
 {
-    internal sealed class IndexBuilder : IConfigurable, IDisposable
+    internal abstract class IndexBuilder : IConfigurable, IDisposable
     {
-        private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
-        private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
-        private SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
+        protected SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
+        protected SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
+        protected SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);
 
-        private List<MutableTuple<Relation, Envelop>> _relations = new List<MutableTuple<Relation, Envelop>>(10240);
-        private HashSet<long> _skippedRelations = new HashSet<long>();
+        protected List<MutableTuple<Relation, Envelop>> _relations = new List<MutableTuple<Relation, Envelop>>(10240);
+        protected HashSet<long> _skippedRelations = new HashSet<long>();
 
-        private RTree<uint> _tree;
-        private ElementStore _store;
-        private IndexSettings _settings;
-        private IndexStatistic _indexStatistic;
+        protected RTree<uint> _tree;
+        protected ElementStore _store;
+        protected IndexSettings _settings;
+        protected IndexStatistic _indexStatistic;
 
-        private string _outputDirectory;
-
-        private ITrace _trace;
+        protected ITrace _trace;
 
         public IndexBuilder(ITrace trace)
         {
@@ -43,41 +41,9 @@ namespace ActionStreetMap.Maps.Index.Import
             _indexStatistic = new IndexStatistic(_trace);
         }
 
-        public void Build(string filePath, string outputDirectory)
-        {
-            var reader = GetReader(filePath);
-            
-            _outputDirectory = outputDirectory;
+        public abstract void Build();
 
-            var kvUsageMemoryStream = new MemoryStream();
-            var kvUsage = new KeyValueUsage(kvUsageMemoryStream);
-
-            var keyValueStoreFile = new FileStream(String.Format(Consts.KeyValueStorePathFormat, outputDirectory), FileMode.Create);
-            var index = new KeyValueIndex(_settings.Search.KvIndexCapacity, _settings.Search.PrefixLength);
-            var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStoreFile);
-
-            var storeFile = new FileStream(String.Format(Consts.ElementStorePathFormat, outputDirectory), FileMode.Create);
-            _store = new ElementStore(keyValueStore, storeFile);
-            _tree = new RTree<uint>(65);
-
-            reader.Read();
-            Clear();
-            Complete();
-
-            using (var kvFileStream = new FileStream(String.Format(Consts.KeyValueUsagePathFormat, outputDirectory), FileMode.Create))
-            {
-                var buffer = kvUsageMemoryStream.GetBuffer();
-                kvFileStream.Write(buffer, 0, (int)kvUsageMemoryStream.Length);
-            }
-
-            KeyValueIndex.Save(index, new FileStream(String.Format(Consts.KeyValueIndexPathFormat, outputDirectory), FileMode.Create));
-            SpatialIndex<uint>.Save(_tree, new FileStream(String.Format(Consts.SpatialIndexPathFormat, outputDirectory), FileMode.Create));
-            _store.Dispose();
-            _store = null;
-            _tree = null;
-        }
-
-        private IReader GetReader(string filePath)
+        protected IReader GetReader(string filePath)
         {
             var extension = Path.GetExtension(filePath);
             // TODO support different formats
@@ -219,6 +185,8 @@ namespace ActionStreetMap.Maps.Index.Import
             _relations.Add(new MutableTuple<Relation, Envelop>(relation, envelop));
        }
 
+        public virtual void ProcessBoundingBox(BoundingBox bbox) { }
+
         private void FinishRelaitonProcessing()
         {
             foreach (var relationTuple in _relations)
@@ -228,16 +196,6 @@ namespace ActionStreetMap.Maps.Index.Import
                 var offset = _store.Insert(relationTuple.Item1);
                 _tree.Insert(offset, relationTuple.Item2);
                 _indexStatistic.Increment(ElementType.Relation);
-            }
-        }
-
-        public void ProcessBoundingBox(BoundingBox bbox)
-        {
-            // TODO save header file
-            using (var writer = new StreamWriter(new FileStream(String.Format(Consts.HeaderPathFormat, _outputDirectory),
-                    FileMode.Create)))
-            {
-                writer.Write("{0} {1}", bbox.MinPoint, bbox.MaxPoint);
             }
         }
 

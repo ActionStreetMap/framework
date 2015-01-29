@@ -25,7 +25,7 @@ namespace ActionStreetMap.Tests.Maps.Formats
             var readerContext = new ReaderContext
             {
                 SourceStream = new MemoryStream(Encoding.Default.GetBytes(_xmlContent)),
-                Builder = new ActionStreetMap.Maps.Index.Import.IndexBuilder(new ConsoleTrace()),
+                //Builder = new ActionStreetMap.Maps.Index.Import.IndexBuilder(new ConsoleTrace()),
                 ReuseEntities = false,
                 SkipTags = false,
             };

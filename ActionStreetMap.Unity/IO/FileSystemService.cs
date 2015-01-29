@@ -29,6 +29,15 @@ namespace ActionStreetMap.Unity.IO
 #endif
         }
 
+        public Stream WriteStream(string path)
+        {
+#if UNITY_WEBPLAYER
+            return new MemoryStream();
+#else
+            return new FileStream(_pathResolver.Resolve(path), FileMode.Create);
+#endif
+        }
+
         /// <inheritdoc />
         public string ReadText(string path)
         {

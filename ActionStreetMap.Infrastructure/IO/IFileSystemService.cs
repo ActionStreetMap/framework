@@ -15,6 +15,13 @@ namespace ActionStreetMap.Infrastructure.IO
         Stream ReadStream(string path);
 
         /// <summary>
+        ///    Gets write stream for given path.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        /// <returns>Stream.</returns>
+        Stream WriteStream(string path);
+
+        /// <summary>
         ///     Reads text using path.
         /// </summary>
         /// <param name="path">Path.</param>
