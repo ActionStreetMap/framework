@@ -40,6 +40,7 @@ namespace ActionStreetMap.Maps.Index.Import
         public IndexBuilder(ITrace trace)
         {
             _trace = trace;
+            _indexStatistic = new IndexStatistic(_trace);
         }
 
         public void Build(string filePath, string outputDirectory)
@@ -47,7 +48,6 @@ namespace ActionStreetMap.Maps.Index.Import
             var reader = GetReader(filePath);
             
             _outputDirectory = outputDirectory;
-            _indexStatistic = new IndexStatistic(_trace);
 
             var kvUsageMemoryStream = new MemoryStream();
             var kvUsage = new KeyValueUsage(kvUsageMemoryStream);

@@ -16,6 +16,11 @@ using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Import;
 using ActionStreetMap.Maps.Index.Spatial;
 using ActionStreetMap.Maps.Index.Storage;
+using ActionStreetMap.Maps.Formats.Xml;
+using ActionStreetMap.Maps.Formats;
+using System.Text;
+using ActionStreetMap.Infrastructure.Formats.Json;
+using Moq;
 
 namespace ActionStreetMap.Tests
 {
@@ -57,12 +62,24 @@ namespace ActionStreetMap.Tests
             //program.ReadIndex("Index");
             //program.SubscribeOnMainThreadTest();
 
+            var settings = new IndexSettings();
+            var build = new ActionStreetMap.Maps.Index.Import.IndexBuilder(new ConsoleTrace());
+            var configMock = new Mock<IConfigSection>();
+            configMock.Setup(c => c.GetString("index", null)).Returns(TestHelper.TestIndexSettingsPath);
+            build.Configure(configMock.Object);
+            var xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
+            var readerContext = new ReaderContext
+            {
+                SourceStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlContent)),
+                Builder = build,
+                ReuseEntities = false,
+                SkipTags = false,
+            };
 
-            var command = new GeocodeCommand(new NominatimGeocoder());
+            var parser = new XmlResponseParser(readerContext);
+            parser.Parse();
 
-            var ggg = command.Execute("","slutsk").Subscribe(r =>Console.WriteLine(r));
-
-            Console.ReadKey();
+            
         }
 
         public void RunMocker()
