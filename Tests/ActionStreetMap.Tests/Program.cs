@@ -62,14 +62,22 @@ namespace ActionStreetMap.Tests
             //program.ReadIndex("Index");
             //program.SubscribeOnMainThreadTest();
 
-            var xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
+            /*var xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
             var build = new InMemoryIndexBuilder(".xml", 
                 new MemoryStream(Encoding.UTF8.GetBytes(xmlContent)), new ConsoleTrace());
             var configMock = new Mock<IConfigSection>();
             configMock.Setup(c => c.GetString("index", null)).Returns(TestHelper.TestIndexSettingsPath);
             build.Configure(configMock.Object);
 
-            build.Build();
+            build.Build();*/
+
+            var provider = new ElementSourceProvider(new TestPathResolver(), TestHelper.GetFileSystemService());
+            var configMock = new Mock<IConfigSection>();
+            configMock.Setup(c => c.GetString(It.IsAny<string>(), null)).Returns("");
+            provider.Configure(configMock.Object);
+
+            var sources = provider.Get(new BoundingBox(new GeoCoordinate(52.533, 13.386),
+                new GeoCoordinate(52.534, 13.387))).Wait();
         }
 
         public void RunMocker()

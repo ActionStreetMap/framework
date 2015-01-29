@@ -136,7 +136,9 @@ namespace ActionStreetMap.Maps.Index
         {
             _insertTree = new RTree<string>();
             var rootFolder = configSection.GetString(MapPathKey, null);
-            SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
+            if (!String.IsNullOrEmpty(rootFolder))
+                SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
+            
             // convert to search tree and release insert tree
             _searchTree = SpatialIndex<string>.ToReadOnly(_insertTree);
             _insertTree = null;
