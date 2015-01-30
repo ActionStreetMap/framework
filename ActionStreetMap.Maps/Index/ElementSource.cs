@@ -45,13 +45,13 @@ namespace ActionStreetMap.Maps.Index
         ///     Creates instance of <see cref="ElementSource" /> from streams and 
         ///     created spatial index.
         /// </summary>
-        internal ElementSource(Stream keyValueUsageStream, Stream keyValueIndexStream, Stream keyValueStoreStream,
-            Stream elementStoreStream, ISpatialIndex<uint> spatialIndex)
+        internal ElementSource(KeyValueUsage keyValueUsage, KeyValueIndex keyValueIndex, KeyValueStore keyValueStore,
+            ElementStore elementStore, ISpatialIndex<uint> spatialIndex)
         {
-            KvUsage = new KeyValueUsage(keyValueUsageStream);
-            KvIndex = KeyValueIndex.Load(keyValueIndexStream);
-            KvStore = new KeyValueStore(KvIndex, KvUsage, keyValueStoreStream);
-            ElementStore = new ElementStore(KvStore, elementStoreStream);
+            KvUsage = keyValueUsage;
+            KvIndex = keyValueIndex;
+            KvStore = keyValueStore;
+            ElementStore = elementStore;
             SpatialIndexTree = spatialIndex;
         }
 

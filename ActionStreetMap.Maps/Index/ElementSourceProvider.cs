@@ -10,6 +10,7 @@ using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Index.Spatial;
+using ActionStreetMap.Maps.Index.Import;
 
 namespace ActionStreetMap.Maps.Index
 {
@@ -76,26 +77,37 @@ namespace ActionStreetMap.Maps.Index
         /// <inheritdoc />
         public IObservable<IElementSource> Get(BoundingBox query)
         {
-            return _searchTree
-               .Search(query)
-               .SelectMany(elementSourcePath =>
-               {
-                   if (elementSourcePath == null)
-                   {
-                       Trace.Warn("Maps", String.Format("No element source is found for given query:{0}", query));
-                       return Observable.Empty<IElementSource>();
-                   }
+            // NOTE block thread here
+            var elementSourcePath = _searchTree.Search(query).Wait();
 
-                   if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
-                   {
-                       if (_elementSourceCache != null)
-                           _elementSourceCache.Item2.Dispose();
-                       var elementSource = new ElementSource(elementSourcePath, _fileSystemService);
-                       _elementSourceCache = new MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
-                   }
+            if (elementSourcePath == null)
+            {
+                Trace.Warn("Maps", String.Format(Strings.NoPresistentElementSourceFound, query));
+                // TODO genetate url
+                var uri = query.ToString();
+                return ObservableWWW.GetAndGetBytes(uri).Take(1)
+                    .SelectMany(b =>
+                    {
+                        var indexBuilder = new InMemoryIndexBuilder(".xml", new MemoryStream(b), Trace);
+                        indexBuilder.Build();
+                        var elementStore = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex, 
+                            indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
+                        SetCurrentElementSource(query.ToString(), elementStore);
+                        return Observable.Return<IElementSource>(elementStore);
+                    });
+            }
 
-                   return Observable.Return(_elementSourceCache.Item2);
-               });
+            if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
+                SetCurrentElementSource(elementSourcePath, new ElementSource(elementSourcePath, _fileSystemService));
+
+            return Observable.Return(_elementSourceCache.Item2);
+        }
+
+        private void SetCurrentElementSource(string elementSourcePath, IElementSource elementSource)
+        {
+            if (_elementSourceCache != null)
+                _elementSourceCache.Item2.Dispose();
+            _elementSourceCache = new MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
         }
 
         private void SearchAndReadMapIndexHeaders(string folder)

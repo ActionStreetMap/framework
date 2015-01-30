@@ -29,8 +29,8 @@ namespace ActionStreetMap.Maps.Index.Import
         private readonly List<MutableTuple<Relation, Envelop>> _relations = new List<MutableTuple<Relation, Envelop>>(10240);
         private readonly HashSet<long> _skippedRelations = new HashSet<long>();
 
-        protected RTree<uint> Tree;
-        protected ElementStore Store;
+        internal RTree<uint> Tree { get; set; }
+        internal ElementStore Store { get; set; }
         protected IndexSettings Settings;
         protected IndexStatistic IndexStatistic;
 
