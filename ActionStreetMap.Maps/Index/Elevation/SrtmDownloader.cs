@@ -4,15 +4,18 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Diagnostic;
 
-namespace ActionStreetMap.Explorer.Downloaders
+namespace ActionStreetMap.Maps.Index.Elevation
 {
     /// <summary> Downloads SRTM data from NASA server. </summary>
-    public class SrtmDownloader: IConfigurable
+    public class SrtmDownloader
     {
+        private const string LogTag = "mapdata.srtm";
         private readonly IFileSystemService _fileSystemService;
-        private string _srtmServer;
-        private string _srtmMapPath;
+        private readonly ITrace _trace;
+        private readonly string _server;
+        private readonly string _mapPath;
         private static readonly Dictionary<int, string> ContinentMap = new Dictionary<int, string>()
         {
             {0, "Eurasia"},
@@ -25,9 +28,12 @@ namespace ActionStreetMap.Explorer.Downloaders
 
         /// <summary> Creates instance of <see cref="SrtmDownloader"/>. </summary>
         /// <param name="fileSystemService">File system service.</param>
-        public SrtmDownloader(IFileSystemService fileSystemService)
+        public SrtmDownloader(string server, string mapPath, IFileSystemService fileSystemService, ITrace trace)
         {
+            _server = server;
+            _mapPath = mapPath;
             _fileSystemService = fileSystemService;
+            _trace = trace;
         }
 
         #region Public methods
@@ -38,19 +44,20 @@ namespace ActionStreetMap.Explorer.Downloaders
         public IObservable<byte[]> Download(GeoCoordinate coordinate)
         {
             var prefix = GetFileNamePrefix(coordinate);
-            foreach (var line in _fileSystemService.ReadText(_srtmMapPath).Split('\n'))
+            foreach (var line in _fileSystemService.ReadText(_mapPath).Split('\n'))
             {
                 if (line.StartsWith(prefix))
                 {
                     var parameters = line.Split(' ');
                     // NOTE some of files miss exptension point between name and .hgt.zip
-                    var url = String.Format("{0}/{1}/{2}", _srtmServer, ContinentMap[int.Parse(parameters[1])],
+                    var url = String.Format("{0}/{1}/{2}", _server, ContinentMap[int.Parse(parameters[1])],
                         parameters[1].EndsWith("zip") ? "" : parameters[0] + ".hgt.zip");
+                    _trace.Warn(LogTag, String.Format("Downloading SRTM data from {0}", url));
                     return ObservableWWW.GetAndGetBytes(url).Take(1);
                 }
             }
             return Observable.Throw<byte[]>(new ArgumentException(
-                String.Format("Cannot find {0} on {1}", prefix, _srtmMapPath)));
+                String.Format("Cannot find {0} on {1}", prefix, _mapPath)));
         }
 
         /// <summary> Downloads SRTM for given boudning box. </summary>
@@ -68,12 +75,6 @@ namespace ActionStreetMap.Explorer.Downloaders
             return String.Format("{0}{1:00}{2}{3:000}",
                 coordinate.Latitude > 0 ? 'N' : 'S', Math.Abs(coordinate.Latitude),
                 coordinate.Longitude > 0 ? 'E' : 'W', Math.Abs(coordinate.Longitude));
-        }
-
-        public void Configure(IConfigSection configSection)
-        {
-            _srtmMapPath = configSection.GetString("map", null);
-            _srtmServer = configSection.GetString("server", @"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3");
         }
     }
 }

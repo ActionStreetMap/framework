@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Linq;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
+using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Core.Elevation;
+using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.IO.Compression;
 
-namespace ActionStreetMap.Core.Elevation
+namespace ActionStreetMap.Maps.Index.Elevation
 {
     /// <summary>
     ///     Implementation of <see cref="IElevationProvider"/> which uses SRTM data files.
@@ -14,6 +19,10 @@ namespace ActionStreetMap.Core.Elevation
         private readonly object _lockObj = new object();
         private readonly IFileSystemService _fileSystemService;
         private const string PathKey = "";
+
+        private string _srtmServer;
+        private string _srtmMapPath;
+        private SrtmDownloader _downloader;
 
         //arc seconds per pixel (3 equals cca 90m)
         private int _secondsPerPx;
@@ -47,6 +56,19 @@ namespace ActionStreetMap.Core.Elevation
         public bool HasElevation(double latitude, double longitude)
         {
             return _fileSystemService.Exists(GetFilePath((int) latitude, (int) longitude));
+        }
+
+        /// <inheritdoc />
+        public IObservable<Unit> Download(double latitude, double longitude)
+        {
+            return _downloader.Download(new GeoCoordinate(latitude, longitude))
+                    .SelectMany(bytes => 
+                    {
+                        _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
+                        _srtmLat = (int)latitude;
+                        _srtmLon = (int)longitude;
+                        return Observable.Return<Unit>(Unit.Default);
+                    });
         }
 
         /// <inheritdoc />
@@ -158,6 +180,10 @@ namespace ActionStreetMap.Core.Elevation
         {
             var path = configSection.GetString(PathKey, null);
             _dataDirectory = path;
+
+            _srtmMapPath = configSection.GetString("map", null);
+            _srtmServer = configSection.GetString("server", @"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3");
+            _downloader = new SrtmDownloader(_srtmServer, _srtmMapPath, _fileSystemService, Trace);
         }
     }
 }

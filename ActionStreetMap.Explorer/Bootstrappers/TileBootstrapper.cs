@@ -10,6 +10,7 @@ using ActionStreetMap.Maps.GeoCoding;
 using ActionStreetMap.Maps.Geocoding;
 using ActionStreetMap.Maps.Index;
 using ActionStreetMap.Maps.Index.Search;
+using ActionStreetMap.Maps.Index.Elevation;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {

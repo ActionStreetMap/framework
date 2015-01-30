@@ -49,7 +49,6 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="AlgorithmException.cs" />
-    <Compile Include="Elevation\SrtmElevationProvider.cs" />
     <Compile Include="IPositionObserver.cs" />
     <Compile Include="Positioning\Nmea\ActualNmeaValueType.cs" />
     <Compile Include="Positioning\Nmea\Error.cs" />

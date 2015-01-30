@@ -5,42 +5,39 @@ using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Core.Elevation
 {
-    /// <summary>
-    ///     Defines behavior of heightmap provider.
-    /// </summary>
+    /// <summary> Defines behavior of heightmap provider. </summary>
     public interface IHeightMapProvider
     {
-        /// <summary>
-        ///     Returns heightmap array for given center with given resolution/
-        /// </summary>
+        /// <summary> Returns heightmap array for given center with given resolution. </summary>
         HeightMap Get(Tile tile, int resolution);
 
-        /// <summary>
-        ///     Store heightmap in object pool to reuse in next call.
-        /// </summary>
+        /// <summary> Store heightmap in object pool to reuse in next call. </summary>
         /// <param name="heightMap">Heightmap.</param>
         void Store(HeightMap heightMap);
     }
 
-    /// <summary>
-    ///     Default realization of heightmap provider.
-    /// </summary>
+    /// <summary> Default realization of heightmap provider. </summary>
     public class HeightMapProvider: IHeightMapProvider, IConfigurable
     {
+        private const string LogTag = "mapdata.elevation";
+
         private const float MaxHeight = 8000;
 
         private readonly IElevationProvider _elevationProvider;
         private readonly IObjectPool _objectPool;
 
         private bool _isFlat;
-        //private float[,] _map;
+        private bool _autoDownload;
 
-        /// <summary>
-        ///     Creates HeightMapProvider.
-        /// </summary>
+        [Dependency]
+        public ITrace Trace { get; set; }
+
+        /// <summary> Creates HeightMapProvider. </summary>
         /// <param name="elevationProvider">Elevation provider.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
@@ -60,7 +57,17 @@ namespace ActionStreetMap.Core.Elevation
             // TODO actually, this doesn't handle properly all the cases 
             // (e.g. different integer part of latitude for given location)
             var tileGeoCenter = GeoProjection.ToGeoCoordinate(tile.RelativeNullPoint, tile.MapCenter);
-            var isFlat = _isFlat && !_elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
+
+            bool hasData = _elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
+            if (!hasData && _autoDownload)
+            {
+                Trace.Warn(LogTag, String.Format("No elevation data found for {0}. Starting downloading..", tileGeoCenter));
+                _elevationProvider.Download(tileGeoCenter.Latitude, tileGeoCenter.Longitude).Wait();
+                hasData = _elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
+                Trace.Output(LogTag, String.Format("Success: {0}", hasData));
+            }
+
+            var isFlat = _isFlat && !hasData;
 
             float maxElevation;
             float minElevation;
@@ -70,6 +77,7 @@ namespace ActionStreetMap.Core.Elevation
             else
                 BuildFlatMap(map, resolution, out minElevation, out maxElevation);
 
+            Trace.Output(LogTag, String.Format("Elevation mode is flat: {0}", isFlat));
             return new HeightMap
             {
                 LeftBottomCorner = tile.BottomLeft,
@@ -94,6 +102,7 @@ namespace ActionStreetMap.Core.Elevation
         public void Configure(IConfigSection configSection)
         {
             _isFlat = configSection.GetBool("flat", false);
+            _autoDownload = configSection.GetBool("download", true);
         }
 
         #region Private members

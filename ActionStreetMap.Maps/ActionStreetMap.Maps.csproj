@@ -64,6 +64,8 @@
     <Compile Include="Helpers\AddressExtractor.cs" />
     <Compile Include="Helpers\MultipolygonProcessor.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
+    <Compile Include="Index\Elevation\SrtmDownloader.cs" />
+    <Compile Include="Index\Elevation\SrtmElevationProvider.cs" />
     <Compile Include="Index\Import\InMemoryIndexBuilder.cs" />
     <Compile Include="Index\Import\PersistentIndexBuilder.cs" />
     <Compile Include="Index\Spatial\ISpatialIndex.cs" />
