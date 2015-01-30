@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using ActionStreetMap.Core;
+using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index.Helpers;
 
-namespace ActionStreetMap.Maps.Index.Storage
+namespace ActionStreetMap.Maps.Data.Storage
 {
     internal sealed class ElementStore: IDisposable
     {

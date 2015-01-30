@@ -1,7 +1,7 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Reactive;
 
-namespace ActionStreetMap.Maps.Index.Spatial
+namespace ActionStreetMap.Maps.Data.Spatial
 {
     /// <summary> Represents spatial index. </summary>
     /// <typeparam name="T"></typeparam>

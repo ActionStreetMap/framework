@@ -6,8 +6,8 @@ using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Maps.Data.Search;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index.Search;
 
 namespace ActionStreetMap.Explorer.Commands
 {

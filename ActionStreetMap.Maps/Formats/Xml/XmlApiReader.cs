@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
 using ActionStreetMap.Core;
+using ActionStreetMap.Maps.Data.Import;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index.Import;
 
 namespace ActionStreetMap.Maps.Formats.Xml
 {

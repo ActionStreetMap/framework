@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using ActionStreetMap.Maps.Index.Import;
+using ActionStreetMap.Maps.Data.Import;
 
 namespace ActionStreetMap.Maps.Formats
 {

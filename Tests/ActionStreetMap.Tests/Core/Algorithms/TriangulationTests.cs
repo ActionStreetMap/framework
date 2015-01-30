@@ -8,7 +8,7 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps;
-using ActionStreetMap.Maps.Index;
+using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Visitors;
 using ActionStreetMap.Tests.Maps;
 using ActionStreetMap.Explorer.Scene.Geometry;

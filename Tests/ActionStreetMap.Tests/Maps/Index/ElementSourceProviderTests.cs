@@ -6,7 +6,7 @@ using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Maps.Index;
+using ActionStreetMap.Maps.Data;
 using Moq;
 using NUnit.Framework;
 

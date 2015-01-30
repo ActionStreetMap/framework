@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ActionStreetMap.Maps.Index.Storage
+namespace ActionStreetMap.Maps.Data.Storage
 {
     /// <summary>
     ///     Stores key value pairs.

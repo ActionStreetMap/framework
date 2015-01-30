@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Maps.Index;
+using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Visitors;
 
 namespace ActionStreetMap.Maps

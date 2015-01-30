@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using ActionStreetMap.Infrastructure.Formats.Json;
-using ActionStreetMap.Maps.Index.Import;
+using ActionStreetMap.Maps.Data.Import;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Maps.Index

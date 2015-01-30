@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
 using ActionStreetMap.Core;
-using ActionStreetMap.Maps.Extensions;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Extensions;
 
-namespace ActionStreetMap.Maps.Index.Spatial
+namespace ActionStreetMap.Maps.Data.Spatial
 {
     /// <summary>
     ///     Implements R-Tree data structure which is used to index spatial data.

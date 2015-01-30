@@ -4,11 +4,11 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Data.Import;
+using ActionStreetMap.Maps.Data.Spatial;
+using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Formats;
 using ActionStreetMap.Maps.Formats.Xml;
-using ActionStreetMap.Maps.Index.Import;
-using ActionStreetMap.Maps.Index.Spatial;
-using ActionStreetMap.Maps.Index.Storage;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Maps.Formats

@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-
-using ActionStreetMap.Maps.Extensions;
-using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Extensions;
 
-namespace ActionStreetMap.Maps.Index.Spatial
+namespace ActionStreetMap.Maps.Data.Spatial
 {
     /// <summary>
     ///     Represents readonly spatial index.

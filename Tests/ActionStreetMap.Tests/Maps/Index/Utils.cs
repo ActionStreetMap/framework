@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.IO;
+using ActionStreetMap.Maps.Data;
+using ActionStreetMap.Maps.Data.Spatial;
+using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index;
-using ActionStreetMap.Maps.Index.Spatial;
-using ActionStreetMap.Maps.Index.Storage;
 using Moq;
 
 namespace ActionStreetMap.Tests.Maps.Index

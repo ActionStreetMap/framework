@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
+using ActionStreetMap.Core;
+using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
-using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Core.Elevation;
-using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.IO.Compression;
+using ActionStreetMap.Infrastructure.Reactive;
 
-namespace ActionStreetMap.Maps.Index.Elevation
+namespace ActionStreetMap.Maps.Data.Elevation
 {
     /// <summary>
     ///     Implementation of <see cref="IElevationProvider"/> which uses SRTM data files.

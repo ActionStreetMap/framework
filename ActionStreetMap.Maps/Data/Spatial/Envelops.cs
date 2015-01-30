@@ -1,7 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Core;
 
-namespace ActionStreetMap.Maps.Index.Spatial
+namespace ActionStreetMap.Maps.Data.Spatial
 {
     internal interface IEnvelop
     {

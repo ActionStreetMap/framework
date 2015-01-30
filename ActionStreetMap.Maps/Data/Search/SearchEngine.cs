@@ -4,7 +4,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
 
-namespace ActionStreetMap.Maps.Index.Search
+namespace ActionStreetMap.Maps.Data.Search
 {
     /// <summary> Provides the way to find elements by given text parameters. </summary>
     public interface ISearchEngine

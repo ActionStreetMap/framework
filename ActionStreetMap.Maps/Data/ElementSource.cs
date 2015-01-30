@@ -1,13 +1,12 @@
 ﻿using System;
-using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Data.Spatial;
+using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index.Spatial;
-using ActionStreetMap.Maps.Index.Storage;
 
-namespace ActionStreetMap.Maps.Index
+namespace ActionStreetMap.Maps.Data
 {
     /// <summary> Represents an abstract source of Element objects. </summary>
     public interface IElementSource : IDisposable

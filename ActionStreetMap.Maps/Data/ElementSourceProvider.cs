@@ -6,36 +6,28 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Maps.Index.Spatial;
-using ActionStreetMap.Maps.Index.Import;
-using ActionStreetMap.Infrastructure.Formats.Json;
+using ActionStreetMap.Maps.Data.Import;
+using ActionStreetMap.Maps.Data.Spatial;
 
-namespace ActionStreetMap.Maps.Index
+namespace ActionStreetMap.Maps.Data
 {
-    /// <summary>
-    ///     Provides the way to get the corresponding element source by geocoordinate.
-    /// </summary>
+    /// <summary> Provides the way to get the corresponding element source by geocoordinate.s </summary>
     public interface IElementSourceProvider: IDisposable
     {
-        /// <summary>
-        ///     Returns element sources by query represented by bounding box.
-        /// </summary>
+        /// <summary> Returns element sources by query represented by bounding box. </summary>
         /// <returns>Element source.</returns>
         IObservable<IElementSource> Get(BoundingBox query);
 
-        /// <summary>
-        ///     Returns active element sources.
-        /// </summary>
+        /// <summary> Returns active element sources. </summary>
         /// <returns>Element source.</returns>
         IObservable<IElementSource> Get();
     }
 
-    /// <summary>
-    ///     Default implementation of <see cref="IElementSourceProvider"/>
-    /// </summary>
+    /// <summary> Default implementation of <see cref="IElementSourceProvider"/>. </summary>
     public sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
     {      
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
@@ -53,16 +45,11 @@ namespace ActionStreetMap.Maps.Index
         private RTree<string> _insertTree;
         private MutableTuple<string, IElementSource> _elementSourceCache;
 
-
-        /// <summary>
-        ///     Trace.
-        /// </summary>
+        /// <summary> Trace. </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 
-        /// <summary>
-        ///     Creates instance of <see cref="ElementSourceProvider"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="ElementSourceProvider"/>. </summary>
         /// <param name="pathResolver">Path resolver.</param>
         /// <param name="fileSystemService">File system service.</param>
         [Dependency]
@@ -97,7 +84,7 @@ namespace ActionStreetMap.Maps.Index
                     .SelectMany(b =>
                     {
                         if (_settings == null) ReadIndexSettings();
-                        var indexBuilder = new InMemoryIndexBuilder(".xml", new MemoryStream(b), _settings, Trace);
+                        var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(b), _settings, Trace);
                         indexBuilder.Build();
                         var elementStore = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex, 
                             indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);

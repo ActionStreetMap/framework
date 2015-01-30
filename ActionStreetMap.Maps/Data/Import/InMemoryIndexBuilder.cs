@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using ActionStreetMap.Infrastructure.Diagnostic;
-using ActionStreetMap.Maps.Index.Spatial;
-using ActionStreetMap.Maps.Index.Storage;
+using ActionStreetMap.Maps.Data.Spatial;
+using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Formats;
 
-namespace ActionStreetMap.Maps.Index.Import
+namespace ActionStreetMap.Maps.Data.Import
 {
     internal class InMemoryIndexBuilder: IndexBuilder
     {

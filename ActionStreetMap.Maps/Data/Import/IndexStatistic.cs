@@ -1,8 +1,8 @@
 ﻿using System;
 using ActionStreetMap.Infrastructure.Diagnostic;
-using ActionStreetMap.Maps.Index.Helpers;
+using ActionStreetMap.Maps.Data.Helpers;
 
-namespace ActionStreetMap.Maps.Index.Import
+namespace ActionStreetMap.Maps.Data.Import
 {
     internal class IndexStatistic
     {

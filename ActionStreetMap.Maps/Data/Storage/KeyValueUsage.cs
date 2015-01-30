@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ActionStreetMap.Maps.Index.Storage
+namespace ActionStreetMap.Maps.Data.Storage
 {
     /// <summary>
     ///     Represents inverted index to search for elements which uses the corresponding key/value pair.

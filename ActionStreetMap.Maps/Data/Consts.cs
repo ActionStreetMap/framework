@@ -1,4 +1,4 @@
-﻿namespace ActionStreetMap.Maps.Index
+﻿namespace ActionStreetMap.Maps.Data
 {
     internal static class Consts
     {

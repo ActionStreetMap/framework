@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Infrastructure.Formats.Json;
 
-namespace ActionStreetMap.Maps.Index.Import
+namespace ActionStreetMap.Maps.Data.Import
 {
     internal class IndexSettings
     {

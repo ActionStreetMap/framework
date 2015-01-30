@@ -1,4 +1,4 @@
-﻿namespace ActionStreetMap.Maps.Index.Helpers
+﻿namespace ActionStreetMap.Maps.Data.Helpers
 {
     internal enum ElementType : byte
     {

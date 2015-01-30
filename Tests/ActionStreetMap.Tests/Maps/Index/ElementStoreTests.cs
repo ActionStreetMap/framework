@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using ActionStreetMap.Core;
+using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index.Storage;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Maps.Index

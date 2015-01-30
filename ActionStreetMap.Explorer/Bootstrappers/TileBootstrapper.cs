@@ -6,11 +6,11 @@ using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Maps;
+using ActionStreetMap.Maps.Data;
+using ActionStreetMap.Maps.Data.Elevation;
+using ActionStreetMap.Maps.Data.Search;
 using ActionStreetMap.Maps.GeoCoding;
 using ActionStreetMap.Maps.Geocoding;
-using ActionStreetMap.Maps.Index;
-using ActionStreetMap.Maps.Index.Search;
-using ActionStreetMap.Maps.Index.Elevation;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {

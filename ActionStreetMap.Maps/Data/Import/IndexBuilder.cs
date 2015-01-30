@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Diagnostic;
-using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.Primitives;
+using ActionStreetMap.Maps.Data.Helpers;
+using ActionStreetMap.Maps.Data.Spatial;
+using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Formats;
 using ActionStreetMap.Maps.Formats.O5m;
 using ActionStreetMap.Maps.Formats.Pbf;
 using ActionStreetMap.Maps.Formats.Xml;
-using ActionStreetMap.Maps.Index.Helpers;
-using ActionStreetMap.Maps.Index.Spatial;
-using ActionStreetMap.Maps.Index.Storage;
 using Node = ActionStreetMap.Maps.Entities.Node;
 using Relation = ActionStreetMap.Maps.Entities.Relation;
 using Way = ActionStreetMap.Maps.Entities.Way;
 
-namespace ActionStreetMap.Maps.Index.Import
+namespace ActionStreetMap.Maps.Data.Import
 {
     internal abstract class IndexBuilder : IDisposable
     {

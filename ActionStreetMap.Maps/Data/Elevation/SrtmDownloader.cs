@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Infrastructure.Config;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Infrastructure.Diagnostic;
 
-namespace ActionStreetMap.Maps.Index.Elevation
+namespace ActionStreetMap.Maps.Data.Elevation
 {
     /// <summary> Downloads SRTM data from NASA server. </summary>
     public class SrtmDownloader

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Maps.Index;
-using ActionStreetMap.Maps.Index.Search;
+using ActionStreetMap.Maps.Data;
+using ActionStreetMap.Maps.Data.Search;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Maps.Index

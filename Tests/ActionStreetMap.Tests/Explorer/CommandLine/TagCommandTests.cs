@@ -3,8 +3,8 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Commands;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Data.Search;
 using ActionStreetMap.Maps.Entities;
-using ActionStreetMap.Maps.Index.Search;
 using Moq;
 using NUnit.Framework;
 
