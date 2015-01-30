@@ -14,8 +14,8 @@ namespace ActionStreetMap.Maps.Data.Elevation
         private readonly IFileSystemService _fileSystemService;
         private readonly ITrace _trace;
         private readonly string _server;
-        private readonly string _mapPath;
-        private static readonly Dictionary<int, string> ContinentMap = new Dictionary<int, string>()
+        private readonly string _schemaPath;
+        private static readonly Dictionary<int, string> ContinentMap = new Dictionary<int, string>
         {
             {0, "Eurasia"},
             {1, "South_America"},
@@ -26,11 +26,14 @@ namespace ActionStreetMap.Maps.Data.Elevation
         };
 
         /// <summary> Creates instance of <see cref="SrtmDownloader"/>. </summary>
+        /// <param name="schemaPath">Uri schema path.</param>
         /// <param name="fileSystemService">File system service.</param>
-        public SrtmDownloader(string server, string mapPath, IFileSystemService fileSystemService, ITrace trace)
+        /// <param name="server">Server.</param>
+        /// <param name="trace">Trace.</param>
+        public SrtmDownloader(string server, string schemaPath, IFileSystemService fileSystemService, ITrace trace)
         {
             _server = server;
-            _mapPath = mapPath;
+            _schemaPath = schemaPath;
             _fileSystemService = fileSystemService;
             _trace = trace;
         }
@@ -43,7 +46,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
         public IObservable<byte[]> Download(GeoCoordinate coordinate)
         {
             var prefix = GetFileNamePrefix(coordinate);
-            foreach (var line in _fileSystemService.ReadText(_mapPath).Split('\n'))
+            foreach (var line in _fileSystemService.ReadText(_schemaPath).Split('\n'))
             {
                 if (line.StartsWith(prefix))
                 {
@@ -56,7 +59,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
                 }
             }
             return Observable.Throw<byte[]>(new ArgumentException(
-                String.Format("Cannot find {0} on {1}", prefix, _mapPath)));
+                String.Format("Cannot find {0} on {1}", prefix, _schemaPath)));
         }
 
         /// <summary> Downloads SRTM for given boudning box. </summary>

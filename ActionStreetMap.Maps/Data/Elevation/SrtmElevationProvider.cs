@@ -18,6 +18,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
     {
         private readonly object _lockObj = new object();
         private readonly IFileSystemService _fileSystemService;
+        private readonly ITrace _trace;
 
         private string _srtmServer;
         private string _srtmSchemaPath;
@@ -36,25 +37,22 @@ namespace ActionStreetMap.Maps.Data.Elevation
         private byte[] _hgtData;
 
         /// <summary>
-        ///     Trace.
-        /// </summary>
-        [Dependency]
-        public ITrace Trace { get; set; }
-
-        /// <summary>
         ///     Creates SRTM specific implementation of <see cref="IElevationProvider"/>
         /// </summary>
         /// <param name="fileSystemService">File system service.</param>
+        /// <param name="trace">Trace.</param>
         [Dependency]
-        public SrtmElevationProvider(IFileSystemService fileSystemService)
+        public SrtmElevationProvider(IFileSystemService fileSystemService, ITrace trace)
         {
             _fileSystemService = fileSystemService;
+            _trace = trace;
         }
 
         /// <inheritdoc />
         public bool HasElevation(double latitude, double longitude)
         {
-            return _fileSystemService.Exists(GetFilePath((int) latitude, (int) longitude));
+            return (_srtmLat == ((int)latitude) && _srtmLon == ((int)longitude)) || 
+                _fileSystemService.Exists(GetFilePath((int) latitude, (int) longitude));
         }
 
         /// <inheritdoc />
@@ -66,6 +64,11 @@ namespace ActionStreetMap.Maps.Data.Elevation
                         _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
                         _srtmLat = (int)latitude;
                         _srtmLon = (int)longitude;
+                        // store data to disk
+                        var path = GetFilePath(_srtmLat, _srtmLon);
+                        using(var stream = _fileSystemService.WriteStream(path))
+                            stream.Write(_hgtData, 0, _hgtData.Length);
+
                         return Observable.Return<Unit>(Unit.Default);
                     });
         }
@@ -132,7 +135,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
 
                     var filePath = GetFilePath(latDec, lonDec);
 
-                    Trace.Output(String.Format(Strings.LoadElevationFrom, filePath));
+                    _trace.Output("mapdata.srtm", String.Format(Strings.LoadElevationFrom, filePath));
 
                     if (!_fileSystemService.Exists(filePath))
                         throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));
@@ -181,7 +184,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
 
             _srtmSchemaPath = configSection.GetString("remote.schema", null);
             _srtmServer = configSection.GetString("remote.server", @"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3");
-            _downloader = new SrtmDownloader(_srtmServer, _srtmSchemaPath, _fileSystemService, Trace);
+            _downloader = new SrtmDownloader(_srtmServer, _srtmSchemaPath, _fileSystemService, _trace);
         }
     }
 }

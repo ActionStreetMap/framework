@@ -29,7 +29,8 @@ namespace ActionStreetMap.Maps.Data
 
     /// <summary> Default implementation of <see cref="IElementSourceProvider"/>. </summary>
     public sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
-    {      
+    {
+        private const string LogTag = "mapdata.source";
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
         private readonly string[] _splitString= { " " };
 
@@ -76,15 +77,16 @@ namespace ActionStreetMap.Maps.Data
 
             if (elementSourcePath == null)
             {
-                Trace.Warn("Maps", String.Format(Strings.NoPresistentElementSourceFound, query));
+                Trace.Warn(LogTag, String.Format(Strings.NoPresistentElementSourceFound, query));
                 var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 
                     query.MaxPoint.Longitude, query.MaxPoint.Latitude);
                 var uri = String.Format("{0}{1}", _mapDataServerUri, Uri.EscapeDataString(queryString));
                 return ObservableWWW.GetAndGetBytes(uri).Take(1)
-                    .SelectMany(b =>
+                    .SelectMany(bytes =>
                     {
+                        Trace.Warn(LogTag, String.Format("Build index from {0} bytes received", bytes));
                         if (_settings == null) ReadIndexSettings();
-                        var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(b), _settings, Trace);
+                        var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), _settings, Trace);
                         indexBuilder.Build();
                         var elementStore = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex, 
                             indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
@@ -155,7 +157,7 @@ namespace ActionStreetMap.Maps.Data
             //api/0.6/map?bbox=left,bottom,right,top
             _mapDataServerQuery = configSection.GetString(@"remote.query", "{0},{1},{2},{3}");
             _mapDataFormat = configSection.GetString(@"remote.format", "xml");
-            _indexSettingsPath = configSection.GetString(@" index.settings", null);
+            _indexSettingsPath = configSection.GetString(@"index.settings", null);
 
             _insertTree = new RTree<string>();
             var rootFolder = configSection.GetString("local", null);

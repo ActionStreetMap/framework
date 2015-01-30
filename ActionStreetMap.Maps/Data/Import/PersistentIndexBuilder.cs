@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
@@ -27,7 +28,8 @@ namespace ActionStreetMap.Maps.Data.Import
         public override void Build()
         {
             var sourceStream = _fileSystemService.ReadStream(_filePath);
-            var reader = GetReader(Path.GetExtension(_filePath));
+            var format = _filePath.Split('.').Last();
+            var reader = GetReader(format);
 
             var kvUsageMemoryStream = new MemoryStream();
             var kvUsage = new KeyValueUsage(kvUsageMemoryStream);

@@ -10,7 +10,7 @@
 		"elevation": {
 			"local":"Maps/elevation",
 			"remote.server":"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3",
-			"remote.schema": "Config/srtm.map.txt"
+			"remote.schema": "Config/srtm.schema.txt"
 		}
 	},
 	"theme":"Config/themes/default/theme.json",

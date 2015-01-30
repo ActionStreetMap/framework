@@ -45,13 +45,13 @@ namespace ActionStreetMap.Maps.Data.Import
         protected IReader GetReader(string extension)
         {
             if (String.IsNullOrEmpty(extension) ||
-                (extension.ToLower() != ".o5m" && extension.ToLower() != ".pbf" && extension.ToLower() != ".xml"))
+                (extension.ToLower() != "o5m" && extension.ToLower() != "pbf" && extension.ToLower() != "xml"))
                 throw new NotSupportedException(Strings.NotSupportedMapFormat);
 
             switch (extension)
             {
-                case ".o5m": return new O5mReader();
-                case ".pbf": return new PbfReader();
+                case "o5m": return new O5mReader();
+                case "pbf": return new PbfReader();
                 default: return new XmlApiReader();
             }
         }
