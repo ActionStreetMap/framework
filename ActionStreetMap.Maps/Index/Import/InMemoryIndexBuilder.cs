@@ -14,8 +14,8 @@ namespace ActionStreetMap.Maps.Index.Import
         internal KeyValueStore KvStore { get; private set; }
         internal KeyValueUsage KvUsage { get; private set; }
 
-        public InMemoryIndexBuilder(string extension, Stream sourceStream, ITrace trace)
-            : base(trace)
+        public InMemoryIndexBuilder(string extension, Stream sourceStream, IndexSettings settings, ITrace trace)
+            : base(settings, trace)
         {
             _extension = extension;
             _sourceStream = sourceStream;

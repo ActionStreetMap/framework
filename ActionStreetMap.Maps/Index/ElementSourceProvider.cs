@@ -11,6 +11,7 @@ using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Index.Spatial;
 using ActionStreetMap.Maps.Index.Import;
+using ActionStreetMap.Infrastructure.Formats.Json;
 
 namespace ActionStreetMap.Maps.Index
 {
@@ -36,17 +37,22 @@ namespace ActionStreetMap.Maps.Index
     ///     Default implementation of <see cref="IElementSourceProvider"/>
     /// </summary>
     public sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
-    {
-        private const string MapPathKey = "";
-
+    {      
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
         private readonly string[] _splitString= { " " };
+
+        private string _mapDataServerUri;
+        private string _mapDataServerQuery;
+        private string _mapDataFormat;
+        private string _indexSettingsPath;
 
         private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
         private ISpatialIndex<string> _searchTree;
+        private IndexSettings _settings;
         private RTree<string> _insertTree;
         private MutableTuple<string, IElementSource> _elementSourceCache;
+
 
         /// <summary>
         ///     Trace.
@@ -77,18 +83,21 @@ namespace ActionStreetMap.Maps.Index
         /// <inheritdoc />
         public IObservable<IElementSource> Get(BoundingBox query)
         {
+            // TODO ensure thread safety in this and all related methods
             // NOTE block thread here
             var elementSourcePath = _searchTree.Search(query).Wait();
 
             if (elementSourcePath == null)
             {
                 Trace.Warn("Maps", String.Format(Strings.NoPresistentElementSourceFound, query));
-                // TODO genetate url
-                var uri = query.ToString();
+                var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 
+                    query.MaxPoint.Longitude, query.MaxPoint.Latitude);
+                var uri = String.Format("{0}{1}", _mapDataServerUri, Uri.EscapeDataString(queryString));
                 return ObservableWWW.GetAndGetBytes(uri).Take(1)
                     .SelectMany(b =>
                     {
-                        var indexBuilder = new InMemoryIndexBuilder(".xml", new MemoryStream(b), Trace);
+                        if (_settings == null) ReadIndexSettings();
+                        var indexBuilder = new InMemoryIndexBuilder(".xml", new MemoryStream(b), _settings, Trace);
                         indexBuilder.Build();
                         var elementStore = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex, 
                             indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
@@ -108,6 +117,14 @@ namespace ActionStreetMap.Maps.Index
             if (_elementSourceCache != null)
                 _elementSourceCache.Item2.Dispose();
             _elementSourceCache = new MutableTuple<string, IElementSource>(elementSourcePath, elementSource);
+        }
+
+        private void ReadIndexSettings() 
+        {
+            var jsonContent = _fileSystemService.ReadText(_indexSettingsPath);
+            var node = JSON.Parse(jsonContent);
+            _settings = new IndexSettings();
+            _settings.ReadFromJson(node);
         }
 
         private void SearchAndReadMapIndexHeaders(string folder)
@@ -146,8 +163,15 @@ namespace ActionStreetMap.Maps.Index
         /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
+            _mapDataServerUri = configSection
+                .GetString("server", @"http://api.openstreetmap.org/api/0.6/map?bbox=");
+            //api/0.6/map?bbox=left,bottom,right,top
+            _mapDataServerQuery = configSection.GetString("query", "{0},{1},{2},{3}");
+            _mapDataFormat = configSection.GetString("format", ".xml");
+            _indexSettingsPath = configSection.GetString("index", null);
+
             _insertTree = new RTree<string>();
-            var rootFolder = configSection.GetString(MapPathKey, null);
+            var rootFolder = configSection.GetString("", null);
             if (!String.IsNullOrEmpty(rootFolder))
                 SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
             

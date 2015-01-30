@@ -24,7 +24,9 @@ namespace ActionStreetMap.Tests.Maps.Formats
         public void SetUpFixture()
         {
             _xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
-            _indexBuilder = new TestableIndexBuilder(new ConsoleTrace());
+            var settings = new IndexSettings();
+            settings.ReadFromJson(JSON.Parse(File.ReadAllText(TestHelper.TestIndexSettingsPath)));
+            _indexBuilder = new TestableIndexBuilder(settings, new ConsoleTrace());
         }
 
         [SetUp]
@@ -57,11 +59,9 @@ namespace ActionStreetMap.Tests.Maps.Formats
         // NOTE This class is workaround due to limitation of mock framework (cannot mock sealed, internal, etc.)
         private class TestableIndexBuilder : IndexBuilder
         {
-            public TestableIndexBuilder(ITrace trace) : base(trace)
+            public TestableIndexBuilder(IndexSettings settings, ITrace trace)
+                : base(settings, trace)
             {
-                Settings = new IndexSettings();
-                Settings.ReadFromJson(JSON.Parse(File.ReadAllText(TestHelper.TestIndexSettingsPath)));
-
                 Store = new ElementStore(new KeyValueStore(new KeyValueIndex(1000, 3),
                     new KeyValueUsage(new MemoryStream()), new MemoryStream()), new MemoryStream());
 

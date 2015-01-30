@@ -72,8 +72,12 @@ namespace ActionStreetMap.Tests
             build.Build();*/
 
             var provider = new ElementSourceProvider(new TestPathResolver(), TestHelper.GetFileSystemService());
+            provider.Trace = new ConsoleTrace();
             var configMock = new Mock<IConfigSection>();
-            configMock.Setup(c => c.GetString(It.IsAny<string>(), null)).Returns("");
+            configMock.Setup(c => c.GetString("server", It.IsAny<string>())).Returns("http://api.openstreetmap.org/api/0.6/map?bbox=");
+            configMock.Setup(c => c.GetString("query", It.IsAny<string>())).Returns("{0},{1},{2},{3}");
+            configMock.Setup(c => c.GetString("format", It.IsAny<string>())).Returns(".xml");
+            configMock.Setup(c => c.GetString("index", It.IsAny<string>())).Returns(TestHelper.TestIndexSettingsPath);
             provider.Configure(configMock.Object);
 
             var sources = provider.Get(new BoundingBox(new GeoCoordinate(52.533, 13.386),
@@ -127,8 +131,9 @@ namespace ActionStreetMap.Tests
 
         private void CreateIndex(string o5mFile, string settingsFile, string outputDirectory)
         {
-            var builder = new PersistentIndexBuilder(o5mFile, outputDirectory, TestHelper.GetFileSystemService(), new ConsoleTrace());
-            builder.Configure(new ConfigSection(String.Format("{{\"index\":\"{0}\"}}", settingsFile.Replace("\\", "/"))));
+            var settings = new IndexSettings();
+            settings.ReadFromJson(JSON.Parse(File.ReadAllText(TestHelper.TestIndexSettingsPath)));
+            var builder = new PersistentIndexBuilder(o5mFile, outputDirectory, TestHelper.GetFileSystemService(), settings, new ConsoleTrace());
             builder.Build();
         }
 

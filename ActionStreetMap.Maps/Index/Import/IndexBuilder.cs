@@ -20,7 +20,7 @@ using Way = ActionStreetMap.Maps.Entities.Way;
 
 namespace ActionStreetMap.Maps.Index.Import
 {
-    internal abstract class IndexBuilder : IConfigurable, IDisposable
+    internal abstract class IndexBuilder : IDisposable
     {
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
@@ -36,8 +36,9 @@ namespace ActionStreetMap.Maps.Index.Import
 
         protected ITrace Trace;
 
-        protected IndexBuilder(ITrace trace)
+        protected IndexBuilder(IndexSettings settings, ITrace trace)
         {
+            Settings = settings;
             Trace = trace;
             IndexStatistic = new IndexStatistic(Trace);
         }
@@ -217,16 +218,6 @@ namespace ActionStreetMap.Maps.Index.Import
             _ways = null;
             GC.Collect();
             GC.WaitForFullGCComplete();
-        }
-
-        public void Configure(IConfigSection configSection)
-        {
-            var settingsPath = configSection.GetString("index", null);
-
-            var jsonString = File.ReadAllText(settingsPath);
-            var node = JSON.Parse(jsonString);
-            Settings = new IndexSettings();
-            Settings.ReadFromJson(node);
         }
 
         public void Dispose()

@@ -15,8 +15,8 @@ namespace ActionStreetMap.Maps.Index.Import
         private readonly IFileSystemService _fileSystemService;
 
         public PersistentIndexBuilder(string filePath, string outputDirectory, IFileSystemService fileSystemService,
-            ITrace trace)
-            : base(trace)
+            IndexSettings settings, ITrace trace)
+            : base(settings, trace)
         {
             _filePath = filePath;
             _outputDirectory = outputDirectory;
