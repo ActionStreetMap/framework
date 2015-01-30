@@ -151,14 +151,14 @@ namespace ActionStreetMap.Maps.Data
         public void Configure(IConfigSection configSection)
         {
             _mapDataServerUri = configSection
-                .GetString("server", @"http://api.openstreetmap.org/api/0.6/map?bbox=");
+                .GetString(@"remote.server", @"http://api.openstreetmap.org/api/0.6/map?bbox=");
             //api/0.6/map?bbox=left,bottom,right,top
-            _mapDataServerQuery = configSection.GetString("query", "{0},{1},{2},{3}");
-            _mapDataFormat = configSection.GetString("format", ".xml");
-            _indexSettingsPath = configSection.GetString("index", null);
+            _mapDataServerQuery = configSection.GetString(@"remote.query", "{0},{1},{2},{3}");
+            _mapDataFormat = configSection.GetString(@"remote.format", "xml");
+            _indexSettingsPath = configSection.GetString(@" index.settings", null);
 
             _insertTree = new RTree<string>();
-            var rootFolder = configSection.GetString("", null);
+            var rootFolder = configSection.GetString("local", null);
             if (!String.IsNullOrEmpty(rootFolder))
                 SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
             

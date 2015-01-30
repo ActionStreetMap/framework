@@ -20,8 +20,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
     public class TileBootstrapper : BootstrapperPlugin
     {
         private const string TileKey = "tile";
-        private const string ElevationKey = "elevationdata";
-        private const string DataSourceProviderKey = "mapdata";
+        private const string ElevationKey = @"data/elevation";
+        private const string MapDataKey = @"data/map";
 
         /// <inheritdoc />
         public override string Name { get { return "tile"; } }
@@ -33,7 +33,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                .For<IElementSourceProvider>()
                .Use<ElementSourceProvider>()
                .Singleton()
-               .SetConfig(GlobalConfigSection.GetSection(DataSourceProviderKey)));
+               .SetConfig(GlobalConfigSection.GetSection(MapDataKey)));
 
             Container.Register(Component.For<ITileLoader>().Use<MapTileLoader>().Singleton());
 

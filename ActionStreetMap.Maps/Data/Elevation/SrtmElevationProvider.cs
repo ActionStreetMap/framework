@@ -18,10 +18,9 @@ namespace ActionStreetMap.Maps.Data.Elevation
     {
         private readonly object _lockObj = new object();
         private readonly IFileSystemService _fileSystemService;
-        private const string PathKey = "";
 
         private string _srtmServer;
-        private string _srtmMapPath;
+        private string _srtmSchemaPath;
         private SrtmDownloader _downloader;
 
         //arc seconds per pixel (3 equals cca 90m)
@@ -178,12 +177,11 @@ namespace ActionStreetMap.Maps.Data.Elevation
         /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
-            var path = configSection.GetString(PathKey, null);
-            _dataDirectory = path;
+            _dataDirectory = configSection.GetString("local", null);
 
-            _srtmMapPath = configSection.GetString("map", null);
-            _srtmServer = configSection.GetString("server", @"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3");
-            _downloader = new SrtmDownloader(_srtmServer, _srtmMapPath, _fileSystemService, Trace);
+            _srtmSchemaPath = configSection.GetString("remote.schema", null);
+            _srtmServer = configSection.GetString("remote.server", @"http://dds.cr.usgs.gov/srtm/version2_1/SRTM3");
+            _downloader = new SrtmDownloader(_srtmServer, _srtmSchemaPath, _fileSystemService, Trace);
         }
     }
 }
