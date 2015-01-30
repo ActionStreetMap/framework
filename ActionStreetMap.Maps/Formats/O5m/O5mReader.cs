@@ -39,9 +39,8 @@ namespace ActionStreetMap.Maps.Formats.O5m
 
         private byte[] _ioBuf;
 
-        private readonly Stream _fis;
-
-        private readonly ReaderContext _context;
+        private Stream _fis;
+        private ReaderContext _context;
 
         private int _ioPos;
 
@@ -67,29 +66,30 @@ namespace ActionStreetMap.Maps.Formats.O5m
         private int _lastLon, _lastLat;
 
         // reused entities
-        private readonly Node _node;
-        private readonly Way _way;
-        private readonly Relation _relation;
-        private readonly List<long> _reusableIdList;
-        private readonly List<RelationMember> _reusableRelMemberList;
+        private Node _node;
+        private Way _way;
+        private Relation _relation;
+        private List<long> _reusableIdList;
+        private List<RelationMember> _reusableRelMemberList;
 
-        public O5mReader(ReaderContext context)
+        public O5mReader()
         {
-            _context = context;
-            _fis = context.SourceStream;
             _ioBuf = new byte[8192];
             _cnvBuffer = new byte[4000]; // OSM data should not contain string pairs with length > 512
             _ioPos = 0;
             _stringPair = new String[2];
             _lastRef = new long[3];
-            if (_context.SkipArray == null)
-            {
-                _firstPosInFile = new long[256];
-                for (int i = 0; i < _firstPosInFile.Length; i++)
-                    _firstPosInFile[i] = -1;
-            }
-            // create reused entitites
-            if (_context.ReuseEntities)
+ 
+            _firstPosInFile = new long[256];
+            for (int i = 0; i < _firstPosInFile.Length; i++)
+                _firstPosInFile[i] = -1;
+        }
+
+        private void InitializeFromContext(ReaderContext context)
+        {
+            _context = context;
+            _fis = context.SourceStream;
+            if (context.ReuseEntities)
             {
                 _node = new Node();
                 _way = new Way();
@@ -99,8 +99,10 @@ namespace ActionStreetMap.Maps.Formats.O5m
             }
         }
 
-        public void Read()
+        public void Read(ReaderContext context)
         {
+            InitializeFromContext(context);
+
             int start = _fis.ReadByte();
             ++_countBytes;
             if (start != ResetFlag)

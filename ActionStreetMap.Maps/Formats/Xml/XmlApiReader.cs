@@ -9,21 +9,17 @@ namespace ActionStreetMap.Maps.Formats.Xml
     /// <summary> Provides API to parse response of Overpass API backend. </summary>
     internal class XmlApiReader : IReader
     {
-        private readonly ReaderContext _context;
-        private readonly IndexBuilder _builder;
+        private ReaderContext _context;
+        private IndexBuilder _builder;
 
         private XmlReader _reader;
         private Element _currentElement;
 
-        /// <summary> Creates instance of <see cref="XmlApiReader" />. </summary>
-        public XmlApiReader(ReaderContext context)
+        public void Read(ReaderContext context)
         {
             _context = context;
             _builder = context.Builder;
-        }
 
-        public void Read()
-        {
             using (_reader = XmlReader.Create(_context.SourceStream))
             {
                 _reader.MoveToContent();

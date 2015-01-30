@@ -17,6 +17,7 @@ namespace ActionStreetMap.Tests.Maps.Formats
     public class XmlApiReaderTests
     {
         private string _xmlContent;
+        private ReaderContext _context;
         private XmlApiReader _reader;
         private TestableIndexBuilder _indexBuilder;
 
@@ -32,20 +33,22 @@ namespace ActionStreetMap.Tests.Maps.Formats
         [SetUp]
         public void Setup()
         {
-            _reader = new XmlApiReader(new ReaderContext
+            _reader = new XmlApiReader();
+
+            _context = new ReaderContext
             {
                 SourceStream = new MemoryStream(Encoding.UTF8.GetBytes(_xmlContent)),
                 Builder = _indexBuilder,
                 ReuseEntities = false,
                 SkipTags = false,
-            });
+            };
         }
 
         [Test]
         public void CanParseOsmXml()
         {
             // ACT
-            _reader.Read();
+            _reader.Read(_context);
 
             // ASSERT
             // TODO check xml processing logic, not builder!

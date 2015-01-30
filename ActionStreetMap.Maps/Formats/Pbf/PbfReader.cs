@@ -13,13 +13,9 @@ using ProtoBuf.Meta;
 
 namespace ActionStreetMap.Maps.Formats.Pbf
 {
-    /// <summary>
-    ///     Reads PBF files.
-    /// </summary>
+    /// <summary> Reads PBF files. </summary>
     internal class PbfReader : IReader, IEnumerator<PrimitiveBlock>
     {
-        private readonly ReaderContext _context;
-
         private readonly RuntimeTypeModel _runtimeTypeModel;
 
         // Types of the objects to be deserialized.
@@ -27,15 +23,14 @@ namespace ActionStreetMap.Maps.Formats.Pbf
         private readonly Type _blobType = typeof(Blob);
         private readonly Type _primitiveBlockType = typeof(PrimitiveBlock);
         private readonly Type _headerBlockType = typeof(HeaderBlock);
+
+        private ReaderContext _context;
         private PrimitiveBlock _block;
         private Envelop _envelop;
 
-        /// <summary>
-        ///     Creates a new PBF reader.
-        /// </summary>
-        public PbfReader(ReaderContext context)
+        /// <summary> Creates a new PBF reader. </summary>
+        public PbfReader()
         {
-            _context = context;
             _runtimeTypeModel = TypeModel.Create();
             _runtimeTypeModel.Add(_blockHeaderType, true);
             _runtimeTypeModel.Add(_blobType, true);
@@ -46,8 +41,9 @@ namespace ActionStreetMap.Maps.Formats.Pbf
         /// <summary>
         ///     Reads pbf file using <see cref="ReaderContext"/>.
         /// </summary>
-        public void Read()
+        public void Read(ReaderContext context)
         {
+            _context = context;
             _envelop = new Envelop();
             while (MoveNext())
             {

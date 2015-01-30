@@ -5,6 +5,7 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Maps.Index.Spatial;
 using ActionStreetMap.Maps.Index.Storage;
+using ActionStreetMap.Maps.Formats;
 
 namespace ActionStreetMap.Maps.Index.Import
 {
@@ -26,7 +27,7 @@ namespace ActionStreetMap.Maps.Index.Import
         public override void Build()
         {
             var sourceStream = _fileSystemService.ReadStream(_filePath);
-            var reader = GetReader(Path.GetExtension(_filePath), sourceStream);
+            var reader = GetReader(Path.GetExtension(_filePath));
 
             var kvUsageMemoryStream = new MemoryStream();
             var kvUsage = new KeyValueUsage(kvUsageMemoryStream);
@@ -39,7 +40,14 @@ namespace ActionStreetMap.Maps.Index.Import
             Store = new ElementStore(keyValueStore, storeFile);
             Tree = new RTree<uint>(65);
 
-            reader.Read();
+            reader.Read(new ReaderContext
+            {
+                SourceStream = sourceStream,
+                Builder = this,
+                ReuseEntities = false,
+                SkipTags = false,
+            });
+
             Clear();
             Complete();
 
