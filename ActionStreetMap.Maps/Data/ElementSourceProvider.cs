@@ -77,14 +77,15 @@ namespace ActionStreetMap.Maps.Data
 
             if (elementSourcePath == null)
             {
-                Trace.Warn(LogTag, String.Format(Strings.NoPresistentElementSourceFound, query));
                 var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 
                     query.MaxPoint.Longitude, query.MaxPoint.Latitude);
                 var uri = String.Format("{0}{1}", _mapDataServerUri, Uri.EscapeDataString(queryString));
-                return ObservableWWW.GetAndGetBytes(uri).Take(1)
+                Trace.Warn(LogTag, String.Format(Strings.NoPresistentElementSourceFound, query, uri));
+                return ObservableWWW.GetAndGetBytes(uri)
+                    .Take(1)
                     .SelectMany(bytes =>
                     {
-                        Trace.Warn(LogTag, String.Format("Build index from {0} bytes received", bytes));
+                        Trace.Warn(LogTag, String.Format("Build index from {0} bytes received", bytes.Length));
                         if (_settings == null) ReadIndexSettings();
                         var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), _settings, Trace);
                         indexBuilder.Build();

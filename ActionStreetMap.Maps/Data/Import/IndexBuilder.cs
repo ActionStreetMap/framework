@@ -206,7 +206,6 @@ namespace ActionStreetMap.Maps.Data.Import
             _ways.Clear();
             _ways = null;
             GC.Collect();
-            GC.WaitForFullGCComplete();
         }
 
         public void Dispose()
