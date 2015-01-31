@@ -16,6 +16,8 @@ namespace ActionStreetMap.Maps.Data.Elevation
     /// </summary>
     public class SrtmElevationProvider : IElevationProvider, IConfigurable
     {
+        private const string LogTag = "mapdata.srtm";
+
         private readonly object _lockObj = new object();
         private readonly IFileSystemService _fileSystemService;
         private readonly ITrace _trace;
@@ -58,13 +60,16 @@ namespace ActionStreetMap.Maps.Data.Elevation
         /// <inheritdoc />
         public IObservable<Unit> Download(double latitude, double longitude)
         {
+            _trace.Output(LogTag, String.Format("downloading data for {0}:{1}", latitude, longitude));
             return _downloader.Download(new GeoCoordinate(latitude, longitude))
                     .SelectMany(bytes => 
                     {
+                        _trace.Output(LogTag, String.Format("downloaded {0} bytes", bytes.Length));
                         _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
                         InitData((int) latitude, (int) longitude);
                         // store data to disk
                         var path = GetFilePath(_srtmLat, _srtmLon);
+                        _trace.Output(LogTag, String.Format("storing as {0}", path));
                         using(var stream = _fileSystemService.WriteStream(path))
                             stream.Write(_hgtData, 0, _hgtData.Length);
 

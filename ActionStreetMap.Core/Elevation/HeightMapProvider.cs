@@ -24,7 +24,7 @@ namespace ActionStreetMap.Core.Elevation
     /// <summary> Default realization of heightmap provider. </summary>
     public class HeightMapProvider: IHeightMapProvider, IConfigurable
     {
-        private const string LogTag = "mapdata.elevation";
+        private const string LogTag = "mapdata.ele";
 
         private const float MaxHeight = 8000;
 
@@ -61,10 +61,9 @@ namespace ActionStreetMap.Core.Elevation
             bool hasData = _elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
             if (!hasData && _autoDownload)
             {
-                Trace.Warn(LogTag, String.Format("No elevation data found for {0}. Starting downloading..", tileGeoCenter));
+                Trace.Warn(LogTag, String.Format("no elevation data found for {0}", tileGeoCenter));
                 _elevationProvider.Download(tileGeoCenter.Latitude, tileGeoCenter.Longitude).Wait();
                 hasData = _elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
-                Trace.Output(LogTag, String.Format("Success: {0}", hasData));
             }
 
             var isFlat = _isFlat && !hasData;
@@ -77,7 +76,7 @@ namespace ActionStreetMap.Core.Elevation
             else
                 BuildFlatMap(map, resolution, out minElevation, out maxElevation);
 
-            Trace.Output(LogTag, String.Format("Elevation mode is flat: {0}", isFlat));
+            Trace.Output(LogTag, String.Format("elevation mode is flat: {0}", isFlat));
             return new HeightMap
             {
                 LeftBottomCorner = tile.BottomLeft,
