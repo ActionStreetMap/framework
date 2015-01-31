@@ -62,8 +62,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
                     .SelectMany(bytes => 
                     {
                         _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
-                        _srtmLat = (int)latitude;
-                        _srtmLon = (int)longitude;
+                        InitData((int) latitude, (int) longitude);
                         // store data to disk
                         var path = GetFilePath(_srtmLat, _srtmLon);
                         using(var stream = _fileSystemService.WriteStream(path))
@@ -141,26 +140,30 @@ namespace ActionStreetMap.Maps.Data.Elevation
                         throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));
 
                     _hgtData = _fileSystemService.ReadBytes(filePath);
-
-                    switch (_hgtData.Length)
-                    {
-                        case 1201*1201*2: // SRTM-3
-                            _totalPx = 1201;
-                            _secondsPerPx = 3;
-                            break;
-                        case 3601*3601*2: // SRTM-1
-                            _totalPx = 3601;
-                            _secondsPerPx = 1;
-                            break;
-                        default:
-                            throw new ArgumentException("Invalid file size.", filePath);
-                    }
-                    // NOTE this is just perfromance optimization
-                    _offset = (_totalPx*_totalPx - _totalPx)*2;
-                    _srtmLat = latDec;
-                    _srtmLon = lonDec;
+                    InitData(latDec, lonDec);
                 }
             }
+        }
+
+        private void InitData(int latDec, int lonDec)
+        {
+            switch (_hgtData.Length)
+            {
+                case 1201 * 1201 * 2: // SRTM-3
+                    _totalPx = 1201;
+                    _secondsPerPx = 3;
+                    break;
+                case 3601 * 3601 * 2: // SRTM-1
+                    _totalPx = 3601;
+                    _secondsPerPx = 1;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid file size.");
+            }
+            // NOTE this is just perfromance optimization
+            _offset = (_totalPx * _totalPx - _totalPx) * 2;
+            _srtmLat = latDec;
+            _srtmLon = lonDec;
         }
 
         // NOTE inline instruction would be nice here, but current CLR version doesn't support it
