@@ -188,7 +188,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         #region Nested
 
-        internal struct SpatialIndexNode
+        internal class SpatialIndexNode
         {
             public T Data;
             public IEnvelop Envelope;
