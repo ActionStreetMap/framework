@@ -1,26 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Core.Tiling;
-using ActionStreetMap.Explorer.Commands;
-using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Maps.Data;
-using ActionStreetMap.Maps.Data.Import;
-using ActionStreetMap.Maps.Data.Spatial;
-using ActionStreetMap.Maps.Data.Storage;
-using ActionStreetMap.Maps.Geocoding;
-using ActionStreetMap.Maps.Formats.Xml;
-using ActionStreetMap.Maps.Formats;
-using System.Text;
-using ActionStreetMap.Infrastructure.Formats.Json;
-using Moq;
 
 namespace ActionStreetMap.Tests
 {
@@ -47,41 +33,11 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            var sw = new Stopwatch();
-            sw.Start();
-            // program.RunGame();
+            program.RunGame();
+            //program.DoContinuosMovements();
             //program.RunMocker();
-            //program.Wait();
-
-            // program.DoContinuosMovements();
-
-            /* program.CreateIndex(
-                @"g:\__ASM\_other_projects\osmconvert\ile-de-france.o5m",
-                @"g:\__ASM\__repository\framework\Tests\TestAssets\DemoResources\Config\themes\default\index.json",
-                "Index");*/
-            //program.ReadIndex("Index");
-            //program.SubscribeOnMainThreadTest();
-
-            /*var xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
-            var build = new InMemoryIndexBuilder(".xml", 
-                new MemoryStream(Encoding.UTF8.GetBytes(xmlContent)), new ConsoleTrace());
-            var configMock = new Mock<IConfigSection>();
-            configMock.Setup(c => c.GetString("index", null)).Returns(TestHelper.TestIndexSettingsPath);
-            build.Configure(configMock.Object);
-
-            build.Build();*/
-
-            var provider = new ElementSourceProvider(new TestPathResolver(), TestHelper.GetFileSystemService());
-            provider.Trace = new ConsoleTrace();
-            var configMock = new Mock<IConfigSection>();
-            configMock.Setup(c => c.GetString("server", It.IsAny<string>())).Returns("http://api.openstreetmap.org/api/0.6/map?bbox=");
-            configMock.Setup(c => c.GetString("query", It.IsAny<string>())).Returns("{0},{1},{2},{3}");
-            configMock.Setup(c => c.GetString("format", It.IsAny<string>())).Returns(".xml");
-            configMock.Setup(c => c.GetString("index", It.IsAny<string>())).Returns(TestHelper.TestIndexSettingsPath);
-            provider.Configure(configMock.Object);
-
-            var sources = provider.Get(new BoundingBox(new GeoCoordinate(52.533, 13.386),
-                new GeoCoordinate(52.534, 13.387))).Wait();
+            //program.Wait(); 
+            Console.ReadKey();
         }
 
         public void RunMocker()
@@ -118,52 +74,6 @@ namespace ActionStreetMap.Tests
             _logger.Stop();
         }
 
-        private static void InvokeAndMeasure(Action action)
-        {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            action.Invoke();
-            sw.Stop();
-            Console.WriteLine("Action completed in {0}ms", sw.ElapsedMilliseconds);
-        }
-
-        #region Index experiments
-
-        private void CreateIndex(string o5mFile, string settingsFile, string outputDirectory)
-        {
-            var settings = new IndexSettings();
-            settings.ReadFromJson(JSON.Parse(File.ReadAllText(TestHelper.TestIndexSettingsPath)));
-            var builder = new PersistentIndexBuilder(o5mFile, outputDirectory, TestHelper.GetFileSystemService(), settings, new ConsoleTrace());
-            builder.Build();
-        }
-
-        private void ReadIndex(string indexDirectory)
-        {
-            var logger = new PerformanceLogger();
-            logger.Start();
-
-            var usage = new KeyValueUsage(new FileStream(String.Format(Consts.KeyValueUsagePathFormat, indexDirectory), FileMode.Open));
-            var tree = SpatialIndex<uint>.Load(new FileStream(String.Format(Consts.SpatialIndexPathFormat, indexDirectory), FileMode.Open));
-            var index = KeyValueIndex.Load(new FileStream(String.Format(Consts.KeyValueIndexPathFormat, indexDirectory), FileMode.Open));
-            var keyValueStore = new KeyValueStore(index, usage, new FileStream(String.Format(Consts.KeyValueStorePathFormat, indexDirectory), FileMode.Open));
-            var store = new ElementStore(keyValueStore, new FileStream(String.Format(Consts.ElementStorePathFormat, indexDirectory), FileMode.Open));
-
-            /*InvokeAndMeasure(() =>
-            {
-                var results = tree.Search(new Envelop(new GeoCoordinate(52.54, 13.346),
-                        new GeoCoordinate(52.552, 13.354)));
-                foreach (var result in results)
-                {
-                    var element = store.Get(result);
-                    Console.WriteLine(element);
-                }
-            });*/
-
-            logger.Stop();
-        }
-
-        #endregion
-
         #region Performance analysis
 
         public void DoContinuosMovements()
@@ -183,39 +93,6 @@ namespace ActionStreetMap.Tests
                     _startGeoCoordinate.Longitude);
                 _positionObserver.OnNext(newCoordinate);
             }
-        }
-
-        #endregion
-
-        #region Rx test
-
-        public void SubscribeOnMainThreadTest()
-        {
-            Console.WriteLine("Main:{0}", Thread.CurrentThread.ManagedThreadId);
-            var heavyMethod = Observable.Start(() =>
-            {
-                // heavy method...
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
-                Console.WriteLine("heavyMethod:{0}", Thread.CurrentThread.ManagedThreadId);
-                return 10;
-            });
-
-            var heavyMethod2 = Observable.Start(() =>
-            {
-                // heavy method...
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
-                Console.WriteLine("heavyMethod2:{0}", Thread.CurrentThread.ManagedThreadId);
-                return 10;
-            });
-
-            // Join and await two other thread values
-            Observable.WhenAll(heavyMethod, heavyMethod2)
-                //.ObserveOnMainThread() // return to main thread
-                .Subscribe(xs =>
-                {
-                    Console.WriteLine("Subscribe:{0}", Thread.CurrentThread.ManagedThreadId);
-                });
-            Console.ReadKey();
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using ActionStreetMap.Infrastructure.IO;
+using ActionStreetMap.Infrastructure.Reactive;
 #if UNITY_WEBPLAYER
 using UnityEngine;
 #endif
@@ -22,8 +23,7 @@ namespace ActionStreetMap.Unity.IO
         public Stream ReadStream(string path)
         {
 #if UNITY_WEBPLAYER
-            var file = Resources.Load<TextAsset>(_pathResolver.Resolve(path));
-            return new MemoryStream(file.bytes);
+            return new MemoryStream(GetBytesSync(path));
 #else
             return File.Open(_pathResolver.Resolve(path), FileMode.Open);
 #endif
@@ -42,8 +42,7 @@ namespace ActionStreetMap.Unity.IO
         public string ReadText(string path)
         {
 #if UNITY_WEBPLAYER
-            var file = Resources.Load<TextAsset>(_pathResolver.Resolve(path));
-            return file.text;
+            return GetTextSync(path);
 #else
             using (var reader = new StreamReader(_pathResolver.Resolve(path)))
                 return reader.ReadToEnd();
@@ -54,8 +53,7 @@ namespace ActionStreetMap.Unity.IO
         public byte[] ReadBytes(string path)
         {
 #if UNITY_WEBPLAYER
-            var file = Resources.Load<TextAsset>(_pathResolver.Resolve(path));
-            return file.bytes;
+            return GetBytesSync(path);
 #else
             return File.ReadAllBytes(_pathResolver.Resolve(path));
 #endif
@@ -65,7 +63,7 @@ namespace ActionStreetMap.Unity.IO
         public bool Exists(string path)
         {
 #if UNITY_WEBPLAYER
-            return true;
+            return Observable.Start(() => Resources.Load<TextAsset>(_pathResolver.Resolve(path)) != null, Scheduler.MainThread).Wait();
 #else
             return File.Exists(_pathResolver.Resolve(path));
 #endif
@@ -90,5 +88,18 @@ namespace ActionStreetMap.Unity.IO
             return Directory.GetDirectories(_pathResolver.Resolve(path), searchPattern);
 #endif
         }
+#if UNITY_WEBPLAYER
+        private string GetTextSync(string path)
+        {
+            // NOTE this method should NOT be called from MainThread.
+             return Observable.Start(() => Resources.Load<TextAsset>(_pathResolver.Resolve(path)).text, Scheduler.MainThread).Wait();
+        }
+
+        private byte[] GetBytesSync(string path)
+        {
+            // NOTE this method should NOT be called from MainThread.
+            return Observable.Start(() => Resources.Load<TextAsset>(_pathResolver.Resolve(path)).bytes, Scheduler.MainThread).Wait();
+        }
+#endif
     }
 }
