@@ -75,8 +75,8 @@ namespace ActionStreetMap.Maps.Data.Elevation
         private string GetFileNamePrefix(GeoCoordinate coordinate)
         {
             return String.Format("{0}{1:00}{2}{3:000}",
-                coordinate.Latitude > 0 ? 'N' : 'S', Math.Abs(coordinate.Latitude),
-                coordinate.Longitude > 0 ? 'E' : 'W', Math.Abs(coordinate.Longitude));
+                coordinate.Latitude > 0 ? 'N' : 'S', Math.Abs((int)coordinate.Latitude),
+                coordinate.Longitude > 0 ? 'E' : 'W', Math.Abs((int)coordinate.Longitude));
         }
     }
 }
