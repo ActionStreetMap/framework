@@ -19,9 +19,7 @@ using ActionStreetMap.Unity;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
-    /// <summary>
-    ///     Register scene specific classes.
-    /// </summary>
+    /// <summary> Register scene specific classes. </summary>
     public class SceneBootstrapper: BootstrapperPlugin
     {
         private const string ThemeKey = "theme";

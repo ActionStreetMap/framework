@@ -9,9 +9,7 @@ using ActionStreetMap.Unity.Utils;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
-    /// <summary>
-    ///     Register infrastructure classes.
-    /// </summary>
+    /// <summary> Register infrastructure classes. </summary>
     public class InfrastructureBootstrapper: BootstrapperPlugin
     {
         /// <inheritdoc />

@@ -4,22 +4,16 @@ using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.MapCss.Domain
 {
-    /// <summary>
-    ///     Represents MapCSS rule for certain model.
-    /// </summary>
+    /// <summary>  Represents MapCSS rule for certain model. </summary>
     public class Rule
     {
         private Model _model;
         internal Model Model { set { _model = value; } }
 
-        /// <summary>
-        ///     List of declarations.
-        /// </summary>
+        /// <summary> List of declarations. </summary>
         public Dictionary<string, Declaration> Declarations { get; set; }
 
-        /// <summary>
-        ///     Creates MapCss rule for model.
-        /// </summary>
+        /// <summary> Creates MapCss rule for model. </summary>
         /// <param name="model">Model.</param>
         public Rule(Model model)
         {
@@ -27,14 +21,10 @@ namespace ActionStreetMap.Core.MapCss.Domain
             Declarations = new Dictionary<string, Declaration>(8);
         }
 
-        /// <summary>
-        ///     Checks whether this rule can be used
-        /// </summary>
+        /// <summary> Checks whether this rule can be used. </summary>
         public bool IsApplicable { get { return Declarations.Count > 0; } }
 
-        /// <summary>
-        ///     Evaluates value for gived qualifier. If not possible, returns default
-        /// </summary>
+        /// <summary> Evaluates value for gived qualifier. If not possible, returns default. </summary>
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
         /// <param name="default">Default value</param>
@@ -54,9 +44,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
             return (T) Convert.ChangeType(declaration.Value, typeof (T));
         }
 
-        /// <summary>
-        ///     Evaluates  value for gived qualifier.
-        /// </summary>
+        /// <summary> Evaluates  value for gived qualifier. </summary>
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
         /// <returns>Evaluated value</returns>
@@ -65,9 +53,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
             return Evaluate(qualifier, v => (T) Convert.ChangeType(v, typeof (T)));
         }
 
-        /// <summary>
-        ///     Evaluates list of values for gived qualifier.
-        /// </summary>
+        /// <summary> Evaluates list of values for gived qualifier. </summary>
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
         /// <returns>Evaluated list</returns>
@@ -76,9 +62,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
             return EvaluateList(qualifier, v => (T) Convert.ChangeType(v, typeof (T)));
         }
 
-        /// <summary>
-        ///     Evaluates list of values for gived qualifier.
-        /// </summary>
+        /// <summary> Evaluates list of values for gived qualifier. </summary>
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
         /// <param name="converter">Convertrs string to given type</param>
@@ -97,9 +81,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
             return values;
         }
 
-        /// <summary>
-        ///     Evaluates  value for gived qualifier.
-        /// </summary>
+        /// <summary> Evaluates  value for gived qualifier. </summary>
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
         /// <param name="converter">Convertrs string to given type</param>

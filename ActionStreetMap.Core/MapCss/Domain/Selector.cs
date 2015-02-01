@@ -7,41 +7,27 @@ using ActionStreetMap.Core.Utilities;
 
 namespace ActionStreetMap.Core.MapCss.Domain
 {
-    /// <summary>
-    ///     Represents MapCSS selector.
-    /// </summary>
+    /// <summary> Represents MapCSS selector. </summary>
     public abstract class Selector
     {
-        /// <summary>
-        ///     True if it's used for closed polygon. Applicable only for way.
-        /// </summary>
+        /// <summary> True if it's used for closed polygon. Applicable only for way. </summary>
         public bool IsClosed { get; set; }
 
-        /// <summary>
-        ///     Gets or sets tag.
-        /// </summary>
+        /// <summary> Gets or sets tag. </summary>
         public string Tag { get; set; }
 
-        /// <summary>
-        ///     Gets or sets value.
-        /// </summary>
+        /// <summary> Gets or sets value. </summary>
         public string Value { get; set; }
 
-        /// <summary>
-        ///     Gets or sets operation on tag.
-        /// </summary>
+        /// <summary> Gets or sets operation on tag. </summary>
         public string Operation { get; set; }
 
-        /// <summary>
-        ///     Checks whether model can be used with this selector.
-        /// </summary>
+        /// <summary> Checks whether model can be used with this selector. </summary>
         /// <param name="model">Model.</param>
         /// <returns> True if model can be used with this selector.</returns>
         public abstract bool IsApplicable(Model model);
 
-        /// <summary>
-        ///     Checks model.
-        /// </summary>
+        /// <summary> Checks model. </summary>
         /// <typeparam name="T">Type of model.</typeparam>
         /// <param name="model">Model.</param>
         /// <returns>True if model can be used.</returns>
@@ -53,9 +39,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
             return MatchTags(model);
         }
 
-        /// <summary>
-        ///     Mathes tags of given model.
-        /// </summary>
+        /// <summary> Matches tags of given model. </summary>
         /// <param name="model">Model.</param>
         /// <returns>True if model is matched.</returns>
         protected bool MatchTags(Model model)
@@ -80,12 +64,10 @@ namespace ActionStreetMap.Core.MapCss.Domain
         }
     }
 
-    #region Concret trivial implementations
+    #region Concrete trivial implementations
 
-    /// <summary>
-    ///     Selector for Node.
-    /// </summary>
-    public class NodeSelector : Selector
+    /// <summary> Selector for Node. </summary>
+    internal class NodeSelector : Selector
     {
         /// <inheritdoc />
         public override bool IsApplicable(Model model)
@@ -94,10 +76,8 @@ namespace ActionStreetMap.Core.MapCss.Domain
         }
     }
 
-    /// <summary>
-    ///     Selector for Area.
-    /// </summary>
-    public class AreaSelector : Selector
+    /// <summary>  Selector for Area. </summary>
+    internal class AreaSelector : Selector
     {
         /// <inheritdoc />
         public override bool IsApplicable(Model model)
@@ -106,10 +86,8 @@ namespace ActionStreetMap.Core.MapCss.Domain
         }
     }
 
-    /// <summary>
-    ///     Selector for Way.
-    /// </summary>
-    public class WaySelector : Selector
+    /// <summary> Selector for Way. </summary>
+    internal class WaySelector : Selector
     {
         /// <inheritdoc />
         public override bool IsApplicable(Model model)
@@ -118,10 +96,8 @@ namespace ActionStreetMap.Core.MapCss.Domain
         }
     }
 
-    /// <summary>
-    ///     Selector for canvas.
-    /// </summary>
-    public class CanvasSelector : Selector
+    /// <summary> Selector for canvas. </summary>
+    internal class CanvasSelector : Selector
     {
         /// <inheritdoc />
         public override bool IsApplicable(Model model)
@@ -130,16 +106,12 @@ namespace ActionStreetMap.Core.MapCss.Domain
         }
     }
 
-    /// <summary>
-    ///     Composite selector which compares list of selectors using logical AND.
-    /// </summary>
-    public class AndSelector: Selector
+    /// <summary> Composite selector which compares list of selectors using logical AND. </summary>
+    internal class AndSelector: Selector
     {
         private readonly IList<Selector> _selectors;
 
-        /// <summary>
-        ///     Creates AndSelector.
-        /// </summary>
+        /// <summary> Creates AndSelector. </summary>
         /// <param name="selectors">List of selectors.</param>
         public AndSelector(IList<Selector> selectors)
         {

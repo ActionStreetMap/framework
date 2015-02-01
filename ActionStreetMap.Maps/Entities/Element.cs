@@ -4,23 +4,18 @@ using ActionStreetMap.Maps.Visitors;
 namespace ActionStreetMap.Maps.Entities
 {
     /// <summary>
-    ///     Primive used as a base class for any osm object that has a meaning on the map (NodeIds, Ways and Relations).
+    ///     Primive used as a base class for any osm object that has a meaning on the map 
+    ///     (NodeIds, Ways and Relations).
     /// </summary>
     public abstract class Element
     {
-        /// <summary>
-        ///     The id.
-        /// </summary>
+        /// <summary> Gets or sets id. </summary>
         public long Id { get; set; }
 
-        /// <summary>
-        ///     The tags.
-        /// </summary>
+        /// <summary> Gets or sets tags. </summary>
         public Dictionary<string, string> Tags { get; set; }
 
-        /// <summary>
-        ///     Adds tag to collection.
-        /// </summary>
+        /// <summary> Safe adds tag to collection. </summary>
         /// <param name="key">Tag key.</param>
         /// <param name="value">Tag value.</param>
         public virtual void AddTag(string key, string value)
@@ -30,9 +25,7 @@ namespace ActionStreetMap.Maps.Entities
             Tags.Add(key, value);
         }
 
-        /// <summary>
-        ///     Accepts visitor.
-        /// </summary>
+        /// <summary> Accepts visitor. </summary>
         /// <param name="elementVisitor">Element visitor.</param>
         public abstract void Accept(IElementVisitor elementVisitor);
 

@@ -3,10 +3,8 @@ using Antlr.Runtime.Tree;
 
 namespace ActionStreetMap.Core.MapCss.Visitors
 {
-    /// <summary>
-    ///     Provides null realization of IMapCssVisitor
-    /// </summary>
-    public class MapCssVisitorBase: IMapCssVisitor
+    /// <summary>  Provides null realization of IMapCssVisitor. </summary>
+    internal class MapCssVisitorBase : IMapCssVisitor
     {
         /// <inheritdoc />
         public virtual Stylesheet Visit(CommonTree tree)

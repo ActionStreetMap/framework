@@ -4,19 +4,13 @@ using ActionStreetMap.Maps.Visitors;
 
 namespace ActionStreetMap.Maps.Entities
 {
-    /// <summary>
-    ///     Represents a simple way.
-    /// </summary>
+    /// <summary> Represents a simple way. </summary>
     public class Way : Element
     {
-        /// <summary>
-        ///     Holds the list of nodes.
-        /// </summary>
-        public List<long> NodeIds { get; set; }
+        /// <summary> Holds the list of nodes. </summary>
+        internal List<long> NodeIds { get; set; }
 
-        /// <summary>
-        ///     GeoCoordinates of way.
-        /// </summary>
+        /// <summary> Gets or sets geo coordinates of way. </summary>
         public List<GeoCoordinate> Coordinates { get; set; }
 
         /// <inheritdoc />
@@ -25,9 +19,7 @@ namespace ActionStreetMap.Maps.Entities
             elementVisitor.VisitWay(this);
         }
 
-        /// <summary>
-        ///     Returns all the ponts in this way in the same order as the nodes.
-        /// </summary>
+        /// <summary> Returns all the ponts in this way in the same order as the nodes. </summary>
         public void FillPoints(List<GeoCoordinate> coordinates)
         {
             for (int idx = 0; idx < Coordinates.Count; idx++)
@@ -38,9 +30,7 @@ namespace ActionStreetMap.Maps.Entities
             }
         }
 
-        /// <summary>
-        ///     True if way is polygon.
-        /// </summary>
+        /// <summary> True if way is polygon. </summary>
         public bool IsPolygon
         {
             get { return Coordinates.Count > 2; }

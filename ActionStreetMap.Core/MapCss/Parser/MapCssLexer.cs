@@ -26,7 +26,7 @@ using Antlr.Runtime.Misc;
 
 [System.Diagnostics.DebuggerNonUserCodeAttribute]
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "3.5.0.2")]
-public partial class MapCssLexer : Antlr.Runtime.Lexer
+internal partial class MapCssLexer : Antlr.Runtime.Lexer
 {
 	public const int EOF=-1;
 	public const int ATTRIBUTE_SELECTOR=4;

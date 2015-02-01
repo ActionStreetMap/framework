@@ -7,56 +7,31 @@ namespace ActionStreetMap.Core.Positioning
     /// </summary>
     public class GeoPosition
     {
-        /// <summary>
-        ///     Geo coordinate.
-        /// </summary>
+        /// <summary> Geo coordinate. </summary>
         public GeoCoordinate Coordinate;
 
-        /// <summary>
-        ///     Speed in km/h
-        /// </summary>
+        /// <summary> Speed in km/h. </summary>
         public double Speed = -1.0;
 
-        /// <summary>
-        ///     Course in degrees
-        /// </summary>
+        /// <summary> Course in degrees. </summary>
         public double Course = -1.0;
 
-        /// <summary>
-        ///     Date.
-        /// </summary>
+        /// <summary> Date. </summary>
         public DateTime Date = DateTime.MinValue;
 
-        /// <summary>
-        ///     Time.
-        /// </summary>
+        /// <summary> Time.</summary>
         public TimeSpan Time = TimeSpan.MinValue;
 
-        /// <summary>
-        ///     DateTime.
-        /// </summary>
-        public DateTime DateTime
-        {
-            get
-            {
-                return new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds,
-                    Time.Milliseconds);
-            }
-        }
+        /// <summary> DateTime. </summary>
+        public DateTime DateTime { get { return new DateTime(Date.Year, Date.Month, Date.Day, Time.Hours, Time.Minutes, Time.Seconds, Time.Milliseconds); } }
 
-        /// <summary>
-        ///     Position fix.
-        /// </summary>
+        /// <summary> Position fix. </summary>
         public int PositionFixIndicator = -1;
 
-        /// <summary>
-        ///     Satelites.
-        /// </summary>
+        /// <summary> Satelites. </summary>
         public int Satelites = 0;
 
-        /// <summary>
-        ///     Hdop.
-        /// </summary>
+        /// <summary> Hdop. </summary>
         public int Hdop = 0;
 
         /// <inheritdoc />

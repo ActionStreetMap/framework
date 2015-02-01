@@ -1,21 +1,13 @@
 ﻿namespace ActionStreetMap.Core.Scene.Roads
 {
-    /// <summary>
-    ///     Represents general road type.
-    /// </summary>
+    /// <summary> Represents general road type. </summary>
     public enum RoadType: byte
     {
-        /// <summary>
-        ///     For car.
-        /// </summary>
+        /// <summary> Road for cars. </summary>
         Car,
-        /// <summary>
-        ///     For bikes
-        /// </summary>
+        /// <summary> Road for bikes. </summary>
         Bike,
-        /// <summary>
-        /// For pedestrian.
-        /// </summary>
+        /// <summary> Road for pedestrians. </summary>
         Pedestrian
     }
 }

@@ -4,77 +4,49 @@ using ActionStreetMap.Core.Utilities;
 
 namespace ActionStreetMap.Core.Tiling.Models
 {
-    /// <summary>
-    ///     Represents map tile.
-    /// </summary>
+    /// <summary> Represents map tile. </summary>
     public class Tile : Model
     {
-        /// <summary>
-        ///     Stores map center coordinate in lat/lon.
-        /// </summary>
+        /// <summary> Stores map center coordinate in lat/lon. </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
-        /// <summary>
-        ///     Stores tile center coordinate in Unity metrics.
-        /// </summary>
+        /// <summary> Stores tile center coordinate in Unity metrics. </summary>
         public MapPoint MapCenter { get; private set; }
 
-        /// <summary>
-        ///     Gets or sets tile canvas.
-        /// </summary>
+        /// <summary> Gets or sets tile canvas. </summary>
         public Canvas Canvas { get; private set; }
 
-        /// <summary>
-        ///     Gets bounding box for current tile.
-        /// </summary>
+        /// <summary> Gets bounding box for current tile. </summary>
         public BoundingBox BoundingBox { get; private set; }
 
-        /// <summary>
-        ///     Square side size in Unity metrics.
-        /// </summary>
+        /// <summary> Square side size in Unity metrics. </summary>
         public float Size { get; private set; }
 
-        /// <summary>
-        ///     Gets or sets game object which is used to represent this tile.
-        /// </summary>
+        /// <summary> Gets or sets game object which is used to represent this tile. </summary>
         public IGameObject GameObject { get; set; }
 
-        /// <summary>
-        ///     Gets or sets heightmap of given tile.
-        /// </summary>
+        /// <summary> Gets or sets heightmap of given tile. </summary>
         public HeightMap HeightMap { get; set; }
 
-        /// <summary>
-        ///     Gets ModelRegistry of given tile.
-        /// </summary>
+        /// <summary> Gets ModelRegistry of given tile. </summary>
         public TileRegistry Registry { get; private set; }
 
-        /// <summary>
-        ///     Gets top left point on map.
-        /// </summary>
+        /// <summary> Gets top left point on map. </summary>
         public MapPoint TopLeft { get; private set; }
 
-        /// <summary>
-        ///     Gets top right point on map.
-        /// </summary>
+        /// <summary> Gets top right point on map. </summary>
         public MapPoint TopRight { get; private set; }
 
-        /// <summary>
-        ///     Gets bottom left point on map.
-        /// </summary>
+        /// <summary> Gets bottom left point on map. </summary>
         public MapPoint BottomLeft { get; private set; }
 
-        /// <summary>
-        ///     Gets bottom right point on map.
-        /// </summary>
+        /// <summary> Gets bottom right point on map. </summary>
         public MapPoint BottomRight { get; private set; }
 
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
 
-        /// <summary>
-        ///     Creates tile.
-        /// </summary>
+        /// <summary> Creates tile. </summary>
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="mapCenter">Center of map.</param>
         /// <param name="canvas">Map canvas.</param>
@@ -98,9 +70,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             Registry = new TileRegistry();
         }
 
-        /// <summary>
-        ///     Checks whether absolute position locates in tile with bound offset.
-        /// </summary>
+        /// <summary> Checks whether absolute position locates in tile with bound offset. </summary>
         /// <param name="position">Absolute position in game.</param>
         /// <param name="offset">offset from bounds.</param>
         /// <returns>Tres if position in tile</returns>

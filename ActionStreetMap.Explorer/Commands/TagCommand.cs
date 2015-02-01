@@ -11,9 +11,7 @@ using ActionStreetMap.Maps.Entities;
 
 namespace ActionStreetMap.Explorer.Commands
 {
-    /// <summary>
-    ///     Tags search command.
-    /// </summary>
+    /// <summary> Tags search command. </summary>
     public class TagCommand : ICommand
     {
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
@@ -25,9 +23,7 @@ namespace ActionStreetMap.Explorer.Commands
         /// <inheritdoc />
         public string Description { get { return Strings.TagCommand; } }
 
-        /// <summary>
-        ///     Creates instance of <see cref="TagCommand" />
-        /// </summary>
+        /// <summary> Creates instance of <see cref="TagCommand" />. </summary>
         /// <param name="positionObserver">Position listener.</param>
         /// <param name="searchEngine">Search engine instance.</param>
         [Dependency]

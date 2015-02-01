@@ -3,16 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace ActionStreetMap.Explorer.Commands
 {
-    /// <summary>
-    ///     Helper class to parse list of arguments.
-    /// </summary>
+    /// <summary> Helper class to parse list of arguments. </summary>
     public class Arguments
     {
         private readonly HybridDictionary _parameters;
 
-        /// <summary>
-        ///     Creates instance of <see cref="Arguments"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="Arguments"/>. </summary>
         /// <param name="args"></param>
         public Arguments(string[] args)
         {
@@ -77,12 +73,9 @@ namespace ActionStreetMap.Explorer.Commands
             }
         }
 
-        /// <summary>
-        ///     Returns a parameter value if it exists.
-        /// </summary>
+        /// <summary> Returns a parameter value if it exists. </summary>
         /// <param name="param">Parameter name.</param>
         /// <returns>Parameter value.</returns>
-        public string this[string param] { get { return (_parameters[param] as string); }
-        }
+        public string this[string param] { get { return (_parameters[param] as string); } }
     }
 }

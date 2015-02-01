@@ -5,9 +5,7 @@ using ActionStreetMap.Infrastructure.Formats.Json;
 
 namespace ActionStreetMap.Infrastructure.Config
 {
-    /// <summary>
-    ///     Represens a single element of xml.
-    /// </summary>
+    /// <summary>  Represens a single element of xml. </summary>
     public class ConfigElement
     {
         private readonly string _xpath;

@@ -3,14 +3,10 @@ using ActionStreetMap.Maps.Visitors;
 
 namespace ActionStreetMap.Maps.Entities
 {
-    /// <summary>
-    ///     Represents a simple relation.
-    /// </summary>
+    /// <summary> Represents a simple relation. </summary>
     public class Relation : Element
     {
-        /// <summary>
-        ///     The relation members.
-        /// </summary>
+        /// <summary> Gets or sets relation members. </summary>
         public List<RelationMember> Members { get; set; }
 
         /// <inheritdoc />

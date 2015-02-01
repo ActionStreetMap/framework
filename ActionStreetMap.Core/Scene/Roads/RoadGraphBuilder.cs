@@ -5,28 +5,20 @@ using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Scene.Roads
 {
-    /// <summary>
-    ///     Defines API for building road graph.
-    /// </summary>
+    /// <summary> Defines API for building road graph. </summary>
     public interface IRoadGraphBuilder
     {
-        /// <summary>
-        ///     Adds road element to graph.
-        /// </summary>
+        /// <summary> Adds road element to graph. </summary>
         /// <param name="element">Road element.</param>
         void Add(RoadElement element);
 
-        /// <summary>
-        ///    Builds road graph and cleanups internal buffers to make object ready to reuse.
-        /// </summary>
+        /// <summary> Builds road graph and cleanups internal buffers to make object ready to reuse. </summary>
         /// <returns>Road graph.</returns>
         RoadGraph Build();
     }
 
-    /// <summary>
-    ///     Default implementation of <see cref="IRoadGraphBuilder"/>.
-    /// </summary>
-    public sealed class RoadGraphBuilder: IRoadGraphBuilder
+    /// <summary> Default implementation of <see cref="IRoadGraphBuilder"/>. </summary>
+    internal sealed class RoadGraphBuilder: IRoadGraphBuilder
     {
         // map which is used for merging of split elements
         private readonly Dictionary<long, List<RoadElement>> _elements = new Dictionary<long, List<RoadElement>>(128);

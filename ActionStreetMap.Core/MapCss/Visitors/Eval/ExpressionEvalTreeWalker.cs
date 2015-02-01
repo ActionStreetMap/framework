@@ -11,10 +11,10 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
 {
     /// <summary>
     ///     Naive implementation of Eval expression builder
-    /// Internally, builds expression from common tree which represents operations in prefix notation
-    /// Unfortunately, it can be used only on platform which support such features
+    ///     Internally, builds expression from common tree which represents operations in prefix notation
+    ///     Unfortunately, it can be used only on platform which support such features
     /// </summary>
-    public sealed class ExpressionEvalTreeWalker: ITreeWalker
+    internal sealed class ExpressionEvalTreeWalker: ITreeWalker
     {
         private readonly object _lockObj = new object();
 
@@ -23,9 +23,7 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
         private CommonTree _tree;
         private object _compiledLambda;
 
-        /// <summary>
-        ///     Creates ExpressionEvalTreeWalker
-        /// </summary>
+        /// <summary> Creates ExpressionEvalTreeWalker. </summary>
         /// <param name="tree">Parse tree.</param>
         public ExpressionEvalTreeWalker(CommonTree tree)
         {

@@ -5,26 +5,20 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Infrastructure
 {
-    /// <summary>
-    ///     Wrapper of real Unity's GameObject.
-    /// </summary>
-    public class UnityGameObject : IGameObject
+    /// <summary> Wrapper of real Unity's GameObject. </summary>
+    internal class UnityGameObject : IGameObject
     {
         private readonly string _name;
         private object _gameObject;
 
-        /// <summary>
-        ///     Creates UnityGameObject. Internally creates Unity's GameObject with given name.
-        /// </summary>
+        /// <summary> Creates UnityGameObject. Internally creates Unity's GameObject with given name. </summary>
         /// <param name="name">Name.</param>
         public UnityGameObject(string name)
         {
             _name = name;
         }
 
-        /// <summary>
-        ///     Creates UnityGameObject.
-        /// </summary>
+        /// <summary> Creates UnityGameObject. </summary>
         /// <param name="name">Name.</param>
         /// <param name="gameObject">GameObject to be wrapperd.</param>
         public UnityGameObject(string name, GameObject gameObject)
@@ -74,9 +68,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
             }
         }
 
-        /// <summary>
-        ///     Sets parent on current thread.
-        /// </summary>
+        /// <summary>  Sets parent on current thread. </summary>
         internal void SetParent(IGameObject parent)
         {
             (_gameObject as GameObject).transform.parent = parent.GetComponent<GameObject>().transform;

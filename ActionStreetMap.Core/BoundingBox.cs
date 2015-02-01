@@ -4,24 +4,18 @@ using ActionStreetMap.Core.Utilities;
 namespace ActionStreetMap.Core
 {
     /// <summary>
-    ///     Represents bounding box. See details:
-    ///     http://stackoverflow.com/questions/238260/how-to-calculate-the-bounding-box-for-a-given-lat-lng-location
+    ///     Represents bounding box. 
+    ///     See details: http://stackoverflow.com/questions/238260/how-to-calculate-the-bounding-box-for-a-given-lat-lng-location
     /// </summary>
     public class BoundingBox
     {
-        /// <summary>
-        ///     Gets or sets point with minimal latitude and longitude
-        /// </summary>
+        /// <summary> Gets or sets point with minimal latitude and longitude. </summary>
         public GeoCoordinate MinPoint { get; set; }
 
-        /// <summary>
-        ///     Gets or sets point with maximum latitude and longitude
-        /// </summary>
+        /// <summary> Gets or sets point with maximum latitude and longitude. </summary>
         public GeoCoordinate MaxPoint { get; set; }
 
-        /// <summary>
-        ///     Creates bounding box from given min and max points
-        /// </summary>
+        /// <summary> Creates bounding box from given min and max points. </summary>
         /// <param name="minPoint">Point with minimal latitude and longitude</param>
         /// <param name="maxPoint">Point with maximum latitude and longitude</param>
         public BoundingBox(GeoCoordinate minPoint, GeoCoordinate maxPoint)
@@ -31,16 +25,12 @@ namespace ActionStreetMap.Core
             Size = GeoProjection.Distance(minPoint, maxPoint)/Math.Sqrt(2);
         }
 
-        /// <summary>
-        ///     Gets size of bounding box. Assume that it's created as square.
-        /// </summary>
+        /// <summary> Gets size of bounding box. Assume that it's created as square. </summary>
         public double Size { get; private set; }
 
         #region Operations
 
-        /// <summary>
-        ///     Adds point to bounding boxes together yielding as result the smallest box that surrounds both.
-        /// </summary>
+        /// <summary> Adds point to bounding boxes together yielding as result the smallest box that surrounds both. </summary>
         public static BoundingBox operator +(BoundingBox a, GeoCoordinate b)
         {
             var minPoint = new GeoCoordinate(
@@ -54,9 +44,7 @@ namespace ActionStreetMap.Core
             return new BoundingBox(minPoint, maxPoint);
         }
 
-        /// <summary>
-        ///     Adds bounding box to current
-        /// </summary>
+        /// <summary> Adds bounding box to current. </summary>
         public static BoundingBox operator +(BoundingBox a, BoundingBox b)
         {
             var minLat = a.MinPoint.Latitude < b.MinPoint.Latitude ? a.MinPoint.Latitude : b.MinPoint.Latitude;
@@ -72,11 +60,9 @@ namespace ActionStreetMap.Core
 
         # region Creation
 
-        /// <summary>
-        ///     Creates bounding box
-        /// </summary>
-        /// <param name="point">Center</param>
-        /// <param name="halfSideInM">Half length of the bounding box</param>
+        /// <summary> Creates bounding box. </summary>
+        /// <param name="point">Center.</param>
+        /// <param name="halfSideInM">Half length of the bounding box.</param>
         public static BoundingBox CreateBoundingBox(GeoCoordinate point, double halfSideInM)
         {
             // Bounding box surrounding the point at given coordinates,

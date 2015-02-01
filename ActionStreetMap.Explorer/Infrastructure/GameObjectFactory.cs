@@ -5,10 +5,8 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Infrastructure
 {
-    /// <summary>
-    ///     Represents default GameObject factory.
-    /// </summary>
-    public class GameObjectFactory : IGameObjectFactory
+    /// <summary> Represents default GameObject factory. </summary>
+    internal class GameObjectFactory : IGameObjectFactory
     {
         /// <inheritdoc />
         public virtual IGameObject CreateNew(string name)

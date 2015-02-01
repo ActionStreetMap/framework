@@ -4,10 +4,8 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Infrastructure
 {
-    /// <summary>
-    ///     Defines default object pool.
-    /// </summary>
-    public class ObjectPool: IObjectPool
+    /// <summary> Defines default object pool. </summary>
+    internal class ObjectPool: IObjectPool
     {
         private readonly Dictionary<Type, object> _listPoolMap = new Dictionary<Type, object>(8);
         private readonly ObjectArrayPool<float> _splatMapArrayPool = new ObjectArrayPool<float>(1);

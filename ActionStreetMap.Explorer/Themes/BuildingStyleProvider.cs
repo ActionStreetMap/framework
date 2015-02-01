@@ -9,9 +9,10 @@ using ActionStreetMap.Explorer.Scene.Buildings;
 namespace ActionStreetMap.Explorer.Themes
 {
     /// <summary>
-    ///     Provides the way to get BuildingStyle using Building. This implementation uses color as key to find style.
+    ///     Provides the way to get BuildingStyle using Building. This implementation uses color as key to 
+    ///     find style.
     /// </summary>
-    public class BuildingStyleProvider : IBuildingStyleProvider
+    internal class BuildingStyleProvider : IBuildingStyleProvider
     {
         private readonly Dictionary<string, List<BuildingStyle.FacadeStyle>> _facadeStyleMapping;
         private readonly Dictionary<string, List<BuildingStyle.RoofStyle>> _roofStyleMapping;
@@ -20,9 +21,7 @@ namespace ActionStreetMap.Explorer.Themes
         private readonly DoubleKeyDictionary<string, Color32, BuildingStyle.FacadeStyle> _facadeStyleCache;
         private readonly DoubleKeyDictionary<string, Color32, BuildingStyle.RoofStyle> _roofStyleCache;
 
-        /// <summary>
-        ///     Creates BuildingStyleProvider.
-        /// </summary>
+        /// <summary> Creates BuildingStyleProvider. </summary>
         /// <param name="facadeStyleMapping"></param>
         /// <param name="roofStyleMapping"></param>
         public BuildingStyleProvider(Dictionary<string, List<BuildingStyle.FacadeStyle>> facadeStyleMapping,

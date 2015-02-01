@@ -15,16 +15,16 @@ namespace ActionStreetMap.Core.Scene.Details
             DetailIndex = DefaultDetailIndex;
         }
 
-        /// <summary> ZIndex. </summary>
+        /// <summary> Gets or sets zIndex. </summary>
         public float ZIndex { get; set; }
 
-        /// <summary> Splat index. </summary>
+        /// <summary> Gets or sets splat index. </summary>
         public int SplatIndex { get; set; }
 
-        /// <summary> Detail index. </summary>
+        /// <summary> Gets or sets detail index. </summary>
         public int DetailIndex { get; set; }
 
-        /// <summary> Average elevation. </summary>
+        /// <summary> Gets or sets average elevation. </summary>
         public float AverageElevation { get; set; }
 
         /// <summary> Gets or sets map points for this surcafe. </summary>

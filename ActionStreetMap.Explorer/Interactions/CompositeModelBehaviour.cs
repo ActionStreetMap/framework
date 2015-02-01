@@ -7,9 +7,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Interactions
 {
-    /// <summary>
-    ///     Defines model behavior which consists of list of mono behaviors.
-    /// </summary>
+    /// <summary> Defines model behavior which consists of list of mono behaviors. </summary>
     public class CompositeModelBehaviour : IModelBehaviour
     {
         private readonly IEnumerable<Type> _behaviourTypes;
@@ -17,9 +15,7 @@ namespace ActionStreetMap.Explorer.Interactions
         /// <inheritdoc />
         public string Name { get; private set; }
 
-        /// <summary>
-        ///     Creates CompositeModelBehaviour
-        /// </summary>
+        /// <summary> Creates CompositeModelBehaviour. </summary>
         /// <param name="name">Name.</param>
         /// <param name="behaviourTypes">List of mono behaviors.</param>
         public CompositeModelBehaviour(string name, IEnumerable<Type> behaviourTypes)

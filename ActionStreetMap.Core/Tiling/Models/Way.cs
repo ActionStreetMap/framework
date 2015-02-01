@@ -2,9 +2,7 @@
 
 namespace ActionStreetMap.Core.Tiling.Models
 {
-    /// <summary>
-    ///     Represents a set of connected points. For example, used for roads
-    /// </summary>
+    /// <summary> Represents a set of connected points. For example, used for roads. </summary>
     public class Way: Model
     {
         /// <summary> Gets or sets geo coordinates for this model. </summary>

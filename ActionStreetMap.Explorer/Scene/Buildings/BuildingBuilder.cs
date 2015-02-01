@@ -1,43 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings
 {
-    /// <summary>
-    ///     Defines building builder logic.
-    /// </summary>
+    /// <summary>  Defines building builder logic. </summary>
     public interface IBuildingBuilder
     {
-        /// <summary>
-        ///     Builds building.
-        /// </summary>
+        /// <summary> Builds building. </summary>
         /// <param name="heightMap">Heightmap.</param>
         /// <param name="building">Building.</param>
         /// <param name="style">Style.</param>
         void Build(HeightMap heightMap, Building building, BuildingStyle style);
     }
 
-    /// <summary>
-    ///     Default building builder.
-    /// </summary>
+    /// <summary> Default building builder. </summary>
     public class BuildingBuilder : IBuildingBuilder
     {
         private readonly IResourceProvider _resourceProvider;
         private readonly IObjectPool _objectPool;
 
-        /// <summary>
-        ///     Creates BuildingBuilder.
-        /// </summary>
+        /// <summary> Creates BuildingBuilder. </summary>
         /// <param name="resourceProvider">Resource provider.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
@@ -62,9 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
             Scheduler.MainThread.Schedule(() => AttachChildGameObject(building.GameObject, "roof", roofMeshData));
         }
 
-        /// <summary>
-        ///     Process unity's game object.
-        /// </summary>
+        /// <summary> Process unity's game object. </summary>
         protected virtual void AttachChildGameObject(IGameObject parent, string name, MeshData meshData)
         {
             GameObject gameObject = GetGameObject(meshData);

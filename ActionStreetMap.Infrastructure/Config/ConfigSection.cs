@@ -6,26 +6,20 @@ using ActionStreetMap.Infrastructure.IO;
 
 namespace ActionStreetMap.Infrastructure.Config
 {
-    /// <summary>
-    ///     Represens a JSON config entry.
-    /// </summary>
+    /// <summary> Represens a JSON config entry. </summary>
     public class ConfigSection : IConfigSection
     {
         /// <summary> Gets root element of this section. </summary>
         public ConfigElement RootElement { get; private set; }
 
-        /// <summary>
-        ///     Creates ConfigSection.
-        /// </summary>
+        /// <summary> Creates ConfigSection. </summary>
         /// <param name="element">Config element.</param>
         public ConfigSection(ConfigElement element)
         {
             RootElement = element;
         }
 
-        /// <summary>
-        ///     Creates ConfigSection.
-        /// </summary>
+        /// <summary> Creates ConfigSection. </summary>
         /// <param name="appConfigFileName">Config appConfig.</param>
         /// <param name="fileSystemService">File system service</param>
         public ConfigSection(string appConfigFileName, IFileSystemService fileSystemService)

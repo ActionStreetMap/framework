@@ -7,17 +7,16 @@ using Antlr.Runtime.Tree;
 
 namespace ActionStreetMap.Core.MapCss.Visitors.Eval
 {
-    /// <summary>
-    ///     Provides workaround to process eval expressions for platforms which doesn't support expression trees (e.g. web player).
+    /// <summary> 
+    ///     Provides workaround to process eval expressions for platforms which doesn't support expression 
+    ///     trees (e.g. web player). 
     /// </summary>
-    public class StringEvalTreeWalker: ITreeWalker
+    internal class StringEvalTreeWalker: ITreeWalker
     {
         private readonly CommonTree _tree;
         private OperationStack _opStack;
 
-        /// <summary>
-        ///     Creates StringEvalTreeWalker
-        /// </summary>
+        /// <summary> Creates StringEvalTreeWalker. </summary>
         /// <param name="tree">Parse tree.</param>
         public StringEvalTreeWalker(CommonTree tree)
         {

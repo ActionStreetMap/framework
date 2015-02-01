@@ -1,33 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Commands
 {
-    /// <summary>
-    ///     Responsible for command registration.
-    /// </summary>
+    /// <summary> Responsible for command registration. </summary>
     public class CommandController
     {
         private Dictionary<string, ICommand> _cmdTable = new Dictionary<string, ICommand>();
 
-        /// <summary>
-        ///     Returns list of registered commands.
-        /// </summary>
+        /// <summary> Returns list of registered commands. </summary>
         public IEnumerable<string> CommandNames { get { return _cmdTable.Keys; } }
 
-        /// <summary>
-        ///     Gets command by name.
-        /// </summary>
+        /// <summary> Gets command by name. </summary>
         /// <param name="name">Name of command.</param>
         /// <returns>Command</returns>
         public ICommand this[string name] { get { return _cmdTable[name]; } }
 
-        /// <summary>
-        ///     Creates instance of <see cref="CommandController"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="CommandController"/>. </summary>
         [Dependency]
         public CommandController(IEnumerable<ICommand> commands)
         {
@@ -38,27 +29,21 @@ namespace ActionStreetMap.Explorer.Commands
                 Register(new Command("help", "prints help", CmdHelp));
         }
 
-        /// <summary>
-        ///     Registers command.
-        /// </summary>
+        /// <summary> Registers command. </summary>
         /// <param name="command">Command.</param>
         public void Register(ICommand command)
         {
             _cmdTable[command.Name] = command;
         }
 
-        /// <summary>
-        ///     Unregisters command.
-        /// </summary>
+        /// <summary> Unregisters command. </summary>
         /// <param name="command">Command.</param>
         public void Unregister(ICommand command)
         {
             _cmdTable.Remove(command.Name);
         }
 
-        /// <summary>
-        ///     Checks whether command is registered.
-        /// </summary>
+        /// <summary> Checks whether command is registered. </summary>
         /// <param name="command">Command.</param>
         /// <returns>True if command registered.</returns>
         public bool Contains(string command)

@@ -1,33 +1,19 @@
 ﻿namespace ActionStreetMap.Infrastructure.Diagnostic
 {
-    /// <summary>
-    ///     Defines trace record types.
-    /// </summary>
+    /// <summary>  Defines trace record types. </summary>
     public enum RecordType
     {
-        /// <summary>
-        ///     Normal.
-        /// </summary>
+        /// <summary> Normal. </summary>
         Normal,
-        /// <summary>
-        ///     Warning.
-        /// </summary>
+        /// <summary> Warning. </summary>
         Warning,
-        /// <summary>
-        ///     Error.
-        /// </summary>
+        /// <summary> Error. </summary>
         Error,
-        /// <summary>
-        ///     System.
-        /// </summary>
+        /// <summary> System. </summary>
         System,
-        /// <summary>
-        ///     Input.
-        /// </summary>
+        /// <summary> Input. </summary>
         Input,
-        /// <summary>
-        ///     Output.
-        /// </summary>
+        /// <summary> Output. </summary>
         Output
     }
 }

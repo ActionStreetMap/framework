@@ -3,21 +3,17 @@ using System.Collections.Generic;
 
 namespace ActionStreetMap.Core.Scene.Roads
 {
-    /// <summary>
-    ///     Provides road junction utility methods.
-    /// </summary>
+    /// <summary> Provides road junction utility methods. </summary>
     internal static class RoadJunctionUtils
     {
         private static readonly List<int> IndexBuffer = new List<int>(4);
 
-        /// <summary>
-        ///     Generates polygon for given road junction and modifies connected road elements.
-        /// </summary>
+        /// <summary> Generates polygon for given road junction and modifies connected road elements. </summary>
         /// <param name="junction">Road junction.</param>
         public static RoadJunction CompleteJunction(RoadJunction junction)
         {
             // TODO use thread pool
-            List<MapPoint> junctionPolygon = new List<MapPoint>(8);
+            var junctionPolygon = new List<MapPoint>(8);
             foreach (var connection in junction.Connections)
             {
                 bool fromStart = connection.Start == junction;

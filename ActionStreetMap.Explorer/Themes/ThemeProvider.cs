@@ -18,22 +18,16 @@ using Rect = ActionStreetMap.Explorer.Scene.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Explorer.Themes
 {
-    /// <summary>
-    ///     Defines theme provider logic
-    /// </summary>
+    /// <summary> Defines theme provider logic. </summary>
     public interface IThemeProvider
     {
-        /// <summary>
-        ///     Gets theme.
-        /// </summary>
+        /// <summary> Gets theme. </summary>
         /// <returns>Theme.</returns>
         Theme Get();
     }
 
-    /// <summary>
-    ///     Default theme provider which uses json files with style definitions.
-    /// </summary>
-    public class ThemeProvider : IThemeProvider, IConfigurable
+    /// <summary> Default theme provider which uses json files with style definitions. </summary>
+    internal class ThemeProvider : IThemeProvider, IConfigurable
     {
         private const string BuildingsThemeFile = @"buildings";
         private const string RoadsThemeFile = @"roads";
@@ -45,9 +39,7 @@ namespace ActionStreetMap.Explorer.Themes
 
         private Theme _theme;
 
-        /// <summary>
-        ///     Creates ThemeProvider.
-        /// </summary>
+        /// <summary> Creates ThemeProvider. </summary>
         /// <param name="fileSystemService">File system service.</param>
         /// <param name="facadeBuilders">Facade builders.</param>
         /// <param name="roofBuilders">Roof builders.</param>

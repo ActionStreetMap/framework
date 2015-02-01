@@ -20,10 +20,8 @@ namespace ActionStreetMap.Core.MapCss
         Stylesheet Get();
     }
 
-    /// <summary>
-    ///     Default implementation of IStylesheetProvider
-    /// </summary>
-    public class StylesheetProvider : IStylesheetProvider, IConfigurable
+    /// <summary> Default implementation of IStylesheetProvider. </summary>
+    internal class StylesheetProvider : IStylesheetProvider, IConfigurable
     {
         private readonly IFileSystemService _fileSystemService;
         private const string PathKey = "mapcss";

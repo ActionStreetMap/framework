@@ -4,26 +4,18 @@ using ActionStreetMap.Infrastructure.IO;
 
 namespace ActionStreetMap.Infrastructure.Bootstrap
 {
-    /// <summary>
-    ///     Represents a bootstrapper plugin.
-    /// </summary>
+    /// <summary> Represents a bootstrapper plugin. </summary>
     public abstract class BootstrapperPlugin: IBootstrapperPlugin
     {
-        /// <summary>
-        ///     Gets or sets DI container.
-        /// </summary>
+        /// <summary> Gets or sets DI container. </summary>
         [Dependency]
         public IContainer Container { get; set; }
 
-        /// <summary>
-        ///     Gets or sets global configuration section
-        /// </summary>
+        /// <summary> Gets or sets global configuration section. </summary>
         [Dependency]
         public IConfigSection GlobalConfigSection { get; set; }
 
-        /// <summary>
-        ///     Gets or sets file system service.
-        /// </summary>
+        /// <summary> Gets or sets file system service. </summary>
         [Dependency]
         public IFileSystemService FileSystemService { get; set; }
 

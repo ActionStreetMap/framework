@@ -9,9 +9,7 @@ namespace ActionStreetMap.Core.Tiling.Models
     /// </summary>
     public class Relation: Model
     {
-        /// <summary>
-        ///     This map keeps information about roles between elements.
-        /// </summary>
+        /// <summary> This map keeps information about roles between elements. </summary>
         public Dictionary<string, HashSet<long>> RoleMap { get; set; }
 
         /// <summary> Areas which are defined in relation. </summary>

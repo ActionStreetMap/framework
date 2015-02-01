@@ -5,9 +5,7 @@ using ActionStreetMap.Explorer.Scene;
 
 namespace ActionStreetMap.Explorer.Helpers
 {
-    /// <summary>
-    ///     Provides methods for basic mapcss properties receiving
-    /// </summary>
+    /// <summary> Provides methods for basic mapcss properties receiving. </summary>
     internal static class CommonRuleExtensions
     {
         public static string GetKey(this Rule rule)
@@ -52,25 +50,19 @@ namespace ActionStreetMap.Explorer.Helpers
             return null;
         }
 
-        /// <summary>
-        ///     Z-index is just the lowest y coordinate
-        /// </summary>
+        /// <summary> Z-index is just the lowest y coordinate. </summary>
         public static float GetZIndex(this Rule rule)
         {
             return rule.Evaluate<float>("z-index");
         }
 
-        /// <summary>
-        ///     Gets width
-        /// </summary>
+        /// <summary> Gets width. </summary>
         public static float GetWidth(this Rule rule)
         {
             return rule.Evaluate<float>("width");
         }
 
-        /// <summary>
-        ///     Gets road type.
-        /// </summary>
+        /// <summary> Gets road type. </summary>
         public static RoadType GetRoadType(this Rule rule)
         {
             var typeStr = rule.Evaluate<string>("type");

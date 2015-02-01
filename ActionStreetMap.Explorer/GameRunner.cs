@@ -7,21 +7,15 @@ using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Explorer
 {
-    /// <summary>
-    ///     Represents entry point class for ASM logic.
-    /// </summary>
+    /// <summary> Represents entry point class for ASM logic. </summary>
     public interface IGameRunner
     {
-        /// <summary>
-        ///      Runs game with provided coordinate as map center.
-        /// </summary>
+        /// <summary> Runs game with provided coordinate as map center. </summary>
         /// <param name="startCoordinate">Geo coordinate for (0,0) map point.</param>
         void RunGame(GeoCoordinate startCoordinate);
     }
 
-    /// <summary>
-    ///     Represents application component root.
-    /// </summary>
+    /// <summary> Represents application component root. </summary>
     public sealed class GameRunner : IGameRunner, IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
         private readonly IContainer _container;
@@ -29,9 +23,7 @@ namespace ActionStreetMap.Explorer
         private IPositionObserver<MapPoint> _mapPositionObserver;
         private IPositionObserver<GeoCoordinate> _geoPositionObserver;
 
-        /// <summary>
-        ///     Creates instance of <see cref="GameRunner"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="GameRunner"/>. </summary>
         /// <param name="container">DI container.</param>
         /// <param name="messageBus">Message bus.</param>
         public GameRunner(IContainer container, IMessageBus messageBus)

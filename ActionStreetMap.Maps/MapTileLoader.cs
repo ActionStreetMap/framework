@@ -9,7 +9,7 @@ using ActionStreetMap.Maps.Visitors;
 namespace ActionStreetMap.Maps
 {
     /// <summary> Loads tile from given element source. </summary>
-    public class MapTileLoader: ITileLoader
+    internal class MapTileLoader: ITileLoader
     {
         private readonly IElementSourceProvider _elementSourceProvider;
         private readonly IModelLoader _modelLoader;

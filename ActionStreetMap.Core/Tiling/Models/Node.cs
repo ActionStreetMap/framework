@@ -1,9 +1,7 @@
 ﻿
 namespace ActionStreetMap.Core.Tiling.Models
 {
-    /// <summary>
-    ///     Represents Node - point on map with associated tags.
-    /// </summary>
+    /// <summary> Represents Node - point on map with associated tags. </summary>
     public class Node: Model
     {
         /// <summary> Gets or sets geo coordinate. </summary>

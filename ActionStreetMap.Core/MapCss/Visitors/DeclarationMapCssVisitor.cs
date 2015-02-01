@@ -5,16 +5,12 @@ using Antlr.Runtime.Tree;
 
 namespace ActionStreetMap.Core.MapCss.Visitors
 {
-    /// <summary>
-    ///     Provides logic to parse declarations.
-    /// </summary>
-    public class DeclarationMapCssVisitor: MapCssVisitorBase
+    /// <summary> Provides logic to parse declarations. </summary>
+    internal class DeclarationMapCssVisitor: MapCssVisitorBase
     {
         private readonly bool _canUseExprTree;
 
-        /// <summary>
-        ///     Creates DeclarationMapCssVisitor
-        /// </summary>
+        /// <summary> Creates DeclarationMapCssVisitor. </summary>
         /// <param name="canUseExprTree">True if platform supports expression trees.</param>
         public DeclarationMapCssVisitor(bool canUseExprTree)
         {

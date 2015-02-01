@@ -28,7 +28,7 @@ namespace ActionStreetMap.Maps.Data
     }
 
     /// <summary> Default implementation of <see cref="IElementSourceProvider"/>. </summary>
-    public sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
+    internal sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
     {
         private const string LogTag = "mapdata.source";
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");

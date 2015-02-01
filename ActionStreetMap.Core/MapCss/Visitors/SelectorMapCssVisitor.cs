@@ -4,10 +4,8 @@ using Antlr.Runtime.Tree;
 
 namespace ActionStreetMap.Core.MapCss.Visitors
 {
-    /// <summary>
-    ///     Selector visitor.
-    /// </summary>
-    public class SelectorMapCssVisitor : MapCssVisitorBase
+    /// <summary>  Selector visitor. </summary>
+    internal class SelectorMapCssVisitor : MapCssVisitorBase
     {
         /// <inheritdoc />
         public override Selector VisitSelector(CommonTree selectorTree, string selectorType)

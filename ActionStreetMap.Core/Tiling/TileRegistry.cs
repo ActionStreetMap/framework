@@ -7,7 +7,8 @@ using ActionStreetMap.Infrastructure.Primitives;
 namespace ActionStreetMap.Core.Tiling
 {
     /// <summary>
-    ///    Provides the way to register and unregister world specific objects (e.g. buildings, roads, etc.) in tile.
+    ///    Provides the way to register and unregister world specific objects (e.g. buildings, roads, etc.) 
+    ///     in tile.
     /// </summary>
     public class TileRegistry : IDisposable
     {
@@ -16,14 +17,10 @@ namespace ActionStreetMap.Core.Tiling
 
         // NOTE actually, this is workaround.
         // TODO should be designed better solution to prevent rendering of cross tile objects.
-        /// <summary>
-        ///     Contains global list of registered object ids
-        /// </summary>
+        /// <summary>  Contains global list of registered object ids. </summary>
         private static readonly SafeHashSet<long> GlobalIds = new SafeHashSet<long>();
 
-        /// <summary>
-        ///     Creates ModelRegistry using global registered id hashset.
-        /// </summary>
+        /// <summary> Creates ModelRegistry using global registered id hashset. </summary>
         internal TileRegistry()
         {
             _localIds = new SafeHashSet<long>();
@@ -70,9 +67,7 @@ namespace ActionStreetMap.Core.Tiling
 
         #endregion
 
-        /// <summary>
-        ///     Checks whether object with specific id is registered in global and local storages.
-        /// </summary>
+        /// <summary> Checks whether object with specific id is registered in global and local storages. </summary>
         /// <param name="id">Object id.</param>
         /// <returns>True if registration is found.</returns>
         public bool Contains(long id)

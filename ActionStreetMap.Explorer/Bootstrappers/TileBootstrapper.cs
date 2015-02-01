@@ -14,9 +14,7 @@ using ActionStreetMap.Maps.Geocoding;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
-    /// <summary>
-    ///     Register tile processing classes.
-    /// </summary>
+    /// <summary> Register tile processing classes. </summary>
     public class TileBootstrapper : BootstrapperPlugin
     {
         private const string TileKey = "tile";

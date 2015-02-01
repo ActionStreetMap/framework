@@ -2,24 +2,16 @@
 
 namespace ActionStreetMap.Core
 {
-    /// <summary>
-    ///     Represents regular geo coordinate with latitude and longitude.
-    /// </summary>
+    /// <summary> Represents regular geo coordinate with latitude and longitude. </summary>
     public struct GeoCoordinate
     {
-        /// <summary>
-        ///     Latitude in degrees.
-        /// </summary>
+        /// <summary> Latitude in degrees. </summary>
         public readonly double Latitude;
 
-        /// <summary>
-        ///     Longitude in degrees
-        /// </summary>
+        /// <summary> Longitude in degrees. </summary>
         public readonly double Longitude;
 
-        /// <summary>
-        ///     Creates geo coordinate from given latitude and longitude.
-        /// </summary>
+        /// <summary> Creates geo coordinate from given latitude and longitude. </summary>
         /// <param name="latitude">Latitude.</param>
         /// <param name="longitude">Longitude.</param>
         public GeoCoordinate(double latitude, double longitude)
@@ -28,18 +20,14 @@ namespace ActionStreetMap.Core
             Longitude = longitude;
         }
 
-        /// <summary>
-        ///     Compares two geo coordinates.
-        /// </summary>
+        /// <summary> Compares two geo coordinates. </summary>
         public static bool operator ==(GeoCoordinate a, GeoCoordinate b)
         {
             return MathUtility.AreEqual(a.Latitude, b.Latitude) &&
                    MathUtility.AreEqual(a.Longitude, b.Longitude);
         }
 
-        /// <summary>
-        ///     Compares two geo coordinates.
-        /// </summary>
+        /// <summary> Compares two geo coordinates. </summary>
         public static bool operator !=(GeoCoordinate a, GeoCoordinate b)
         {
             return !(a == b);

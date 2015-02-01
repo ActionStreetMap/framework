@@ -8,16 +8,12 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Tiling
 {
-    /// <summary>
-    ///     Represents default tile activator. 
-    /// </summary>
+    /// <summary> Represents default tile activator. </summary>
     public class TileActivator: ITileActivator
     {
         private const string Category = "tile";
 
-        /// <summary>
-        ///     Trace.
-        /// </summary>
+        /// <summary> Trace. </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 
@@ -43,18 +39,14 @@ namespace ActionStreetMap.Explorer.Tiling
             Scheduler.MainThread.Schedule(() => DestroyWithChildren(tile));
         }
 
-        /// <summary>
-        ///     Destroys tile using UnityEngine.Object.Destroy.
-        /// </summary>
+        /// <summary> Destroys tile using UnityEngine.Object.Destroy. </summary>
         /// <param name="tile">Tile.</param>
         protected virtual void DestroyWithChildren(Tile tile)
         {
             UnityEngine.Object.Destroy(tile.GameObject.GetComponent<GameObject>());
         }
 
-        /// <summary>
-        ///     Calls UnityEngine.GameObject.SetActive(active) for given tile.
-        /// </summary>
+        /// <summary> Calls UnityEngine.GameObject.SetActive(active) for given tile. </summary>
         /// <param name="tile">Tile.</param>
         /// <param name="active">Active flag.</param>
         protected virtual void ProcessWithChildren(Tile tile, bool active)

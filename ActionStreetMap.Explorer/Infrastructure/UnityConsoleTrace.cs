@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Infrastructure
 {
-    /// <summary>
-    ///     UnityConsole trace
-    /// </summary>
-    public class UnityConsoleTrace: DefaultTrace
+    /// <summary> UnityConsole trace </summary>
+    internal class UnityConsoleTrace: DefaultTrace
     {
         /// <inheritdoc />
         protected override void WriteRecord(RecordType type, string category, string message, Exception exception)

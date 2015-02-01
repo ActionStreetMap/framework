@@ -9,9 +9,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 {
-    /// <summary>
-    ///     Builds dome roof.
-    /// </summary>
+    /// <summary> Builds dome roof. </summary>
     public class DomeRoofBuilder: IRoofBuilder
     {
         private readonly IGameObjectFactory _gameObjectFactory;
@@ -19,9 +17,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         /// <inheritdoc />
         public string Name { get { return "dome"; } }
 
-        /// <summary>
-        ///     Creates DomeRoofBuilder
-        /// </summary>
+        /// <summary> Creates DomeRoofBuilder. </summary>
         [Dependency]
         public DomeRoofBuilder(IGameObjectFactory gameObjectFactory)
         {
@@ -62,9 +58,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             };
         }
 
-        /// <summary>
-        ///     Sets Unity specific data.
-        /// </summary>
+        /// <summary> Sets Unity specific data. </summary>
         /// <param name="gameObjectWrapper">GameObject wrapper.</param>
         /// <param name="center">Sphere center.</param>
         /// <param name="diameter">Diameter.</param>

@@ -3,10 +3,8 @@ using System.Linq;
 
 namespace ActionStreetMap.Maps.Extensions
 {
-    /// <summary>
-    ///     Contains extensions that aid in interpreting some of the OSM-tags.
-    /// </summary>
-    public static class TagExtensions
+    /// <summary> Contains extensions that aid in interpreting some of the OSM-tags. </summary>
+    internal static class TagExtensions
     {
         private static readonly string[] BooleanTrueValues = {"yes", "true", "1"};
         private static readonly string[] BooleanFalseValues = {"no", "false", "0"};
@@ -38,9 +36,7 @@ namespace ActionStreetMap.Maps.Extensions
                    BooleanFalseValues.Contains(tagValue.ToLowerInvariant());
         }
 
-        /// <summary>
-        ///     Checks given string whether it's null or empty (incl. triming)
-        /// </summary>
+        /// <summary> Checks given string whether it's null or empty (incl. triming). </summary>
         /// <param name="str">Source string.</param>
         internal static bool IsNullOrWhiteSpace(string str)
         {

@@ -2,9 +2,7 @@
 
 namespace ActionStreetMap.Infrastructure.Diagnostic
 {
-    /// <summary>
-    ///     Empty trace which simplifies logging via inheritance.
-    /// </summary>
+    /// <summary> Empty trace which simplifies logging via inheritance. </summary>
     public class DefaultTrace : ITrace
     {
         #region ITrace implementation
@@ -98,9 +96,7 @@ namespace ActionStreetMap.Infrastructure.Diagnostic
 
         #endregion
 
-        /// <summary>
-        ///     Writes record to trace.
-        /// </summary>
+        /// <summary> Writes record to trace. </summary>
         /// <param name="type">Record type.</param>
         /// <param name="category">Category.</param>
         /// <param name="message">Message.</param>

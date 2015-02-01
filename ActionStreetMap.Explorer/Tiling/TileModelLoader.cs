@@ -20,9 +20,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Tiling
 {
-    /// <summary>
-    ///     Represents class responsible to process all models for tile.
-    /// </summary>
+    /// <summary> Represents class responsible to process all models for tile. </summary>
     public class TileModelLoader : IModelLoader
     {
         private readonly IHeightMapProvider _heighMapProvider;
@@ -35,9 +33,7 @@ namespace ActionStreetMap.Explorer.Tiling
         private readonly HeightMapProcessor _heightMapProcessor;
         private readonly Stylesheet _stylesheet;
 
-        /// <summary>
-        ///     Creates <see cref="TileModelLoader"/>
-        /// </summary>
+        /// <summary> Creates <see cref="TileModelLoader"/>. </summary>
         [Dependency]
         public TileModelLoader(IGameObjectFactory gameObjectFactory, IThemeProvider themeProvider,
             IHeightMapProvider heighMapProvider, ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,

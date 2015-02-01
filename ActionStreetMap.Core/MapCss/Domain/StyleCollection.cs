@@ -4,9 +4,7 @@ using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.MapCss.Domain
 {
-    /// <summary>
-    ///     Contains some performance optimizations for rule processing
-    /// </summary>
+    /// <summary> Contains some performance optimizations for rule processing. </summary>
     internal class StyleCollection
     {
         private readonly List<Style> _canvasStyles = new List<Style>(1);
