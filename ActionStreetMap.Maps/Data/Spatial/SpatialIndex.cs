@@ -39,7 +39,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
                 var nodesToSearch = new Stack<SpatialIndexNode>();
 
-                while (node.Envelope != null)
+                while (node!= null && node.Envelope != null)
                 {
                     if (node.Children != null)
                     {
@@ -66,7 +66,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
         private static void Collect(SpatialIndexNode node, IObserver<T> observer)
         {
             var nodesToSearch = new Stack<SpatialIndexNode>();
-            while (node.Envelope != null)
+            while (node != null && node.Envelope != null)
             {
                 if (node.Children != null)
                 {

@@ -34,6 +34,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     /// </summary>
     public class TerrainBuilder : ITerrainBuilder
     {
+        private const string LogTag = "terrain";
+
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly IResourceProvider _resourceProvider;
         private readonly IRoadBuilder _roadBuilder;
@@ -76,6 +78,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public IGameObject Build(IGameObject parent, TerrainSettings settings)
         {
+            Trace.Output(LogTag, "starting build");
             ProcessTerrainObjects(settings);
 
             var canvas = settings.Tile.Canvas;
@@ -112,11 +115,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _surfaceBuilder.Build(settings, alphaMapElements, settings.Tile.Canvas.SplatMap, canvas.Details);
 
             var gameObject = _gameObjectFactory.CreateNew("terrain");
+            Trace.Output(LogTag, "scheduling on main thread..");
             Scheduler.MainThread.Schedule(() =>
             {
                 CreateTerrainGameObject(gameObject, parent, settings, size, canvas.Details);
                 // NOTE schedule cleanup on non-UI thread
                 canvas.Dispose();
+                Trace.Output(LogTag, "build finished");
             });
 
             return gameObject;
