@@ -34,6 +34,7 @@ namespace ActionStreetMap.Core.Elevation
         private bool _isFlat;
         private bool _autoDownload;
 
+        /// <summary> Trace. </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 

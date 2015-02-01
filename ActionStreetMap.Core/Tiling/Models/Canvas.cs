@@ -46,9 +46,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             loader.CompleteTile(tile);
         }
 
-        /// <summary>
-        ///     Adds road element to terrain.
-        /// </summary>
+        /// <summary> Adds road element to terrain. </summary>
         /// <param name="roadElement">Road element</param>
         public void AddRoadElement(RoadElement roadElement)
         {
@@ -58,9 +56,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             }
         }
 
-        /// <summary>
-        ///     Adds area which should be drawn using different splat index.
-        /// </summary>
+        /// <summary> Adds area which should be drawn using different splat index. </summary>
         /// <param name="surface">Area settings.</param>
         public void AddArea(Surface surface)
         {
@@ -70,9 +66,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             }
         }
 
-        /// <summary>
-        ///     Adds area which should be adjuested by height. Processed last.
-        /// </summary>
+        /// <summary> Adds area which should be adjuested by height. Processed last. </summary>
         /// <param name="surface">Area settings.</param>
         public void AddElevation(Surface surface)
         {
@@ -102,15 +96,25 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <inheritdoc />
         public void Dispose()
         {
-            //Return lists to object pool
-            foreach (var area in Areas)
-                _objectPool.StoreList(area.Points);
-            foreach (var elevation in Elevations)
-                _objectPool.StoreList(elevation.Points);
+           Dispose(true);
+        }
 
-            Details.ForEach(array => Array.Clear(array, 0, array.Length));
-            _objectPool.StoreList(Details, true);
-            _objectPool.StoreArray(SplatMap);
+        /// <summary>  Dispose pattern implementation. </summary>
+        /// <param name="disposing">True if necessary to dispose managed resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //Return lists to object pool
+                foreach (var area in Areas)
+                    _objectPool.StoreList(area.Points);
+                foreach (var elevation in Elevations)
+                    _objectPool.StoreList(elevation.Points);
+
+                Details.ForEach(array => Array.Clear(array, 0, array.Length));
+                _objectPool.StoreList(Details, true);
+                _objectPool.StoreArray(SplatMap);
+            }
         }
     }
 }

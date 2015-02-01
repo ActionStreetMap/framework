@@ -122,12 +122,10 @@ namespace ActionStreetMap.Core.Tiling
                 return;
             _allTiles.Add(i, j, entry);
             _messageBus.Send(new TileLoadStartMessage(tileCenter));
+            // Set activated before load to prevent concurrent issue in case of fast tile switching.
+            entry.Item2 = TileState.Activated;
             tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
-            _tileLoader.Load(tile).Subscribe(_ => {}, () => 
-            {
-                lock (_lockObj) { entry.Item2 = TileState.Activated; }
-                _messageBus.Send(new TileLoadFinishMessage(tile));
-            });
+            _tileLoader.Load(tile).Subscribe(_ => {}, () => _messageBus.Send(new TileLoadFinishMessage(tile)));
         }
 
         private void Destroy(int i, int j)

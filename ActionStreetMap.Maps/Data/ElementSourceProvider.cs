@@ -74,7 +74,6 @@ namespace ActionStreetMap.Maps.Data
             // TODO ensure thread safety in this and all related methods
             // NOTE block thread here
             var elementSourcePath = _searchTree.Search(query).Wait();
-
             if (elementSourcePath == null && !String.IsNullOrEmpty(_mapDataServerUri))
             {
                 var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 

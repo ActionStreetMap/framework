@@ -31,7 +31,7 @@ namespace ActionStreetMap.Tests
 
         public void OnTileFound(Tile tile, MapPoint position)
         {
-            System.Console.WriteLine("Tile {0} found for {1}", tile.MapCenter, position);
+            //System.Console.WriteLine("Tile {0} found for {1}", tile.MapCenter, position);
         }
 
         public void OnTileBuildStarted(MapPoint center)
