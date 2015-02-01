@@ -19,8 +19,10 @@ namespace ActionStreetMap.Tests.Maps.Index
         public void CanCreateElementSource()
         {
             // ARRANGE
+            var directory = "local";
             var configSection = new Mock<IConfigSection>();
-            var directory = "index";
+            configSection.Setup(c => c.GetString(directory, It.IsAny<string>()))
+                .Returns(directory);
             var fileSystemService = Utils.GetFileSystemServiceMock(directory);
             var pathResolver = new Mock<IPathResolver>();
             pathResolver.Setup(p => p.Resolve(It.IsAny<string>())).Returns<string>(s => s);
@@ -38,12 +40,9 @@ namespace ActionStreetMap.Tests.Maps.Index
             provider.Configure(configSection.Object);
             var elementSource1 = provider.Get(new BoundingBox(
                 new GeoCoordinate(52.0f, 13.0f), new GeoCoordinate(52.1f, 13.1f)));
-            var elementSource2 = provider.Get(new BoundingBox(
-                new GeoCoordinate(52.5f, 13.5f), new GeoCoordinate(52.6f, 13.6f)));
 
             // ARRANGE
             Assert.IsNotNull(elementSource1.Wait());
-            Assert.IsNull(elementSource2.DefaultIfEmpty().Wait());
         }
     }
 }

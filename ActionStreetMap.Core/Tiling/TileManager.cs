@@ -134,7 +134,7 @@ namespace ActionStreetMap.Core.Tiling
         {
             var entry = _allTiles[i, j];
             if (entry.Item2 != TileState.Deactivated)
-                throw new AlgorithmException(Strings.TileDeactivationBug);
+                throw new AlgorithmException(String.Format(Strings.TileStateException, entry.Item2));
             _allTiles.Remove(i, j);
             _tileActivator.Destroy(entry.Item1);
             _messageBus.Send(new TileDestroyMessage(entry.Item1));

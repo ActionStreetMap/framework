@@ -32,7 +32,7 @@ namespace ActionStreetMap.Tests.Core.Elevation
             });
 
             var provider = new HeightMapProvider(elevationProvider.Object, new ObjectPool());
-            
+            provider.Trace = new ConsoleTrace();
             // ACT
             var heightMap = provider.Get(new Tile(center, new MapPoint(), null, tileSize), resolution);
                 

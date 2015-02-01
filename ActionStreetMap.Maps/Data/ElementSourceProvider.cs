@@ -75,7 +75,7 @@ namespace ActionStreetMap.Maps.Data
             // NOTE block thread here
             var elementSourcePath = _searchTree.Search(query).Wait();
 
-            if (elementSourcePath == null)
+            if (elementSourcePath == null && !String.IsNullOrEmpty(_mapDataServerUri))
             {
                 var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 
                     query.MaxPoint.Longitude, query.MaxPoint.Latitude);
@@ -85,7 +85,7 @@ namespace ActionStreetMap.Maps.Data
                     .Take(1)
                     .SelectMany(bytes =>
                     {
-                        Trace.Warn(LogTag, String.Format("Build index from {0} bytes received", bytes.Length));
+                        Trace.Warn(LogTag, String.Format("build index from {0} bytes received", bytes.Length));
                         if (_settings == null) ReadIndexSettings();
                         var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), _settings, Trace);
                         indexBuilder.Build();
@@ -153,10 +153,10 @@ namespace ActionStreetMap.Maps.Data
         /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
-            _mapDataServerUri = configSection
-                .GetString(@"remote.server", @"http://api.openstreetmap.org/api/0.6/map?bbox=");
+            // @"http://api.openstreetmap.org/api/0.6/map?bbox="
+            _mapDataServerUri = configSection.GetString(@"remote.server", null);
             //api/0.6/map?bbox=left,bottom,right,top
-            _mapDataServerQuery = configSection.GetString(@"remote.query", "{0},{1},{2},{3}");
+            _mapDataServerQuery = configSection.GetString(@"remote.query", null);
             _mapDataFormat = configSection.GetString(@"remote.format", "xml");
             _indexSettingsPath = configSection.GetString(@"index.settings", null);
 

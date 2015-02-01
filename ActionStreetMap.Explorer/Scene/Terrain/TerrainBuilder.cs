@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -15,23 +14,17 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain
 {
-    /// <summary>
-    ///     Defines terrain builder.
-    /// </summary>
+    /// <summary> Defines terrain builder. </summary>
     public interface ITerrainBuilder
     {
-        /// <summary>
-        ///     Builds terrain.
-        /// </summary>
+        /// <summary> Builds terrain. </summary>
         /// <param name="parent">Parent game object, usually Tile.</param>
         /// <param name="settings">Terrain settings.</param>
         /// <returns>Terrain game object.</returns>
         IGameObject Build(IGameObject parent, TerrainSettings settings);
     }
 
-    /// <summary>
-    ///     Creates Unity Terrain object using given settings.
-    /// </summary>
+    /// <summary>  Creates Unity Terrain object using given settings. </summary>
     public class TerrainBuilder : ITerrainBuilder
     {
         private const string LogTag = "terrain";
@@ -46,15 +39,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private SplatPrototype[] _splatPrototypes;
         private DetailPrototype[] _detailPrototypes;
 
-        /// <summary>
-        ///     Gets or sets trace.
-        /// </summary>
+        /// <summary>  Gets or sets trace. </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 
-        /// <summary>
-        ///     Creates TerrainBuilder.
-        /// </summary>
+        /// <summary> Creates TerrainBuilder. </summary>
         /// <param name="gameObjectFactory">Game object factory.</param>
         /// <param name="resourceProvider">Resource provider.</param>
         /// <param name="roadBuilder">Road builder.</param>
@@ -171,9 +160,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             }
         }
 
-        /// <summary>
-        ///     Creates real game object
-        /// </summary>
+        /// <summary>   Creates real game object. </summary>
         protected virtual void CreateTerrainGameObject(IGameObject terrainWrapper, IGameObject parent, 
             TerrainSettings settings, Vector3 size, List<int[,]> detailMapList)
         {
@@ -183,7 +170,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             terrainData.SetHeights(0, 0, settings.Tile.HeightMap.Data);
             terrainData.size = size;
             
-            // Assume that settings is the same all the time
+            // assume that settings is the same all the time
             if (_splatPrototypes == null)
                 _splatPrototypes = GetSplatPrototypes(settings.SplatParams);
 
