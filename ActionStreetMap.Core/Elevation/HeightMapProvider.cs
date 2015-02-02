@@ -96,6 +96,7 @@ namespace ActionStreetMap.Core.Elevation
         public void Store(HeightMap heightMap)
         {
             _objectPool.StoreArray(heightMap.Data);
+            heightMap.Data = null;
         }
 
         /// <inheritdoc />
