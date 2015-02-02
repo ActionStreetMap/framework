@@ -95,7 +95,10 @@ namespace ActionStreetMap.Maps.Data
             }
 
             if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
+            {
+                Trace.Warn(LogTag, string.Format("load index data from {0}", elementSourcePath));
                 SetCurrentElementSource(elementSourcePath, new ElementSource(elementSourcePath, _fileSystemService));
+            }
 
             return Observable.Return(_elementSourceCache.Item2);
         }
