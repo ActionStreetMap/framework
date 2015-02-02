@@ -23,10 +23,10 @@ namespace ActionStreetMap.Core.Tiling
     public class TileManager : ITilePositionObserver, IConfigurable
     {
         /// <summary> Maximum of loaded tiles including non-active. </summary>
-        private const int TileCacheSize = 4;
+        private const int TileCacheSize = 2;
 
         /// <summary> Max index distance in 2d space. </summary>
-        private const int ThresholdIndex = 4;
+        private const int ThresholdIndex = 1;
 
         private readonly object _lockObj = new object();
 
@@ -132,7 +132,7 @@ namespace ActionStreetMap.Core.Tiling
         {
             var entry = _allTiles[i, j];
             if (entry.Item2 != TileState.Deactivated)
-                throw new AlgorithmException(String.Format(Strings.TileStateException, entry.Item2));
+                throw new AlgorithmException(String.Format(Strings.TileStateException, entry.Item2, entry.Item1));
             _allTiles.Remove(i, j);
             _tileActivator.Destroy(entry.Item1);
             _messageBus.Send(new TileDestroyMessage(entry.Item1));
