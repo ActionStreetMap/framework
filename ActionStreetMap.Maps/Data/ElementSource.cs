@@ -37,7 +37,7 @@ namespace ActionStreetMap.Maps.Data
             KvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
             KvStore = new KeyValueStore(KvIndex, KvUsage, fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
             ElementStore = new ElementStore(KvStore, fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)));
-            SpatialIndexTree = SpatialIndex<uint>.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
+            SpatialIndexTree = SpatialIndex.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
         }
 
         /// <summary>

@@ -60,7 +60,7 @@ namespace ActionStreetMap.Maps.Data.Import
             }
 
             KeyValueIndex.Save(index, _fileSystemService.WriteStream(String.Format(Consts.KeyValueIndexPathFormat, _outputDirectory)));
-            SpatialIndex<uint>.Save(Tree, _fileSystemService.WriteStream(String.Format(Consts.SpatialIndexPathFormat, _outputDirectory)));
+            SpatialIndex.Save(Tree, _fileSystemService.WriteStream(String.Format(Consts.SpatialIndexPathFormat, _outputDirectory)));
             Store.Dispose();
         }
 

@@ -41,9 +41,8 @@ namespace ActionStreetMap.Maps.Data
 
         private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
-        private ISpatialIndex<string> _searchTree;
         private IndexSettings _settings;
-        private RTree<string> _insertTree;
+        private RTree<string> _tree;
         private MutableTuple<string, IElementSource> _elementSourceCache;
 
         /// <summary> Trace. </summary>
@@ -73,7 +72,7 @@ namespace ActionStreetMap.Maps.Data
         {
             // TODO ensure thread safety in this and all related methods
             // NOTE block thread here
-            var elementSourcePath = _searchTree.Search(query).Wait();
+            var elementSourcePath = _tree.Search(query).Wait();
             if (elementSourcePath == null && !String.IsNullOrEmpty(_mapDataServerUri))
             {
                 var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 
@@ -135,7 +134,7 @@ namespace ActionStreetMap.Maps.Data
                 var maxPoint = GetCoordinateFromString(coordinateStrings[1]);
 
                 var envelop = new Envelop(minPoint, maxPoint);
-                _insertTree.Insert(Path.GetDirectoryName(headerPath), envelop);
+                _tree.Insert(Path.GetDirectoryName(headerPath), envelop);
             }
         }
 
@@ -159,14 +158,10 @@ namespace ActionStreetMap.Maps.Data
             _mapDataFormat = configSection.GetString(@"remote.format", "xml");
             _indexSettingsPath = configSection.GetString(@"index.settings", null);
 
-            _insertTree = new RTree<string>();
+            _tree = new RTree<string>();
             var rootFolder = configSection.GetString("local", null);
             if (!String.IsNullOrEmpty(rootFolder))
                 SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
-            
-            // convert to search tree and release insert tree
-            _searchTree = SpatialIndex<string>.ToReadOnly(_insertTree);
-            _insertTree = null;
         }
 
         /// <inheritdoc />

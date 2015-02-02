@@ -10,7 +10,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
     ///     Represents readonly spatial index.
     /// </summary>
     /// <typeparam name="T">Data type which is associated with envelop.</typeparam>
-    internal class SpatialIndex<T>: ISpatialIndex<T>
+    internal class SpatialIndex : ISpatialIndex<uint>
     {
         private const uint Marker = uint.MaxValue;
 
@@ -21,14 +21,14 @@ namespace ActionStreetMap.Maps.Data.Spatial
 	        _root = root;
 	    }
 
-        public IObservable<T> Search(BoundingBox query)
+        public IObservable<uint> Search(BoundingBox query)
         {
             return Search(new Envelop(query.MinPoint, query.MaxPoint));
         }
 
-        private IObservable<T> Search(IEnvelop envelope)
+        private IObservable<uint> Search(IEnvelop envelope)
         {
-            return Observable.Create<T>(observer =>
+            return Observable.Create<uint>(observer =>
             {
                 var node = _root;
                 if (!envelope.Intersects(node.Envelope))
@@ -39,7 +39,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
                 var nodesToSearch = new Stack<SpatialIndexNode>();
 
-                while (node!= null && node.Envelope != null)
+                while (node.Envelope != null)
                 {
                     if (node.Children != null)
                     {
@@ -63,10 +63,10 @@ namespace ActionStreetMap.Maps.Data.Spatial
             });
         }
 
-        private static void Collect(SpatialIndexNode node, IObserver<T> observer)
+        private static void Collect(SpatialIndexNode node, IObserver<uint> observer)
         {
             var nodesToSearch = new Stack<SpatialIndexNode>();
-            while (node != null && node.Envelope != null)
+            while (node.Envelope != null)
             {
                 if (node.Children != null)
                 {
@@ -120,22 +120,22 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         #region Static: Load
 
-        public static SpatialIndex<uint> Load(Stream stream)
+        public static SpatialIndex Load(Stream stream)
         {
             using (var reader = new BinaryReader(stream))
             {
-                SpatialIndex<uint>.SpatialIndexNode root;
+                SpatialIndex.SpatialIndexNode root;
                 ReadNode(out root, reader);
-                return new SpatialIndex<uint>(root);
+                return new SpatialIndex(root);
             }
         }
 
-        private static bool ReadNode(out SpatialIndex<uint>.SpatialIndexNode root, BinaryReader reader)
+        private static bool ReadNode(out SpatialIndex.SpatialIndexNode root, BinaryReader reader)
         {
             var data = reader.ReadUInt32();
             if (data == Marker)
             {
-                root = default(SpatialIndex<uint>.SpatialIndexNode);
+                root = default(SpatialIndex.SpatialIndexNode);
                 return true;
             }
 
@@ -149,17 +149,16 @@ namespace ActionStreetMap.Maps.Data.Spatial
                 new Envelop(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
             // TODO use list from object pool
-            var children = new List<SpatialIndex<uint>.SpatialIndexNode>(64);
+            var children = new List<SpatialIndex.SpatialIndexNode>();
             while (true)
             {
-                SpatialIndex<uint>.SpatialIndexNode child;
+                SpatialIndex.SpatialIndexNode child;
                 if (ReadNode(out child, reader))
                     break;
                 children.Add(child);
             }
-            root = new SpatialIndex<uint>.SpatialIndexNode(data, envelop, children.Count > 0 ? children.ToArray() : null);
+            root = new SpatialIndex.SpatialIndexNode(data, envelop, children.Count > 0 ? children.ToArray() : null);
             root.IsLeaf = isLeaf;
-
             return false;
         }
 
@@ -167,12 +166,12 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         #region Static: Convert
 
-        public static SpatialIndex<T> ToReadOnly(RTree<T> rTree)
+        public static SpatialIndex ToReadOnly(RTree<uint> rTree)
         {
-            return new SpatialIndex<T>(VisitTree(rTree.Root));
+            return new SpatialIndex(VisitTree(rTree.Root));
         }
 
-        private static SpatialIndexNode VisitTree(RTree<T>.RTreeNode rNode)
+        private static SpatialIndexNode VisitTree(RTree<uint>.RTreeNode rNode)
         {
             var children = new SpatialIndexNode[rNode.Children.Count];
             for (int i = 0; i < rNode.Children.Count; i++)
@@ -188,14 +187,14 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         #region Nested
 
-        internal class SpatialIndexNode
+        internal struct SpatialIndexNode
         {
-            public T Data;
+            public uint Data;
             public IEnvelop Envelope;
             public bool IsLeaf;
             public SpatialIndexNode[] Children;
 
-            public SpatialIndexNode(T data, IEnvelop envelope, SpatialIndexNode[] children)
+            public SpatialIndexNode(uint data, IEnvelop envelope, SpatialIndexNode[] children)
             {
                 Data = data;
                 Envelope = envelope;

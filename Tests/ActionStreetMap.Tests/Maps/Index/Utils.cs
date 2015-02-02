@@ -62,7 +62,7 @@ namespace ActionStreetMap.Tests.Maps.Index
                 .Returns(elementStoreStream);
 
             var treeStream = new MemoryStream();
-            SpatialIndex<uint>.Save(tree, treeStream);
+            SpatialIndex.Save(tree, treeStream);
             treeStream = new MemoryStream(treeStream.GetBuffer());
 
             fileSystemService.Setup(fs => fs.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)))
