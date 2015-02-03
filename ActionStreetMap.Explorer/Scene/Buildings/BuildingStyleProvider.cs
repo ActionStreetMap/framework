@@ -89,7 +89,11 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
                     }
                 }
                 facadeStyle = facadeStyles[facadeIndex];
-                _facadeStyleCache.Add(building.Type, building.FacadeColor, facadeStyle);
+                lock (_facadeStyleCache)
+                {
+                    if (!_facadeStyleCache.ContainsKey(building.Type, building.FacadeColor))
+                        _facadeStyleCache.Add(building.Type, building.FacadeColor, facadeStyle);
+                }
             }
             else
             {
@@ -104,7 +108,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
                 var currentDiff = double.MaxValue;
                 for (int i = 0; i < roofStyles.Count; i++)
                 {
-                    var difference =building.RoofColor.DistanceTo(roofStyles[i].Color);
+                    var difference = building.RoofColor.DistanceTo(roofStyles[i].Color);
                     if (difference < currentDiff)
                     {
                         currentDiff = difference;
@@ -113,7 +117,11 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
                     }
                 }
                 roofStyle = roofStyles[roofIndex];
-                _roofStyleCache.Add(building.Type, building.RoofColor, roofStyle);
+                lock (_facadeStyleCache)
+                {
+                    if (!_roofStyleCache.ContainsKey(building.Type, building.RoofColor))
+                        _roofStyleCache.Add(building.Type, building.RoofColor, roofStyle);
+                }
             }
             else
             {
