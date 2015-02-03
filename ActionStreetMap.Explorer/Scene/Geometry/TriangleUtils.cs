@@ -3,14 +3,10 @@ using ActionStreetMap.Core;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry
 {
-    /// <summary>
-    ///     Provides some triangle utility functions
-    /// </summary>
+    /// <summary> Provides some triangle utility functions. </summary>
     public static class TriangleUtils
     {
-        /// <summary>
-        ///     Calculates tirangle area.
-        /// </summary>
+        /// <summary> Calculates tirangle area. </summary>
         /// <param name="p1">Triangle point one.</param>
         /// <param name="p2">Triangle point two.</param>
         /// <param name="p3">Triangle point three.</param>
@@ -20,9 +16,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             return Math.Abs((p1.X - p3.X)*(p2.Y - p1.Y) - (p1.X - p2.X)*(p3.Y - p1.Y))*0.5;
         }
 
-        /// <summary>
-        ///     Gets random point in triangle.
-        /// </summary>
+        /// <summary> Gets random point in triangle. </summary>
         /// <param name="p1">Triangle point one.</param>
         /// <param name="p2">Triangle point two.</param>
         /// <param name="p3">Triangle point three.</param>

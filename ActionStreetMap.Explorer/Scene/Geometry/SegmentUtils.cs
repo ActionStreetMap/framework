@@ -4,14 +4,10 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry
 {
-    /// <summary>
-    ///     Segment utils.
-    /// </summary>
+    /// <summary> Segment utils. </summary>
     public class SegmentUtils
     {
-        /// <summary>
-        ///     Gets intersection point of two segments
-        /// </summary>
+        /// <summary> Gets intersection point of two segments. </summary>
         public static Vector3 IntersectionPoint(Segment first, Segment second)
         {
             float a1 = first.End.z - first.Start.z;
@@ -40,9 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
                 );
         }
 
-        /// <summary>
-        ///     Returns true if segmens intersect
-        /// </summary>
+        /// <summary> Returns true if segmens intersect. </summary>
         public static bool Intersect(Segment first, Segment second)
         {
             Vector2 a = new Vector2(first.End.x - first.Start.x, first.End.z - first.Start.z);
@@ -89,9 +83,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             return doIntersect;
         }
 
-        /// <summary>
-        ///     Gets parallel segment with given offset
-        /// </summary>
+        /// <summary> Gets parallel segment with given offset. </summary>
         public static Segment GetParallel(Segment segment, float offset)
         {
             float x1 = segment.Start.x, x2 = segment.End.x, z1 = segment.Start.z, z2 = segment.End.z;

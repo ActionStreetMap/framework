@@ -12,16 +12,11 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides logic to build info models.
-    /// </summary>
+    /// <summary> Provides logic to build info models. </summary>
     public class InfoModelBuilder: ModelBuilder
     {       
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "info"; }
-        }
+        public override string Name { get { return "info"; } }
 
         /// <inheritdoc />
         public override IGameObject BuildNode(Tile tile, Rule rule, Node node)
@@ -48,9 +43,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return gameObjectWrapper;
         }
 
-        /// <summary>
-        ///     Process unity specific data.
-        /// </summary>
+        /// <summary> Process unity specific data. </summary>
         protected virtual void BuildObject(Tile tile, IGameObject gameObjectWrapper, Info info, 
             InfoStyle style, MapPoint mapPoint, float zIndex)
         {

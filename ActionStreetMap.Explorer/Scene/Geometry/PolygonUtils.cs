@@ -8,14 +8,10 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry
 {
-    /// <summary>
-    ///     Provides some polygon util methods.
-    /// </summary>
+    /// <summary> Provides some polygon util methods. </summary>
     public static class PolygonUtils
     {
-        /// <summary>
-        ///     Triangulates given polygon.
-        /// </summary>
+        /// <summary> Triangulates given polygon. </summary>
         /// <param name="points">Points which represents polygon.</param>
         /// <param name="objectPool">Object pool.</param>
         /// <param name="reverse">Reverse points.</param>
@@ -28,9 +24,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             return result;
         }
 
-        /// <summary>
-        ///     Cuts given polygon by tile corners.
-        /// </summary>
+        /// <summary> Cuts given polygon by tile corners. </summary>
         /// <param name="leftBottom">Left bottom corner.</param>
         /// <param name="rightUpper">Right upper corner.</param>
         /// <param name="points">Closed polygon points.</param>
@@ -49,9 +43,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             points.AddRange(result);
         }
 
-        /// <summary>
-        ///     Cuts given polygon by tile corners.
-        /// </summary>
+        /// <summary> Cuts given polygon by tile corners. </summary>
         /// <param name="heightmap">Height map.</param>
         /// <param name="points">Closed polygon points.</param>
         public static void ClipPolygonByTile(HeightMap heightmap, List<MapPoint> points)
@@ -62,9 +54,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
                 points[i].SetElevation(heightmap.LookupHeight(points[i]));
         }
 
-        /// <summary>
-        ///     Make offset polygon
-        /// </summary>
+        /// <summary> Make offset polygon. </summary>
         /// <param name="verticies">Source polygon.</param>
         /// <param name="result">Result polygon.</param>
         /// <param name="offset">Offset.</param>
@@ -89,9 +79,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             }
         }
 
-        /// <summary>
-        ///     Calcs center of polygon.
-        /// </summary>
+        /// <summary> Calcs center of polygon. </summary>
         /// <param name="polygon">Polygon.</param>
         /// <returns>Center of polygon.</returns>
         public static MapPoint GetCentroid(List<MapPoint> polygon)
@@ -143,13 +131,11 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             }
         }
 
-        /// <summary>
-        ///     Simplifies polygon using Douglas Peucker algorithim.
-        /// </summary>
+        /// <summary> Simplifies polygon using Douglas Peucker algorithim. </summary>
         /// <param name="source">Source.</param>
         /// <param name="destination">Destination.</param>
         /// <param name="tolerance">Tolerance.</param>
-        /// <param name="objectPool"></param>
+        /// <param name="objectPool">Object pool.</param>
         public static void Simplify(List<MapPoint> source, List<MapPoint> destination, float tolerance, 
             IObjectPool objectPool)
         {

@@ -5,24 +5,16 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
 {
-    /// <summary>
-    ///     Represents polygon.
-    /// </summary>
+    /// <summary> Represents polygon. </summary>
     public class Polygon
     {
-        /// <summary>
-        ///     Gets polygon verticies.
-        /// </summary>
+        /// <summary> Gets polygon verticies. </summary>
         public Vector3[] Verticies { get; private set; }
 
-        /// <summary>
-        ///     Gets polygon segments.
-        /// </summary>
+        /// <summary> Gets polygon segments. </summary>
         public Segment[] Segments { get; private set; }
 
-        /// <summary>
-        ///     Creates Polygon from MapPoints.
-        /// </summary>
+        /// <summary> Creates Polygon from MapPoints. </summary>
         /// <param name="verticies">Verticies.</param>
         public Polygon(IEnumerable<MapPoint> verticies)
         {
@@ -30,9 +22,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
             ComputeSegments();
         }
 
-        /// <summary>
-        ///     Creates Polygon from MapPoints and elevation
-        /// </summary>
+        /// <summary> Creates Polygon from MapPoints and elevation. </summary>
         /// <param name="verticies">Verticies.</param>
         /// <param name="elevation">Elevation.</param>
         public Polygon(IEnumerable<MapPoint> verticies, float elevation)
@@ -41,9 +31,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
             ComputeSegments();
         }
 
-        /// <summary>
-        ///     Creates Polygon from Vector3.
-        /// </summary>
+        /// <summary> Creates Polygon from Vector3. </summary>
         /// <param name="verticies">Verticies.</param>
         public Polygon(IEnumerable<Vector3> verticies)
         {

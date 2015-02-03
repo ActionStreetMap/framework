@@ -4,19 +4,13 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Terrain;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Core.Scene.Details;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides the way to process splat areas.
-    /// </summary>
+    /// <summary> Provides the way to process splat areas. </summary>
     public class SplatModelBuilder : ModelBuilder
     {
         /// <inheritdoc />

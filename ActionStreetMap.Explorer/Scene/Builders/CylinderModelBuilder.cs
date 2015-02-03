@@ -10,16 +10,11 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides logic to build cylinders.
-    /// </summary>
+    /// <summary> Provides logic to build cylinders. </summary>
     public class CylinderModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "cylinder"; }
-        }
+        public override string Name { get { return "cylinder"; } }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
@@ -50,9 +45,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return gameObjectWrapper;
         }
 
-        /// <summary>
-        ///     Process unity specific data.
-        /// </summary>
+        /// <summary> Process unity specific data. </summary>
         protected virtual void BuildCylinder(IGameObject gameObjectWrapper, Rule rule, Model model,
             MapPoint cylinderCenter, float diameter, float actualHeight, float heightOffset)
         {

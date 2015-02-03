@@ -6,9 +6,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 {
-    /// <summary>
-    ///     Defines thick line util methods.
-    /// </summary>
+    /// <summary> Defines thick line util methods. </summary>
     internal class ThickLineUtils
     {
         #region Line elements in tile
@@ -94,9 +92,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                    point.Y >= minPoint.Y && point.Y <= maxPoint.Y;
         }
 
-        /// <summary>
-        ///     Find intesection point of segment with tile borders
-        /// </summary>
+        /// <summary> Find intesection point of segment with tile bordersю </summary>
         private static MapPoint GetIntersectionPoint(MapPoint tilePoint, MapPoint nonTilePoint, MapPoint minPoint,
             MapPoint maxPoint)
         {
@@ -172,7 +168,6 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                 point1.Elevation = heightMap.LookupHeight(point1);
                 result.Add(point1);
 
-
                 var distance = point1.DistanceTo(point2);
                 while (distance > maxDistance)
                 {
@@ -199,14 +194,14 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             return result;
         }
 
-        public static MapPoint GetNextIntermediatePoint(HeightMap heightMap, MapPoint point1, MapPoint point2, float maxDistance)
+        public static MapPoint GetNextIntermediatePoint(HeightMap heightMap, MapPoint point1,
+            MapPoint point2, float maxDistance)
         {
             var distance = point1.DistanceTo(point2);
             if (distance > maxDistance)
             {
                 var ration = maxDistance / distance;
-                var next = new MapPoint(
-                            point1.X + ration * (point2.X - point1.X),
+                var next = new MapPoint(point1.X + ration * (point2.X - point1.X),
                             point1.Y + ration * (point2.Y - point1.Y));
 
                 next.Elevation = heightMap.LookupHeight(point1);

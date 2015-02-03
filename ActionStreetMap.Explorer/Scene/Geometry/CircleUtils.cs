@@ -7,16 +7,12 @@ using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry
 {
-    /// <summary>
-    ///     Provides circle helper methods.
-    /// </summary>
+    /// <summary> Provides circle helper methods. </summary>
     public static class CircleUtils
     {
         private const double ConvertionCoefficient = (6378137 * Math.PI) / 180;
 
-        /// <summary>
-        ///     Gets circle.
-        /// </summary>
+        /// <summary> Gets circle. </summary>
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="points">Geo coordinates.</param>
         /// <returns>Tuple which represents circle: Item1 is diameter, Item2 is shpere center.</returns>
@@ -38,9 +34,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             return new MutableTuple<float, MapPoint>(diameter, sphereCenter);
         }
 
-        /// <summary>
-        ///     Gets circle.
-        /// </summary>
+        /// <summary> Gets circle. </summary>
         /// <param name="points">Map points.</param>
         /// <returns>Tuple which represents circle: Item1 is diameter, Item2 is shpere center.</returns>
         public static MutableTuple<float, MapPoint> GetCircle(List<MapPoint> points)

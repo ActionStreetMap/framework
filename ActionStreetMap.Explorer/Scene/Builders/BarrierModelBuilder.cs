@@ -15,9 +15,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides logic to build various barriers.
-    /// </summary>
+    /// <summary>  Provides logic to build various barriers. </summary>
     public class BarrierModelBuilder: ModelBuilder
     {
         private readonly HeightMapProcessor _heightMapProcessor;
@@ -25,9 +23,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override string Name { get { return "barrier"; } }
 
-        /// <summary>
-        ///     Creates instance of <see cref="BarrierModelBuilder"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="BarrierModelBuilder"/>. </summary>
         /// <param name="heightMapProcessor">Heightmap processor.</param>
         [Dependency]
         public BarrierModelBuilder(HeightMapProcessor heightMapProcessor)
@@ -67,9 +63,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return gameObjectWrapper;
         }
 
-        /// <summary>
-        ///     Process unity specific data.
-        /// </summary>
+        /// <summary> Process unity specific data. </summary>
         protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule,
             List<Vector3> p, List<int> t, List<Vector2> u)
         {

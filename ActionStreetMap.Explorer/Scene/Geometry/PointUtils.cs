@@ -6,9 +6,7 @@ using ActionStreetMap.Core.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry
 {
-    /// <summary>
-    ///     Provids some helper methods for points.
-    /// </summary>
+    /// <summary> Provids some helper methods for points. </summary>
     public static class PointUtils
     {
         #region Points for polygons
@@ -100,9 +98,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
 
         #endregion
 
-        /// <summary>
-        ///     Fills heighmap.
-        /// </summary>
+        /// <summary> Fills heighmap. </summary>
         /// <param name="heightMap">Heightmap.</param>
         /// <param name="center">Center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
@@ -113,9 +109,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             FillHeight(heightMap, center, geoCoordinates, verticies, geoCoordinates.Count);
         }
 
-        /// <summary>
-        ///     Fills heighmap.
-        /// </summary>
+        /// <summary> Fills heighmap. </summary>
         /// <param name="heightMap">Heightmap.</param>
         /// <param name="center">Center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
@@ -136,9 +130,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             }
         }
 
-        /// <summary>
-        ///     Tests whether points represent convex polygon.
-        /// </summary>
+        /// <summary> Tests whether points represent convex polygon. </summary>
         /// <param name="points">Polygon points.</param>
         /// <returns>True if polygon is convex.</returns>
         public static bool IsConvex(List<MapPoint> points)
@@ -163,9 +155,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             return true;
         }
 
-        /// <summary>
-        ///     Sorts verticies in clockwise order.
-        /// </summary>
+        /// <summary> Sorts verticies in clockwise order. </summary>
         private static void SortVertices(List<MapPoint> verticies)
         {
             var direction = PointsDirection(verticies);
@@ -205,6 +195,5 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             Clockwise,
             CountClockwise
         }
-
     }
 }

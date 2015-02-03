@@ -10,16 +10,11 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides logic to build details.
-    /// </summary>
+    /// <summary> Provides logic to build details. </summary>
     public class DetailModelBuilder: ModelBuilder
     {
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "detail"; }
-        }
+        public override string Name { get { return "detail"; } }
 
         /// <inheritdoc />
         public override IGameObject BuildNode(Tile tile, Rule rule, Node node)
@@ -41,9 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return gameObjectWrapper;
         }
 
-        /// <summary>
-        ///     Process unity specific data.
-        /// </summary>
+        /// <summary> Process unity specific data. </summary>
         protected virtual void BuildObject(IGameObject gameObjectWrapper, Tile tile, Rule rule, Node node, MapPoint mapPoint, 
             float zIndex, string detail)
         {

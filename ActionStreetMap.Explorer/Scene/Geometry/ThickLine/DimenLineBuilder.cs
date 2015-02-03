@@ -7,19 +7,13 @@ using ActionStreetMap.Explorer.Scene.Utils;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 {
-    /// <summary>
-    ///     Thick line with height and width in 3D space. Can be used to represent barriers.
-    /// </summary>
+    /// <summary> Thick line with height and width in 3D space. Can be used to represent barriers. </summary>
     public class DimenLineBuilder : ThickLineBuilder
     {
-        /// <summary>
-        ///     Gets or sets height.
-        /// </summary>
+        /// <summary> Gets or sets height. </summary>
         public float Height { get; set; }
 
-        /// <summary>
-        ///     Creates instance of <see cref="DimenLineBuilder"/>.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="DimenLineBuilder"/>. </summary>
         /// <param name="height">Line height.</param>
         /// <param name="objectPool">Object Pool.</param>
         /// <param name="heightMapProcessor">HeightMapProcessor.</param>

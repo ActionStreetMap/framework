@@ -16,9 +16,7 @@ using ActionStreetMap.Explorer.Helpers;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides logic to build buildings.
-    /// </summary>
+    /// <summary> Provides logic to build buildings. </summary>
     public class BuildingModelBuilder : ModelBuilder
     {
         private readonly IBuildingBuilder _builder;
@@ -28,9 +26,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override string Name { get { return "building"; } }
 
-        /// <summary>
-        ///     Creates BuildingModelBuilder.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="BuildingModelBuilder"/>. </summary>
         [Dependency]
         public BuildingModelBuilder(IBuildingBuilder builder, HeightMapProcessor heightMapProcessor)
         {

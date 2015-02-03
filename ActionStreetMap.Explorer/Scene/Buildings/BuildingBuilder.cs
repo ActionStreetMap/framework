@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings
 {
-    /// <summary>  Defines building builder logic. </summary>
+    /// <summary> Defines building builder logic. </summary>
     public interface IBuildingBuilder
     {
         /// <summary> Builds building. </summary>
@@ -27,7 +27,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
         private readonly IResourceProvider _resourceProvider;
         private readonly IObjectPool _objectPool;
 
-        /// <summary> Creates BuildingBuilder. </summary>
+        /// <summary> Creates instance of <see cref="BuildingBuilder"/>. </summary>
         /// <param name="resourceProvider">Resource provider.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]

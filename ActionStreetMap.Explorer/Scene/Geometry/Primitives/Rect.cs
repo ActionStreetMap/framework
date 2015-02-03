@@ -2,24 +2,16 @@
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
 {
-    /// <summary>
-    ///     Represent rectangle.
-    /// </summary>
+    /// <summary> Represent rectangle. </summary>
     public class Rect
     {
-        /// <summary>
-        ///     Left bottom corner.
-        /// </summary>
+        /// <summary> Left bottom corner. </summary>
         public Vector2 LeftBottom;
 
-        /// <summary>
-        ///     Right upper corner.
-        /// </summary>
+        /// <summary> Right upper corner. </summary>
         public Vector2 RightUpper;
 
-        /// <summary>
-        ///     Creates Rect.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="Rect"/>. </summary>
         /// <param name="leftBottom">Left bottom corner.</param>
         /// <param name="rightUpper">Right upper corner.</param>
         public Rect(Vector2 leftBottom, Vector2 rightUpper)

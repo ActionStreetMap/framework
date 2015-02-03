@@ -10,37 +10,27 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 {
-    /// <summary>
-    ///     Builds thick 2D line in 3D space. Not thread safe.
-    /// </summary>
+    /// <summary> Builds thick 2D line in 3D space. Not thread safe. </summary>
     public class ThickLineBuilder: IDisposable
     {
         private const float MaxPointDistance = 8f;
 
         private HeightMap _heightMap;
 
-        /// <summary>
-        ///     Points.
-        /// </summary>
+        /// <summary> Points. </summary>
         protected List<Vector3> Points;
 
-        /// <summary>
-        ///     Triangles.
-        /// </summary>
+        /// <summary> Triangles. </summary>
         protected List<int> Triangles;
 
-        /// <summary>
-        ///     Uv map.
-        /// </summary>
+        /// <summary> Uv map. </summary>
         protected List<Vector2> Uv;
 
-        /// <summary>
-        ///     Current Triangle index.
-        /// </summary>
+        /// <summary> Current Triangle index. </summary>
         protected int TrisIndex = 0;
 
-        /// <summary>
-        ///     UV ratio. TODO ratio depends on texture
+        /// <summary> 
+        ///     UV ratio. TODO ratio depends on texture 
         /// </summary>
         protected float Ratio = 20;
 
@@ -52,11 +42,9 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
         private readonly IObjectPool _objectPool;
         private readonly HeightMapProcessor _heightMapProcessor;
 
-        /// <summary>
-        ///     Creates instance of <see cref="ThickLineBuilder"/>.
-        /// </summary>
-        /// <param name="objectPool"></param>
-        /// <param name="heightMapProcessor"></param>
+        /// <summary> Creates instance of <see cref="ThickLineBuilder"/>. </summary>
+        /// <param name="objectPool">Object pool.</param>
+        /// <param name="heightMapProcessor">Heightmap processor.</param>
         public ThickLineBuilder(IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
         {
             _objectPool = objectPool;
@@ -68,9 +56,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             Uv = _objectPool.NewList<Vector2>(1024);
         }
 
-        /// <summary>
-        ///     Builds line.
-        /// </summary>
+        /// <summary> Builds line. </summary>
         /// <param name="heightMap">Heightmap.</param>
         /// <param name="elements">Line elements.</param>
         /// <param name="builder">Builds unity objects.</param>
@@ -101,9 +87,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         #region Segment processing
 
-        /// <summary>
-        ///     Process line segment.
-        /// </summary>
+        /// <summary> Process line segment. </summary>
         /// <param name="lineElements">Line elements.</param>
         protected void ProcessLine(List<LineElement> lineElements)
         {
@@ -117,9 +101,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             ProcessLastSegment(lineSegments, _currentElement.Width);
         }
 
-        /// <summary>
-        ///     Processes first road segments except last one (if LineSegments.Count > 1)
-        /// </summary>
+        /// <summary> Processes first road segments except last one (if LineSegments.Count > 1). </summary>
         private void ProcessFirstSegments(List<ThickLineSegment> lineSegments)
         {
             var segmentsCount = lineSegments.Count;
@@ -153,9 +135,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             }
         }
 
-        /// <summary>
-        ///     Processes last road segment of current RoadElement
-        /// </summary>
+        /// <summary> Processes last road segment of current RoadElement. </summary>
         private void ProcessLastSegment(List<ThickLineSegment> lineSegments, float width)
         {
             var segmentsCount = lineSegments.Count;
@@ -235,9 +215,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         #region Add shapes
 
-        /// <summary>
-        ///     Adds triangle.
-        /// </summary>
+        /// <summary> Adds triangle. </summary>
         protected virtual void AddTriangle(Vector3 first, Vector3 second, Vector3 third, bool invert)
         {
             Points.Add(first);
@@ -260,9 +238,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             AddTrapezoid(right.Start, left.Start, left.End, right.End);
         }
 
-        /// <summary>
-        ///     Adds trapezoid.
-        /// </summary>
+        /// <summary> Adds trapezoid. </summary>
         protected virtual void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd)
         {
             Points.Add(rightStart);

@@ -10,16 +10,11 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides logic to build spheres.
-    /// </summary>
+    /// <summary> Provides logic to build spheres. </summary>
     public class SphereModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "sphere"; }
-        }
+        public override string Name { get { return "sphere"; } }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
@@ -45,9 +40,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return gameObjectWrapper;
         }
 
-        /// <summary>
-        ///     Process unity specific data.
-        /// </summary>
+        /// <summary> Process unity specific data. </summary>
         protected virtual void BuildSphere(IGameObject gameObjectWrapper, Rule rule, Model model, 
             MapPoint sphereCenter, float diameter, float heightOffset)
         {

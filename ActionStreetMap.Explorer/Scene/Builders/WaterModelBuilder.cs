@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Core.Scene.Details;
 
@@ -16,9 +12,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides logic to build water.
-    /// </summary>
+    /// <summary>  Provides logic to build water. </summary>
     public class WaterModelBuilder : ModelBuilder
     {
         private const int NoLayer = -1;
@@ -69,9 +63,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return gameObjectWrapper;
         }
 
-        /// <summary>
-        ///     Process unity specific data.
-        /// </summary>
+        /// <summary> Process unity specific data. </summary>
         protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule, Vector3[] points, int[] triangles)
         {
             var gameObject = gameObjectWrapper.AddComponent(new GameObject());

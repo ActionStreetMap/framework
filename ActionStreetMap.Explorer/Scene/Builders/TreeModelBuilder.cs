@@ -3,14 +3,10 @@ using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Explorer.Scene.Terrain;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Provides the way to process trees.
-    /// </summary>
+    /// <summary> Provides the way to process trees. </summary>
     public class TreeModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
