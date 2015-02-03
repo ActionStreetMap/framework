@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             // TODO check this
             //WorldManager.AddModel(node.Id);
-            var gameObjectWrapper = GameObjectFactory.CreateNew("detail " + node);
+            var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(node));
 
             Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, tile, rule, node, mapPoint, zIndex, detail));
 

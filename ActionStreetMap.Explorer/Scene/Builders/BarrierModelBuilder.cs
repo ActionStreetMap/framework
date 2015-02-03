@@ -44,7 +44,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 return null;
             }
 
-            var gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("{0} {1}", Name, way));
+            var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(way));
 
             var points = ObjectPool.NewList<MapPoint>();
             PointUtils.FillHeight(tile.HeightMap, tile.RelativeNullPoint, way.Points, points);

@@ -24,7 +24,8 @@ namespace ActionStreetMap.Explorer.Infrastructure
         public UnityGameObject(string name, GameObject gameObject)
         {
             _gameObject = gameObject;
-            gameObject.name = name;
+            if (!string.IsNullOrEmpty(name))
+                gameObject.name = name;
             _name = name;
         }
 
@@ -38,7 +39,8 @@ namespace ActionStreetMap.Explorer.Infrastructure
                     throw new InvalidOperationException("GameObject is already added!");
 
                 _gameObject = component;
-                (component as GameObject).name = _name;
+                if (!string.IsNullOrEmpty(_name))
+                    (component as GameObject).name = _name;
             }
             return component;
         }

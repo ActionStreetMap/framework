@@ -63,7 +63,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             //ObjectPool.Store(verticies2D);
 
-            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("{0} {1}", Name, area));
+            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(GetName(area));
             Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, rule, vector3Ds, triangles));
 
             return gameObjectWrapper;

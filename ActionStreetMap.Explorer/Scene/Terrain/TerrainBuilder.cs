@@ -131,8 +131,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             roadObservable.Subscribe(road =>
                 {
                     var element = road.Elements.First();
-                    road.GameObject = _gameObjectFactory
-                        .CreateNew(String.Format("road [{0}]:{1}", element.Id, element.Type), settings.Tile.GameObject);
+                    road.GameObject = _gameObjectFactory.CreateNew("road", settings.Tile.GameObject);
                     _roadBuilder.BuildRoad(heightMap, road, roadStyleProvider.Get(road));
                 });
 
@@ -140,8 +139,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var junctionObservable = roadGraph.Junctions.ToObservable();
             junctionObservable.Subscribe(junction =>
             {
-                junction.GameObject = _gameObjectFactory
-                    .CreateNew(String.Format("junction: {0}", junction.Center), settings.Tile.GameObject);
+                junction.GameObject = _gameObjectFactory.CreateNew("junction", settings.Tile.GameObject);
                 _roadBuilder.BuildJunction(heightMap, junction, roadStyleProvider.Get(junction));
             });
 

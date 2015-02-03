@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var elevation = tile.HeightMap.LookupHeight(sphereCenter);
 
-            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("Sphere {0}", area));
+            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(GetName(area));
 
             tile.Registry.RegisterGlobal(area.Id);
 

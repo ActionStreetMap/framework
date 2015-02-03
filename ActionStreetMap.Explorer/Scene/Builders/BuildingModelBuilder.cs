@@ -92,7 +92,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             float elevation, float minHeight)
         {
             var gameObjectWrapper = GameObjectFactory
-                .CreateNew(String.Format("Building {0}", model), tile.GameObject);
+                .CreateNew(GetName(model), tile.GameObject);
 
             // NOTE observed that min_height should be subracted from height for building:part
             // TODO this should be done in mapcss, but stylesheet doesn't support multiply eval operations

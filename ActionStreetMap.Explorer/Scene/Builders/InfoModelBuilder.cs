@@ -38,7 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             };
             var style = ThemeProvider.Get().GetInfoStyle(info);
 
-            var gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("info {0}", node));
+            var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(node));
 
             var zIndex = rule.GetZIndex();
             mapPoint.Elevation = tile.HeightMap.LookupHeight(mapPoint);

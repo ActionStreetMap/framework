@@ -40,7 +40,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var actualHeight = (height - minHeight) / 2;
 
-            var gameObjectWrapper = GameObjectFactory.CreateNew(String.Format("Cylinder {0}", area));
+            var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(area));
 
             tile.Registry.RegisterGlobal(area.Id);
 

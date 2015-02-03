@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Core.MapCss.Domain;
+﻿using System;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Themes;
@@ -108,6 +109,16 @@ namespace ActionStreetMap.Explorer.Scene
         {
             //Trace.Normal(String.Format("{0}: building node {1}", Name, node.Id));
             return null;
+        }
+
+        public string GetName(Model model)
+        {
+            // NOTE this is performance optimization for release mode only
+#if DEBUG
+            return String.Format("{0} {1}", Name, model);
+#else
+            return null;
+#endif
         }
     }
 }
