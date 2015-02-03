@@ -4,7 +4,7 @@ using ActionStreetMap.Core.MapCss.Visitors.Eval;
 
 namespace ActionStreetMap.Core.MapCss.Domain
 {
-    /// <summary> MapCSS declaration (e.g. 'fill-color:red'). </summary>
+    /// <summary> MapCSS declaration. </summary>
     public class Declaration
     {
         /// <summary> Gets or sets declaration key. </summary>
@@ -26,18 +26,12 @@ namespace ActionStreetMap.Core.MapCss.Domain
         }
     }
 
-    /// <summary>  List of declarations. </summary>
-    public class ListDeclaration : Declaration
+    /// <summary> List of declarations. </summary>
+    internal class ListDeclaration : Declaration
     {
         private readonly List<Declaration> _declarations = new List<Declaration>(4);
 
         /// <summary> Inner declarations. </summary>
-        public List<Declaration> Items
-        {
-            get
-            {
-                return _declarations;
-            }
-        }
+        public List<Declaration> Items { get { return _declarations; } }
     }
 }

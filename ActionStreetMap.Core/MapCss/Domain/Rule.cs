@@ -96,10 +96,8 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
             var declaration = Declarations[qualifier];
 
-            if (declaration.IsEval)
-            {
+            if (declaration.IsEval) 
                 return declaration.Evaluator.Walk<T>(_model);
-            }
 
             return converter(declaration.Value);
         }

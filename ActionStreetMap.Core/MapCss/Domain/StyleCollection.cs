@@ -86,28 +86,13 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
             // NOTE This can be nicely done by LINQ intesection extension method
             // but this peace of code is performance critical
-            // TODO check whether we have here allocations due to foreach
             foreach (var key in style.Declarations.Keys)
             {
                 var styleDeclaration = style.Declarations[key];
                 if (rule.Declarations.ContainsKey(key))
-                {
-                    var declaration = rule.Declarations[key];
-                    declaration.Value = styleDeclaration.Value;
-                    declaration.Evaluator = styleDeclaration.Evaluator;
-                    declaration.IsEval = styleDeclaration.IsEval;
-                }
+                    rule.Declarations[key] = styleDeclaration;
                 else
-                {
-                    // Should copy Declaration
-                    rule.Declarations.Add(key, new Declaration
-                    {
-                        Qualifier = styleDeclaration.Qualifier,
-                        Value = styleDeclaration.Value,
-                        Evaluator = styleDeclaration.Evaluator,
-                        IsEval = styleDeclaration.IsEval
-                    });
-                }
+                    rule.Declarations.Add(key, styleDeclaration);
             }
         }
 
