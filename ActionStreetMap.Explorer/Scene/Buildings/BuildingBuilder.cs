@@ -47,9 +47,12 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
             var roofMeshData = GetRoofBuilder(building, style.Roof.Builders)
                .Build(building, style);
 
-            // NOTE use different gameObject only to support different materials
-            Scheduler.MainThread.Schedule(() => AttachChildGameObject(building.GameObject, "facade", facadeMeshData));
-            Scheduler.MainThread.Schedule(() => AttachChildGameObject(building.GameObject, "roof", roofMeshData));
+            Scheduler.MainThread.Schedule(() =>
+            {
+                // NOTE use different gameObject only to support different materials
+                AttachChildGameObject(building.GameObject, "facade", facadeMeshData);
+                AttachChildGameObject(building.GameObject, "roof", roofMeshData);
+            });
         }
 
         /// <summary> Process unity's game object. </summary>
