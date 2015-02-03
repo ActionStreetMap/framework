@@ -111,7 +111,10 @@ namespace ActionStreetMap.Explorer.Scene
             return null;
         }
 
-        public string GetName(Model model)
+        /// <summary> Returns name of game object. </summary>
+        /// <param name="model">Model.</param>
+        /// <returns>Name of game object.</returns>
+        protected string GetName(Model model)
         {
             // NOTE this is performance optimization for release mode only
 #if DEBUG

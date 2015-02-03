@@ -9,7 +9,6 @@ namespace ActionStreetMap.Maps.Data.Spatial
     /// <summary>
     ///     Represents readonly spatial index.
     /// </summary>
-    /// <typeparam name="T">Data type which is associated with envelop.</typeparam>
     internal class SpatialIndex : ISpatialIndex<uint>
     {
         private const uint Marker = uint.MaxValue;
