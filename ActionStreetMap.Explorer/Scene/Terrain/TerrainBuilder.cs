@@ -153,7 +153,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             {
                 var elevationObservable = canvas.Elevations.ToObservable();
                 elevationObservable.Subscribe(elevationArea =>
-                    _heightMapProcessor.AdjustPolygon(elevationArea.Points, elevationArea.AverageElevation));
+                    _heightMapProcessor.AdjustPolygon(heightMap, elevationArea.Points, elevationArea.AverageElevation));
                 elevationObservable.Wait();
             }
         }

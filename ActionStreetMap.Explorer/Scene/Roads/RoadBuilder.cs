@@ -80,7 +80,7 @@ namespace ActionStreetMap.Explorer.Scene.Roads
         /// <inheritdoc />
         public void BuildJunction(HeightMap heightMap, RoadJunction junction, RoadStyle style)
         {
-            _heightMapProcessor.AdjustPolygon(junction.Polygon, junction.Center.Elevation);
+            _heightMapProcessor.AdjustPolygon(heightMap, junction.Polygon, junction.Center.Elevation);
 
             var buffer = _objectPool.NewList<int>();
             var polygonTriangles = Triangulator.Triangulate(junction.Polygon, buffer);

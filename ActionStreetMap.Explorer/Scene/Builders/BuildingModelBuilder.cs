@@ -79,7 +79,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 footPrint[i].SetElevation(elevation);
             // NOTE do not adjust height map in case of positive minHeight
             if (!heightMap.IsFlat && Math.Abs(minHeight) < 0.5f)
-                _heightMapProcessor.AdjustPolygon(footPrint, elevation);
+                _heightMapProcessor.AdjustPolygon(heightMap, footPrint, elevation);
 
             return elevation;
         }

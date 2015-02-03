@@ -78,7 +78,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             {
                 _currentElement = lineElements[i];
                 _nextElement = i == elementsCount - 1 ? null : lineElements[i + 1];
-                ProcessLine(lineElements);
+                ProcessLine(heightMap, lineElements);
             }
 
             builder(Points, Triangles, Uv);
@@ -88,10 +88,11 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
         #region Segment processing
 
         /// <summary> Process line segment. </summary>
+        /// <param name="heightMap">Heightmap.</param>
         /// <param name="lineElements">Line elements.</param>
-        protected void ProcessLine(List<LineElement> lineElements)
+        protected void ProcessLine(HeightMap heightMap, List<LineElement> lineElements)
         {
-            var lineSegments = GetThickSegments(_currentElement);
+            var lineSegments = GetThickSegments(heightMap, _currentElement);
 
             // NOTE Sometimes the road has only one point (wrong pbf file?)
             if (lineSegments.Count == 0)
@@ -267,7 +268,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         #region Getting segments and turn types
 
-        private List<ThickLineSegment> GetThickSegments(LineElement lineElement)
+        private List<ThickLineSegment> GetThickSegments(HeightMap heightMap, LineElement lineElement)
         {
             var lineSegments = new List<ThickLineSegment>();
 
@@ -279,7 +280,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                 // we should add intermediate points between given to follow elevation changes more smooth 
                 points = ThickLineUtils.GetIntermediatePoints(_heightMap, lineElement.Points, MaxPointDistance);
                 for (int i = 0; i < points.Count - 1; i++)
-                    _heightMapProcessor.AdjustLine(points[i], points[i + 1], lineElement.Width);
+                    _heightMapProcessor.AdjustLine(heightMap, points[i], points[i + 1], lineElement.Width);
             }
 
             for (int i = 1; i < points.Count; i++)

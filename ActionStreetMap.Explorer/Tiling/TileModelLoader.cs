@@ -59,7 +59,6 @@ namespace ActionStreetMap.Explorer.Tiling
         {
             tile.GameObject = _gameObjectFactory.CreateNew("tile");
             Scheduler.MainThread.Schedule(() => tile.GameObject.AddComponent(new GameObject()));
-            _heightMapProcessor.Recycle(tile.HeightMap);
         }
 
         /// <inheritdoc />
@@ -131,11 +130,7 @@ namespace ActionStreetMap.Explorer.Tiling
             });
 
             // NOTE schedule cleanup on UI thread as data may be used
-            Scheduler.MainThread.Schedule(() =>
-            {
-                _heightMapProcessor.Clear();
-                _heighMapProvider.Store(tile.HeightMap);
-            });
+            Scheduler.MainThread.Schedule(() => _heighMapProvider.Store(tile.HeightMap));
             _objectPool.Shrink();
         }
 
