@@ -61,7 +61,6 @@
     <Compile Include="Scene\Buildings\BuildingStyle.cs" />
     <Compile Include="Scene\Buildings\Facades\FlatFacadeBuilder.cs" />
     <Compile Include="Scene\Buildings\Facades\IFacadeBuilder.cs" />
-    <Compile Include="Scene\Buildings\IBuildingStyleProvider.cs" />
     <Compile Include="Scene\Buildings\MeshData.cs" />
     <Compile Include="Scene\Buildings\Roofs\DomeRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\FlatRoofBuilder.cs" />
@@ -93,7 +92,6 @@
     <Compile Include="Scene\Geometry\TriangleUtils.cs" />
     <Compile Include="Scene\Infos\InfoStyle.cs" />
     <Compile Include="Scene\Infos\InfoStyleProvider.cs" />
-    <Compile Include="Scene\Roads\IRoadStyleProvider.cs" />
     <Compile Include="Scene\Roads\RoadBehaviors.cs" />
     <Compile Include="Scene\Roads\RoadBuilder.cs" />
     <Compile Include="Scene\Roads\RoadFixBehavior.cs" />
@@ -115,7 +113,7 @@
     <Compile Include="Scene\Builders\RoadModelBuilder.cs" />
     <Compile Include="Scene\Builders\SplatModelBuilder.cs" />
     <Compile Include="Scene\Builders\TreeModelBuilder.cs" />
-    <Compile Include="Scene\IModelBuilder.cs" />
+    <Compile Include="Scene\Builders\ModelBuilder.cs" />
     <Compile Include="Scene\Builders\CylinderModelBuilder.cs" />
     <Compile Include="Scene\Builders\SphereModelBuilder.cs" />
     <Compile Include="Scene\Builders\WaterModelBuilder.cs" />
@@ -129,11 +127,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\UnityConsoleTrace.cs" />
     <Compile Include="Tiling\TileActivator.cs" />
-    <Compile Include="Themes\BuildingStyleProvider.cs" />
-    <Compile Include="Themes\InfoStyleProvider.cs" />
-    <Compile Include="Themes\ThemeProvider.cs" />
-    <Compile Include="Themes\RoadStyleProvider.cs" />
-    <Compile Include="Themes\Theme.cs" />
+    <Compile Include="Scene\Buildings\BuildingStyleProvider.cs" />
+    <Compile Include="Scene\ThemeProvider.cs" />
+    <Compile Include="Scene\Roads\RoadStyleProvider.cs" />
+    <Compile Include="Scene\Theme.cs" />
     <Compile Include="Tiling\TileModelLoader.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@ using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Infos;
 using ActionStreetMap.Explorer.Scene.Roads;
 
-namespace ActionStreetMap.Explorer.Themes
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Represents game theme. Bridge to style providers for different models. </summary>
     public class Theme

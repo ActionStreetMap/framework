@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ActionStreetMap.Explorer.Scene;
+using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Infrastructure.Dependencies;
 using NUnit.Framework;
 

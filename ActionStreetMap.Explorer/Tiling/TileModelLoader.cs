@@ -9,7 +9,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene;
-using ActionStreetMap.Explorer.Themes;
+using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -136,7 +136,6 @@ namespace ActionStreetMap.Explorer.Tiling
                 _heightMapProcessor.Clear();
                 _heighMapProvider.Store(tile.HeightMap);
             });
-
             _objectPool.Shrink();
         }
 

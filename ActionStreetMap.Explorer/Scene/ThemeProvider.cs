@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Utilities;
-using ActionStreetMap.Infrastructure.Config;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Formats.Json;
-using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Explorer.Scene.Infos;
 using ActionStreetMap.Explorer.Scene.Roads;
+using ActionStreetMap.Infrastructure.Config;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Formats.Json;
+using ActionStreetMap.Infrastructure.IO;
 using UnityEngine;
-
 using Rect = ActionStreetMap.Explorer.Scene.Geometry.Primitives.Rect;
 
-namespace ActionStreetMap.Explorer.Themes
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Defines theme provider logic. </summary>
     public interface IThemeProvider

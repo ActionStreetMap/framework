@@ -2,45 +2,34 @@
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Themes;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Utils;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary>
-    ///     Defines model builder logic.
-    /// </summary>
+    /// <summary> Defines model builder logic. </summary>
     public interface IModelBuilder
     {
-        /// <summary>
-        ///     Name of model builder.
-        /// </summary>
+        /// <summary> Name of model builder. </summary>
         string Name { get; }
 
-        /// <summary>
-        ///     Builds model from area.
-        /// </summary>
+        /// <summary> Builds model from area. </summary>
         /// <param name="tile">Tile.</param>
         /// <param name="rule">Rule.</param>
         /// <param name="area">Area.</param>
         /// <returns>Game object wrapper.</returns>
         IGameObject BuildArea(Tile tile, Rule rule, Area area);
 
-        /// <summary>
-        ///     Builds model from way.
-        /// </summary>
+        /// <summary> Builds model from way. </summary>
         /// <param name="tile">Tile.</param>
         /// <param name="rule">Rule.</param>
         /// <param name="way">Way.</param>
         /// <returns>Game object wrapper.</returns>
         IGameObject BuildWay(Tile tile, Rule rule, Way way);
 
-        /// <summary>
-        ///     Builds model from node.
-        /// </summary>
+        /// <summary> Builds model from node. </summary>
         /// <param name="tile">Tile.</param>
         /// <param name="rule">Rule.</param>
         /// <param name="node">Node.</param>
@@ -48,9 +37,7 @@ namespace ActionStreetMap.Explorer.Scene
         IGameObject BuildNode(Tile tile, Rule rule, Node node);
     }
 
-    /// <summary>
-    ///     Defines base class for model builders which provides helper logic.
-    /// </summary>
+    /// <summary> Defines base class for model builders which provides helper logic. </summary>
     public abstract class ModelBuilder : IModelBuilder
     {
         /// <inheritdoc />

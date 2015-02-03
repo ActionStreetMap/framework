@@ -15,7 +15,7 @@ using ActionStreetMap.Maps.Data.Spatial;
 
 namespace ActionStreetMap.Maps.Data
 {
-    /// <summary> Provides the way to get the corresponding element source by geocoordinate.s </summary>
+    /// <summary> Provides the way to get the corresponding element source by geocoordinate. </summary>
     public interface IElementSourceProvider: IDisposable
     {
         /// <summary> Returns element sources by query represented by bounding box. </summary>

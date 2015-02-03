@@ -3,7 +3,7 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Scene.Infos;
 using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Utilities;
-using ActionStreetMap.Explorer.Themes;
+using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
