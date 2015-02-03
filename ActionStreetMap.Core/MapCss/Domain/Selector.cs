@@ -109,11 +109,11 @@ namespace ActionStreetMap.Core.MapCss.Domain
     /// <summary> Composite selector which compares list of selectors using logical AND. </summary>
     internal class AndSelector: Selector
     {
-        private readonly IList<Selector> _selectors;
+        private readonly List<Selector> _selectors;
 
         /// <summary> Creates AndSelector. </summary>
         /// <param name="selectors">List of selectors.</param>
-        public AndSelector(IList<Selector> selectors)
+        public AndSelector(List<Selector> selectors)
         {
             _selectors = selectors;
         }
@@ -121,7 +121,12 @@ namespace ActionStreetMap.Core.MapCss.Domain
         /// <inheritdoc />
         public override bool IsApplicable(Model model)
         {
-            return _selectors.All(s => s.IsApplicable(model));
+            // just the same as _selectors.All(s => s.IsApplicable(model));
+            foreach (var selector in _selectors)
+                if (!selector.IsApplicable(model))
+                    return false;
+
+            return true;
         }
     }
 
