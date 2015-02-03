@@ -70,8 +70,8 @@ namespace ActionStreetMap.Maps.Data
         /// <inheritdoc />
         public IObservable<IElementSource> Get(BoundingBox query)
         {
-            // TODO ensure thread safety in this and all related methods
             // NOTE block thread here
+            Trace.Output(LogTag, "getting element sources..");
             var elementSourcePath = _tree.Search(query).Wait();
             if (elementSourcePath == null && !String.IsNullOrEmpty(_mapDataServerUri))
             {
