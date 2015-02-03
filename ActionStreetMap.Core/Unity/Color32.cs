@@ -2,34 +2,22 @@
 
 namespace ActionStreetMap.Core.Unity
 {
-    /// <summary>
-    ///     Defines RGBA color
-    /// </summary>
+    /// <summary> Defines RGBA color. </summary>
     public struct Color32
     {
-        /// <summary>
-        ///     Red.
-        /// </summary>
+        /// <summary> Red. </summary>
         public byte R;
 
-        /// <summary>
-        ///     Green.
-        /// </summary>
+        /// <summary> Green. </summary>
         public byte G;
 
-        /// <summary>
-        ///     Blue.
-        /// </summary>
+        /// <summary> Blue. </summary>
         public byte B;
 
-        /// <summary>
-        ///     Alpha
-        /// </summary>
+        /// <summary> Alpha. </summary>
         public byte A;
 
-        /// <summary>
-        ///     Creates color.
-        /// </summary>
+        /// <summary> Creates color. </summary>
         /// <param name="r">Red.</param>
         /// <param name="g">Green.</param>
         /// <param name="b">Blue.</param>
@@ -42,9 +30,7 @@ namespace ActionStreetMap.Core.Unity
             A = a;
         }
 
-        /// <summary>
-        ///     Converts to int reprsentation.
-        /// </summary>
+        /// <summary> Converts to int reprentation. </summary>
         /// <returns></returns>
         public int ToInt()
         {
@@ -55,7 +41,6 @@ namespace ActionStreetMap.Core.Unity
             return rgb;
         }
 
-        // 
         /// <summary>
         ///     Calculate distance to given color.This algorithm is combination both weighted Euclidean distance functions, where
         ///     the weight factors depend on how big the "red" component of the colour is.
@@ -72,9 +57,7 @@ namespace ActionStreetMap.Core.Unity
             return Math.Sqrt((((512 + rmean)*r*r) >> 8) + 4*g*g + (((767 - rmean)*b*b) >> 8));
         }
 
-        /// <summary>
-        ///     Returns string representation of this object.
-        /// </summary>
+        /// <inheritdoc />
         public override string ToString()
         {
             return String.Format("({0},{1},{2},{3})", R, G, B, A);

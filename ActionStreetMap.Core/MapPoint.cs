@@ -23,7 +23,7 @@ namespace ActionStreetMap.Core
             Elevation = elevation;
         }
 
-        /// <summary> Creates MapPoint. </summary>
+        /// <summary> Creates instance of <see cref="MapPoint"/>. </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="elevation">Elevation.</param>
@@ -32,7 +32,7 @@ namespace ActionStreetMap.Core
             Elevation = elevation;
         }
 
-        /// <summary> Creates MapPoint. </summary>
+        /// <summary> Creates instance of <see cref="MapPoint"/>. </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         public MapPoint(float x, float y): this()
