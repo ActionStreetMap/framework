@@ -69,7 +69,7 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void LoadArea(Tile tile, Area area)
         {
-            VisitModel(tile, area, (rule, modelBuilder) =>
+            LoadModel(tile, area, (rule, modelBuilder) =>
             {
                 var result = modelBuilder.BuildArea(tile, rule, area);
                 _objectPool.StoreList(area.Points);
@@ -80,7 +80,7 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void LoadWay(Tile tile, Way way)
         {
-            VisitModel(tile, way, (rule, modelBuilder) =>
+            LoadModel(tile, way, (rule, modelBuilder) =>
             {
                 var result = modelBuilder.BuildWay(tile, rule, way);
                 _objectPool.StoreList(way.Points);
@@ -91,10 +91,10 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void LoadNode(Tile tile, Node node)
         {
-            VisitModel(tile, node, (rule, modelBuilder) => modelBuilder.BuildNode(tile, rule, node));
+            LoadModel(tile, node, (rule, modelBuilder) => modelBuilder.BuildNode(tile, rule, node));
         }
 
-        private void VisitModel(Tile tile, Model model, Func<Rule, IModelBuilder, IGameObject> func)
+        private void LoadModel(Tile tile, Model model, Func<Rule, IModelBuilder, IGameObject> func)
         {
             var rule = _stylesheet.GetModelRule(model);
             if (ShouldUseBuilder(tile, rule, model))
