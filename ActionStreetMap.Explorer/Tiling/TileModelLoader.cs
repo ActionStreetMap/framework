@@ -15,7 +15,6 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Terrain;
-using ActionStreetMap.Explorer.Scene.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Tiling
@@ -30,7 +29,6 @@ namespace ActionStreetMap.Explorer.Tiling
         private readonly IModelBehaviour[] _behaviours;
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly IThemeProvider _themeProvider;
-        private readonly HeightMapProcessor _heightMapProcessor;
         private readonly Stylesheet _stylesheet;
 
         /// <summary> Creates <see cref="TileModelLoader"/>. </summary>
@@ -38,7 +36,7 @@ namespace ActionStreetMap.Explorer.Tiling
         public TileModelLoader(IGameObjectFactory gameObjectFactory, IThemeProvider themeProvider,
             IHeightMapProvider heighMapProvider, ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
             IEnumerable<IModelBuilder> builders, IEnumerable<IModelBehaviour> behaviours,
-            IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
+            IObjectPool objectPool)
         {
             _heighMapProvider = heighMapProvider;
             _terrainBuilder = terrainBuilder;
@@ -48,7 +46,6 @@ namespace ActionStreetMap.Explorer.Tiling
             _behaviours = behaviours.ToArray();
             _gameObjectFactory = gameObjectFactory;
             _themeProvider = themeProvider;
-            _heightMapProcessor = heightMapProcessor;
             _stylesheet = stylesheetProvider.Get();
         }
 
