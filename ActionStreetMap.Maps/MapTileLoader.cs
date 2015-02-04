@@ -35,23 +35,26 @@ namespace ActionStreetMap.Maps
                 tile.BoundingBox,
                 new NodeVisitor(tile, _modelLoader, _objectPool),
                 new WayVisitor(tile, _modelLoader, _objectPool),
-                new RelationVisitor(tile, _modelLoader, _objectPool)
-                );
+                new RelationVisitor(tile, _modelLoader, _objectPool));
 
             // prepare tile
             tile.Accept(tile, _modelLoader);
 
-            return _elementSourceProvider
-                .Get(tile.BoundingBox)
-                .SelectMany(elementSource => elementSource.Get(tile.BoundingBox).ObserveOn(Scheduler.ThreadPool))
-                // NOTE subscription will cause side effect
-                .Do(element => element.Accept(filterElementVisitor))
-                .ContinueWith(() =>
-                {
-                    // finalyze tile
-                    (tile.Canvas).Accept(tile, _modelLoader);
-                    return Observable.Empty<Unit>();
-                });
+            var result = new Subject<Unit>();
+            _elementSourceProvider.Get(tile.BoundingBox).Subscribe(elementSource => 
+                elementSource.Get(tile.BoundingBox)
+                .ObserveOn(Scheduler.ThreadPool)
+                .Do(element => element.Accept(filterElementVisitor),
+                    () =>
+                    {
+                        // NOTE so far, we call this for every element source
+                        // However, it will break multiply element sources case
+                        (tile.Canvas).Accept(tile, _modelLoader);
+                        result.OnCompleted();
+                    })
+                .Subscribe());
+
+            return result;
         }
     }
 }

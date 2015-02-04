@@ -71,7 +71,7 @@ namespace ActionStreetMap.Maps.Data
         public IObservable<IElementSource> Get(BoundingBox query)
         {
             // NOTE block thread here
-            Trace.Output(LogTag, "getting element sources..");
+            Trace.Output(LogTag, String.Format("getting element sources for {0}", query));
             var elementSourcePath = _tree.Search(query).Wait();
             if (elementSourcePath == null && !String.IsNullOrEmpty(_mapDataServerUri))
             {

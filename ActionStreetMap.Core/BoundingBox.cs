@@ -87,5 +87,11 @@ namespace ActionStreetMap.Core
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return String.Format("{0},{1}", MinPoint, MaxPoint);
+        }
     }
 }
