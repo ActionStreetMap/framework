@@ -270,8 +270,6 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         private List<ThickLineSegment> GetThickSegments(HeightMap heightMap, LineElement lineElement)
         {
-            var lineSegments = new List<ThickLineSegment>();
-
             List<MapPoint> points;
             if (_heightMap.IsFlat)
                 points = lineElement.Points;
@@ -282,7 +280,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                 for (int i = 0; i < points.Count - 1; i++)
                     _heightMapProcessor.AdjustLine(heightMap, points[i], points[i + 1], lineElement.Width);
             }
-
+            var lineSegments = new List<ThickLineSegment>(points.Count);
             for (int i = 1; i < points.Count; i++)
                 lineSegments.Add(ThickLineHelper.GetThickSegment(points[i - 1], points[i], lineElement.Width));
 
