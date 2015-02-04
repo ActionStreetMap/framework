@@ -147,16 +147,17 @@ namespace ActionStreetMap.Maps.Data.Spatial
                 (IEnvelop)new PointEnvelop(reader.ReadInt32(), reader.ReadInt32()) :
                 new Envelop(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
-            // TODO use list from object pool
-            var children = new List<SpatialIndex.SpatialIndexNode>();
+            List<SpatialIndex.SpatialIndexNode> children = null;
             while (true)
             {
                 SpatialIndex.SpatialIndexNode child;
                 if (ReadNode(out child, reader))
                     break;
+                if (children == null)
+                    children = new List<SpatialIndex.SpatialIndexNode>();
                 children.Add(child);
             }
-            root = new SpatialIndex.SpatialIndexNode(data, envelop, children.Count > 0 ? children.ToArray() : null);
+            root = new SpatialIndex.SpatialIndexNode(data, envelop, children != null && children.Count > 0 ? children.ToArray() : null);
             root.IsLeaf = isLeaf;
             return false;
         }
