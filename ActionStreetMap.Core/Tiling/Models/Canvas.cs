@@ -35,9 +35,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
-            Areas = new List<Surface>();
-            Elevations = new List<Surface>();
-            Trees = new List<Tree>();
+            Areas = objectPool.NewList<Surface>(128);
+            Elevations = objectPool.NewList<Surface>(8);
+            Trees = objectPool.NewList<Tree>(64);
         }
 
         /// <inheritdoc />
@@ -114,6 +114,10 @@ namespace ActionStreetMap.Core.Tiling.Models
                 Details.ForEach(array => Array.Clear(array, 0, array.Length));
                 _objectPool.StoreList(Details, true);
                 _objectPool.StoreArray(SplatMap);
+
+                _objectPool.StoreList(Areas);
+                _objectPool.StoreList(Elevations);
+                _objectPool.StoreList(Trees);
             }
         }
     }
