@@ -90,7 +90,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             var result = _objectPool.NewList<MapPoint>();
             PolygonUtils.Simplify(footprint, result, 1, _objectPool);
             var polygon = new Polygon(result);
-            Segment longestSegment = null;
+            Segment longestSegment = default(Segment);
             length = 0;
             for (int i = 0; i < polygon.Segments.Length; i++)
             {

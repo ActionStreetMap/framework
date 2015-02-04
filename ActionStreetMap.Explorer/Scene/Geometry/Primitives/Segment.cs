@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
 {
     /// <summary> Represent line segment. </summary>
-    public class Segment
+    public struct Segment
     {
         /// <summary> Start. </summary>
         public Vector3 Start;

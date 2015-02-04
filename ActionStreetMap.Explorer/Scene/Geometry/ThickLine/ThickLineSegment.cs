@@ -4,7 +4,7 @@ using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 {
     /// <summary> Represents thick line segment. </summary>
-    public class ThickLineSegment
+    public struct ThickLineSegment
     {
         /// <summary> Left parallel segment. </summary>
         public Segment Left;

@@ -19,7 +19,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         public Style()
         {
             Selectors = new List<Selector>();
-            Declarations = new Dictionary<string, Declaration>();
+            Declarations = new Dictionary<string, Declaration>(4);
         }
 
         /// <summary> Checks whether model is defined in style. </summary>
