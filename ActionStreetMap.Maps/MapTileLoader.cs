@@ -15,7 +15,7 @@ namespace ActionStreetMap.Maps
         private readonly IModelLoader _modelLoader;
         private readonly IObjectPool _objectPool;
 
-        /// <summary> Creates MapTileLoader. </summary>
+        /// <summary> Creates <see cref="MapTileLoader"/>. </summary>
         /// <param name="elementSourceProvider">Element source provider.</param>
         /// <param name="modelLoader">model visitor.</param>
         /// <param name="objectPool">Object pool.</param>
@@ -49,7 +49,7 @@ namespace ActionStreetMap.Maps
                     {
                         // NOTE so far, we call this for every element source
                         // However, it will break multiply element sources case
-                        (tile.Canvas).Accept(tile, _modelLoader);
+                        tile.Canvas.Accept(tile, _modelLoader);
                         result.OnCompleted();
                     })
                 .Subscribe());
