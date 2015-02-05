@@ -5,43 +5,34 @@ using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Scene.Roads
 {
-    /// <summary> Defines API for building road graph. </summary>
-    public interface IRoadGraphBuilder
-    {
-        /// <summary> Adds road element to graph. </summary>
-        /// <param name="element">Road element.</param>
-        void Add(RoadElement element);
-
-        /// <summary> Builds road graph and cleanups internal buffers to make object ready to reuse. </summary>
-        /// <returns>Road graph.</returns>
-        RoadGraph Build();
-    }
-
-    /// <summary> Default implementation of <see cref="IRoadGraphBuilder"/>. </summary>
-    internal sealed class RoadGraphBuilder: IRoadGraphBuilder
+    /// <summary> Provides ability to build road graph. </summary>
+    internal sealed class RoadGraphBuilder
     {
         // map which is used for merging of split elements
-        private readonly Dictionary<long, List<RoadElement>> _elements = new Dictionary<long, List<RoadElement>>(128);
+        private readonly Dictionary<long, List<RoadElement>> _elements = new Dictionary<long, List<RoadElement>>(1024);
 
         // key is point which is shared between different road elements ("junction")
-        private readonly Dictionary<MapPoint, SortedList<RoadType, RoadJunction>> _junctionsMap = new Dictionary<MapPoint, SortedList<RoadType, RoadJunction>>(54);
+        private readonly Dictionary<MapPoint, SortedList<RoadType, RoadJunction>> _junctionsMap = new Dictionary<MapPoint, SortedList<RoadType, RoadJunction>>(256);
 
         // point to index in RoadElement/index in Element.Points tuple
         private readonly Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>> _pointsMap = 
-            new Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>>(256);
+            new Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>>(2056);
+
+        private bool _isBuilt = false;
 
         #region Public methods
 
         /// <inheritdoc />
         public RoadGraph Build()
         {
+            _isBuilt = true;
+
             MergeRoads();
 
             var roads = _elements.Select(kv => new Road { Elements = kv.Value }).ToArray();
             var junctions = _junctionsMap.Values
                 .SelectMany(j => j.Values).Select(RoadJunctionUtils.CompleteJunction).ToArray();
 
-            // clear buffers
             _elements.Clear();
             _junctionsMap.Clear();
             _pointsMap.Clear();
@@ -52,6 +43,9 @@ namespace ActionStreetMap.Core.Scene.Roads
         /// <inheritdoc />
         public void Add(RoadElement element)
         {
+            // TODO This is workaround. Need investigate why this method is called after build is started
+            if (_isBuilt) return;
+            
             _elements.Add(element.Id, new List<RoadElement>(1) { element });
 
             RoadElement el = element;

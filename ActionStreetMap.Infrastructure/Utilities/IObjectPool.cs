@@ -8,6 +8,13 @@ namespace ActionStreetMap.Infrastructure.Utilities
     /// </summary>
     public interface IObjectPool
     {
+        #region Objects
+        /// <summary> Returns object from pool which is likely to be single instance. </summary>
+        T NewHeavy<T>() where T: new();
+        /// <summary> Returns object to pool which is likely to be single instance. </summary>
+        void StoreHeavy<T>(T instance) where T : new();
+        #endregion
+
         #region Lists
         /// <summary> Returns list from pool or creates new one. </summary>
         List<T> NewList<T>();

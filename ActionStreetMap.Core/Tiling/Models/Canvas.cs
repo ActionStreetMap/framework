@@ -9,7 +9,7 @@ namespace ActionStreetMap.Core.Tiling.Models
     /// <summary> Represents canvas (terrain). </summary>
     public class Canvas : Model, IDisposable
     {
-        private readonly IRoadGraphBuilder _roadGraphBuilder = new RoadGraphBuilder();
+        private readonly RoadGraphBuilder _roadGraphBuilder;
         private readonly IObjectPool _objectPool;
 
         /// <summary> Flat areas which should be rendered with some texture. </summary>
@@ -35,6 +35,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
+            _roadGraphBuilder = objectPool.NewHeavy<RoadGraphBuilder>();
             Areas = objectPool.NewList<Surface>(128);
             Elevations = objectPool.NewList<Surface>(8);
             Trees = objectPool.NewList<Tree>(64);
@@ -110,6 +111,8 @@ namespace ActionStreetMap.Core.Tiling.Models
                     _objectPool.StoreList(area.Points);
                 foreach (var elevation in Elevations)
                     _objectPool.StoreList(elevation.Points);
+
+                _objectPool.StoreHeavy(_roadGraphBuilder);
 
                 Details.ForEach(array => Array.Clear(array, 0, array.Length));
                 _objectPool.StoreList(Details, true);

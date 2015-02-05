@@ -10,6 +10,39 @@ namespace ActionStreetMap.Explorer.Infrastructure
         private readonly Dictionary<Type, object> _listPoolMap = new Dictionary<Type, object>(8);
         private readonly ObjectArrayPool<float> _splatMapArrayPool = new ObjectArrayPool<float>(1);
 
+        private readonly Dictionary<Type, object> _objectPoolMap = new Dictionary<Type, object>(2);
+
+        /// <inheritdoc />
+        public T NewHeavy<T>() where T : new()
+        {
+            Type type = typeof(T);
+            if (!_objectPoolMap.ContainsKey(type))
+            {
+                lock (_objectPoolMap)
+                {
+                    if (!_objectPoolMap.ContainsKey(type))
+                        _objectPoolMap.Add(type, new ObjectTypePool<T>(1, 1));
+                }
+            }
+
+            return (_objectPoolMap[type] as ObjectTypePool<T>).New();
+        }
+
+        /// <inheritdoc />
+        public void StoreHeavy<T>(T instance) where T : new()
+        {
+            Type type = typeof(T);
+            if (!_objectPoolMap.ContainsKey(type))
+            {
+                lock (_objectPoolMap)
+                {
+                    if (!_objectPoolMap.ContainsKey(type))
+                        _objectPoolMap.Add(type, new ObjectTypePool<T>(1, 1));
+                }
+            }
+            (_objectPoolMap[type] as ObjectTypePool<T>).Store(instance);
+        }
+
         /// <inheritdoc />
         public List<T> NewList<T>()
         {

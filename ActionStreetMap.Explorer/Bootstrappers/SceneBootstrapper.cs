@@ -87,7 +87,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<ITerrainBuilder>().Use<TerrainBuilder>().Singleton());
            
             // roads
-            Container.Register(Component.For<IRoadGraphBuilder>().Use<RoadGraphBuilder>().Singleton());
             Container.Register(Component.For<IRoadStyleProvider>().Use<RoadStyleProvider>().Singleton());
             Container.Register(Component.For<IRoadBuilder>().Use<RoadBuilder>().Singleton());
 
