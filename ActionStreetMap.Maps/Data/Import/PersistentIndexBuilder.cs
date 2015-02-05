@@ -7,6 +7,7 @@ using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Formats;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Maps.Data.Import
 {
@@ -17,8 +18,8 @@ namespace ActionStreetMap.Maps.Data.Import
         private readonly IFileSystemService _fileSystemService;
 
         public PersistentIndexBuilder(string filePath, string outputDirectory, IFileSystemService fileSystemService,
-            IndexSettings settings, ITrace trace)
-            : base(settings, trace)
+            IndexSettings settings, IObjectPool objectPool, ITrace trace)
+            : base(settings, objectPool, trace)
         {
             _filePath = filePath;
             _outputDirectory = outputDirectory;
@@ -39,7 +40,7 @@ namespace ActionStreetMap.Maps.Data.Import
             var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStoreFile);
 
             var storeFile = _fileSystemService.WriteStream(String.Format(Consts.ElementStorePathFormat, _outputDirectory));
-            Store = new ElementStore(keyValueStore, storeFile);
+            Store = new ElementStore(keyValueStore, storeFile, ObjectPool);
             Tree = new RTree<uint>(65);
 
             reader.Read(new ReaderContext

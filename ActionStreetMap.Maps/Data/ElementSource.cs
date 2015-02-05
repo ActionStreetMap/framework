@@ -5,6 +5,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Entities;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Maps.Data
 {
@@ -30,13 +31,14 @@ namespace ActionStreetMap.Maps.Data
         /// </summary>
         /// <param name="directory">Already resolved directory which contains all indecies.</param>
         /// <param name="fileService">File system service.</param>
-        internal ElementSource(string directory, IFileSystemService fileService)
+        /// <param name="objectPool">ObjectPool.</param>
+        internal ElementSource(string directory, IFileSystemService fileService, IObjectPool objectPool)
         {
             // load map data from streams
             KvUsage = new KeyValueUsage(fileService.ReadStream(string.Format(Consts.KeyValueUsagePathFormat, directory)));
             KvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
             KvStore = new KeyValueStore(KvIndex, KvUsage, fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
-            ElementStore = new ElementStore(KvStore, fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)));
+            ElementStore = new ElementStore(KvStore, fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)), objectPool);
             SpatialIndexTree = SpatialIndex.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
         }
 

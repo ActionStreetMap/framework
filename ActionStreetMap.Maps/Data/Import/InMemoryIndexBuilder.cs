@@ -3,6 +3,7 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Formats;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Maps.Data.Import
 {
@@ -15,8 +16,8 @@ namespace ActionStreetMap.Maps.Data.Import
         internal KeyValueStore KvStore { get; private set; }
         internal KeyValueUsage KvUsage { get; private set; }
 
-        public InMemoryIndexBuilder(string extension, Stream sourceStream, IndexSettings settings, ITrace trace)
-            : base(settings, trace)
+        public InMemoryIndexBuilder(string extension, Stream sourceStream, IndexSettings settings, IObjectPool objectPool, ITrace trace)
+            : base(settings, objectPool, trace)
         {
             _extension = extension;
             _sourceStream = sourceStream;
@@ -34,7 +35,7 @@ namespace ActionStreetMap.Maps.Data.Import
             KvStore = new KeyValueStore(KvIndex, KvUsage, keyValueStoreFile);
 
             var storeFile = new MemoryStream();
-            Store = new ElementStore(KvStore, storeFile);
+            Store = new ElementStore(KvStore, storeFile, ObjectPool);
             Tree = new RTree<uint>(65);
 
             reader.Read(new ReaderContext

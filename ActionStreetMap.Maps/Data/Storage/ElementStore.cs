@@ -4,6 +4,7 @@ using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Maps.Entities;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Maps.Data.Storage
 {
@@ -11,6 +12,7 @@ namespace ActionStreetMap.Maps.Data.Storage
     {
         private readonly KeyValueStore _keyValueStore;
         private readonly Stream _stream;
+        private readonly IObjectPool _objectPool;
 
         // serialize specific
         private BinaryWriter _writer;
@@ -19,18 +21,17 @@ namespace ActionStreetMap.Maps.Data.Storage
         // deserialize specific
         private BinaryReader _reader;
         
-        public ElementStore(KeyValueStore keyValueStore, Stream stream)
+        public ElementStore(KeyValueStore keyValueStore, Stream stream, IObjectPool objectPool)
         {
             _keyValueStore = keyValueStore;
             _stream = stream;
+            _objectPool = objectPool;
         }
 
         #region Public methods
 
-        /// <summary>
-        ///     Inserts element into store and returns offset
-        /// </summary>
-        /// <param name="element"></param>
+        /// <summary> Inserts element into store and returns offset. </summary>
+        /// <param name="element">Element.</param>
         /// <returns>Offset.</returns>
         public uint Insert(Element element)
         {
@@ -156,17 +157,17 @@ namespace ActionStreetMap.Maps.Data.Storage
             return element;
         }
 
-        private static Node ReadNode(BinaryReader reader)
+        private Node ReadNode(BinaryReader reader)
         {
             return new Node { Coordinate = ReadCoordinate(reader)};
         }
 
-        private static Way ReadWay(BinaryReader reader)
+        private Way ReadWay(BinaryReader reader)
         {
             Way way = new Way();
             var count = reader.ReadUInt16();
             // TODO use object pool
-            var coordinates = new List<GeoCoordinate>(count);
+            var coordinates = _objectPool.NewList<GeoCoordinate>(count);
             for (int i = 0; i < count; i++)
                 coordinates.Add(ReadCoordinate(reader));
             way.Coordinates = coordinates;
@@ -195,7 +196,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             return relation;
         }
 
-        private static Dictionary<string, string> ReadTags(KeyValueStore keyValueStore, BinaryReader reader)
+        private Dictionary<string, string> ReadTags(KeyValueStore keyValueStore, BinaryReader reader)
         {
             var count = reader.ReadUInt16();
             var tags = new Dictionary<string, string>(count);
@@ -208,7 +209,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             return tags;
         }
 
-        private static GeoCoordinate ReadCoordinate(BinaryReader reader)
+        private GeoCoordinate ReadCoordinate(BinaryReader reader)
         {
             var scaled = new ScaledGeoCoordinate(reader.ReadInt32(), reader.ReadInt32());
             return scaled.Unscale();

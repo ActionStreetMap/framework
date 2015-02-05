@@ -19,17 +19,6 @@ namespace ActionStreetMap.Maps.Entities
             elementVisitor.VisitWay(this);
         }
 
-        /// <summary> Returns all the ponts in this way in the same order as the nodes. </summary>
-        public void FillPoints(List<GeoCoordinate> coordinates)
-        {
-            for (int idx = 0; idx < Coordinates.Count; idx++)
-            {
-                if (idx > 0 && Coordinates[idx - 1] == Coordinates[idx])
-                    continue;
-                coordinates.Add(Coordinates[idx]);
-            }
-        }
-
         /// <summary> True if way is polygon. </summary>
         public bool IsPolygon
         {

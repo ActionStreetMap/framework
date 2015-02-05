@@ -9,6 +9,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data;
 using Moq;
 using NUnit.Framework;
+using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Maps.Index
 {
@@ -33,7 +34,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             fileSystemService.Setup(fs => fs.ReadStream(directory + @"\" + Consts.HeaderFileName))
                 .Returns(stream);
 
-            var provider = new ElementSourceProvider(pathResolver.Object, fileSystemService.Object);
+            var provider = new ElementSourceProvider(pathResolver.Object, fileSystemService.Object, new ObjectPool());
             provider.Trace = new Mock<ITrace>().Object;
 
             // ACT

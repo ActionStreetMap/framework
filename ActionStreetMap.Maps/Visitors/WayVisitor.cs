@@ -52,12 +52,10 @@ namespace ActionStreetMap.Maps.Visitors
         {
             if (!IsArea(way.Tags))
             {
-                var points = ObjectPool.NewList<GeoCoordinate>();
-                way.FillPoints(points);
                 ModelLoader.LoadWay(Tile, new Way
                 {
                     Id = way.Id,
-                    Points = points,
+                    Points = way.Coordinates,
                     Tags = way.Tags
                 });
 
@@ -67,12 +65,10 @@ namespace ActionStreetMap.Maps.Visitors
             if (!way.IsPolygon)
                 return;
             {
-                var points = ObjectPool.NewList<GeoCoordinate>();
-                way.FillPoints(points);
                 ModelLoader.LoadArea(Tile, new Area
                 {
                     Id = way.Id,
-                    Points = points,
+                    Points = way.Coordinates,
                     Tags = way.Tags
                 });
             }

@@ -14,6 +14,7 @@ using ActionStreetMap.Maps.Formats.Xml;
 using Node = ActionStreetMap.Maps.Entities.Node;
 using Relation = ActionStreetMap.Maps.Entities.Relation;
 using Way = ActionStreetMap.Maps.Entities.Way;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Maps.Data.Import
 {
@@ -31,11 +32,13 @@ namespace ActionStreetMap.Maps.Data.Import
         protected IndexSettings Settings;
         protected IndexStatistic IndexStatistic;
 
+        protected IObjectPool ObjectPool;
         protected ITrace Trace;
 
-        protected IndexBuilder(IndexSettings settings, ITrace trace)
+        protected IndexBuilder(IndexSettings settings, IObjectPool objectPool, ITrace trace)
         {
             Settings = settings;
+            ObjectPool = objectPool;
             Trace = trace;
             IndexStatistic = new IndexStatistic(Trace);
         }

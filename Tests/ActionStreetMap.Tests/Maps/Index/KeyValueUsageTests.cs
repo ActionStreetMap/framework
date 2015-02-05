@@ -4,6 +4,7 @@ using System.Linq;
 using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Entities;
 using NUnit.Framework;
+using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Maps.Index
 {
@@ -31,7 +32,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             _kvStore = new KeyValueStore(_index, _kvUsage, keyValueStream);
 
             var elementStoreStream = new MemoryStream(new byte[10000]);
-            _elementStore = new ElementStore(_kvStore, elementStoreStream);
+            _elementStore = new ElementStore(_kvStore, elementStoreStream, new ObjectPool());
         }
 
         [Test]

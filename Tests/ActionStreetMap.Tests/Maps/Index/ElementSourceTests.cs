@@ -4,6 +4,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Entities;
 using NUnit.Framework;
+using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Maps.Index
 {
@@ -15,7 +16,7 @@ namespace ActionStreetMap.Tests.Maps.Index
         public void Setup()
         {
             var directory = "index";
-            _source = new ElementSource(directory, Utils.GetFileSystemServiceMock(directory).Object);
+            _source = new ElementSource(directory, Utils.GetFileSystemServiceMock(directory).Object, new ObjectPool());
         }
 
         [Test]

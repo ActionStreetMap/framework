@@ -12,6 +12,7 @@ using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data.Import;
 using ActionStreetMap.Maps.Data.Spatial;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Maps.Data
 {
@@ -41,6 +42,7 @@ namespace ActionStreetMap.Maps.Data
 
         private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
+        private readonly IObjectPool _objectPool;
         private IndexSettings _settings;
         private RTree<string> _tree;
         private MutableTuple<string, IElementSource> _elementSourceCache;
@@ -52,11 +54,13 @@ namespace ActionStreetMap.Maps.Data
         /// <summary> Creates instance of <see cref="ElementSourceProvider"/>. </summary>
         /// <param name="pathResolver">Path resolver.</param>
         /// <param name="fileSystemService">File system service.</param>
+        /// <param name="objectPool">Object pool.</param>
         [Dependency]
-        public ElementSourceProvider(IPathResolver pathResolver, IFileSystemService fileSystemService)
+        public ElementSourceProvider(IPathResolver pathResolver, IFileSystemService fileSystemService, IObjectPool objectPool)
         {
             _pathResolver = pathResolver;
             _fileSystemService = fileSystemService;
+            _objectPool = objectPool;
         }
 
         /// <inheritdoc />
@@ -85,7 +89,7 @@ namespace ActionStreetMap.Maps.Data
                     {
                         Trace.Warn(LogTag, String.Format("build index from {0} bytes received", bytes.Length));
                         if (_settings == null) ReadIndexSettings();
-                        var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), _settings, Trace);
+                        var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), _settings, _objectPool, Trace);
                         indexBuilder.Build();
                         var elementStore = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex, 
                             indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
@@ -97,7 +101,7 @@ namespace ActionStreetMap.Maps.Data
             if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
             {
                 Trace.Warn(LogTag, string.Format("load index data from {0}", elementSourcePath));
-                SetCurrentElementSource(elementSourcePath, new ElementSource(elementSourcePath, _fileSystemService));
+                SetCurrentElementSource(elementSourcePath, new ElementSource(elementSourcePath, _fileSystemService, _objectPool));
             }
 
             return Observable.Return(_elementSourceCache.Item2);

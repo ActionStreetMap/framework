@@ -10,6 +10,7 @@ using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Entities;
 using Moq;
+using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Maps.Index
 {
@@ -27,7 +28,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStream);
 
             var elementStoreStream = new MemoryStream(new byte[10000]);
-            var elementStore = new ElementStore(keyValueStore, elementStoreStream);
+            var elementStore = new ElementStore(keyValueStore, elementStoreStream, new ObjectPool());
             var tree = new RTree<uint>();
 
             var node = new Node()

@@ -10,6 +10,8 @@ using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Formats;
 using ActionStreetMap.Maps.Formats.Xml;
 using NUnit.Framework;
+using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Maps.Formats
 {
@@ -27,7 +29,7 @@ namespace ActionStreetMap.Tests.Maps.Formats
             _xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
             var settings = new IndexSettings();
             settings.ReadFromJson(JSON.Parse(File.ReadAllText(TestHelper.TestIndexSettingsPath)));
-            _indexBuilder = new TestableIndexBuilder(settings, new ConsoleTrace());
+            _indexBuilder = new TestableIndexBuilder(settings, new ObjectPool(), new ConsoleTrace());
         }
 
         [SetUp]
@@ -62,11 +64,11 @@ namespace ActionStreetMap.Tests.Maps.Formats
         // NOTE This class is workaround due to limitation of mock framework (cannot mock sealed, internal, etc.)
         private class TestableIndexBuilder : IndexBuilder
         {
-            public TestableIndexBuilder(IndexSettings settings, ITrace trace)
-                : base(settings, trace)
+            public TestableIndexBuilder(IndexSettings settings, IObjectPool objectPool, ITrace trace)
+                : base(settings, objectPool, trace)
             {
                 Store = new ElementStore(new KeyValueStore(new KeyValueIndex(1000, 3),
-                    new KeyValueUsage(new MemoryStream()), new MemoryStream()), new MemoryStream());
+                    new KeyValueUsage(new MemoryStream()), new MemoryStream()), new MemoryStream(), new ObjectPool());
 
                 Tree = new RTree<uint>();
             }
