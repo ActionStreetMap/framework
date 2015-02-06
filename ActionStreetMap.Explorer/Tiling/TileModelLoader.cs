@@ -127,7 +127,11 @@ namespace ActionStreetMap.Explorer.Tiling
             });
 
             // NOTE schedule cleanup on UI thread as data may be used
-            Scheduler.MainThread.Schedule(() => _heighMapProvider.Store(tile.HeightMap));
+            Scheduler.MainThread.Schedule(() => 
+            {
+                _heighMapProvider.Store(tile.HeightMap);
+                tile.Canvas.Dispose();
+            });
             _objectPool.Shrink();
         }
 

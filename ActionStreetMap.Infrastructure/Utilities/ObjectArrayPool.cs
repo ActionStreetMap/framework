@@ -57,14 +57,15 @@ namespace ActionStreetMap.Infrastructure.Utilities
         public void Store(object arrayObj)
         {
             // TODO this looks ugly
-
             var array3 = arrayObj as T[,,];
             if (array3 != null)
             {
                 Array.Clear(array3, 0, array3.Length);
                 lock (_lockObj)
                 {
-                    _objectArray3Stack.Push(array3);
+                    // Do not store more than one
+                    if (_objectArray3Stack.Count == 0)
+                        _objectArray3Stack.Push(array3);
                     return;
                 }
             }
@@ -75,7 +76,9 @@ namespace ActionStreetMap.Infrastructure.Utilities
                 Array.Clear(array2, 0, array2.Length);
                 lock (_lockObj)
                 {
-                    _objectArray2Stack.Push(array2);
+                    // Do not store more than one
+                    if (_objectArray2Stack.Count == 0)
+                        _objectArray2Stack.Push(array2);
                     return;
                 }
             }

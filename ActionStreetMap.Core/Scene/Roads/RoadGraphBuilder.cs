@@ -54,7 +54,7 @@ namespace ActionStreetMap.Core.Scene.Roads
                 var point = el.Points[i];
 
                 if (!_pointsMap.ContainsKey(point))
-                    _pointsMap[point] = new SortedList<RoadType, MutableTuple<RoadElement, int>>();
+                    _pointsMap[point] = new SortedList<RoadType, MutableTuple<RoadElement, int>>(1);
 
                 if (!_pointsMap[point].ContainsKey(el.Type) && !_junctionsMap.ContainsKey(point))
                     _pointsMap[point].Add(el.Type, new MutableTuple<RoadElement, int>(el, i));
