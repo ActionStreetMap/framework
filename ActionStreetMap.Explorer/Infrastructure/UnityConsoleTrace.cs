@@ -13,13 +13,13 @@ namespace ActionStreetMap.Explorer.Infrastructure
             switch (type)
             {
                 case RecordType.Error:
-                    Debug.LogException(exception);
+                    UnityEngine.Debug.LogException(exception);
                     break;
-                case RecordType.Warning:
-                    Debug.LogWarning(String.Format("{0}:{1}", category, message));
+                case RecordType.Warn:
+                    UnityEngine.Debug.LogWarning(String.Format("{0}:{1}", category, message));
                     break;
                 default:
-                    Debug.Log(String.Format("{0}:{1}", category, message));
+                    UnityEngine.Debug.Log(String.Format("{0}:{1}", category, message));
                     break;
             }
         }

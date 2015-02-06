@@ -60,16 +60,16 @@ namespace ActionStreetMap.Maps.Data.Elevation
         /// <inheritdoc />
         public IObservable<Unit> Download(double latitude, double longitude)
         {
-            _trace.Output(LogTag, String.Format("downloading data for {0}:{1}", latitude, longitude));
+            _trace.Info(LogTag, "downloading data for {0}:{1}", latitude, longitude);
             return _downloader.Download(new GeoCoordinate(latitude, longitude))
                     .SelectMany(bytes => 
                     {
-                        _trace.Output(LogTag, String.Format("downloaded {0} bytes", bytes.Length));
+                        _trace.Info(LogTag, "downloaded {0} bytes", bytes.Length);
                         _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
                         InitData((int) latitude, (int) longitude);
                         // store data to disk
                         var path = GetFilePath(_srtmLat, _srtmLon);
-                        _trace.Output(LogTag, String.Format("storing as {0}", path));
+                        _trace.Info(LogTag, "storing as {0}", path);
                         using(var stream = _fileSystemService.WriteStream(path))
                             stream.Write(_hgtData, 0, _hgtData.Length);
 
@@ -139,7 +139,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
 
                     var filePath = GetFilePath(latDec, lonDec);
 
-                    _trace.Output("mapdata.srtm", String.Format(Strings.LoadElevationFrom, filePath));
+                    _trace.Info("mapdata.srtm", Strings.LoadElevationFrom, filePath);
 
                     if (!_fileSystemService.Exists(filePath))
                         throw new Exception(String.Format(Strings.CannotFindSrtmData, filePath));

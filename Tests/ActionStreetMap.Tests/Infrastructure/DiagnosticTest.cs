@@ -13,18 +13,10 @@ namespace ActionStreetMap.Tests.Infrastructure
         {
             using (var trace = new DefaultTrace())
             {
-                trace.Normal("normal");
-                trace.Normal("category", "Normal");
-                trace.Warn("Warn");
+                trace.Debug("category", "Normal");
+                trace.Info("category", "Input");
                 trace.Warn("category", "Warn");
-                trace.Input("Input");
-                trace.Input("category", "Input");
-                trace.Output("Output");
-                trace.Output("category", "Output");
-                trace.System("System");
-                trace.System("category", "System");
-                trace.Error("Error", new ArgumentException());
-                trace.Error("category", "Error", new ArgumentException());
+                trace.Error("category", new ArgumentException(), "Error");
             }
         }
     }

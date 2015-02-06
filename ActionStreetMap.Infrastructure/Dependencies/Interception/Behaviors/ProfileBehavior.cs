@@ -50,7 +50,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors
             sw.Start();
             var result = methodBase.Invoke(methodInvocation.Target, methodInvocation.Parameters.Values.ToArray());
             sw.Stop();
-            _trace.Normal("Interception." + Name, String.Format("{0}: {1} ms", methodName, sw.ElapsedMilliseconds));
+            _trace.Debug("interception." + Name, "{0}: {1} ms", methodName, sw.ElapsedMilliseconds.ToString());
             
             methodInvocation.IsInvoked = true;
             return methodInvocation.Return = new MethodReturn(result);

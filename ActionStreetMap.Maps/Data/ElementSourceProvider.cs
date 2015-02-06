@@ -75,19 +75,19 @@ namespace ActionStreetMap.Maps.Data
         public IObservable<IElementSource> Get(BoundingBox query)
         {
             // NOTE block thread here
-            Trace.Output(LogTag, String.Format("getting element sources for {0}", query));
+            Trace.Info(LogTag, "getting element sources for {0}", query);
             var elementSourcePath = _tree.Search(query).Wait();
             if (elementSourcePath == null && !String.IsNullOrEmpty(_mapDataServerUri))
             {
                 var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 
                     query.MaxPoint.Longitude, query.MaxPoint.Latitude);
                 var uri = String.Format("{0}{1}", _mapDataServerUri, Uri.EscapeDataString(queryString));
-                Trace.Warn(LogTag, String.Format(Strings.NoPresistentElementSourceFound, query, uri));
+                Trace.Warn(LogTag, Strings.NoPresistentElementSourceFound, query, uri);
                 return ObservableWWW.GetAndGetBytes(uri)
                     .Take(1)
                     .SelectMany(bytes =>
                     {
-                        Trace.Warn(LogTag, String.Format("build index from {0} bytes received", bytes.Length));
+                        Trace.Info(LogTag, "build index from {0} bytes received", bytes.Length);
                         if (_settings == null) ReadIndexSettings();
                         var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), _settings, _objectPool, Trace);
                         indexBuilder.Build();
@@ -100,7 +100,7 @@ namespace ActionStreetMap.Maps.Data
 
             if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
             {
-                Trace.Warn(LogTag, string.Format("load index data from {0}", elementSourcePath));
+                Trace.Info(LogTag, "load index data from {0}", elementSourcePath);
                 SetCurrentElementSource(elementSourcePath, new ElementSource(elementSourcePath, _fileSystemService, _objectPool));
             }
 

@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         {
             if (way.Points.Count < 2)
             {
-                Trace.Warn(Strings.InvalidPolyline);
+                Trace.Warn("model.barrier", Strings.InvalidPolyline);
                 return null;
             }
 

@@ -62,7 +62,7 @@ namespace ActionStreetMap.Core.Elevation
             bool hasData = _elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
             if (!hasData && _autoDownload)
             {
-                Trace.Warn(LogTag, String.Format("no elevation data found for {0}", tileGeoCenter));
+                Trace.Warn(LogTag, "no elevation data found for {0}", tileGeoCenter);
                 _elevationProvider.Download(tileGeoCenter.Latitude, tileGeoCenter.Longitude).Wait();
                 hasData = _elevationProvider.HasElevation(tileGeoCenter.Latitude, tileGeoCenter.Longitude);
             }
@@ -77,7 +77,7 @@ namespace ActionStreetMap.Core.Elevation
             else
                 BuildFlatMap(map, resolution, out minElevation, out maxElevation);
 
-            Trace.Output(LogTag, String.Format("elevation mode is flat: {0}", isFlat));
+            Trace.Info(LogTag, "elevation mode is flat: {0}", isFlat);
             return new HeightMap
             {
                 LeftBottomCorner = tile.BottomLeft,

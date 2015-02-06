@@ -67,7 +67,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public IGameObject Build(IGameObject parent, TerrainSettings settings)
         {
-            Trace.Output(LogTag, "starting build");
+            Trace.Info(LogTag, "starting build");
             ProcessTerrainObjects(settings);
 
             var canvas = settings.Tile.Canvas;
@@ -104,15 +104,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _surfaceBuilder.Build(settings, alphaMapElements, settings.Tile.Canvas.SplatMap, canvas.Details);
 
             var gameObject = _gameObjectFactory.CreateNew("terrain");
-            Trace.Output(LogTag, "scheduling on main thread..");
+            Trace.Debug(LogTag, "scheduling on main thread..");
             Scheduler.MainThread.Schedule(() =>
             {
                 CreateTerrainGameObject(gameObject, parent, settings, size, canvas.Details);
-                // NOTE schedule cleanup on non-UI thread
                 canvas.Dispose();
-                Trace.Output(LogTag, "build finished");
+                Trace.Info(LogTag, "build finished");
             });
-
             return gameObject;
         }
 

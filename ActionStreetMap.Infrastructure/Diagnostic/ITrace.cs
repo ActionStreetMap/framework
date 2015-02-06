@@ -8,40 +8,28 @@ namespace ActionStreetMap.Infrastructure.Diagnostic
         /// <summary> Level of tracing. </summary>
         int Level { get; set; }
 
-        /// <summary> Writes message to trace using default tracer category. </summary>
-        void Normal(string message);
+        /// <summary> Writes debug message. </summary>
+        void Debug(string category, string message);
 
-        /// <summary> Writes message to trace using category provided. </summary>
-        void Normal(string category, string message);
+        /// <summary> Writes debug message. </summary>
+        void Debug(string category, string format, params object[] args);
 
-        /// <summary> Writes message to trace using default tracer category. </summary>
-        void Output(string message);
+        /// <summary> Writes info message. </summary>
+        void Info(string category, string message);
 
-        /// <summary> Writes message to trace using category provided. </summary>
-        void Output(string category, string message);
+        /// <summary> Writes info message. </summary>
+        void Info(string category, string format, params object[] args);
 
-        /// <summary> Writes message to trace using default tracer category. </summary>
-        void Input(string message);
-
-        /// <summary> Writes message to trace using category provided. </summary>
-        void Input(string category, string message);
-
-        /// <summary> Writes message to trace using default tracer category. </summary>
-        void System(string message);
-
-        /// <summary> Writes message to trace using category provided. </summary>
-        void System(string category, string message);
-
-        /// <summary> Writes message to trace using default tracer category. </summary>
-        void Warn(string message);
-
-        /// <summary> Writes message to trace using category provided. </summary>
+        /// <summary> Writes warn message. </summary>
         void Warn(string category, string message);
 
-        /// <summary> Writes message to trace using default tracer category. </summary>
-        void Error(string message, Exception exception);
+        /// <summary> Writes warn message. </summary>
+        void Warn(string category, string format, params object[] args);
 
-        /// <summary> Writes message to trace. </summary>
-        void Error(string category, string message, Exception exception);
+        /// <summary> Writes exception message. </summary>
+        void Error(string category, Exception ex, string message);
+
+        /// <summary> Writes exception message. </summary>
+        void Error(string category, Exception ex, string format, params object[] args);
     }
 }

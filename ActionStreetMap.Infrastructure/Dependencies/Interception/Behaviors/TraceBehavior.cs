@@ -32,7 +32,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors
                     (ag, p) => ag + (ag != "" ? ", ": "") +
                     (p.Value != null? p.ToString(): "<null>")));
 
-            _trace.Normal("Interception." + Name, String.Format("invoke {0}", methodName));
+            _trace.Debug("interception." + Name,"invoke {0}", methodName);
             
             var result = methodInvocation.IsInvoked? methodInvocation.Return :  
                 base.Invoke(methodInvocation);
@@ -42,7 +42,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors
             if (methodInfo != null && methodInfo.ReturnType != typeof(void))
                 resultString += ": " + result.GetReturnValue();
 
-            _trace.Normal("Interception." + Name, String.Format("end {0}{1}", methodName, resultString));
+            _trace.Debug("interception." + Name, "end {0}{1}", methodName, resultString);
 
             return result;
         }

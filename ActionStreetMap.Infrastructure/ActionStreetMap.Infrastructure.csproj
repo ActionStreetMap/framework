@@ -79,7 +79,6 @@
     <Compile Include="Dependencies\TypeHelper.cs" />
     <Compile Include="Diagnostic\DefaultTrace.cs" />
     <Compile Include="Diagnostic\ITrace.cs" />
-    <Compile Include="Diagnostic\RecordType.cs" />
     <Compile Include="Formats\Json\SimpleJSON.cs" />
     <Compile Include="Primitives\DoubleKeyDictionary.cs" />
     <Compile Include="Primitives\SafeDictionary.cs" />

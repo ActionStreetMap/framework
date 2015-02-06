@@ -11,7 +11,7 @@ namespace ActionStreetMap.Explorer.Tiling
     /// <summary> Represents default tile activator. </summary>
     public class TileActivator: ITileActivator
     {
-        private const string Category = "tile";
+        private const string LogTag = "tile";
 
         /// <summary> Trace. </summary>
         [Dependency]
@@ -20,21 +20,21 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void Activate(Tile tile)
         {
-            Trace.Output(Category, String.Format("Activate tile: {0}", tile.MapCenter));
+            Trace.Debug(LogTag, "activate tile: {0}", tile.MapCenter);
             Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, true));
         }
 
         /// <inheritdoc />
         public void Deactivate(Tile tile)
         {
-            Trace.Output(Category, String.Format("Deactivate tile: {0}", tile.MapCenter));
+            Trace.Debug(LogTag, "deactivate tile: {0}", tile.MapCenter);
             Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, false));
         }
 
         /// <inheritdoc />
         public void Destroy(Tile tile)
         {
-            Trace.Output(Category, String.Format("Destroy tile: {0}", tile.MapCenter));
+            Trace.Debug(LogTag, "destroy tile: {0}", tile.MapCenter);
             tile.Registry.Dispose();
             Scheduler.MainThread.Schedule(() => DestroyWithChildren(tile));
         }
