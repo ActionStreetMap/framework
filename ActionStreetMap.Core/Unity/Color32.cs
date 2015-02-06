@@ -3,7 +3,7 @@
 namespace ActionStreetMap.Core.Unity
 {
     /// <summary> Defines RGBA color. </summary>
-    public struct Color32
+    public class Color32
     {
         /// <summary> Red. </summary>
         public byte R;

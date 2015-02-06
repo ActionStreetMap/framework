@@ -219,7 +219,7 @@ namespace ActionStreetMap.Core.Utilities
             byte red = (byte) (HexToInt(color[1]) + HexToInt(color[0]) * 16.000);
             byte green = (byte)(HexToInt(color[3]) + HexToInt(color[2]) * 16.000);
             byte blue = (byte)(HexToInt(color[5]) + HexToInt(color[4]) * 16.000);
-            var finalColor = new Color32 {R = red, G = green, B = blue, A = 1};
+            var finalColor = new Color32(red, green, blue, 1);
             return finalColor;
         }
 
