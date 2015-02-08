@@ -6,35 +6,32 @@ using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(52.53176, 13.38702);
+        private const string LogTag = "host";
+        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(55.7537315, 37.6198537);
         private readonly string _nmeaFilePath = TestHelper.TestNmeaFilePath;
 
         private readonly Container _container = new Container();
-        private readonly MessageBus _messageBus = new MessageBus();
         private readonly PerformanceLogger _logger = new PerformanceLogger();
-        private readonly DemoTileListener _tileListener;
+        private IMessageBus _messageBus;
+        private ITrace _trace;
+        private DemoTileListener _tileListener;
         private IPositionObserver<GeoCoordinate> _positionObserver;
 
         private readonly ManualResetEvent _waitEvent = new ManualResetEvent(false);
 
-        public Program()
-        {
-            // NOTE not used directly but it subscribes to messages from message bus
-            // and logs them to console
-            _tileListener = new DemoTileListener(_messageBus, _logger);
-        }
 
         private static void Main(string[] args)
         {
             var program = new Program();
             program.RunGame();
-            //program.DoContinuosMovements();
+            program.DoContinuosMovements();
             //program.RunMocker();
             //program.Wait(); 
             Console.ReadKey();
@@ -54,7 +51,11 @@ namespace ActionStreetMap.Tests
         public void RunGame()
         {
             _logger.Start();
-            var componentRoot = TestHelper.GetGameRunner(_container, _messageBus);
+            var componentRoot = TestHelper.GetGameRunner(_container);
+
+            _messageBus = _container.Resolve<IMessageBus>();
+            _trace = _container.Resolve<ITrace>();
+            _tileListener = new DemoTileListener(_messageBus, _logger);
 
             // start game on default position
             componentRoot.RunGame(_startGeoCoordinate);
@@ -63,7 +64,7 @@ namespace ActionStreetMap.Tests
 
             _messageBus.AsObservable<GeoPosition>().Do(position =>
             {
-                Console.WriteLine("GeoPosition: {0}", position);
+                _trace.Debug(LogTag, "GeoPosition: {0}", position);
                 _positionObserver.OnNext(position.Coordinate);
             }).Subscribe();
         }
@@ -78,21 +79,26 @@ namespace ActionStreetMap.Tests
 
         public void DoContinuosMovements()
         {
-            for (int i = 0; i < 15000; i++)
+            for (int j = 0; j < 10; j++)
             {
-                var newCoordinate = new GeoCoordinate(
-                    _startGeoCoordinate.Latitude + 0.00001 * i,
-                    _startGeoCoordinate.Longitude);
-                _positionObserver.OnNext(newCoordinate);
+                for (int i = 0; i < 15000; i++)
+                {
+                    var newCoordinate = new GeoCoordinate(
+                        _startGeoCoordinate.Latitude + 0.00001*i,
+                        _startGeoCoordinate.Longitude);
+                    _positionObserver.OnNext(newCoordinate);
+                }
+
+                for (int i = 15000; i >= 0; i--)
+                {
+                    var newCoordinate = new GeoCoordinate(
+                        _startGeoCoordinate.Latitude + 0.00001*i,
+                        _startGeoCoordinate.Longitude);
+                    _positionObserver.OnNext(newCoordinate);
+                }
             }
 
-            for (int i = 15000; i >= 0; i--)
-            {
-                var newCoordinate = new GeoCoordinate(
-                    _startGeoCoordinate.Latitude + 0.00001 * i,
-                    _startGeoCoordinate.Longitude);
-                _positionObserver.OnNext(newCoordinate);
-            }
+            _trace.Debug(LogTag, "DoContinuosMovements: end");
         }
 
         #endregion

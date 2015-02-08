@@ -11,7 +11,7 @@ namespace ActionStreetMap.Core.Positioning.Nmea
     public sealed class NmeaPositionMocker : IDisposable
     {
         private readonly NmeaParser _parser;
-        private readonly MessageBus _messageBus;
+        private readonly IMessageBus _messageBus;
 
         private GeoPosition _position;
         private DateTime? _positionDateTime;
@@ -36,7 +36,7 @@ namespace ActionStreetMap.Core.Positioning.Nmea
         /// </summary>
         /// <param name="stream">Nmea stream.</param>
         /// <param name="messageBus">MessageBus.</param>
-        public NmeaPositionMocker(Stream stream, MessageBus messageBus)
+        public NmeaPositionMocker(Stream stream, IMessageBus messageBus)
         {
             _parser = new NmeaParser(stream);
             _messageBus = messageBus;
