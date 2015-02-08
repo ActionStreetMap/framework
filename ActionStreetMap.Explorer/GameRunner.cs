@@ -1,42 +1,86 @@
 ﻿using System;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Explorer.Bootstrappers;
 using ActionStreetMap.Infrastructure.Bootstrap;
+using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Explorer
 {
-    /// <summary> Represents entry point class for ASM logic. </summary>
-    public interface IGameRunner
-    {
-        /// <summary> Runs game with provided coordinate as map center. </summary>
-        /// <param name="startCoordinate">Geo coordinate for (0,0) map point.</param>
-        void RunGame(GeoCoordinate startCoordinate);
-    }
-
     /// <summary> Represents application component root. </summary>
-    public sealed class GameRunner : IGameRunner, IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    public sealed class GameRunner : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
+        private const string LogTag = "runner";
         private readonly IContainer _container;
-        private readonly IMessageBus _messageBus;
         private IPositionObserver<MapPoint> _mapPositionObserver;
         private IPositionObserver<GeoCoordinate> _geoPositionObserver;
 
-        /// <summary> Creates instance of <see cref="GameRunner"/>. </summary>
-        /// <param name="container">DI container.</param>
-        /// <param name="messageBus">Message bus.</param>
-        public GameRunner(IContainer container, IMessageBus messageBus)
-        {
-            _container = container;
-            _messageBus = messageBus;
-        } 
+        private bool _isActive;
 
-        /// <inheritdoc />
+        /// <summary> 
+        ///     Creates instance of <see cref="GameRunner"/>. <see cref="ITrace"/>, <see cref="IPathResolver"/> and
+        ///     <see cref="IMessageBus"/> services should be already registered inside container.
+        /// </summary>
+        /// <param name="container">DI container.</param>
+        /// <param name="rootConfigPath">Path of main configuration.</param>
+        public GameRunner(IContainer container, string rootConfigPath)
+        {
+            _container = container;         
+            ITrace trace = null;
+            try
+            {
+                // NOTE these classes should be provided by client application.
+                trace = _container.Resolve<ITrace>();
+                var pathResolver = _container.Resolve<IPathResolver>();
+                var messageBus = _container.Resolve<IMessageBus>();
+                // read config
+                var fileSystemService = new FileSystemService(pathResolver, trace);
+                container.RegisterInstance(typeof (IFileSystemService), fileSystemService);
+                container.RegisterInstance<IConfigSection>(new ConfigSection(rootConfigPath, fileSystemService));
+            }
+            catch (DependencyException depEx)
+            {
+                throw new ArgumentException(Strings.CannotRunGameWithoutPrerequesites, "container", depEx);
+            }
+            catch (Exception ex)
+            {
+                if (trace != null)
+                    trace.Error(LogTag, ex, Strings.CannotReadMainConfig, rootConfigPath);
+                throw;
+            }
+
+            // register bootstrappers
+            _container.Register(Component.For<IBootstrapperService>().Use<BootstrapperService>());
+            _container.Register(Component.For<IBootstrapperPlugin>().Use<InfrastructureBootstrapper>().Named("infrastructure"));
+            _container.Register(Component.For<IBootstrapperPlugin>().Use<TileBootstrapper>().Named("tile"));
+            _container.Register(Component.For<IBootstrapperPlugin>().Use<SceneBootstrapper>().Named("scene"));
+        }
+
+        /// <summary> Registers specific bootstrapper plugin. </summary>
+        /// <returns> Current GameRunner.</returns>
+        public GameRunner RegisterPlugin<T>(string name, params object[] args) where T: IBootstrapperPlugin
+        {
+            if (_isActive) 
+                throw new InvalidOperationException(Strings.CannotRegisterPluginForActiveGame);
+            _container.Register(Component.For<IBootstrapperPlugin>().Use(typeof(T), args).Named(name).Singleton());
+            return this;
+        }
+
+        /// <summary> Runs game. Do not call this method on UI thread to prevent its blocking. </summary>
+        /// <param name="coordinate">GeoCoordinate for (0,0) map point. </param>
         public void RunGame(GeoCoordinate coordinate)
         {
+            if(_isActive)
+                throw new InvalidOperationException(Strings.CannotRunGameTwice);
+
+            _isActive = true;
+
             // run bootstrappers
-            _container.RegisterInstance(_messageBus);
             _container.Resolve<IBootstrapperService>().Run();
 
             // resolve actual position observers
@@ -45,7 +89,7 @@ namespace ActionStreetMap.Explorer
             _geoPositionObserver = tilePositionObserver;
 
             // notify about geo coordinate change
-            Scheduler.ThreadPool.Schedule(() => _geoPositionObserver.OnNext(coordinate));
+            _geoPositionObserver.OnNext(coordinate);
         }
 
         #region IObserver<MapPoint> implementation

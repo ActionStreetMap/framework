@@ -18,15 +18,11 @@ namespace ActionStreetMap.Core.Scene.Roads
         private readonly Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>> _pointsMap = 
             new Dictionary<MapPoint, SortedList<RoadType, MutableTuple<RoadElement, int>>>(2056);
 
-        private bool _isBuilt = false;
-
         #region Public methods
 
         /// <inheritdoc />
         public RoadGraph Build()
         {
-            _isBuilt = true;
-
             MergeRoads();
 
             var roads = _elements.Select(kv => new Road { Elements = kv.Value }).ToArray();
@@ -42,10 +38,7 @@ namespace ActionStreetMap.Core.Scene.Roads
 
         /// <inheritdoc />
         public void Add(RoadElement element)
-        {
-            // TODO This is workaround. Need investigate why this method is called after build is started
-            if (_isBuilt) return;
-            
+        {           
             _elements.Add(element.Id, new List<RoadElement>(1) { element });
 
             RoadElement el = element;

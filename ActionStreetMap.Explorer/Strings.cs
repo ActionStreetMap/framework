@@ -2,6 +2,10 @@
 {
     internal static class Strings
     {
+        public static string CannotRunGameWithoutPrerequesites = "Fatal: GameRunner cannot be instatiated because if missing service registrations inside container.";
+        public static string CannotReadMainConfig = "Fatal: cannot read configuration from {0}";
+        public static string CannotRunGameTwice = "Cannot call RunGame method second time!";
+        public static string CannotRegisterPluginForActiveGame = "Plugin cannot be installed while game is run";
         public static string CannotGetBuildingStyle = "Can't get building style - unknown building type: {0}. " +
                                                       "Try to check your current mapcss and theme files";       
         public static string InvalidPolyline = "Attempt to render polyline with less than 2 points";

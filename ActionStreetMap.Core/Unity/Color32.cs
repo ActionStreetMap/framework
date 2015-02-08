@@ -6,16 +6,18 @@ namespace ActionStreetMap.Core.Unity
     public class Color32
     {
         /// <summary> Red. </summary>
-        public byte R;
+        public byte R { get; private set; }
 
         /// <summary> Green. </summary>
-        public byte G;
+        public byte G { get; private set; }
 
         /// <summary> Blue. </summary>
-        public byte B;
+        public byte B { get; private set; }
 
         /// <summary> Alpha. </summary>
-        public byte A;
+        public byte A { get; private set; }
+
+        private readonly int _intValue;
 
         /// <summary> Creates color. </summary>
         /// <param name="r">Red.</param>
@@ -28,18 +30,14 @@ namespace ActionStreetMap.Core.Unity
             G = g;
             B = b;
             A = a;
+
+            _intValue = R;
+            _intValue = (_intValue << 8) + G;
+            _intValue = (_intValue << 8) + B;
         }
 
-        /// <summary> Converts to int reprentation. </summary>
-        /// <returns></returns>
-        public int ToInt()
-        {
-            int rgb = R;
-            rgb = (rgb << 8) + G;
-            rgb = (rgb << 8) + B;
-
-            return rgb;
-        }
+        /// <summary> Gets int reprentation. </summary>
+        public int IntValue { get { return _intValue; } }
 
         /// <summary>
         ///     Calculate distance to given color.This algorithm is combination both weighted Euclidean distance functions, where
@@ -55,6 +53,23 @@ namespace ActionStreetMap.Core.Unity
             long g = G - other.G;
             long b = B - other.B;
             return Math.Sqrt((((512 + rmean)*r*r) >> 8) + 4*g*g + (((767 - rmean)*b*b) >> 8));
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return _intValue;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Color32))
+                return false;
+
+            var color = obj as Color32;
+
+            return R == color.R && G == color.G && B == color.B && A == color.A;
         }
 
         /// <inheritdoc />

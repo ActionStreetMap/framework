@@ -5,6 +5,7 @@ using ActionStreetMap.Explorer.Bootstrappers;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Tests.Explorer.Tiles;
 using ActionStreetMap.Unity.IO;
@@ -42,34 +43,16 @@ namespace ActionStreetMap.Tests
 
         public static GameRunner GetGameRunner(IContainer container)
         {
-            return GetGameRunner(container, new MessageBus());
-        }
-
-        public static GameRunner GetGameRunner(IContainer container, MessageBus messageBus)
-        {
             // these items are used during boot process
-            var pathResolver = new TestPathResolver();
-            container.RegisterInstance<IPathResolver>(pathResolver);
-            var fileSystemService = new FileSystemService(pathResolver);
-            container.RegisterInstance<IFileSystemService>(GetFileSystemService());
-
-            container.RegisterInstance<IConfigSection>(new ConfigSection(ConfigAppRootFile, fileSystemService));
-
-            // actual boot service
-            container.Register(Component.For<IBootstrapperService>().Use<BootstrapperService>());
-
-            // boot plugins
-            container.Register(Component.For<IBootstrapperPlugin>().Use<InfrastructureBootstrapper>().Named("infrastructure"));
-            container.Register(Component.For<IBootstrapperPlugin>().Use<TileBootstrapper>().Named("tile"));
-            container.Register(Component.For<IBootstrapperPlugin>().Use<SceneBootstrapper>().Named("scene"));
-            container.Register(Component.For<IBootstrapperPlugin>().Use<TestBootstrapperPlugin>().Named("test"));
-
-            return new GameRunner(container, messageBus);
+            container.Register(Component.For<ITrace>().Use<ConsoleTrace>().Singleton());
+            container.Register(Component.For<IPathResolver>().Use<TestPathResolver>().Singleton());
+            container.Register(Component.For<IMessageBus>().Use<MessageBus>().Singleton());
+            return new GameRunner(container, ConfigAppRootFile).RegisterPlugin<TestBootstrapperPlugin>("test");
         }
 
         public static IFileSystemService GetFileSystemService()
         {
-            return new FileSystemService(new TestPathResolver());
+            return new FileSystemService(new TestPathResolver(), new ConsoleTrace());
         }
     }
 }

@@ -3,7 +3,6 @@ using ActionStreetMap.Explorer.Commands;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Utils;
 
@@ -18,7 +17,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         /// <inheritdoc />
         public override bool Run()
         {
-            Container.Register(Component.For<ITrace>().Use<UnityConsoleTrace>().Singleton());
             Container.Register(Component.For<IGameObjectFactory>().Use<GameObjectFactory>().Singleton());
             Container.Register(Component.For<IObjectPool>().Use<ObjectPool>().Singleton());
 

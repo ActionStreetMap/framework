@@ -67,7 +67,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public IGameObject Build(IGameObject parent, TerrainSettings settings)
         {
-            Trace.Info(LogTag, "starting build");
+            Trace.Debug(LogTag, "starting build");
             ProcessTerrainObjects(settings);
 
             var canvas = settings.Tile.Canvas;
@@ -109,7 +109,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             {
                 CreateTerrainGameObject(gameObject, parent, settings, size, canvas.Details);
                 canvas.Dispose();
-                Trace.Info(LogTag, "build finished");
+                Trace.Debug(LogTag, "build finished");
             });
             return gameObject;
         }

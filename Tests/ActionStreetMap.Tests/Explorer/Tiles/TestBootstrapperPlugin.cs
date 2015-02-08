@@ -16,16 +16,12 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
         private readonly TestModelBehaviour _solidModelBehaviour = new TestModelBehaviour("solid");
         private readonly TestModelBehaviour _waterModelBehaviour = new TestModelBehaviour("water");
 
-        public override string Name
-        {
-            get { return "test"; }
-        }
+        public override string Name { get { return "test"; } }
 
         public override bool Run()
         {
             Scheduler.MainThread = new TestScheduler();
 
-            Container.Register(Component.For<ITrace>().Use<ConsoleTrace>());
             Container.RegisterInstance<IModelBehaviour>(_solidModelBehaviour, "solid");
             Container.RegisterInstance<IModelBehaviour>(_waterModelBehaviour, "water");
 
