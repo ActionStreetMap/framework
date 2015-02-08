@@ -51,6 +51,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             var objectPool = new ObjectPool();
             config.Setup(c => c.GetString("local", null)).Returns(TestHelper.MapDataPath);
             var elementSourceProvider = new ElementSourceProvider(pathResolver, TestHelper.GetFileSystemService(), new ObjectPool());
+            elementSourceProvider.Trace = new ConsoleTrace();
             elementSourceProvider.Configure(config.Object);
             var loader = new MapTileLoader(elementSourceProvider, sceneVisitor, new ObjectPool());
 

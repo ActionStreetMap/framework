@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using NUnit.Framework;
@@ -19,12 +20,14 @@ namespace ActionStreetMap.Tests.Explorer.Themes
             Assert.AreEqual(ColorUtility.FromName("red"), provider.Get(new Building()
             {
                 Type = "residential",
+                RoofColor = new Color32(0, 0, 0, 0),
                 FacadeColor = ColorUtility.FromName("red"),
             }).Facade.Color, "Unable to use color name");
 
             Assert.AreEqual(ColorUtility.FromUnknown("#4C2F20"), provider.Get(new Building()
             {
                 Type = "residential",
+                RoofColor = new Color32(0, 0, 0, 0),
                 FacadeColor = ColorUtility.FromUnknown("#4C2F27"),
             }).Facade.Color, "Unable to use color from hex");
         }
@@ -40,6 +43,7 @@ namespace ActionStreetMap.Tests.Explorer.Themes
             {
                 Type = "residential",
                 Id = 1,
+                FacadeColor = new Color32(0, 0, 0, 0),
                 RoofColor = ColorUtility.FromName("red"),
             }).Roof.Color, "Cannot choose roof");
         }
