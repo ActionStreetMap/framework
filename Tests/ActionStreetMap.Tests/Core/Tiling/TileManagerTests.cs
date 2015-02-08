@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Core;
+﻿using System;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
@@ -162,6 +163,26 @@ namespace ActionStreetMap.Tests.Core.Tiling
                     Assert.AreEqual(1, observer.Count);
                 }
             }
+        }
+
+        [Test]
+        [Description("This test checks whether manager is able to deactivate/destroy tiles correctly to prevent high memory consumption")]
+        public void ShouldDeleteOutsideCurrent()
+        {
+            // ARRANGE
+            var manager = GetManager();
+            var positionObserver = manager as IPositionObserver<MapPoint>;
+
+            Func<float, float> coordGetter = offset => (Half*offset) - 0.1f;
+
+            positionObserver.OnNext(new MapPoint(0, 0));
+            Assert.AreEqual(1, manager.Count);
+            positionObserver.OnNext(new MapPoint(0, coordGetter(1)));
+            Assert.AreEqual(2, manager.Count);
+            positionObserver.OnNext(new MapPoint(0, coordGetter(1.5f)));
+            Assert.AreEqual(3, manager.Count);
+            //positionObserver.OnNext(new MapPoint(coordGetter(1), coordGetter(2)));
+            //Assert.AreEqual(3, manager.Count);
         }
 
         private TileManager GetManager()
