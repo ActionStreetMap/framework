@@ -45,29 +45,7 @@ namespace ActionStreetMap.Core.Tiling
         /// <param name="tile">Tile.</param>
         public TileLoadFinishMessage(Tile tile) { Tile = tile; }
     }
-    #endregion
 
-    #region Activation
-    /// <summary> Defines "Tile activate" message. </summary>
-    public sealed class TileActivateMessage
-    {
-        /// <summary> Gets tile. </summary>
-        public Tile Tile { get; private set; }
-
-        /// <summary> Creates message. </summary>
-        /// <param name="tile">Tile.</param>
-        public TileActivateMessage(Tile tile) { Tile = tile; }
-    }
-    /// <summary> Defines "Tile deactivate" message. </summary>
-    public sealed class TileDeactivateMessage
-    {
-        /// <summary> Gets tile. </summary>
-        public Tile Tile { get; private set; }
-
-        /// <summary> Creates message. </summary>
-        /// <param name="tile">Tile.</param>
-        public TileDeactivateMessage(Tile tile) { Tile = tile; }
-    }
     /// <summary>
     ///     Defines "Tile destroy" message
     /// </summary>

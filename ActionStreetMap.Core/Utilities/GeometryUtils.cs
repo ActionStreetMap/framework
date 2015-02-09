@@ -7,7 +7,7 @@ namespace ActionStreetMap.Core.Utilities
         ///     Checks whether point is located in triangle
         ///     http://stackoverflow.com/questions/13300904/determine-whether-point-lies-inside-triangle
         /// </summary>
-        public static bool IsPointInTreangle(MapPoint p, MapPoint p1, MapPoint p2, MapPoint p3)
+        public static bool IsPointInTriangle(MapPoint p, MapPoint p1, MapPoint p2, MapPoint p3)
         {
             float alpha = ((p2.Y - p3.Y) * (p.X - p3.X) + (p3.X - p2.X) * (p.Y - p3.Y)) /
                           ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
