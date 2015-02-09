@@ -4,18 +4,10 @@ using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Primitives
 {
-    /// <summary>
-    ///     A double key dictionary.
-    /// </summary>
-    /// <typeparam name="K">
-    ///     The first key type.
-    /// </typeparam>
-    /// <typeparam name="T">
-    ///     The second key type.
-    /// </typeparam>
-    /// <typeparam name="V">
-    ///     The value type.
-    /// </typeparam>
+    /// <summary> A double key dictionary. </summary>
+    /// <typeparam name="K"> The first key type. </typeparam>
+    /// <typeparam name="T"> The second key type. </typeparam>
+    /// <typeparam name="V"> The value type. </typeparam>
     /// <remarks>
     ///     See http://noocyte.wordpress.com/2008/02/18/double-key-dictionary/
     ///     A Remove method was added.
@@ -25,28 +17,19 @@ namespace ActionStreetMap.Infrastructure.Primitives
     {
         private readonly object _lockObj = new object();
 
-        /// <summary>
-        ///     The m_inner dictionary.
-        /// </summary>
+        /// <summary> The m_inner dictionary. </summary>
         private Dictionary<T, V> m_innerDictionary;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="DoubleKeyDictionary{K,T,V}" /> class.
-        /// </summary>
+        /// <summary> Initializes a new instance of the <see cref="DoubleKeyDictionary{K,T,V}" /> class. </summary>
         public DoubleKeyDictionary()
         {
             OuterDictionary = new Dictionary<K, Dictionary<T, V>>();
         }
 
-        /// <summary>
-        ///     Gets or sets OuterDictionary.
-        /// </summary>
+        /// <summary> Gets or sets OuterDictionary. </summary>
         private Dictionary<K, Dictionary<T, V>> OuterDictionary { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the value with the specified indices.
-        /// </summary>
-        /// <value></value>
+        /// <summary> Gets or sets the value with the specified indices. </summary>
         public V this[K index1, T index2]
         {
             get { return OuterDictionary[index1][index2]; }
@@ -54,9 +37,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
             set { Add(index1, index2, value); }
         }
 
-        /// <summary>
-        ///     Clears this dictionary.
-        /// </summary>
+        /// <summary> Clears this dictionary. </summary>
         public void Clear()
         {
             OuterDictionary.Clear();
@@ -64,18 +45,10 @@ namespace ActionStreetMap.Infrastructure.Primitives
                 m_innerDictionary.Clear();
         }
 
-        /// <summary>
-        ///     Adds the specified key.
-        /// </summary>
-        /// <param name="key1">
-        ///     The key1.
-        /// </param>
-        /// <param name="key2">
-        ///     The key2.
-        /// </param>
-        /// <param name="value">
-        ///     The value.
-        /// </param>
+        /// <summary> Adds the specified key. </summary>
+        /// <param name="key1"> The key1. </param>
+        /// <param name="key2"> The key2. </param>
+        /// <param name="value"> The value. </param>
         public void Add(K key1, T key2, V value)
         { 
             lock (_lockObj)
@@ -100,18 +73,10 @@ namespace ActionStreetMap.Infrastructure.Primitives
             }
         }
 
-        /// <summary>
-        ///     Determines whether the specified dictionary contains the key.
-        /// </summary>
-        /// <param name="index1">
-        ///     The index1.
-        /// </param>
-        /// <param name="index2">
-        ///     The index2.
-        /// </param>
-        /// <returns>
-        ///     <c>true</c> if the specified index1 contains key; otherwise, <c>false</c>.
-        /// </returns>
+        /// <summary> Determines whether the specified dictionary contains the key. </summary>
+        /// <param name="index1"> The index1. </param>
+        /// <param name="index2"> The index2. </param>
+        /// <returns> <c>true</c> if the specified index1 contains key; otherwise, <c>false</c>. </returns>
         public bool ContainsKey(K index1, T index2)
         {
             if (!OuterDictionary.ContainsKey(index1))
@@ -123,20 +88,14 @@ namespace ActionStreetMap.Infrastructure.Primitives
             return true;
         }
 
-        /// <summary>
-        ///     Equalses the specified other.
-        /// </summary>
+        /// <summary> Equalses the specified other. </summary>
         public bool Equals(DoubleKeyDictionary<K, T, V> other)
         {
             // NOTE we don't care about this logic so far
             return false;
         }
 
-        /// <summary>
-        ///     Gets the enumerator.
-        /// </summary>
-        /// <returns>
-        /// </returns>
+        /// <summary> Gets the enumerator. </summary>
         public IEnumerator<DoubleKeyPairValue<K, T, V>> GetEnumerator()
         {
             foreach (var outer in OuterDictionary)
@@ -146,15 +105,9 @@ namespace ActionStreetMap.Infrastructure.Primitives
             }
         }
 
-        /// <summary>
-        ///     Removes the specified key.
-        /// </summary>
-        /// <param name="key1">
-        ///     The key1.
-        /// </param>
-        /// <param name="key2">
-        ///     The key2.
-        /// </param>
+        /// <summary> Removes the specified key. </summary>
+        /// <param name="key1"> The key1. </param>
+        /// <param name="key2"> The key2. </param>
         public void Remove(K key1, T key2)
         {
             OuterDictionary[key1].Remove(key2);
@@ -162,9 +115,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
                 OuterDictionary.Remove(key1);
         }
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
+        /// <summary> Returns an enumerator that iterates through a collection. </summary>
         /// <returns>
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
@@ -174,32 +125,16 @@ namespace ActionStreetMap.Infrastructure.Primitives
         }
     }
 
-    /// <summary>
-    ///     Represents two keys and a value.
-    /// </summary>
-    /// <typeparam name="K">
-    ///     First key type.
-    /// </typeparam>
-    /// <typeparam name="T">
-    ///     Second key type.
-    /// </typeparam>
-    /// <typeparam name="V">
-    ///     Value type.
-    /// </typeparam>
+    /// <summary> Represents two keys and a value. </summary>
+    /// <typeparam name="K"> First key type. </typeparam>
+    /// <typeparam name="T"> Second key type. </typeparam>
+    /// <typeparam name="V"> Value type. </typeparam>
     public class DoubleKeyPairValue<K, T, V>
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="DoubleKeyPairValue{K,T,V}" /> class.
-        /// </summary>
-        /// <param name="key1">
-        ///     The key1.
-        /// </param>
-        /// <param name="key2">
-        ///     The key2.
-        /// </param>
-        /// <param name="value">
-        ///     The value.
-        /// </param>
+        /// <summary> Initializes a new instance of the <see cref="DoubleKeyPairValue{K,T,V}" /> class. </summary>
+        /// <param name="key1"> The key1. </param>
+        /// <param name="key2"> The key2. </param>
+        /// <param name="value"> The value. </param>
         public DoubleKeyPairValue(K key1, T key2, V value)
         {
             Key1 = key1;
@@ -207,30 +142,20 @@ namespace ActionStreetMap.Infrastructure.Primitives
             Value = value;
         }
 
-        /// <summary>
-        ///     Gets or sets the key1.
-        /// </summary>
+        /// <summary> Gets or sets the key1. </summary>
         /// <value>The key1.</value>
         public K Key1 { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the key2.
-        /// </summary>
+        /// <summary> Gets or sets the key2. </summary>
         /// <value>The key2.</value>
         public T Key2 { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the value.
-        /// </summary>
+        /// <summary> Gets or sets the value. </summary>
         /// <value>The value.</value>
         public V Value { get; set; }
 
-        /// <summary>
-        ///     Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="System.String" /> that represents this instance.
-        /// </returns>
+        /// <summary> Returns a <see cref="System.String" /> that represents this instance. </summary>
+        /// <returns> A <see cref="System.String" /> that represents this instance. </returns>
         public override string ToString()
         {
             return Key1 + " - " + Key2 + " - " + Value;
