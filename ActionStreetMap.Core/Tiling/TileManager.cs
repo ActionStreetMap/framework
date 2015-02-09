@@ -22,19 +22,13 @@ namespace ActionStreetMap.Core.Tiling
     /// <summary> This class listens to position changes and manages tile processing. </summary>
     public class TileManager : ITilePositionObserver, IConfigurable
     {
-        /// <summary> Maximum of loaded tiles including non-active. </summary>
-        private const int TileCacheSize = 2;
-
-        /// <summary> Max index distance in 2d space. </summary>
-        private const int ThresholdIndex = 1;
-
         private readonly object _lockObj = new object();
 
         private float _tileSize;
         private float _offset;
         private float _moveSensitivity;
+        private float _thresholdDistance;
         private int _heightmapsize;
-        private bool _allowAutoRemoval;
         private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
 
         private GeoCoordinate _currentPosition;
@@ -48,14 +42,14 @@ namespace ActionStreetMap.Core.Tiling
         private readonly ITileActivator _tileActivator;
         private readonly IObjectPool _objectPool;
 
-        private readonly DoubleKeyDictionary<int, int, MutableTuple<Tile, TileState>> _allTiles = 
-            new DoubleKeyDictionary<int, int, MutableTuple<Tile, TileState>>();
+        private readonly DoubleKeyDictionary<int, int, Tile> _allTiles = 
+            new DoubleKeyDictionary<int, int, Tile>();
 
         /// <summary> Gets relative null point. </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
         /// <summary> Gets current tile. </summary>
-        public Tile Current { get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2].Item1; } }
+        public Tile Current { get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2]; } }
 
         /// <summary> Gets all tile count. </summary>
         public int Count { get { return _allTiles.Count(); } }
@@ -77,65 +71,29 @@ namespace ActionStreetMap.Core.Tiling
             _objectPool = objectPool;
         }
 
-        #region Activation
-
-        private void Activate(int i, int j)
-        {
-            var entry = _allTiles[i, j];
-            var tile = entry.Item1;
-            if (entry.Item2 == TileState.Activated)
-                return;
-
-            _tileActivator.Activate(tile);
-            entry.Item2 = TileState.Activated;
-            _messageBus.Send(new TileActivateMessage(tile));
-        }
-
-        private void Deactivate(int i, int j)
-        {
-            if (!_allTiles.ContainsKey(i, j))
-                return;
-
-            var entry = _allTiles[i, j];
-            var tile = entry.Item1;
-
-            // NOTE or != Activated ?
-            if (entry.Item2 == TileState.Deactivated)
-                return;
-            _tileActivator.Deactivate(tile);
-            entry.Item2 = TileState.Deactivated;
-            _messageBus.Send(new TileDeactivateMessage(tile));
-        }
-
-        #endregion
-
         #region Create/Destroy tile
 
-        private void CreateTile(int i, int j)
+        private void Create(int i, int j)
         {
             var tileCenter = new MapPoint(i*_tileSize, j*_tileSize);
 
             var tile = new Tile(RelativeNullPoint, tileCenter, new Canvas(_objectPool), _tileSize);
-            var entry = new MutableTuple<Tile, TileState>(tile, TileState.IsLoading);
 
             if (_allTiles.ContainsKey(i, j))
                 return;
-            _allTiles.Add(i, j, entry);
+            _allTiles.Add(i, j, tile);
             _messageBus.Send(new TileLoadStartMessage(tileCenter));
             // Set activated before load to prevent concurrent issue in case of fast tile switching.
-            entry.Item2 = TileState.Activated;
             tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
             _tileLoader.Load(tile).Subscribe(_ => {}, () => _messageBus.Send(new TileLoadFinishMessage(tile)));
         }
 
         private void Destroy(int i, int j)
         {
-            var entry = _allTiles[i, j];
-            if (entry.Item2 != TileState.Deactivated)
-                throw new AlgorithmException(String.Format(Strings.TileStateException, entry.Item2, entry.Item1));
+            var tile = _allTiles[i, j];
             _allTiles.Remove(i, j);
-            _tileActivator.Destroy(entry.Item1);
-            _messageBus.Send(new TileDestroyMessage(entry.Item1));
+            _tileActivator.Destroy(tile);
+            _messageBus.Send(new TileDestroyMessage(tile));
         }
 
         #endregion
@@ -149,22 +107,19 @@ namespace ActionStreetMap.Core.Tiling
 
         private void PreloadNextTile(Tile tile, MapPoint position, int i, int j)
         {
-            var index = GetNextTileIndex(tile, position, i, j);
-            if (!_allTiles.ContainsKey(index.Item1, index.Item2))
-                CreateTile(index.Item1, index.Item2);
-            else
-                Activate(i, j);
-
-            // NOTE We destroy tiles which are far away from us
-            if (_allowAutoRemoval && _allTiles.Count() > TileCacheSize)
+            // Let's cleanup old tile first to release memory.
+            foreach (var doubleKeyPairValue in _allTiles.ToList())
             {
-                foreach (var doubleKeyPairValue in _allTiles.ToList())
-                {
-                    if(Math.Abs(doubleKeyPairValue.Key1 - i) + 
-                        Math.Abs(doubleKeyPairValue.Key2 - j) > ThresholdIndex)
-                        Destroy(doubleKeyPairValue.Key1, doubleKeyPairValue.Key2);
-                }
+                var candidateToDie = doubleKeyPairValue.Value;
+                if (candidateToDie.MapCenter.DistanceTo(position) >= _thresholdDistance)
+                    Destroy(doubleKeyPairValue.Key1, doubleKeyPairValue.Key2);
             }
+
+            var index = GetNextTileIndex(tile, position, i, j);
+            if (_allTiles.ContainsKey(index.Item1, index.Item2))
+                return;
+
+            Create(index.Item1, index.Item2);
         }
 
         /// <summary>
@@ -173,36 +128,18 @@ namespace ActionStreetMap.Core.Tiling
         private MutableTuple<int, int> GetNextTileIndex(Tile tile, MapPoint position, int i, int j)
         {
             // top
-            if (GeometryUtils.IsPointInTreangle(position, tile.MapCenter, tile.TopLeft, tile.TopRight))
-            {
-                Deactivate(i, j - 1);
-                Deactivate(i - 1, j - 1);
-                Deactivate(i + 1, j - 1);
+            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, tile.TopLeft, tile.TopRight))
                 return new MutableTuple<int, int>(i, j + 1);
-            }
-
+      
             // left
-            if (GeometryUtils.IsPointInTreangle(position, tile.MapCenter, tile.TopLeft, tile.BottomLeft))
-            {
-                Deactivate(i + 1, j);
-                Deactivate(i + 1, j + 1);
-                Deactivate(i + 1, j - 1);
+            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, tile.TopLeft, tile.BottomLeft))
                 return new MutableTuple<int, int>(i - 1, j);
-            }
 
             // right
-            if (GeometryUtils.IsPointInTreangle(position, tile.MapCenter, tile.TopRight, tile.BottomRight))
-            {
-                Deactivate(i - 1, j);
-                Deactivate(i - 1, j + 1);
-                Deactivate(i - 1, j - 1);
+            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, tile.TopRight, tile.BottomRight))
                 return new MutableTuple<int, int>(i + 1, j);
-            }
-
+ 
             // bottom
-            Deactivate(i, j + 1);
-            Deactivate(i - 1, j + 1);
-            Deactivate(i + 1, j + 1);
             return new MutableTuple<int, int>(i, j - 1);
         }
 
@@ -233,14 +170,14 @@ namespace ActionStreetMap.Core.Tiling
 
                     bool hasTile = _allTiles.ContainsKey(i, j);
                     if (!hasTile)
-                        CreateTile(i, j);
+                        Create(i, j);
 
-                    var tileEntry = _allTiles[i, j];
+                    var tile = _allTiles[i, j];
                     if (hasTile) 
-                        _messageBus.Send(new TileFoundMessage(tileEntry.Item1, _currentMapPoint));
+                        _messageBus.Send(new TileFoundMessage(tile, _currentMapPoint));
 
-                    if (ShouldPreload(tileEntry.Item1, value))
-                        PreloadNextTile(tileEntry.Item1, value, i, j);
+                    if (ShouldPreload(tile, value))
+                        PreloadNextTile(tile, value, i, j);
 
                     _currentTileIndex.Item1 = i;
                     _currentTileIndex.Item2 = j;
@@ -281,18 +218,7 @@ namespace ActionStreetMap.Core.Tiling
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
             _heightmapsize = configSection.GetInt("heightmap", 1025);
 
-            _allowAutoRemoval = configSection.GetBool("autoclean", true);
-        }
-
-        #endregion
-
-        #region Nested classes
-
-        private enum TileState
-        {
-            IsLoading,
-            Activated,
-            Deactivated
+            _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
         }
 
         #endregion

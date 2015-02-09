@@ -17,10 +17,9 @@
 	"mapcss":"Config/themes/default/default.mapcss",
 	"geocoding":"http://nominatim.openstreetmap.org/search",
 	"tile": {
-		"size":1000,
-		"offset":300,
+		"size":500,
+		"offset":100,
 		"heightmap":1025,
-		"autoclean":true,
 		"flat":false,
 	}
 }
