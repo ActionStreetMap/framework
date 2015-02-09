@@ -43,7 +43,14 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <param name="tile">Tile.</param>
         protected virtual void DestroyWithChildren(Tile tile)
         {
-            UnityEngine.Object.Destroy(tile.GameObject.GetComponent<GameObject>());
+            var parent = tile.GameObject.GetComponent<GameObject>();
+            // NOTE should it be recursive as child may have children?
+            foreach (Transform child in parent.transform)
+                GameObject.Destroy(child.gameObject);
+
+            UnityEngine.Object.Destroy(parent);
+            // NOTE this is required to release meshes as they are not garbage collected
+            Resources.UnloadUnusedAssets();
         }
 
         /// <summary> Calls UnityEngine.GameObject.SetActive(active) for given tile. </summary>
