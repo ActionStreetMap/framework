@@ -34,7 +34,7 @@ namespace ActionStreetMap.Tests
         public const string TestBaseMapcssFile = @"..\..\..\..\Tests\TestAssets\Mapcss\base.mapcss";
         public const string DefaultMapcssFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\themes\default\default.mapcss";
 
-        public const string BerlinXmlData = @"..\..\..\..\Tests\TestAssets\Osm\xml_api.osm";
+        public const string BerlinXmlData = @"..\..\..\..\Tests\TestAssets\Osm\berlin_xml_api.osm";
 
         public static GameRunner GetGameRunner()
         {
