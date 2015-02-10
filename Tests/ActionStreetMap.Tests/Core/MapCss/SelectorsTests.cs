@@ -17,8 +17,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[landuse] { z-index: 0.1}\n");
 
             // ACT
-            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>(){{"landuse", "forest"}});
-            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>(){{"building", "residential"}});
+            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "forest" } }.ToTags());
+            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "building", "residential" } }.ToTags());
 
             // ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
@@ -32,8 +32,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[!landuse] { z-index: 0.1}\n");
 
             // ACT
-            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>(){{"landuse", "forest"}});
-            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "building", "residential" } });
+            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "forest" } }.ToTags());
+            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "building", "residential" } }.ToTags());
 
             // ASSERT
             Assert.IsFalse(stylesheet.GetModelRule(area1).IsApplicable);
@@ -47,8 +47,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[landuse=forest] { z-index: 0.1}\n");
 
             // ACT
-            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>(){{"landuse", "forest"}});
-            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "grass" } });
+            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "forest" } }.ToTags());
+            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "grass" } }.ToTags());
 
             // ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
@@ -62,8 +62,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[landuse!=forest] { z-index: 0.1}\n");
 
             // ACT
-            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() {{ "landuse", "forest" }});
-            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>(){{"landuse", "grass"}});
+            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "forest" } }.ToTags());
+            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "grass" } }.ToTags());
 
             // ASSERT
             Assert.IsFalse(stylesheet.GetModelRule(area1).IsApplicable);
@@ -77,8 +77,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[level<0] { z-index: 0.1}\n");
 
             // ACT
-            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { {"level", "-1"}});
-            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "1" } });
+            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "-1" } }.ToTags());
+            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "1" } }.ToTags());
 
             // ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
@@ -92,8 +92,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[level>0] { z-index: 0.1}\n");
 
             // ACT
-            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { {"level", "1"}});
-            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { {"level", "0"}});
+            var area1 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "1" } }.ToTags());
+            var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "0" } }.ToTags());
 
             // ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
@@ -116,10 +116,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                     new GeoCoordinate(1, 0),
                     new GeoCoordinate(0, 0)
                 },
-                Tags = new Dictionary<string, string>()
-                {
-                    {"barrier", "yes"}
-                }
+                Tags = new Dictionary<string, string>() { { "barrier", "yes" } }.ToTags()
             };
 
             var openWay = new Way
@@ -131,10 +128,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                     new GeoCoordinate(1, 0),
                     new GeoCoordinate(0, 1)
                 },
-                Tags = new Dictionary<string, string>()
-                {
-                    {"barrier", "yes"}
-                }
+                Tags = new Dictionary<string, string>() { { "barrier", "yes" } }.ToTags()
             };
 
             // ACT & ASSERT

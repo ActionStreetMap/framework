@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Core.Utilities;
 
 namespace ActionStreetMap.Maps.Helpers
 {
@@ -34,7 +36,7 @@ namespace ActionStreetMap.Maps.Helpers
         /// </summary>
         /// <param name="tags">Tags collection.</param>
         /// <returns>Address.</returns>
-        public static Address Extract(Dictionary<string, string> tags)
+        public static Address Extract(TagCollection tags)
         {
             return new Address
             {
@@ -44,12 +46,12 @@ namespace ActionStreetMap.Maps.Helpers
             };
         }
 
-        private static string GetValue(IEnumerable<string> keyList, Dictionary<string, string> tags)
+        private static string GetValue(IEnumerable<string> keyList, TagCollection tags)
         {
             string value;
             foreach (var key in keyList)
             {
-                if (tags.ContainsKey(key) && tags.TryGetValue(key, out value))
+                if (tags.TryGetValue(key, out value))
                     return value;
             }
             return null;

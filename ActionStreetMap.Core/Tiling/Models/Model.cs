@@ -9,7 +9,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public long Id { get; set; }
 
         /// <summary> Gets or sets osm tags. </summary>
-        public Dictionary<string, string> Tags { get; set; }
+        public TagCollection Tags { get; set; }
 
         /// <summary> True if model's points defines closed polygon. </summary>
         public abstract bool IsClosed { get; }
@@ -23,7 +23,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public override string ToString()
         {
             string tags = "{no tags}";
-            if (Tags != null && Tags.Count > 0)
+            if (Tags != null)
             {
                 tags = "tags:{";
                 foreach (var tag in Tags)

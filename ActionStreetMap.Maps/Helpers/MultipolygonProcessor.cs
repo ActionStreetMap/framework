@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Maps.Entities;
 using Area = ActionStreetMap.Core.Tiling.Models.Area;
+using TagCollection = ActionStreetMap.Core.Tiling.Models.TagCollection;
 
 namespace ActionStreetMap.Maps.Helpers
 {
@@ -190,7 +192,7 @@ namespace ActionStreetMap.Maps.Helpers
             }
         }
 
-        private static Dictionary<string, string> GetTags(Relation relation, CoordinateSequence outer)
+        private static TagCollection GetTags(Relation relation, CoordinateSequence outer)
         {
             // TODO tag processing
             return relation.Tags.Count > 1 ? relation.Tags : outer.Tags;
@@ -204,13 +206,13 @@ namespace ActionStreetMap.Maps.Helpers
             private List<GeoCoordinate> _coordinates;
             private long _id;
 
-            public Dictionary<string, string> Tags { get; set; } 
+            public TagCollection Tags { get; set; } 
 
             public CoordinateSequence(long id, Way way)
             {
                 _nodes = new List<GeoCoordinate>(way.Coordinates);
                 _id = id;
-                Tags = way.Tags;
+                Tags = way.Tags.AllowAdd();
             }
 
             public CoordinateSequence(CoordinateSequence sequence)
@@ -288,15 +290,15 @@ namespace ActionStreetMap.Maps.Helpers
                 return other.Coordinates.All(c => IsPointInPolygon(c, Coordinates));
             }
 
-            private void MergeTags(Dictionary<string, string> other)
+            private void MergeTags(TagCollection other)
             {
-                Tags = Tags ?? new Dictionary<string, string>();
+                Tags = Tags ?? new TagCollection();
                 if (other != null)
                 {
-                    foreach (var key in other.Keys)
+                    foreach (var kv in other)
                     {
-                        if (!Tags.ContainsKey(key))
-                            Tags.Add(key, other[key]);
+                        if (!Tags.ContainsKey(kv.Key))
+                            Tags.Add(kv.Key, kv.Value);
                     }
                 }
             }

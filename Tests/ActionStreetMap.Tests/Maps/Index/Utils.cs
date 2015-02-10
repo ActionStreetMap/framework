@@ -35,7 +35,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             {
                 Id = 1,
                 Coordinate = new GeoCoordinate(52.0, 13.0),
-                Tags = new Dictionary<string, string>() { { "key1", "value1" }, { "key2", "value2" } }
+                Tags = new Dictionary<string, string>() { { "key1", "value1" }, { "key2", "value2" } }.ToTags()
             };
             var nodeOffset = elementStore.Insert(node);
             tree.Insert(nodeOffset, new PointEnvelop(node.Coordinate));
@@ -43,7 +43,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             {
                 Id = 2,
                 Coordinates = new List<GeoCoordinate>() { new GeoCoordinate(52.1, 13.1), new GeoCoordinate(52.2, 13.2) },
-                Tags = new Dictionary<string, string>() { { "key1", "value1" }, { "key2", "value2" } }
+                Tags = new Dictionary<string, string>() { { "key1", "value1" }, { "key2", "value2" } }.ToTags()
             };
             var wayOffset = elementStore.Insert(way);
             tree.Insert(wayOffset, new Envelop(way.Coordinates.First(), way.Coordinates.Last()));

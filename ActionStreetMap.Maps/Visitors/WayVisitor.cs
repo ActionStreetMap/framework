@@ -11,9 +11,11 @@ namespace ActionStreetMap.Maps.Visitors
 {
     internal class WayVisitor : ElementVisitor
     {
-        /// <summary>
-        ///     Contains keys of osm tags which are markers of closed polygons ("area")
-        /// </summary>
+        // NOTE these hashsets contains all case sensitive strings as we don't want to convert case of matching string every time
+        private static readonly HashSet<string> BooleanTrueValues = new HashSet<string> { "yes", "Yes", "YES", "true", "True", "TRUE", "1" };
+        private static readonly HashSet<string> BooleanFalseValues = new HashSet<string> { "no", "No", "NO", "false", "False", "FALSE", "0" };
+
+        /// <summary> Contains keys of osm tags which are markers of closed polygons ("area"). </summary>
         private static readonly HashSet<string> AreaKeys = new HashSet<string>
         {
             "building",
@@ -74,9 +76,17 @@ namespace ActionStreetMap.Maps.Visitors
             }
         }
 
-        private bool IsArea(Dictionary<string, string> tags)
+        private bool IsArea(TagCollection tags)
         {
-            return tags != null && tags.Any(tag => AreaKeys.Contains(tag.Key) && !tags.IsFalse(tag.Key));
+            //return tags != null && tags.Any(tag => AreaKeys.Contains(tag.Key) && !tags.IsFalse(tag.Key));
+            if (tags == null)
+                return false;
+
+            for (int i = 0; i < tags.Count; i++)
+                if (AreaKeys.Contains(tags.KeyAt(i)) && !BooleanFalseValues.Contains(tags.ValueAt(i)))
+                    return true;
+
+            return false;
         }
     }
 }

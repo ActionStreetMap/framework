@@ -46,12 +46,12 @@ namespace ActionStreetMap.Tests.Maps.Index
             var offset1 = _elementStore.Insert(new Node()
             {
                 Id = 1,
-                Tags = new Dictionary<string, string> {{pair1.Key, pair1.Value}}
+                Tags = new Dictionary<string, string> { { pair1.Key, pair1.Value } }.ToTags()
             });
             var offset2 = _elementStore.Insert(new Node()
             {
                 Id = 2,
-                Tags = new Dictionary<string, string> {{pair1.Key, pair1.Value}, {pair2.Key, pair2.Value}}
+                Tags = new Dictionary<string, string> { { pair1.Key, pair1.Value }, { pair2.Key, pair2.Value } }.ToTags()
             });     
    
             var usageOffset1 = _kvStore.GetUsage(_index.GetOffset(pair1));

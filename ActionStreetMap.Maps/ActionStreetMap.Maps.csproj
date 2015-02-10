@@ -52,7 +52,6 @@
     <Compile Include="..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
-    <Compile Include="Extensions\TagExtensions.cs" />
     <Compile Include="Entities\Node.cs" />
     <Compile Include="Entities\Element.cs" />
     <Compile Include="Formats\IReader.cs" />

@@ -16,7 +16,7 @@ namespace ActionStreetMap.Tests.Maps
                 {"addr:housenumber", "26"},
                 {"addr:postcode", "220088"},
                 {"addr:street", "Zacharova"},
-            };
+            }.ToTags();
 
             // ACT
             var locationInfo = AddressExtractor.Extract(tags);

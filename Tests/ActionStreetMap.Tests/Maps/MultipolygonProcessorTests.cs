@@ -26,7 +26,7 @@ namespace ActionStreetMap.Tests.Maps
                 {
                     {"type", "multipolygon"},
                     {"tag","tags"}
-                },
+                }.ToTags(),
                 Members = new List<RelationMember>()
                 {
                     CreateRelationWayMember("outer", new MapPoint(0, 0), new MapPoint(3, 5),
@@ -58,7 +58,7 @@ namespace ActionStreetMap.Tests.Maps
                 {
                     {"type", "multipolygon"},
                     {"tag","tags"}
-                },
+                }.ToTags(),
                 Members = new List<RelationMember>()
                 {
                     CreateRelationWayMember("outer", new MapPoint(0, 0), new MapPoint(3, 5),
@@ -96,7 +96,7 @@ namespace ActionStreetMap.Tests.Maps
                 {
                     {"type", "multipolygon"},
                     {"tag", "tags"}
-                },
+                }.ToTags(),
                 Members = new List<RelationMember>()
                 {
                     CreateRelationWayMember("outer", new MapPoint(0, 0), new MapPoint(3, 5),
@@ -128,7 +128,7 @@ namespace ActionStreetMap.Tests.Maps
                 {
                     {"type", "multipolygon"},
                     {"tag","tags"}
-                },
+                }.ToTags(),
                 Members = new List<RelationMember>()
                 {
                    CreateRelationWayMember("outer", new MapPoint(0, 0), new MapPoint(3, 5),
@@ -161,7 +161,7 @@ namespace ActionStreetMap.Tests.Maps
                 {
                     {"type", "multipolygon"},
                     {"tag","tags"}
-                },
+                }.ToTags(),
                 Members = new List<RelationMember>()
                 {
                     CreateRelationWayMember("outer", new MapPoint(0, 0), new MapPoint(3, 5),
@@ -204,7 +204,7 @@ namespace ActionStreetMap.Tests.Maps
                 {
                     {"type", "multipolygon"},
                     {"tag","tags"}
-                },
+                }.ToTags(),
                 Members = new List<RelationMember>()
                 {
                     CreateRelationWayMember("outer", new MapPoint(1, 5), new MapPoint(8, 4)), 

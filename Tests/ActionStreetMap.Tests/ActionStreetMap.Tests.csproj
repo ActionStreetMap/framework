@@ -55,8 +55,10 @@
     <Compile Include="Core\Scene\RoadGraphBugFixTests.cs" />
     <Compile Include="Core\Scene\RoadGraphTests.cs" />
     <Compile Include="Core\Scene\RoadJunctionUtilsTests.cs" />
+    <Compile Include="Core\Tiling\TagCollectionTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />
+    <Compile Include="TestExtensions.cs" />
     <Compile Include="TestScheduler.cs" />
     <Compile Include="GeoCoordinateHelper.cs" />
     <Compile Include="ConsoleTrace.cs" />

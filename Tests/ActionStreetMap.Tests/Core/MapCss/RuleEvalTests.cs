@@ -54,7 +54,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                     {"building:shape", "sphere"},
                     {"min_height", "100"},
                     {"building:levels", "5"},
-                }
+                }.ToTags()
             };
 
             // ACT
@@ -93,7 +93,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                     {"building:part", "yes"},
                     {"height", "237"},
                     {"min_height", "205"},
-                },
+                }.ToTags(),
                 Points = testPoints
             };
             var area2 = new Area
@@ -103,7 +103,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                     {"building", "roof"},
                     {"building:part", "yes"},
                     {"level", "1"},
-                },
+                }.ToTags(),
                 Points = testPoints
             };
 
@@ -135,7 +135,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 Tags = new Dictionary<string, string>()
                 {
                     {"building:levels", "5"}
-                }
+                }.ToTags()
             };
 
             var stylesheet = MapCssHelper.GetStylesheetFromFile(path, canUseExprTree);
@@ -160,7 +160,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 {
                     {"building:height", "20"},
                     {"roof:height", "5"},
-                }
+                }.ToTags()
             };
 
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[building:height][roof:height] { height: eval(num(tag('building:height')) - num(tag('roof:height')));}\n", canUseExprTree);
@@ -221,7 +221,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 Tags = new Dictionary<string, string>()
                 {
                     {"building", "residential"},
-                }
+                }.ToTags()
             };
 
             // ACT
@@ -244,11 +244,11 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 {
                     {"waterway", "river"},
                     {"name", "spree"}
-                });
+                }.ToTags());
             var way2 = MapCssHelper.GetWay(new Dictionary<string, string>()
             {
                 {"name", "some name"}
-            });
+            }.ToTags());
 
             // ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(way1).IsApplicable);
@@ -269,7 +269,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 Tags = new Dictionary<string, string>()
                 {
                     {"building", "commercial"},
-                }
+                }.ToTags()
             };
 
             // ACT
@@ -294,7 +294,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 Tags = new Dictionary<string, string>()
                 {
                     {"building", "yes"},
-                }
+                }.ToTags()
             };
 
             // ACT
@@ -320,7 +320,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 {
                     {"building", "commercial"},
                     {"building:color", "#cfc6b5"}
-                }
+                }.ToTags()
             };
 
             // ACT
@@ -342,7 +342,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var node = MapCssHelper.GetNode(new Dictionary<string, string>()
                 {
                     {"test", "yes"},
-                });
+                }.ToTags());
 
             // ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(node).IsApplicable);

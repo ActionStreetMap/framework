@@ -63,7 +63,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             return new Canvas(new ObjectPool());
         }
 
-        public static Area GetArea(Dictionary<string, string> tags)
+        public static Area GetArea(TagCollection tags)
         {
             return new Area
             {
@@ -78,7 +78,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
         }
 
-        public static Way GetWay(Dictionary<string, string> tags)
+        public static Way GetWay(TagCollection tags)
         {
             return new Way
             {
@@ -93,7 +93,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
         }
 
-        public static Node GetNode(Dictionary<string, string> tags)
+        public static Node GetNode(TagCollection tags)
         {
             return new Node
             {

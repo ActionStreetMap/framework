@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: InternalsVisibleTo("ActionStreetMap.Explorer")]
+[assembly: InternalsVisibleTo("ActionStreetMap.Maps")]
 [assembly: InternalsVisibleTo("ActionStreetMap.Unity")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM

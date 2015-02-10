@@ -17,14 +17,13 @@ namespace ActionStreetMap.Tests.Explorer
             var provider = new StylesheetProvider(TestHelper.DefaultMapcssFile, TestHelper.GetFileSystemService());
             var stylesheet = provider.Get();
 
+            var tags = new TagCollection();
+            tags.Add("building", "residential");
             var building = new Area()
             {
                 Id = 1,
                 Points = new List<GeoCoordinate>(),
-                Tags = new Dictionary<string, string>()
-                {
-                    {"building","residential"},
-                }
+                Tags = tags.AsReadOnly()
             };
 
             // ACT

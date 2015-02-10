@@ -74,6 +74,7 @@
     <Compile Include="Scene\Roads\RoadJunctionUtils.cs" />
     <Compile Include="Scene\Roads\RoadType.cs" />
     <Compile Include="Scene\Roads\TrafficLight.cs" />
+    <Compile Include="Tiling\Models\TagCollection.cs" />
     <Compile Include="Utilities\GeoProjection.cs" />
     <Compile Include="BoundingBox.cs" />
     <Compile Include="Elevation\HeightMap.cs" />

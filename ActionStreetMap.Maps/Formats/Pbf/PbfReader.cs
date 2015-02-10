@@ -11,6 +11,8 @@ using Ionic.Zlib;
 using ProtoBuf;
 using ProtoBuf.Meta;
 
+using TagCollection = ActionStreetMap.Core.Tiling.Models.TagCollection;
+
 namespace ActionStreetMap.Maps.Formats.Pbf
 {
     /// <summary> Reads PBF files. </summary>
@@ -85,7 +87,7 @@ namespace ActionStreetMap.Maps.Formats.Pbf
 
             if (node.keys.Any())
             {
-                elementNode.Tags = new Dictionary<string, string>(node.keys.Count);
+                elementNode.Tags = new TagCollection(node.keys.Count);
                 for (int tagIdx = 0; tagIdx < node.keys.Count; tagIdx++)
                 {
                     var keyBytes = block.stringtable.s[(int)node.keys[tagIdx]];
@@ -116,7 +118,7 @@ namespace ActionStreetMap.Maps.Formats.Pbf
             if (way.keys.Any())
             {
                 var keyCount = way.keys.Count;
-                elementWay.Tags = new Dictionary<string, string>(keyCount);
+                elementWay.Tags = new TagCollection(keyCount);
                 for (int tagIdx = 0; tagIdx < keyCount; tagIdx++)
                 {
                     var keyBytes = block.stringtable.s[(int)way.keys[tagIdx]];
@@ -151,7 +153,7 @@ namespace ActionStreetMap.Maps.Formats.Pbf
             }
             if (relation.keys.Count > 0)
             {
-                elementRelation.Tags = new Dictionary<string, string>(relation.keys.Count);
+                elementRelation.Tags = new TagCollection(relation.keys.Count);
                 for (int tagIdx = 0; tagIdx < relation.keys.Count; tagIdx++)
                 {
                     var keyBytes = block.stringtable.s[(int)relation.keys[tagIdx]];

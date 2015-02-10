@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ActionStreetMap.Maps.Visitors;
+﻿using ActionStreetMap.Maps.Visitors;
+using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Maps.Entities
 {
@@ -13,15 +13,14 @@ namespace ActionStreetMap.Maps.Entities
         public long Id { get; set; }
 
         /// <summary> Gets or sets tags. </summary>
-        public Dictionary<string, string> Tags { get; set; }
+        public TagCollection Tags { get; set; }
 
         /// <summary> Safe adds tag to collection. </summary>
         /// <param name="key">Tag key.</param>
         /// <param name="value">Tag value.</param>
         public virtual void AddTag(string key, string value)
         {
-            if (Tags == null)
-                Tags = new Dictionary<string, string>();
+            if (Tags == null) Tags = new TagCollection();
             Tags.Add(key, value);
         }
 

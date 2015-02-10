@@ -5,6 +5,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Maps.Entities;
 using ActionStreetMap.Infrastructure.Utilities;
+using TagCollection = ActionStreetMap.Core.Tiling.Models.TagCollection;
 
 namespace ActionStreetMap.Maps.Data.Storage
 {
@@ -196,17 +197,17 @@ namespace ActionStreetMap.Maps.Data.Storage
             return relation;
         }
 
-        private Dictionary<string, string> ReadTags(KeyValueStore keyValueStore, BinaryReader reader)
+        private TagCollection ReadTags(KeyValueStore keyValueStore, BinaryReader reader)
         {
             var count = reader.ReadUInt16();
-            var tags = new Dictionary<string, string>(count);
+            var tags = new TagCollection(count);
             for (int i = 0; i < count; i++)
             {
                 var offset = reader.ReadUInt32();
                 var tag = keyValueStore.Get(offset);
                 tags.Add(tag.Key, tag.Value);
             }
-            return tags;
+            return tags.AsReadOnly();
         }
 
         private GeoCoordinate ReadCoordinate(BinaryReader reader)

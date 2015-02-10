@@ -36,7 +36,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             {
                 Id = 1,
                 Coordinate = new GeoCoordinate(52, 13),
-                Tags = new Dictionary<string, string>() {{"key1", "value1"}, {"key2", "value2"}}
+                Tags = new Dictionary<string, string>() { { "key1", "value1" }, { "key2", "value2" } }.ToTags()
             };
 
             // ACT
@@ -55,7 +55,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             {
                 Id = 1,
                 Coordinates = new List<GeoCoordinate>() { new GeoCoordinate(52, 13), new GeoCoordinate(52.1f, 13.1f)},
-                Tags = new Dictionary<string, string>() { { "key1", "value1" }, { "key2", "value2" } }
+                Tags = new Dictionary<string, string>() { { "key1", "value1" }, { "key2", "value2" } }.ToTags()
             };
 
             // ACT
@@ -74,14 +74,14 @@ namespace ActionStreetMap.Tests.Maps.Index
             {
                 Id = 1,
                 Coordinates = new List<GeoCoordinate>() {new GeoCoordinate(52, 13), new GeoCoordinate(52.1f, 13.1f)},
-                Tags = new Dictionary<string, string>() {{"key11", "value11"}, {"key12", "value12"}}
+                Tags = new Dictionary<string, string>() { { "key11", "value11" }, { "key12", "value12" } }.ToTags()
             };
             var offset1 = _store.Insert(way1);
             var way2 = new Way()
             {
                 Id = 2,
                 Coordinates = new List<GeoCoordinate>() {new GeoCoordinate(53, 14), new GeoCoordinate(53.1f, 14.1f)},
-                Tags = new Dictionary<string, string>() {{"key21", "value21"}, {"key22", "value22"}}
+                Tags = new Dictionary<string, string>() { { "key21", "value21" }, { "key22", "value22" } }.ToTags()
             };
             var offset2 = _store.Insert(way2);
 
@@ -101,7 +101,7 @@ namespace ActionStreetMap.Tests.Maps.Index
                         Offset = offset2
                     }
                 },
-                Tags = new Dictionary<string, string>() { { "type", "multipolygon"} }
+                Tags = new Dictionary<string, string>() { { "type", "multipolygon" } }.ToTags()
             };
 
             // ACT
