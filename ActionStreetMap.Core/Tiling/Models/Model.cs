@@ -11,9 +11,6 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Gets or sets osm tags. </summary>
         public Dictionary<string, string> Tags { get; set; }
 
-        /// <summary> Gets or sets application specific properties to model. </summary>
-        public Dictionary<string, object> Properties { get; set; }        
-
         /// <summary> True if model's points defines closed polygon. </summary>
         public abstract bool IsClosed { get; }
 
