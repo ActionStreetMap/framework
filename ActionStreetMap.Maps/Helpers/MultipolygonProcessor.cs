@@ -179,7 +179,7 @@ namespace ActionStreetMap.Maps.Helpers
                     areas.Add(new Area()
                     {
                         Id = outer.Id,
-                        Tags = tags,
+                        Tags = tags.Complete(),
                         Points = outer.Coordinates,
                         Holes = holes
                     });
@@ -212,7 +212,7 @@ namespace ActionStreetMap.Maps.Helpers
             {
                 _nodes = new List<GeoCoordinate>(way.Coordinates);
                 _id = id;
-                Tags = way.Tags.AllowAdd();
+                Tags = way.Tags;
             }
 
             public CoordinateSequence(CoordinateSequence sequence)
@@ -292,15 +292,10 @@ namespace ActionStreetMap.Maps.Helpers
 
             private void MergeTags(TagCollection other)
             {
-                Tags = Tags ?? new TagCollection();
-                if (other != null)
-                {
-                    foreach (var kv in other)
-                    {
-                        if (!Tags.ContainsKey(kv.Key))
-                            Tags.Add(kv.Key, kv.Value);
-                    }
-                }
+                if (other == null) return;
+                if (Tags == null) Tags = new TagCollection(other.Count);
+                
+                Tags.Merge(other);
             }
 
             /// <summary>

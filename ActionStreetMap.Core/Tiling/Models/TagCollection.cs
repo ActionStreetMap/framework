@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 
 namespace ActionStreetMap.Core.Tiling.Models
 {
     /// <summary> Represents tag collection. </summary>
     public class TagCollection : IEnumerable<KeyValuePair<string, string>>
     {
-        private bool _isReadOnly;
+        private bool _isCompleted;
 
         private readonly List<string> _keys;
         private readonly List<string> _values;
@@ -32,7 +29,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Adds tag with given key and value to collection. </summary>
         public void Add(string key, string value)
         {
-            if (_isReadOnly) throw new InvalidOperationException(Strings.CannotAddTags);
+            if (_isCompleted) throw new InvalidOperationException(Strings.CannotAddTagCollection);
 
             _keys.Add(key);
             _values.Add(value);
@@ -45,7 +42,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         }
 
         /// <summary> Gets value for given key. </summary>
-        public string this[string key] { get { return _values[GetIndexOf(key)]; } }
+        public string this[string key] { get { return _values[IndexOf(key)]; } }
 
         /// <summary> Gets value by given index. </summary>
         public string ValueAt(int index) { return _values[index]; }
@@ -54,28 +51,72 @@ namespace ActionStreetMap.Core.Tiling.Models
         public string KeyAt(int index) { return _keys[index]; }
 
         /// <summary>  Gets index of given key. </summary>
-        public int GetIndexOf(string key)
+        public int IndexOf(string key)
         {
+            if (!_isCompleted)
+                throw new InvalidOperationException(Strings.CannotSearchTagCollection);
+            
             return _keys.BinarySearch(key, StringComparer.OrdinalIgnoreCase); 
         }
 
         /// <summary> Makes collection readonly. </summary>
-        public TagCollection AsReadOnly()
+        public TagCollection Complete()
         {
-            _isReadOnly = true;
+            if (_isCompleted) return this;
+
             if (_keys.Count < _keys.Capacity)
             {
                 _keys.TrimExcess();
                 _values.TrimExcess();
             }
+            SortLists();
+            _isCompleted = true;
+
             return this;
         }
 
-        /// <summary> Allows to add new tags to collection. </summary>
-        internal TagCollection AllowAdd()
+        private void SortLists()
         {
-            _isReadOnly = false;
-            return this;
+            // bubble sort
+            bool stillGoing = true;
+            var count = _keys.Count - 1;
+            while (stillGoing)
+            {
+                stillGoing = false;
+                for (int i = 0; i < count; i++)
+                {
+                    string keyX = _keys[i];
+                    string keyY = _keys[i + 1];
+                    string valueX = _values[i];
+                    string valueY = _values[i + 1];
+                    if (StringComparer.OrdinalIgnoreCase.Compare(keyX, keyY) > 0)
+                    {
+                        _keys[i] = keyY;
+                        _keys[i + 1] = keyX;
+                        _values[i] = valueY;
+                        _values[i + 1] = valueX;
+                        stillGoing = true;
+                    }
+                }
+            }
+        }
+
+        /// <summary> Merges tag collection to current. </summary>
+        public void Merge(TagCollection other)
+        {
+            foreach (var kv in other)
+            {
+                var index = IndexOf(kv.Key);
+                if (index < 0)
+                {
+                    _isCompleted = false;
+                    Add(kv.Key, kv.Value);
+                    // NOTE that's not nice: O(N^3) complexity, hopefully we don't expect big collections here
+                    // So, can use this approach instead to allocate extra memory
+                    SortLists();
+                    _isCompleted = true;
+                }
+            }
         }
 
         /// <summary> Gets count of items </summary>

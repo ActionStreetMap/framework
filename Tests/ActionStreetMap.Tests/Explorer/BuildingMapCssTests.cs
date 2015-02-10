@@ -23,7 +23,7 @@ namespace ActionStreetMap.Tests.Explorer
             {
                 Id = 1,
                 Points = new List<GeoCoordinate>(),
-                Tags = tags.AsReadOnly()
+                Tags = tags.Complete()
             };
 
             // ACT

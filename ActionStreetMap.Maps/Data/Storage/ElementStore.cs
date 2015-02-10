@@ -207,7 +207,7 @@ namespace ActionStreetMap.Maps.Data.Storage
                 var tag = keyValueStore.Get(offset);
                 tags.Add(tag.Key, tag.Value);
             }
-            return tags.AsReadOnly();
+            return tags.Complete();
         }
 
         private GeoCoordinate ReadCoordinate(BinaryReader reader)

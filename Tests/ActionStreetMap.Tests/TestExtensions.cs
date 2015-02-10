@@ -13,7 +13,7 @@ namespace ActionStreetMap.Tests
             TagCollection tags = new TagCollection(dict.Count);
             foreach (var kv in dict)
                 tags.Add(kv.Key, kv.Value);
-            return tags.AsReadOnly();
+            return tags.Complete();
         }
     }
 }

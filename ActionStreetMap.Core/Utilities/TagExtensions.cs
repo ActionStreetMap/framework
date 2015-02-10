@@ -7,7 +7,7 @@ namespace ActionStreetMap.Core.Utilities
     {
         public static bool ContainsKey(this TagCollection tags, string key)
         {
-            return tags.GetIndexOf(key) >= 0;
+            return tags.IndexOf(key) >= 0;
         }
 
         public static bool ContainsKeyValue(this TagCollection tags, string key, string value)
@@ -42,7 +42,7 @@ namespace ActionStreetMap.Core.Utilities
             value = null;
             if (tags == null) return false;
 
-            var index = tags.GetIndexOf(key);
+            var index = tags.IndexOf(key);
             if (index < 0) return false;
 
             value = tags.ValueAt(index);
