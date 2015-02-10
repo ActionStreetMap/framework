@@ -1,11 +1,10 @@
 ﻿using System;
 using ActionStreetMap.Infrastructure.Diagnostic;
-using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Infrastructure
 {
     /// <summary> UnityConsole trace </summary>
-    internal class UnityConsoleTrace: DefaultTrace
+    public class UnityConsoleTrace: DefaultTrace
     {
         /// <inheritdoc />
         protected override void WriteRecord(RecordType type, string category, string message, Exception exception)
