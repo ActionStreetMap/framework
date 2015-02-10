@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ActionStreetMap.Maps.Extensions
+namespace ActionStreetMap.Maps.Helpers
 {
 	internal static class StackExtensions
 	{

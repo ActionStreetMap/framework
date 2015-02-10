@@ -5,7 +5,6 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Maps.Extensions;
 
 namespace ActionStreetMap.Maps.Visitors
 {

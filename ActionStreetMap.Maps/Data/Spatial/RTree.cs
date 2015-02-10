@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Maps.Extensions;
+using ActionStreetMap.Maps.Helpers;
 
 namespace ActionStreetMap.Maps.Data.Spatial
 {
