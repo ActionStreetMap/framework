@@ -46,11 +46,12 @@ namespace ActionStreetMap.Explorer.Tiling
             var parent = tile.GameObject.GetComponent<GameObject>();
             // NOTE should it be recursive as child may have children?
             foreach (Transform child in parent.transform)
-                GameObject.Destroy(child.gameObject);
+                UnityEngine.Object.Destroy(child.gameObject);
 
             UnityEngine.Object.Destroy(parent);
             // NOTE this is required to release meshes as they are not garbage collected
             Resources.UnloadUnusedAssets();
+            GC.Collect();
         }
 
         /// <summary> Calls UnityEngine.GameObject.SetActive(active) for given tile. </summary>
