@@ -6,11 +6,10 @@ namespace ActionStreetMap.Core.Scene.Roads
     /// <summary> Provides road junction utility methods. </summary>
     internal static class RoadJunctionUtils
     {
-        private static readonly List<int> IndexBuffer = new List<int>(4);
-
         /// <summary> Generates polygon for given road junction and modifies connected road elements. </summary>
         /// <param name="junction">Road junction.</param>
-        public static RoadJunction CompleteJunction(RoadJunction junction)
+        /// <param name="indexBuffer">Temporary buffer,</param>
+        public static RoadJunction CompleteJunction(RoadJunction junction, List<int> indexBuffer)
         {
             // TODO use thread pool
             var junctionPolygon = new List<MapPoint>(8);
@@ -19,7 +18,7 @@ namespace ActionStreetMap.Core.Scene.Roads
                 bool fromStart = connection.Start == junction;
                 // TODO merge two methods: TruncateToJoinPoint and GetJoinSegment?
                 if (connection.Points[fromStart ? 0 : connection.Points.Count - 1].Equals(junction.Center))
-                    TruncateToJoinPoint(connection.Points, connection.Width * 2, fromStart);
+                    TruncateToJoinPoint(connection.Points, connection.Width * 2, fromStart, indexBuffer);
 
                 var segment = GetJoinSegment(connection.Points, connection.Width * 2, fromStart);
                 junctionPolygon.Add(segment.Start);
@@ -35,7 +34,7 @@ namespace ActionStreetMap.Core.Scene.Roads
         ///     Gets point along AB at given distance from A and modifies/truncates points list to use it.
         ///     threshold value should not be big in order not to affect direction.
         /// </summary>
-        internal static MapPoint TruncateToJoinPoint(List<MapPoint> points, float threshold, bool fromFirst)
+        internal static MapPoint TruncateToJoinPoint(List<MapPoint> points, float threshold, bool fromFirst, List<int> indexBuffer)
         {
             float distance;
             int count = points.Count;
@@ -54,7 +53,7 @@ namespace ActionStreetMap.Core.Scene.Roads
                 // NOTE actually, this can be replaced with simple RemoveAt(index), but
                 // this operation takes O(n) as it includes array copying at every interation
                 // and I want to avoid this
-                IndexBuffer.Add(index);
+                indexBuffer.Add(index);
 
             } while (--count > 1);
 
@@ -74,30 +73,28 @@ namespace ActionStreetMap.Core.Scene.Roads
             vectorY *= factor;
 
             var truncPoint = new MapPoint(a.X + vectorX, a.Y + vectorY, a.Elevation);
-            if (IndexBuffer.Count == 0)
+            if (indexBuffer.Count == 0)
             {
                 points[fromFirst ? 0 : count - 1] = truncPoint;
             }
-            else if (IndexBuffer.Count == 1)
+            else if (indexBuffer.Count == 1)
             {
-                points[IndexBuffer[0]] = truncPoint;
-                TruncatePoints(points, IndexBuffer[0] - increment, 1);
+                points[indexBuffer[0]] = truncPoint;
+                TruncatePoints(points, indexBuffer[0] - increment, 1);
             }
             else
             {
                 // now need to remove skipped items and replace trunc point
-                var length = IndexBuffer.Count;
-                var firstIndex = (fromFirst ? IndexBuffer[0] - increment : IndexBuffer[length - 1]);
+                var length = indexBuffer.Count;
+                var firstIndex = (fromFirst ? indexBuffer[0] - increment : indexBuffer[length - 1]);
                 TruncatePoints(points, firstIndex, length);
                 points[firstIndex] = truncPoint;
             }
-            IndexBuffer.Clear();
+            indexBuffer.Clear();
             return truncPoint;
         }
 
-        /// <summary>
-        ///     Truncates list.
-        /// </summary>
+        /// <summary> Truncates list. </summary>
         internal static void TruncatePoints(List<MapPoint> points, int index, int count)
         {
             if (points.Count <= 2) return;
@@ -109,9 +106,7 @@ namespace ActionStreetMap.Core.Scene.Roads
             points.RemoveRange(index, count);
         }
 
-        /// <summary>
-        ///     Gets join segment orthogonal to last two points of road element's points.
-        /// </summary>
+        /// <summary> Gets join segment orthogonal to last two points of road element's points. </summary>
         internal static Segment GetJoinSegment(List<MapPoint> points, float width, bool fromFirst)
         {
             var count = points.Count;
@@ -130,9 +125,7 @@ namespace ActionStreetMap.Core.Scene.Roads
                 new MapPoint(a.X - dX, a.Y - dY, a.Elevation));
         }
 
-        /// <summary>
-        ///     Sorts segments by angle.
-        /// </summary>
+        /// <summary> Sorts segments by angle. </summary>
         /// <param name="original">Original point.</param>
         /// <param name="pivot">Pivot point.</param>
         /// <param name="choices">List of choice points.</param>
@@ -142,9 +135,7 @@ namespace ActionStreetMap.Core.Scene.Roads
             choices.Sort((v1, v2) => GetTurnAngle(original, pivot, v1).CompareTo(GetTurnAngle(original, pivot, v2)));
         }
 
-        /// <summary>
-        ///     Gets angle between sigments created by points.
-        /// </summary>
+        /// <summary> Gets angle between sigments created by points. </summary>
         internal static double GetTurnAngle(MapPoint original, MapPoint pivot, MapPoint choice)
         {
             var angle1 = Math.Atan2(original.Y - pivot.Y, original.X - pivot.X);

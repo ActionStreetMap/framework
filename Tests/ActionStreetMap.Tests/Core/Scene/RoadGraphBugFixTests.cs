@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Roads;
+using ActionStreetMap.Explorer.Infrastructure;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.Scene
@@ -93,7 +94,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             });
 
             // ACT
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             var roads = graph.Roads;

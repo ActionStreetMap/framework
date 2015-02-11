@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Infrastructure.Primitives;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Scene.Roads
 {
@@ -21,13 +22,20 @@ namespace ActionStreetMap.Core.Scene.Roads
         #region Public methods
 
         /// <inheritdoc />
-        public RoadGraph Build()
+        public RoadGraph Build(IObjectPool objectPool)
         {
             MergeRoads();
 
-            var roads = _elements.Select(kv => new Road { Elements = kv.Value }).ToArray();
+            var roads = _elements
+                .Select(kv => new Road { Elements = kv.Value })
+                .ToArray();
+
+            var indexBuffer = objectPool.NewList<int>(4);
             var junctions = _junctionsMap.Values
-                .SelectMany(j => j.Values).Select(RoadJunctionUtils.CompleteJunction).ToArray();
+                .SelectMany(j => j.Values)
+                .Select(r => RoadJunctionUtils.CompleteJunction(r, indexBuffer))
+                .ToArray();
+            objectPool.StoreList(indexBuffer);
 
             _elements.Clear();
             _junctionsMap.Clear();
@@ -156,7 +164,6 @@ namespace ActionStreetMap.Core.Scene.Roads
             else
                 firstList.AddRange(secondList);
             _elements.Remove(secondId);
-            //Console.WriteLine(String.Format("merge {0} with {1}", secondId, firstId));
             secondList.ForEach(e => e.Id = firstId);
         }
 
@@ -281,9 +288,7 @@ namespace ActionStreetMap.Core.Scene.Roads
 
         #region Static methods
 
-        /// <summary>
-        ///     Creates clone of given road element.
-        /// </summary>
+        /// <summary> Creates clone of given road element. </summary>
         private static RoadElement Clone(RoadElement element)
         {
             return new RoadElement

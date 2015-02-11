@@ -21,7 +21,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed, new List<int>());
 
             // ASSERT
             Assert.AreEqual(4, roadPoints.Count);
@@ -39,7 +39,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed, new List<int>());
 
             // ASSERT
             Assert.AreEqual(3, roadPoints.Count);
@@ -58,7 +58,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed, new List<int>());
 
             // ASSERT
             Assert.AreEqual(new MapPoint(7, 0), result);
@@ -83,7 +83,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed, new List<int>());
 
             // ASSERT
             Assert.AreEqual(new MapPoint(7, 0), result);
@@ -108,7 +108,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 roadPoints.Reverse();
 
             // ACT
-            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed);
+            var result = RoadJunctionUtils.TruncateToJoinPoint(roadPoints, width, reversed, new List<int>());
 
             // ASSERT
             Assert.AreEqual(2, roadPoints.Count);
@@ -128,10 +128,10 @@ namespace ActionStreetMap.Tests.Core.Scene
             var points4 = new List<MapPoint> { joinPoint, new MapPoint(67.9f, 24.0f), new MapPoint(93.1f, 32.6f) };
 
             // ACT
-            var point1 = RoadJunctionUtils.TruncateToJoinPoint(points1, threshold, false);
-            var point2 = RoadJunctionUtils.TruncateToJoinPoint(points2, threshold, true);
-            var point3 = RoadJunctionUtils.TruncateToJoinPoint(points3, threshold, false);
-            var point4 = RoadJunctionUtils.TruncateToJoinPoint(points4, threshold, true);
+            var point1 = RoadJunctionUtils.TruncateToJoinPoint(points1, threshold, false, new List<int>());
+            var point2 = RoadJunctionUtils.TruncateToJoinPoint(points2, threshold, true, new List<int>());
+            var point3 = RoadJunctionUtils.TruncateToJoinPoint(points3, threshold, false, new List<int>());
+            var point4 = RoadJunctionUtils.TruncateToJoinPoint(points4, threshold, true, new List<int>());
 
             // ASSERT
             Assert.IsTrue(Math.Abs(joinPoint.DistanceTo(point1) - joinPoint.DistanceTo(point2)) < 0.01);
@@ -151,7 +151,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             if (reversed) points.Reverse();
 
             // ACT
-            RoadJunctionUtils.TruncateToJoinPoint(points, threshold, true);
+            RoadJunctionUtils.TruncateToJoinPoint(points, threshold, true, new List<int>());
 
             // ASSERT
             Assert.AreEqual(2, points.Count);
@@ -253,7 +253,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             });
 
             // ACT
-            RoadJunctionUtils.CompleteJunction(junction);
+            RoadJunctionUtils.CompleteJunction(junction, new List<int>());
 
             // ASSERT
             Assert.AreEqual(8, junction.Polygon.Count);
@@ -298,7 +298,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             });
 
             // ACT
-            RoadJunctionUtils.CompleteJunction(junction);
+            RoadJunctionUtils.CompleteJunction(junction, new List<int>());
 
             // ASSERT
             foreach (var point in junction.Polygon)

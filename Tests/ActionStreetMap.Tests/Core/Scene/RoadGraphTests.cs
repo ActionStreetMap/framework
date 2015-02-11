@@ -2,6 +2,7 @@
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Roads;
+using ActionStreetMap.Explorer.Infrastructure;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.Scene
@@ -35,7 +36,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             // ACT
             builder.Add(roadElement1);
             builder.Add(roadElement2);
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
 
@@ -73,7 +74,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             // ACT
             builder.Add(roadElement1);
             builder.Add(roadElement2);
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             var elements = GetElements(graph).ToList();
@@ -111,7 +112,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             builder.Add(roadElement1);
             builder.Add(roadElement2);
             builder.Add(roadElement3);
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             var elements = GetElements(graph).ToList();
@@ -143,7 +144,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(10, 0) }
             });
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
@@ -180,7 +181,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 Points =
                     new List<MapPoint>() { new MapPoint(10, 20), new MapPoint(10, 10), new MapPoint(10, 0) }
             });
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             var elements = GetElements(graph).ToList();
@@ -200,7 +201,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 Type = RoadType.Car,
                 Points = new List<MapPoint>() { new MapPoint(-10, 0), new MapPoint(0, 0), new MapPoint(10, 0), new MapPoint(0, 0) }
             });
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
@@ -227,7 +228,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 Type = RoadType.Pedestrian,
                 Points = new List<MapPoint>() { new MapPoint(0, 10), new MapPoint(0, 0), new MapPoint(0, -10) }
             });
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
@@ -253,7 +254,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             });
 
             // ACT
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
@@ -297,7 +298,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             builder.Add(elements.Single(e => e.Id == third));
 
             // ACT
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
@@ -367,7 +368,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             builder.Add(elements.Single(e => e.Id == forth));
 
             // ACT
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(0, graph.Junctions.Count());
@@ -432,7 +433,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             builder.Add(elements.Single(e => e.Id == forth));
 
             // ACT
-            var graph = builder.Build();
+            var graph = builder.Build(new ObjectPool());
 
             // ASSERT
             Assert.AreEqual(4, graph.Roads.Count());

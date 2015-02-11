@@ -91,7 +91,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <returns>Road graph.</returns>
         public RoadGraph BuildRoadGraph()
         {
-            return _roadGraphBuilder.Build();
+            return _roadGraphBuilder.Build(_objectPool);
         }
 
         /// <inheritdoc />
@@ -100,7 +100,7 @@ namespace ActionStreetMap.Core.Tiling.Models
            Dispose(true);
         }
 
-        /// <summary>  Dispose pattern implementation. </summary>
+        /// <summary> Dispose pattern implementation. </summary>
         /// <param name="disposing">True if necessary to dispose managed resources.</param>
         protected virtual void Dispose(bool disposing)
         {
