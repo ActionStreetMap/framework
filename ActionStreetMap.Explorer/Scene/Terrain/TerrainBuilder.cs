@@ -163,7 +163,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             // create TerrainData
             var terrainData = new TerrainData();
             terrainData.heightmapResolution = settings.Tile.HeightMap.Resolution;
-            terrainData.SetHeights(0, 0, settings.Tile.HeightMap.Data);
+
             terrainData.size = size;
             
             // assume that settings is the same all the time
@@ -185,9 +185,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 settings.ZIndex, settings.CornerPosition.y);
             terrain.heightmapPixelError = settings.PixelMapError;
             terrain.basemapDistance = settings.BaseMapDist;
+            terrain.heightmapMaximumLOD = 1;
 
             //disable this for better frame rate
             terrain.castShadows = false;
+
+            terrainData.SetHeights(0, 0, settings.Tile.HeightMap.Data);
 
             terrainData.SetAlphamaps(0, 0, settings.Tile.Canvas.SplatMap);
 
@@ -290,7 +293,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             // TODO make this configurable
             int detailMapSize = settings.Resolution; //Resolutions of detail (Grass) layers
-            int detailObjectDistance = 400;   //The distance at which details will no longer be drawn
+            int detailObjectDistance = 500;   //The distance at which details will no longer be drawn
             float detailObjectDensity = 1f; //Creates more dense details within patch
             int detailResolutionPerPatch = 128; //The size of detail patch. A higher number may reduce draw calls as details will be batch in larger patches
             float wavingGrassStrength = 0.4f;
