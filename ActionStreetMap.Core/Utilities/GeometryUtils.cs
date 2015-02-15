@@ -57,7 +57,7 @@ namespace ActionStreetMap.Core.Utilities
         ///     See http://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon
         /// </summary>
         public static List<MapPoint> CreateRoundedCorner(MapPoint angularPoint, MapPoint p1, MapPoint p2, 
-            float radius, float degreePerPoint, IObjectPool objectPool)
+            float elevation, float radius, float degreePerPoint, IObjectPool objectPool)
         {
             // vector 1
             double dx1 = angularPoint.X - p1.X;
@@ -87,8 +87,8 @@ namespace ActionStreetMap.Core.Utilities
             }
 
             // points of intersection are calculated by the proportion between the coordinates of the vector, length of vector and the length of the segment.
-            var p1Cross = GetProportionPoint(angularPoint, segment, length1, dx1, dy1);
-            var p2Cross = GetProportionPoint(angularPoint, segment, length2, dx2, dy2);
+            var p1Cross = GetProportionPoint(angularPoint, elevation, segment, length1, dx1, dy1);
+            var p2Cross = GetProportionPoint(angularPoint, elevation, segment, length2, dx2, dy2);
 
             // calculation of the coordinates of the circle center by the addition of angular vectors.
             double dx = angularPoint.X*2 - p1Cross.X - p2Cross.X;
@@ -97,7 +97,7 @@ namespace ActionStreetMap.Core.Utilities
             double L = GetLength(dx, dy);
             double d = GetLength(segment, radius);
 
-            var circlePoint = GetProportionPoint(angularPoint, d, L, dx, dy);
+            var circlePoint = GetProportionPoint(angularPoint, elevation, d, L, dx, dy);
 
             // startAngle and EndAngle of arc
             var startAngle = Math.Atan2(p1Cross.Y - circlePoint.Y, p1Cross.X - circlePoint.X);
@@ -116,7 +116,7 @@ namespace ActionStreetMap.Core.Utilities
             if (sweepAngle > Math.PI)
                 sweepAngle = Math.PI - sweepAngle;
 
-            return CreateArc(circlePoint, p1Cross, p2Cross, startAngle, sweepAngle, radius, degreePerPoint, objectPool);
+            return CreateArc(circlePoint, p1Cross, p2Cross, elevation, startAngle, sweepAngle, radius, degreePerPoint, objectPool);
         }
 
         private static double GetLength(double dx, double dy)
@@ -124,14 +124,14 @@ namespace ActionStreetMap.Core.Utilities
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private static MapPoint GetProportionPoint(MapPoint point, double segment, double length, double dx, double dy)
+        private static MapPoint GetProportionPoint(MapPoint point, float elevation, double segment, double length, double dx, double dy)
         {
             double factor = segment / length;
-            return new MapPoint((float)(point.X - dx * factor), (float)(point.Y - dy * factor));
+            return new MapPoint((float)(point.X - dx * factor), (float)(point.Y - dy * factor), elevation);
         }
 
         private static List<MapPoint> CreateArc(MapPoint circlePoint, MapPoint startPoint, MapPoint endPoint,
-            double startAngle, double sweepAngle, float radius, float degreePerPoint, IObjectPool objectPool)
+            float elevation, double startAngle, double sweepAngle, float radius, float degreePerPoint, IObjectPool objectPool)
         {
             const double degreeInRad = 180 / Math.PI;
 
@@ -146,10 +146,9 @@ namespace ActionStreetMap.Core.Utilities
             {
                 var pointX = (float)(circlePoint.X + Math.Cos(startAngle + sign * (double)(i * degreePerPoint) / degreeInRad) * radius);
                 var pointY = (float)(circlePoint.Y + Math.Sin(startAngle + sign * (double)(i * degreePerPoint) / degreeInRad) * radius);
-                points.Add(new MapPoint(pointX, pointY));
+                points.Add(new MapPoint(pointX, pointY, elevation));
             }
             points.Add(sign < 0 ? startPoint : endPoint);
-
             // NOTE this is important as we want to to keep the same point traversal order
             if(sign < 0) points.Reverse();
 
@@ -200,12 +199,6 @@ namespace ActionStreetMap.Core.Utilities
             var lambda = (dx * (point.X - lineStart.X)) + (dy * (point.Y - lineStart.Y));
 
             return new MapPoint((dx * lambda) + lineStart.X, (dy * lambda) + lineStart.Y);
-        }
-
-        public static bool IsOnLine(MapPoint point, MapPoint startLine, MapPoint endLine)
-        {
-            return Math.Abs(((point.Y - startLine.Y)) / ((point.X - startLine.X)) - ((endLine.Y - startLine.Y)) /
-                ((endLine.X - startLine.X))) < float.Epsilon;
         }
 
         #endregion

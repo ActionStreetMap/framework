@@ -64,28 +64,34 @@ namespace ActionStreetMap.Core
             return string.Format("({0:F1}, {1:F1}):{2:F1}", X, Y, Elevation);
         }
 
-        /// <summary> Defines + operationю </summary>
+        /// <summary> Defines + operation. </summary>
         public static MapPoint operator +(MapPoint left, MapPoint right)
         {
             return new MapPoint(left.X + right.X, left.Y + right.Y);
         }
 
-        /// <summary> Defines - operationю </summary>
+        /// <summary> Defines - operation. </summary>
         public static MapPoint operator -(MapPoint left, MapPoint right)
         {
             return new MapPoint(left.X - right.X, left.Y - right.Y);
         }
 
-        /// <summary> Defines == operationю </summary>
+        /// <summary> Defines == operation. </summary>
         public static bool operator ==(MapPoint left, MapPoint right)
         {
             return left.Equals(right);
         }
 
-        /// <summary> Defines != operationю </summary>
+        /// <summary> Defines != operation. </summary>
         public static bool operator !=(MapPoint left, MapPoint right)
         {
             return !left.Equals(right);
+        }
+
+        /// <summary> Defines * operation. </summary>
+        public static MapPoint operator *(MapPoint a, float d)
+        {
+            return new MapPoint(a.X * d, a.Y * d);
         }
 
         /// <summary> Gets normalized. </summary>
