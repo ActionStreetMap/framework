@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Utilities
 {
@@ -50,6 +49,8 @@ namespace ActionStreetMap.Core.Utilities
 
         #endregion
 
+        // NOTE not used but keep it so far.
+        /*
         #region Arc specific functions
 
         /// <summary> 
@@ -156,8 +157,36 @@ namespace ActionStreetMap.Core.Utilities
         }
 
         #endregion
-
+*/
+        
         #region Line specific functions
+
+        public static MapPoint GetIntersectionPoint(MapSegment first, MapSegment second, float elevation)
+        {
+            float a1 = first.End.Y - first.Start.Y;
+            float b1 = first.Start.X - first.End.X;
+            float c1 = a1 * first.Start.X + b1 * first.Start.Y;
+
+            // Get A,B,C of second line - points : ps2 to pe2
+            float a2 = second.End.Y - second.Start.Y;
+            float b2 = second.Start.X - second.End.X;
+            float c2 = a2 * second.Start.X + b2 * second.Start.Y;
+
+            // Get delta and check if the lines are parallel
+            float delta = a1 * b2 - a2 * b1;
+            if (Math.Abs(delta) < float.Epsilon)
+            {
+                // should share the same point - we will use it
+                if (first.End == second.Start)
+                    return first.End;
+                throw new ArgumentException("Segments are parallel");
+            }
+
+            return new MapPoint(
+                (b2 * c1 - b1 * c2) / delta,
+                (a1 * c2 - a2 * c1) / delta,
+                elevation);
+        }
 
         /// <summary> Gets offset line with given width for needed side. </summary>
         public static MapSegment GetOffsetLine(MapPoint point1, MapPoint point2, float width, bool isLeft)
@@ -183,6 +212,23 @@ namespace ActionStreetMap.Core.Utilities
             float rY2 = point2.Y - dxLi;
             
             return new MapSegment(new MapPoint(rX1, rY1), new MapPoint(rX2, rY2));
+        }
+
+        /// <summary> Gets T line. </summary>
+        public static MapSegment GetTSegment(List<MapPoint> points, float width, float elevation, bool connectedToEnd)
+        {
+            var point1 = points[connectedToEnd ? 0 : points.Count - 1];
+            var point2 = points[connectedToEnd ? points.Count - 1: 0];
+
+            float length = point1.DistanceTo(point2);
+            float dxLi = (point2.X - point1.X) / length * width;
+            float dyLi = (point2.Y - point1.Y) / length * width;
+
+            float lX2 = point2.X - dyLi;
+            float lY2 = point2.Y + dxLi;
+            float rX2 = point2.X + dyLi;
+            float rY2 = point2.Y - dxLi;
+            return new MapSegment(new MapPoint(lX2, lY2, elevation), new MapPoint(rX2, rY2, elevation));
         }
 
         /// <summary> Gets the closest point (perpendicular) on line. </summary>

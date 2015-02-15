@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Utilities;
 
@@ -16,7 +15,6 @@ namespace ActionStreetMap.Core.Scene.Roads
         /// <param name="objectPool">Object pool.</param>
         public static RoadJunction Complete(RoadJunction junction, IObjectPool objectPool)
         {
-            const float degreePerPoint = 20;
             var connections = junction.Connections;
             var elevation = junction.Center.Elevation;
             // sort connections by angle between them and MapPoint(int.MaxValue, 0) clockwise
@@ -28,81 +26,85 @@ namespace ActionStreetMap.Core.Scene.Roads
                        GeometryUtils.GetTurnAngle(ComparePoint, junction.Center, c2Point));
             });
 
-            // NOTE actually, capacity depends on degreePerPoint and angle between adjusted road elements
-            var polygon = new List<MapPoint>(connections.Count * 7 + 1);
-            // now we want to build junction polygon and truncate road elements to fit to it.
-            // TODO assign the same elevation to all points
+            var polygon = objectPool.NewList<MapPoint>(connections.Count * 2);           
             MapPoint firstElementPoint = default(MapPoint);
             var lastElementIndex = connections.Count - 1;
             for (int i = 0; i < connections.Count; i++)
             {
                 // get two adjusted segments
-                var e1 = connections[i];
-                var e2 = connections[i != lastElementIndex ? i + 1 : 0];
+                var current = connections[i];
+                var left = connections[i != lastElementIndex ? i + 1 : 0];
+                var right = connections[i != 0 ? i - 1 : lastElementIndex];
 
-                bool e1IsStart = e1.Start == junction;
-                bool e2IsStart = e2.Start == junction;
+                // boolean flags to determine which point should be used from points
+                bool currentFromStart = current.Start == junction;
+                bool leftFromStart = left.Start == junction;
+                bool rightFromStart = right.Start == junction;
+
+                var points = current.Points;
 
                 // detect next to center point
-                var e1Point = e1IsStart ? e1.Points[1] : e1.Points[e1.Points.Count - 2];
-                var e2Point = e2IsStart ? e2.Points[1] : e2.Points[e2.Points.Count - 2];
+                var currentPoint = currentFromStart ? points[1] : points[points.Count - 2];
+                var leftPoint = i != lastElementIndex
+                    ? (leftFromStart ? left.Points[1] : left.Points[left.Points.Count - 2])
+                    : firstElementPoint;
 
-                // store first element point as element will be truncated, but it's used twice
-                if (i == 0) firstElementPoint = e1Point;
+                var rightPoint = rightFromStart ? right.Points[1] : right.Points[right.Points.Count - 2];
 
-                // clockwise sorted: so should use e1's left segment and e2's right one
-                var segment1 = GeometryUtils.GetOffsetLine(e1Point, junction.Center, e1.Width / 2, true);
-                var segment2 = GeometryUtils.GetOffsetLine(i != lastElementIndex? e2Point: firstElementPoint, junction.Center, e1.Width / 2, false);
+                // store element point of first element as it will be truncated before second use
+                if (i == 0) firstElementPoint = currentPoint;
 
-                List<MapPoint> polygonPart;
-                // almost on the same line
-                if (180 - Math.Abs(GeometryUtils.GetTurnAngle(e1Point, junction.Center, e2Point)) < 1)
-                    polygonPart = CreateRectangle(junction.Center, segment1.Start, segment2.Start, elevation, e1.Width, e2.Width, objectPool);
-                 else
-                    polygonPart = GeometryUtils.CreateRoundedCorner(junction.Center, segment1.Start, segment2.Start,
-                        elevation, e1.Width > e2.Width ? e1.Width : e2.Width, degreePerPoint, objectPool);
+                // get offset segments
+                var currentLeftSegment = GeometryUtils.GetOffsetLine(currentPoint, junction.Center, current.Width, true);
+                var currentRightSegment = GeometryUtils.GetOffsetLine(currentPoint, junction.Center, current.Width, false);
 
-                polygon.AddRange(polygonPart);
+                var leftSegment = GeometryUtils.GetOffsetLine(junction.Center, leftPoint, left.Width, true);
+                var rightSegment = GeometryUtils.GetOffsetLine(junction.Center, rightPoint, left.Width, false);
+                
+                // get intersection points from left and right
+                var leftInsectPoint = GeometryUtils.GetIntersectionPoint(currentLeftSegment, leftSegment, elevation);
+                var rightInsectPoint = GeometryUtils.GetIntersectionPoint(currentRightSegment, rightSegment, elevation);
 
-                // truncate road element points to junction
-                TruncateToPoint(polygonPart[0], e1.Points, e1IsStart, objectPool);
-                // TODO generate traffic light positions here?
+                // detect the farest point of projections
+                var leftProjection = GeometryUtils.GetClosestPointOnLine(leftInsectPoint, points[0], points[points.Count - 1]);
+                var rightProjection = GeometryUtils.GetClosestPointOnLine(rightInsectPoint, points[0], points[points.Count - 1]);
+
+                // detect truncate point and truncate
+                var truncatePoint = leftProjection.DistanceTo(junction.Center) >
+                                    rightProjection.DistanceTo(junction.Center)
+                    ? leftProjection
+                    : rightProjection;
+                TruncateToPoint(truncatePoint, points, currentFromStart, objectPool);
+
+                // add points to junction polygon
+                var tSegment = GeometryUtils.GetTSegment(points, current.Width, elevation, !currentFromStart);
+                polygon.Add(tSegment.Start);
+                polygon.Add(tSegment.End);
             }
-            
-            //polygon.Add(polygon[0]);
+           
+            // sort clockwise
+            GeometryUtils.SortByAngle(polygon[0], junction.Center, polygon);
 
-            junction.Polygon = polygon;
+            // copy avoiding duplicates
+            junction.Polygon = objectPool.NewList<MapPoint>(polygon.Count);
+            for(int i = 0; i < polygon.Count; i++)
+                if (i == 0 || polygon[i - 1] != polygon[i])
+                    junction.Polygon.Add(polygon[i]);
+
+            objectPool.StoreList(polygon);
+
             return junction;
         }
 
-        internal static List<MapPoint> CreateRectangle(MapPoint center, MapPoint p1, MapPoint p2,
-            float elevation, float width1, float width2, IObjectPool objectPool)
-        {
-            var polygonPart = objectPool.NewList<MapPoint>(2);
-            var offset1 = (center - p1)*(width1/2) + center;
-            offset1.SetElevation(elevation);
-            polygonPart.Add(offset1);
-
-            var offset2 = (center - p2) * (width1 / 2) + center;
-            offset2.SetElevation(elevation);
-            polygonPart.Add(offset2);
-
-            return polygonPart;
-        }
-
+        /// <summary> Truncates point list. </summary>
         internal static MapPoint TruncateToPoint(MapPoint point, List<MapPoint> points, bool fromStart, IObjectPool objectPool)
         {
-            // TODO first arg should be converted to normal to points line!
-            var indexBuffer = objectPool.NewList<int>(4);
-            
             float distance;
             int count = points.Count;
             int increment = fromStart ? 1 : -1;
             int index = fromStart ? 0 : count - 1;
-
-            var projection = GeometryUtils.GetClosestPointOnLine(point, points[0], points[count - 1]);
-
-            var threshold = projection.DistanceTo(fromStart ? points[0] : points[count - 1]);
+            var indexBuffer = objectPool.NewList<int>(4);
+            var threshold = point.DistanceTo(fromStart ? points[0] : points[count - 1]);
             MapPoint a = points[index];
             MapPoint b;
             do
@@ -143,7 +145,7 @@ namespace ActionStreetMap.Core.Scene.Roads
             {
                 // We don't want to have list which contains two equal points (ignore elevation)
                 var compared = points[fromStart ? 1 : count - 2];
-                if (!compared.X.Equals(truncPoint.X) && !compared.Y.Equals(truncPoint.Y))
+                if (!compared.X.Equals(truncPoint.X) || !compared.Y.Equals(truncPoint.Y))
                     points[fromStart ? 0 : count - 1] = truncPoint;
             }
             else if (indexBuffer.Count == 1)
@@ -169,7 +171,7 @@ namespace ActionStreetMap.Core.Scene.Roads
         {
             if (points.Count <= 2) return;
 
-            // Do not truncate to one point
+            // do not truncate to one point
             // TODO however it can lead to case when points are equal
             if (count == points.Count - 1) 
                 count--;

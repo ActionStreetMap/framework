@@ -132,6 +132,43 @@ namespace ActionStreetMap.Tests.Core.Scene
         }
 
         [Test]
+        public void TruncateTCrossRoadCorrect()
+        {
+            // ARRANGE
+            var junction = new RoadJunction(new MapPoint(0, 0));
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 0,
+                Width = 3,
+                End = junction,
+                Points = new List<MapPoint>() { new MapPoint(-20, 0), new MapPoint(-10, 0), new MapPoint(0, 0), }
+            });
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 1,
+                Width = 3,
+                End = junction,
+                Points = new List<MapPoint>() { new MapPoint(20, 0), new MapPoint(10, 0), new MapPoint(0, 0), }
+            });
+            junction.Connections.Add(new RoadElement()
+            {
+                Id = 3,
+                Width = 3,
+                Start = junction,
+                Points = new List<MapPoint>() { new MapPoint(0, 0), new MapPoint(0, 10), new MapPoint(0, 20), }
+            });
+
+            // ACT
+            RoadJunctionUtils.Complete(junction, new ObjectPool());
+
+            // ASSERT
+            var connections = junction.Connections;
+            Assert.AreEqual(new MapPoint(3, 0), connections[0].Points[2]);
+            Assert.AreEqual(new MapPoint(-3, 0), connections[1].Points[2]);
+            Assert.AreEqual(new MapPoint(0, 3), connections[2].Points[0]);
+        }
+
+        [Test]
         public void CanGenerateJunctionPolygon()
         {
             // ARRANGE
@@ -161,14 +198,14 @@ namespace ActionStreetMap.Tests.Core.Scene
             RoadJunctionUtils.Complete(junction, new ObjectPool());
 
             // ASSERT
-            using (var writer = new StreamWriter(new FileStream("mappoint.txt", FileMode.Create)))
+           /* using (var writer = new StreamWriter(new FileStream("mappoint.txt", FileMode.Create)))
             {
                 foreach (var mapPoint in junction.Polygon)
                 {
                     writer.WriteLine("new MapPoint({0}f, {1}f),", mapPoint.X, mapPoint.Y);
                 }
-            }
-            Assert.AreEqual(28, junction.Polygon.Count);
+            }*/
+            Assert.AreEqual(4, junction.Polygon.Count);
         }
 
         [Test]
