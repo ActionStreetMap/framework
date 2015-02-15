@@ -30,12 +30,19 @@ namespace ActionStreetMap.Core.Scene.Roads
                 .Select(kv => new Road { Elements = kv.Value })
                 .ToArray();
 
-            var indexBuffer = objectPool.NewList<int>(4);
             var junctions = _junctionsMap.Values
                 .SelectMany(j => j.Values)
-                .Select(r => RoadJunctionUtils.CompleteJunction(r, indexBuffer))
-                .ToArray();
-            objectPool.StoreList(indexBuffer);
+                .Select(r =>
+                {
+                    try
+                    {
+                        return RoadJunctionUtils.Complete(r, objectPool);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                }).ToArray();
 
             _elements.Clear();
             _junctionsMap.Clear();
