@@ -2,7 +2,7 @@
 using ActionStreetMap.Core;
 using ActionStreetMap.Unity.Wrappers;
 
-namespace ActionStreetMap.Explorer.Terrain.Flat
+namespace ActionStreetMap.Explorer.Terrain.FlatShade
 {
     /// <summary> Represents area which should be filled with gradient. </summary>
     public class GradientArea

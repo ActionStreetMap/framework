@@ -18,7 +18,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Terrain.Unity
 {
     /// <summary> Creates Unity Terrain object using given settings. </summary>
-    public class TerrainBuilder : ITerrainBuilder
+    public class UnityTerrainBuilder : ITerrainBuilder
     {
         private const string LogTag = "terrain";
 
@@ -37,7 +37,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         [Dependency]
         public ITrace Trace { get; set; }
 
-        /// <summary> Creates TerrainBuilder. </summary>
+        /// <summary> Creates <see cref="UnityTerrainBuilder"/>. </summary>
         /// <param name="gameObjectFactory">Game object factory.</param>
         /// <param name="resourceProvider">Resource provider.</param>
         /// <param name="roadBuilder">Road builder.</param>
@@ -45,7 +45,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         /// <param name="objectPool">Object pool.</param>
         /// <param name="heightMapProcessor">Heightmap processor.</param>
         [Dependency]
-        public TerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider,
+        public UnityTerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider,
             IRoadBuilder roadBuilder, IThemeProvider themeProvider, IObjectPool objectPool,
             HeightMapProcessor heightMapProcessor)
         {

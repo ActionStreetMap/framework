@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain.Flat
+namespace ActionStreetMap.Explorer.Terrain.FlatShade
 {
     /// <summary> Builds terrain grid. </summary>
     internal class TerrainGridBuilder

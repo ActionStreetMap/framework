@@ -2,7 +2,7 @@
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain.Flat
+namespace ActionStreetMap.Explorer.Terrain.FlatShade
 {
     /// <summary> Provides the way to build mesh which represents terrain part. </summary>
     internal class TerrainCellBuilder
