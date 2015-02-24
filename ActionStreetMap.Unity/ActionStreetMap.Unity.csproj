@@ -61,6 +61,7 @@
     <Compile Include="Reactive\UnityWinRTBridge\ThreadPoolScheduler_UnityWinRT.cs" />
     <Compile Include="Utils\ProxyGen.cs" />
     <Compile Include="Utils\SysCommand.cs" />
+    <Compile Include="Wrappers\GradientWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ActionStreetMap.Infrastructure\ActionStreetMap.Infrastructure.csproj">

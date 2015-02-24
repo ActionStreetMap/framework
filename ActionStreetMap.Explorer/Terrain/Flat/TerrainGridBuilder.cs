@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain.Flat
@@ -83,7 +84,7 @@ namespace ActionStreetMap.Explorer.Terrain.Flat
         }
 
         /// <summary> Fills cells with given gradient. </summary>
-        private void Fill(Gradient gradient, int line, int start, int end)
+        private void Fill(GradientWrapper gradient, int line, int start, int end)
         {
             var yIndex = line / _cellResolution;
             var xStartIndex = start / _cellResolution;
@@ -120,7 +121,7 @@ namespace ActionStreetMap.Explorer.Terrain.Flat
         #region ScanLine algorithm modification
 
         /// <summary> Custom version of ScanLine algorithm to process terrain data. </summary>
-        private void ScanAndFill(List<Segment2D> segments, int size, Gradient gradient)
+        private void ScanAndFill(List<Segment2D> segments, int size, GradientWrapper gradient)
         {
             // TODO use object pool
             var pointsBuffer = new List<int>();

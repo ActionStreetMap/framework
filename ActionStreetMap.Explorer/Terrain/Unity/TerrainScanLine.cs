@@ -4,9 +4,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Terrain.Unity
 {
-    /// <summary>
-    ///     Custom version of Scanline algorithm to process terrain data
-    /// </summary>
+    /// <summary> Custom version of Scanline algorithm to process terrain data. </summary>
     internal class TerrainScanLine
     {
         public static void ScanAndFill(Polygon polygon, int size, Action<int, int, int> fillAction, IObjectPool objectPool)

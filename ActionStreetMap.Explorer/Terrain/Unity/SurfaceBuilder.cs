@@ -5,24 +5,19 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Terrain.Unity
 {
-    /// <summary>
-    ///     Fills alphamap and detail maps of TerrainData using TerrainSettings provided.
-    /// </summary>
+    /// <summary> Fills alphamap and detail maps of TerrainData using TerrainSettings provided. </summary>
     public class SurfaceBuilder
     {
         private readonly IObjectPool _objectPool;
-        /// <summary>
-        ///     Creates instance of <see cref="SurfaceBuilder"/>.
-        /// </summary>
+
+        /// <summary> Creates instance of <see cref="SurfaceBuilder"/>. </summary>
         /// <param name="objectPool"></param>
         public SurfaceBuilder(IObjectPool objectPool)
         {
             _objectPool = objectPool;
         }
 
-        /// <summary>
-        ///     Builds surface.
-        /// </summary>
+        /// <summary> Builds surface. </summary>
         /// <param name="settings">Terrain settings.</param>
         /// <param name="elements">Terrain elements.</param>
         /// <param name="splatMap">Splat map.</param>

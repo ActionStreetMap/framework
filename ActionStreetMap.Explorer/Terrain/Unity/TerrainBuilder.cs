@@ -23,7 +23,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         IGameObject Build(IGameObject parent, TerrainSettings settings);
     }
 
-    /// <summary>  Creates Unity Terrain object using given settings. </summary>
+    /// <summary> Creates Unity Terrain object using given settings. </summary>
     public class TerrainBuilder : ITerrainBuilder
     {
         private const string LogTag = "terrain";
@@ -38,7 +38,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         private SplatPrototype[] _splatPrototypes;
         private DetailPrototype[] _detailPrototypes;
 
-        /// <summary>  Gets or sets trace. </summary>
+        /// <summary> Gets or sets trace. </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 

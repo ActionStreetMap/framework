@@ -135,6 +135,7 @@
     <Compile Include="Scene\Roads\RoadStyleProvider.cs" />
     <Compile Include="Scene\Theme.cs" />
     <Compile Include="Tiling\TileModelLoader.cs" />
+    <Compile Include="Utils\Noise.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ActionStreetMap.Core\ActionStreetMap.Core.csproj">
