@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Scene.Roads;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Roads;
-using ActionStreetMap.Explorer.Scene.Utils;
-
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain
+namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
 {
     /// <summary> Defines terrain builder. </summary>
     public interface ITerrainBuilder

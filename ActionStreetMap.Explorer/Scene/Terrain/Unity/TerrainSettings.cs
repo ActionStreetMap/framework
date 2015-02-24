@@ -3,7 +3,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Scene.Roads;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain
+namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
 {
     /// <summary> Defines terrain settings. </summary>
     public class TerrainSettings

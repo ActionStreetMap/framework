@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain
+namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
 {
     /// <summary>
     ///     Custom version of Scanline algorithm to process terrain data

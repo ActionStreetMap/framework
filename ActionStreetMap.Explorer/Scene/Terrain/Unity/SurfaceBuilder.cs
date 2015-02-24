@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
-using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
 using ActionStreetMap.Core.Scene.Details;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain
+namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
 {
     /// <summary>
     ///     Fills alphamap and detail maps of TerrainData using TerrainSettings provided.
