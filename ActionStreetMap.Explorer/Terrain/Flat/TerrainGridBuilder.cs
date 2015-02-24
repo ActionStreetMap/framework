@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Terrain.Flat
         }
 
         /// <summary> Builds grid starting from position using given heightmap. </summary>
-        public TerrainGridBuilder Move(Vector2 position, float[,] heightmap, Gradient gradient)
+        public TerrainGridBuilder Move(Vector2 position, float[,] heightmap, GradientWrapper gradient)
         {
             _position = position;
             for (int y = 0; y < GridRowCount; y++)

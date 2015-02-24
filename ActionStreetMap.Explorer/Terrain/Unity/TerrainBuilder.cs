@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Details;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -13,16 +17,6 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain.Unity
 {
-    /// <summary> Defines terrain builder. </summary>
-    public interface ITerrainBuilder
-    {
-        /// <summary> Builds terrain. </summary>
-        /// <param name="parent">Parent game object, usually Tile.</param>
-        /// <param name="settings">Terrain settings.</param>
-        /// <returns>Terrain game object.</returns>
-        IGameObject Build(IGameObject parent, TerrainSettings settings);
-    }
-
     /// <summary> Creates Unity Terrain object using given settings. </summary>
     public class TerrainBuilder : ITerrainBuilder
     {
@@ -32,6 +26,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         private readonly IResourceProvider _resourceProvider;
         private readonly IRoadBuilder _roadBuilder;
         private readonly IObjectPool _objectPool;
+        private readonly IThemeProvider _themeProvider;
         private readonly SurfaceBuilder _surfaceBuilder;
         private readonly HeightMapProcessor _heightMapProcessor;
 
@@ -46,16 +41,20 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         /// <param name="gameObjectFactory">Game object factory.</param>
         /// <param name="resourceProvider">Resource provider.</param>
         /// <param name="roadBuilder">Road builder.</param>
+        /// <param name="themeProvider">Theme provider.</param>
         /// <param name="objectPool">Object pool.</param>
         /// <param name="heightMapProcessor">Heightmap processor.</param>
         [Dependency]
         public TerrainBuilder(IGameObjectFactory gameObjectFactory, IResourceProvider resourceProvider,
-            IRoadBuilder roadBuilder, IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
+            IRoadBuilder roadBuilder, IThemeProvider themeProvider, IObjectPool objectPool,
+            HeightMapProcessor heightMapProcessor)
         {
             _gameObjectFactory = gameObjectFactory;
             _resourceProvider = resourceProvider;
             _roadBuilder = roadBuilder;
+            _themeProvider = themeProvider;
             _objectPool = objectPool;
+
 
             _heightMapProcessor = heightMapProcessor;
             _surfaceBuilder = new SurfaceBuilder(objectPool);
@@ -64,8 +63,21 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         #region ITerrainBuilder implementation
 
         /// <inheritdoc />
-        public IGameObject Build(IGameObject parent, TerrainSettings settings)
+        public IGameObject Build(Tile tile, Rule rule)
         {
+            var settings = new TerrainSettings
+            {
+                Tile = tile,
+                Resolution = rule.GetResolution(),
+                CenterPosition = new Vector2(tile.MapCenter.X, tile.MapCenter.Y),
+                CornerPosition = new Vector2(tile.BottomLeft.X, tile.BottomLeft.Y),
+                PixelMapError = rule.GetPixelMapError(),
+                ZIndex = rule.GetZIndex(),
+                SplatParams = rule.GetSplatParams(),
+                DetailParams = rule.GetDetailParams(),
+                RoadStyleProvider = _themeProvider.Get().GetStyleProvider<IRoadStyleProvider>()
+            };
+
             Trace.Debug(LogTag, "starting build");
             ProcessTerrainObjects(settings);
 
@@ -106,7 +118,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
             Trace.Debug(LogTag, "scheduling on main thread..");
             Scheduler.MainThread.Schedule(() =>
             {
-                CreateTerrainGameObject(gameObject, parent, settings, size, canvas.Details);
+                CreateTerrainGameObject(gameObject, tile.GameObject, settings, size, canvas.Details);
                 canvas.Dispose();
                 Trace.Debug(LogTag, "build finished");
             });

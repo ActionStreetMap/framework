@@ -8,14 +8,11 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
-using ActionStreetMap.Explorer.Terrain.Unity;
+using ActionStreetMap.Explorer.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Roads;
-using ActionStreetMap.Explorer.Scene.Terrain;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Tiling
@@ -29,13 +26,13 @@ namespace ActionStreetMap.Explorer.Tiling
         private readonly IModelBuilder[] _builders;
         private readonly IModelBehaviour[] _behaviours;
         private readonly IGameObjectFactory _gameObjectFactory;
-        private readonly IThemeProvider _themeProvider;
+
         private readonly Stylesheet _stylesheet;
 
         /// <summary> Creates <see cref="TileModelLoader"/>. </summary>
         [Dependency]
-        public TileModelLoader(IGameObjectFactory gameObjectFactory, IThemeProvider themeProvider,
-            IHeightMapProvider heighMapProvider, ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
+        public TileModelLoader(IGameObjectFactory gameObjectFactory, IHeightMapProvider heighMapProvider,
+            ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
             IEnumerable<IModelBuilder> builders, IEnumerable<IModelBehaviour> behaviours,
             IObjectPool objectPool)
         {
@@ -46,7 +43,6 @@ namespace ActionStreetMap.Explorer.Tiling
             _builders = builders.ToArray();
             _behaviours = behaviours.ToArray();
             _gameObjectFactory = gameObjectFactory;
-            _themeProvider = themeProvider;
             _stylesheet = stylesheetProvider.Get();
         }
 
@@ -114,18 +110,7 @@ namespace ActionStreetMap.Explorer.Tiling
         {
             var rule = _stylesheet.GetCanvasRule(tile.Canvas);
 
-            _terrainBuilder.Build(tile.GameObject, new TerrainSettings
-            {
-                Tile = tile,
-                Resolution = rule.GetResolution(),
-                CenterPosition = new Vector2(tile.MapCenter.X, tile.MapCenter.Y),
-                CornerPosition = new Vector2(tile.BottomLeft.X, tile.BottomLeft.Y),
-                PixelMapError = rule.GetPixelMapError(),
-                ZIndex = rule.GetZIndex(),
-                SplatParams = rule.GetSplatParams(),
-                DetailParams = rule.GetDetailParams(),
-                RoadStyleProvider = _themeProvider.Get().GetStyleProvider<IRoadStyleProvider>()
-            });
+            _terrainBuilder.Build(tile, rule);
 
             // NOTE schedule cleanup on UI thread as data may be used
             Scheduler.MainThread.Schedule(() => 

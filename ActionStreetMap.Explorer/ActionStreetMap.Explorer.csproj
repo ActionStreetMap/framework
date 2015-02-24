@@ -96,6 +96,7 @@
     <Compile Include="Scene\Roads\RoadBuilder.cs" />
     <Compile Include="Scene\Roads\RoadFixBehavior.cs" />
     <Compile Include="Scene\Roads\RoadStyle.cs" />
+    <Compile Include="Terrain\ITerrainBuilder.cs" />
     <Compile Include="Terrain\Flat\GradientArea.cs" />
     <Compile Include="Terrain\Flat\TerrainCellBuilder.cs" />
     <Compile Include="Terrain\Flat\TerrainGridBuilder.cs" />

@@ -1,8 +1,8 @@
 ﻿using ActionStreetMap.Core.MapCss;
-using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
+using ActionStreetMap.Explorer.Terrain;
 using ActionStreetMap.Explorer.Terrain.Unity;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
@@ -12,7 +12,6 @@ using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Roads;
-using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Unity;
