@@ -2,7 +2,7 @@
 using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
+namespace ActionStreetMap.Explorer.Terrain.Unity
 {
     /// <summary>
     ///     Custom version of Scanline algorithm to process terrain data

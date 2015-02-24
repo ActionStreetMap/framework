@@ -11,7 +11,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
+namespace ActionStreetMap.Explorer.Terrain.Unity
 {
     /// <summary> Defines terrain builder. </summary>
     public interface ITerrainBuilder

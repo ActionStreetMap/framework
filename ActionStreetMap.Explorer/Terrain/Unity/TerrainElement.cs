@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
+namespace ActionStreetMap.Explorer.Terrain.Unity
 {
     /// <summary>
     ///     Defines terrain element.

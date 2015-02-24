@@ -10,7 +10,7 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
-using ActionStreetMap.Explorer.Scene.Terrain.Unity;
+using ActionStreetMap.Explorer.Terrain.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;

@@ -3,7 +3,7 @@ using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Unity
+namespace ActionStreetMap.Explorer.Terrain.Unity
 {
     /// <summary>
     ///     Fills alphamap and detail maps of TerrainData using TerrainSettings provided.
