@@ -82,9 +82,9 @@ namespace ActionStreetMap.Core.Elevation
             {
                 LeftBottomCorner = tile.BottomLeft,
                 RightUpperCorner = tile.TopRight,
-                AxisOffset = tile.Size / resolution,
+                XAxisRatio = tile.Width / resolution,
+                YAxisRatio = tile.Width / resolution,
                 IsFlat = _isFlat,
-                Size = tile.Size,
                 Data = map,
                 MinElevation = minElevation,
                 MaxElevation = maxElevation,

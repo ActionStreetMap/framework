@@ -14,7 +14,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             // ARRANGE
             int testId = 7;
             int otherId = 5;
-            var tile = new Tile(new GeoCoordinate(0,0),new MapPoint(0,0), null, 100);
+            var tile = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), null, 100, 100);
 
             // ACT
             tile.Registry.Register(new Info() { Id = testId });
@@ -30,8 +30,8 @@ namespace ActionStreetMap.Tests.Core.Tiling
             // ARRANGE
             int testId = 7;
             int otherId = 5;
-            var tile1 = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), null, 100);
-            var tile2 = new Tile(new GeoCoordinate(0, 0), new MapPoint(100, 100), null, 100);
+            var tile1 = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), null, 100, 100);
+            var tile2 = new Tile(new GeoCoordinate(0, 0), new MapPoint(100, 100), null, 100, 100);
 
             // ACT
             tile1.Registry.RegisterGlobal(testId);
@@ -49,7 +49,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             int testId = 7;
-            var tile = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), null, 100);
+            var tile = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), null, 100, 100);
 
             // ACT & ASSERT
             tile.Registry.RegisterGlobal(testId);

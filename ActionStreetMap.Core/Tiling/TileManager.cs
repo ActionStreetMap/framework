@@ -77,7 +77,7 @@ namespace ActionStreetMap.Core.Tiling
         {
             var tileCenter = new MapPoint(i*_tileSize, j*_tileSize);
 
-            var tile = new Tile(RelativeNullPoint, tileCenter, new Canvas(_objectPool), _tileSize);
+            var tile = new Tile(RelativeNullPoint, tileCenter, new Canvas(_objectPool), _tileSize, _tileSize);
 
             if (_allTiles.ContainsKey(i, j))
                 return;

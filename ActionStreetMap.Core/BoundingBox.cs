@@ -62,9 +62,9 @@ namespace ActionStreetMap.Core
 
         /// <summary> Creates bounding box as rectangle. </summary>
         /// <param name="center">Center point.</param>
-        /// <param name="height">Heigh in meters.</param>
         /// <param name="width">Width in meters.</param>
-        public static BoundingBox CreateBoundingBox(GeoCoordinate center, double height, double width)
+        /// <param name="height">Heigh in meters.</param>
+        public static BoundingBox CreateBoundingBox(GeoCoordinate center, float width, float height)
         {
             // Bounding box surrounding the point at given coordinates,
             // assuming local approximation of Earth surface as a sphere
@@ -93,7 +93,7 @@ namespace ActionStreetMap.Core
         /// <summary> Creates bounding box as square. </summary>
         /// <param name="center">Center.</param>
         /// <param name="sideInMeters">Length of the bounding box.</param>
-        public static BoundingBox CreateBoundingBox(GeoCoordinate center, double sideInMeters)
+        public static BoundingBox CreateBoundingBox(GeoCoordinate center, float sideInMeters)
         {
             return CreateBoundingBox(center, sideInMeters, sideInMeters);
         }

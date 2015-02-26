@@ -59,12 +59,11 @@ namespace ActionStreetMap.Explorer.Scene.Utils
             var size = heightMap.Resolution;
             var data = heightMap.Data;
             var lastIndex = size - 1;
-            var ratio = heightMap.Size / heightMap.Resolution;
 
             for (int i = 0; i < points.Count; i++)
             {
                 var point = points[i];
-                polygonMapPointBuffer.Add(GetHeightMapPoint(heightMap, ratio, point.X, point.Y));
+                polygonMapPointBuffer.Add(GetHeightMapPoint(heightMap, point.X, point.Y));
             }
 
             // NOTE: this is experimental - simple scan line is faster, but it was designed
@@ -98,11 +97,11 @@ namespace ActionStreetMap.Explorer.Scene.Utils
                 _data[line, i] = elevation;
         }
 
-        private MapPoint GetHeightMapPoint(HeightMap heightMap, float ratio, float x, float y)
+        private MapPoint GetHeightMapPoint(HeightMap heightMap, float x, float y)
         {
             return new MapPoint(
-            (int)Math.Ceiling((x - heightMap.LeftBottomCorner.X) / ratio),
-            (int)Math.Ceiling(((y - heightMap.LeftBottomCorner.Y) / ratio)));
+            (int)Math.Ceiling((x - heightMap.LeftBottomCorner.X) / heightMap.XAxisRatio),
+            (int)Math.Ceiling(((y - heightMap.LeftBottomCorner.Y) / heightMap.YAxisRatio)));
         }
 
         private void SetOffsetPoints(HeightMap heightMap, MapPoint point1, MapPoint point2, float offset, List<MapPoint> mapPointBuffer)
@@ -113,12 +112,10 @@ namespace ActionStreetMap.Explorer.Scene.Utils
             var zOffset = (z2 - z1) / l;
             var xOffset = (x1 - x2) / l;
 
-            float ratio = heightMap.Size / heightMap.Resolution;
-
-            mapPointBuffer.Add(GetHeightMapPoint(heightMap, ratio, x1 - offset * zOffset, z1 - offset * xOffset));
-            mapPointBuffer.Add(GetHeightMapPoint(heightMap, ratio, x2 - offset * zOffset, z2 - offset * xOffset));
-            mapPointBuffer.Add(GetHeightMapPoint(heightMap, ratio, x2 + offset * zOffset, z2 + offset * xOffset));
-            mapPointBuffer.Add(GetHeightMapPoint(heightMap, ratio, x1 + offset * zOffset, z1 + offset * xOffset));
+            mapPointBuffer.Add(GetHeightMapPoint(heightMap, x1 - offset * zOffset, z1 - offset * xOffset));
+            mapPointBuffer.Add(GetHeightMapPoint(heightMap, x2 - offset * zOffset, z2 - offset * xOffset));
+            mapPointBuffer.Add(GetHeightMapPoint(heightMap, x2 + offset * zOffset, z2 + offset * xOffset));
+            mapPointBuffer.Add(GetHeightMapPoint(heightMap, x1 + offset * zOffset, z1 + offset * xOffset));
         }
     }
 }

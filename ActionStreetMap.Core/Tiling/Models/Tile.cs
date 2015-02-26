@@ -13,14 +13,17 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Stores tile center coordinate in Unity metrics. </summary>
         public MapPoint MapCenter { get; private set; }
 
+        /// <summary> Gets width in meters. </summary>
+        public float Width { get; private set; }
+
+        /// <summary> Gets height in meters. </summary>
+        public float Height { get; private set; }
+
         /// <summary> Gets or sets tile canvas. </summary>
         public Canvas Canvas { get; private set; }
 
         /// <summary> Gets bounding box for current tile. </summary>
         public BoundingBox BoundingBox { get; private set; }
-
-        /// <summary> Square side size in Unity metrics. </summary>
-        public float Size { get; private set; }
 
         /// <summary> Gets or sets game object which is used to represent this tile. </summary>
         public IGameObject GameObject { get; set; }
@@ -50,22 +53,26 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="mapCenter">Center of map.</param>
         /// <param name="canvas">Map canvas.</param>
-        /// <param name="size">Tile size in meters.</param>
-        public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, Canvas canvas, float size)
+        /// <param name="width">Tile width in meters.</param>
+        /// <param name="height">Tile height in meters.</param>
+        public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, Canvas canvas, 
+            float width, float height)
         {
             RelativeNullPoint = relativeNullPoint;
             MapCenter = mapCenter;
             Canvas = canvas;
-            Size = size;
+
+            Width = width;
+            Height = height;
 
             var geoCenter = GeoProjection.ToGeoCoordinate(relativeNullPoint, mapCenter);
-            BoundingBox = BoundingBox.CreateBoundingBox(geoCenter, size);
+            BoundingBox = BoundingBox.CreateBoundingBox(geoCenter, width, height);
 
-            TopLeft = new MapPoint(MapCenter.X - Size/2, MapCenter.Y + Size/2);
-            BottomRight = new MapPoint(MapCenter.X + Size / 2, MapCenter.Y - Size / 2);
+            TopLeft = new MapPoint(MapCenter.X - width / 2, MapCenter.Y + height / 2);
+            BottomRight = new MapPoint(MapCenter.X + width / 2, MapCenter.Y - height / 2);
 
-            TopRight = new MapPoint(MapCenter.X + Size / 2, MapCenter.Y + Size / 2);
-            BottomLeft = new MapPoint(MapCenter.X - Size / 2, MapCenter.Y - Size / 2);
+            TopRight = new MapPoint(MapCenter.X + width / 2, MapCenter.Y + height / 2);
+            BottomLeft = new MapPoint(MapCenter.X - width / 2, MapCenter.Y - height / 2);
 
             Registry = new TileRegistry();
         }

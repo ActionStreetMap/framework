@@ -94,7 +94,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
                         htmap[j, i] /= maxElevation;
             });
 
-            var size = new Vector3(settings.Tile.Size, settings.Tile.HeightMap.MaxElevation, settings.Tile.Size);
+            var size = new Vector3(settings.Tile.Width, settings.Tile.HeightMap.MaxElevation, settings.Tile.Height);
             var layers = settings.SplatParams.Count;
 
             settings.Tile.Canvas.SplatMap = _objectPool

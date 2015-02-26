@@ -34,7 +34,7 @@ namespace ActionStreetMap.Tests.Core.Elevation
             var provider = new HeightMapProvider(elevationProvider.Object, new ObjectPool());
             provider.Trace = new ConsoleTrace();
             // ACT
-            var heightMap = provider.Get(new Tile(center, new MapPoint(), null, tileSize), resolution);
+            var heightMap = provider.Get(new Tile(center, new MapPoint(), null, tileSize, tileSize), resolution);
                 
             // ASSERT
             Assert.IsNotNull(heightMap);
@@ -74,10 +74,10 @@ namespace ActionStreetMap.Tests.Core.Elevation
                 IsFlat = false,
                 RightUpperCorner = new MapPoint(center.X + tileSize / 2, center.Y + tileSize / 2),
                 LeftBottomCorner = new MapPoint(center.X - tileSize / 2, center.Y - tileSize / 2),
-                AxisOffset = tileSize / resolution,
+                XAxisRatio = tileSize / resolution,
+                YAxisRatio = tileSize / resolution,
                 MaxElevation = maxElevation,
                 Resolution = resolution,
-                Size = tileSize
             };
 
             // ACT && ASSERT

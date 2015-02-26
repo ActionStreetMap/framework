@@ -16,9 +16,6 @@ namespace ActionStreetMap.Core.Elevation
         /// <summary> Gets or sets point of right upper corner. </summary>
         public MapPoint RightUpperCorner { get; set; }
 
-        /// <summary>  Gets or sets axis offset. </summary>
-        public float AxisOffset { get; set; }
-
         /// <summary> Gets or sets min elevation of given heightmap. </summary>
         public float MinElevation { get; set; }
 
@@ -31,14 +28,17 @@ namespace ActionStreetMap.Core.Elevation
         /// <summary> Gets or sets actual heightmap data. </summary>
         public float[,] Data { get; set; }
 
-        /// <summary> Gets or sets heightmap size (in meters). </summary>
-        public float Size { get; set; }
+        /// <summary> Gets or sets x axis offset (performance optimization). </summary>
+        internal float XAxisRatio { get; set; }
+
+        /// <summary> Gets or sets y axis offset  (performance optimization). </summary>
+        internal float YAxisRatio { get; set; }
 
         /// <summary> Returns corresponding height for given point. </summary>
         public virtual float LookupHeight(MapPoint mapPoint)
         {
-            var i = (int)Math.Round((mapPoint.X - LeftBottomCorner.X) / AxisOffset);
-            var j = (int)Math.Round((mapPoint.Y - LeftBottomCorner.Y) / AxisOffset);
+            var i = (int)Math.Round((mapPoint.X - LeftBottomCorner.X) / XAxisRatio);
+            var j = (int)Math.Round((mapPoint.Y - LeftBottomCorner.Y) / YAxisRatio);
 
             // check out of range
             var bound = Resolution - 1;
