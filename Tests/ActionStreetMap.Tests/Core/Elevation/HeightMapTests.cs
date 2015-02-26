@@ -18,7 +18,7 @@ namespace ActionStreetMap.Tests.Core.Elevation
         {
             // ARRANGE 
             var center = new GeoCoordinate(latitude, longitude);
-            var bbox = BoundingBox.CreateBoundingBox(center, tileSize / 2);
+            var bbox = BoundingBox.CreateBoundingBox(center, tileSize);
             var latitudeOffset = (bbox.MaxPoint.Latitude - bbox.MinPoint.Latitude) / resolution;
             var longitudeOffset = (bbox.MaxPoint.Longitude - bbox.MinPoint.Longitude) / resolution;
             var elevationProvider = new Mock<IElevationProvider>();

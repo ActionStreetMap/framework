@@ -59,7 +59,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             Size = size;
 
             var geoCenter = GeoProjection.ToGeoCoordinate(relativeNullPoint, mapCenter);
-            BoundingBox = BoundingBox.CreateBoundingBox(geoCenter, size / 2);
+            BoundingBox = BoundingBox.CreateBoundingBox(geoCenter, size);
 
             TopLeft = new MapPoint(MapCenter.X - Size/2, MapCenter.Y + Size/2);
             BottomRight = new MapPoint(MapCenter.X + Size / 2, MapCenter.Y - Size / 2);

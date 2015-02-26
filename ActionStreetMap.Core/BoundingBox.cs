@@ -60,30 +60,42 @@ namespace ActionStreetMap.Core
 
         # region Creation
 
-        /// <summary> Creates bounding box. </summary>
-        /// <param name="point">Center.</param>
-        /// <param name="halfSideInM">Half length of the bounding box.</param>
-        public static BoundingBox CreateBoundingBox(GeoCoordinate point, double halfSideInM)
+        /// <summary> Creates bounding box as rectangle. </summary>
+        /// <param name="center">Center point.</param>
+        /// <param name="height">Heigh in meters.</param>
+        /// <param name="width">Width in meters.</param>
+        public static BoundingBox CreateBoundingBox(GeoCoordinate center, double height, double width)
         {
             // Bounding box surrounding the point at given coordinates,
             // assuming local approximation of Earth surface as a sphere
             // of radius given by WGS84
-            var lat = MathUtility.Deg2Rad(point.Latitude);
-            var lon = MathUtility.Deg2Rad(point.Longitude);
+            var lat = MathUtility.Deg2Rad(center.Latitude);
+            var lon = MathUtility.Deg2Rad(center.Longitude);
 
             // Radius of Earth at given latitude
             var radius = GeoProjection.WGS84EarthRadius(lat);
             // Radius of the parallel at given latitude
-            var pradius = radius*Math.Cos(lat);
+            var pradius = radius * Math.Cos(lat);
 
-            var latMin = lat - halfSideInM/radius;
-            var latMax = lat + halfSideInM/radius;
-            var lonMin = lon - halfSideInM/pradius;
-            var lonMax = lon + halfSideInM/pradius;
+            var dWidth = width/(2*radius);
+            var dHeight = height / (2 * pradius);
+
+            var latMin = lat - dWidth;
+            var latMax = lat + dWidth;
+            var lonMin = lon - dHeight;
+            var lonMax = lon + dHeight;
 
             return new BoundingBox(
                 new GeoCoordinate(MathUtility.Rad2Deg(latMin), MathUtility.Rad2Deg(lonMin)),
                 new GeoCoordinate(MathUtility.Rad2Deg(latMax), MathUtility.Rad2Deg(lonMax)));
+        }
+
+        /// <summary> Creates bounding box as square. </summary>
+        /// <param name="center">Center.</param>
+        /// <param name="sideInMeters">Length of the bounding box.</param>
+        public static BoundingBox CreateBoundingBox(GeoCoordinate center, double sideInMeters)
+        {
+            return CreateBoundingBox(center, sideInMeters, sideInMeters);
         }
 
         #endregion
