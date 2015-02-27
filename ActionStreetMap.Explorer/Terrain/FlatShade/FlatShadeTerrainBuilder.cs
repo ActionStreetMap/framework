@@ -28,7 +28,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
 
         private Material _material;
         // TODO make it configurable
-        private string _materialKey = "FlatTerrain";
+        private string _materialKey = @"Materials/Terrain/TerrainBase";
 
         /// <summary> Gets or sets trace. </summary>
         [Dependency]
@@ -68,16 +68,19 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
             Trace.Debug(LogTag, "build cells..");
             // create terrain cells
             var terrainCells = gridBuilder
-                                    .Move(leftBottom, tile.HeightMap.Data, GradientWrapper.CreateFrom())
-                                    .Fill(GetGradientSurfaces(tile))
-                                    .Build()
-                                    .ToList(); // for console builds
+                .Move(leftBottom, tile.HeightMap.Data, GradientWrapper.CreateFrom())
+                .Fill(GetGradientSurfaces(tile))
+                .Build();
+                 //.ToList(); // for console builds
 
-            Trace.Debug(LogTag, "cells: {0}", terrainCells.Count);
+            var gameObject = _gameObjectFactory.CreateNew("terrain", tile.GameObject);
 
-            var gameObject = _gameObjectFactory.CreateNew("terrain");
-
-            Scheduler.MainThread.Schedule(() => CreateTerrainObjects(tile, gameObject, terrainCells));
+            Scheduler.MainThread.Schedule(() =>
+            {
+                CreateTerrainObjects(tile, gameObject, terrainCells);
+                _objectPool.StoreObject(gridBuilder);
+                tile.Canvas.Dispose();
+            });
 
             return gameObject;
         }

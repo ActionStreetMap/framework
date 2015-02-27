@@ -99,14 +99,14 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
             var size = new Vector3(settings.Tile.Width, settings.Tile.HeightMap.MaxElevation, settings.Tile.Height);
             var layers = settings.SplatParams.Count;
 
-            settings.Tile.Canvas.SplatMap = _objectPool
+            var splatMap = _objectPool
                 .NewArray<float>(settings.Resolution, settings.Resolution, layers);
 
-            canvas.Details = _objectPool.NewList<int[,]>(settings.DetailParams.Count);
+            var details = _objectPool.NewList<int[,]>(settings.DetailParams.Count);
             // this list should be kept untouched
-            if (!canvas.Details.Any())
+            if (!details.Any())
                 for (int i = 0; i < settings.DetailParams.Count; i++)
-                    canvas.Details.Add(new int[settings.Resolution, settings.Resolution]);
+                    details.Add(new int[settings.Resolution, settings.Resolution]);
          
             // fill alphamap
             var alphaMapElements = CreateElements(settings, canvas.Areas,
@@ -114,14 +114,17 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
                 settings.Resolution / size.z,
                 t => t.SplatIndex);
 
-            _surfaceBuilder.Build(settings, alphaMapElements, settings.Tile.Canvas.SplatMap, canvas.Details);
+            _surfaceBuilder.Build(settings, alphaMapElements, splatMap, details);
 
             var gameObject = _gameObjectFactory.CreateNew("terrain");
             Trace.Debug(LogTag, "scheduling on main thread..");
             Scheduler.MainThread.Schedule(() =>
             {
-                CreateTerrainGameObject(gameObject, tile.GameObject, settings, size, canvas.Details);
+                CreateTerrainGameObject(gameObject, tile.GameObject, settings, size, splatMap, details);
                 canvas.Dispose();
+                details.ForEach(array => Array.Clear(array, 0, array.Length));
+                _objectPool.StoreList(details, true);
+                _objectPool.StoreArray(splatMap);
                 Trace.Debug(LogTag, "build finished");
             });
             return gameObject;
@@ -169,9 +172,9 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
             }
         }
 
-        /// <summary>   Creates real game object. </summary>
+        /// <summary> Creates real game object. </summary>
         protected virtual void CreateTerrainGameObject(IGameObject terrainWrapper, IGameObject parent, 
-            TerrainSettings settings, Vector3 size, List<int[,]> detailMapList)
+            TerrainSettings settings, Vector3 size, float[,,] splatMap, List<int[,]> detailMapList)
         {
             // create TerrainData
             var terrainData = new TerrainData();
@@ -205,7 +208,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
 
             terrainData.SetHeights(0, 0, settings.Tile.HeightMap.Data);
 
-            terrainData.SetAlphamaps(0, 0, settings.Tile.Canvas.SplatMap);
+            terrainData.SetAlphamaps(0, 0, splatMap);
 
             SetTrees(terrain, settings, size);
 

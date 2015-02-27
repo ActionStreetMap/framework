@@ -21,12 +21,6 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Tree. </summary>
         public List<Tree> Trees { get; private set; }
 
-        /// <summary> Splat array. </summary>
-        public float[,,] SplatMap { get; set; }
-        
-        /// <summary> Terrain details list.  </summary>
-        public List<int[,]> Details { get; set; }
-
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
 
@@ -106,17 +100,13 @@ namespace ActionStreetMap.Core.Tiling.Models
         {
             if (disposing)
             {
-                //Return lists to object pool
+                // return lists to object pool
                 foreach (var area in Areas)
                     _objectPool.StoreList(area.Points);
                 foreach (var elevation in Elevations)
                     _objectPool.StoreList(elevation.Points);
 
                 _objectPool.StoreObject(_roadGraphBuilder);
-
-                Details.ForEach(array => Array.Clear(array, 0, array.Length));
-                _objectPool.StoreList(Details, true);
-                _objectPool.StoreArray(SplatMap);
 
                 _objectPool.StoreList(Areas);
                 _objectPool.StoreList(Elevations);
