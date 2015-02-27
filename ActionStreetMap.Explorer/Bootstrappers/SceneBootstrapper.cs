@@ -3,6 +3,7 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Terrain;
+using ActionStreetMap.Explorer.Terrain.FlatShade;
 using ActionStreetMap.Explorer.Terrain.Unity;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
@@ -84,7 +85,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IRoofBuilder>().Use<FlatRoofBuilder>().Named("flat").Singleton());
 
             // terrain
-            Container.Register(Component.For<ITerrainBuilder>().Use<UnityTerrainBuilder>().Singleton());
+            Container.Register(Component.For<ITerrainBuilder>().Use<FlatShadeTerrainBuilder>().Singleton());
            
             // roads
             Container.Register(Component.For<IRoadStyleProvider>().Use<RoadStyleProvider>().Singleton());

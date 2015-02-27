@@ -45,12 +45,15 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         }
 
         /// <summary> Populates given mesh with terrain data. </summary>
-        public void Update(Mesh meshData)
+        public TerrainCellMesh CreateMesh(string name)
         {
-            meshData.vertices = _vertices;
-            meshData.triangles = _triangles;
-            meshData.colors = _colors;
-            meshData.RecalculateNormals();
+            return new TerrainCellMesh
+            {
+                Name = name,
+                Vertices = _vertices, 
+                Triangles = _triangles, 
+                Colors = _colors,
+            };
         }
 
         private void Create(float[,] heightmap, int xOffset, int yOffset, GradientWrapper defaultGradient)

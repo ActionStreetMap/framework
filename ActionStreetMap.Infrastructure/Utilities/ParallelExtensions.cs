@@ -58,6 +58,8 @@ namespace ActionStreetMap.Infrastructure.Utilities
         {
             int parallelDegree = Environment.ProcessorCount;
             int maxSize = (int)Math.Ceiling(count / (double)parallelDegree);
+            // NOTE for small arrays
+            maxSize = maxSize == 0 ? 1 : maxSize;
             int k = 0;
             var chunks = new IObservable<T>[parallelDegree];
             for (int i = 0; i < parallelDegree; i++)

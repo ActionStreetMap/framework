@@ -35,7 +35,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
-            _roadGraphBuilder = objectPool.NewHeavy<RoadGraphBuilder>();
+            _roadGraphBuilder = objectPool.NewObject<RoadGraphBuilder>();
             Areas = objectPool.NewList<Surface>(128);
             Elevations = objectPool.NewList<Surface>(8);
             Trees = objectPool.NewList<Tree>(64);
@@ -112,7 +112,7 @@ namespace ActionStreetMap.Core.Tiling.Models
                 foreach (var elevation in Elevations)
                     _objectPool.StoreList(elevation.Points);
 
-                _objectPool.StoreHeavy(_roadGraphBuilder);
+                _objectPool.StoreObject(_roadGraphBuilder);
 
                 Details.ForEach(array => Array.Clear(array, 0, array.Length));
                 _objectPool.StoreList(Details, true);

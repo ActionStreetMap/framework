@@ -11,7 +11,7 @@ namespace ActionStreetMap.Unity.Wrappers
 
         public Color Evaluate(float time)
         {
-            return _gradient.Evaluate(time);
+            return Color.red; //_gradient.Evaluate(time);
         }
 
         public static GradientWrapper CreateFrom()

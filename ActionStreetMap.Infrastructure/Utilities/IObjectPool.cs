@@ -1,18 +1,22 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 
 namespace ActionStreetMap.Infrastructure.Utilities
 {
-    /// <summary>
-    ///     Represents object pool which is used to reduced amount of memory allocations.
-    /// </summary>
+    /// <summary> Represents object pool which is used to reduced amount of memory allocations. </summary>
     public interface IObjectPool
     {
         #region Objects
+
         /// <summary> Returns object from pool which is likely to be single instance. </summary>
-        T NewHeavy<T>() where T: new();
+        T NewObject<T>(Func<T> factoryMethod);
+
+        /// <summary> Returns object from pool which is likely to be single instance. </summary>
+        T NewObject<T>() where T: new();
+
         /// <summary> Returns object to pool which is likely to be single instance. </summary>
-        void StoreHeavy<T>(T instance) where T : new();
+        void StoreObject<T>(T instance);
+
         #endregion
 
         #region Lists

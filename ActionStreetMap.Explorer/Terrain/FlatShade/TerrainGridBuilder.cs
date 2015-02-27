@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using ActionStreetMap.Explorer.Scene.Buildings;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
@@ -37,17 +39,21 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         public TerrainGridBuilder Move(Vector2 position, float[,] heightmap, GradientWrapper gradient)
         {
             _position = position;
-            for (int y = 0; y < GridRowCount; y++)
-                for (int x = 0; x < GridRowCount; x++)
-                {
-                    var subTilePosition = new Vector2(_position.x + x*_cellSize, _position.y + y*_cellSize);
-                    _cells[y, x].Move(subTilePosition, heightmap, _cellResolution * x, _cellResolution * y, gradient);
-                }
+            _cells.Parallel((start, end) =>
+            {
+                  for (int y = start; y < end; y++)
+                      for (int x = 0; x < GridRowCount; x++)
+                      {
+                          var subTilePosition = new Vector2(_position.x + x * _cellSize, _position.y + y * _cellSize);
+                          _cells[y, x].Move(subTilePosition, heightmap, _cellResolution * x, _cellResolution * y, gradient);
+                      }
+            });
+
             return this;
         }
 
         /// <summary> Fills grid with given areas. </summary>
-        public TerrainGridBuilder Fill(List<GradientArea> areas)
+        public TerrainGridBuilder Fill(IEnumerable<GradientSurface> areas)
         {
             var ratio = _resolution/_size;
             foreach (var area in areas)
@@ -70,16 +76,13 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         }
 
         /// <summary> Builds terrain meshes. </summary>
-        public IEnumerable<Mesh> Build()
+        public IEnumerable<TerrainCellMesh> Build()
         {
             for (int y = 0; y < GridRowCount; y++)
             {
                 for (int x = 0; x < GridRowCount; x++)
-                {
-                    var meshData = new Mesh {name = String.Format("cell_{0}_{1}", y, x)};
-                    _cells[y, x].Update(meshData);
-                    yield return  meshData;
-                }
+                    yield return _cells[y, x]
+                        .CreateMesh(String.Format("cell_{0}_{1}", y, x));
             }
         }
 

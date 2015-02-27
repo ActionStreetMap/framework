@@ -20,7 +20,7 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
     /// <summary> Creates Unity Terrain object using given settings. </summary>
     public class UnityTerrainBuilder : ITerrainBuilder
     {
-        private const string LogTag = "terrain";
+        private const string LogTag = "terrain.unity";
 
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly IResourceProvider _resourceProvider;
@@ -65,6 +65,8 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
         /// <inheritdoc />
         public IGameObject Build(Tile tile, Rule rule)
         {
+            Trace.Debug(LogTag, "read settings");
+
             var settings = new TerrainSettings
             {
                 Tile = tile,

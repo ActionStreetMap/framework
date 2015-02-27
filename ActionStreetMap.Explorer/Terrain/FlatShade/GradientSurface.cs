@@ -5,7 +5,7 @@ using ActionStreetMap.Unity.Wrappers;
 namespace ActionStreetMap.Explorer.Terrain.FlatShade
 {
     /// <summary> Represents area which should be filled with gradient. </summary>
-    public class GradientArea
+    public class GradientSurface
     {
         /// <summary> Gets or sets gradient. </summary>
         public GradientWrapper Gradient { get; set; }

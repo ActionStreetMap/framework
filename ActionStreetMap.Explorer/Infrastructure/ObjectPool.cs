@@ -12,36 +12,43 @@ namespace ActionStreetMap.Explorer.Infrastructure
 
         private readonly Dictionary<Type, object> _objectPoolMap = new Dictionary<Type, object>(2);
 
+        #region Objects
+
         /// <inheritdoc />
-        public T NewHeavy<T>() where T : new()
+        public T NewObject<T>(Func<T> factoryMethod)
         {
             Type type = typeof(T);
             if (!_objectPoolMap.ContainsKey(type))
-            {
-                lock (_objectPoolMap)
-                {
-                    if (!_objectPoolMap.ContainsKey(type))
-                        _objectPoolMap.Add(type, new ObjectTypePool<T>(1, 1));
-                }
-            }
+                CreateObjectPoolMap<T>(type);
 
-            return (_objectPoolMap[type] as ObjectTypePool<T>).New();
+            return (_objectPoolMap[type] as ObjectTypePool<T>).New(factoryMethod);
         }
 
         /// <inheritdoc />
-        public void StoreHeavy<T>(T instance) where T : new()
+        public T NewObject<T>() where T : new()
+        {
+           return NewObject<T>(() => new T());
+        }
+
+        /// <inheritdoc />
+        public void StoreObject<T>(T instance)
         {
             Type type = typeof(T);
             if (!_objectPoolMap.ContainsKey(type))
-            {
-                lock (_objectPoolMap)
-                {
-                    if (!_objectPoolMap.ContainsKey(type))
-                        _objectPoolMap.Add(type, new ObjectTypePool<T>(1, 1));
-                }
-            }
+                CreateObjectPoolMap<T>(type);
             (_objectPoolMap[type] as ObjectTypePool<T>).Store(instance);
         }
+
+        private void CreateObjectPoolMap<T>(Type type)
+        {
+            lock (_objectPoolMap)
+            {
+                if (!_objectPoolMap.ContainsKey(type))
+                    _objectPoolMap.Add(type, new ObjectTypePool<T>(1, 1));
+            }
+        }
+
+        #endregion
 
         /// <inheritdoc />
         public List<T> NewList<T>()
