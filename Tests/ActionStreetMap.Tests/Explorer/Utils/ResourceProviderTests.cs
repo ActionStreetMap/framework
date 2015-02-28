@@ -13,7 +13,6 @@ namespace ActionStreetMap.Tests.Explorer.Utils
         {
             // ARRANGE
             var resourceProvider = new UnityResourceProvider(TestHelper.GetFileSystemService());
-            resourceProvider.Trace = new ConsoleTrace();
             var configMock = new Mock<IConfigSection>();
             configMock.Setup(c => c.GetString(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(TestHelper.TestGradientPath);

@@ -41,7 +41,6 @@ namespace ActionStreetMap.Explorer.Scene.Utils
     /// <summary> Default, dictionary based implementation of IResourceProvider. </summary>
     internal class UnityResourceProvider : IResourceProvider, IConfigurable
     {
-        private const string LogTag = "resources";
         private readonly IFileSystemService _fileSystemService;
         private readonly Dictionary<string, GameObject> _gameObjects = new Dictionary<string, GameObject>();
         private readonly Dictionary<string, Material> _materials = new Dictionary<string, Material>();
@@ -49,9 +48,6 @@ namespace ActionStreetMap.Explorer.Scene.Utils
         private readonly Dictionary<string, Texture2D> _textures2D = new Dictionary<string, Texture2D>();
 
         private Dictionary<int, GradientWrapper> _gradients;
-
-        [Dependency]
-        public ITrace Trace { get; set; }
 
         /// <summary> Creates instance of <see cref="UnityResourceProvider"/>. </summary>
         /// <param name="fileSystemService">File system service.</param>
@@ -105,13 +101,12 @@ namespace ActionStreetMap.Explorer.Scene.Utils
 
         public void Configure(IConfigSection configSection)
         {
-            var gradientFilePath = configSection.GetString(@"gradient", "");
+            var gradientFilePath = configSection.GetString(@"gradients", null);
             _gradients = ParseGradients(gradientFilePath);
         }
 
         private Dictionary<int, GradientWrapper> ParseGradients(string gradientFilePath)
         {
-            Trace.Debug(LogTag, "parse gradients..");
             var gradientContent = _fileSystemService.ReadText(gradientFilePath);
             var json = JSON.Parse(gradientContent);
 

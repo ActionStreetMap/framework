@@ -4,18 +4,14 @@ using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Terrain;
 using ActionStreetMap.Explorer.Terrain.FlatShade;
-using ActionStreetMap.Explorer.Terrain.Unity;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
-using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Utils;
-using ActionStreetMap.Infrastructure.Formats.Json;
-using ActionStreetMap.Unity;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
@@ -30,30 +26,27 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         /// <inheritdoc />
         public override bool Run()
         {
-            Container.Register(Component.For<IResourceProvider>().Use<UnityResourceProvider>().Singleton());
+            Container.Register(Component
+                .For<IResourceProvider>()
+                .Use<UnityResourceProvider>()
+                .SetConfig(GlobalConfigSection.GetSection(ThemeKey))
+                .Singleton());
 
             Container.Register(Component.For<IModelLoader>().Use<TileModelLoader>().Singleton());
 
-            var themeConfigPath = GlobalConfigSection.GetString(ThemeKey, null);
-            var themeConfig = new ConfigSection(themeConfigPath, FileSystemService);
             // register theme provider
             Container.Register(Component
                 .For<IThemeProvider>()
                 .Use<ThemeProvider>()
-                .Singleton()
-                .SetConfig(themeConfig));
-
-            // NOTE this is workaround to inject compilation dependend value
-            if (GlobalConfigSection is ConfigSection)
-                (GlobalConfigSection as ConfigSection).RootElement.Node["exprTreeAllowed"] = 
-                    new JSONData(Environment.IsExpressionTreeAllowed);
+                .SetConfig(GlobalConfigSection.GetSection(ThemeKey))
+                .Singleton());
 
             // register stylesheet provider
             Container.Register(Component
                 .For<IStylesheetProvider>()
                 .Use<StylesheetProvider>()
-                .Singleton()
-                .SetConfig(GlobalConfigSection));
+                .SetConfig(GlobalConfigSection)
+                .Singleton());
 
             // register model builders
             Container.Register(Component.For<IModelBuilder>().Use<BuildingModelBuilder>().Named("building").Singleton());
