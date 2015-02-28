@@ -22,11 +22,11 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
 
         private readonly IRoadBuilder _roadBuilder;
         private readonly IThemeProvider _themeProvider;
+        private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly IObjectPool _objectPool;
         private readonly HeightMapProcessor _heightMapProcessor;
 
-        private Material _material;
         // TODO make it configurable
         private string _materialKey = @"Materials/Terrain/TerrainBase";
 
@@ -37,16 +37,18 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         /// <summary> Creates instance of <see cref="FlatShadeTerrainBuilder"/>. </summary>
         /// <param name="roadBuilder">Road builder.</param>
         /// <param name="themeProvider">Theme provider.</param>
+        /// <param name="resourceProvider">Resource provider.</param>
         /// <param name="gameObjectFactory">GameObject factory.</param>
         /// <param name="objectPool">Object pool.</param>
         /// <param name="heightMapProcessor">Heightmap processor.</param>
         [Dependency]
         public FlatShadeTerrainBuilder(IRoadBuilder roadBuilder, IThemeProvider themeProvider, 
-            IGameObjectFactory gameObjectFactory, IObjectPool objectPool, 
-            HeightMapProcessor heightMapProcessor)
+            IResourceProvider resourceProvider, IGameObjectFactory gameObjectFactory, 
+            IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
         {
             _roadBuilder = roadBuilder;
             _themeProvider = themeProvider;
+            _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
             _objectPool = objectPool;
             _heightMapProcessor = heightMapProcessor;
@@ -57,8 +59,12 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         {
             Trace.Debug(LogTag, "build start");
 
+            float size = 300;
+            int resolution = 180;
+            int defaultGradient = 0;
+
             // TODO remove hardcoded parameters - read them from rule
-            var gridBuilder = _objectPool.NewObject(() => new TerrainGridBuilder(300, 180));
+            var gridBuilder = _objectPool.NewObject(() => new TerrainGridBuilder(size, resolution));
 
             var leftBottom = new Vector2(tile.BottomLeft.X, tile.BottomLeft.Y);
 
@@ -68,7 +74,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
             Trace.Debug(LogTag, "build cells..");
             // create terrain cells
             var terrainCells = gridBuilder
-                .Move(leftBottom, tile.HeightMap.Data, GradientWrapper.CreateFrom())
+                .Move(leftBottom, tile.HeightMap.Data, _resourceProvider.GetGradient(defaultGradient))
                 .Fill(GetGradientSurfaces(tile))
                 .Build();
                  //.ToList(); // for console builds
@@ -131,8 +137,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
             {
                 yield return new GradientSurface()
                 {
-                    // TODO set correct gradient
-                    Gradient = GradientWrapper.CreateFrom(),
+                    Gradient = _resourceProvider.GetGradient(surface.SplatIndex),
                     Points = surface.Points
                 };
             }
@@ -158,18 +163,14 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
 
                 var cell = new GameObject(terrainCellMesh.Name);
                 cell.transform.parent = grid.transform;
-                cell.AddComponent<MeshRenderer>().material = GetTerrainMaterial();
+                cell.AddComponent<MeshRenderer>().material = 
+                    _resourceProvider.GetMatertial(_materialKey);
                 cell.AddComponent<MeshFilter>().mesh = mesh;
                 cell.AddComponent<MeshCollider>();
             }
 
             Trace.Debug(LogTag, "build finished");
             tile.Canvas.Dispose();
-        }
-
-        private Material GetTerrainMaterial()
-        {
-            return _material ?? (_material = Resources.Load<Material>(_materialKey));
         }
     }
 }

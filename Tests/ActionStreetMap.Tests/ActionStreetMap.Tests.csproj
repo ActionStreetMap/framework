@@ -58,6 +58,7 @@
     <Compile Include="Core\Scene\RoadJunctionUtilsTests.cs" />
     <Compile Include="Core\Tiling\TagCollectionTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
+    <Compile Include="Explorer\Utils\ResourceProviderTests.cs" />
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="TestScheduler.cs" />

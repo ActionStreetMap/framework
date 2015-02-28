@@ -1,4 +1,4 @@
-﻿
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActionStreetMap.Unity.Wrappers
@@ -9,27 +9,54 @@ namespace ActionStreetMap.Unity.Wrappers
 #if !CONSOLE
         private Gradient _gradient;
 
+        /// <summary> Evaluates color. </summary>
         public Color Evaluate(float time)
         {
-            return Color.red; //_gradient.Evaluate(time);
+            return _gradient.Evaluate(time);
         }
 
-        public static GradientWrapper CreateFrom()
+        /// <summary> Creates gradient. </summary>
+        public GradientWrapper(IEnumerable<ColorKey> colorKeys, IEnumerable<AlphaKey> alphaKeys)
         {
-            // TODO create unity gradient from args
-            return new GradientWrapper();
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                colorKeys.Select(c => new GradientColorKey(c.Color, c.Time)).ToArray(),
+                alphaKeys.Select(c => new GradientAlphaKey(c.Alpha, c.Time)).ToArray());
+            _gradient = gradient;
         } 
 #else
+        /// <summary> Evaluates color. </summary>
         public Color Evaluate(float time)
         {
             return Color.red;
         }
 
-        public static GradientWrapper CreateFrom()
+        /// <summary> Creates gradient. </summary>
+        public GradientWrapper(IEnumerable<ColorKey> colorKeys, IEnumerable<AlphaKey> alphaKeys)
         {
-            // TODO add valid args
-            return new GradientWrapper();
         }
+
 #endif
+        #region Nested types
+
+        /// <summary> Represents color key. </summary>
+        public struct ColorKey
+        {
+            /// <summary> Color. </summary>
+            public Color Color;
+            /// <summary> Time. </summary>
+            public float Time;
+        }
+
+        /// <summary> Represents alpha key. </summary>
+        public struct AlphaKey
+        {
+            /// <summary> Alpha. </summary>
+            public float Alpha;
+            /// <summary> Time. </summary>
+            public float Time;
+        }
+
+        #endregion
     }
 }
