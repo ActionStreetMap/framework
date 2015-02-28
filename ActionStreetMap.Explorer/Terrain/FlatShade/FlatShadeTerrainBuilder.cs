@@ -10,7 +10,6 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain.FlatShade
@@ -26,9 +25,6 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly IObjectPool _objectPool;
         private readonly HeightMapProcessor _heightMapProcessor;
-
-        // TODO make it configurable
-        private string _materialKey = @"Materials/Terrain/TerrainBase";
 
         /// <summary> Gets or sets trace. </summary>
         [Dependency]
@@ -59,12 +55,14 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         {
             Trace.Debug(LogTag, "build start");
 
+            // TODO remove hardcoded parameters - read them from rule
             float size = 300;
             int resolution = 180;
             int defaultGradient = 0;
+            string materialKey = @"Materials/Terrain/TerrainBase";
 
-            // TODO remove hardcoded parameters - read them from rule
-            var gridBuilder = _objectPool.NewObject(() => new TerrainGridBuilder(size, resolution));
+            var gridBuilder = _objectPool.NewObject(() => 
+                new TerrainGridBuilder(size, resolution, _objectPool));
 
             var leftBottom = new Vector2(tile.BottomLeft.X, tile.BottomLeft.Y);
 
@@ -83,7 +81,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
 
             Scheduler.MainThread.Schedule(() =>
             {
-                CreateTerrainObjects(tile, gameObject, terrainCells);
+                CreateTerrainObjects(tile, gameObject, materialKey, terrainCells);
                 _objectPool.StoreObject(gridBuilder);
                 tile.Canvas.Dispose();
             });
@@ -118,7 +116,6 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
             roadObservable.Wait();
             junctionObservable.Wait();
             
-
             Trace.Debug(LogTag, "process elevation areas");
             // NOTE We have to do this in the last order. Otherwise, new height
             // value can affect other models (e.g. water vs road)
@@ -135,7 +132,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         {
             foreach (var surface in tile.Canvas.Areas)
             {
-                yield return new GradientSurface()
+                yield return new GradientSurface
                 {
                     Gradient = _resourceProvider.GetGradient(surface.SplatIndex),
                     Points = surface.Points
@@ -143,7 +140,8 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
             }
         }
 
-        private void CreateTerrainObjects(Tile tile, IGameObject gameObject, IEnumerable<TerrainCellMesh> meshes)
+        private void CreateTerrainObjects(Tile tile, IGameObject gameObject, string materialKey,
+            IEnumerable<TerrainCellMesh> meshes)
         {
             Trace.Debug(LogTag, "create terrain objects..");
             var grid = gameObject.GetComponent<GameObject>();
@@ -164,7 +162,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
                 var cell = new GameObject(terrainCellMesh.Name);
                 cell.transform.parent = grid.transform;
                 cell.AddComponent<MeshRenderer>().material = 
-                    _resourceProvider.GetMatertial(_materialKey);
+                    _resourceProvider.GetMatertial(materialKey);
                 cell.AddComponent<MeshFilter>().mesh = mesh;
                 cell.AddComponent<MeshCollider>();
             }

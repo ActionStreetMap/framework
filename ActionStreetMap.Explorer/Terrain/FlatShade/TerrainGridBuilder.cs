@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Explorer.Scene.Buildings;
+using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
@@ -15,16 +15,18 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         private readonly float _size;
         private readonly float _cellSize;
         private readonly int _resolution;
+        private readonly IObjectPool _objectPool;
         private readonly int _cellResolution;
         private readonly TerrainCellBuilder[,] _cells;
 
         // left bottom corner
         private Vector2 _position;
 
-        public TerrainGridBuilder(float size, int resolution)
+        public TerrainGridBuilder(float size, int resolution, IObjectPool objectPool)
         {
             _size = size;
             _resolution = resolution;
+            _objectPool = objectPool;
             _cellSize = size/GridRowCount;
             _cellResolution = resolution/GridRowCount;
             _cells = new TerrainCellBuilder[GridRowCount, GridRowCount];
@@ -59,8 +61,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
             foreach (var area in areas)
             {
                 var pointsCount = area.Points.Count;
-                // TODO use list from object pool
-                var segments = new List<Segment2D>(pointsCount);
+                var segments = _objectPool.NewList<Segment2D>(pointsCount);
                 for (int i = 0; i < pointsCount; i++)
                 {
                     var endIndex = i == pointsCount - 1 ? 0 : i + 1;
@@ -71,6 +72,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
                     segments.Add(new Segment2D(start, end));
                 }
                 ScanAndFill(segments, _resolution, area.Gradient);
+                _objectPool.StoreList(segments);
             }
             return this;
         }
@@ -81,8 +83,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
             for (int y = 0; y < GridRowCount; y++)
             {
                 for (int x = 0; x < GridRowCount; x++)
-                    yield return _cells[y, x]
-                        .CreateMesh(String.Format("cell_{0}_{1}", y, x));
+                    yield return _cells[y, x].CreateMesh(String.Format("cell_{0}_{1}", y, x));
             }
         }
 
@@ -126,8 +127,7 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
         /// <summary> Custom version of ScanLine algorithm to process terrain data. </summary>
         private void ScanAndFill(List<Segment2D> segments, int size, GradientWrapper gradient)
         {
-            // TODO use object pool
-            var pointsBuffer = new List<int>();
+            var pointsBuffer = _objectPool.NewList<int>();
             for (int y = 0; y < size; y++)
             {
                 foreach (var segment in segments)
@@ -170,7 +170,6 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
                 {
                     // TODO use optimized data structure
                     pointsBuffer.Sort();
-                    //_pointsBuffer = _pointsBuffer.Distinct().ToList();
 
                     // merge connected ranges
                     for (int i = pointsBuffer.Count - 1; i > 0; i--)
@@ -188,14 +187,14 @@ namespace ActionStreetMap.Explorer.Terrain.FlatShade
                 if (pointsBuffer.Count == 1) continue;
 
                 if (pointsBuffer.Count%2 != 0)
-                    throw new InvalidOperationException(
-                        "Bug in algorithm! We're expecting to have even number of intersection _pointsBuffer: (_pointsBuffer.Count % 2 != 0)");
+                    throw new AlgorithmException(Strings.TerrainScanLineAlgorithmBug);
 
                 for (int i = 0; i < pointsBuffer.Count; i += 2)
                     Fill(gradient, y, pointsBuffer[i], pointsBuffer[i + 1]);
 
                 pointsBuffer.Clear();
             }
+            _objectPool.StoreList(pointsBuffer);
         }
 
         /// <summary> Represents segment in 2D space. </summary>

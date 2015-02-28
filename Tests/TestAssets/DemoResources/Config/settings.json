@@ -1,7 +1,7 @@
 {
 	"data": {
 		"map": {
-			"local":"Maps/osm",
+            "local":"Maps/osm",
 			"index.settings": "Config/themes/default/index.json",
 			"remote.server":"http://api.openstreetmap.org/api/0.6/map?bbox=",
 			"remote.query":"{0},{1},{2},{3}",
@@ -13,7 +13,12 @@
 			"remote.schema": "Config/srtm.schema.txt"
 		}
 	},
-	"theme":"Config/themes/default/theme.json",
+	"theme": {
+			"buildings":[{"path":"Config/themes/default/building.default.json"}],
+			"roads":[{"path":"Config/themes/default/road.default.json"}],
+			"infos":[{"path":"Config/themes/default/info.default.json"}],
+			"gradients": "Config/themes/default/gradients.default.json"
+	},
 	"mapcss":"Config/themes/default/default.mapcss",
 	"geocoding":"http://nominatim.openstreetmap.org/search",
 	"tile": {

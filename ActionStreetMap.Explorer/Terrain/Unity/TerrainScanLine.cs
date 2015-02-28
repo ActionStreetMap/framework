@@ -1,4 +1,5 @@
 ﻿using System;
+using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
 
@@ -70,12 +71,8 @@ namespace ActionStreetMap.Explorer.Terrain.Unity
                 if (pointsBuffer.Count == 1)
                     continue;
 
-
                 if (pointsBuffer.Count % 2 != 0)
-                {
-                    throw new InvalidOperationException(
-                        "Bug in algorithm! We're expecting to have even number of intersection _pointsBuffer: (_pointsBuffer.Count % 2 != 0)");
-                }
+                    throw new AlgorithmException(Strings.TerrainScanLineAlgorithmBug);
 
                 for (int i = 0; i < pointsBuffer.Count; i += 2)
                     fillAction(z, pointsBuffer[i], pointsBuffer[i + 1]);
