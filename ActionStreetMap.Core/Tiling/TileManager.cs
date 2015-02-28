@@ -216,7 +216,7 @@ namespace ActionStreetMap.Core.Tiling
             _tileSize = configSection.GetFloat("size", 500);
             _offset = configSection.GetFloat("offset", 50);
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
-            _heightmapsize = configSection.GetInt("heightmap", 1024) + 1;
+            _heightmapsize = configSection.GetInt("heightmap", 1025);
 
             _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
         }
