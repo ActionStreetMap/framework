@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ActionStreetMap.Unity.Wrappers
@@ -7,7 +8,7 @@ namespace ActionStreetMap.Unity.Wrappers
     public class GradientWrapper
     {
 #if !CONSOLE
-        private Gradient _gradient;
+        private readonly Gradient _gradient;
 
         /// <summary> Evaluates color. </summary>
         public Color Evaluate(float time)
