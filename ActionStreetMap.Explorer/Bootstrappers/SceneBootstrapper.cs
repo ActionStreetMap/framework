@@ -3,8 +3,6 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Terrain;
-using ActionStreetMap.Explorer.Terrain.FlatShade;
-using ActionStreetMap.Explorer.Terrain.Unity;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;

@@ -15,7 +15,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain.Unity
+namespace ActionStreetMap.Explorer.Terrain
 {
     /// <summary> Creates Unity Terrain object using given settings. </summary>
     public class UnityTerrainBuilder : ITerrainBuilder
