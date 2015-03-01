@@ -55,7 +55,6 @@ namespace ActionStreetMap.Explorer.Terrain
             _themeProvider = themeProvider;
             _objectPool = objectPool;
 
-
             _heightMapProcessor = heightMapProcessor;
             _surfaceBuilder = new SurfaceBuilder(objectPool);
         }

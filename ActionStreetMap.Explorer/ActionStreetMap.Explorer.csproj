@@ -100,7 +100,6 @@
     <Compile Include="Terrain\SurfaceBuilder.cs" />
     <Compile Include="Terrain\UnityTerrainBuilder.cs" />
     <Compile Include="Terrain\TerrainElement.cs" />
-    <Compile Include="Terrain\TerrainScanLine.cs" />
     <Compile Include="Terrain\TerrainSettings.cs" />
     <Compile Include="Scene\Utils\HeightMapProcessor.cs" />
     <Compile Include="Scene\Utils\RandomHelper.cs" />
