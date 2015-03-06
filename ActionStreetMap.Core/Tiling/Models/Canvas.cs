@@ -13,7 +13,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         private readonly IObjectPool _objectPool;
 
         // TODO remove it once this expirement is completed
-        internal List<RoadElement> RoadElements = new List<RoadElement>(16);
+        internal List<RoadElement> RoadElementsTest = new List<RoadElement>(16);
+        internal List<Surface> AreasTest = new List<Surface>(16);
+        internal List<Surface> ElevationsTest = new List<Surface>(16);
 
         /// <summary> Flat areas which should be rendered with some texture. </summary>
         public List<Surface> Areas { get; private set; }
@@ -50,7 +52,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         {
             lock (_roadGraphBuilder)
             {
-                RoadElements.Add(roadElement);
+                RoadElementsTest.Add(roadElement);
                 //_roadGraphBuilder.Add(roadElement);
             }
         }
@@ -61,7 +63,8 @@ namespace ActionStreetMap.Core.Tiling.Models
         {
             lock (Areas)
             {
-                Areas.Add(surface);
+                AreasTest.Add(surface);
+                //Areas.Add(surface);
             }
         }
 
@@ -72,6 +75,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             lock (Elevations)
             {
                 Elevations.Add(surface);
+               //Elevations.Add(surface);
             }
         }
 

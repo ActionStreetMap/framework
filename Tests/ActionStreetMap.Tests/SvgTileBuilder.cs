@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Scene.Roads;
@@ -18,12 +19,29 @@ namespace ActionStreetMap.Tests
             Console.Write("Generating road image.. ");
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var allRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.RoadElements));
+
+            var solution = BuildRoads(tile);
+
             sw.Stop();
             var svgBuilder = new SVGBuilder();
-            svgBuilder.AddPaths(allRoads);
+            svgBuilder.AddPaths(solution);
             svgBuilder.SaveToFile("solution.svg");
             Console.WriteLine("Took: {0}ms", sw.ElapsedMilliseconds);
+        }
+
+        private static Paths BuildRoads(Tile tile)
+        {
+            var carRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.RoadElementsTest.Where(r => r.Type == RoadType.Car)));
+            var walkRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.RoadElementsTest.Where(r => r.Type == RoadType.Pedestrian)));
+
+            var clipper = new Clipper();
+            clipper.AddPaths(carRoads, PolyType.ptClip, true);
+            clipper.AddPaths(walkRoads, PolyType.ptSubject, true);
+
+            var solution = new Paths();
+            clipper.Execute(ClipType.ctUnion, solution);
+
+            return solution;
         }
 
         private static Dictionary<float, Paths> BuildRoadMap(IEnumerable<RoadElement> elements)
@@ -31,12 +49,7 @@ namespace ActionStreetMap.Tests
             // Can be done by LINQ, but this code will be reused in production in slightly different context
             var roadMap = new Dictionary<float, Paths>();
             foreach (var roadElement in elements)
-            {
-                if (roadElement.Type != RoadType.Car) continue;
-
-                AddRoad(roadMap, roadElement.Points, roadElement.Width);
-            }
-
+                AddRoad(roadMap, roadElement.Points, roadElement.Width/2);
             return roadMap;
         }
 
@@ -68,6 +81,7 @@ namespace ActionStreetMap.Tests
             }
             var polySolution = new Paths();
             polyClipper.Execute(ClipType.ctUnion, polySolution, PolyFillType.pftPositive, PolyFillType.pftPositive);
+
             return polySolution;
 
             /*polyClipper.Clear();
