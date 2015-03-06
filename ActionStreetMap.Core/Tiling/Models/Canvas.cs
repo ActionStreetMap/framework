@@ -12,6 +12,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         private readonly RoadGraphBuilder _roadGraphBuilder;
         private readonly IObjectPool _objectPool;
 
+        // TODO remove it once this expirement is completed
+        internal List<RoadElement> RoadElements = new List<RoadElement>(16);
+
         /// <summary> Flat areas which should be rendered with some texture. </summary>
         public List<Surface> Areas { get; private set; }
 
@@ -47,7 +50,8 @@ namespace ActionStreetMap.Core.Tiling.Models
         {
             lock (_roadGraphBuilder)
             {
-                _roadGraphBuilder.Add(roadElement);
+                RoadElements.Add(roadElement);
+                //_roadGraphBuilder.Add(roadElement);
             }
         }
 

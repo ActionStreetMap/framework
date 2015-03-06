@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
+
+using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 
 namespace ActionStreetMap.Core.Scene.Roads
 {
@@ -32,17 +36,7 @@ namespace ActionStreetMap.Core.Scene.Roads
 
             var junctions = _junctionsMap.Values
                 .SelectMany(j => j.Values)
-                .Select(r =>
-                {
-                    try
-                    {
-                        return RoadJunctionUtils.Complete(r, objectPool);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw;
-                    }
-                }).ToArray();
+                .Select(r => RoadJunctionUtils.Complete(r, objectPool)).ToArray();
 
             _elements.Clear();
             _junctionsMap.Clear();

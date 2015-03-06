@@ -46,6 +46,8 @@ namespace ActionStreetMap.Tests
             GC.Collect();
             _logger.Report("DemoTileListener.OnTileBuildFinished: after GC");
             _stopwatch.Reset();
+
+            TestRoadGraph.Build(tile.Canvas.RoadElements);
         } 
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Core.Tiling;
@@ -9,12 +11,15 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 
+using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+
 namespace ActionStreetMap.Tests
 {
     internal class Program
     {
         private const string LogTag = "host";
-        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(55.7537315, 37.6198537);
+        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(52.52033, 13.38748);
         private readonly string _nmeaFilePath = TestHelper.TestNmeaFilePath;
 
         private readonly Container _container = new Container();
@@ -26,12 +31,11 @@ namespace ActionStreetMap.Tests
 
         private readonly ManualResetEvent _waitEvent = new ManualResetEvent(false);
 
-
         private static void Main(string[] args)
         {
             var program = new Program();
             program.RunGame();
-            program.DoContinuosMovements();
+           // program.DoContinuosMovements();
             //program.RunMocker();
             //program.Wait(); 
             Console.ReadKey();
