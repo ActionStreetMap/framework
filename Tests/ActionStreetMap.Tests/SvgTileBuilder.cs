@@ -5,20 +5,20 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Scene.Roads;
-
+using ActionStreetMap.Core.Tiling.Models;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 
 namespace ActionStreetMap.Tests
 {
-    public class TestRoadGraph
+    public class SvgTileBuilder
     {
-        public static void Build(IEnumerable<RoadElement> elements)
+        public static void Build(Tile tile)
         {
             Console.Write("Generating road image.. ");
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var allRoads = GetOffsetSolution(BuildRoadMap(elements));
+            var allRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.RoadElements));
             sw.Stop();
             var svgBuilder = new SVGBuilder();
             svgBuilder.AddPaths(allRoads);
@@ -67,10 +67,22 @@ namespace ActionStreetMap.Tests
                 offsetClipper.Clear();
             }
             var polySolution = new Paths();
-            polyClipper.Execute(ClipType.ctUnion, polySolution);
-
-
+            polyClipper.Execute(ClipType.ctUnion, polySolution, PolyFillType.pftPositive, PolyFillType.pftPositive);
             return polySolution;
+
+            /*polyClipper.Clear();
+            polyClipper.AddPath(new Path()
+            {
+                new IntPoint(-500, -500),
+                new IntPoint(500, -500),
+                new IntPoint(500, 500),
+                new IntPoint(-500, 500)
+            }, PolyType.ptClip, true);
+            polyClipper.AddPaths(polySolution, PolyType.ptSubject, true);
+            var ggg = new Paths();
+
+            polyClipper.Execute(ClipType.ctIntersection, ggg);
+            return ggg;*/
         }
     }
 }

@@ -63,7 +63,7 @@
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />
     <Compile Include="SvgBuilder.cs" />
     <Compile Include="TestExtensions.cs" />
-    <Compile Include="TestRoadGraph.cs" />
+    <Compile Include="SvgTileBuilder.cs" />
     <Compile Include="TestScheduler.cs" />
     <Compile Include="GeoCoordinateHelper.cs" />
     <Compile Include="ConsoleTrace.cs" />
