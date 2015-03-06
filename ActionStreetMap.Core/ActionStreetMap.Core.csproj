@@ -50,6 +50,63 @@
     </Compile>
     <Compile Include="AlgorithmException.cs" />
     <Compile Include="IPositionObserver.cs" />
+    <Compile Include="Polygons\Behavior.cs" />
+    <Compile Include="Polygons\clipper.cs" />
+    <Compile Include="Polygons\Enums.cs" />
+    <Compile Include="Polygons\Geometry\Edge.cs" />
+    <Compile Include="Polygons\Geometry\ExtensionMethods.cs" />
+    <Compile Include="Polygons\Geometry\IEdge.cs" />
+    <Compile Include="Polygons\Geometry\IPolygon.cs" />
+    <Compile Include="Polygons\Geometry\ISegment.cs" />
+    <Compile Include="Polygons\Geometry\ITriangle.cs" />
+    <Compile Include="Polygons\Geometry\Point.cs" />
+    <Compile Include="Polygons\Geometry\Polygon.cs" />
+    <Compile Include="Polygons\Geometry\Rectangle.cs" />
+    <Compile Include="Polygons\Geometry\RegionPointer.cs" />
+    <Compile Include="Polygons\Geometry\Vertex.cs" />
+    <Compile Include="Polygons\Mesh.cs" />
+    <Compile Include="Polygons\Meshing\Algorithm\Dwyer.cs" />
+    <Compile Include="Polygons\Meshing\Algorithm\Incremental.cs" />
+    <Compile Include="Polygons\Meshing\Algorithm\SweepLine.cs" />
+    <Compile Include="Polygons\Meshing\ConstraintMesher.cs" />
+    <Compile Include="Polygons\Meshing\ConstraintOptions.cs" />
+    <Compile Include="Polygons\Meshing\Converter.cs" />
+    <Compile Include="Polygons\Meshing\Data\BadSubseg.cs" />
+    <Compile Include="Polygons\Meshing\Data\BadTriangle.cs" />
+    <Compile Include="Polygons\Meshing\Data\BadTriQueue.cs" />
+    <Compile Include="Polygons\Meshing\GenericMesher.cs" />
+    <Compile Include="Polygons\Meshing\IConstraintMesher.cs" />
+    <Compile Include="Polygons\Meshing\IQualityMesher.cs" />
+    <Compile Include="Polygons\Meshing\Iterators\EdgeIterator.cs" />
+    <Compile Include="Polygons\Meshing\Iterators\RegionIterator.cs" />
+    <Compile Include="Polygons\Meshing\ITriangulator.cs" />
+    <Compile Include="Polygons\Meshing\QualityMesher.cs" />
+    <Compile Include="Polygons\Meshing\QualityOptions.cs" />
+    <Compile Include="Polygons\MeshValidator.cs" />
+    <Compile Include="Polygons\NewLocation.cs" />
+    <Compile Include="Polygons\RobustPredicates.cs" />
+    <Compile Include="Polygons\Sampler.cs" />
+    <Compile Include="Polygons\Tools\AdjacencyMatrix.cs" />
+    <Compile Include="Polygons\Tools\CuthillMcKee.cs" />
+    <Compile Include="Polygons\Tools\InputTriangle.cs" />
+    <Compile Include="Polygons\Tools\IntersectionHelper.cs" />
+    <Compile Include="Polygons\Tools\PointSorter.cs" />
+    <Compile Include="Polygons\Tools\QuadTree.cs" />
+    <Compile Include="Polygons\Tools\QualityMeasure.cs" />
+    <Compile Include="Polygons\Tools\SimpleSmoother.cs" />
+    <Compile Include="Polygons\Tools\Statistic.cs" />
+    <Compile Include="Polygons\Topology\DCEL\DcelMesh.cs" />
+    <Compile Include="Polygons\Topology\DCEL\Face.cs" />
+    <Compile Include="Polygons\Topology\DCEL\HalfEdge.cs" />
+    <Compile Include="Polygons\Topology\DCEL\Vertex.cs" />
+    <Compile Include="Polygons\Topology\Osub.cs" />
+    <Compile Include="Polygons\Topology\Otri.cs" />
+    <Compile Include="Polygons\Topology\Segment.cs" />
+    <Compile Include="Polygons\Topology\Triangle.cs" />
+    <Compile Include="Polygons\TriangleLocator.cs" />
+    <Compile Include="Polygons\Voronoi\BoundedVoronoi.cs" />
+    <Compile Include="Polygons\Voronoi\StandardVoronoi.cs" />
+    <Compile Include="Polygons\Voronoi\VoronoiBase.cs" />
     <Compile Include="Positioning\Nmea\ActualNmeaValueType.cs" />
     <Compile Include="Positioning\Nmea\Error.cs" />
     <Compile Include="Positioning\Nmea\GGA.cs" />
@@ -139,7 +196,9 @@
       <Name>ActionStreetMap.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Polygons\README.txt" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="MapCss\Parser\Mapcss.bnf" />
     <None Include="MapCss\Parser\MapCss.g" />
