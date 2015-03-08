@@ -98,25 +98,25 @@ namespace ActionStreetMap.Explorer.Terrain
             var size = new Vector3(settings.Tile.Width, settings.Tile.HeightMap.MaxElevation, settings.Tile.Height);
             var layers = settings.SplatParams.Count;
 
-            var splatMap = _objectPool
-                .NewArray<float>(settings.Resolution, settings.Resolution, layers);
+            //var splatMap = _objectPool
+            //    .NewArray<float>(settings.Resolution, settings.Resolution, layers);
 
-            var details = _objectPool.NewList<int[,]>(settings.DetailParams.Count);
+            //var details = _objectPool.NewList<int[,]>(settings.DetailParams.Count);
             // this list should be kept untouched
-            if (!details.Any())
-                for (int i = 0; i < settings.DetailParams.Count; i++)
-                    details.Add(new int[settings.Resolution, settings.Resolution]);
+            //if (!details.Any())
+            //    for (int i = 0; i < settings.DetailParams.Count; i++)
+            //        details.Add(new int[settings.Resolution, settings.Resolution]);
          
             // fill alphamap
-            var alphaMapElements = CreateElements(settings, canvas.Areas,
-                settings.Resolution / size.x,
-                settings.Resolution / size.z,
-                t => t.SplatIndex);
+            //var alphaMapElements = CreateElements(settings, canvas.Areas,
+            //    settings.Resolution / size.x,
+            //    settings.Resolution / size.z,
+            //    t => t.SplatIndex);
 
-            _surfaceBuilder.Build(settings, alphaMapElements, splatMap, details);
+           // _surfaceBuilder.Build(settings, alphaMapElements, splatMap, details);
 
             var gameObject = _gameObjectFactory.CreateNew("terrain");
-            Trace.Debug(LogTag, "scheduling on main thread..");
+            /*Trace.Debug(LogTag, "scheduling on main thread..");
             Scheduler.MainThread.Schedule(() =>
             {
                 CreateTerrainGameObject(gameObject, tile.GameObject, settings, size, splatMap, details);
@@ -125,7 +125,7 @@ namespace ActionStreetMap.Explorer.Terrain
                 _objectPool.StoreList(details, true);
                 _objectPool.StoreArray(splatMap);
                 Trace.Debug(LogTag, "build finished");
-            });
+            });*/
             return gameObject;
         }
 

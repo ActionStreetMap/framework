@@ -4,11 +4,10 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using ActionStreetMap.Core.Polygons;
-
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 
-namespace ActionStreetMap.Tests
+namespace ActionStreetMap.Tests.Expiremental
 {
     public class SVGBuilder
     {

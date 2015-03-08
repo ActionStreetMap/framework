@@ -13,9 +13,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         private readonly IObjectPool _objectPool;
 
         // TODO remove it once this expirement is completed
-        internal List<RoadElement> RoadElementsTest = new List<RoadElement>(16);
-        internal List<Surface> AreasTest = new List<Surface>(16);
-        internal List<Surface> ElevationsTest = new List<Surface>(16);
+        public List<RoadElement> RoadElementsTest = new List<RoadElement>(16);
+        public List<Surface> AreasTest = new List<Surface>(16);
+        public List<Surface> ElevationsTest = new List<Surface>(16);
 
         /// <summary> Flat areas which should be rendered with some texture. </summary>
         public List<Surface> Areas { get; private set; }

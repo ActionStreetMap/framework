@@ -18,11 +18,12 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.52672, 13.38785);
+        public static readonly Container _container = new Container();
+
         private const string LogTag = "host";
-        private readonly GeoCoordinate _startGeoCoordinate = new GeoCoordinate(52.52033, 13.38748);
         private readonly string _nmeaFilePath = TestHelper.TestNmeaFilePath;
 
-        private readonly Container _container = new Container();
         private readonly PerformanceLogger _logger = new PerformanceLogger();
         private IMessageBus _messageBus;
         private ITrace _trace;
@@ -62,7 +63,7 @@ namespace ActionStreetMap.Tests
             _tileListener = new DemoTileListener(_messageBus, _logger);
 
             // start game on default position
-            componentRoot.RunGame(_startGeoCoordinate);
+            componentRoot.RunGame(StartGeoCoordinate);
 
             _positionObserver = _container.Resolve<ITilePositionObserver>();
 
@@ -88,16 +89,16 @@ namespace ActionStreetMap.Tests
                 for (int i = 0; i < 15000; i++)
                 {
                     var newCoordinate = new GeoCoordinate(
-                        _startGeoCoordinate.Latitude + 0.00001*i,
-                        _startGeoCoordinate.Longitude);
+                        StartGeoCoordinate.Latitude + 0.00001*i,
+                        StartGeoCoordinate.Longitude);
                     _positionObserver.OnNext(newCoordinate);
                 }
 
                 for (int i = 15000; i >= 0; i--)
                 {
                     var newCoordinate = new GeoCoordinate(
-                        _startGeoCoordinate.Latitude + 0.00001*i,
-                        _startGeoCoordinate.Longitude);
+                        StartGeoCoordinate.Latitude + 0.00001*i,
+                        StartGeoCoordinate.Longitude);
                     _positionObserver.OnNext(newCoordinate);
                 }
             }
