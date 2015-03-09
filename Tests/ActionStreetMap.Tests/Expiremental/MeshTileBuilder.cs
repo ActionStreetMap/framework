@@ -18,6 +18,7 @@ using UnityEngine;
 using Mesh = ActionStreetMap.Core.Polygons.Mesh;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+using System.Diagnostics;
 
 namespace ActionStreetMap.Tests.Expiremental
 {
@@ -27,10 +28,17 @@ namespace ActionStreetMap.Tests.Expiremental
 
         public static void Build(Tile tile)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             //clipper
-            var roads = BuildRoads(tile);
-            var solution = ClipByTile(tile, roads);
-            SaveSvg(solution);
+            var clippedRoads = ClipByTile(tile, BuildRoads(tile));
+            var clippedAreas = ClipByTile(tile, BuildAreas(tile));
+
+            var solution = new Paths();
+            Clipper clipper = new Clipper();
+            clipper.AddPaths(clippedRoads, PolyType.ptClip, true);
+            clipper.AddPaths(clippedAreas, PolyType.ptSubject, true);
+            clipper.Execute(ClipType.ctDifference, solution);
 
             // triangle
             Dictionary<int, Vertex> regionVertexMap;
@@ -40,8 +48,9 @@ namespace ActionStreetMap.Tests.Expiremental
             var mesh = polygon.Triangulate(options, quality, new Incremental());
 
             BuildTile(mesh, regionVertexMap);
-
-            Console.WriteLine("Done");
+            sw.Stop();
+            Console.WriteLine("Took: {0}ms", sw.ElapsedMilliseconds);
+            SaveSvg(solution);
         }
 
         #region Tile
@@ -54,6 +63,7 @@ namespace ActionStreetMap.Tests.Expiremental
             var elevationProvider = Program._container.Resolve<IElevationProvider>();
 
             var hashMap = new Dictionary<int, int>();
+            Console.WriteLine("Total triangles: {0}", mesh.Triangles.Count);
             foreach (var triangle in mesh.Triangles)
             {
                 var p0 = triangle.GetVertex(0);
@@ -160,7 +170,7 @@ namespace ActionStreetMap.Tests.Expiremental
                 return new Vertex(p.X / Scale, (p.Y - delta) / Scale);
 
             const double radInDegree = Math.PI / 180;
-            for (int i = 0; i < 360; i += 5)
+            for (int i = 0; i < 360; i += 1)
             {
                 var angle = i * radInDegree;
                 var x = Math.Round(p.X + delta * Math.Cos(angle), MidpointRounding.AwayFromZero);
@@ -171,7 +181,8 @@ namespace ActionStreetMap.Tests.Expiremental
             }
 
 
-            throw new InvalidOperationException("GetAnyPointInsidePolygon is wrong");
+            //throw new InvalidOperationException("GetAnyPointInsidePolygon is wrong");
+            return new Vertex(p.X / Scale, p.Y / Scale);
         }
 
         #endregion
@@ -191,6 +202,18 @@ namespace ActionStreetMap.Tests.Expiremental
             }, PolyType.ptClip, true);
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
+            return solution;
+        }
+
+        private static Paths BuildAreas(Tile tile)
+        {
+            var clipper = new Clipper();
+            clipper.AddPaths(tile.Canvas.AreasTest
+                .Select(a => a.Points.Select(p => new IntPoint(p.X * Scale, p.Y * Scale)).ToList()).ToList(),
+                PolyType.ptSubject, true);
+
+            var solution = new Paths();
+            clipper.Execute(ClipType.ctUnion, solution);
             return solution;
         }
 
