@@ -9,22 +9,11 @@ namespace ActionStreetMap.Core.Tiling.Models
     /// <summary> Represents canvas (terrain). </summary>
     public class Canvas : Model, IDisposable
     {
-        private readonly RoadGraphBuilder _roadGraphBuilder;
         private readonly IObjectPool _objectPool;
 
-        // TODO remove it once this expirement is completed
-        public List<RoadElement> RoadElementsTest = new List<RoadElement>(16);
-        public List<Surface> AreasTest = new List<Surface>(16);
-        public List<Surface> ElevationsTest = new List<Surface>(16);
-
-        /// <summary> Flat areas which should be rendered with some texture. </summary>
+        public List<RoadElement> Roads { get; private set; }
         public List<Surface> Areas { get; private set; }
-
-        /// <summary> Fixed value elevation surface </summary>
-        public List<Surface> Elevations { get; private set; }
-
-        /// <summary> Tree. </summary>
-        public List<Tree> Trees { get; private set; }
+        public List<Surface> Waters { get; private set; }
 
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
@@ -34,10 +23,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
-            _roadGraphBuilder = objectPool.NewObject<RoadGraphBuilder>();
             Areas = objectPool.NewList<Surface>(128);
-            Elevations = objectPool.NewList<Surface>(8);
-            Trees = objectPool.NewList<Tree>(64);
+            Roads = objectPool.NewList<RoadElement>(64);
+            Waters = objectPool.NewList<Surface>(64);
         }
 
         /// <inheritdoc />
@@ -48,12 +36,11 @@ namespace ActionStreetMap.Core.Tiling.Models
 
         /// <summary> Adds road element to terrain. </summary>
         /// <param name="roadElement">Road element</param>
-        public void AddRoadElement(RoadElement roadElement)
+        public void AddRoad(RoadElement roadElement)
         {
-            lock (_roadGraphBuilder)
+            lock (Roads)
             {
-                RoadElementsTest.Add(roadElement);
-                //_roadGraphBuilder.Add(roadElement);
+                Roads.Add(roadElement);
             }
         }
 
@@ -63,43 +50,24 @@ namespace ActionStreetMap.Core.Tiling.Models
         {
             lock (Areas)
             {
-                AreasTest.Add(surface);
-                //Areas.Add(surface);
+                Areas.Add(surface);
             }
         }
 
-        /// <summary> Adds area which should be adjuested by height. Processed last. </summary>
-        /// <param name="surface">Area settings.</param>
-        public void AddElevation(Surface surface)
+        /// <summary> Adds water. </summary>
+        /// <param name="surface">Water settings.</param>
+        public void AddWater(Surface surface)
         {
-            lock (Elevations)
+            lock (Waters)
             {
-                Elevations.Add(surface);
-               //Elevations.Add(surface);
+                Waters.Add(surface);
             }
-        }
-
-        /// <summary> Adds tree. </summary>
-        /// <param name="tree">Tree.</param>
-        public void AddTree(Tree tree)
-        {
-            lock (Trees)
-            {
-                Trees.Add(tree);
-            }
-        }
-
-        /// <summary> Builds road graph. </summary>
-        /// <returns>Road graph.</returns>
-        public RoadGraph BuildRoadGraph()
-        {
-            return _roadGraphBuilder.Build(_objectPool);
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-           Dispose(true);
+            Dispose(true);
         }
 
         /// <summary> Dispose pattern implementation. </summary>
@@ -111,14 +79,10 @@ namespace ActionStreetMap.Core.Tiling.Models
                 // return lists to object pool
                 foreach (var area in Areas)
                     _objectPool.StoreList(area.Points);
-                foreach (var elevation in Elevations)
-                    _objectPool.StoreList(elevation.Points);
-
-                _objectPool.StoreObject(_roadGraphBuilder);
-
-                _objectPool.StoreList(Areas);
-                _objectPool.StoreList(Elevations);
-                _objectPool.StoreList(Trees);
+                foreach (var water in Waters)
+                    _objectPool.StoreList(water.Points);
+                foreach (var road in Roads)
+                    _objectPool.StoreList(road.Points);
             }
         }
     }

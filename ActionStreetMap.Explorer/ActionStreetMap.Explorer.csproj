@@ -96,11 +96,10 @@
     <Compile Include="Scene\Roads\RoadBuilder.cs" />
     <Compile Include="Scene\Roads\RoadFixBehavior.cs" />
     <Compile Include="Scene\Roads\RoadStyle.cs" />
-    <Compile Include="Terrain\ITerrainBuilder.cs" />
-    <Compile Include="Terrain\SurfaceBuilder.cs" />
-    <Compile Include="Terrain\UnityTerrainBuilder.cs" />
-    <Compile Include="Terrain\TerrainElement.cs" />
-    <Compile Include="Terrain\TerrainSettings.cs" />
+    <Compile Include="Terrain\MeshGrid.cs" />
+    <Compile Include="Terrain\MeshRegion.cs" />
+    <Compile Include="Terrain\MeshTerrainBuilder.cs" />
+    <Compile Include="Terrain\MeshGridBuilder.cs" />
     <Compile Include="Scene\Utils\HeightMapProcessor.cs" />
     <Compile Include="Scene\Utils\RandomHelper.cs" />
     <Compile Include="Scene\Utils\ResourceProvider.cs" />
@@ -126,6 +125,7 @@
     <Compile Include="Interactions\CompositeModelBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\UnityConsoleTrace.cs" />
+    <Compile Include="Terrain\IMeshRegionVisitor.cs" />
     <Compile Include="Tiling\TileActivator.cs" />
     <Compile Include="Scene\Buildings\BuildingStyleProvider.cs" />
     <Compile Include="Scene\ThemeProvider.cs" />

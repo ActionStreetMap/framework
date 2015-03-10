@@ -24,7 +24,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             // road should be processed in one place: it's better to collect all 
             // roads and create connected road network
-            tile.Canvas.AddRoadElement(new RoadElement
+            tile.Canvas.AddRoad(new RoadElement
             {
                 Id = way.Id,
                 Address = AddressExtractor.Extract(way.Tags),

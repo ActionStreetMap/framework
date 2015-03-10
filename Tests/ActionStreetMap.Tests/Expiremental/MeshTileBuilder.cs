@@ -154,7 +154,6 @@ namespace ActionStreetMap.Tests.Expiremental
         private static Vertex GetAnyPointInsidePolygon(Path path)
         {
             // TODO Find better algorithm!
-
             var p = path[0];
             var delta = 1f;
             if (Clipper.PointInPolygon(new IntPoint(p.X + delta, p.Y), path) > 0)
@@ -169,20 +168,38 @@ namespace ActionStreetMap.Tests.Expiremental
             if (Clipper.PointInPolygon(new IntPoint(p.X, p.Y - delta), path) > 0)
                 return new Vertex(p.X / Scale, (p.Y - delta) / Scale);
 
-            const double radInDegree = Math.PI / 180;
-            for (int i = 0; i < 360; i += 1)
-            {
-                var angle = i * radInDegree;
-                var x = Math.Round(p.X + delta * Math.Cos(angle), MidpointRounding.AwayFromZero);
-                var y = Math.Round(p.Y + delta * Math.Sin(angle), MidpointRounding.AwayFromZero);
 
+            IntRect intRect = new IntRect();
+            for (int index = 0; index < path.Count; ++index)
+            {
+                if (path[index].X < intRect.left)
+                    intRect.left = path[index].X;
+                else if (path[index].X > intRect.right)
+                    intRect.right = path[index].X;
+                if (path[index].Y < intRect.top)
+                    intRect.top = path[index].Y;
+                else if (path[index].Y > intRect.bottom)
+                    intRect.bottom = path[index].Y;
+            }
+
+            while (true)
+            {
+                var x = UnityEngine.Random.Range(intRect.left, intRect.right);
+                var y = UnityEngine.Random.Range(intRect.bottom, intRect.top);
                 if (Clipper.PointInPolygon(new IntPoint(x, y), path) > 0)
                     return new Vertex(x / Scale, y / Scale);
             }
 
+            //const double radInDegree = Math.PI / 180;
+            //for (int i = 0; i < 360; i += 1)
+            //{
+            //    var angle = i * radInDegree;
+            //    var x = Math.Round(p.X + delta * Math.Cos(angle), MidpointRounding.AwayFromZero);
+            //    var y = Math.Round(p.Y + delta * Math.Sin(angle), MidpointRounding.AwayFromZero);
 
-            //throw new InvalidOperationException("GetAnyPointInsidePolygon is wrong");
-            return new Vertex(p.X / Scale, p.Y / Scale);
+            //    if (Clipper.PointInPolygon(new IntPoint(x, y), path) > 0)
+            //        return new Vertex(x / Scale, y / Scale);
+            //}
         }
 
         #endregion
