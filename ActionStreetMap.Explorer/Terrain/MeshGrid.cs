@@ -1,9 +1,17 @@
-﻿using ActionStreetMap.Core.Polygons;
+﻿using System;
+using System.Collections.Generic;
+using ActionStreetMap.Core.Polygons;
 
 namespace ActionStreetMap.Explorer.Terrain
 {
-    public class MeshGrid
+    internal class MeshGrid
     {
-        public Mesh[] Cells;
+        public Cell[] Cells;
+
+        public class Cell
+        {
+            public Mesh Mesh;
+            public List<MeshRegion> Regions;
+        }
     }
 }

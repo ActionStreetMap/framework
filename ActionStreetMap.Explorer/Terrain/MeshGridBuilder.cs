@@ -49,7 +49,10 @@ namespace ActionStreetMap.Explorer.Terrain
             sw.Stop();
             Trace.Debug(LogTag, "Took: {0}ms", sw.ElapsedMilliseconds);
 
-            return new MeshGrid();
+            return new MeshGrid()
+            {
+                Cells = null,
+            };
         }
 
         #region Triangle
