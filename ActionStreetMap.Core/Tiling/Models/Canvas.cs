@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Tiling.Models
 
         public List<RoadElement> Roads { get; private set; }
         public List<Surface> Areas { get; private set; }
-        public List<Surface> Waters { get; private set; }
+        public List<Surface> Water { get; private set; }
 
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
@@ -25,7 +25,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             _objectPool = objectPool;
             Areas = objectPool.NewList<Surface>(128);
             Roads = objectPool.NewList<RoadElement>(64);
-            Waters = objectPool.NewList<Surface>(64);
+            Water = objectPool.NewList<Surface>(64);
         }
 
         /// <inheritdoc />
@@ -58,9 +58,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <param name="surface">Water settings.</param>
         public void AddWater(Surface surface)
         {
-            lock (Waters)
+            lock (Water)
             {
-                Waters.Add(surface);
+                Water.Add(surface);
             }
         }
 
@@ -79,7 +79,7 @@ namespace ActionStreetMap.Core.Tiling.Models
                 // return lists to object pool
                 foreach (var area in Areas)
                     _objectPool.StoreList(area.Points);
-                foreach (var water in Waters)
+                foreach (var water in Water)
                     _objectPool.StoreList(water.Points);
                 foreach (var road in Roads)
                     _objectPool.StoreList(road.Points);
