@@ -6,7 +6,7 @@ namespace ActionStreetMap.Explorer.Terrain
 {
     internal class MeshGrid
     {
-        public Cell[] Cells;
+        public Cell[,] Cells;
 
         public class Cell
         {

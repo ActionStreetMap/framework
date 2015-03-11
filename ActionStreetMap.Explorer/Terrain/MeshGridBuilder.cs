@@ -21,6 +21,10 @@ namespace ActionStreetMap.Explorer.Terrain
         private const string LogTag = "mesh.tile";
         private const float Scale = 1000f;
 
+        // TODO make configurable
+        private const float MaxCellSize = 100;
+        private const float MaxArea = 30;
+
         [Dependency]
         public ITrace Trace { get; set; }
 
@@ -35,43 +39,66 @@ namespace ActionStreetMap.Explorer.Terrain
             var areas = BuildAreas(tile);
 
             var solution = GetSolution(waters, roads, areas);
-
-            // triangle
-            var meshRegions = new List<MeshRegion>();
-
-            // TODO split to several meshes based on tile size
-            var polygon = GetPolygon(tile, solution, meshRegions);
-            var options = new ConstraintOptions { UseRegions = true};
-            var quality = new QualityOptions { MaximumArea = 30 };
-
-            var mesh = polygon.Triangulate(options, quality, new Incremental());
+            var grid = CreateGrid(solution);
 
             sw.Stop();
             Trace.Debug(LogTag, "Took: {0}ms", sw.ElapsedMilliseconds);
 
-            return new MeshGrid()
+            return grid;
+        }
+
+        #region Grid
+
+        private MeshGrid CreateGrid(Tile tile, Paths solution)
+        {
+            var cellRowCount = Math.Ceiling(tile.Height / MaxCellSize);
+            var cellColumnCount = Math.Ceiling(tile.Width / MaxCellSize);
+            var cellHeight = tile.Height / cellRowCount;
+            var cellWidth = tile.Width / cellColumnCount;
+
+            MeshGrid.Cell[,] cells = new MeshGrid.Cell[cellRowCount, cellColumnCount];
+
+            for(int j = 0; j < cellRowCount; j++)
+                for (int i = 0; i < cellColumnCount; i++)
+                {
+                    var point = new MapPoint(
+                        tile.BottomLeft.X + i * cellWidth, 
+                        tile.BottomLeft.Y + j * cellHeight);
+
+                    cells[j, i] = CreateCell(point, cellHeight, cellWidth)
+                }
+            return new MeshGrid() 
             {
-                Cells = null,
+                Cells = cells
             };
         }
 
-        #region Triangle
-
-        public static Polygon GetPolygon(Tile tile, Paths roads, List<MeshRegion> meshRegions)
+        private MeshGrid.Cell CreateCell(MapPoint leftBottom, float height, float width, Paths solution)
         {
-            var polygon = new Polygon();
+            // triangle
+            var meshRegions = new List<MeshRegion>();
 
+             var polygon = new Polygon();
             polygon.AddContour(new Collection<Vertex>
             {
-                new Vertex(tile.BottomLeft.X, tile.BottomLeft.Y),
-                new Vertex(tile.BottomRight.X, tile.BottomRight.Y),
-                new Vertex(tile.TopRight.X, tile.TopRight.Y),
-                new Vertex(tile.TopLeft.X, tile.TopLeft.Y)
+                new Vertex(leftBottom.X, tile.leftBottom.Y),
+                new Vertex(leftBottom.X + width, leftBottom.Y),
+                new Vertex(leftBottom.X + width, leftBottom.Y + height),
+                new Vertex(leftBottom.X, leftBottom.Y + height)
             });
 
             AddRegions(polygon, roads, meshRegions, null);
 
-            return polygon;
+            var options = new ConstraintOptions { UseRegions = true };
+            var quality = new QualityOptions { MaximumArea = 30 };
+
+            var mesh = polygon.Triangulate(options, quality, new Incremental());
+
+            return new MeshGrid.Cell()
+            {
+                Mesh = mesh,
+                Regions = meshRegions
+            };
         }
 
         private static void AddRegions(Polygon polygon, Paths paths, List<MeshRegion> meshRegions, 
@@ -137,7 +164,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         #endregion
 
-        #region Clipper logic
+        #region Clipper
 
         private static Paths GetSolution(Paths waters, Paths roads, Paths areas)
         {
