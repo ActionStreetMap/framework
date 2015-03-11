@@ -2,7 +2,6 @@
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
-using ActionStreetMap.Explorer.Terrain;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -11,6 +10,7 @@ using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Utils;
+using ActionStreetMap.Explorer.Tiling.Terrain;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {

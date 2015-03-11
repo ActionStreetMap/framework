@@ -13,7 +13,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain
+namespace ActionStreetMap.Explorer.Tiling.Terrain
 {
     internal class MeshTerrainBuilder : ITerrainBuilder
     {
