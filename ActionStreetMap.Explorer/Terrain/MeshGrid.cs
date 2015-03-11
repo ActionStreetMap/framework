@@ -12,13 +12,13 @@ namespace ActionStreetMap.Explorer.Terrain
 
         public class Cell
         {
-            public Content Water;
-            public Content Surfaces;
-            public Content Roads;
-            public Content Bridges;
+            public Data Water;
+            public Data Surfaces;
+            public Data Roads;
+            public Data Bridges;
         }
 
-        public class Content
+        public class Data
         {
             public Mesh Mesh;
             public List<MeshRegion> Regions;

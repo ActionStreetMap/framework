@@ -31,7 +31,7 @@ namespace ActionStreetMap.Explorer.Terrain
         public MeshGrid Build(Tile tile)
         {
             // get original objects in tile
-            var content = new CanvasContent
+            var content = new CanvasData
             {
                 Water = BuildWater(tile.Canvas),
                 Roads = BuildRoads(tile.Canvas),
@@ -48,11 +48,13 @@ namespace ActionStreetMap.Explorer.Terrain
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
                 {
-                    var point = new MapPoint(
-                        tile.BottomLeft.X + i * cellWidth,
-                        tile.BottomLeft.Y + j * cellHeight);
+                    var rectangle = new Rectangle(
+                        tile.BottomLeft.X + i * cellWidth, 
+                        tile.BottomLeft.Y + j * cellHeight, 
+                        cellWidth, 
+                        cellHeight);
 
-                    cells[j, i] = CreateCell(point, cellHeight, cellWidth, content);
+                    cells[j, i] = CreateCell(rectangle, content);
                 }
 
             return new MeshGrid()
@@ -64,7 +66,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         #region Grid
 
-        private MeshGrid.Cell CreateCell(MapPoint leftBottom, float height, float width, CanvasContent content)
+        private MeshGrid.Cell CreateCell(Rectangle rectangle, CanvasData content)
         {
             // TODO calculate all objects based on their types
             var solution = new Paths();
@@ -76,21 +78,22 @@ namespace ActionStreetMap.Explorer.Terrain
             return new MeshGrid.Cell()
             {
                 // TODO assign water, surfaces, bridges
-                Roads = CreateGridContent(leftBottom, height, width, solution)
+                Roads = CreateGridData(rectangle, solution, null)
             };
         }
 
-        private MeshGrid.Content CreateGridContent(MapPoint leftBottom, float height, float width, Paths solution)
+        private MeshGrid.Data CreateGridData(Rectangle rectangle, Paths solution, 
+            IMeshRegionVisitor regionVisitor)
         {
             var meshRegions = new List<MeshRegion>();
             var polygon = new Polygon();
 
             polygon.AddContour(new Collection<Vertex>
             {
-                new Vertex(leftBottom.X, tile.leftBottom.Y),
-                new Vertex(leftBottom.X + width, leftBottom.Y),
-                new Vertex(leftBottom.X + width, leftBottom.Y + height),
-                new Vertex(leftBottom.X, leftBottom.Y + height)
+                new Vertex(rectangle.Left, rectangle.Bottom),
+                new Vertex(rectangle.Right, rectangle.Bottom),
+                new Vertex(rectangle.Right, rectangle.Top),
+                new Vertex(rectangle.Left, rectangle.Top)
             });
 
             AddRegions(polygon, roads, meshRegions, null);
@@ -99,15 +102,15 @@ namespace ActionStreetMap.Explorer.Terrain
             var quality = new QualityOptions { MaximumArea = MaximumArea };
 
             var mesh = polygon.Triangulate(options, quality);
-            return new MeshGrid.Content
+            return new MeshGrid.Data
             {
                 Mesh = mesh,
                 Regions = meshRegions
             };
         }
 
-        private static void AddRegions(Polygon polygon, Paths paths, List<MeshRegion> meshRegions, 
-            IMeshRegionVisitor visitor)
+        private void AddRegions(Polygon polygon, Paths paths, List<MeshRegion> meshRegions, 
+            IMeshRegionVisitor regionVisitor)
         {
             foreach (var path in Clipper.SimplifyPolygons(paths))
             {
@@ -119,7 +122,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     polygon.AddContour(path.Select(p => new Vertex(p.X / Scale, p.Y / Scale)));
                     meshRegions.Add(new MeshRegion()
                     {
-                        Visitor = visitor,
+                        Visitor = regionVisitor,
                         Anchor = vertex
                     });
                 }
@@ -272,7 +275,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         #region Nested classes
 
-        private class CanvasContent
+        private class CanvasData
         {
             public Paths Water;
             public Paths Surfaces;
