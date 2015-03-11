@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Elevation;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
 using ActionStreetMap.Core.Polygons.Tools;
 using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Core.Tiling.Terrain;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -14,11 +15,12 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain
 {
-    internal class MeshTerrainBuilder
+    internal class MeshTerrainBuilder : ITerrainBuilder
     {
         private const string LogTag = "mesh.terrain";
 
         private readonly IElevationProvider _elevationProvider;
+        private readonly MeshGridBuilder _meshGridBuilder;
 
         [Dependency]
         public ITrace Trace { get; set; }
@@ -27,16 +29,23 @@ namespace ActionStreetMap.Explorer.Terrain
         public MeshTerrainBuilder(IElevationProvider elevationProvider)
         {
             _elevationProvider = elevationProvider;
+            _meshGridBuilder = new MeshGridBuilder();
         }
 
-        public IGameObject Build(MeshGrid terrainGrid)
+        public IGameObject Build(Tile tile, Rule rule)
+        {
+            var meshGrid = _meshGridBuilder.Build(tile);
+            return Build(meshGrid);
+        }
+
+        private IGameObject Build(MeshGrid terrainGrid)
         {
             var relativeNullPoint = terrainGrid.RelativeNullPoint;
 
             for (int i = 0; i < terrainGrid.Cells.Length; i++)
             {
-                var cell = terrainGrid.Cells[0];
-                var terrainMesh = cell.SurfaceMesh;
+                var cell = terrainGrid.Cells[0, 0];
+                var terrainMesh = cell.Roads.Mesh;
 
                 var vertices = new List<Vector3>(terrainMesh.Vertices.Count);
                 var triangles = new List<int>(terrainMesh.Triangles.Count);
@@ -75,19 +84,19 @@ namespace ActionStreetMap.Explorer.Terrain
                 }
 
                 FillRegions(cell, hashMap);
-            }          
+            }
 
             return null;
         }
 
-        private void FillRegions(MeshGrid.Cell cell, Dictionary<int, int> hashMap)
+        private void FillRegions(MeshCell cell, Dictionary<int, int> hashMap)
         {
-            var tree = new QuadTree(cell.SurfaceMesh);
-            RegionIterator iterator = new RegionIterator(cell.SurfaceMesh);
-            foreach (var region in cell.Regions)
+            var tree = new QuadTree(cell.Roads.Mesh);
+            RegionIterator iterator = new RegionIterator(cell.Roads.Mesh);
+            foreach (var region in cell.Roads.Regions)
             {
                 var point = region.Anchor;
-                var start = (Triangle)tree.Query(point.X, point.Y);
+                var start = (Triangle) tree.Query(point.X, point.Y);
 
                 int count = 0;
                 iterator.Process(start, triangle =>

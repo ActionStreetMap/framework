@@ -55,11 +55,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 for (int j = 0; j < count; j++)
                 {
                     var point = TriangleUtils.GetRandomPoint(p1, p2, p3, rnd.NextDouble(), rnd.NextDouble());
-                    tile.Canvas.AddTree(new Tree()
+                    // TODO use this different way
+                    /*tile.Canvas.AddTree(new Tree()
                     {
                         Type = 0, // TODO
                         Point = point
-                    });
+                    });*/
                 }
             }
         }

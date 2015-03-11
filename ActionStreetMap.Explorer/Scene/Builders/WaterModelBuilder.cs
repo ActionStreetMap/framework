@@ -44,13 +44,14 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             //var offsetPoints = ObjectPool.NewList<MapPoint>(verticies2D.Count);
             //PolygonUtils.MakeOffset(verticies2D, offsetPoints, -2f);
      
+            // TODO use this different way
             // add elevation
-            tile.Canvas.AddElevation(new Surface
+            /*tile.Canvas.AddElevation(new Surface
             {
                 ZIndex = rule.GetZIndex(),
                 AverageElevation = elevation - 10,
                 Points = verticies2D
-            });
+            });*/
 
             var vector3Ds = verticies2D.GetVerticies(elevation - 2.5f);
             var triangles = PolygonUtils.Triangulate(verticies2D, ObjectPool);

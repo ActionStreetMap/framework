@@ -16,11 +16,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         public override IGameObject BuildNode(Tile tile, Rule rule, Node node)
         {
             var mapPoint = GeoProjection.ToMapCoordinate(tile.RelativeNullPoint, node.Point);
-            tile.Canvas.AddTree(new Tree()
+            // TODO add tree at given point
+            /*tile.Canvas.AddTree(new Tree()
             {
                 Id = node.Id,
                 Point = mapPoint
-            });
+            });*/
 
             return null;
         }

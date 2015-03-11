@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Polygons.Geometry;
 using ActionStreetMap.Core.Polygons.Meshing;
-using ActionStreetMap.Core.Polygons.Meshing.Algorithm;
 using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 
-namespace ActionStreetMap.Explorer.Terrain
+namespace ActionStreetMap.Core.Tiling.Terrain
 {
     internal class MeshGridBuilder
     {
@@ -33,18 +32,18 @@ namespace ActionStreetMap.Explorer.Terrain
             // get original objects in tile
             var content = new CanvasData
             {
-                Water = BuildWater(tile.Canvas),
-                Roads = BuildRoads(tile.Canvas),
-                Surfaces = BuildSurfaces(tile.Canvas)
+                Water = BuildWater(tile),
+                Roads = BuildRoads(tile),
+                Surfaces = BuildSurfaces(tile)
             };
 
             // detect grid parameters
-            var cellRowCount = Math.Ceiling(tile.Height / MaxCellSize);
-            var cellColumnCount = Math.Ceiling(tile.Width / MaxCellSize);
+            var cellRowCount = (int) Math.Ceiling(tile.Height / MaxCellSize);
+            var cellColumnCount = (int)Math.Ceiling(tile.Width / MaxCellSize);
             var cellHeight = tile.Height / cellRowCount;
             var cellWidth = tile.Width / cellColumnCount;
 
-            var cells = new MeshGrid.Cell[cellRowCount, cellColumnCount];
+            var cells = new MeshCell[cellRowCount, cellColumnCount];
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
                 {
@@ -66,7 +65,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         #region Grid
 
-        private MeshGrid.Cell CreateCell(Rectangle rectangle, CanvasData content)
+        private MeshCell CreateCell(Rectangle rectangle, CanvasData content)
         {
             // TODO calculate all objects based on their types
             var solution = new Paths();
@@ -75,14 +74,14 @@ namespace ActionStreetMap.Explorer.Terrain
             clipper.AddPaths(content.Surfaces, PolyType.ptSubject, true);
             clipper.Execute(ClipType.ctDifference, solution);
 
-            return new MeshGrid.Cell()
+            return new MeshCell()
             {
                 // TODO assign water, surfaces, bridges
                 Roads = CreateGridData(rectangle, solution, null)
             };
         }
 
-        private MeshGrid.Data CreateGridData(Rectangle rectangle, Paths solution, 
+        private MeshData CreateGridData(Rectangle rectangle, Paths solution, 
             IMeshRegionVisitor regionVisitor)
         {
             var meshRegions = new List<MeshRegion>();
@@ -96,13 +95,13 @@ namespace ActionStreetMap.Explorer.Terrain
                 new Vertex(rectangle.Left, rectangle.Top)
             });
 
-            AddRegions(polygon, roads, meshRegions, null);
+            AddRegions(polygon, solution, meshRegions, regionVisitor);
 
             var options = new ConstraintOptions { UseRegions = true };
             var quality = new QualityOptions { MaximumArea = MaximumArea };
 
             var mesh = polygon.Triangulate(options, quality);
-            return new MeshGrid.Data
+            return new MeshData
             {
                 Mesh = mesh,
                 Regions = meshRegions
@@ -161,10 +160,11 @@ namespace ActionStreetMap.Explorer.Terrain
                     intRect.bottom = path[index].Y;
             }
 
+            var random = new Random();
             while (true)
             {
-                var x = UnityEngine.Random.Range(intRect.left, intRect.right);
-                var y = UnityEngine.Random.Range(intRect.bottom, intRect.top);
+                var x = RandomUtils.LongRandom(intRect.left, intRect.right, random);
+                var y = RandomUtils.LongRandom(intRect.bottom, intRect.top, random);
                 if (Clipper.PointInPolygon(new IntPoint(x, y), path) > 0)
                     return new Vertex(x/Scale, y/Scale);
             }
@@ -190,10 +190,10 @@ namespace ActionStreetMap.Explorer.Terrain
             return solution;
         }
 
-        private static Paths BuildWater(Canvas canvas)
+        private static Paths BuildWater(Tile tile)
         {
             var clipper = new Clipper();
-            clipper.AddPaths(canvas.Water
+            clipper.AddPaths(tile.Canvas.Water
                 .Select(a => a.Points.Select(p => new IntPoint(p.X * Scale, p.Y * Scale)).ToList()).ToList(),
                 PolyType.ptSubject, true);
 
@@ -202,10 +202,10 @@ namespace ActionStreetMap.Explorer.Terrain
             return ClipByTile(tile, solution);
         }
 
-        private static Paths BuildSurfaces(Canvas canvas)
+        private static Paths BuildSurfaces(Tile tile)
         {
             var clipper = new Clipper();
-            clipper.AddPaths(canvas.Areas
+            clipper.AddPaths(tile.Canvas.Areas
                 .Select(a => a.Points.Select(p => new IntPoint(p.X*Scale, p.Y*Scale)).ToList()).ToList(),
                 PolyType.ptSubject, true);
 
@@ -214,11 +214,11 @@ namespace ActionStreetMap.Explorer.Terrain
             return ClipByTile(tile, solution);
         }
 
-        private static Paths BuildRoads(Canvas canvas)
+        private static Paths BuildRoads(Tile tile)
         {
-            var carRoads = GetOffsetSolution(BuildRoadMap(canvas.Roads.Where(r => r.Type == RoadType.Car)));
+            var carRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
             var walkRoads =
-                GetOffsetSolution(BuildRoadMap(canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
+                GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
 
             var clipper = new Clipper();
             clipper.AddPaths(carRoads, PolyType.ptClip, true);

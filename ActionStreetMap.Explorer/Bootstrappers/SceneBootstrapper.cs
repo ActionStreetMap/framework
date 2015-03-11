@@ -77,7 +77,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IRoofBuilder>().Use<FlatRoofBuilder>().Named("flat").Singleton());
 
             // terrain
-            Container.Register(Component.For<ITerrainBuilder>().Use<UnityTerrainBuilder>().Singleton());
+            Container.Register(Component.For<ITerrainBuilder>().Use<MeshTerrainBuilder>().Singleton());
            
             // roads
             Container.Register(Component.For<IRoadStyleProvider>().Use<RoadStyleProvider>().Singleton());

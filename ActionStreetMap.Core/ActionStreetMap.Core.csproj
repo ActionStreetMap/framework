@@ -132,6 +132,11 @@
     <Compile Include="Scene\Roads\RoadType.cs" />
     <Compile Include="Scene\Roads\TrafficLight.cs" />
     <Compile Include="Tiling\Models\TagCollection.cs" />
+    <Compile Include="Tiling\Terrain\IMeshRegionVisitor.cs" />
+    <Compile Include="Tiling\Terrain\MeshGrid.cs" />
+    <Compile Include="Tiling\Terrain\MeshGridBuilder.cs" />
+    <Compile Include="Tiling\Terrain\MeshRegion.cs" />
+    <Compile Include="Utilities\RandomUtils.cs" />
     <Compile Include="Utilities\GeoProjection.cs" />
     <Compile Include="BoundingBox.cs" />
     <Compile Include="Elevation\HeightMap.cs" />
