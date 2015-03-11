@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Core.Elevation;
+﻿using ActionStreetMap.Core;
+using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Dependencies;

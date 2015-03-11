@@ -1,6 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Infrastructure.Reactive;
-namespace ActionStreetMap.Core.Elevation
+
+namespace ActionStreetMap.Core
 {
     /// <summary> Defines behavior of elevation provider. </summary>
     public interface IElevationProvider

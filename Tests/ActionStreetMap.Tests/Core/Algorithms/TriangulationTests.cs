@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Infrastructure;
@@ -10,7 +9,6 @@ using ActionStreetMap.Maps;
 using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Tests.Maps;
 using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Unity.IO;
 using Moq;
 using NUnit.Framework;
 
@@ -53,7 +51,10 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             var elementSourceProvider = new ElementSourceProvider(pathResolver, TestHelper.GetFileSystemService(), new ObjectPool());
             elementSourceProvider.Trace = new ConsoleTrace();
             elementSourceProvider.Configure(config.Object);
-            var loader = new MapTileLoader(elementSourceProvider, sceneVisitor, new ObjectPool());
+
+            var elevationProvider = new Mock<IElevationProvider>();
+            elevationProvider.Setup(e => e.HasElevation(It.IsAny<BoundingBox>())).Returns(true);
+            var loader = new MapTileLoader(elementSourceProvider, elevationProvider.Object, sceneVisitor, new ObjectPool());
 
             var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), new Canvas(new ObjectPool()), 1000, 1000);
             loader.Load(tile).Wait();

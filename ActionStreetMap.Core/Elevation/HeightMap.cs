@@ -5,6 +5,7 @@ namespace ActionStreetMap.Core.Elevation
     /// <summary>
     ///     Represents heightmap - object which provides information about elevation in given point.
     /// </summary>
+    [Obsolete]
     public class HeightMap: IDisposable
     {
         /// <summary> Gets or sets heightmap resolution. </summary>

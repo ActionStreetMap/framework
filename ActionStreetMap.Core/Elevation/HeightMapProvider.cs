@@ -11,6 +11,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 namespace ActionStreetMap.Core.Elevation
 {
     /// <summary> Defines behavior of heightmap provider. </summary>
+    [Obsolete]
     public interface IHeightMapProvider
     {
         /// <summary> Returns heightmap array for given center with given resolution. </summary>
@@ -22,6 +23,7 @@ namespace ActionStreetMap.Core.Elevation
     }
 
     /// <summary> Default realization of heightmap provider. </summary>
+    [Obsolete]
     public class HeightMapProvider: IHeightMapProvider, IConfigurable
     {
         private const string LogTag = "mapdata.ele";
