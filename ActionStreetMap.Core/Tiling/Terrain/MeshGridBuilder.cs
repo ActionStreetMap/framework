@@ -38,25 +38,25 @@ namespace ActionStreetMap.Core.Tiling.Terrain
             };
 
             // detect grid parameters
-            var cellRowCount = (int) Math.Ceiling(tile.Height / MaxCellSize);
-            var cellColumnCount = (int)Math.Ceiling(tile.Width / MaxCellSize);
-            var cellHeight = tile.Height / cellRowCount;
-            var cellWidth = tile.Width / cellColumnCount;
+            var cellRowCount = (int) Math.Ceiling(tile.Height/MaxCellSize);
+            var cellColumnCount = (int) Math.Ceiling(tile.Width/MaxCellSize);
+            var cellHeight = tile.Height/cellRowCount;
+            var cellWidth = tile.Width/cellColumnCount;
 
             var cells = new MeshCell[cellRowCount, cellColumnCount];
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
                 {
                     var rectangle = new Rectangle(
-                        tile.BottomLeft.X + i * cellWidth, 
-                        tile.BottomLeft.Y + j * cellHeight, 
-                        cellWidth, 
+                        tile.BottomLeft.X + i*cellWidth,
+                        tile.BottomLeft.Y + j*cellHeight,
+                        cellWidth,
                         cellHeight);
 
                     cells[j, i] = CreateCell(rectangle, content);
                 }
 
-            return new MeshGrid()
+            return new MeshGrid
             {
                 RelativeNullPoint = tile.RelativeNullPoint,
                 Cells = cells
@@ -74,17 +74,16 @@ namespace ActionStreetMap.Core.Tiling.Terrain
             clipper.AddPaths(content.Surfaces, PolyType.ptSubject, true);
             clipper.Execute(ClipType.ctDifference, solution);
 
-            return new MeshCell()
+            return new MeshCell
             {
                 // TODO assign water, surfaces, bridges
                 Roads = CreateGridData(rectangle, solution, null)
             };
         }
 
-        private MeshData CreateGridData(Rectangle rectangle, Paths solution, 
+        private MeshData CreateGridData(Rectangle rectangle, Paths solution,
             IMeshRegionVisitor regionVisitor)
         {
-            var meshRegions = new List<MeshRegion>();
             var polygon = new Polygon();
 
             polygon.AddContour(new Collection<Vertex>
@@ -95,11 +94,10 @@ namespace ActionStreetMap.Core.Tiling.Terrain
                 new Vertex(rectangle.Left, rectangle.Top)
             });
 
-            AddRegions(polygon, solution, meshRegions, regionVisitor);
+            var meshRegions = CreateMeshRegions(polygon, ClipByRectangle(rectangle, solution), regionVisitor);
 
-            var options = new ConstraintOptions { UseRegions = true };
-            var quality = new QualityOptions { MaximumArea = MaximumArea };
-
+            var options = new ConstraintOptions {UseRegions = true};
+            var quality = new QualityOptions {MaximumArea = MaximumArea};
             var mesh = polygon.Triangulate(options, quality);
             return new MeshData
             {
@@ -108,9 +106,9 @@ namespace ActionStreetMap.Core.Tiling.Terrain
             };
         }
 
-        private void AddRegions(Polygon polygon, Paths paths, List<MeshRegion> meshRegions, 
-            IMeshRegionVisitor regionVisitor)
+        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Paths paths, IMeshRegionVisitor regionVisitor)
         {
+            var meshRegions = new List<MeshRegion>();
             foreach (var path in Clipper.SimplifyPolygons(paths))
             {
                 var orientation = Clipper.Orientation(path);
@@ -118,16 +116,17 @@ namespace ActionStreetMap.Core.Tiling.Terrain
                 {
                     var vertex = GetAnyPointInsidePolygon(path);
                     polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
-                    polygon.AddContour(path.Select(p => new Vertex(p.X / Scale, p.Y / Scale)));
-                    meshRegions.Add(new MeshRegion()
+                    polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
+                    meshRegions.Add(new MeshRegion
                     {
                         Visitor = regionVisitor,
                         Anchor = vertex
                     });
                 }
                 else
-                    polygon.AddContour(path.Select(p => new Vertex(p.X / Scale, p.Y / Scale)));
+                    polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
             }
+            return meshRegions;
         }
 
         private static Vertex GetAnyPointInsidePolygon(Path path)
@@ -147,13 +146,14 @@ namespace ActionStreetMap.Core.Tiling.Terrain
             if (Clipper.PointInPolygon(new IntPoint(p.X, p.Y - delta), path) > 0)
                 return new Vertex(p.X/Scale, (p.Y - delta)/Scale);
 
-            IntRect intRect = new IntRect();
+            var intRect = new IntRect();
             for (int index = 0; index < path.Count; ++index)
             {
                 if (path[index].X < intRect.left)
                     intRect.left = path[index].X;
                 else if (path[index].X > intRect.right)
                     intRect.right = path[index].X;
+                // NOTE clipper uses inverted y-axis
                 if (path[index].Y < intRect.top)
                     intRect.top = path[index].Y;
                 else if (path[index].Y > intRect.bottom)
@@ -164,7 +164,7 @@ namespace ActionStreetMap.Core.Tiling.Terrain
             while (true)
             {
                 var x = RandomUtils.LongRandom(intRect.left, intRect.right, random);
-                var y = RandomUtils.LongRandom(intRect.bottom, intRect.top, random);
+                var y = RandomUtils.LongRandom(intRect.top, intRect.bottom, random);
                 if (Clipper.PointInPolygon(new IntPoint(x, y), path) > 0)
                     return new Vertex(x/Scale, y/Scale);
             }
@@ -176,14 +176,24 @@ namespace ActionStreetMap.Core.Tiling.Terrain
 
         private static Paths ClipByTile(Tile tile, Paths subjects)
         {
+            return ClipByRectangle(new Rectangle(
+                tile.BottomLeft.X,
+                tile.BottomLeft.Y,
+                tile.Width,
+                tile.Height),
+                subjects);
+        }
+
+        private static Paths ClipByRectangle(Rectangle rect, Paths subjects)
+        {
             var clipper = new Clipper();
             clipper.AddPaths(subjects, PolyType.ptSubject, true);
             clipper.AddPath(new Path
             {
-                new IntPoint(tile.BottomLeft.X*Scale, tile.BottomLeft.Y*Scale),
-                new IntPoint(tile.BottomRight.X*Scale, tile.BottomRight.Y*Scale),
-                new IntPoint(tile.TopRight.X*Scale, tile.TopRight.Y*Scale),
-                new IntPoint(tile.TopLeft.X*Scale, tile.TopLeft.Y*Scale)
+                new IntPoint(rect.Left*Scale, rect.Bottom*Scale),
+                new IntPoint(rect.Right*Scale, rect.Bottom*Scale),
+                new IntPoint(rect.Right*Scale, rect.Top*Scale),
+                new IntPoint(rect.Left*Scale, rect.Top*Scale)
             }, PolyType.ptClip, true);
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
@@ -194,7 +204,7 @@ namespace ActionStreetMap.Core.Tiling.Terrain
         {
             var clipper = new Clipper();
             clipper.AddPaths(tile.Canvas.Water
-                .Select(a => a.Points.Select(p => new IntPoint(p.X * Scale, p.Y * Scale)).ToList()).ToList(),
+                .Select(a => a.Points.Select(p => new IntPoint(p.X*Scale, p.Y*Scale)).ToList()).ToList(),
                 PolyType.ptSubject, true);
 
             var solution = new Paths();
@@ -216,9 +226,11 @@ namespace ActionStreetMap.Core.Tiling.Terrain
 
         private static Paths BuildRoads(Tile tile)
         {
-            var carRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
-            var walkRoads =
-                GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
+            var carRoads = GetOffsetSolution(BuildRoadMap(
+                tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
+
+            var walkRoads = GetOffsetSolution(BuildRoadMap(
+                tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
 
             var clipper = new Clipper();
             clipper.AddPaths(carRoads, PolyType.ptClip, true);
@@ -232,25 +244,21 @@ namespace ActionStreetMap.Core.Tiling.Terrain
 
         private static Dictionary<float, Paths> BuildRoadMap(IEnumerable<RoadElement> elements)
         {
-            // Can be done by LINQ, but this code will be reused in production in slightly different context
+            // TODO optimize that
             var roadMap = new Dictionary<float, Paths>();
             foreach (var roadElement in elements)
-                AddRoad(roadMap, roadElement.Points, roadElement.Width*Scale/2);
-            return roadMap;
-        }
-
-        private static void AddRoad(Dictionary<float, Paths> roadMap, List<MapPoint> points, float width)
-        {
-            var path = new Path(points.Count);
-            foreach (var p in points)
-                path.Add(new IntPoint(p.X*Scale, p.Y*Scale));
-
-            lock (roadMap)
             {
-                if (!roadMap.ContainsKey(width))
-                    roadMap.Add(width, new Paths());
-                roadMap[width].Add(path);
+                var path = new Path(roadElement.Points.Count);
+                var width = roadElement.Width*Scale/2;
+                path.AddRange(roadElement.Points.Select(p => new IntPoint(p.X*Scale, p.Y*Scale)));
+                lock (roadMap)
+                {
+                    if (!roadMap.ContainsKey(width))
+                        roadMap.Add(width, new Paths());
+                    roadMap[width].Add(path);
+                }
             }
+            return roadMap;
         }
 
         private static Paths GetOffsetSolution(Dictionary<float, Paths> roads)
