@@ -77,6 +77,17 @@ namespace ActionStreetMap.Maps.Data.Elevation
                     });
         }
 
+        public bool HasElevation(BoundingBox bbox)
+        {
+            // TODO implement this
+            return true;
+        }
+
+        public IObservable<Unit> Download(BoundingBox bbox)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <inheritdoc />
         public float GetElevation(double latitude, double longitude)
         {
