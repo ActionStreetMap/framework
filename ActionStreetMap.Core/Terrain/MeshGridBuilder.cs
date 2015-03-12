@@ -197,7 +197,7 @@ namespace ActionStreetMap.Core.Terrain
                 PolyType.ptSubject, true);
 
             var solution = new Paths();
-            clipper.Execute(ClipType.ctUnion, solution);
+            clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
             return ClipByTile(tile, solution);
         }
 
@@ -209,7 +209,7 @@ namespace ActionStreetMap.Core.Terrain
                 PolyType.ptSubject, true);
 
             var solution = new Paths();
-            clipper.Execute(ClipType.ctUnion, solution);
+            clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
             return ClipByTile(tile, solution);
         }
 
@@ -226,7 +226,7 @@ namespace ActionStreetMap.Core.Terrain
             clipper.AddPaths(walkRoads, PolyType.ptSubject, true);
 
             var solution = new Paths();
-            clipper.Execute(ClipType.ctUnion, solution);
+            clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
 
             return ClipByTile(tile, solution);
         }

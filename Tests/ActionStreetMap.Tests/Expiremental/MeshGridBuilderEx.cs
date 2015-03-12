@@ -207,12 +207,12 @@ namespace ActionStreetMap.Tests.Expiremental
         private static Paths BuildSurfaces(Tile tile)
         {
             var clipper = new Clipper();
-            clipper.AddPaths(tile.Canvas.Areas
-                .Select(a => a.Points.Select(p => new IntPoint(p.X*Scale, p.Y*Scale)).ToList()).ToList(),
-                PolyType.ptSubject, true);
+            var areas = tile.Canvas.Areas.Select(a => a.Points.Select(p => new IntPoint(p.X*Scale, p.Y*Scale)).ToList()).ToList();
+
+            clipper.AddPaths(areas, PolyType.ptSubject, true);
 
             var solution = new Paths();
-            clipper.Execute(ClipType.ctUnion, solution);
+            clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
             return ClipByTile(tile, solution);
         }
 
