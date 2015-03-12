@@ -63,13 +63,6 @@ namespace ActionStreetMap.Core.Terrain
 
         private MeshGridCell CreateCell(Rectangle rectangle, CanvasData content)
         {
-            // clip areas by roads
-            var surfaces = new Paths();
-            Clipper clipper = new Clipper();
-            clipper.AddPaths(content.Roads, PolyType.ptClip, true);
-            clipper.AddPaths(content.Surfaces, PolyType.ptSubject, true);
-            clipper.Execute(ClipType.ctDifference, surfaces);
-
             // build polygon
             var polygon = new Polygon();
             var options = new ConstraintOptions { UseRegions = true };
@@ -82,13 +75,23 @@ namespace ActionStreetMap.Core.Terrain
                 new Vertex(rectangle.Left, rectangle.Top)
             });
 
-            var mesh = polygon.Triangulate(options, quality);
+            // NOTE the order of operation is important
+            var resultRoads = CreateMeshRegions(polygon, ClipByRectangle(rectangle, content.Roads));
 
+            // clip areas by roads
+            var surfaces = new Paths();
+            Clipper clipper = new Clipper();
+            clipper.AddPaths(content.Roads, PolyType.ptClip, true);
+            clipper.AddPaths(content.Surfaces, PolyType.ptSubject, true);
+            clipper.Execute(ClipType.ctDifference, surfaces);
+            var resultSurface = CreateMeshRegions(polygon, ClipByRectangle(rectangle, surfaces));
+
+            var mesh = polygon.Triangulate(options, quality);
             return new MeshGridCell
             {
                 Mesh = mesh,
-                Surfaces = CreateMeshRegions(polygon, ClipByRectangle(rectangle, surfaces)),
-                Roads = CreateMeshRegions(polygon, ClipByRectangle(rectangle, content.Roads))
+                Roads = resultRoads,
+                Surfaces = resultSurface,
             };
         }
 

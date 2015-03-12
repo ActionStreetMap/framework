@@ -11,10 +11,12 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Utils;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
+using Color32 = UnityEngine.Color32;
 
 namespace ActionStreetMap.Explorer.Terrain
 {
@@ -47,8 +49,7 @@ namespace ActionStreetMap.Explorer.Terrain
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            var terrainObject = _gameObjectFactory.CreateNew("terrain");
-            terrainObject.Parent = tile.GameObject;
+            var terrainObject = _gameObjectFactory.CreateNew("terrain", tile.GameObject);
 
             var meshGrid = _meshGridBuilder.Build(tile);
             BuildCells(tile, rule, terrainObject, meshGrid);
@@ -64,6 +65,9 @@ namespace ActionStreetMap.Explorer.Terrain
             var relativeNullPoint = tile.RelativeNullPoint;
             var rowCount = cells.GetLength(0);
             var columnCount = cells.GetLength(1);
+            var gradient = GetGradient();
+   
+
             for (int j = 0; j < rowCount; j++)
                 for (int i = 0; i < columnCount; i++)
                 {
@@ -72,6 +76,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
                     var vertices = new List<Vector3>(terrainMesh.Vertices.Count);
                     var triangles = new List<int>(terrainMesh.Triangles.Count);
+                    var colors = new List<Color>(terrainMesh.Vertices.Count);
 
                     var hashMap = new Dictionary<int, int>();
                     Trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
@@ -103,20 +108,26 @@ namespace ActionStreetMap.Explorer.Terrain
                         triangles.Add(--index);
                         triangles.Add(--index);
 
+                        var firstValue = (Noise.Perlin3D(new Vector3((float)p0.X, ele0, (float)p0.Y), 0.2f) + 1f) / 2f;
+                        var triangleColor = gradient.Evaluate(firstValue);
+
+                        colors.Add(triangleColor);
+                        colors.Add(triangleColor);
+                        colors.Add(triangleColor);
+
                         hashMap.Add(triangle.GetHashCode(), index);
                     }
 
-                    FillRegions(cell, hashMap);
+                    FillRegions(cell, colors, hashMap);
 
-                    var goCell = _gameObjectFactory.CreateNew(String.Format("cell {0}_{1}", i, j));
-                    goCell.Parent = terrainObject;
-
-                    Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, null));
+                    var goCell = _gameObjectFactory.CreateNew(String.Format("cell {0}_{1}", i, j), terrainObject);
+                    Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, colors));
                 }
         }
 
-        private void FillRegions(MeshGridCell cell, Dictionary<int, int> hashMap)
+        private void FillRegions(MeshGridCell cell, List<Color> colors, Dictionary<int, int> hashMap)
         {
+            // TODO this should be refactored
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
             foreach (var region in cell.Roads)
@@ -125,12 +136,34 @@ namespace ActionStreetMap.Explorer.Terrain
                 var start = (Triangle)tree.Query(point.X, point.Y);
 
                 int count = 0;
+                var color = Color.red;
                 iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];
+                    colors[index] = color;
+                    colors[index + 1] = color;
+                    colors[index + 2] = color;
                     count++;
                 });
-                Trace.Debug(LogTag, "Region processed: {0}", count);
+                Trace.Debug(LogTag, "Road region processed: {0}", count);
+            }
+
+            foreach (var region in cell.Surfaces)
+            {
+                var point = region.Anchor;
+                var start = (Triangle)tree.Query(point.X, point.Y);
+
+                int count = 0;
+                var color = Color.blue;
+                iterator.Process(start, triangle =>
+                {
+                    var index = hashMap[triangle.GetHashCode()];
+                    colors[index] = color;
+                    colors[index + 1] = color;
+                    colors[index + 2] = color;
+                    count++;
+                });
+                Trace.Debug(LogTag, "Surface region processed: {0}", count);
             }
         }
 
@@ -148,6 +181,37 @@ namespace ActionStreetMap.Explorer.Terrain
             gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial(_resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
             gameObject.AddComponent<MeshCollider>();
+        }
+
+        private static Gradient GetGradient()
+        {
+            var gradient = new Gradient();
+            // Populate the color keys at the relative time 0 and 1 (0 and 100%)
+            var gck = new GradientColorKey[5];
+            gck[0].color = new Color32(152, 251, 152, 1); // pale green
+            gck[0].time = 0.0f;
+
+            gck[1].color = new Color32(173, 255, 47, 1); // green yellow
+            gck[1].time = 0.05f;
+
+            gck[2].color = new Color32(0, 100, 0, 1); // dark green
+            gck[2].time = 0.1f;
+
+            gck[3].color = new Color32(85, 107, 47, 1); // dark olive green
+            gck[3].time = 0.8f;
+
+            gck[4].color = new Color32(184, 134, 11, 1); // dark golden rod 
+            gck[4].time = 1f;
+
+            // Populate the alpha  keys at relative time 0 and 1  (0 and 100%)
+            var gak = new GradientAlphaKey[2];
+            gak[0].alpha = 1f;
+            gak[0].time = 0.0f;
+            gak[1].alpha = 1f;
+            gak[1].time = 1.0f;
+            gradient.SetKeys(gck, gak);
+
+            return gradient;
         }
     }
 }
