@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
@@ -8,8 +9,11 @@ using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain
@@ -19,25 +23,35 @@ namespace ActionStreetMap.Explorer.Terrain
         private const string LogTag = "mesh.terrain";
 
         private readonly IElevationProvider _elevationProvider;
+        private readonly IResourceProvider _resourceProvider;
+        private readonly IGameObjectFactory _gameObjectFactory;
         private readonly MeshGridBuilder _meshGridBuilder;
 
         [Dependency]
         public ITrace Trace { get; set; }
 
         [Dependency]
-        public MeshTerrainBuilder(IElevationProvider elevationProvider)
+        public MeshTerrainBuilder(IElevationProvider elevationProvider, 
+            IResourceProvider resourceProvider,
+            IGameObjectFactory gameObjectFactory)
         {
             _elevationProvider = elevationProvider;
+            _resourceProvider = resourceProvider;
+            _gameObjectFactory = gameObjectFactory;
             _meshGridBuilder = new MeshGridBuilder();
         }
 
         public IGameObject Build(Tile tile, Rule rule)
         {
+            Trace.Debug(LogTag, "started to build terrain");
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
+            var terrainObject = _gameObjectFactory.CreateNew("terrain");
+            terrainObject.Parent = tile.GameObject;
+
             var meshGrid = _meshGridBuilder.Build(tile);
-            var terrainObject =  Build(meshGrid);
+            BuildCells(tile, rule, terrainObject, meshGrid);
 
             sw.Stop();
             Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds);
@@ -45,18 +59,16 @@ namespace ActionStreetMap.Explorer.Terrain
             return terrainObject;
         }
 
-        private IGameObject Build(MeshGrid terrainGrid)
+        private void BuildCells(Tile tile, Rule rule, IGameObject terrainObject, MeshGridCell[,] cells)
         {
-            var relativeNullPoint = terrainGrid.RelativeNullPoint;
-
-            var rowCount = terrainGrid.Cells.GetLength(0);
-            var columnCount = terrainGrid.Cells.GetLength(1);
-
+            var relativeNullPoint = tile.RelativeNullPoint;
+            var rowCount = cells.GetLength(0);
+            var columnCount = cells.GetLength(1);
             for (int j = 0; j < rowCount; j++)
                 for (int i = 0; i < columnCount; i++)
                 {
-                    var cell = terrainGrid.Cells[i, j];
-                    var terrainMesh = cell.Roads.Mesh;
+                    var cell = cells[i, j];
+                    var terrainMesh = cell.Mesh;
 
                     var vertices = new List<Vector3>(terrainMesh.Vertices.Count);
                     var triangles = new List<int>(terrainMesh.Triangles.Count);
@@ -95,18 +107,20 @@ namespace ActionStreetMap.Explorer.Terrain
                     }
 
                     FillRegions(cell, hashMap);
-                }
 
-            return null;
+                    var goCell = _gameObjectFactory.CreateNew(String.Format("cell {0}_{1}", i, j));
+                    goCell.Parent = terrainObject;
+
+                    Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, null));
+                }
         }
 
-        private void FillRegions(MeshCell cell, Dictionary<int, int> hashMap)
+        private void FillRegions(MeshGridCell cell, Dictionary<int, int> hashMap)
         {
-            var tree = new QuadTree(cell.Roads.Mesh);
-            RegionIterator iterator = new RegionIterator(cell.Roads.Mesh);
-            foreach (var region in cell.Roads.Regions)
+            var tree = new QuadTree(cell.Mesh);
+            RegionIterator iterator = new RegionIterator(cell.Mesh);
+            foreach (var point in cell.Roads)
             {
-                var point = region.Anchor;
                 var start = (Triangle) tree.Query(point.X, point.Y);
 
                 int count = 0;
@@ -115,8 +129,24 @@ namespace ActionStreetMap.Explorer.Terrain
                     var index = hashMap[triangle.GetHashCode()];
                     count++;
                 });
-                Trace.Debug(LogTag, "Region: {0}, processed: {1}", start.Region, count);
+                Trace.Debug(LogTag, "Region processed: {0}", count);
             }
+        }
+
+        private void BuildGameObject(Rule rule, IGameObject cellObject, 
+            List<Vector3> vertices, List<int> triangles, List<Color> colors)
+        {
+            var gameObject = cellObject.GetComponent<GameObject>();
+
+            var meshData = new Mesh();
+            meshData.vertices = vertices.ToArray();
+            meshData.triangles = triangles.ToArray();
+            meshData.colors = colors.ToArray();
+            meshData.RecalculateNormals();
+
+            gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial(_resourceProvider);
+            gameObject.AddComponent<MeshFilter>().mesh = meshData;
+            gameObject.AddComponent<MeshCollider>();
         }
     }
 }

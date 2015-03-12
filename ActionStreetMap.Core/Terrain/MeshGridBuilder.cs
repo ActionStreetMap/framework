@@ -27,7 +27,7 @@ namespace ActionStreetMap.Core.Terrain
         [Dependency]
         public ITrace Trace { get; set; }
 
-        public MeshGrid Build(Tile tile)
+        public MeshGridCell[,] Build(Tile tile)
         {
             // get original objects in tile
             var content = new CanvasData
@@ -43,7 +43,7 @@ namespace ActionStreetMap.Core.Terrain
             var cellHeight = tile.Height/cellRowCount;
             var cellWidth = tile.Width/cellColumnCount;
 
-            var cells = new MeshCell[cellRowCount, cellColumnCount];
+            var cells = new MeshGridCell[cellRowCount, cellColumnCount];
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
                 {
@@ -56,36 +56,24 @@ namespace ActionStreetMap.Core.Terrain
                     cells[j, i] = CreateCell(rectangle, content);
                 }
 
-            return new MeshGrid
-            {
-                RelativeNullPoint = tile.RelativeNullPoint,
-                Cells = cells
-            };
+            return cells;
         }
 
         #region Grid
 
-        private MeshCell CreateCell(Rectangle rectangle, CanvasData content)
+        private MeshGridCell CreateCell(Rectangle rectangle, CanvasData content)
         {
-            // TODO calculate all objects based on their types
-            var solution = new Paths();
+            // clip areas by roads
+            var surfaces = new Paths();
             Clipper clipper = new Clipper();
             clipper.AddPaths(content.Roads, PolyType.ptClip, true);
             clipper.AddPaths(content.Surfaces, PolyType.ptSubject, true);
-            clipper.Execute(ClipType.ctDifference, solution);
+            clipper.Execute(ClipType.ctDifference, surfaces);
 
-            return new MeshCell
-            {
-                // TODO assign water, surfaces, bridges
-                Roads = CreateGridData(rectangle, solution, null)
-            };
-        }
-
-        private MeshData CreateGridData(Rectangle rectangle, Paths solution,
-            IMeshRegionVisitor regionVisitor)
-        {
+            // build polygon
             var polygon = new Polygon();
-
+            var options = new ConstraintOptions { UseRegions = true };
+            var quality = new QualityOptions { MaximumArea = MaximumArea };
             polygon.AddContour(new Collection<Vertex>
             {
                 new Vertex(rectangle.Left, rectangle.Bottom),
@@ -94,21 +82,19 @@ namespace ActionStreetMap.Core.Terrain
                 new Vertex(rectangle.Left, rectangle.Top)
             });
 
-            var meshRegions = CreateMeshRegions(polygon, ClipByRectangle(rectangle, solution), regionVisitor);
-
-            var options = new ConstraintOptions {UseRegions = true};
-            var quality = new QualityOptions {MaximumArea = MaximumArea};
             var mesh = polygon.Triangulate(options, quality);
-            return new MeshData
+
+            return new MeshGridCell
             {
                 Mesh = mesh,
-                Regions = meshRegions
+                Surfaces = CreateMeshRegions(polygon, ClipByRectangle(rectangle, surfaces)),
+                Roads = CreateMeshRegions(polygon, ClipByRectangle(rectangle, content.Roads))
             };
         }
 
-        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Paths paths, IMeshRegionVisitor regionVisitor)
+        private List<Vertex> CreateMeshRegions(Polygon polygon, Paths paths)
         {
-            var meshRegions = new List<MeshRegion>();
+            var meshRegions = new List<Vertex>();
             foreach (var path in Clipper.SimplifyPolygons(paths))
             {
                 var orientation = Clipper.Orientation(path);
@@ -117,11 +103,7 @@ namespace ActionStreetMap.Core.Terrain
                     var vertex = GetAnyPointInsidePolygon(path);
                     polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
                     polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
-                    meshRegions.Add(new MeshRegion
-                    {
-                        Visitor = regionVisitor,
-                        Anchor = vertex
-                    });
+                    meshRegions.Add(vertex);
                 }
                 else
                     polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
