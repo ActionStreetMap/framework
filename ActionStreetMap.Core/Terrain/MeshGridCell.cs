@@ -8,9 +8,9 @@ namespace ActionStreetMap.Core.Terrain
     {
         public Mesh Mesh;
 
-        public List<Vertex> Water;
-        public List<Vertex> Surfaces;
-        public List<Vertex> Roads;
-        public List<Vertex> Bridges;
+        public List<MeshRegion> Water;
+        public List<MeshRegion> Surfaces;
+        public List<MeshRegion> Roads;
+        public List<MeshRegion> Bridges;
     }
 }

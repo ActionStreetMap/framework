@@ -119,9 +119,10 @@ namespace ActionStreetMap.Explorer.Terrain
         {
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
-            foreach (var point in cell.Roads)
+            foreach (var region in cell.Roads)
             {
-                var start = (Triangle) tree.Query(point.X, point.Y);
+                var point = region.Anchor;
+                var start = (Triangle)tree.Query(point.X, point.Y);
 
                 int count = 0;
                 iterator.Process(start, triangle =>

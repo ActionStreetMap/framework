@@ -92,9 +92,9 @@ namespace ActionStreetMap.Core.Terrain
             };
         }
 
-        private List<Vertex> CreateMeshRegions(Polygon polygon, Paths paths)
+        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Paths paths)
         {
-            var meshRegions = new List<Vertex>();
+            var meshRegions = new List<MeshRegion>();
             foreach (var path in Clipper.SimplifyPolygons(paths))
             {
                 var orientation = Clipper.Orientation(path);
@@ -103,7 +103,11 @@ namespace ActionStreetMap.Core.Terrain
                     var vertex = GetAnyPointInsidePolygon(path);
                     polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
                     polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
-                    meshRegions.Add(vertex);
+                    meshRegions.Add(new MeshRegion()
+                    {
+                        Id = 0,
+                        Anchor = vertex
+                    });
                 }
                 else
                     polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
