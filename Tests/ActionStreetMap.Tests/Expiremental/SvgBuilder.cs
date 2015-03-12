@@ -73,6 +73,13 @@ namespace ActionStreetMap.Tests.Expiremental
             PolyInfoList.Add(pi);
         }
 
+        public static void SaveToFile(Paths poly, string filename, double scale = 1.0, int margin = 10)
+        {
+            var svgBuilder = new SVGBuilder();
+            svgBuilder.AddPaths(poly);
+            svgBuilder.SaveToFile(filename, scale, margin);
+        }
+
         public Boolean SaveToFile(string filename, double scale = 1.0, int margin = 10)
         {
             if (scale == 0) scale = 1.0;

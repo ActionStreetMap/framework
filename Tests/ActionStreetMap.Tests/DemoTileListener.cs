@@ -4,6 +4,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Tests.Expiremental;
 
 namespace ActionStreetMap.Tests
 {
@@ -46,6 +47,9 @@ namespace ActionStreetMap.Tests
             GC.Collect();
             _logger.Report("DemoTileListener.OnTileBuildFinished: after GC");
             _stopwatch.Reset();
+
+            var gridBuilder = new MeshGridBuilderEx();
+            gridBuilder.Build(tile);
         } 
     }
 }

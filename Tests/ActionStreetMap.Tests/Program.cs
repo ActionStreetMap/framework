@@ -18,7 +18,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.52672, 13.38785);
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.51372, 13.37734);
         public static readonly Container _container = new Container();
 
         private const string LogTag = "host";
