@@ -1,4 +1,4 @@
-﻿namespace ActionStreetMap.Core.Tiling.Terrain
+﻿namespace ActionStreetMap.Core.Terrain
 {
     public interface IMeshRegionVisitor
     {

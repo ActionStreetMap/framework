@@ -2,7 +2,7 @@
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 
-namespace ActionStreetMap.Explorer.Tiling.Terrain
+namespace ActionStreetMap.Explorer.Terrain
 {
     public interface ITerrainBuilder
     {

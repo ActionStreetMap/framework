@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Polygons;
 
-namespace ActionStreetMap.Core.Tiling.Terrain
+namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshGrid
     {

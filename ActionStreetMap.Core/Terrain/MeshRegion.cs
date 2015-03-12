@@ -1,7 +1,7 @@
 ﻿
 using ActionStreetMap.Core.Polygons.Geometry;
 
-namespace ActionStreetMap.Core.Tiling.Terrain
+namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshRegion
     {

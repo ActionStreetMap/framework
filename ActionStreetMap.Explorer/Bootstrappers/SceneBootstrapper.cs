@@ -10,7 +10,7 @@ using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Utils;
-using ActionStreetMap.Explorer.Tiling.Terrain;
+using ActionStreetMap.Explorer.Terrain;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {

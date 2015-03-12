@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
 using ActionStreetMap.Core.Polygons.Tools;
 using ActionStreetMap.Core.Polygons.Topology;
+using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
-using ActionStreetMap.Core.Tiling.Terrain;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Tiling.Terrain
+namespace ActionStreetMap.Explorer.Terrain
 {
     internal class MeshTerrainBuilder : ITerrainBuilder
     {

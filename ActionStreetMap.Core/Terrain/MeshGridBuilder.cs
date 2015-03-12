@@ -13,7 +13,7 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 
-namespace ActionStreetMap.Core.Tiling.Terrain
+namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshGridBuilder
     {
