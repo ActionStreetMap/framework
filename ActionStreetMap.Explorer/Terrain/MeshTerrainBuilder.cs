@@ -66,7 +66,6 @@ namespace ActionStreetMap.Explorer.Terrain
             var rowCount = cells.GetLength(0);
             var columnCount = cells.GetLength(1);
             var gradient = GetGradient();
-   
 
             for (int j = 0; j < rowCount; j++)
                 for (int i = 0; i < columnCount; i++)
@@ -154,7 +153,7 @@ namespace ActionStreetMap.Explorer.Terrain
                 var start = (Triangle)tree.Query(point.X, point.Y);
 
                 int count = 0;
-                var color = Color.blue;
+                var color = GetColorBySplatId(region.SplatId);
                 iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];
@@ -164,6 +163,16 @@ namespace ActionStreetMap.Explorer.Terrain
                     count++;
                 });
                 Trace.Debug(LogTag, "Surface region processed: {0}", count);
+            }
+        }
+
+        private Color GetColorBySplatId(int id)
+        {
+            switch (id%3)
+            {
+                case 0: return Color.yellow;
+                case 1: return Color.green;
+                default: return Color.blue;
             }
         }
 
