@@ -8,7 +8,6 @@ using ActionStreetMap.Core.Polygons.Meshing;
 using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utilities;
-using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
@@ -23,7 +22,7 @@ namespace ActionStreetMap.Core.Terrain
 
         // TODO make configurable
         private const float MaxCellSize = 100;
-        private const float MaximumArea = 30;
+        private const float MaximumArea = 10;
 
         public MeshGridBuilder(ITrace trace)
         {
@@ -77,8 +76,8 @@ namespace ActionStreetMap.Core.Terrain
         {
             // build polygon
             var polygon = new Polygon();
-            var options = new ConstraintOptions { UseRegions = true };
-            var quality = new QualityOptions { MaximumArea = MaximumArea };
+            var options = new ConstraintOptions {UseRegions = true};
+            var quality = new QualityOptions {MaximumArea = MaximumArea};
             polygon.AddContour(new Collection<Vertex>
             {
                 new Vertex(rectangle.Left, rectangle.Bottom),
@@ -96,7 +95,7 @@ namespace ActionStreetMap.Core.Terrain
             {
                 Mesh = mesh,
                 Roads = resultRoads,
-                Surfaces = resultSurface,
+                Surfaces = resultSurface
             };
         }
 
@@ -110,15 +109,15 @@ namespace ActionStreetMap.Core.Terrain
                 {
                     var vertex = GetAnyPointInsidePolygon(path);
                     polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
-                    polygon.AddContour(path.Select(p => new Vertex(p.X / Scale, p.Y / Scale)));
-                    meshRegions.Add(new MeshRegion()
+                    polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
+                    meshRegions.Add(new MeshRegion
                     {
                         SplatId = regionData.SplatId,
                         Anchor = vertex
                     });
                 }
                 else
-                    polygon.AddContour(path.Select(p => new Vertex(p.X / Scale, p.Y / Scale)));
+                    polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
             }
             return meshRegions;
         }
@@ -213,7 +212,7 @@ namespace ActionStreetMap.Core.Terrain
 
             var solution = new Paths();
             clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
-            return new RegionData 
+            return new RegionData
             {
                 SplatId = 0,
                 Shape = ClipByTile(tile, solution)
@@ -238,8 +237,9 @@ namespace ActionStreetMap.Core.Terrain
                 clipper.AddPaths(regions.SelectMany(r => r.Shape).ToList(), PolyType.ptClip, true);
                 clipper.AddPaths(surfacesUnion, PolyType.ptSubject, true);
                 var surfacesResult = new Paths();
-                clipper.Execute(ClipType.ctDifference, surfacesResult, PolyFillType.pftPositive, PolyFillType.pftPositive);
-                regions.Add(new RegionData()
+                clipper.Execute(ClipType.ctDifference, surfacesResult, PolyFillType.pftPositive,
+                    PolyFillType.pftPositive);
+                regions.Add(new RegionData
                 {
                     SplatId = group.Key,
                     Shape = ClipByTile(tile, surfacesResult)
@@ -263,7 +263,7 @@ namespace ActionStreetMap.Core.Terrain
             var solution = new Paths();
             clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
 
-            return new RegionData 
+            return new RegionData
             {
                 SplatId = 0,
                 Shape = ClipByTile(tile, solution)
@@ -296,7 +296,7 @@ namespace ActionStreetMap.Core.Terrain
             foreach (var carRoadEntry in roads)
             {
                 var offsetSolution = new Paths();
-                offsetClipper.AddPaths(carRoadEntry.Value, JoinType.jtMiter, EndType.etOpenRound);
+                offsetClipper.AddPaths(carRoadEntry.Value, JoinType.jtMiter, EndType.etOpenButt);
                 offsetClipper.Execute(ref offsetSolution, carRoadEntry.Key);
                 polyClipper.AddPaths(offsetSolution, PolyType.ptSubject, true);
                 offsetClipper.Clear();
