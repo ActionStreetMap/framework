@@ -76,13 +76,13 @@ namespace ActionStreetMap.Core.Terrain
             });
 
             // NOTE the order of operation is important
-            var resultRoads = CreateMeshRegions(polygon, ClipByRectangle(rectangle, content.Roads));
+            var resultRoads = CreateMeshRegions(polygon, ClipByRectangle(rectangle, content.Roads.Shape));
 
             // clip areas by roads
             var surfaces = new Paths();
             Clipper clipper = new Clipper();
-            clipper.AddPaths(content.Roads, PolyType.ptClip, true);
-            clipper.AddPaths(content.Surfaces, PolyType.ptSubject, true);
+            clipper.AddPaths(content.Roads.Shape, PolyType.ptClip, true);
+            clipper.AddPaths(content.Surfaces.Shape, PolyType.ptSubject, true);
             clipper.Execute(ClipType.ctDifference, surfaces);
             var resultSurface = CreateMeshRegions(polygon, ClipByRectangle(rectangle, surfaces));
 
@@ -108,7 +108,7 @@ namespace ActionStreetMap.Core.Terrain
                     polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
                     meshRegions.Add(new MeshRegion()
                     {
-                        Id = 0,
+                        SplatId = 0,
                         Anchor = vertex
                     });
                 }
@@ -189,7 +189,7 @@ namespace ActionStreetMap.Core.Terrain
             return solution;
         }
 
-        private static Paths BuildWater(Tile tile)
+        private static RegionData BuildWater(Tile tile)
         {
             var clipper = new Clipper();
             clipper.AddPaths(tile.Canvas.Water
@@ -198,10 +198,14 @@ namespace ActionStreetMap.Core.Terrain
 
             var solution = new Paths();
             clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
-            return ClipByTile(tile, solution);
+            return new RegionData 
+            {
+                SplatId = 0,
+                Shape = ClipByTile(tile, solution)
+            };
         }
 
-        private static Paths BuildSurfaces(Tile tile)
+        private static RegionData BuildSurfaces(Tile tile)
         {
             var clipper = new Clipper();
             clipper.AddPaths(tile.Canvas.Areas
@@ -210,10 +214,14 @@ namespace ActionStreetMap.Core.Terrain
 
             var solution = new Paths();
             clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
-            return ClipByTile(tile, solution);
+            return new RegionData 
+            {
+                SplatId = 0,
+                Shape = ClipByTile(tile, solution)
+            };
         }
 
-        private static Paths BuildRoads(Tile tile)
+        private static RegionData BuildRoads(Tile tile)
         {
             var carRoads = GetOffsetSolution(BuildRoadMap(
                 tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
@@ -228,7 +236,11 @@ namespace ActionStreetMap.Core.Terrain
             var solution = new Paths();
             clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
 
-            return ClipByTile(tile, solution);
+            return new RegionData 
+            {
+                SplatId = 0,
+                Shape = ClipByTile(tile, solution)
+            };
         }
 
         private static Dictionary<float, Paths> BuildRoadMap(IEnumerable<RoadElement> elements)
@@ -274,9 +286,15 @@ namespace ActionStreetMap.Core.Terrain
 
         private class CanvasData
         {
-            public Paths Water;
-            public Paths Surfaces;
-            public Paths Roads;
+            public RegionData Water;
+            public RegionData Surfaces;
+            public RegionData Roads;
+        }
+
+        private class RegionData
+        {
+            public int SplatId;
+            public Paths Shape;
         }
 
         #endregion

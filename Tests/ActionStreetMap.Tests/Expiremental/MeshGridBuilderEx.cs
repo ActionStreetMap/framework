@@ -111,7 +111,7 @@ namespace ActionStreetMap.Tests.Expiremental
                     polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
                     meshRegions.Add(new MeshRegion
                     {
-                        Id = 0,
+                        SplatId = 0,
                         Anchor = vertex
                     });
                 }

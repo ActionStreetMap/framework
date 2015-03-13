@@ -4,7 +4,7 @@ namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshRegion
     {
-        public int Id;
+        public int SplatId;
         public Vertex Anchor;
     }
 }
