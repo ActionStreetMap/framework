@@ -17,6 +17,7 @@ namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshGridBuilder
     {
+        private readonly ITrace _trace;
         private const string LogTag = "mesh.tile";
         private const float Scale = 10000f;
 
@@ -24,8 +25,10 @@ namespace ActionStreetMap.Core.Terrain
         private const float MaxCellSize = 100;
         private const float MaximumArea = 30;
 
-        [Dependency]
-        public ITrace Trace { get; set; }
+        public MeshGridBuilder(ITrace trace)
+        {
+            _trace = trace;
+        }
 
         public MeshGridCell[,] Build(Tile tile)
         {

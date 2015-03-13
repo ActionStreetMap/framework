@@ -27,25 +27,23 @@ namespace ActionStreetMap.Explorer.Terrain
         private readonly IElevationProvider _elevationProvider;
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
+        private readonly ITrace _trace;
         private readonly MeshGridBuilder _meshGridBuilder;
 
         [Dependency]
-        public ITrace Trace { get; set; }
-
-        [Dependency]
-        public MeshTerrainBuilder(IElevationProvider elevationProvider, 
-            IResourceProvider resourceProvider,
-            IGameObjectFactory gameObjectFactory)
+        public MeshTerrainBuilder(IElevationProvider elevationProvider, IResourceProvider resourceProvider,
+            IGameObjectFactory gameObjectFactory, ITrace trace)
         {
             _elevationProvider = elevationProvider;
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
-            _meshGridBuilder = new MeshGridBuilder();
+            _trace = trace;
+            _meshGridBuilder = new MeshGridBuilder(trace);
         }
 
         public IGameObject Build(Tile tile, Rule rule)
         {
-            Trace.Debug(LogTag, "started to build terrain");
+            _trace.Debug(LogTag, "started to build terrain");
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
@@ -55,7 +53,7 @@ namespace ActionStreetMap.Explorer.Terrain
             BuildCells(tile, rule, terrainObject, meshGrid);
 
             sw.Stop();
-            Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds);
+            _trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds);
 
             return terrainObject;
         }
@@ -78,7 +76,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     var colors = new List<Color>(terrainMesh.Vertices.Count);
 
                     var hashMap = new Dictionary<int, int>();
-                    Trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
+                    _trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
                     foreach (var triangle in terrainMesh.Triangles)
                     {
                         var p0 = triangle.GetVertex(0);
@@ -144,7 +142,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     colors[index + 2] = color;
                     count++;
                 });
-                Trace.Debug(LogTag, "Road region processed: {0}", count);
+                _trace.Debug(LogTag, "Road region processed: {0}", count);
             }
 
             foreach (var region in cell.Surfaces)
@@ -162,7 +160,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     colors[index + 2] = color;
                     count++;
                 });
-                Trace.Debug(LogTag, "Surface region processed: {0}", count);
+                _trace.Debug(LogTag, "Surface region processed: {0}", count);
             }
         }
 
