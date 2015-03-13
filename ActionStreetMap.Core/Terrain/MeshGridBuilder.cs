@@ -16,13 +16,14 @@ namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshGridBuilder
     {
-        private readonly ITrace _trace;
         private const string LogTag = "mesh.tile";
         private const float Scale = 10000f;
 
         // TODO make configurable
         private const float MaxCellSize = 100;
         private const float MaximumArea = 10;
+
+        private readonly ITrace _trace;
 
         public MeshGridBuilder(ITrace trace)
         {
@@ -87,6 +88,7 @@ namespace ActionStreetMap.Core.Terrain
             });
 
             // NOTE the order of operation is important
+            var water = CreateMeshRegions(polygon, rectangle, content.Water);
             var resultRoads = CreateMeshRegions(polygon, rectangle, content.Roads);
             var resultSurface = CreateMeshRegions(polygon, rectangle, content.Surfaces);
 
@@ -94,6 +96,7 @@ namespace ActionStreetMap.Core.Terrain
             return new MeshGridCell
             {
                 Mesh = mesh,
+                Water = water,
                 Roads = resultRoads,
                 Surfaces = resultSurface
             };
@@ -219,7 +222,7 @@ namespace ActionStreetMap.Core.Terrain
             };
         }
 
-        private static List<RegionData> BuildSurfaces(Tile tile, RegionData waters, RegionData roads)
+        private static List<RegionData> BuildSurfaces(Tile tile, RegionData water, RegionData roads)
         {
             var regions = new List<RegionData>();
             foreach (var group in tile.Canvas.Areas.GroupBy(s => s.SplatIndex))
@@ -234,6 +237,7 @@ namespace ActionStreetMap.Core.Terrain
 
                 clipper.Clear();
                 clipper.AddPaths(roads.Shape, PolyType.ptClip, true);
+                clipper.AddPaths(water.Shape, PolyType.ptClip, true);
                 clipper.AddPaths(regions.SelectMany(r => r.Shape).ToList(), PolyType.ptClip, true);
                 clipper.AddPaths(surfacesUnion, PolyType.ptSubject, true);
                 var surfacesResult = new Paths();
@@ -260,13 +264,21 @@ namespace ActionStreetMap.Core.Terrain
             clipper.AddPaths(carRoads, PolyType.ptClip, true);
             clipper.AddPaths(walkRoads, PolyType.ptSubject, true);
 
-            var solution = new Paths();
-            clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
+            var roads = new Paths();
+            clipper.Execute(ClipType.ctUnion, roads, PolyFillType.pftPositive, PolyFillType.pftPositive);
+
+            // clip by water
+            // TODO detect bridges!
+            clipper.Clear();
+            var resultRoads = new Paths();
+            clipper.AddPaths(water.Shape, PolyType.ptClip, true);
+            clipper.AddPaths(roads, PolyType.ptSubject, true);
+            clipper.Execute(ClipType.ctDifference, resultRoads, PolyFillType.pftPositive, PolyFillType.pftPositive);
 
             return new RegionData
             {
                 SplatId = 0,
-                Shape = ClipByTile(tile, solution)
+                Shape = ClipByTile(tile, resultRoads)
             };
         }
 

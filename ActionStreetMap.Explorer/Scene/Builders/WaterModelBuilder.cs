@@ -33,6 +33,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             // detect minimal elevation for water
             var elevation = verticies2D.Min(v => v.Elevation);
 
+            tile.Canvas.AddWater(new Surface()
+            {
+                Points = verticies2D.ToList(),
+            });
+
+
             // cut polygon by current tile
             PolygonUtils.ClipPolygonByTile(tile.BottomLeft, tile.TopRight, verticies2D);
 

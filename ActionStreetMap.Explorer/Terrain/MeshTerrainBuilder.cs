@@ -115,15 +115,16 @@ namespace ActionStreetMap.Explorer.Terrain
                         hashMap.Add(triangle.GetHashCode(), index);
                     }
 
-                    FillRegions(cell, colors, hashMap);
+                    FillRegions(cell, vertices, colors, hashMap);
 
                     var goCell = _gameObjectFactory.CreateNew(String.Format("cell {0}_{1}", i, j), terrainObject);
                     Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, colors));
                 }
         }
 
-        private void FillRegions(MeshGridCell cell, List<Color> colors, Dictionary<int, int> hashMap)
+        private void FillRegions(MeshGridCell cell, List<Vector3> vertices, List<Color> colors, Dictionary<int, int> hashMap)
         {
+            _trace.Debug(LogTag, "start FillRegions");
             // TODO this should be refactored
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
@@ -162,6 +163,32 @@ namespace ActionStreetMap.Explorer.Terrain
                 });
                 _trace.Debug(LogTag, "Surface region processed: {0}", count);
             }
+
+            foreach (var region in cell.Water)
+            {
+                var point = region.Anchor;
+                var start = (Triangle)tree.Query(point.X, point.Y);
+
+                int count = 0;
+                float deepLevel = 4;
+                iterator.Process(start, triangle =>
+                {
+                    var index = hashMap[triangle.GetHashCode()];
+
+                    var p1 = vertices[index];
+                    vertices[index] = new Vector3(p1.x, p1.y - deepLevel, p1.z);
+
+                    var p2 = vertices[index+1];
+                    vertices[index + 1] = new Vector3(p2.x, p2.y - deepLevel, p2.z);
+
+                    var p3 = vertices[index+2];
+                    vertices[index + 2] = new Vector3(p3.x, p3.y - deepLevel, p3.z);
+
+                    count++;
+                });
+                _trace.Debug(LogTag, "Water region processed: {0}", count);
+            }
+            _trace.Debug(LogTag, "end FillRegions");
         }
 
         private Color GetColorBySplatId(int id)
