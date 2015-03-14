@@ -15,6 +15,7 @@ using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 using Color32 = UnityEngine.Color32;
 
@@ -224,35 +225,33 @@ namespace ActionStreetMap.Explorer.Terrain
             gameObject.AddComponent<MeshCollider>();
         }
 
-        private static Gradient GetGradient()
+        private static GradientWrapper GetGradient()
         {
-            var gradient = new Gradient();
             // Populate the color keys at the relative time 0 and 1 (0 and 100%)
-            var gck = new GradientColorKey[5];
-            gck[0].color = new Color32(152, 251, 152, 1); // pale green
-            gck[0].time = 0.0f;
+            var gck = new GradientWrapper.ColorKey[5];
+            gck[0].Color = new Color32(152, 251, 152, 1); // pale green
+            gck[0].Time = 0.0f;
 
-            gck[1].color = new Color32(173, 255, 47, 1); // green yellow
-            gck[1].time = 0.05f;
+            gck[1].Color = new Color32(173, 255, 47, 1); // green yellow
+            gck[1].Time = 0.05f;
 
-            gck[2].color = new Color32(0, 100, 0, 1); // dark green
-            gck[2].time = 0.1f;
+            gck[2].Color = new Color32(0, 100, 0, 1); // dark green
+            gck[2].Time = 0.1f;
 
-            gck[3].color = new Color32(85, 107, 47, 1); // dark olive green
-            gck[3].time = 0.8f;
+            gck[3].Color = new Color32(85, 107, 47, 1); // dark olive green
+            gck[3].Time = 0.8f;
 
-            gck[4].color = new Color32(184, 134, 11, 1); // dark golden rod 
-            gck[4].time = 1f;
+            gck[4].Color = new Color32(184, 134, 11, 1); // dark golden rod 
+            gck[4].Time = 1f;
 
             // Populate the alpha  keys at relative time 0 and 1  (0 and 100%)
-            var gak = new GradientAlphaKey[2];
-            gak[0].alpha = 1f;
-            gak[0].time = 0.0f;
-            gak[1].alpha = 1f;
-            gak[1].time = 1.0f;
-            gradient.SetKeys(gck, gak);
+            var gak = new GradientWrapper.AlphaKey[2];
+            gak[0].Alpha = 1f;
+            gak[0].Time = 0.0f;
+            gak[1].Alpha = 1f;
+            gak[1].Time = 1.0f;
 
-            return gradient;
+            return new GradientWrapper(gck, gak);
         }
     }
 }
