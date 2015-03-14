@@ -165,13 +165,14 @@ namespace ActionStreetMap.Explorer.Terrain
                     _trace.Debug(LogTag, "Surface region processed: {0}", count);
                 }
 
+            const float deepLevel = 4;
             foreach (var region in cell.Water.FillRegions)
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);
 
                 int count = 0;
-                float deepLevel = 4;
+      
                 iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];
@@ -190,6 +191,11 @@ namespace ActionStreetMap.Explorer.Terrain
                 _trace.Debug(LogTag, "Water region processed: {0}", count);
             }
             _trace.Debug(LogTag, "end FillRegions");
+        }
+
+        private void BuildOffsetShape(MeshRegion region, List<Vector3> vertices, List<Color> colors)
+        {
+            const float deepLevel = 4;
         }
 
         private Color GetColorBySplatId(int id)
