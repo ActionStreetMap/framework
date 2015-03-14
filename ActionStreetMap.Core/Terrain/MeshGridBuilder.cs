@@ -11,6 +11,7 @@ using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.Geometry.Vertex>>;
 
 namespace ActionStreetMap.Core.Terrain
 {
@@ -102,27 +103,40 @@ namespace ActionStreetMap.Core.Terrain
             };
         }
 
-        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Rectangle rectangle, RegionData regionData)
+        private MeshRegion CreateMeshRegions(Polygon polygon, Rectangle rectangle, RegionData regionData)
         {
-            var meshRegions = new List<MeshRegion>();
-            foreach (var path in Clipper.SimplifyPolygons(ClipByRectangle(rectangle, regionData.Shape)))
+            var fillRegions = new List<MeshFillRegion>();
+            var simplifiedPath = Clipper.SimplifyPolygons(ClipByRectangle(rectangle, regionData.Shape));
+            var contours = new VertexPaths(4);
+            var holes = new VertexPaths(2);
+            foreach (var path in simplifiedPath)
             {
                 var orientation = Clipper.Orientation(path);
+                var vertecies = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
                 if (orientation)
                 {
                     var vertex = GetAnyPointInsidePolygon(path);
                     polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
-                    polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
-                    meshRegions.Add(new MeshRegion
+                    polygon.AddContour(vertecies);
+                    fillRegions.Add(new MeshFillRegion
                     {
                         SplatId = regionData.SplatId,
                         Anchor = vertex
                     });
+                    contours.Add(vertecies);
                 }
                 else
-                    polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
+                {
+                    polygon.AddContour(vertecies);
+                    holes.Add(vertecies);
+                }
             }
-            return meshRegions;
+            return new MeshRegion()
+            {
+                Contours = contours,
+                Holes = holes,
+                FillRegions = fillRegions
+            };
         }
 
         private List<MeshRegion> CreateMeshRegions(Polygon polygon, Rectangle rectangle, List<RegionData> regionDatas)
@@ -130,7 +144,7 @@ namespace ActionStreetMap.Core.Terrain
             var meshRegions = new List<MeshRegion>();
             foreach (var regionData in regionDatas)
             {
-                meshRegions.AddRange(CreateMeshRegions(polygon, rectangle, regionData));
+                meshRegions.Add(CreateMeshRegions(polygon, rectangle, regionData));
             }
             return meshRegions;
         }

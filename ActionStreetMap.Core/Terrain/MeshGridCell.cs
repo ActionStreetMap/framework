@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Polygons;
-using ActionStreetMap.Core.Polygons.Geometry;
 
 namespace ActionStreetMap.Core.Terrain
 {
@@ -8,9 +7,10 @@ namespace ActionStreetMap.Core.Terrain
     {
         public Mesh Mesh;
 
-        public List<MeshRegion> Water;
+        public MeshRegion Water;
+        public MeshRegion Roads;
+
         public List<MeshRegion> Surfaces;
-        public List<MeshRegion> Roads;
         public List<MeshRegion> Bridges;
     }
 }

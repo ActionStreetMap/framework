@@ -128,7 +128,7 @@ namespace ActionStreetMap.Explorer.Terrain
             // TODO this should be refactored
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
-            foreach (var region in cell.Roads)
+            foreach (var region in cell.Roads.FillRegions)
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);
@@ -146,25 +146,26 @@ namespace ActionStreetMap.Explorer.Terrain
                 _trace.Debug(LogTag, "Road region processed: {0}", count);
             }
 
-            foreach (var region in cell.Surfaces)
-            {
-                var point = region.Anchor;
-                var start = (Triangle)tree.Query(point.X, point.Y);
-
-                int count = 0;
-                var color = GetColorBySplatId(region.SplatId);
-                iterator.Process(start, triangle =>
+            foreach (var meshRegion in cell.Surfaces)
+                foreach (var fillRegion in meshRegion.FillRegions)
                 {
-                    var index = hashMap[triangle.GetHashCode()];
-                    colors[index] = color;
-                    colors[index + 1] = color;
-                    colors[index + 2] = color;
-                    count++;
-                });
-                _trace.Debug(LogTag, "Surface region processed: {0}", count);
-            }
+                    var point = fillRegion.Anchor;
+                    var start = (Triangle) tree.Query(point.X, point.Y);
 
-            foreach (var region in cell.Water)
+                    int count = 0;
+                    var color = GetColorBySplatId(fillRegion.SplatId);
+                    iterator.Process(start, triangle =>
+                    {
+                        var index = hashMap[triangle.GetHashCode()];
+                        colors[index] = color;
+                        colors[index + 1] = color;
+                        colors[index + 2] = color;
+                        count++;
+                    });
+                    _trace.Debug(LogTag, "Surface region processed: {0}", count);
+                }
+
+            foreach (var region in cell.Water.FillRegions)
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);

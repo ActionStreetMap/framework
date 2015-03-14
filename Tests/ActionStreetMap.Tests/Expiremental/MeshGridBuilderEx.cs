@@ -98,9 +98,9 @@ namespace ActionStreetMap.Tests.Expiremental
             };
         }
 
-        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Paths paths)
+        private List<MeshFillRegion> CreateMeshRegions(Polygon polygon, Paths paths)
         {
-            var meshRegions = new List<MeshRegion>();
+            var meshRegions = new List<MeshFillRegion>();
             foreach (var path in Clipper.SimplifyPolygons(paths))
             {
                 var orientation = Clipper.Orientation(path);
@@ -109,7 +109,7 @@ namespace ActionStreetMap.Tests.Expiremental
                     var vertex = GetAnyPointInsidePolygon(path);
                     polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
                     polygon.AddContour(path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)));
-                    meshRegions.Add(new MeshRegion
+                    meshRegions.Add(new MeshFillRegion
                     {
                         SplatId = 0,
                         Anchor = vertex
