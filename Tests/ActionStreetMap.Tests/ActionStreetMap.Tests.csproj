@@ -58,7 +58,6 @@
     <Compile Include="Core\Scene\RoadGraphTests.cs" />
     <Compile Include="Core\Scene\RoadJunctionUtilsTests.cs" />
     <Compile Include="Core\Tiling\TagCollectionTests.cs" />
-    <Compile Include="Expiremental\MeshGridBuilderEx.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="Explorer\Utils\ResourceProviderTests.cs" />
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />

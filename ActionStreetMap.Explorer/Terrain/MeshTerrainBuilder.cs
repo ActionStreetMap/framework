@@ -116,14 +116,14 @@ namespace ActionStreetMap.Explorer.Terrain
                         hashMap.Add(triangle.GetHashCode(), index);
                     }
 
-                    FillRegions(cell, vertices, colors, hashMap);
+                    FillRegions(tile, cell, vertices, triangles, colors, hashMap);
 
                     var goCell = _gameObjectFactory.CreateNew(String.Format("cell {0}_{1}", i, j), terrainObject);
                     Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, colors));
                 }
         }
 
-        private void FillRegions(MeshGridCell cell, List<Vector3> vertices, List<Color> colors, Dictionary<int, int> hashMap)
+        private void FillRegions(Tile tile, MeshGridCell cell, List<Vector3> vertices, List<int> triangles, List<Color> colors, Dictionary<int, int> hashMap)
         {
             _trace.Debug(LogTag, "start FillRegions");
             // TODO this should be refactored
@@ -166,14 +166,13 @@ namespace ActionStreetMap.Explorer.Terrain
                     _trace.Debug(LogTag, "Surface region processed: {0}", count);
                 }
 
-            const float deepLevel = 4;
+            const float deepLevel = 10;
             foreach (var region in cell.Water.FillRegions)
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);
-
                 int count = 0;
-      
+     
                 iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];
@@ -190,14 +189,59 @@ namespace ActionStreetMap.Explorer.Terrain
                     count++;
                 });
                 _trace.Debug(LogTag, "Water region processed: {0}", count);
+
             }
+            BuildOffsetShape(tile, cell.Water, vertices, triangles, colors);
             _trace.Debug(LogTag, "end FillRegions");
         }
 
-        private void BuildOffsetShape(MeshRegion region, List<Vector3> vertices, List<Color> colors)
+        #region Offset processing
+
+        private void BuildOffsetShape(Tile tile, MeshRegion region, List<Vector3> vertices, List<int> triangles, List<Color> colors)
         {
-            const float deepLevel = 4;
+            const float deepLevel = 10;
+            foreach (var contour in region.Contours)
+            {
+                var length = contour.Count;
+                var vertOffset = vertices.Count;
+                // vertices
+                for (int i = 0; i < length; i++)
+                {
+                    var v2DIndex = i == (length - 1) ? 0 : i + 1;
+
+                    var coord1 = GeoProjection.ToGeoCoordinate(tile.RelativeNullPoint, (float)contour[i].X, (float)contour[i].Y);
+                    var ele1 = _elevationProvider.GetElevation(coord1.Latitude, coord1.Longitude);
+
+                    var coord2 = GeoProjection.ToGeoCoordinate(tile.RelativeNullPoint, (float)contour[v2DIndex].X, (float)contour[v2DIndex].Y);
+                    var ele2 = _elevationProvider.GetElevation(coord2.Latitude, coord2.Longitude);
+
+                    vertices.Add(new Vector3((float)contour[i].X, ele1, (float)contour[i].Y));
+                    vertices.Add(new Vector3((float)contour[v2DIndex].X, ele2, (float)contour[v2DIndex].Y));
+                    vertices.Add(new Vector3((float)contour[v2DIndex].X, ele2 - deepLevel, (float)contour[v2DIndex].Y));
+                    vertices.Add(new Vector3((float)contour[i].X, ele1 - deepLevel, (float)contour[i].Y));
+
+                    colors.Add(Color.magenta);
+                    colors.Add(Color.magenta);
+                    colors.Add(Color.magenta);
+                    colors.Add(Color.magenta);
+                }
+
+                // triangles
+                for (int i = 0; i < length; i++)
+                {
+                    var vIndex = vertOffset + i*4;
+                    triangles.Add(vIndex);
+                    triangles.Add(vIndex + 2);
+                    triangles.Add(vIndex + 1);
+
+                    triangles.Add(vIndex + 3);
+                    triangles.Add(vIndex + 2);
+                    triangles.Add(vIndex + 0);
+                }
+            }
         }
+
+        #endregion
 
         private Color GetColorBySplatId(int id)
         {
