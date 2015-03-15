@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
+using ActionStreetMap.Core.Polygons.Geometry;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
 using ActionStreetMap.Core.Polygons.Tools;
 using ActionStreetMap.Core.Polygons.Topology;
@@ -15,6 +16,7 @@ using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 using Color32 = UnityEngine.Color32;
@@ -30,6 +32,9 @@ namespace ActionStreetMap.Explorer.Terrain
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly ITrace _trace;
         private readonly MeshGridBuilder _meshGridBuilder;
+
+        // TODO make configurable
+        private const float MaxCellSize = 100;
 
         [Dependency]
         public MeshTerrainBuilder(IElevationProvider elevationProvider, IResourceProvider resourceProvider,
@@ -50,8 +55,31 @@ namespace ActionStreetMap.Explorer.Terrain
 
             var terrainObject = _gameObjectFactory.CreateNew("terrain", tile.GameObject);
 
-            var meshGrid = _meshGridBuilder.Build(tile);
-            BuildCells(tile, rule, terrainObject, meshGrid);
+            // detect grid parameters
+            var cellRowCount = (int) Math.Ceiling(tile.Height/MaxCellSize);
+            var cellColumnCount = (int) Math.Ceiling(tile.Width/MaxCellSize);
+            var cellHeight = tile.Height/cellRowCount;
+            var cellWidth = tile.Width/cellColumnCount;
+
+            var contentData = _meshGridBuilder.GetCanvasData(tile);
+            var tasks = new List<IObservable<Unit>>(cellRowCount*cellColumnCount);
+            for (int j = 0; j < cellRowCount; j++)
+                for (int i = 0; i < cellColumnCount; i++)
+                {
+                    var rectangle = new Rectangle(
+                        tile.BottomLeft.X + i*cellWidth,
+                        tile.BottomLeft.Y + j*cellHeight,
+                        cellWidth,
+                        cellHeight);
+                    var name = String.Format("cell {0}_{1}", i, j);
+                    tasks.Add(Observable.Start(() =>
+                    {
+                        var cell = _meshGridBuilder.CreateCell(rectangle, contentData);
+                        BuildCell(tile, rule, terrainObject, cell, name);
+                    }));
+                }
+
+            tasks.WhenAll().Wait();
 
             sw.Stop();
             _trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds);
@@ -59,68 +87,60 @@ namespace ActionStreetMap.Explorer.Terrain
             return terrainObject;
         }
 
-        private void BuildCells(Tile tile, Rule rule, IGameObject terrainObject, MeshGridCell[,] cells)
+        private void BuildCell(Tile tile, Rule rule, IGameObject terrainObject, MeshGridCell cell, string name)
         {
             var relativeNullPoint = tile.RelativeNullPoint;
-            var rowCount = cells.GetLength(0);
-            var columnCount = cells.GetLength(1);
             var gradient = GetGradient();
 
-            for (int j = 0; j < rowCount; j++)
-                for (int i = 0; i < columnCount; i++)
-                {
-                    var cell = cells[i, j];
-                    var terrainMesh = cell.Mesh;
+            var terrainMesh = cell.Mesh;
 
-                    var vertices = new List<Vector3>(terrainMesh.Vertices.Count);
-                    var triangles = new List<int>(terrainMesh.Triangles.Count);
-                    var colors = new List<Color>(terrainMesh.Vertices.Count);
+            var vertices = new List<Vector3>(terrainMesh.Vertices.Count);
+            var triangles = new List<int>(terrainMesh.Triangles.Count);
+            var colors = new List<Color>(terrainMesh.Vertices.Count);
 
-                    var hashMap = new Dictionary<int, int>();
-                    _trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
-                    foreach (var triangle in terrainMesh.Triangles)
-                    {
-                        var p0 = triangle.GetVertex(0);
-                        var coord0 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
-                            new MapPoint((float) p0.X, (float) p0.Y));
-                        var ele0 = _elevationProvider.GetElevation(coord0.Latitude, coord0.Longitude);
-                        //ele0 += elevationNoise.GetValue((float)p0.X, ele0, (float)p0.X);
-                        vertices.Add(new Vector3((float) p0.X, ele0, (float) p0.Y));
+            var hashMap = new Dictionary<int, int>();
+            _trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
+            foreach (var triangle in terrainMesh.Triangles)
+            {
+                var p0 = triangle.GetVertex(0);
+                var coord0 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
+                    new MapPoint((float) p0.X, (float) p0.Y));
+                var ele0 = _elevationProvider.GetElevation(coord0.Latitude, coord0.Longitude);
+                //ele0 += elevationNoise.GetValue((float)p0.X, ele0, (float)p0.X);
+                vertices.Add(new Vector3((float) p0.X, ele0, (float) p0.Y));
 
-                        var p1 = triangle.GetVertex(1);
-                        var coord1 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
-                            new MapPoint((float) p1.X, (float) p1.Y));
-                        var ele1 = _elevationProvider.GetElevation(coord1.Latitude, coord1.Longitude);
-                        //ele1 += elevationNoise.GetValue((float)p1.X, ele1, (float)p1.X);
-                        vertices.Add(new Vector3((float) p1.X, ele1, (float) p1.Y));
+                var p1 = triangle.GetVertex(1);
+                var coord1 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
+                    new MapPoint((float) p1.X, (float) p1.Y));
+                var ele1 = _elevationProvider.GetElevation(coord1.Latitude, coord1.Longitude);
+                //ele1 += elevationNoise.GetValue((float)p1.X, ele1, (float)p1.X);
+                vertices.Add(new Vector3((float) p1.X, ele1, (float) p1.Y));
 
-                        var p2 = triangle.GetVertex(2);
-                        var coord2 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
-                            new MapPoint((float) p2.X, (float) p2.Y));
-                        var ele2 = _elevationProvider.GetElevation(coord2.Latitude, coord2.Longitude);
-                        //ele2 += elevationNoise.GetValue((float) p2.X, ele2, (float) p2.X);
-                        vertices.Add(new Vector3((float) p2.X, ele2, (float) p2.Y));
+                var p2 = triangle.GetVertex(2);
+                var coord2 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
+                    new MapPoint((float) p2.X, (float) p2.Y));
+                var ele2 = _elevationProvider.GetElevation(coord2.Latitude, coord2.Longitude);
+                //ele2 += elevationNoise.GetValue((float) p2.X, ele2, (float) p2.X);
+                vertices.Add(new Vector3((float) p2.X, ele2, (float) p2.Y));
 
-                        var index = vertices.Count;
-                        triangles.Add(--index);
-                        triangles.Add(--index);
-                        triangles.Add(--index);
+                var index = vertices.Count;
+                triangles.Add(--index);
+                triangles.Add(--index);
+                triangles.Add(--index);
 
-                        var firstValue = (Noise.Perlin3D(new Vector3((float)p0.X, ele0, (float)p0.Y), 0.2f) + 1f) / 2f;
-                        var triangleColor = gradient.Evaluate(firstValue);
+                var firstValue = (Noise.Perlin3D(new Vector3((float) p0.X, ele0, (float) p0.Y), 0.2f) + 1f)/2f;
+                var triangleColor = gradient.Evaluate(firstValue);
 
-                        colors.Add(triangleColor);
-                        colors.Add(triangleColor);
-                        colors.Add(triangleColor);
+                colors.Add(triangleColor);
+                colors.Add(triangleColor);
+                colors.Add(triangleColor);
 
-                        hashMap.Add(triangle.GetHashCode(), index);
-                    }
+                hashMap.Add(triangle.GetHashCode(), index);
+            }
+            FillRegions(tile, cell, vertices, triangles, colors, hashMap);
 
-                    FillRegions(tile, cell, vertices, triangles, colors, hashMap);
-
-                    var goCell = _gameObjectFactory.CreateNew(String.Format("cell {0}_{1}", i, j), terrainObject);
-                    Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, colors));
-                }
+            var goCell = _gameObjectFactory.CreateNew(name, terrainObject);
+            Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, colors));
         }
 
         private void FillRegions(Tile tile, MeshGridCell cell, List<Vector3> vertices, List<int> triangles, List<Color> colors, Dictionary<int, int> hashMap)

@@ -10,6 +10,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Utilities;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.Geometry.Vertex>>;
@@ -20,9 +21,8 @@ namespace ActionStreetMap.Core.Terrain
     {
         private const string LogTag = "mesh.tile";
         private const float Scale = 10000f;
+        private readonly object _lock = new object();
 
-        // TODO make configurable
-        private const float MaxCellSize = 100;
         private const float MaximumArea = 10;
 
         private readonly ITrace _trace;
@@ -30,38 +30,11 @@ namespace ActionStreetMap.Core.Terrain
         public MeshGridBuilder(ITrace trace)
         {
             _trace = trace;
-        }
-
-        public MeshGridCell[,] Build(Tile tile)
-        {
-            // get original objects in tile
-            var contentData = GetCanvasData(tile);
-
-            // detect grid parameters
-            var cellRowCount = (int) Math.Ceiling(tile.Height/MaxCellSize);
-            var cellColumnCount = (int) Math.Ceiling(tile.Width/MaxCellSize);
-            var cellHeight = tile.Height/cellRowCount;
-            var cellWidth = tile.Width/cellColumnCount;
-
-            var cells = new MeshGridCell[cellRowCount, cellColumnCount];
-            for (int j = 0; j < cellRowCount; j++)
-                for (int i = 0; i < cellColumnCount; i++)
-                {
-                    var rectangle = new Rectangle(
-                        tile.BottomLeft.X + i*cellWidth,
-                        tile.BottomLeft.Y + j*cellHeight,
-                        cellWidth,
-                        cellHeight);
-
-                    cells[j, i] = CreateCell(rectangle, contentData);
-                }
-
-            return cells;
-        }
+        }     
 
         #region Grid
 
-        private CanvasData GetCanvasData(Tile tile)
+        public CanvasData GetCanvasData(Tile tile)
         {
             var water = BuildWater(tile);
             var roads = BuildRoads(tile, water);
@@ -76,12 +49,12 @@ namespace ActionStreetMap.Core.Terrain
             };
         }
 
-        private MeshGridCell CreateCell(Rectangle rectangle, CanvasData content)
+        public MeshGridCell CreateCell(Rectangle rectangle, CanvasData content)
         {
             // build polygon
             var polygon = new Polygon();
             var options = new ConstraintOptions {UseRegions = true};
-            var quality = new QualityOptions {MaximumArea = MaximumArea};
+            var quality = new QualityOptions { MaximumArea = MaximumArea };
             polygon.AddContour(new Collection<Vertex>
             {
                 new Vertex(rectangle.Left, rectangle.Bottom),
@@ -96,7 +69,11 @@ namespace ActionStreetMap.Core.Terrain
             var resultWalkRoads = CreateMeshRegions(polygon, rectangle, content.WalkRoads);
             var resultSurface = CreateMeshRegions(polygon, rectangle, content.Surfaces);
 
-            var mesh = polygon.Triangulate(options, quality);
+            Mesh mesh;
+            lock (_lock)
+            {
+                mesh = polygon.Triangulate(options, quality);
+            }
             return new MeshGridCell
             {
                 Mesh = mesh,
@@ -425,7 +402,7 @@ namespace ActionStreetMap.Core.Terrain
 
         #region Nested classes
 
-        private class CanvasData
+        internal class CanvasData
         {
             public RegionData Water;
             public List<RegionData> Surfaces;
@@ -433,7 +410,7 @@ namespace ActionStreetMap.Core.Terrain
             public RegionData WalkRoads;
         }
 
-        private class RegionData
+        internal class RegionData
         {
             public int SplatId;
             public Paths Shape;

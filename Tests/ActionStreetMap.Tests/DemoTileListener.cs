@@ -50,25 +50,6 @@ namespace ActionStreetMap.Tests
             GC.Collect();
             _logger.Report("DemoTileListener.OnTileBuildFinished: after GC");
             _stopwatch.Reset();
-            
-            VisualizeTile(tile);
-        }
-
-        private void VisualizeTile(Tile tile)
-        {
-            var gridBuilder = new MeshGridBuilder(new ConsoleTrace());
-            var cells = gridBuilder.Build(tile);
-
-            var rowCount = cells.GetLength(0);
-            var columnCount = cells.GetLength(1);
-            var scale = 10000;
-            for (int j = 0; j < rowCount; j++)
-                for (int i = 0; i < columnCount; i++)
-                {
-                    var cell = cells[i, j];
-                    var polygon = cell.CarRoads.Contours.Select(c => c.Select(v => new IntPoint(v.X*scale, v.Y*scale)).ToList()).ToList();
-                    SVGBuilder.SaveToFile(polygon, String.Format("cell_{0}_{1}.svg", i, j), 0.005);
-                }
         }
     }
 }
