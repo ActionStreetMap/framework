@@ -31,7 +31,7 @@ namespace ActionStreetMap.Explorer.Terrain
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly ITrace _trace;
-        private readonly MeshGridBuilder _meshGridBuilder;
+        private readonly MeshCellBuilder _meshCellBuilder;
 
         // TODO make configurable
         private const float MaxCellSize = 100;
@@ -44,7 +44,7 @@ namespace ActionStreetMap.Explorer.Terrain
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
             _trace = trace;
-            _meshGridBuilder = new MeshGridBuilder(trace);
+            _meshCellBuilder = new MeshCellBuilder(trace);
         }
 
         public IGameObject Build(Tile tile, Rule rule)
@@ -61,7 +61,7 @@ namespace ActionStreetMap.Explorer.Terrain
             var cellHeight = tile.Height/cellRowCount;
             var cellWidth = tile.Width/cellColumnCount;
 
-            var contentData = _meshGridBuilder.GetCanvasData(tile);
+            var contentData = _meshCellBuilder.GetCanvasData(tile);
             var tasks = new List<IObservable<Unit>>(cellRowCount*cellColumnCount);
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
@@ -74,7 +74,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     var name = String.Format("cell {0}_{1}", i, j);
                     tasks.Add(Observable.Start(() =>
                     {
-                        var cell = _meshGridBuilder.CreateCell(rectangle, contentData);
+                        var cell = _meshCellBuilder.CreateCell(rectangle, contentData);
                         BuildCell(tile, rule, terrainObject, cell, name);
                     }));
                 }
@@ -87,7 +87,7 @@ namespace ActionStreetMap.Explorer.Terrain
             return terrainObject;
         }
 
-        private void BuildCell(Tile tile, Rule rule, IGameObject terrainObject, MeshGridCell cell, string name)
+        private void BuildCell(Tile tile, Rule rule, IGameObject terrainObject, MeshCell cell, string name)
         {
             var relativeNullPoint = tile.RelativeNullPoint;
             var gradient = GetGradient();
@@ -143,7 +143,7 @@ namespace ActionStreetMap.Explorer.Terrain
             Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, colors));
         }
 
-        private void FillRegions(Tile tile, MeshGridCell cell, List<Vector3> vertices, List<int> triangles, List<Color> colors, Dictionary<int, int> hashMap)
+        private void FillRegions(Tile tile, MeshCell cell, List<Vector3> vertices, List<int> triangles, List<Color> colors, Dictionary<int, int> hashMap)
         {
             _trace.Debug(LogTag, "start FillRegions");
             // TODO this should be refactored

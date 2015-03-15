@@ -3,7 +3,7 @@ using ActionStreetMap.Core.Polygons;
 
 namespace ActionStreetMap.Core.Terrain
 {
-    internal class MeshGridCell
+    internal class MeshCell
     {
         public Mesh Mesh;
 

@@ -124,7 +124,9 @@
     <Compile Include="Positioning\Nmea\RMC.cs" />
     <Compile Include="Scene\Details\Surface.cs" />
     <Compile Include="Scene\Details\Tree.cs" />
-    <Compile Include="Terrain\MeshFillRegion.cs" />
+    <Compile Include="Terrain\MeshCanvas.cs" />
+    <Compile Include="Terrain\MeshCanvasBuilder.cs" />
+    <Compile Include="Terrain\MeshRegion.cs" />
     <Compile Include="Tiling\Models\Relation.cs" />
     <Compile Include="Scene\Roads\RoadGraph.cs" />
     <Compile Include="Scene\Roads\RoadGraphBuilder.cs" />
@@ -133,8 +135,8 @@
     <Compile Include="Scene\Roads\RoadType.cs" />
     <Compile Include="Scene\Roads\TrafficLight.cs" />
     <Compile Include="Tiling\Models\TagCollection.cs" />
-    <Compile Include="Terrain\MeshGridCell.cs" />
-    <Compile Include="Terrain\MeshGridBuilder.cs" />
+    <Compile Include="Terrain\MeshCell.cs" />
+    <Compile Include="Terrain\MeshCellBuilder.cs" />
     <Compile Include="Utilities\RandomUtils.cs" />
     <Compile Include="Utilities\GeoProjection.cs" />
     <Compile Include="BoundingBox.cs" />
