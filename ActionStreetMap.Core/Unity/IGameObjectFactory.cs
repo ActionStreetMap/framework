@@ -16,11 +16,5 @@ namespace ActionStreetMap.Core.Unity
         /// <param name="parent">Parent.</param>
         /// <returns>Game object wrapper.</returns>
         IGameObject CreateNew(string name, IGameObject parent);
-
-        /// <summary> Wraps existing Unity's game object. </summary>
-        /// <param name="name">Name.</param>
-        /// <param name="gameObject">Unity's GameObject.</param>
-        /// <returns>Game object wrapper.</returns>
-        IGameObject Wrap(string name, object gameObject);
     }
 }

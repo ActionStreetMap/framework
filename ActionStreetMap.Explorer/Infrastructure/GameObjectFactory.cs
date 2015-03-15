@@ -32,16 +32,5 @@ namespace ActionStreetMap.Explorer.Infrastructure
 
             return go;
         }
-
-        /// <inheritdoc />
-        public IGameObject Wrap(string name, object gameObject)
-        {
-            var instance = gameObject as GameObject;
-            if(instance == null)
-                throw new ArgumentException(
-                    String.Format("Unable to wrap {0}. Expecting UnityEngine.GameObject", gameObject), "gameObject");
-
-            return new UnityGameObject(name, instance);
-        }
     }
 }

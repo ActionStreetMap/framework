@@ -18,17 +18,6 @@ namespace ActionStreetMap.Explorer.Infrastructure
             _name = name;
         }
 
-        /// <summary> Creates UnityGameObject. </summary>
-        /// <param name="name">Name.</param>
-        /// <param name="gameObject">GameObject to be wrapperd.</param>
-        public UnityGameObject(string name, GameObject gameObject)
-        {
-            _gameObject = gameObject;
-            if (!string.IsNullOrEmpty(name))
-                gameObject.name = name;
-            _name = name;
-        }
-
         /// <inheritdoc />
         public T AddComponent<T>(T component)
         {
@@ -65,14 +54,21 @@ namespace ActionStreetMap.Explorer.Infrastructure
         {
             set
             {
-                Scheduler.MainThread.Schedule(
-                    () => { (_gameObject as GameObject).transform.parent = value.GetComponent<GameObject>().transform; });
+                Scheduler.MainThread.Schedule(() =>
+                {
+                    if (IsEmpty)
+                        throw new InvalidOperationException("Propery setter: parent cannot be set for empty object: " + Name);
+                    (_gameObject as GameObject).transform.parent = value.GetComponent<GameObject>().transform;
+                });
             }
         }
 
         /// <summary>  Sets parent on current thread. </summary>
         internal void SetParent(IGameObject parent)
         {
+            if (IsEmpty)
+                throw new InvalidOperationException("SetParent: parent cannot be set for empty object: " + Name);
+
             (_gameObject as GameObject).transform.parent = parent.GetComponent<GameObject>().transform;
         }
     }
