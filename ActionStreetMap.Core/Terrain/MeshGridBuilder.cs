@@ -9,6 +9,7 @@ using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Reactive;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.Geometry.Vertex>>;
@@ -64,12 +65,13 @@ namespace ActionStreetMap.Core.Terrain
         {
             var water = BuildWater(tile);
             var roads = BuildRoads(tile, water);
-            var surfaces = BuildSurfaces(tile, water, roads);
+            var surfaces = BuildSurfaces(tile, water, roads.Item1, roads.Item2);
 
             return new CanvasData
             {
                 Water = water,
-                Roads = roads,
+                CarRoads = roads.Item1,
+                WalkRoads = roads.Item2,
                 Surfaces = surfaces
             };
         }
@@ -90,7 +92,8 @@ namespace ActionStreetMap.Core.Terrain
 
             // NOTE the order of operation is important
             var water = CreateMeshRegions(polygon, rectangle, content.Water);
-            var resultRoads = CreateMeshRegions(polygon, rectangle, content.Roads);
+            var resultCarRoads = CreateMeshRegions(polygon, rectangle, content.CarRoads);
+            var resultWalkRoads = CreateMeshRegions(polygon, rectangle, content.WalkRoads);
             var resultSurface = CreateMeshRegions(polygon, rectangle, content.Surfaces);
 
             var mesh = polygon.Triangulate(options, quality);
@@ -98,7 +101,8 @@ namespace ActionStreetMap.Core.Terrain
             {
                 Mesh = mesh,
                 Water = water,
-                Roads = resultRoads,
+                CarRoads = resultCarRoads,
+                WalkRoads = resultWalkRoads,
                 Surfaces = resultSurface
             };
         }
@@ -287,7 +291,7 @@ namespace ActionStreetMap.Core.Terrain
             };
         }
 
-        private static List<RegionData> BuildSurfaces(Tile tile, RegionData water, RegionData roads)
+        private static List<RegionData> BuildSurfaces(Tile tile, RegionData water, RegionData carRoads, RegionData walkRoads)
         {
             var regions = new List<RegionData>();
             foreach (var group in tile.Canvas.Areas.GroupBy(s => s.SplatIndex))
@@ -301,7 +305,8 @@ namespace ActionStreetMap.Core.Terrain
                 clipper.Execute(ClipType.ctUnion, surfacesUnion, PolyFillType.pftPositive, PolyFillType.pftPositive);
 
                 clipper.Clear();
-                clipper.AddPaths(roads.Shape, PolyType.ptClip, true);
+                clipper.AddPaths(carRoads.Shape, PolyType.ptClip, true);
+                clipper.AddPaths(walkRoads.Shape, PolyType.ptClip, true);
                 clipper.AddPaths(water.Shape, PolyType.ptClip, true);
                 clipper.AddPaths(regions.SelectMany(r => r.Shape).ToList(), PolyType.ptClip, true);
                 clipper.AddPaths(surfacesUnion, PolyType.ptSubject, true);
@@ -317,27 +322,59 @@ namespace ActionStreetMap.Core.Terrain
             return regions;
         }
 
-        private static RegionData BuildRoads(Tile tile, RegionData water)
-        {
-            var carRoads = GetOffsetSolution(BuildRoadMap(
-                tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
+        //private static RegionData BuildCarRoads(Tile tile, RegionData water)
+        //{
+        //    var carRoads = GetOffsetSolution(BuildRoadMap(
+        //        tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
 
-            var walkRoads = GetOffsetSolution(BuildRoadMap(
-                tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
+        //    var walkRoads = GetOffsetSolution(BuildRoadMap(
+        //        tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
+
+        //    var clipper = new Clipper();
+        //    clipper.AddPaths(carRoads, PolyType.ptClip, true);
+        //    clipper.AddPaths(walkRoads, PolyType.ptSubject, true);
+
+        //    var extrudedWalkRoads = new Paths();
+        //    clipper.Execute(ClipType.ctDifference, extrudedWalkRoads);
+
+        //    // clip by water
+        //    // TODO detect bridges!
+        //    clipper.Clear();
+        //    var resultRoads = new Paths();
+        //    clipper.AddPaths(water.Shape, PolyType.ptClip, true);
+        //    clipper.AddPaths(extrudedWalkRoads, PolyType.ptSubject, true);
+        //    clipper.Execute(ClipType.ctDifference, resultRoads, PolyFillType.pftPositive, PolyFillType.pftPositive);
+
+        //    return new RegionData
+        //    {
+        //        SplatId = 0,
+        //        Shape = ClipByTile(tile, resultRoads)
+        //    };
+        //}
+
+
+        private static Tuple<RegionData,RegionData> BuildRoads(Tile tile, RegionData water)
+        {
+            var carRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
+            var walkRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
 
             var clipper = new Clipper();
             clipper.AddPaths(carRoads, PolyType.ptClip, true);
             clipper.AddPaths(walkRoads, PolyType.ptSubject, true);
+            var extrudedWalkRoads = new Paths();
+            clipper.Execute(ClipType.ctDifference, extrudedWalkRoads);
 
-            var roads = new Paths();
-            clipper.Execute(ClipType.ctUnion, roads, PolyFillType.pftPositive, PolyFillType.pftPositive);
+            return new Tuple<RegionData, RegionData>(
+                CreateRoadRegionData(tile, water, carRoads),
+                CreateRoadRegionData(tile, water, extrudedWalkRoads));
+        }
 
-            // clip by water
-            // TODO detect bridges!
-            clipper.Clear();
+        private static RegionData CreateRoadRegionData(Tile tile, RegionData water, Paths subject)
+        {
+            var clipper = new Clipper();
             var resultRoads = new Paths();
             clipper.AddPaths(water.Shape, PolyType.ptClip, true);
-            clipper.AddPaths(roads, PolyType.ptSubject, true);
+            clipper.AddPaths(subject, PolyType.ptSubject, true);
             clipper.Execute(ClipType.ctDifference, resultRoads, PolyFillType.pftPositive, PolyFillType.pftPositive);
 
             return new RegionData
@@ -392,7 +429,8 @@ namespace ActionStreetMap.Core.Terrain
         {
             public RegionData Water;
             public List<RegionData> Surfaces;
-            public RegionData Roads;
+            public RegionData CarRoads;
+            public RegionData WalkRoads;
         }
 
         private class RegionData

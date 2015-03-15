@@ -130,7 +130,7 @@ namespace ActionStreetMap.Explorer.Terrain
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
             var roadDeepLevel = 0.2f;
-            foreach (var region in cell.Roads.FillRegions)
+            foreach (var region in cell.CarRoads.FillRegions)
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);
@@ -156,7 +156,27 @@ namespace ActionStreetMap.Explorer.Terrain
 
                     count++;
                 });
-                _trace.Debug(LogTag, "Road region processed: {0}", count);
+                _trace.Debug(LogTag, "Car road region processed: {0}", count);
+            }
+
+            foreach (var region in cell.WalkRoads.FillRegions)
+            {
+                var point = region.Anchor;
+                var start = (Triangle)tree.Query(point.X, point.Y);
+
+                int count = 0;
+                var color = Color.yellow;
+
+                iterator.Process(start, triangle =>
+                {
+                    var index = hashMap[triangle.GetHashCode()];
+                    colors[index] = color;
+                    colors[index + 1] = color;
+                    colors[index + 2] = color;
+
+                    count++;
+                });
+                _trace.Debug(LogTag, "Walk road region processed: {0}", count);
             }
 
             foreach (var meshRegion in cell.Surfaces)
@@ -204,7 +224,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
             }
             BuildOffsetShape(tile, cell.Water, vertices, triangles, colors, waterDeepLevel);
-            BuildOffsetShape(tile, cell.Roads, vertices, triangles, colors, roadDeepLevel);
+            BuildOffsetShape(tile, cell.CarRoads, vertices, triangles, colors, roadDeepLevel);
             _trace.Debug(LogTag, "end FillRegions");
         }
 

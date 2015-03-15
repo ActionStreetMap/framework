@@ -8,7 +8,9 @@ namespace ActionStreetMap.Core.Terrain
         public Mesh Mesh;
 
         public MeshRegion Water;
-        public MeshRegion Roads;
+
+        public MeshRegion CarRoads;
+        public MeshRegion WalkRoads;
 
         public List<MeshRegion> Surfaces;
         public List<MeshRegion> Bridges;
