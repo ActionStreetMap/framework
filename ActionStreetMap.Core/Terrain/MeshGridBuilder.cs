@@ -112,24 +112,27 @@ namespace ActionStreetMap.Core.Terrain
             foreach (var path in simplifiedPath)
             {
                 var orientation = Clipper.Orientation(path);
-                var vertecies = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
+                var vertices = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
                 if (orientation)
                 {
                     var vertex = GetAnyPointInsidePolygon(path);
                     polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
-                    polygon.AddContour(vertecies);
+                    polygon.AddContour(vertices);
                     fillRegions.Add(new MeshFillRegion
                     {
                         SplatId = regionData.SplatId,
                         Anchor = vertex
                     });
-                    contours.Add(vertecies);
+                    contours.AddRange(GetContour(rectangle, path));
                 }
                 else
                 {
-                    polygon.AddContour(vertecies);
-                    holes.Add(vertecies);
+                    polygon.AddContour(vertices);
+                    var ggg = GetContour(rectangle, path);
+                    ggg.ForEach(g => g.Reverse());
+                    contours.AddRange(ggg);
                 }
+                
             }
             return new MeshRegion()
             {
@@ -137,6 +140,42 @@ namespace ActionStreetMap.Core.Terrain
                 Holes = holes,
                 FillRegions = fillRegions
             };
+        }
+
+        private VertexPaths GetContour(Rectangle rect, Path path)
+        {
+            ClipperOffset offset = new ClipperOffset();
+            offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
+            var offsetPath = new Paths();
+            offset.Execute(ref offsetPath, 10);
+
+            var intRect = new Path
+            {
+                new IntPoint(rect.Left*Scale, rect.Bottom*Scale),
+                new IntPoint(rect.Right*Scale, rect.Bottom*Scale),
+                new IntPoint(rect.Right*Scale, rect.Top*Scale),
+                new IntPoint(rect.Left*Scale, rect.Top*Scale)
+            };
+
+            offset.Clear();
+            offset.AddPath(intRect, JoinType.jtMiter, EndType.etClosedLine);
+            var offsetRect = new Paths();
+            offset.Execute(ref offsetRect, 10);
+
+            var clipper = new Clipper();
+            clipper.AddPaths(offsetPath, PolyType.ptSubject, true);
+            clipper.AddPaths(offsetRect, PolyType.ptClip, true);
+            var ggg = new Paths();
+            clipper.Execute(ClipType.ctDifference, ggg, PolyFillType.pftPositive, PolyFillType.pftEvenOdd);
+
+            clipper.Clear();
+            clipper.AddPaths(ggg, PolyType.ptSubject, true);
+            clipper.AddPath(intRect, PolyType.ptClip, true);
+
+            var solution = new Paths();
+            clipper.Execute(ClipType.ctIntersection, solution);
+
+            return solution.Select(c => c.Select(p => new Vertex(p.X / Scale, p.Y / Scale)).ToList()).ToList();
         }
 
         private List<MeshRegion> CreateMeshRegions(Polygon polygon, Rectangle rectangle, List<RegionData> regionDatas)
@@ -204,10 +243,22 @@ namespace ActionStreetMap.Core.Terrain
                 subjects);
         }
 
+        private static Paths ClipByRectangle(Rectangle rect, Path subject)
+        {
+            var clipper = new Clipper();
+            clipper.AddPath(subject, PolyType.ptSubject, true);
+            return ClipByRectangle(rect, clipper);
+        }
+
         private static Paths ClipByRectangle(Rectangle rect, Paths subjects)
         {
             var clipper = new Clipper();
             clipper.AddPaths(subjects, PolyType.ptSubject, true);
+            return ClipByRectangle(rect, clipper);
+        }
+
+        private static Paths ClipByRectangle(Rectangle rect, Clipper clipper)
+        {
             clipper.AddPath(new Path
             {
                 new IntPoint(rect.Left*Scale, rect.Bottom*Scale),

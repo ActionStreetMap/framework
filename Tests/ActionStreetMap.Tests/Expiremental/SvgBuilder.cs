@@ -37,7 +37,7 @@ namespace ActionStreetMap.Tests.Expiremental
                 dashArray = null;
                 penClr = Color.Black;
                 penWidth = 0.8;
-                showCoords = false;
+                showCoords = true;
             }
         }
 

@@ -129,6 +129,7 @@ namespace ActionStreetMap.Explorer.Terrain
             // TODO this should be refactored
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
+            var roadDeepLevel = 0.2f;
             foreach (var region in cell.Roads.FillRegions)
             {
                 var point = region.Anchor;
@@ -136,12 +137,23 @@ namespace ActionStreetMap.Explorer.Terrain
 
                 int count = 0;
                 var color = Color.red;
+   
                 iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];
                     colors[index] = color;
                     colors[index + 1] = color;
                     colors[index + 2] = color;
+
+                    var p1 = vertices[index];
+                    vertices[index] = new Vector3(p1.x, p1.y - roadDeepLevel, p1.z);
+
+                    var p2 = vertices[index + 1];
+                    vertices[index + 1] = new Vector3(p2.x, p2.y - roadDeepLevel, p2.z);
+
+                    var p3 = vertices[index + 2];
+                    vertices[index + 2] = new Vector3(p3.x, p3.y - roadDeepLevel, p3.z);
+
                     count++;
                 });
                 _trace.Debug(LogTag, "Road region processed: {0}", count);
@@ -166,7 +178,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     _trace.Debug(LogTag, "Surface region processed: {0}", count);
                 }
 
-            const float deepLevel = 10;
+            const float waterDeepLevel = 5;
             foreach (var region in cell.Water.FillRegions)
             {
                 var point = region.Anchor;
@@ -178,28 +190,28 @@ namespace ActionStreetMap.Explorer.Terrain
                     var index = hashMap[triangle.GetHashCode()];
 
                     var p1 = vertices[index];
-                    vertices[index] = new Vector3(p1.x, p1.y - deepLevel, p1.z);
+                    vertices[index] = new Vector3(p1.x, p1.y - waterDeepLevel, p1.z);
 
                     var p2 = vertices[index+1];
-                    vertices[index + 1] = new Vector3(p2.x, p2.y - deepLevel, p2.z);
+                    vertices[index + 1] = new Vector3(p2.x, p2.y - waterDeepLevel, p2.z);
 
                     var p3 = vertices[index+2];
-                    vertices[index + 2] = new Vector3(p3.x, p3.y - deepLevel, p3.z);
+                    vertices[index + 2] = new Vector3(p3.x, p3.y - waterDeepLevel, p3.z);
 
                     count++;
                 });
                 _trace.Debug(LogTag, "Water region processed: {0}", count);
 
             }
-            BuildOffsetShape(tile, cell.Water, vertices, triangles, colors);
+            BuildOffsetShape(tile, cell.Water, vertices, triangles, colors, waterDeepLevel);
+            BuildOffsetShape(tile, cell.Roads, vertices, triangles, colors, roadDeepLevel);
             _trace.Debug(LogTag, "end FillRegions");
         }
 
         #region Offset processing
 
-        private void BuildOffsetShape(Tile tile, MeshRegion region, List<Vector3> vertices, List<int> triangles, List<Color> colors)
+        private void BuildOffsetShape(Tile tile, MeshRegion region, List<Vector3> vertices, List<int> triangles, List<Color> colors, float deepLevel)
         {
-            const float deepLevel = 10;
             foreach (var contour in region.Contours)
             {
                 var length = contour.Count;

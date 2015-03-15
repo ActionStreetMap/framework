@@ -66,7 +66,7 @@ namespace ActionStreetMap.Tests
                 for (int i = 0; i < columnCount; i++)
                 {
                     var cell = cells[i, j];
-                    var polygon = cell.Water.Contours.Select(c => c.Select(v => new IntPoint(v.X*scale, v.Y*scale)).ToList()).ToList();
+                    var polygon = cell.Roads.Contours.Select(c => c.Select(v => new IntPoint(v.X*scale, v.Y*scale)).ToList()).ToList();
                     SVGBuilder.SaveToFile(polygon, String.Format("cell_{0}_{1}.svg", i, j), 0.005);
                 }
         }
