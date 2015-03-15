@@ -13,43 +13,44 @@ using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Utils;
+using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 using Color32 = UnityEngine.Color32;
 
 namespace ActionStreetMap.Explorer.Terrain
 {
-    internal class MeshTerrainBuilder : ITerrainBuilder
+    internal class MeshTerrainBuilder : ITerrainBuilder, IConfigurable
     {
         private const string LogTag = "mesh.terrain";
 
         private readonly IElevationProvider _elevationProvider;
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
-        private readonly ITrace _trace;
         private readonly MeshCellBuilder _meshCellBuilder;
+
+        [Dependency]
+        public ITrace Trace { get; set; }
 
         // TODO make configurable
         private const float MaxCellSize = 100;
 
         [Dependency]
         public MeshTerrainBuilder(IElevationProvider elevationProvider, IResourceProvider resourceProvider,
-            IGameObjectFactory gameObjectFactory, ITrace trace)
+            IGameObjectFactory gameObjectFactory)
         {
             _elevationProvider = elevationProvider;
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
-            _trace = trace;
-            _meshCellBuilder = new MeshCellBuilder(trace);
+            _meshCellBuilder = new MeshCellBuilder();
         }
 
         public IGameObject Build(Tile tile, Rule rule)
         {
-            _trace.Debug(LogTag, "started to build terrain");
+            Trace.Debug(LogTag, "started to build terrain");
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
@@ -61,7 +62,13 @@ namespace ActionStreetMap.Explorer.Terrain
             var cellHeight = tile.Height/cellRowCount;
             var cellWidth = tile.Width/cellColumnCount;
 
-            var contentData = _meshCellBuilder.GetCanvasData(tile);
+            var meshCanvasBuilder = new MeshCanvasBuilder();
+
+            var contentData = meshCanvasBuilder
+                .SetTile(tile)
+                .SetScale(MeshCellBuilder.Scale)
+                .Build();
+                
             var tasks = new List<IObservable<Unit>>(cellRowCount*cellColumnCount);
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
@@ -82,7 +89,7 @@ namespace ActionStreetMap.Explorer.Terrain
             tasks.WhenAll().Wait();
 
             sw.Stop();
-            _trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds);
+            Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds);
 
             return terrainObject;
         }
@@ -99,7 +106,7 @@ namespace ActionStreetMap.Explorer.Terrain
             var colors = new List<Color>(terrainMesh.Vertices.Count);
 
             var hashMap = new Dictionary<int, int>();
-            _trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
+            Trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
             foreach (var triangle in terrainMesh.Triangles)
             {
                 var p0 = triangle.GetVertex(0);
@@ -145,7 +152,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         private void FillRegions(Tile tile, MeshCell cell, List<Vector3> vertices, List<int> triangles, List<Color> colors, Dictionary<int, int> hashMap)
         {
-            _trace.Debug(LogTag, "start FillRegions");
+            Trace.Debug(LogTag, "start FillRegions");
             // TODO this should be refactored
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
@@ -176,7 +183,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
                     count++;
                 });
-                _trace.Debug(LogTag, "Car road region processed: {0}", count);
+                Trace.Debug(LogTag, "Car road region processed: {0}", count);
             }
 
             foreach (var region in cell.WalkRoads.FillRegions)
@@ -196,7 +203,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
                     count++;
                 });
-                _trace.Debug(LogTag, "Walk road region processed: {0}", count);
+                Trace.Debug(LogTag, "Walk road region processed: {0}", count);
             }
 
             foreach (var meshRegion in cell.Surfaces)
@@ -215,7 +222,7 @@ namespace ActionStreetMap.Explorer.Terrain
                         colors[index + 2] = color;
                         count++;
                     });
-                    _trace.Debug(LogTag, "Surface region processed: {0}", count);
+                    Trace.Debug(LogTag, "Surface region processed: {0}", count);
                 }
 
             const float waterDeepLevel = 5;
@@ -240,12 +247,12 @@ namespace ActionStreetMap.Explorer.Terrain
 
                     count++;
                 });
-                _trace.Debug(LogTag, "Water region processed: {0}", count);
+                Trace.Debug(LogTag, "Water region processed: {0}", count);
 
             }
             BuildOffsetShape(tile, cell.Water, vertices, triangles, colors, waterDeepLevel);
             BuildOffsetShape(tile, cell.CarRoads, vertices, triangles, colors, roadDeepLevel);
-            _trace.Debug(LogTag, "end FillRegions");
+            Trace.Debug(LogTag, "end FillRegions");
         }
 
         #region Offset processing
@@ -348,6 +355,11 @@ namespace ActionStreetMap.Explorer.Terrain
             gak[1].Time = 1.0f;
 
             return new GradientWrapper(gck, gak);
+        }
+
+        public void Configure(IConfigSection configSection)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -14,27 +14,19 @@ namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshCellBuilder
     {
-        private const string LogTag = "mesh.tile";
-        private const float Scale = 10000f;
+        internal const float Scale = 10000f;
+        private float _maximumArea = 10;
+
         private readonly object _lock = new object();
 
-        private const float MaximumArea = 10;
-
-        private readonly ITrace _trace;
-
-        public MeshCellBuilder(ITrace trace)
-        {
-            _trace = trace;
-        }
-
-        #region Grid
+        #region Public methods
 
         public MeshCell CreateCell(Rectangle rectangle, MeshCanvas content)
         {
             // build polygon
             var polygon = new Polygon();
             var options = new ConstraintOptions {UseRegions = true};
-            var quality = new QualityOptions {MaximumArea = MaximumArea};
+            var quality = new QualityOptions {MaximumArea = _maximumArea};
             polygon.AddContour(new Collection<Vertex>
             {
                 new Vertex(rectangle.Left, rectangle.Bottom),
@@ -50,10 +42,12 @@ namespace ActionStreetMap.Core.Terrain
             var resultSurface = CreateMeshRegions(polygon, rectangle, content.Surfaces);
 
             Mesh mesh;
+            // NOTE this operation is not thread safe
             lock (_lock)
             {
                 mesh = polygon.Triangulate(options, quality);
             }
+
             return new MeshCell
             {
                 Mesh = mesh,
@@ -62,6 +56,16 @@ namespace ActionStreetMap.Core.Terrain
                 WalkRoads = resultWalkRoads,
                 Surfaces = resultSurface
             };
+        }
+
+        #endregion
+
+        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Rectangle rectangle, List<MeshCanvas.Region> regionDatas)
+        {
+            var meshRegions = new List<MeshRegion>();
+            foreach (var regionData in regionDatas)
+                meshRegions.Add(CreateMeshRegions(polygon, rectangle, regionData));
+            return meshRegions;
         }
 
         private MeshRegion CreateMeshRegions(Polygon polygon, Rectangle rectangle, MeshCanvas.Region region)
@@ -141,27 +145,17 @@ namespace ActionStreetMap.Core.Terrain
             var clipper = new Clipper();
             clipper.AddPaths(offsetPath, PolyType.ptSubject, true);
             clipper.AddPaths(offsetRect, PolyType.ptClip, true);
-            var ggg = new Paths();
-            clipper.Execute(ClipType.ctDifference, ggg, PolyFillType.pftPositive, PolyFillType.pftEvenOdd);
+            var diffSolution = new Paths();
+            clipper.Execute(ClipType.ctDifference, diffSolution, PolyFillType.pftPositive, PolyFillType.pftEvenOdd);
 
             clipper.Clear();
-            clipper.AddPaths(ggg, PolyType.ptSubject, true);
+            clipper.AddPaths(diffSolution, PolyType.ptSubject, true);
             clipper.AddPath(intRect, PolyType.ptClip, true);
 
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
 
             return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
-        }
-
-        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Rectangle rectangle, List<MeshCanvas.Region> regionDatas)
-        {
-            var meshRegions = new List<MeshRegion>();
-            foreach (var regionData in regionDatas)
-            {
-                meshRegions.Add(CreateMeshRegions(polygon, rectangle, regionData));
-            }
-            return meshRegions;
         }
 
         private Vertex GetAnyPointInsidePolygon(Path path)
@@ -200,10 +194,7 @@ namespace ActionStreetMap.Core.Terrain
                 if (Clipper.PointInPolygon(middlePoint, path) > 0)
                     return new Vertex(middlePoint.X/Scale, middlePoint.Y/Scale);
             }
-            _trace.Warn(LogTag, "Cannot find point inside polygon");
             throw new AlgorithmException("Cannot find point inside polygon");
         }
-
-        #endregion
     }
 }
