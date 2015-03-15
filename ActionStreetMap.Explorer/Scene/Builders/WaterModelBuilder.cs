@@ -28,7 +28,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var verticies2D = ObjectPool.NewList<MapPoint>();
 
             // get polygon map points
-            PointUtils.GetPolygonPoints(tile.HeightMap, tile.RelativeNullPoint, area.Points, verticies2D);
+            PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, verticies2D);
 
             // detect minimal elevation for water
             var elevation = verticies2D.Min(v => v.Elevation);
@@ -40,7 +40,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
 
             // cut polygon by current tile
-            PolygonUtils.ClipPolygonByTile(tile.BottomLeft, tile.TopRight, verticies2D);
+            PolygonUtils.ClipPolygonByRect(tile.Rectangle, verticies2D);
 
             // get offset points to prevent gaps between water polygon and terrain due to issues 
             // on low terrain heightmap resolutions

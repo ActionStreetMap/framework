@@ -7,7 +7,6 @@ using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Explorer.Scene.Infos;
-using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Formats.Json;
@@ -29,7 +28,6 @@ namespace ActionStreetMap.Explorer.Scene
     internal class ThemeProvider : IThemeProvider, IConfigurable
     {
         private const string BuildingsThemeFile = @"buildings";
-        private const string RoadsThemeFile = @"roads";
         private const string InfosThemeFile = @"infos";
 
         private readonly IFileSystemService _fileSystemService;
@@ -62,9 +60,8 @@ namespace ActionStreetMap.Explorer.Scene
         public void Configure(IConfigSection configSection)
         {
             var buildingStyleProvider = GetBuildingStyleProvider(configSection);
-            var roadStyleProvider = GetRoadStyleProvider(configSection);
             var infoStyleProvider = GetInfoStyleProvider(configSection);
-            _theme = new Theme(buildingStyleProvider, roadStyleProvider, infoStyleProvider);
+            _theme = new Theme(buildingStyleProvider, infoStyleProvider);
         }
 
         #region Buildings
@@ -154,53 +151,6 @@ namespace ActionStreetMap.Explorer.Scene
 
         #endregion
 
-        #region Roads
-
-        private IRoadStyleProvider GetRoadStyleProvider(IConfigSection configSection)
-        {
-            var roadTypeStyleMapping = new Dictionary<string, List<RoadStyle>>();
-            foreach (var roadThemeConfig in configSection.GetSections(RoadsThemeFile))
-            {
-                var path = roadThemeConfig.GetString("path", null);
-
-                var jsonStr = _fileSystemService.ReadText(path);
-                var json = JSON.Parse(jsonStr);
-                var roadStyles = GetRoadStyles(json);
-
-                var types = json["name"].AsArray.Childs.Select(t => t.Value);
-                foreach (var type in types)
-                    roadTypeStyleMapping.Add(type, roadStyles);
-
-            }
-            return new RoadStyleProvider(roadTypeStyleMapping);
-        }
-
-        private List<RoadStyle> GetRoadStyles(JSONNode json)
-        {
-            var roadStyles = new List<RoadStyle>();
-            foreach (JSONNode node in json["roads"].AsArray)
-            {
-                var path = node["path"].Value;
-                var size = new Size(node["size"]["width"].AsInt, node["size"]["height"].AsInt);
-                foreach (JSONNode textureNode in node["textures"].AsArray)
-                {
-                    var map = textureNode["map"];
-                    roadStyles.Add(new RoadStyle
-                    {
-                        Material = textureNode["material"].Value,
-                        Color = ColorUtility.FromUnknown(textureNode["color"].Value),
-                        
-                        Path = path,
-                        MainUvMap = GetUvMap(map["main"], size),
-                        TurnUvMap = GetUvMap(map["turn"], size),
-                    });
-                }
-            }
-
-            return roadStyles;
-        }
-
-        #endregion
 
         private IInfoStyleProvider GetInfoStyleProvider(IConfigSection configSection)
         {

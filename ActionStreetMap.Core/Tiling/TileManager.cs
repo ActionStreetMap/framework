@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Config;
@@ -38,7 +37,6 @@ namespace ActionStreetMap.Core.Tiling
 
         private readonly ITileLoader _tileLoader;
         private readonly IMessageBus _messageBus;
-        private readonly IHeightMapProvider _heightMapProvider;
         private readonly ITileActivator _tileActivator;
         private readonly IObjectPool _objectPool;
 
@@ -56,17 +54,15 @@ namespace ActionStreetMap.Core.Tiling
 
         /// <summary> Creats <see cref="TileManager"/>. </summary>
         /// <param name="tileLoader">Tile loeader.</param>
-        /// <param name="heightMapProvider">Heightmap provider.</param>
         /// <param name="tileActivator">Tile activator.</param>
         /// <param name="messageBus">Message bus.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
-        public TileManager(ITileLoader tileLoader, IHeightMapProvider heightMapProvider, 
-            ITileActivator tileActivator, IMessageBus messageBus, IObjectPool objectPool)
+        public TileManager(ITileLoader tileLoader, ITileActivator tileActivator, 
+            IMessageBus messageBus, IObjectPool objectPool)
         {
             _tileLoader = tileLoader;
             _messageBus = messageBus;
-            _heightMapProvider = heightMapProvider;
             _tileActivator = tileActivator;
             _objectPool = objectPool;
         }
@@ -83,8 +79,6 @@ namespace ActionStreetMap.Core.Tiling
                 return;
             _allTiles.Add(i, j, tile);
             _messageBus.Send(new TileLoadStartMessage(tileCenter));
-            // Set activated before load to prevent concurrent issue in case of fast tile switching.
-            tile.HeightMap = _heightMapProvider.Get(tile, _heightmapsize);
             _tileLoader.Load(tile).Subscribe(_ => {}, () => _messageBus.Send(new TileLoadFinishMessage(tile)));
         }
 
@@ -127,16 +121,17 @@ namespace ActionStreetMap.Core.Tiling
         /// </summary>
         private MutableTuple<int, int> GetNextTileIndex(Tile tile, MapPoint position, int i, int j)
         {
+            var rectangle = tile.Rectangle;
             // top
-            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, tile.TopLeft, tile.TopRight))
+            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, rectangle.TopLeft, rectangle.TopRight))
                 return new MutableTuple<int, int>(i, j + 1);
       
             // left
-            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, tile.TopLeft, tile.BottomLeft))
+            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, rectangle.TopLeft, rectangle.BottomLeft))
                 return new MutableTuple<int, int>(i - 1, j);
 
             // right
-            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, tile.TopRight, tile.BottomRight))
+            if (GeometryUtils.IsPointInTriangle(position, tile.MapCenter, rectangle.TopRight, rectangle.BottomRight))
                 return new MutableTuple<int, int>(i + 1, j);
  
             // bottom

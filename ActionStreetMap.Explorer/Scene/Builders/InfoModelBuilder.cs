@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(node));
 
             var zIndex = rule.GetZIndex();
-            mapPoint.Elevation = tile.HeightMap.LookupHeight(mapPoint);
+            mapPoint.Elevation = ElevationProvider.GetElevation(mapPoint);
 
             Scheduler.MainThread.Schedule(() => BuildObject(tile, gameObjectWrapper, info, style, mapPoint, zIndex));
 

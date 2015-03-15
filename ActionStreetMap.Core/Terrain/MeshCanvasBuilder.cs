@@ -33,9 +33,10 @@ namespace ActionStreetMap.Core.Terrain
         public MeshCanvasBuilder SetTile(Tile tile)
         {
             _tile = tile;
+            var bottomLeft = tile.Rectangle.BottomLeft;
             _tileRect = new Rectangle(
-                tile.BottomLeft.X,
-                tile.BottomLeft.Y,
+                bottomLeft.X,
+                bottomLeft.Y,
                 tile.Width,
                 tile.Height);
             return this;

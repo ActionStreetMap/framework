@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core.Elevation;
+using ActionStreetMap.Core;
 using UnityEngine;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Utils;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 {
@@ -15,18 +14,18 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         /// <summary> Creates instance of <see cref="DimenLineBuilder"/>. </summary>
         /// <param name="height">Line height.</param>
+        /// <param name="elevationProvider">Elevation provider.</param>
         /// <param name="objectPool">Object Pool.</param>
-        /// <param name="heightMapProcessor">HeightMapProcessor.</param>
-        public DimenLineBuilder(float height, IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
-            : base(objectPool, heightMapProcessor)
+        public DimenLineBuilder(float height, IElevationProvider elevationProvider, IObjectPool objectPool)
+            : base(elevationProvider, objectPool)
         {
             Height = height;
         }
 
         /// <inheritdoc />
-        public override void Build(HeightMap heightMap, List<LineElement> elements, Action<List<Vector3>, List<int>, List<Vector2>> builder)
+        public override void Build(MapRectangle rectangle, List<LineElement> elements, Action<List<Vector3>, List<int>, List<Vector2>> builder)
         {
-            base.Build(heightMap, elements, (p, t, u) =>
+            base.Build(rectangle, elements, (p, t, u) =>
             {
                 ProcessLatestFace();
                 builder(Points, Triangles, Uv);

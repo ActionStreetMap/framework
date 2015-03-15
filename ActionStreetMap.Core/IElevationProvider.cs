@@ -32,5 +32,11 @@ namespace ActionStreetMap.Core
         /// <param name="longitude">Longitude.</param>
         /// <returns>Elevation.</returns>
         float GetElevation(double latitude, double longitude);
+
+        /// <summary> Gets elevation for given map point. </summary>
+        float GetElevation(MapPoint point);
+
+        /// <summary> Sets coordinate correspongin for (0,0). </summary>
+        void SetNullPoint(GeoCoordinate coordinate);
     }
 }

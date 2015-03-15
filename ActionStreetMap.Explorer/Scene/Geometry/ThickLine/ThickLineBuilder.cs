@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Infrastructure.Primitives;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
-using ActionStreetMap.Explorer.Scene.Utils;
-using UnityEngine;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
+
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 {
@@ -14,8 +13,6 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
     public class ThickLineBuilder: IDisposable
     {
         private const float MaxPointDistance = 8f;
-
-        private HeightMap _heightMap;
 
         /// <summary> Points. </summary>
         protected List<Vector3> Points;
@@ -39,16 +36,16 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
         private LineElement _currentElement;
         private LineElement _nextElement;
 
+        private readonly IElevationProvider _elevationProvider;
         private readonly IObjectPool _objectPool;
-        private readonly HeightMapProcessor _heightMapProcessor;
 
         /// <summary> Creates instance of <see cref="ThickLineBuilder"/>. </summary>
+        /// <param name="elevationProvider">Elevation provider.</param>
         /// <param name="objectPool">Object pool.</param>
-        /// <param name="heightMapProcessor">Heightmap processor.</param>
-        public ThickLineBuilder(IObjectPool objectPool, HeightMapProcessor heightMapProcessor)
+        public ThickLineBuilder(IElevationProvider elevationProvider, IObjectPool objectPool)
         {
+            _elevationProvider = elevationProvider;
             _objectPool = objectPool;
-            _heightMapProcessor = heightMapProcessor;
 
             // TODO determine best initial size
             Points = _objectPool.NewList<Vector3>(1024);
@@ -57,17 +54,15 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
         }
 
         /// <summary> Builds line. </summary>
-        /// <param name="heightMap">Heightmap.</param>
+        /// <param name="rectangle">Rectangle.</param>
         /// <param name="elements">Line elements.</param>
         /// <param name="builder">Builds unity objects.</param>
-        public virtual void Build(HeightMap heightMap, List<LineElement> elements,
+        public virtual void Build(MapRectangle rectangle, List<LineElement> elements,
             Action<List<Vector3>, List<int>, List<Vector2>> builder)
         {
-            _heightMap = heightMap;
-
             var lineElements = _objectPool.NewList<LineElement>(8);
-            ThickLineUtils.GetLineElementsInTile(heightMap.LeftBottomCorner,
-                heightMap.RightUpperCorner, elements, lineElements, _objectPool);
+            ThickLineUtils.GetLineElementsInTile(rectangle.BottomLeft,
+                rectangle.TopRight, elements, lineElements, _objectPool);
             var elementsCount = lineElements.Count;
 
             // TODO сurrent implementation of GetLineElementsInTile skip segment if its
@@ -78,7 +73,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             {
                 _currentElement = lineElements[i];
                 _nextElement = i == elementsCount - 1 ? null : lineElements[i + 1];
-                ProcessLine(heightMap, lineElements);
+                ProcessLine(lineElements);
             }
 
             builder(Points, Triangles, Uv);
@@ -88,11 +83,10 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
         #region Segment processing
 
         /// <summary> Process line segment. </summary>
-        /// <param name="heightMap">Heightmap.</param>
         /// <param name="lineElements">Line elements.</param>
-        protected void ProcessLine(HeightMap heightMap, List<LineElement> lineElements)
+        protected void ProcessLine(List<LineElement> lineElements)
         {
-            var lineSegments = GetThickSegments(heightMap, _currentElement);
+            var lineSegments = GetThickSegments(_currentElement);
 
             // NOTE Sometimes the road has only one point (wrong pbf file?)
             if (lineSegments.Count == 0)
@@ -147,12 +141,10 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             {
                 var first = lineSegments[segmentsCount - 1];
 
-                MapPoint secondPoint = _heightMap.IsFlat
-                    ? _nextElement.Points[1]
-                    // we split lineElement to smaller parts in non-flat mode
-                    : ThickLineUtils.GetNextIntermediatePoint(_heightMap,
-                        _nextElement.Points[0],
-                        _nextElement.Points[1], MaxPointDistance);
+                MapPoint secondPoint = ThickLineUtils.GetNextIntermediatePoint(
+                    _elevationProvider,
+                    _nextElement.Points[0],
+                    _nextElement.Points[1], MaxPointDistance);
 
                 var second = ThickLineHelper.GetThickSegment(_nextElement.Points[0], secondPoint, width);
 
@@ -268,18 +260,9 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         #region Getting segments and turn types
 
-        private List<ThickLineSegment> GetThickSegments(HeightMap heightMap, LineElement lineElement)
+        private List<ThickLineSegment> GetThickSegments(LineElement lineElement)
         {
-            List<MapPoint> points;
-            if (_heightMap.IsFlat)
-                points = lineElement.Points;
-            else
-            {
-                // we should add intermediate points between given to follow elevation changes more smooth 
-                points = ThickLineUtils.GetIntermediatePoints(_heightMap, lineElement.Points, MaxPointDistance);
-                for (int i = 0; i < points.Count - 1; i++)
-                    _heightMapProcessor.AdjustLine(heightMap, points[i], points[i + 1], lineElement.Width);
-            }
+            var points = ThickLineUtils.GetIntermediatePoints(_elevationProvider, lineElement.Points, MaxPointDistance);
             var lineSegments = new List<ThickLineSegment>(points.Count);
             for (int i = 1; i < points.Count; i++)
                 lineSegments.Add(ThickLineHelper.GetThickSegment(points[i - 1], points[i], lineElement.Width));
@@ -301,7 +284,6 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             if (disposing)
             {
                 // Returns objects back to pool.
-                _heightMap = null;
                 _objectPool.StoreList(Points);
                 _objectPool.StoreList(Triangles);
                 _objectPool.StoreList(Uv);

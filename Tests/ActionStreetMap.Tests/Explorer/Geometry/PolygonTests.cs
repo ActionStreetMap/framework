@@ -43,9 +43,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
         public void CanCutPolygonInTileCrossOneFace()
         {
             // ARRANGE
-            var leftBottom = new MapPoint(0, 0);
-            var rightUpper = new MapPoint(100, 100);
-
+            var rectangle = new MapRectangle(0, 0, 100, 100);
             var sourceAndResultPoints = new List<MapPoint>()
             {
                 new MapPoint(10, 10),
@@ -58,7 +56,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
             };
 
             // ACT
-            PolygonUtils.ClipPolygonByTile(leftBottom, rightUpper, sourceAndResultPoints);
+            PolygonUtils.ClipPolygonByRect(rectangle, sourceAndResultPoints);
 
             // ASSERT
             var expectedPoints = new List<MapPoint>()
@@ -80,9 +78,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
         public void CanCutPolygonInTileCrossTwoFaces()
         {
             // ARRANGE
-            var leftBottom = new MapPoint(0, 0);
-            var rightUpper = new MapPoint(100, 100);
-
+            var rectangle = new MapRectangle(0, 0, 100, 100);
             var sourceAndResultPoints = new List<MapPoint>()
             {
                 new MapPoint(30, 30),
@@ -94,7 +90,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
             };
 
             // ACT
-            PolygonUtils.ClipPolygonByTile(leftBottom, rightUpper, sourceAndResultPoints);
+            PolygonUtils.ClipPolygonByRect(rectangle, sourceAndResultPoints);
 
             // ASSERT
             var expectedPoints = new List<MapPoint>()
@@ -115,9 +111,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
         public void CanCutPolygonInTileCrossThreeFaces()
         {
             // ARRANGE
-            var leftBottom = new MapPoint(0, 0);
-            var rightUpper = new MapPoint(100, 100);
-
+            var rectangle = new MapRectangle(0, 0, 100, 100);
             var sourceAndResultPoints = new List<MapPoint>()
             {
                 new MapPoint(30, 30),
@@ -129,7 +123,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
             };
 
             // ACT
-            PolygonUtils.ClipPolygonByTile(leftBottom, rightUpper, sourceAndResultPoints);
+            PolygonUtils.ClipPolygonByRect(rectangle, sourceAndResultPoints);
 
             // ASSERT
             var expectedPoints = new List<MapPoint>()
@@ -150,9 +144,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
         public void CanCutPolygonInTileTwoPolyAsResult()
         {
             // ARRANGE
-            var leftBottom = new MapPoint(0, 0);
-            var rightUpper = new MapPoint(100, 100);
-
+            var rectangle = new MapRectangle(0, 0, 100, 100);
             var sourceAndResultPoints = new List<MapPoint>()
             {
                 new MapPoint(20, 20),
@@ -168,7 +160,7 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
             };
 
             // ACT
-            PolygonUtils.ClipPolygonByTile(leftBottom, rightUpper, sourceAndResultPoints);
+            PolygonUtils.ClipPolygonByRect(rectangle, sourceAndResultPoints);
 
             // ASSERT
             var expectedPoints = new List<MapPoint>()

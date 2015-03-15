@@ -92,13 +92,8 @@
     <Compile Include="Scene\Geometry\TriangleUtils.cs" />
     <Compile Include="Scene\Infos\InfoStyle.cs" />
     <Compile Include="Scene\Infos\InfoStyleProvider.cs" />
-    <Compile Include="Scene\Roads\RoadBehaviors.cs" />
-    <Compile Include="Scene\Roads\RoadBuilder.cs" />
-    <Compile Include="Scene\Roads\RoadFixBehavior.cs" />
-    <Compile Include="Scene\Roads\RoadStyle.cs" />
     <Compile Include="Terrain\ITerrainBuilder.cs" />
     <Compile Include="Terrain\MeshTerrainBuilder.cs" />
-    <Compile Include="Scene\Utils\HeightMapProcessor.cs" />
     <Compile Include="Scene\Utils\RandomHelper.cs" />
     <Compile Include="Scene\Utils\ResourceProvider.cs" />
     <Compile Include="Strings.cs" />
@@ -126,7 +121,6 @@
     <Compile Include="Tiling\TileActivator.cs" />
     <Compile Include="Scene\Buildings\BuildingStyleProvider.cs" />
     <Compile Include="Scene\ThemeProvider.cs" />
-    <Compile Include="Scene\Roads\RoadStyleProvider.cs" />
     <Compile Include="Scene\Theme.cs" />
     <Compile Include="Tiling\TileModelLoader.cs" />
     <Compile Include="Utils\Noise.cs" />

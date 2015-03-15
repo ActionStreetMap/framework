@@ -1,11 +1,8 @@
 ﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling;
-using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Maps;
 using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Data.Elevation;
@@ -39,12 +36,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             // activates/deactivates tiles during the game based on distance to player
             Container.Register(Component.For<ITileActivator>().Use<TileActivator>().Singleton());
 
-            Container.Register(Component
-                .For<IHeightMapProvider>()
-                .Use<HeightMapProvider>()
-                .Singleton()
-                .SetConfig(GlobalConfigSection.GetSection(TileKey)));
-
             Container.Register(Component.For<IElevationProvider>().Use<SrtmElevationProvider>().Singleton()
                 .SetConfig(GlobalConfigSection.GetSection(ElevationKey)));
             
@@ -58,8 +49,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<ISearchEngine>().Use<SearchEngine>().Singleton());
 
             Container.Register(Component.For<IGeocoder>().Use<NominatimGeocoder>().Singleton());
-
-            Container.Register(Component.For<HeightMapProcessor>().Use<HeightMapProcessor>().Singleton());
             
             return true;
         }

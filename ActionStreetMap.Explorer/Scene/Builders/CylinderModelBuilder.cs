@@ -28,7 +28,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var diameter = circle.Item1;
             var cylinderCenter = circle.Item2;
 
-            var elevation = tile.HeightMap.LookupHeight(cylinderCenter);
+            var elevation = ElevationProvider.GetElevation(cylinderCenter);
 
             var height = rule.GetHeight();
             var minHeight = rule.GetMinHeight();

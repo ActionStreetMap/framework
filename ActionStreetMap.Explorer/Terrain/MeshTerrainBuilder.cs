@@ -72,9 +72,10 @@ namespace ActionStreetMap.Explorer.Terrain
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
                 {
+                    var tileBottomLeft = tile.Rectangle.BottomLeft;
                     var rectangle = new Rectangle(
-                        tile.BottomLeft.X + i*cellWidth,
-                        tile.BottomLeft.Y + j*cellHeight,
+                        tileBottomLeft.X + i * cellWidth,
+                        tileBottomLeft.Y + j * cellHeight,
                         cellWidth,
                         cellHeight);
                     var name = String.Format("cell {0}_{1}", i, j);

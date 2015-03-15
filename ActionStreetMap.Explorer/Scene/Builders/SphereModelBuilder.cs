@@ -29,7 +29,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var sphereCenter = circle.Item2;
             var minHeight = rule.GetMinHeight();
 
-            var elevation = tile.HeightMap.LookupHeight(sphereCenter);
+            var elevation = ElevationProvider.GetElevation(sphereCenter);
 
             IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(GetName(area));
 

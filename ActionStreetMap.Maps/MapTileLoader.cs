@@ -1,5 +1,4 @@
 ﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -42,6 +41,8 @@ namespace ActionStreetMap.Maps
                 new NodeVisitor(tile, _modelLoader, _objectPool),
                 new WayVisitor(tile, _modelLoader, _objectPool),
                 new RelationVisitor(tile, _modelLoader, _objectPool));
+
+            _elevationProvider.SetNullPoint(tile.RelativeNullPoint);
 
             // download elevation data if necessary
             if (!_elevationProvider.HasElevation(tile.BoundingBox))

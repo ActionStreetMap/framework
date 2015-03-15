@@ -20,7 +20,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         public override IGameObject BuildWay(Tile tile, Rule rule, Way way)
         {
             var points = ObjectPool.NewList<MapPoint>();
-            PointUtils.FillHeight(tile.HeightMap, tile.RelativeNullPoint, way.Points, points);
+            PointUtils.FillHeight(ElevationProvider, tile.RelativeNullPoint, way.Points, points);
 
             // road should be processed in one place: it's better to collect all 
             // roads and create connected road network

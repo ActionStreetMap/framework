@@ -18,18 +18,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     /// <summary>  Provides logic to build various barriers. </summary>
     public class BarrierModelBuilder: ModelBuilder
     {
-        private readonly HeightMapProcessor _heightMapProcessor;
-
         /// <inheritdoc />
         public override string Name { get { return "barrier"; } }
-
-        /// <summary> Creates instance of <see cref="BarrierModelBuilder"/>. </summary>
-        /// <param name="heightMapProcessor">Heightmap processor.</param>
-        [Dependency]
-        public BarrierModelBuilder(HeightMapProcessor heightMapProcessor)
-        {
-            _heightMapProcessor = heightMapProcessor;
-        }
 
         /// <inheritdoc />
         public override IGameObject BuildWay(Tile tile, Rule rule, Way way)
@@ -43,14 +33,14 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(way));
 
             var points = ObjectPool.NewList<MapPoint>();
-            PointUtils.FillHeight(tile.HeightMap, tile.RelativeNullPoint, way.Points, points);
+            PointUtils.FillHeight(ElevationProvider, tile.RelativeNullPoint, way.Points, points);
 
             var lines = ObjectPool.NewList<LineElement>(1);
             lines.Add(new LineElement(points, rule.GetWidth()));
-            
-            var dimenLineBuilder = new DimenLineBuilder(2, ObjectPool, _heightMapProcessor);
+
+            var dimenLineBuilder = new DimenLineBuilder(2, ElevationProvider, ObjectPool);
             dimenLineBuilder.Height = rule.GetHeight();
-            dimenLineBuilder.Build(tile.HeightMap, lines,
+            dimenLineBuilder.Build(tile.Rectangle, lines,
                 (p, t, u) => Scheduler.MainThread.Schedule(() =>
                 {
                     BuildObject(gameObjectWrapper, rule, p, t, u);

@@ -50,6 +50,7 @@
     </Compile>
     <Compile Include="AlgorithmException.cs" />
     <Compile Include="IPositionObserver.cs" />
+    <Compile Include="MapRectangle.cs" />
     <Compile Include="Polygons\Behavior.cs" />
     <Compile Include="Polygons\clipper.cs" />
     <Compile Include="Polygons\Enums.cs" />
@@ -140,8 +141,6 @@
     <Compile Include="Utilities\RandomUtils.cs" />
     <Compile Include="Utilities\GeoProjection.cs" />
     <Compile Include="BoundingBox.cs" />
-    <Compile Include="Elevation\HeightMap.cs" />
-    <Compile Include="Elevation\HeightMapProvider.cs" />
     <Compile Include="IElevationProvider.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="GeoCoordinate.cs" />

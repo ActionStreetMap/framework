@@ -8,6 +8,8 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Tests.Expiremental;
+using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 
 namespace ActionStreetMap.Tests
 {
@@ -50,6 +52,22 @@ namespace ActionStreetMap.Tests
             GC.Collect();
             _logger.Report("DemoTileListener.OnTileBuildFinished: after GC");
             _stopwatch.Reset();
+
+            ProcessTile(tile);
+        }
+
+        private void ProcessTile(Tile tile)
+        {
+            var clipper = new Clipper();
+            clipper.AddPaths(tile.Canvas.Water
+               .Select(a => a.Points.Select(p => new IntPoint(p.X * MeshCellBuilder.Scale, p.Y * MeshCellBuilder.Scale)).ToList()).ToList(),
+               PolyType.ptSubject, true);
+            var solution = new Paths();
+            clipper.Execute(ClipType.ctUnion, solution);
+            clipper.Clear();
+
+            SVGBuilder.SaveToFile(solution, "water.svg", 0.001);
         }
     }
 }
+;

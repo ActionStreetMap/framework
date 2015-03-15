@@ -52,29 +52,6 @@ namespace ActionStreetMap.Tests.Explorer.Themes
         }
 
         [Test]
-        public void CanGetRoadStyle()
-        {
-            // ARRANGE
-            var provider = GetThemeProvider();
-            provider.Configure(GetTestThemeConfig());
-
-            // ACT
-            var theme = provider.Get();
-            Assert.IsNotNull(theme);
-
-            var style = theme.GetRoadStyle(new Road() 
-                { Elements = new List<RoadElement>() { new RoadElement() { Type = RoadType.Car } }});
-
-            // ASSERT
-            Assert.AreEqual("Materials/Roads/default_1", style.Path);
-            Assert.AreEqual("asphalt", style.Material);
-            Assert.AreEqual(ColorUtility.FromName("gray"), style.Color);
-            Assert.IsNotNull(style.MainUvMap);
-            Assert.IsNull(style.TurnUvMap);
-
-        }
-
-        [Test]
         public void CanGetInfo()
         {
             // ARRANGE

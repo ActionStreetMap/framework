@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
+using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
@@ -31,6 +31,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
         private int _totalPx;
         private int _offset;
         private string _dataDirectory;
+        private GeoCoordinate _relativeNullPoint;
 
         //default never valid
         private int _srtmLat = 255;
@@ -137,6 +138,17 @@ namespace ActionStreetMap.Maps.Data.Elevation
                    height1*dy*(dx) +
                    height2*(1 - dy)*(1 - dx) +
                    height3*(1 - dy)*dx;
+        }
+
+        public float GetElevation(MapPoint point)
+        {
+            var geoCoordinate = GeoProjection.ToGeoCoordinate(_relativeNullPoint, point);
+            return GetElevation(geoCoordinate.Latitude, geoCoordinate.Longitude);
+        }
+
+        public void SetNullPoint(GeoCoordinate coordinate)
+        {
+            _relativeNullPoint = coordinate;
         }
 
         private void LoadTile(int latDec, int lonDec)

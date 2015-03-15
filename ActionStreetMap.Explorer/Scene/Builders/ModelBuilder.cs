@@ -1,4 +1,5 @@
 ﻿using System;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
@@ -45,33 +46,27 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
         #region Properties. These properties are public due to Reflection limitations on some platform
 
-        /// <summary>
-        ///     Trace.
-        /// </summary>
+        /// <summary> Gets trace. </summary>
         [Dependency]
         public ITrace Trace { get; set; }
 
-        /// <summary>
-        ///     Game object factory.
-        /// </summary>
+        /// <summary> Gets elevation provider. </summary>
+        [Dependency]
+        public IElevationProvider ElevationProvider { get; set; }
+
+        /// <summary> Game object factory. </summary>
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
 
-        /// <summary>
-        ///     Theme provider.
-        /// </summary>
+        /// <summary> Gets theme provider. </summary>
         [Dependency]
         public IThemeProvider ThemeProvider { get; set; }
 
-        /// <summary>
-        ///     Resource provider.
-        /// </summary>
+        /// <summary> Gets resource provider. </summary>
         [Dependency]
         public IResourceProvider ResourceProvider { get; set; }
 
-        /// <summary>
-        ///     Object pool.
-        /// </summary>
+        /// <summary> Gets object pool. </summary>
         [Dependency]
         public IObjectPool ObjectPool { get; set; }
 

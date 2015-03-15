@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry
@@ -11,9 +10,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
     {
         #region Points for polygons
 
-        /// <summary>
-        ///     Converts geo coordinates to map coordinates without elevation data.
-        /// </summary>
+        /// <summary> Converts geo coordinates to map coordinates without elevation data. </summary>
         /// <param name="center">Map center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
         /// <param name="points">Output points.</param>
@@ -23,17 +20,15 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             GetPointsNoElevation(center, geoCoordinates, points, true);
         }
 
-        /// <summary>
-        ///     Converts geo coordinates to map coordinates with elevation data.
-        /// </summary>
-        /// <param name="heightmap">Height map.</param>
+        /// <summary> Converts geo coordinates to map coordinates with elevation data. </summary>
+        /// <param name="elevationProvider">Elevation provider.</param>
         /// <param name="center">Map center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
         /// <param name="points">Output points.</param>
-        public static void GetClockwisePolygonPoints(HeightMap heightmap, GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
+        public static void GetClockwisePolygonPoints(IElevationProvider elevationProvider, GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
             List<MapPoint> points)
         {
-            GetPointsElevation(heightmap, center, geoCoordinates, points, true);
+            GetPointsElevation(elevationProvider, center, geoCoordinates, points, true);
         }
 
         /// <summary>
@@ -48,17 +43,15 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
             GetPointsNoElevation(center, geoCoordinates, points, false);
         }
 
-        /// <summary>
-        ///     Converts geo coordinates to map coordinates with elevation data without sorting.
-        /// </summary>
-        /// <param name="heightmap">Height map.</param>
+        /// <summary> Converts geo coordinates to map coordinates with elevation data without sorting. </summary>
+        /// <param name="elevationProvider">Elevation provider.</param>
         /// <param name="center">Map center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
         /// <param name="points">Output points.</param>
-        public static void GetPolygonPoints(HeightMap heightmap, GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
-            List<MapPoint> points)
+        public static void GetPolygonPoints(IElevationProvider elevationProvider, GeoCoordinate center, 
+            List<GeoCoordinate> geoCoordinates, List<MapPoint> points)
         {
-            GetPointsElevation(heightmap, center, geoCoordinates, points, false);
+            GetPointsElevation(elevationProvider, center, geoCoordinates, points, false);
         }
 
         private static void GetPointsNoElevation(GeoCoordinate center, List<GeoCoordinate> geoCoordinates, 
@@ -83,14 +76,14 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
                 SortVertices(verticies);
         }
 
-        private static void GetPointsElevation(HeightMap heightMap, GeoCoordinate center, 
+        private static void GetPointsElevation(IElevationProvider elevationProvider, GeoCoordinate center, 
             List<GeoCoordinate> geoCoordinates, List<MapPoint> verticies, bool sort)
         {
             var length = geoCoordinates.Count;
             if (geoCoordinates[0] == geoCoordinates[length - 1])
                 length--;
 
-            FillHeight(heightMap, center, geoCoordinates, verticies, length);
+            FillHeight(elevationProvider, center, geoCoordinates, verticies, length);
 
             if(sort)
                 SortVertices(verticies);
@@ -99,23 +92,23 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
         #endregion
 
         /// <summary> Fills heighmap. </summary>
-        /// <param name="heightMap">Heightmap.</param>
+        /// <param name="elevationProvider">Elevation provider.</param>
         /// <param name="center">Center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
         /// <param name="verticies">Verticies.</param>
-        public static void FillHeight(HeightMap heightMap, GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
-            List<MapPoint> verticies)
+        public static void FillHeight(IElevationProvider elevationProvider, GeoCoordinate center, 
+            List<GeoCoordinate> geoCoordinates, List<MapPoint> verticies)
         {
-            FillHeight(heightMap, center, geoCoordinates, verticies, geoCoordinates.Count);
+            FillHeight(elevationProvider, center, geoCoordinates, verticies, geoCoordinates.Count);
         }
 
         /// <summary> Fills heighmap. </summary>
-        /// <param name="heightMap">Heightmap.</param>
+        /// <param name="elevationProvider">Elevation provider.</param>
         /// <param name="center">Center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
         /// <param name="verticies">Verticies.</param>
         /// <param name="length">Count of points to be processed.</param>
-        public static void FillHeight(HeightMap heightMap, GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
+        public static void FillHeight(IElevationProvider elevationProvider, GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
             List<MapPoint> verticies, int length)
         {
             for (int i = 0; i < length; i++)
@@ -124,7 +117,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
                 if (i == 0 || geoCoordinates[i] != geoCoordinates[i - 1])
                 {
                     var point = GeoProjection.ToMapCoordinate(center, geoCoordinates[i]);
-                    point.Elevation = heightMap.LookupHeight(point);
+                    point.Elevation = elevationProvider.GetElevation(point);
                     verticies.Add(point);
                 }
             }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Geometry.ThickLine;
 using Moq;
@@ -16,8 +15,8 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
         public void CanGetIntermediatePoints()
         {
             // ARRANGE
-            var heightMapMock = new Mock<HeightMap>();
-            heightMapMock.Setup(h => h.LookupHeight(It.IsAny<MapPoint>())).Returns(0);
+            var heightMapMock = new Mock<IElevationProvider>();
+            heightMapMock.Setup(h => h.GetElevation(It.IsAny<MapPoint>())).Returns(0);
             var points = new List<MapPoint>()
             {
                 new MapPoint(0, 0, 1),
@@ -42,8 +41,8 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
         public void CanGetNextIntermediatePoint()
         {
             // ARRANGE & ACT
-            var heightMapMock = new Mock<HeightMap>();
-            heightMapMock.Setup(h => h.LookupHeight(It.IsAny<MapPoint>())).Returns(0);
+            var heightMapMock = new Mock<IElevationProvider>();
+            heightMapMock.Setup(h => h.GetElevation(It.IsAny<MapPoint>())).Returns(0);
             var result = ThickLineUtils.GetNextIntermediatePoint(heightMapMock.Object, 
                 new MapPoint(0, 0, 1), new MapPoint(2, 2, 2), 1);
 

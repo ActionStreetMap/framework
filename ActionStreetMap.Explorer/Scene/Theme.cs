@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Scene.Infos;
-using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Infos;
-using ActionStreetMap.Explorer.Scene.Roads;
 
 namespace ActionStreetMap.Explorer.Scene
 {
@@ -13,7 +11,6 @@ namespace ActionStreetMap.Explorer.Scene
     public class Theme
     {
         private readonly IBuildingStyleProvider _buildingStyleProvider;
-        private readonly IRoadStyleProvider _roadStyleProvider;
         private readonly IInfoStyleProvider _infoStyleProvider;
         private readonly Dictionary<Type, object> _providers;
 
@@ -22,18 +19,14 @@ namespace ActionStreetMap.Explorer.Scene
 
         /// <summary> Creates instance of <see cref="Theme"/>. </summary>
         /// <param name="buildingStyleProvider">Building style provider.</param>
-        /// <param name="roadStyleProvider">Road style provider.</param>
         /// <param name="infoStyleProvider">Info style provider.</param>
-        public Theme(IBuildingStyleProvider buildingStyleProvider, IRoadStyleProvider roadStyleProvider, 
-            IInfoStyleProvider infoStyleProvider)
+        public Theme(IBuildingStyleProvider buildingStyleProvider, IInfoStyleProvider infoStyleProvider)
         {
             _buildingStyleProvider = buildingStyleProvider;
-            _roadStyleProvider = roadStyleProvider;
             _infoStyleProvider = infoStyleProvider;
             _providers = new Dictionary<Type, object>
             {
                 {typeof (IBuildingStyleProvider), _buildingStyleProvider},
-                {typeof (IRoadStyleProvider), _roadStyleProvider},
                 {typeof (IInfoStyleProvider), _infoStyleProvider}
             };
         }
@@ -44,14 +37,6 @@ namespace ActionStreetMap.Explorer.Scene
         public BuildingStyle GetBuildingStyle(Building building)
         {
             return _buildingStyleProvider.Get(building);
-        }
-
-        /// <summary> Gets road style. </summary>
-        /// <param name="road">Road.</param>
-        /// <returns>RoadStyle.</returns>
-        public RoadStyle GetRoadStyle(Road road)
-        {
-            return _roadStyleProvider.Get(road);
         }
 
         /// <summary> Gets info style. </summary>

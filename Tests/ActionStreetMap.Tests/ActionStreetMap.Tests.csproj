@@ -67,7 +67,6 @@
     <Compile Include="GeoCoordinateHelper.cs" />
     <Compile Include="ConsoleTrace.cs" />
     <Compile Include="Core\Algorithms\PointHelperTests.cs" />
-    <Compile Include="Core\Elevation\HeightMapTests.cs" />
     <Compile Include="Core\Algorithms\ProjectionTests.cs" />
     <Compile Include="Core\Algorithms\TriangulationTests.cs" />
     <Compile Include="Core\BoundingBoxTests.cs" />

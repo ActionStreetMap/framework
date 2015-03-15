@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
 using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -25,33 +24,21 @@ namespace ActionStreetMap.Explorer.Scene.Geometry
         }
 
         /// <summary> Cuts given polygon by tile corners. </summary>
-        /// <param name="leftBottom">Left bottom corner.</param>
-        /// <param name="rightUpper">Right upper corner.</param>
+        /// <param name="rect">Rectangle.</param>
         /// <param name="points">Closed polygon points.</param>
-        public static void ClipPolygonByTile(MapPoint leftBottom, MapPoint rightUpper, List<MapPoint> points)
+        public static void ClipPolygonByRect(MapRectangle rect, List<MapPoint> points)
         {
             // TODO Optimize memory allocations for lists
             var result = PolygonClipper.GetIntersectedPolygon(points,
                 new List<MapPoint>()
                 {
-                    leftBottom,
-                    new MapPoint(leftBottom.X, rightUpper.Y),
-                    rightUpper,
-                    new MapPoint(rightUpper.X, leftBottom.Y),
+                    rect.BottomLeft,
+                    rect.TopRight,
+                    rect.TopRight,
+                    rect.BottomRight,
                 });
             points.Clear();
             points.AddRange(result);
-        }
-
-        /// <summary> Cuts given polygon by tile corners. </summary>
-        /// <param name="heightmap">Height map.</param>
-        /// <param name="points">Closed polygon points.</param>
-        public static void ClipPolygonByTile(HeightMap heightmap, List<MapPoint> points)
-        {
-            ClipPolygonByTile(heightmap.LeftBottomCorner, heightmap.RightUpperCorner, points);
-            // set height
-            for (int i = 0; i < points.Count; i++)
-                points[i].SetElevation(heightmap.LookupHeight(points[i]));
         }
 
         /// <summary> Make offset polygon. </summary>

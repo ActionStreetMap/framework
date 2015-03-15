@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling;
@@ -20,7 +19,6 @@ namespace ActionStreetMap.Explorer.Tiling
     /// <summary> Represents class responsible to process all models for tile. </summary>
     public class TileModelLoader : IModelLoader
     {
-        private readonly IHeightMapProvider _heighMapProvider;
         private readonly ITerrainBuilder _terrainBuilder;
         private readonly IObjectPool _objectPool;
         private readonly IModelBuilder[] _builders;
@@ -31,12 +29,11 @@ namespace ActionStreetMap.Explorer.Tiling
 
         /// <summary> Creates <see cref="TileModelLoader"/>. </summary>
         [Dependency]
-        public TileModelLoader(IGameObjectFactory gameObjectFactory, IHeightMapProvider heighMapProvider,
+        public TileModelLoader(IGameObjectFactory gameObjectFactory,
             ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
             IEnumerable<IModelBuilder> builders, IEnumerable<IModelBehaviour> behaviours,
             IObjectPool objectPool)
         {
-            _heighMapProvider = heighMapProvider;
             _terrainBuilder = terrainBuilder;
 
             _objectPool = objectPool;
@@ -112,12 +109,7 @@ namespace ActionStreetMap.Explorer.Tiling
 
             _terrainBuilder.Build(tile, rule);
 
-            // NOTE schedule cleanup on UI thread as data may be used
-            Scheduler.MainThread.Schedule(() => 
-            {
-                _heighMapProvider.Store(tile.HeightMap);
-                tile.Canvas.Dispose();
-            });
+            tile.Canvas.Dispose();
             _objectPool.Shrink();
         }
 

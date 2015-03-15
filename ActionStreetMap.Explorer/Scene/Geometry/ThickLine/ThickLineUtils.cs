@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
@@ -13,7 +12,6 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         /// <summary>
         ///     Returns line elements which only consist of points in tile.
-        ///     Required for non-flat maps.
         /// </summary>
         public static void GetLineElementsInTile(MapPoint leftBottomCorner, MapPoint rightUpperCorner,
             List<LineElement> elements, List<LineElement> resultElements, IObjectPool objectPool)
@@ -152,12 +150,14 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         #region Intermediate _points
 
-        public static List<MapPoint> GetIntermediatePoints(HeightMap heightMap, List<MapPoint> original, float maxDistance)
+        public static List<MapPoint> GetIntermediatePoints(IElevationProvider elevationProvider, 
+            List<MapPoint> original, float maxDistance)
         {
-            return GetIntermediatePoints(heightMap, original, maxDistance, 5f);
+            return GetIntermediatePoints(elevationProvider, original, maxDistance, 5f);
         }
 
-        public static List<MapPoint> GetIntermediatePoints(HeightMap heightMap, List<MapPoint> original, float maxDistance, float threshold)
+        public static List<MapPoint> GetIntermediatePoints(IElevationProvider elevationProvider, 
+            List<MapPoint> original, float maxDistance, float threshold)
         {
             var result = new List<MapPoint>(original.Count);
             for (int i = 1; i < original.Count; i++)
@@ -165,7 +165,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                 var point1 = original[i - 1];
                 var point2 = original[i];
 
-                point1.Elevation = heightMap.LookupHeight(point1);
+                point1.Elevation = elevationProvider.GetElevation(point1);
                 result.Add(point1);
 
                 var distance = point1.DistanceTo(point2);
@@ -176,7 +176,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                         point1.X + ration * (point2.X - point1.X),
                         point1.Y + ration * (point2.Y - point1.Y));
 
-                    point1.Elevation = heightMap.LookupHeight(point1);
+                    point1.Elevation = elevationProvider.GetElevation(point1);
 
                     distance = point1.DistanceTo(point2);
                     // we should prevent us to have small distances between points when we have turn
@@ -189,12 +189,12 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
             }
             // add last as we checked previous item in cycle
             var last = original[original.Count - 1];
-            last.Elevation = heightMap.LookupHeight(last);
+            last.Elevation = elevationProvider.GetElevation(last);
             result.Add(last);
             return result;
         }
 
-        public static MapPoint GetNextIntermediatePoint(HeightMap heightMap, MapPoint point1,
+        public static MapPoint GetNextIntermediatePoint(IElevationProvider elevationProvider, MapPoint point1,
             MapPoint point2, float maxDistance)
         {
             var distance = point1.DistanceTo(point2);
@@ -204,7 +204,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                 var next = new MapPoint(point1.X + ration * (point2.X - point1.X),
                             point1.Y + ration * (point2.Y - point1.Y));
 
-                next.Elevation = heightMap.LookupHeight(point1);
+                next.Elevation = elevationProvider.GetElevation(point1);
                 return next;
             }
 

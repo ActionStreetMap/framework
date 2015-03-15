@@ -8,7 +8,6 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
-using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Terrain;
 
@@ -79,10 +78,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             // terrain
             Container.Register(Component.For<ITerrainBuilder>().Use<MeshTerrainBuilder>().Singleton());
            
-            // roads
-            Container.Register(Component.For<IRoadStyleProvider>().Use<RoadStyleProvider>().Singleton());
-            Container.Register(Component.For<IRoadBuilder>().Use<RoadBuilder>().Singleton());
-
             return true;
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -15,10 +14,9 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
     public interface IBuildingBuilder
     {
         /// <summary> Builds building. </summary>
-        /// <param name="heightMap">Heightmap.</param>
         /// <param name="building">Building.</param>
         /// <param name="style">Style.</param>
-        void Build(HeightMap heightMap, Building building, BuildingStyle style);
+        void Build(Building building, BuildingStyle style);
     }
 
     /// <summary> Default building builder. </summary>
@@ -38,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
         }
 
         /// <inheritdoc />
-        public void Build(HeightMap heightMap, Building building, BuildingStyle style)
+        public void Build(Building building, BuildingStyle style)
         {
             var facadeMeshData = style.Facade.Builders[RandomHelper
                 .GetIndex(building.Id, style.Facade.Builders.Length)]

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Scene.Buildings;
@@ -11,7 +10,6 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Maps.Helpers;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Helpers;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
@@ -20,18 +18,17 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     public class BuildingModelBuilder : ModelBuilder
     {
         private readonly IBuildingBuilder _builder;
-
-        private readonly HeightMapProcessor _heightMapProcessor;
+        private readonly IElevationProvider _elevationProvider;
 
         /// <inheritdoc />
         public override string Name { get { return "building"; } }
 
         /// <summary> Creates instance of <see cref="BuildingModelBuilder"/>. </summary>
         [Dependency]
-        public BuildingModelBuilder(IBuildingBuilder builder, HeightMapProcessor heightMapProcessor)
+        public BuildingModelBuilder(IBuildingBuilder builder, IElevationProvider elevationProvider)
         {
             _builder = builder;
-            _heightMapProcessor = heightMapProcessor;
+            _elevationProvider = elevationProvider;
         }
 
         private const int NoValue = 0;
@@ -49,13 +46,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             
             //var simplified = ObjectPool.NewList<MapPoint>();
 
-            PointUtils.GetClockwisePolygonPoints(tile.HeightMap, tile.RelativeNullPoint, footPrint, points);
+            PointUtils.GetClockwisePolygonPoints(_elevationProvider, tile.RelativeNullPoint, footPrint, points);
             var minHeight = rule.GetMinHeight();
 
             // NOTE simplification is important to build hipped/gabled roofs
             //PolygonUtils.Simplify(points, simplified);
 
-            var elevation = AdjustHeightMap(tile.HeightMap, points, minHeight);
+            var elevation = points.Average(p => p.Elevation);
 
             if (tile.Registry.Contains(model.Id))
                 return null;
@@ -66,22 +63,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             //ObjectPool.StoreList(simplified);
 
             return gameObject;
-        }
-
-        private float AdjustHeightMap(HeightMap heightMap, List<MapPoint> footPrint, float minHeight)
-        {
-            // TODO if we have added building to WorldManager then
-            // we should use elevation from existing building
-
-            var elevation = footPrint.Average(p => p.Elevation);
-
-            for (int i = 0; i < footPrint.Count; i++)
-                footPrint[i].SetElevation(elevation);
-            // NOTE do not adjust height map in case of positive minHeight
-            if (!heightMap.IsFlat && Math.Abs(minHeight) < 0.5f)
-                _heightMapProcessor.AdjustPolygon(heightMap, footPrint, elevation);
-
-            return elevation;
         }
 
         private IGameObject BuildGameObject(Tile tile, Rule rule, Model model, List<MapPoint> points,
@@ -121,7 +102,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var theme = ThemeProvider.Get();
             BuildingStyle style = theme.GetBuildingStyle(building);
 
-            _builder.Build(tile.HeightMap, building, style);
+            _builder.Build(building, style);
 
             tile.Registry.Register(building);
             tile.Registry.RegisterGlobal(building.Id);

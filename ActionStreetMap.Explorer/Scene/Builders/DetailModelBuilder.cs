@@ -4,7 +4,6 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Explorer.Scene.Roads;
 using ActionStreetMap.Explorer.Helpers;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var detail = rule.GetDetail();
             var zIndex = rule.GetZIndex();
-            mapPoint.Elevation = tile.HeightMap.LookupHeight(mapPoint);
+            mapPoint.Elevation = ElevationProvider.GetElevation(mapPoint);
 
             // TODO check this
             //WorldManager.AddModel(node.Id);
@@ -43,10 +42,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var prefab = ResourceProvider.GetGameObject(detail);
             var gameObject = (GameObject)Object.Instantiate(prefab);
             
-            // TODO do we need this workarounf?
-            if (rule.IsRoadFix())
-                gameObject.AddComponent<RoadFixBehavior>().RotationOffset = rule.GetDetailRotation();
-
             gameObject.transform.position = new Vector3(mapPoint.X, mapPoint.Elevation + zIndex, mapPoint.Y);           
             gameObjectWrapper.Parent = tile.GameObject;
         }

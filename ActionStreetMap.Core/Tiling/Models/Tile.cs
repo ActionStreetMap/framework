@@ -1,5 +1,4 @@
-﻿using ActionStreetMap.Core.Elevation;
-using ActionStreetMap.Core.Unity;
+﻿using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 
 namespace ActionStreetMap.Core.Tiling.Models
@@ -28,23 +27,11 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Gets or sets game object which is used to represent this tile. </summary>
         public IGameObject GameObject { get; set; }
 
-        /// <summary> Gets or sets heightmap of given tile. </summary>
-        public HeightMap HeightMap { get; set; }
-
         /// <summary> Gets ModelRegistry of given tile. </summary>
         public TileRegistry Registry { get; private set; }
 
-        /// <summary> Gets top left point on map. </summary>
-        public MapPoint TopLeft { get; private set; }
-
-        /// <summary> Gets top right point on map. </summary>
-        public MapPoint TopRight { get; private set; }
-
-        /// <summary> Gets bottom left point on map. </summary>
-        public MapPoint BottomLeft { get; private set; }
-
-        /// <summary> Gets bottom right point on map. </summary>
-        public MapPoint BottomRight { get; private set; }
+        /// <summary> Gets map rectangle. </summary>
+        public MapRectangle Rectangle { get; private set; }
 
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
@@ -68,11 +55,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             var geoCenter = GeoProjection.ToGeoCoordinate(relativeNullPoint, mapCenter);
             BoundingBox = BoundingBox.CreateBoundingBox(geoCenter, width, height);
 
-            TopLeft = new MapPoint(MapCenter.X - width / 2, MapCenter.Y + height / 2);
-            BottomRight = new MapPoint(MapCenter.X + width / 2, MapCenter.Y - height / 2);
-
-            TopRight = new MapPoint(MapCenter.X + width / 2, MapCenter.Y + height / 2);
-            BottomLeft = new MapPoint(MapCenter.X - width / 2, MapCenter.Y - height / 2);
+            Rectangle = new MapRectangle(MapCenter.X - width / 2, MapCenter.Y - height / 2, width, height);
 
             Registry = new TileRegistry();
         }
@@ -83,8 +66,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <returns>Tres if position in tile</returns>
         public bool Contains(MapPoint position, float offset)
         {
-            return (position.X > TopLeft.X + offset) && (position.Y < TopLeft.Y - offset) &&
-                         (position.X < BottomRight.X - offset) && (position.Y > BottomRight.Y + offset);
+            var rectangle = Rectangle;
+            return (position.X > rectangle.TopLeft.X + offset) && (position.Y < rectangle.TopLeft.Y - offset) &&
+                         (position.X < rectangle.BottomRight.X - offset) && (position.Y > rectangle.BottomRight.Y + offset);
         }
 
         /// <inheritdoc />

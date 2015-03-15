@@ -1,6 +1,5 @@
 ﻿using System;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Elevation;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Infrastructure;
@@ -169,8 +168,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             var sceneBuilderMock = new Mock<ITileLoader>();
             sceneBuilderMock.Setup(l => l.Load(It.IsAny<Tile>())).Returns(Observable.Empty<Unit>());
-            var heightMapobserver = new HeightMapProvider(new Mock<IElevationProvider>().Object, new ObjectPool());
-            heightMapobserver.Trace = new ConsoleTrace();
+         
             var activatorMock = new Mock<ITileActivator>();
 
             var configMock = new Mock<IConfigSection>();
@@ -179,7 +177,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             configMock.Setup(c => c.GetFloat("sensitivity", It.IsAny<float>())).Returns(Sensitivity);
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
 
-            var observer = new TileManager(sceneBuilderMock.Object, heightMapobserver, 
+            var observer = new TileManager(sceneBuilderMock.Object,
                 activatorMock.Object, new MessageBus(), new ObjectPool());
             observer.Configure(configMock.Object);
             
