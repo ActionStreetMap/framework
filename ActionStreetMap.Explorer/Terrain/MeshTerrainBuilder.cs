@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
+using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Polygons.Geometry;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
 using ActionStreetMap.Core.Polygons.Tools;
@@ -20,6 +21,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 using Color32 = UnityEngine.Color32;
+using Mesh = UnityEngine.Mesh;
 
 namespace ActionStreetMap.Explorer.Terrain
 {
@@ -120,21 +122,25 @@ namespace ActionStreetMap.Explorer.Terrain
                 var coord0 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
                     new MapPoint((float) p0.X, (float) p0.Y));
                 var ele0 = _elevationProvider.GetElevation(coord0.Latitude, coord0.Longitude);
-                //ele0 += elevationNoise.GetValue((float)p0.X, ele0, (float)p0.X);
+                if (p0.Type == VertexType.FreeVertex)
+                    ele0 += Noise.Perlin3D(new Vector3((float) p0.X, 0, (float) p0.Y), 0.1f);
+
                 vertices.Add(new Vector3((float) p0.X, ele0, (float) p0.Y));
 
                 var p1 = triangle.GetVertex(1);
                 var coord1 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
                     new MapPoint((float) p1.X, (float) p1.Y));
                 var ele1 = _elevationProvider.GetElevation(coord1.Latitude, coord1.Longitude);
-                //ele1 += elevationNoise.GetValue((float)p1.X, ele1, (float)p1.X);
+                if (p1.Type == VertexType.FreeVertex)
+                    ele1 += Noise.Perlin3D(new Vector3((float)p1.X, 0, (float)p1.Y), 0.1f);
                 vertices.Add(new Vector3((float) p1.X, ele1, (float) p1.Y));
 
                 var p2 = triangle.GetVertex(2);
                 var coord2 = GeoProjection.ToGeoCoordinate(relativeNullPoint,
                     new MapPoint((float) p2.X, (float) p2.Y));
                 var ele2 = _elevationProvider.GetElevation(coord2.Latitude, coord2.Longitude);
-                //ele2 += elevationNoise.GetValue((float) p2.X, ele2, (float) p2.X);
+                if (p2.Type == VertexType.FreeVertex)
+                    ele2 += Noise.Perlin3D(new Vector3((float)p2.X, 0, (float)p2.Y), 0.1f);
                 vertices.Add(new Vector3((float) p2.X, ele2, (float) p2.Y));
 
                 var index = vertices.Count;
@@ -185,13 +191,23 @@ namespace ActionStreetMap.Explorer.Terrain
                     colors[index + 2] = color;
 
                     var p1 = vertices[index];
-                    vertices[index] = new Vector3(p1.x, p1.y - roadDeepLevel, p1.z);
+                    float ele1 = 0;
+                    if (triangle.GetVertex(0).Type == VertexType.FreeVertex)
+                        ele1 = Noise.Perlin3D(new Vector3(p1.x, 0, p1.z), 0.1f);
+                    vertices[index] = new Vector3(p1.x, p1.y - roadDeepLevel - ele1, p1.z);
 
                     var p2 = vertices[index + 1];
-                    vertices[index + 1] = new Vector3(p2.x, p2.y - roadDeepLevel, p2.z);
+                    float ele2 = 0;
+                    if (triangle.GetVertex(1).Type == VertexType.FreeVertex)
+                        ele2 = Noise.Perlin3D(new Vector3(p2.x, 0, p2.z), 0.1f);
+         
+                    vertices[index + 1] = new Vector3(p2.x, p2.y - roadDeepLevel - ele2, p2.z);
 
-                    var p3 = vertices[index + 2];
-                    vertices[index + 2] = new Vector3(p3.x, p3.y - roadDeepLevel, p3.z);
+                    var p3= vertices[index + 2];
+                    float ele3 = 0;
+                    if (triangle.GetVertex(2).Type == VertexType.FreeVertex)
+                        ele3 = Noise.Perlin3D(new Vector3(p3.x, 0, p3.z), 0.1f);
+                    vertices[index + 2] = new Vector3(p3.x, p3.y - roadDeepLevel - ele3, p3.z);
 
                     count++;
                 });

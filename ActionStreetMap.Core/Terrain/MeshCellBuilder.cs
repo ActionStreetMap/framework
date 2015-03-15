@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshCellBuilder
     {
-        internal const float Scale = 10000f;
+        internal const float Scale = 100000f;
         private float _maximumArea = 10;
 
         private readonly object _lock = new object();
