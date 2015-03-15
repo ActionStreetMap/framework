@@ -35,8 +35,7 @@ namespace ActionStreetMap.Explorer.Terrain
         [Dependency]
         public ITrace Trace { get; set; }
 
-        // TODO make configurable
-        private const float MaxCellSize = 100;
+        private float _maxCellSize = 100;
 
         [Dependency]
         public MeshTerrainBuilder(IElevationProvider elevationProvider, IResourceProvider resourceProvider,
@@ -50,21 +49,19 @@ namespace ActionStreetMap.Explorer.Terrain
 
         public IGameObject Build(Tile tile, Rule rule)
         {
-            Trace.Debug(LogTag, "started to build terrain");
+            Trace.Debug(LogTag, "Started to build terrain");
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
             var terrainObject = _gameObjectFactory.CreateNew("terrain", tile.GameObject);
 
             // detect grid parameters
-            var cellRowCount = (int) Math.Ceiling(tile.Height/MaxCellSize);
-            var cellColumnCount = (int) Math.Ceiling(tile.Width/MaxCellSize);
+            var cellRowCount = (int)Math.Ceiling(tile.Height / _maxCellSize);
+            var cellColumnCount = (int)Math.Ceiling(tile.Width / _maxCellSize);
             var cellHeight = tile.Height/cellRowCount;
             var cellWidth = tile.Width/cellColumnCount;
 
-            var meshCanvasBuilder = new MeshCanvasBuilder();
-
-            var contentData = meshCanvasBuilder
+            var meshCanvas = new MeshCanvasBuilder()
                 .SetTile(tile)
                 .SetScale(MeshCellBuilder.Scale)
                 .Build();
@@ -81,7 +78,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     var name = String.Format("cell {0}_{1}", i, j);
                     tasks.Add(Observable.Start(() =>
                     {
-                        var cell = _meshCellBuilder.CreateCell(rectangle, contentData);
+                        var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
                         BuildCell(tile, rule, terrainObject, cell, name);
                     }));
                 }
@@ -152,7 +149,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         private void FillRegions(Tile tile, MeshCell cell, List<Vector3> vertices, List<int> triangles, List<Color> colors, Dictionary<int, int> hashMap)
         {
-            Trace.Debug(LogTag, "start FillRegions");
+            Trace.Debug(LogTag, "Start FillRegions");
             // TODO this should be refactored
             var tree = new QuadTree(cell.Mesh);
             RegionIterator iterator = new RegionIterator(cell.Mesh);
@@ -252,7 +249,7 @@ namespace ActionStreetMap.Explorer.Terrain
             }
             BuildOffsetShape(tile, cell.Water, vertices, triangles, colors, waterDeepLevel);
             BuildOffsetShape(tile, cell.CarRoads, vertices, triangles, colors, roadDeepLevel);
-            Trace.Debug(LogTag, "end FillRegions");
+            Trace.Debug(LogTag, "End FillRegions");
         }
 
         #region Offset processing
@@ -359,7 +356,10 @@ namespace ActionStreetMap.Explorer.Terrain
 
         public void Configure(IConfigSection configSection)
         {
-            throw new NotImplementedException();
+            _maxCellSize = configSection.GetFloat("cell.size", 100);
+            var maxArea = configSection.GetFloat("maxArea", 10);
+
+            _meshCellBuilder.SetMaxArea(maxArea);
         }
     }
 }

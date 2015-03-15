@@ -4,7 +4,6 @@ using System.Linq;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Polygons.Geometry;
 using ActionStreetMap.Core.Polygons.Meshing;
-using ActionStreetMap.Infrastructure.Diagnostic;
 
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
@@ -21,7 +20,7 @@ namespace ActionStreetMap.Core.Terrain
 
         #region Public methods
 
-        public MeshCell CreateCell(Rectangle rectangle, MeshCanvas content)
+        public MeshCell Build(Rectangle rectangle, MeshCanvas content)
         {
             // build polygon
             var polygon = new Polygon();
@@ -56,6 +55,11 @@ namespace ActionStreetMap.Core.Terrain
                 WalkRoads = resultWalkRoads,
                 Surfaces = resultSurface
             };
+        }
+
+        public void SetMaxArea(float maxArea)
+        {
+            _maximumArea = maxArea;
         }
 
         #endregion
@@ -166,7 +170,7 @@ namespace ActionStreetMap.Core.Terrain
                 var p2 = path[1];
                 var p3 = path[2];
 
-                var scaleDown = Scale*3f;
+                const float scaleDown = Scale*3f;
                 return new Vertex((p1.X + p2.X + p3.X)/scaleDown, (p1.Y + p2.Y + p3.Y)/scaleDown);
             }
 
