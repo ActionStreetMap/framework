@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ActionStreetMap.Core.Polygons;
@@ -7,10 +6,9 @@ using ActionStreetMap.Core.Polygons.Geometry;
 using ActionStreetMap.Core.Polygons.Meshing;
 using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Tiling.Models;
-using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Infrastructure.Utilities;
+
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.Geometry.Vertex>>;
@@ -30,7 +28,7 @@ namespace ActionStreetMap.Core.Terrain
         public MeshGridBuilder(ITrace trace)
         {
             _trace = trace;
-        }     
+        }
 
         #region Grid
 
@@ -54,7 +52,7 @@ namespace ActionStreetMap.Core.Terrain
             // build polygon
             var polygon = new Polygon();
             var options = new ConstraintOptions {UseRegions = true};
-            var quality = new QualityOptions { MaximumArea = MaximumArea };
+            var quality = new QualityOptions {MaximumArea = MaximumArea};
             polygon.AddContour(new Collection<Vertex>
             {
                 new Vertex(rectangle.Left, rectangle.Bottom),
@@ -113,9 +111,8 @@ namespace ActionStreetMap.Core.Terrain
                     ggg.ForEach(g => g.Reverse());
                     contours.AddRange(ggg);
                 }
-                
             }
-            return new MeshRegion()
+            return new MeshRegion
             {
                 Contours = contours,
                 Holes = holes,
@@ -156,7 +153,7 @@ namespace ActionStreetMap.Core.Terrain
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
 
-            return solution.Select(c => c.Select(p => new Vertex(p.X / Scale, p.Y / Scale)).ToList()).ToList();
+            return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
         }
 
         private List<MeshRegion> CreateMeshRegions(Polygon polygon, Rectangle rectangle, List<RegionData> regionDatas)
@@ -169,45 +166,44 @@ namespace ActionStreetMap.Core.Terrain
             return meshRegions;
         }
 
-        private static Vertex GetAnyPointInsidePolygon(Path path)
+        private Vertex GetAnyPointInsidePolygon(Path path)
         {
-            // TODO Find better algorithm!
-            var p = path[0];
-            var delta = 1f;
-            if (Clipper.PointInPolygon(new IntPoint(p.X + delta, p.Y), path) > 0)
-                return new Vertex((p.X + delta)/Scale, p.Y/Scale);
-
-            if (Clipper.PointInPolygon(new IntPoint(p.X, p.Y + delta), path) > 0)
-                return new Vertex(p.X/Scale, (p.Y + delta)/Scale);
-
-            if (Clipper.PointInPolygon(new IntPoint(p.X - delta, p.Y), path) > 0)
-                return new Vertex((p.X - delta)/Scale, p.Y/Scale);
-
-            if (Clipper.PointInPolygon(new IntPoint(p.X, p.Y - delta), path) > 0)
-                return new Vertex(p.X/Scale, (p.Y - delta)/Scale);
-
-            var intRect = new IntRect();
-            for (int index = 0; index < path.Count; ++index)
+            if (path.Count == 3)
             {
-                if (path[index].X < intRect.left)
-                    intRect.left = path[index].X;
-                else if (path[index].X > intRect.right)
-                    intRect.right = path[index].X;
-                // NOTE clipper uses inverted y-axis
-                if (path[index].Y < intRect.top)
-                    intRect.top = path[index].Y;
-                else if (path[index].Y > intRect.bottom)
-                    intRect.bottom = path[index].Y;
+                var p1 = path[0];
+                var p2 = path[1];
+                var p3 = path[2];
+
+                var scaleDown = Scale*3f;
+                return new Vertex((p1.X + p2.X + p3.X)/scaleDown, (p1.Y + p2.Y + p3.Y)/scaleDown);
             }
 
-            var random = new Random();
-            while (true)
+            // see http://stackoverflow.com/questions/9797448/get-a-point-inside-the-polygon
+            // Chose first 3 consecutive points from the polygon
+            // Check, if the halfway point between the first and the third point is inside the polygon
+            // If yes: You found your point
+            // If no: Drop first point, add next point and goto 2.
+            // This is guaranteed to end, as every strictly closed polygon  has at least one triangle, 
+            // that is completly part of the polygon.
+            var count = path.Count;
+            var circleIndex = count - 2;
+            for (int i = 0; i < count; i++)
             {
-                var x = RandomUtils.LongRandom(intRect.left, intRect.right, random);
-                var y = RandomUtils.LongRandom(intRect.top, intRect.bottom, random);
-                if (Clipper.PointInPolygon(new IntPoint(x, y), path) > 0)
-                    return new Vertex(x/Scale, y/Scale);
+                IntPoint p1 = path[i];
+                IntPoint p3;
+                if (i < circleIndex)
+                    p3 = path[i + 2];
+                else if (i == count - 2)
+                    p3 = path[0];
+                else
+                    p3 = path[1];
+
+                var middlePoint = new IntPoint((p1.X + p3.X)/2, (p1.Y + p3.Y)/2);
+                if (Clipper.PointInPolygon(middlePoint, path) > 0)
+                    return new Vertex(middlePoint.X/Scale, middlePoint.Y/Scale);
             }
+            _trace.Warn(LogTag, "Cannot find point inside polygon");
+            throw new AlgorithmException("Cannot find point inside polygon");
         }
 
         #endregion
@@ -268,7 +264,8 @@ namespace ActionStreetMap.Core.Terrain
             };
         }
 
-        private static List<RegionData> BuildSurfaces(Tile tile, RegionData water, RegionData carRoads, RegionData walkRoads)
+        private static List<RegionData> BuildSurfaces(Tile tile, RegionData water, RegionData carRoads,
+            RegionData walkRoads)
         {
             var regions = new List<RegionData>();
             foreach (var group in tile.Canvas.Areas.GroupBy(s => s.SplatIndex))
@@ -299,38 +296,7 @@ namespace ActionStreetMap.Core.Terrain
             return regions;
         }
 
-        //private static RegionData BuildCarRoads(Tile tile, RegionData water)
-        //{
-        //    var carRoads = GetOffsetSolution(BuildRoadMap(
-        //        tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
-
-        //    var walkRoads = GetOffsetSolution(BuildRoadMap(
-        //        tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
-
-        //    var clipper = new Clipper();
-        //    clipper.AddPaths(carRoads, PolyType.ptClip, true);
-        //    clipper.AddPaths(walkRoads, PolyType.ptSubject, true);
-
-        //    var extrudedWalkRoads = new Paths();
-        //    clipper.Execute(ClipType.ctDifference, extrudedWalkRoads);
-
-        //    // clip by water
-        //    // TODO detect bridges!
-        //    clipper.Clear();
-        //    var resultRoads = new Paths();
-        //    clipper.AddPaths(water.Shape, PolyType.ptClip, true);
-        //    clipper.AddPaths(extrudedWalkRoads, PolyType.ptSubject, true);
-        //    clipper.Execute(ClipType.ctDifference, resultRoads, PolyFillType.pftPositive, PolyFillType.pftPositive);
-
-        //    return new RegionData
-        //    {
-        //        SplatId = 0,
-        //        Shape = ClipByTile(tile, resultRoads)
-        //    };
-        //}
-
-
-        private static Tuple<RegionData,RegionData> BuildRoads(Tile tile, RegionData water)
+        private static Tuple<RegionData, RegionData> BuildRoads(Tile tile, RegionData water)
         {
             var carRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
             var walkRoads = GetOffsetSolution(BuildRoadMap(tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
