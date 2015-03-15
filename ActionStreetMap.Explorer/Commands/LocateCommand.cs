@@ -42,8 +42,8 @@ namespace ActionStreetMap.Explorer.Commands
                 }
                 else
                 {
-                    response.AppendLine(String.Format("map: {0}", _geoPositionObserver.Current));
-                    response.AppendLine(String.Format("geo: {0}", _mapPositionObserver.Current));
+                    response.AppendLine(String.Format("geo: {0}", _geoPositionObserver.Current));
+                    response.AppendLine(String.Format("map: {0}", _mapPositionObserver.Current));
                 }
 
                 o.OnNext(response.ToString());

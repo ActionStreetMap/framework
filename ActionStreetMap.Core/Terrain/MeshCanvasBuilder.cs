@@ -105,7 +105,7 @@ namespace ActionStreetMap.Core.Terrain
                 .Select(a => a.Points.Select(p => new IntPoint(p.X*_scale, p.Y*_scale)).ToList()).ToList(),
                 PolyType.ptSubject, true);
             var solution = new Paths();
-            _clipper.Execute(ClipType.ctUnion, solution, PolyFillType.pftPositive, PolyFillType.pftPositive);
+            _clipper.Execute(ClipType.ctUnion, solution);
             _clipper.Clear();
             _water = new MeshCanvas.Region
             {
