@@ -100,8 +100,6 @@ namespace ActionStreetMap.Core.Polygons
             double detleft, detright, det;
             double detsum, errbound;
 
-            Statistic.CounterClockwiseCount++;
-
             detleft = (pa.x - pc.x) * (pb.y - pc.y);
             detright = (pa.y - pc.y) * (pb.x - pc.x);
             det = detleft - detright;
@@ -143,8 +141,6 @@ namespace ActionStreetMap.Core.Polygons
             {
                 return det;
             }
-
-            Statistic.CounterClockwiseAdaptCount++;
             return CounterClockwiseAdapt(pa, pb, pc, detsum);
         }
 
@@ -167,8 +163,6 @@ namespace ActionStreetMap.Core.Polygons
             double alift, blift, clift;
             double det;
             double permanent, errbound;
-
-            Statistic.InCircleCount++;
 
             adx = pa.x - pd.x;
             bdx = pb.x - pd.x;
@@ -207,7 +201,6 @@ namespace ActionStreetMap.Core.Polygons
                 return det;
             }
 
-            Statistic.InCircleAdaptCount++;
             return InCircleAdapt(pa, pb, pc, pd, permanent);
         }
 
@@ -247,8 +240,6 @@ namespace ActionStreetMap.Core.Polygons
             double denominator;
             double dx, dy, dxoff, dyoff;
 
-            Statistic.CircumcenterCount++;
-
             // Compute the circumcenter of the triangle. 
             xdo = dest.x - org.x;
             ydo = dest.y - org.y;
@@ -268,8 +259,6 @@ namespace ActionStreetMap.Core.Polygons
                 // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
                 // result, avoiding any possibility of division by zero.
                 denominator = 0.5 / CounterClockwise(dest, apex, org);
-                // Don't count the above as an orientation test. 
-                Statistic.CounterClockwiseCount--;
             }
 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -360,8 +349,6 @@ namespace ActionStreetMap.Core.Polygons
             double denominator;
             double dx, dy;
 
-            Statistic.CircumcenterCount++;
-
             // Compute the circumcenter of the triangle. 
             xdo = dest.x - org.x;
             ydo = dest.y - org.y;
@@ -379,8 +366,6 @@ namespace ActionStreetMap.Core.Polygons
                 // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
                 // result, avoiding any possibility of division by zero.
                 denominator = 0.5 / CounterClockwise(dest, apex, org);
-                // Don't count the above as an orientation test. 
-                Statistic.CounterClockwiseCount--;
             }
 
             dx = (yao * dodist - ydo * aodist) * denominator;

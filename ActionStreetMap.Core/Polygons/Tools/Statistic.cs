@@ -18,42 +18,6 @@ namespace ActionStreetMap.Core.Polygons.Tools
     {
         #region Static members
 
-        /// <summary>
-        /// Number of incircle tests performed.
-        /// </summary>
-        public static long InCircleCount = 0;
-        public static long InCircleAdaptCount = 0;
-
-        /// <summary>
-        /// Number of counterclockwise tests performed.
-        /// </summary>
-        public static long CounterClockwiseCount = 0;
-        public static long CounterClockwiseAdaptCount = 0;
-
-        /// <summary>
-        /// Number of 3D orientation tests performed.
-        /// </summary>
-        public static long Orient3dCount = 0;
-
-        /// <summary>
-        /// Number of right-of-hyperbola tests performed.
-        /// </summary>
-        public static long HyperbolaCount = 0;
-
-        /// <summary>
-        /// // Number of circumcenter calculations performed.
-        /// </summary>
-        public static long CircumcenterCount = 0;
-
-        /// <summary>
-        /// Number of circle top calculations performed.
-        /// </summary>
-        public static long CircleTopCount = 0;
-
-        /// <summary>
-        /// Number of vertex relocations.
-        /// </summary>
-        public static long RelocationCount = 0;
 
         #endregion
 

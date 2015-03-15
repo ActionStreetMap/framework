@@ -149,8 +149,6 @@ namespace ActionStreetMap.Core.Polygons
             double xMidOfMiddleEdge, yMidOfMiddleEdge;
             ////////////////////////////// END OF HALE'S VARIABLES //////////////////////////////
 
-            Statistic.CircumcenterCount++;
-
             // Compute the circumcenter of the triangle. 
             xdo = tdest.x - torg.x;
             ydo = tdest.y - torg.y;
@@ -173,8 +171,6 @@ namespace ActionStreetMap.Core.Polygons
                 // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
                 // result, avoiding any possibility of division by zero.
                 denominator = 0.5 / RobustPredicates.CounterClockwise(tdest, tapex, torg);
-                // Don't count the above as an orientation test. 
-                Statistic.CounterClockwiseCount--;
             }
             // calculate the circumcenter in terms of distance to origin point 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -387,8 +383,6 @@ namespace ActionStreetMap.Core.Polygons
                 /// location ///
                 if (relocated > 0)
                 {
-                    Statistic.RelocationCount++;
-
                     dx = newloc[0] - torg.x;
                     dy = newloc[1] - torg.y;
                     origin_x = torg.x;	// keep for later use
@@ -847,8 +841,6 @@ namespace ActionStreetMap.Core.Polygons
             bool neighborNotFound_second;
             ////////////////////////////// END OF HALE'S VARIABLES //////////////////////////////
 
-            Statistic.CircumcenterCount++;
-
             // Compute the circumcenter of the triangle. 
             xdo = tdest.x - torg.x;
             ydo = tdest.y - torg.y;
@@ -871,8 +863,6 @@ namespace ActionStreetMap.Core.Polygons
                 // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
                 // result, avoiding any possibility of division by zero.
                 denominator = 0.5 / RobustPredicates.CounterClockwise(tdest, tapex, torg);
-                // Don't count the above as an orientation test. 
-                Statistic.CounterClockwiseCount--;
             }
             // calculate the circumcenter in terms of distance to origin point 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -1085,8 +1075,6 @@ namespace ActionStreetMap.Core.Polygons
                 /// location ///
                 if (relocated > 0)
                 {
-                    Statistic.RelocationCount++;
-
                     dx = newloc[0] - torg.x;
                     dy = newloc[1] - torg.y;
                     origin_x = torg.x;	// keep for later use

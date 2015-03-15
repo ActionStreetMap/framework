@@ -615,8 +615,6 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
             Vertex leftvertex, rightvertex;
             double dxa, dya, dxb, dyb;
 
-            Statistic.HyperbolaCount++;
-
             leftvertex = fronttri.Dest();
             rightvertex = fronttri.Apex();
             if ((leftvertex.y < rightvertex.y) ||
@@ -646,8 +644,6 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
         {
             double xac, yac, xbc, ybc, xab, yab;
             double aclen2, bclen2, ablen2;
-
-            Statistic.CircleTopCount++;
 
             xac = pa.x - pc.x;
             yac = pa.y - pc.y;

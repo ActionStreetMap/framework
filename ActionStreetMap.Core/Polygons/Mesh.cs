@@ -464,15 +464,6 @@ namespace ActionStreetMap.Core.Polygons
             undeads = 0;               // No eliminated input vertices yet.
             checksegments = false;     // There are no segments in the triangulation yet.
             checkquality = false;      // The quality triangulation stage has not begun.
-
-            Statistic.InCircleCount = 0;
-            Statistic.CounterClockwiseCount = 0;
-            Statistic.InCircleAdaptCount = 0;
-            Statistic.CounterClockwiseAdaptCount = 0;
-            Statistic.Orient3dCount = 0;
-            Statistic.HyperbolaCount = 0;
-            Statistic.CircleTopCount = 0;
-            Statistic.CircumcenterCount = 0;
         }
 
         /// <summary> Read the vertices from memory. </summary>
