@@ -26,12 +26,14 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
         }
 
         private Mesh mesh;
+        private RobustPredicates robustPredicates;
         private double xminextreme; // Nonexistent x value used as a flag in sweepline.
         private List<SplayNode> splaynodes;
 
         public Mesh Triangulate(ICollection<Vertex> points)
         {
             this.mesh = new Mesh();
+            this.robustPredicates = mesh.robustPredicates;
             this.mesh.TransferNodes(points);
 
             // Nonexistent x value used as a flag to mark circle events in sweepline Delaunay algorithm. 
@@ -209,7 +211,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                     leftvertex = farlefttri.Apex();
                     midvertex = lefttri.Dest();
                     rightvertex = lefttri.Apex();
-                    lefttest = RobustPredicates.CounterClockwise(leftvertex, midvertex, rightvertex);
+                    lefttest = robustPredicates.CounterClockwise(leftvertex, midvertex, rightvertex);
                     if (lefttest > 0.0)
                     {
                         newevent = new SweepEvent();
@@ -224,7 +226,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                     leftvertex = righttri.Apex();
                     midvertex = righttri.Org();
                     rightvertex = farrighttri.Apex();
-                    righttest = RobustPredicates.CounterClockwise(leftvertex, midvertex, rightvertex);
+                    righttest = robustPredicates.CounterClockwise(leftvertex, midvertex, rightvertex);
                     if (righttest > 0.0)
                     {
                         newevent = new SweepEvent();
@@ -596,7 +598,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
             Point searchpoint = new Point(); // TODO: mesh.nextras
             Otri dummytri = default(Otri);
 
-            ccwabc = RobustPredicates.CounterClockwise(pa, pb, pc);
+            ccwabc = robustPredicates.CounterClockwise(pa, pb, pc);
             xac = pa.x - pc.x;
             yac = pa.y - pc.y;
             xbc = pb.x - pc.x;

@@ -19,6 +19,7 @@ namespace ActionStreetMap.Core.Polygons
     {
         private Sampler sampler;
         private Mesh mesh;
+        private RobustPredicates robustPredicates;
 
         // Pointer to a recently visited triangle. Improves point location if proximate vertices are
         // inserted sequentially.
@@ -27,7 +28,7 @@ namespace ActionStreetMap.Core.Polygons
         public TriangleLocator(Mesh mesh)
         {
             this.mesh = mesh;
-
+            this.robustPredicates = mesh.robustPredicates;
             sampler = new Sampler();
         }
 
@@ -121,10 +122,10 @@ namespace ActionStreetMap.Core.Polygons
                 }
                 // Does the point lie on the other side of the line defined by the triangle edge
                 // opposite the triangle's destination?
-                destorient = RobustPredicates.CounterClockwise(forg, fapex, searchpoint);
+                destorient = robustPredicates.CounterClockwise(forg, fapex, searchpoint);
                 // Does the point lie on the other side of the line defined by the triangle edge
                 // opposite the triangle's origin?
-                orgorient = RobustPredicates.CounterClockwise(fapex, fdest, searchpoint);
+                orgorient = robustPredicates.CounterClockwise(fapex, fdest, searchpoint);
                 if (destorient > 0.0)
                 {
                     if (orgorient > 0.0)
@@ -302,7 +303,7 @@ namespace ActionStreetMap.Core.Polygons
                 return LocateResult.OnVertex;
             }
             // Orient 'searchtri' to fit the preconditions of calling preciselocate(). 
-            ahead = RobustPredicates.CounterClockwise(torg, tdest, searchpoint);
+            ahead = robustPredicates.CounterClockwise(torg, tdest, searchpoint);
             if (ahead < 0.0)
             {
                 // Turn around so that 'searchpoint' is to the left of the edge specified by 'searchtri'. 

@@ -20,6 +20,7 @@ namespace ActionStreetMap.Core.Polygons
 
         private Mesh mesh;
         private Behavior behavior;
+        private RobustPredicates robustPredicates;
 
         // Work arrays for wegde intersection 
         private double[] petalx = new double[20];
@@ -45,6 +46,7 @@ namespace ActionStreetMap.Core.Polygons
         {
             this.mesh = mesh;
             this.behavior = mesh.behavior;
+            this.robustPredicates = mesh.robustPredicates;
         }
 
         /// <summary> Find a new location for a Steiner point. </summary>
@@ -162,7 +164,7 @@ namespace ActionStreetMap.Core.Polygons
             dadist = (tdest.x - tapex.x) * (tdest.x - tapex.x) +
                 (tdest.y - tapex.y) * (tdest.y - tapex.y);
             // checking if the user wanted exact arithmetic or not 
-            if (Behavior.NoExact)
+            if (behavior.NoExact)
             {
                 denominator = 0.5 / (xdo * yao - xao * ydo);
             }
@@ -170,7 +172,7 @@ namespace ActionStreetMap.Core.Polygons
             {
                 // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
                 // result, avoiding any possibility of division by zero.
-                denominator = 0.5 / RobustPredicates.CounterClockwise(tdest, tapex, torg);
+                denominator = 0.5 / robustPredicates.CounterClockwise(tdest, tapex, torg);
             }
             // calculate the circumcenter in terms of distance to origin point 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -456,7 +458,7 @@ namespace ActionStreetMap.Core.Polygons
                         neighborvertex_2 = neighborotri.Dest();
                         neighborvertex_3 = neighborotri.Apex();
                         // now calculate neighbor's circumcenter which is the voronoi site 
-                        neighborCircumcenter = RobustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
+                        neighborCircumcenter = robustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
                             ref xi_tmp, ref eta_tmp);
 
                         /// compute petal and Voronoi edge intersection /// 
@@ -584,7 +586,7 @@ namespace ActionStreetMap.Core.Polygons
                         neighborvertex_2 = neighborotri.Dest();
                         neighborvertex_3 = neighborotri.Apex();
                         // now calculate neighbor's circumcenter which is the voronoi site 
-                        neighborCircumcenter = RobustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
+                        neighborCircumcenter = robustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
                             ref xi_tmp, ref eta_tmp);
 
                         /// compute petal and Voronoi edge intersection /// 
@@ -854,7 +856,7 @@ namespace ActionStreetMap.Core.Polygons
             dadist = (tdest.x - tapex.x) * (tdest.x - tapex.x) +
                 (tdest.y - tapex.y) * (tdest.y - tapex.y);
             // checking if the user wanted exact arithmetic or not 
-            if (Behavior.NoExact)
+            if (behavior.NoExact)
             {
                 denominator = 0.5 / (xdo * yao - xao * ydo);
             }
@@ -862,7 +864,7 @@ namespace ActionStreetMap.Core.Polygons
             {
                 // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
                 // result, avoiding any possibility of division by zero.
-                denominator = 0.5 / RobustPredicates.CounterClockwise(tdest, tapex, torg);
+                denominator = 0.5 / robustPredicates.CounterClockwise(tdest, tapex, torg);
             }
             // calculate the circumcenter in terms of distance to origin point 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -1197,7 +1199,7 @@ namespace ActionStreetMap.Core.Polygons
                         neighborvertex_2 = neighborotri.Dest();
                         neighborvertex_3 = neighborotri.Apex();
                         // now calculate neighbor's circumcenter which is the voronoi site 
-                        neighborCircumcenter = RobustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
+                        neighborCircumcenter = robustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
                             ref xi_tmp, ref eta_tmp);
 
                         /// compute petal and Voronoi edge intersection /// 
@@ -1482,7 +1484,7 @@ namespace ActionStreetMap.Core.Polygons
                         neighborvertex_2 = neighborotri.Dest();
                         neighborvertex_3 = neighborotri.Apex();
                         // now calculate neighbor's circumcenter which is the voronoi site 
-                        neighborCircumcenter = RobustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
+                        neighborCircumcenter = robustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
                             ref xi_tmp, ref eta_tmp);
 
                         /// compute petal and Voronoi edge intersection /// 
@@ -3960,7 +3962,7 @@ namespace ActionStreetMap.Core.Polygons
             else
             {
                 // Orient 'searchtri' to fit the preconditions of calling preciselocate(). 
-                ahead = RobustPredicates.CounterClockwise(torg, tdest, newvertex);
+                ahead = robustPredicates.CounterClockwise(torg, tdest, newvertex);
                 if (ahead < 0.0)
                 {
                     // Turn around so that 'searchpoint' is to the left of the edge specified by 'searchtri'. 

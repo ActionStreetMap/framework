@@ -39,7 +39,7 @@ namespace ActionStreetMap.Core.Polygons.Voronoi
                 var v1 = (Vertex)edge.face.generator;
                 var v2 = (Vertex)twin.face.generator;
 
-                double dir = RobustPredicates.CounterClockwise(v1, v2, edge.origin);
+                double dir = mesh.robustPredicates.CounterClockwise(v1, v2, edge.origin);
 
                 if (dir <= 0)
                 {

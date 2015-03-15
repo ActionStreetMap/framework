@@ -66,6 +66,8 @@ namespace ActionStreetMap.Core.Polygons
 
         internal TriangleLocator locator;
 
+        internal RobustPredicates robustPredicates;
+
         // Controls the behavior of the mesh instance. 
         internal Behavior behavior;
 
@@ -140,7 +142,8 @@ namespace ActionStreetMap.Core.Polygons
         public Mesh()
         {
             behavior = new Behavior();
-
+            robustPredicates = new RobustPredicates();
+            robustPredicates.ExactInit(behavior);
             vertices = new Dictionary<int, Vertex>();
             triangles = new Dictionary<int, Triangle>();
             subsegs = new Dictionary<int, Segment>();
@@ -153,8 +156,6 @@ namespace ActionStreetMap.Core.Polygons
             qualityMesher = new QualityMesher(this);
 
             locator = new TriangleLocator(this);
-
-            RobustPredicates.ExactInit();
         }
 
         public void Refine(QualityOptions quality)
@@ -961,7 +962,7 @@ namespace ActionStreetMap.Core.Polygons
                             // 'leftvertex' is infinitely distant. Check the convexity of the
                             // boundary of the triangulation. 'farvertex' might be infinite as well,
                             // but trust me, this same condition should be applied.
-                            doflip = RobustPredicates.CounterClockwise(newvertex, rightvertex, farvertex) > 0.0;
+                            doflip = robustPredicates.CounterClockwise(newvertex, rightvertex, farvertex) > 0.0;
                         }
                         else if ((rightvertex == infvertex1) ||
                                  (rightvertex == infvertex2) ||
@@ -970,7 +971,7 @@ namespace ActionStreetMap.Core.Polygons
                             // 'rightvertex' is infinitely distant. Check the convexity of the
                             // boundary of the triangulation. 'farvertex' might be infinite as well,
                             // but trust me, this same condition should be applied.
-                            doflip = RobustPredicates.CounterClockwise(farvertex, leftvertex, newvertex) > 0.0;
+                            doflip = robustPredicates.CounterClockwise(farvertex, leftvertex, newvertex) > 0.0;
                         }
                         else if ((farvertex == infvertex1) ||
                                  (farvertex == infvertex2) ||
@@ -983,7 +984,7 @@ namespace ActionStreetMap.Core.Polygons
                         else
                         {
                             // Test whether the edge is locally Delaunay. 
-                            doflip = RobustPredicates.InCircle(leftvertex, newvertex, rightvertex, farvertex) > 0.0;
+                            doflip = robustPredicates.InCircle(leftvertex, newvertex, rightvertex, farvertex) > 0.0;
                         }
                         if (doflip)
                         {
@@ -1491,7 +1492,7 @@ namespace ActionStreetMap.Core.Polygons
                 testtri.Onext();
                 testvertex = testtri.Dest();
                 // Is this a better vertex? 
-                if (RobustPredicates.InCircle(leftbasevertex, rightbasevertex, bestvertex, testvertex) > 0.0)
+                if (robustPredicates.InCircle(leftbasevertex, rightbasevertex, bestvertex, testvertex) > 0.0)
                 {
                     testtri.Copy(ref besttri);
                     bestvertex = testvertex;

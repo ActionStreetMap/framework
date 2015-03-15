@@ -16,11 +16,6 @@ namespace ActionStreetMap.Core.Polygons.Tools
     /// </summary>
     public class Statistic
     {
-        #region Static members
-
-
-        #endregion
-
         #region Properties
 
         double minEdge = 0;

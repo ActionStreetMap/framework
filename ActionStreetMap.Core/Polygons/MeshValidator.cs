@@ -21,8 +21,8 @@ namespace ActionStreetMap.Core.Polygons
             Vertex oppoorg, oppodest;
 
             // Temporarily turn on exact arithmetic if it's off. 
-            bool saveexact = Behavior.NoExact;
-            Behavior.NoExact = false;
+            bool saveexact = mesh.behavior.NoExact;
+            mesh.behavior.NoExact = false;
 
             int horrors = 0;
 
@@ -40,7 +40,7 @@ namespace ActionStreetMap.Core.Polygons
                     {
                         // Only test for inversion once. Test if the triangle is flat or inverted. 
                         apex = tri.Apex();
-                        if (RobustPredicates.CounterClockwise(org, dest, apex) <= 0.0)
+                        if (mesh.robustPredicates.CounterClockwise(org, dest, apex) <= 0.0)
                         {
                             /*if (Log.Verbose)
                             {
@@ -96,7 +96,7 @@ namespace ActionStreetMap.Core.Polygons
             }*/
 
             // Restore the status of exact arithmetic. 
-            Behavior.NoExact = saveexact;
+            mesh.behavior.NoExact = saveexact;
 
             return (horrors == 0);
         }
@@ -125,8 +125,8 @@ namespace ActionStreetMap.Core.Polygons
             bool shouldbedelaunay;
 
             // Temporarily turn on exact arithmetic if it's off. 
-            bool saveexact = Behavior.NoExact;
-            Behavior.NoExact = false;
+            bool saveexact = mesh.behavior.NoExact;
+            mesh.behavior.NoExact = false;
 
             int horrors = 0;
 
@@ -172,7 +172,7 @@ namespace ActionStreetMap.Core.Polygons
 
                     if (shouldbedelaunay)
                     {
-                        if (RobustPredicates.NonRegular(org, dest, apex, oppoapex) > 0.0)
+                        if (mesh.robustPredicates.NonRegular(org, dest, apex, oppoapex) > 0.0)
                         {
                             /*if (Log.Verbose)
                             {
@@ -187,7 +187,7 @@ namespace ActionStreetMap.Core.Polygons
             }
 
             // Restore the status of exact arithmetic. 
-            Behavior.NoExact = saveexact;
+            mesh.behavior.NoExact = saveexact;
 
             return (horrors == 0);
         }

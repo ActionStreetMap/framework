@@ -20,6 +20,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing
         private BadTriQueue queue;
         private Mesh mesh;
         private Behavior behavior;
+        private RobustPredicates robustPredicates;
 
         private NewLocation newLocation;
 
@@ -30,6 +31,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing
 
             this.mesh = mesh;
             this.behavior = mesh.behavior;
+            this.robustPredicates = mesh.robustPredicates;
 
             newLocation = new NewLocation(mesh);
         }
@@ -536,12 +538,12 @@ namespace ActionStreetMap.Core.Polygons.Meshing
                             + split * (edest.attributes[i] - eorg.attributes[i]);
                     }
 
-                    if (!Behavior.NoExact)
+                    if (!behavior.NoExact)
                     {
                         // Roundoff in the above calculation may yield a 'newvertex' that is not
                         // precisely collinear with 'eorg' and 'edest'. Improve collinearity by one
                         // step of iterative refinement.
-                        multiplier = RobustPredicates.CounterClockwise(eorg, edest, newvertex);
+                        multiplier = robustPredicates.CounterClockwise(eorg, edest, newvertex);
                         divisor = ((eorg.x - edest.x) * (eorg.x - edest.x) +
                                    (eorg.y - edest.y) * (eorg.y - edest.y));
                         if ((multiplier != 0.0) && (divisor != 0.0))
@@ -636,7 +638,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing
                 // TODO: NewLocation doesn't work for refinement. Why? Maybe reset VertexType?
                 if (behavior.fixedArea || behavior.VarArea)
                 {
-                    newloc = RobustPredicates.FindCircumcenter(borg, bdest, bapex, ref xi, ref eta, behavior.offconstant);
+                    newloc = robustPredicates.FindCircumcenter(borg, bdest, bapex, ref xi, ref eta, behavior.offconstant);
                 }
                 else
                 {

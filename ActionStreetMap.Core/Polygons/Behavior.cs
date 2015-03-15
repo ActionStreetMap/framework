@@ -87,13 +87,6 @@ namespace ActionStreetMap.Core.Polygons
             this.goodAngle *= this.goodAngle;
         }
 
-        #region Static properties
-
-        /// <summary> No exact arithmetic. </summary>
-        public static bool NoExact { get; set; }
-
-        #endregion Static properties
-
         #region Public properties
 
         /// <summary> Quality mesh generation. </summary>
@@ -215,6 +208,9 @@ namespace ActionStreetMap.Core.Polygons
             get { return jettison; }
             set { jettison = value; }
         }
+
+        /// <summary> No exact arithmetic. </summary>
+        public bool NoExact { get; set; }
 
         #endregion Public properties
     }

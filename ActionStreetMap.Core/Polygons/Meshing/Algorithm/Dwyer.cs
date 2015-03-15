@@ -45,6 +45,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
 
         private Vertex[] sortarray;
         private Mesh mesh;
+        private RobustPredicates robustPredicates;
 
         /// <summary> Form a Delaunay triangulation by the divide-and-conquer method. </summary>
         /// <returns></returns>
@@ -55,6 +56,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
         public Mesh Triangulate(ICollection<Vertex> points)
         {
             this.mesh = new Mesh();
+            this.robustPredicates = mesh.robustPredicates;
             this.mesh.TransferNodes(points);
 
             Otri hullleft = default(Otri), hullright = default(Otri);
@@ -419,7 +421,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
             {
                 changemade = false;
                 // Make innerleftdest the "bottommost" vertex of the left hull. 
-                if (RobustPredicates.CounterClockwise(innerleftdest, innerleftapex, innerrightorg) > 0.0)
+                if (robustPredicates.CounterClockwise(innerleftdest, innerleftapex, innerrightorg) > 0.0)
                 {
                     innerleft.Lprev();
                     innerleft.Sym();
@@ -428,7 +430,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                     changemade = true;
                 }
                 // Make innerrightorg the "bottommost" vertex of the right hull. 
-                if (RobustPredicates.CounterClockwise(innerrightapex, innerrightorg, innerleftdest) > 0.0)
+                if (robustPredicates.CounterClockwise(innerrightapex, innerrightorg, innerleftdest) > 0.0)
                 {
                     innerright.Lnext();
                     innerright.Sym();
@@ -475,8 +477,8 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                 // Have we reached the top? (This isn't quite the right question, because even
                 // though the left triangulation might seem finished now, moving up on the right
                 // triangulation might reveal a new vertex of the left triangulation. And vice-versa.)
-                leftfinished = RobustPredicates.CounterClockwise(upperleft, lowerleft, lowerright) <= 0.0;
-                rightfinished = RobustPredicates.CounterClockwise(upperright, lowerleft, lowerright) <= 0.0;
+                leftfinished = robustPredicates.CounterClockwise(upperleft, lowerleft, lowerright) <= 0.0;
+                rightfinished = robustPredicates.CounterClockwise(upperright, lowerleft, lowerright) <= 0.0;
                 if (leftfinished && rightfinished)
                 {
                     // Create the top new bounding triangle. 
@@ -532,7 +534,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                     if (nextapex != null)
                     {
                         // Check whether the edge is Delaunay. 
-                        badedge = RobustPredicates.InCircle(lowerleft, lowerright, upperleft, nextapex) > 0.0;
+                        badedge = robustPredicates.InCircle(lowerleft, lowerright, upperleft, nextapex) > 0.0;
                         while (badedge)
                         {
                             // Eliminate the edge with an edge flip. As a result, the left
@@ -562,7 +564,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                             if (nextapex != null)
                             {
                                 // Check whether the edge is Delaunay. 
-                                badedge = RobustPredicates.InCircle(lowerleft, lowerright, upperleft, nextapex) > 0.0;
+                                badedge = robustPredicates.InCircle(lowerleft, lowerright, upperleft, nextapex) > 0.0;
                             }
                             else
                             {
@@ -584,7 +586,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                     if (nextapex != null)
                     {
                         // Check whether the edge is Delaunay. 
-                        badedge = RobustPredicates.InCircle(lowerleft, lowerright, upperright, nextapex) > 0.0;
+                        badedge = robustPredicates.InCircle(lowerleft, lowerright, upperright, nextapex) > 0.0;
                         while (badedge)
                         {
                             // Eliminate the edge with an edge flip. As a result, the right
@@ -614,7 +616,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                             if (nextapex != null)
                             {
                                 // Check whether the edge is Delaunay. 
-                                badedge = RobustPredicates.InCircle(lowerleft, lowerright, upperright, nextapex) > 0.0;
+                                badedge = robustPredicates.InCircle(lowerleft, lowerright, upperright, nextapex) > 0.0;
                             }
                             else
                             {
@@ -625,7 +627,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                     }
                 }
                 if (leftfinished || (!rightfinished &&
-                       (RobustPredicates.InCircle(upperleft, lowerleft, lowerright, upperright) > 0.0)))
+                       (robustPredicates.InCircle(upperleft, lowerleft, lowerright, upperright) > 0.0)))
                 {
                     // Knit the triangulations, adding an edge from 'lowerleft' to 'upperright'. 
                     baseedge.Bond(ref rightcand);
@@ -710,7 +712,7 @@ namespace ActionStreetMap.Core.Polygons.Meshing.Algorithm
                 mesh.MakeTriangle(ref tri1);
                 mesh.MakeTriangle(ref tri2);
                 mesh.MakeTriangle(ref tri3);
-                area = RobustPredicates.CounterClockwise(sortarray[left], sortarray[left + 1], sortarray[left + 2]);
+                area = robustPredicates.CounterClockwise(sortarray[left], sortarray[left + 1], sortarray[left + 2]);
                 if (area == 0.0)
                 {
                     // Three collinear vertices; the triangulation is two edges. 

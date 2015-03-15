@@ -19,6 +19,7 @@ namespace ActionStreetMap.Core.Polygons.Voronoi
         // List of infinite half-edges, i.e. half-edges that start at circumcenters of triangles
         // which lie on the domain boundary.
         protected List<HalfEdge> rays;
+        protected Mesh mesh;
 
         /// <summary> Initializes a new instance of the <see cref="VoronoiBase"/> class. </summary>
         /// <param name="mesh"> Triangle mesh. </param>
@@ -28,6 +29,7 @@ namespace ActionStreetMap.Core.Polygons.Voronoi
         protected VoronoiBase(Mesh mesh, bool generate)
             : base(false)
         {
+            this.mesh = mesh;
             if (generate)
             {
                 Generate(mesh);
@@ -85,7 +87,7 @@ namespace ActionStreetMap.Core.Polygons.Voronoi
                 id = t.id;
                 tri.tri = t;
 
-                pt = RobustPredicates.FindCircumcenter(tri.Org(), tri.Dest(), tri.Apex(), ref xi, ref eta);
+                pt = mesh.robustPredicates.FindCircumcenter(tri.Org(), tri.Dest(), tri.Apex(), ref xi, ref eta);
 
                 vertex = new Vertex(pt.x, pt.y);
                 vertex.id = id;

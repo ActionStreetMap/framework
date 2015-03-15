@@ -22,12 +22,13 @@ namespace ActionStreetMap.Core.Polygons
     /// command prompt with the command "CL /P /C EXACT.C", see
     /// http: //msdn.microsoft.com/en-us/library/8z9z0bx6.aspx
     /// </remarks>
-    public static class RobustPredicates
+    internal class RobustPredicates
     {
-        private static double epsilon, splitter, resulterrbound;
-        private static double ccwerrboundA, ccwerrboundB, ccwerrboundC;
-        private static double iccerrboundA, iccerrboundB, iccerrboundC;
-        //private static double o3derrboundA, o3derrboundB, o3derrboundC;
+        private Behavior behavior;
+        private double epsilon, splitter, resulterrbound;
+        private double ccwerrboundA, ccwerrboundB, ccwerrboundC;
+        private double iccerrboundA, iccerrboundB, iccerrboundC;
+        //private double o3derrboundA, o3derrboundB, o3derrboundC;
 
         /// <summary> Initialize the variables used for exact arithmetic. </summary>
         /// <remarks>
@@ -44,8 +45,9 @@ namespace ActionStreetMap.Core.Polygons
         /// 
         /// Don't change this routine unless you fully understand it.
         /// </remarks>
-        public static void ExactInit()
+        public void ExactInit(Behavior behavior)
         {
+            this.behavior = behavior;
             double half;
             double check, lastcheck;
             bool every_other;
@@ -95,7 +97,7 @@ namespace ActionStreetMap.Core.Polygons
         /// Return a positive value if the points pa, pb, and pc occur in counterclockwise order; a
         /// negative value if they occur in clockwise order; and zero if they are collinear.
         /// </returns>
-        public static double CounterClockwise(Point pa, Point pb, Point pc)
+        public double CounterClockwise(Point pa, Point pb, Point pc)
         {
             double detleft, detright, det;
             double detsum, errbound;
@@ -104,7 +106,7 @@ namespace ActionStreetMap.Core.Polygons
             detright = (pa.y - pc.y) * (pb.x - pc.x);
             det = detleft - detright;
 
-            if (Behavior.NoExact)
+            if (behavior.NoExact)
             {
                 return det;
             }
@@ -156,7 +158,7 @@ namespace ActionStreetMap.Core.Polygons
         /// Return a positive value if the point pd lies inside the circle passing through pa, pb,
         /// and pc; a negative value if it lies outside; and zero if the four points are cocircular.
         /// </returns>
-        public static double InCircle(Point pa, Point pb, Point pc, Point pd)
+        public double InCircle(Point pa, Point pb, Point pc, Point pd)
         {
             double adx, bdx, cdx, ady, bdy, cdy;
             double bdxcdy, cdxbdy, cdxady, adxcdy, adxbdy, bdxady;
@@ -187,7 +189,7 @@ namespace ActionStreetMap.Core.Polygons
                 + blift * (cdxady - adxcdy)
                 + clift * (adxbdy - bdxady);
 
-            if (Behavior.NoExact)
+            if (behavior.NoExact)
             {
                 return det;
             }
@@ -219,7 +221,7 @@ namespace ActionStreetMap.Core.Polygons
         /// Return a positive value if the point pd lies inside the circle passing through pa, pb,
         /// and pc; a negative value if it lies outside; and zero if the four points are cocircular.
         /// </returns>
-        public static double NonRegular(Point pa, Point pb, Point pc, Point pd)
+        public double NonRegular(Point pa, Point pb, Point pc, Point pd)
         {
             return InCircle(pa, pb, pc, pd);
         }
@@ -232,7 +234,7 @@ namespace ActionStreetMap.Core.Polygons
         /// <param name="eta"> Relative coordinate of new location. </param>
         /// <param name="offconstant"> Off-center constant. </param>
         /// <returns> Coordinates of the circumcenter (or off-center) </returns>
-        public static Point FindCircumcenter(Point org, Point dest, Point apex,
+        public Point FindCircumcenter(Point org, Point dest, Point apex,
             ref double xi, ref double eta, double offconstant)
         {
             double xdo, ydo, xao, yao;
@@ -250,7 +252,7 @@ namespace ActionStreetMap.Core.Polygons
             dadist = (dest.x - apex.x) * (dest.x - apex.x) +
                      (dest.y - apex.y) * (dest.y - apex.y);
 
-            if (Behavior.NoExact)
+            if (behavior.NoExact)
             {
                 denominator = 0.5 / (xdo * yao - xao * ydo);
             }
@@ -341,7 +343,7 @@ namespace ActionStreetMap.Core.Polygons
         /// the eta axis. This procedure also returns the square of the length of the triangle's
         /// shortest edge.
         /// </remarks>
-        public static Point FindCircumcenter(Point org, Point dest, Point apex,
+        public Point FindCircumcenter(Point org, Point dest, Point apex,
             ref double xi, ref double eta)
         {
             double xdo, ydo, xao, yao;
@@ -357,7 +359,7 @@ namespace ActionStreetMap.Core.Polygons
             dodist = xdo * xdo + ydo * ydo;
             aodist = xao * xao + yao * yao;
 
-            if (Behavior.NoExact)
+            if (behavior.NoExact)
             {
                 denominator = 0.5 / (xdo * yao - xao * ydo);
             }
@@ -397,7 +399,7 @@ namespace ActionStreetMap.Core.Polygons
         /// property. (That is, if e is strongly nonoverlapping, h will be also.) Does NOT maintain
         /// the nonoverlapping or nonadjacent properties.
         /// </remarks>
-        private static int FastExpansionSumZeroElim(int elen, double[] e, int flen, double[] f, double[] h)
+        private int FastExpansionSumZeroElim(int elen, double[] e, int flen, double[] f, double[] h)
         {
             double Q;
             double Qnew;
@@ -523,7 +525,7 @@ namespace ActionStreetMap.Core.Polygons
         /// maintains the strongly nonoverlapping and nonadjacent properties as well. (That is, if e
         /// has one of these properties, so will h.)
         /// </remarks>
-        private static int ScaleExpansionZeroElim(int elen, double[] e, double b, double[] h)
+        private int ScaleExpansionZeroElim(int elen, double[] e, double b, double[] h)
         {
             double Q, sum;
             double hh;
@@ -571,7 +573,7 @@ namespace ActionStreetMap.Core.Polygons
         /// <param name="elen"></param>
         /// <param name="e"></param>
         /// <returns></returns>
-        private static double Estimate(int elen, double[] e)
+        private double Estimate(int elen, double[] e)
         {
             double Q;
             int eindex;
@@ -602,7 +604,7 @@ namespace ActionStreetMap.Core.Polygons
         /// value has the correct sign. Hence, this function is usually quite fast, but will run
         /// more slowly when the input points are collinear or nearly so.
         /// </remarks>
-        private static double CounterClockwiseAdapt(Point pa, Point pb, Point pc, double detsum)
+        private double CounterClockwiseAdapt(Point pa, Point pb, Point pc, double detsum)
         {
             double acx, acy, bcx, bcy;
             double acxtail, acytail, bcxtail, bcytail;
@@ -707,7 +709,7 @@ namespace ActionStreetMap.Core.Polygons
         /// value has the correct sign. Hence, this function is usually quite fast, but will run
         /// more slowly when the input points are cocircular or nearly so.
         /// </remarks>
-        private static double InCircleAdapt(Point pa, Point pb, Point pc, Point pd, double permanent)
+        private double InCircleAdapt(Point pa, Point pb, Point pc, Point pd, double permanent)
         {
             double adx, bdx, cdx, ady, bdy, cdy;
             double det, errbound;
