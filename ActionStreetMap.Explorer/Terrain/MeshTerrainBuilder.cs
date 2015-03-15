@@ -61,11 +61,13 @@ namespace ActionStreetMap.Explorer.Terrain
             var cellHeight = tile.Height/cellRowCount;
             var cellWidth = tile.Width/cellColumnCount;
 
+            Trace.Debug(LogTag, "Building mesh canvas..");
             var meshCanvas = new MeshCanvasBuilder()
                 .SetTile(tile)
                 .SetScale(MeshCellBuilder.Scale)
                 .Build();
-                
+
+            Trace.Debug(LogTag, "Building mesh cells..");
             var tasks = new List<IObservable<Unit>>(cellRowCount*cellColumnCount);
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
@@ -78,8 +80,15 @@ namespace ActionStreetMap.Explorer.Terrain
                     var name = String.Format("cell {0}_{1}", i, j);
                     tasks.Add(Observable.Start(() =>
                     {
-                        var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                        BuildCell(tile, rule, terrainObject, cell, name);
+                        try
+                        {
+                            var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
+                            BuildCell(tile, rule, terrainObject, cell, name);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.Error(LogTag, ex, "Unable to build {0}", name);
+                        }
                     }));
                 }
 
@@ -158,6 +167,11 @@ namespace ActionStreetMap.Explorer.Terrain
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);
+                if (start == null)
+                {
+                    Trace.Warn(LogTag, "Broken car road region");
+                    continue;
+                }
 
                 int count = 0;
                 var color = Color.red;
@@ -187,7 +201,11 @@ namespace ActionStreetMap.Explorer.Terrain
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);
-
+                if (start == null)
+                {
+                    Trace.Warn(LogTag, "Broken walk road region");
+                    continue;
+                }
                 int count = 0;
                 var color = Color.yellow;
 
@@ -208,7 +226,11 @@ namespace ActionStreetMap.Explorer.Terrain
                 {
                     var point = fillRegion.Anchor;
                     var start = (Triangle) tree.Query(point.X, point.Y);
-
+                    if (start == null)
+                    {
+                        Trace.Warn(LogTag, "Broken surface region");
+                        continue;
+                    }
                     int count = 0;
                     var color = GetColorBySplatId(fillRegion.SplatId);
                     iterator.Process(start, triangle =>
@@ -227,6 +249,11 @@ namespace ActionStreetMap.Explorer.Terrain
             {
                 var point = region.Anchor;
                 var start = (Triangle)tree.Query(point.X, point.Y);
+                if (start == null)
+                {
+                    Trace.Warn(LogTag, "Broken water region");
+                    continue;
+                }
                 int count = 0;
      
                 iterator.Process(start, triangle =>
