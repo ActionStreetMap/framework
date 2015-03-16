@@ -14,6 +14,8 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         {
             var colors = context.Colors;
             var hashMap = context.TriangleMap;
+            var gradient = ResourceProvider.GetGradient(2);
+            var colorNoiseFreq = 1f;
             foreach (var region in meshRegion.FillRegions)
             {
                 var point = region.Anchor;
@@ -23,12 +25,13 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                     Trace.Warn(LogTag, "Broken walk road region");
                     continue;
                 }
-                int count = 0;
-                var color = Color.yellow;
 
+                int count = 0;
                 context.Iterator.Process(start, triangle =>
                 {
+                    var vertex = triangle.GetVertex(0);
                     var index = hashMap[triangle.GetHashCode()];
+                    var color = GetColor(gradient, new Vector3((float) vertex.X, 0, (float) vertex.Y), colorNoiseFreq);
                     colors[index] = color;
                     colors[index + 1] = color;
                     colors[index + 2] = color;
