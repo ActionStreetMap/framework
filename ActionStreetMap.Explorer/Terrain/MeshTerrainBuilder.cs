@@ -129,13 +129,14 @@ namespace ActionStreetMap.Explorer.Terrain
             foreach (var surfaceRegion in cell.Surfaces)
                 _surfaceRoadLayerBuilder.Build(context, surfaceRegion);
 
-            var goCell = _gameObjectFactory.CreateNew(name, terrainObject);
-            Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, context));
+            Scheduler.MainThread.Schedule(() => BuildGameObject(terrainObject, rule, name, context));
         }
 
-        private void BuildGameObject(Rule rule, IGameObject cellObject, MeshContext context)
+        private void BuildGameObject(IGameObject parent, Rule rule, string name, MeshContext context)
         {
-            var gameObject = cellObject.GetComponent<GameObject>();
+            // create cell game object and attach it to parent
+            var gameObject = new GameObject(name);
+            gameObject.transform.parent = parent.GetComponent<GameObject>().transform;
 
             var meshData = new Mesh();
             meshData.vertices = context.Vertices.ToArray();
