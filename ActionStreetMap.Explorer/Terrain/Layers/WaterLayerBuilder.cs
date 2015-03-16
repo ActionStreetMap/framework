@@ -15,6 +15,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         {
             var vertices = context.Vertices;
             var hashMap = context.TriangleMap;
+            var gradient = ResourceProvider.GetGradient(0);
             foreach (var region in meshRegion.FillRegions)
             {
                 var point = region.Anchor;
@@ -30,21 +31,21 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                 {
                     var index = hashMap[triangle.GetHashCode()];
 
-                    var p1 = vertices[index];
-                    vertices[index] = new Vector3(p1.x, p1.y - WaterDeepLevel, p1.z);
+                    var p0 = vertices[index];
+                    vertices[index] = new Vector3(p0.x, p0.y - WaterDeepLevel, p0.z);
 
-                    var p2 = vertices[index + 1];
-                    vertices[index + 1] = new Vector3(p2.x, p2.y - WaterDeepLevel, p2.z);
+                    var p1 = vertices[index + 1];
+                    vertices[index + 1] = new Vector3(p1.x, p1.y - WaterDeepLevel, p1.z);
 
-                    var p3 = vertices[index + 2];
-                    vertices[index + 2] = new Vector3(p3.x, p3.y - WaterDeepLevel, p3.z);
+                    var p2 = vertices[index + 2];
+                    vertices[index + 2] = new Vector3(p2.x, p2.y - WaterDeepLevel, p2.z);
 
                     count++;
                 });
                 Trace.Debug(LogTag, "Water region processed: {0}", count);
             }
 
-            BuildOffsetShape(context, meshRegion, WaterDeepLevel);
+            BuildOffsetShape(context, meshRegion, gradient, WaterDeepLevel);
         }
     }
 }

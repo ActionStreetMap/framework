@@ -18,6 +18,8 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
             var colors = context.Colors;
             var vertices = context.Vertices;
             var hashMap = context.TriangleMap;
+            var gradient = ResourceProvider.GetGradient(1);
+            var eleNoiseFreq = 0.5f;
             foreach (var region in meshRegion.FillRegions)
             {
                 var point = region.Anchor;
@@ -29,39 +31,42 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                 }
 
                 int count = 0;
-                var color = Color.red;
                 context.Iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];
-                    colors[index] = color;
-                    colors[index + 1] = color;
-                    colors[index + 2] = color;
 
-                    var p1 = vertices[index];
-                    float ele1 = 0;
+                    var p0 = vertices[index];
+                    float ele0 = 0;
                     if (triangle.GetVertex(0).Type == VertexType.FreeVertex)
-                        ele1 = Noise.Perlin3D(new Vector3(p1.x, 0, p1.z), 0.1f);
-                    vertices[index] = new Vector3(p1.x, p1.y - RoadDeepLevel - ele1, p1.z);
+                        ele0 = Noise.Perlin3D(new Vector3(p0.x, 0, p0.z), eleNoiseFreq);
+                    vertices[index] = new Vector3(p0.x, p0.y - RoadDeepLevel - ele0, p0.z);
 
-                    var p2 = vertices[index + 1];
-                    float ele2 = 0;
+                    var p1 = vertices[index + 1];
+                    float ele1 = 0;
                     if (triangle.GetVertex(1).Type == VertexType.FreeVertex)
-                        ele2 = Noise.Perlin3D(new Vector3(p2.x, 0, p2.z), 0.1f);
+                        ele1 = Noise.Perlin3D(new Vector3(p1.x, 0, p1.z), eleNoiseFreq);
 
-                    vertices[index + 1] = new Vector3(p2.x, p2.y - RoadDeepLevel - ele2, p2.z);
+                    vertices[index + 1] = new Vector3(p1.x, p1.y - RoadDeepLevel - ele1, p1.z);
 
-                    var p3 = vertices[index + 2];
-                    float ele3 = 0;
+                    var p2 = vertices[index + 2];
+                    float ele2 = 0;
                     if (triangle.GetVertex(2).Type == VertexType.FreeVertex)
-                        ele3 = Noise.Perlin3D(new Vector3(p3.x, 0, p3.z), 0.1f);
-                    vertices[index + 2] = new Vector3(p3.x, p3.y - RoadDeepLevel - ele3, p3.z);
+                        ele2 = Noise.Perlin3D(new Vector3(p2.x, 0, p2.z), eleNoiseFreq);
+                    vertices[index + 2] = new Vector3(p2.x, p2.y - RoadDeepLevel - ele2, p2.z);
+
+                    // use position of first point only
+                    var triangleColor = GetColor(gradient, vertices[index], 0.2f);
+
+                    colors[index] = triangleColor;
+                    colors[index + 1] = triangleColor;
+                    colors[index + 2] = triangleColor;
 
                     count++;
                 });
                 Trace.Debug(LogTag, "Car road region processed: {0}", count);
             }
 
-            BuildOffsetShape(context, meshRegion, RoadDeepLevel);
+            BuildOffsetShape(context, meshRegion, gradient, RoadDeepLevel);
         }
     }
 }

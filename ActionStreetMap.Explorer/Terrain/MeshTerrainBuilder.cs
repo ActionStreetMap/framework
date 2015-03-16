@@ -110,6 +110,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
             var context = new MeshContext
             {
+                Mesh = terrainMesh,
                 Tree = new QuadTree(cell.Mesh),
                 Iterator = new RegionIterator(cell.Mesh),
                 // TODO use object pool

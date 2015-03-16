@@ -1,8 +1,10 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Explorer.Scene.Utils;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain.Layers
@@ -28,11 +30,18 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         public abstract string Name { get; }
         public abstract void Build(MeshContext context, MeshRegion meshRegion);
 
-        protected void BuildOffsetShape(MeshContext context, MeshRegion region, float deepLevel)
+        public Color GetColor(GradientWrapper gradientWrapper, Vector3 point, float freq)
+        {
+            var value = (Noise.Perlin3D(point, freq) + 1f) / 2f;
+            return gradientWrapper.Evaluate(value);
+        }
+
+        protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient, float deepLevel)
         {
             var vertices = context.Vertices;
             var triangles = context.Triangles;
             var colors = context.Colors;
+            var colorNoiseFreq = 0.2f;
             foreach (var contour in region.Contours)
             {
                 var length = contour.Count;
@@ -52,11 +61,13 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                     vertices.Add(new Vector3(p2.X, ele2 - deepLevel, p2.Y));
                     vertices.Add(new Vector3(p1.X, ele1 - deepLevel,  p1.Y));
 
-                    // TODO detect color
-                    colors.Add(Color.magenta);
-                    colors.Add(Color.magenta);
-                    colors.Add(Color.magenta);
-                    colors.Add(Color.magenta);
+                    var firstColor = GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
+                    var secondColor = GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
+
+                    colors.Add(firstColor);
+                    colors.Add(secondColor);
+                    colors.Add(secondColor);
+                    colors.Add(firstColor);
                 }
 
                 // triangles
