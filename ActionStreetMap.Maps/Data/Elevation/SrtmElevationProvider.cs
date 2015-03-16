@@ -51,39 +51,40 @@ namespace ActionStreetMap.Maps.Data.Elevation
             _trace = trace;
         }
 
-        /// <inheritdoc />
-        public bool HasElevation(double latitude, double longitude)
+        private bool HasElevation(double latitude, double longitude)
         {
-            return (_srtmLat == ((int)latitude) && _srtmLon == ((int)longitude)) || 
-                _fileSystemService.Exists(GetFilePath((int) latitude, (int) longitude));
+            return (_srtmLat == ((int)latitude) && _srtmLon == ((int)longitude)) ||
+                _fileSystemService.Exists(GetFilePath((int)latitude, (int)longitude));
         }
 
-        /// <inheritdoc />
-        public IObservable<Unit> Download(double latitude, double longitude)
+
+        private IObservable<Unit> Download(double latitude, double longitude)
         {
             _trace.Info(LogTag, "downloading data for {0}:{1}", latitude, longitude);
             return _downloader.Download(new GeoCoordinate(latitude, longitude))
-                    .SelectMany(bytes => 
+                    .SelectMany(bytes =>
                     {
                         _trace.Info(LogTag, "downloaded {0} bytes", bytes.Length);
                         _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
-                        InitData((int) latitude, (int) longitude);
+                        InitData((int)latitude, (int)longitude);
                         // store data to disk
                         var path = GetFilePath(_srtmLat, _srtmLon);
                         _trace.Info(LogTag, "storing as {0}", path);
-                        using(var stream = _fileSystemService.WriteStream(path))
+                        using (var stream = _fileSystemService.WriteStream(path))
                             stream.Write(_hgtData, 0, _hgtData.Length);
 
                         return Observable.Return<Unit>(Unit.Default);
                     });
         }
 
+        /// <inheritdoc />
         public bool HasElevation(BoundingBox bbox)
         {
             // TODO implement this
             return true;
         }
 
+        /// <inheritdoc />
         public IObservable<Unit> Download(BoundingBox bbox)
         {
             throw new NotImplementedException();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons.Geometry;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
@@ -91,7 +92,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     tasks.Add(Observable.Start(() =>
                     {
                         var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                        BuildCell(rule, terrainObject, cell, name);
+                        BuildCell(rectangle, rule, terrainObject, cell, name);
                     }));
                 }
 
@@ -103,13 +104,16 @@ namespace ActionStreetMap.Explorer.Terrain
             return terrainObject;
         }
 
-        private void BuildCell(Rule rule, IGameObject terrainObject, MeshCell cell, string name)
+        private void BuildCell(Rectangle tileRect, Rule rule, IGameObject terrainObject, MeshCell cell, string name)
         {
             var terrainMesh = cell.Mesh;
             Trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
+            var rect = new MapRectangle((float)tileRect.Left, (float)tileRect.Bottom, 
+                (float)tileRect.Width, (float)tileRect.Height);
 
             var context = new MeshContext
             {
+                Rectangle = rect,
                 Mesh = terrainMesh,
                 Tree = new QuadTree(cell.Mesh),
                 Iterator = new RegionIterator(cell.Mesh),
