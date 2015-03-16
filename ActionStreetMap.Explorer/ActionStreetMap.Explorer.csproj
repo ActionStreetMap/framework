@@ -92,6 +92,11 @@
     <Compile Include="Scene\Geometry\TriangleUtils.cs" />
     <Compile Include="Scene\Infos\InfoStyle.cs" />
     <Compile Include="Scene\Infos\InfoStyleProvider.cs" />
+    <Compile Include="Terrain\Layers\CarRoadLayerBuilder.cs" />
+    <Compile Include="Terrain\Layers\LayerBuilder.cs" />
+    <Compile Include="Terrain\Layers\SurfaceLayerBuilder.cs" />
+    <Compile Include="Terrain\Layers\WalkRoadLayerBuilder.cs" />
+    <Compile Include="Terrain\Layers\WaterLayerBuilder.cs" />
     <Compile Include="Terrain\ITerrainBuilder.cs" />
     <Compile Include="Terrain\MeshTerrainBuilder.cs" />
     <Compile Include="Scene\Utils\RandomHelper.cs" />
@@ -118,6 +123,7 @@
     <Compile Include="Interactions\CompositeModelBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\UnityConsoleTrace.cs" />
+    <Compile Include="Terrain\MeshContext.cs" />
     <Compile Include="Tiling\TileActivator.cs" />
     <Compile Include="Scene\Buildings\BuildingStyleProvider.cs" />
     <Compile Include="Scene\ThemeProvider.cs" />
