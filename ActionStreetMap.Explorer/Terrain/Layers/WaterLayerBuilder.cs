@@ -1,6 +1,4 @@
-﻿using ActionStreetMap.Core.Polygons.Meshing.Iterators;
-using ActionStreetMap.Core.Polygons.Tools;
-using ActionStreetMap.Core.Polygons.Topology;
+﻿using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
 using UnityEngine;
 
@@ -11,11 +9,12 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         private const string LogTag = "layer.water";
         private const float WaterDeepLevel = 5;
 
-        public string Name { get { return "water"; } }
+        public override string Name { get { return "water"; } }
 
-        public void Build(MeshContext context, MeshRegion meshRegion)
+        public override void Build(MeshContext context, MeshRegion meshRegion)
         {
             var vertices = context.Vertices;
+            var hashMap = context.TriangleMap;
             foreach (var region in meshRegion.FillRegions)
             {
                 var point = region.Anchor;

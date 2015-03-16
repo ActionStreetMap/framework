@@ -1,6 +1,4 @@
-﻿using ActionStreetMap.Core.Polygons.Meshing.Iterators;
-using ActionStreetMap.Core.Polygons.Tools;
-using ActionStreetMap.Core.Polygons.Topology;
+﻿using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
 using UnityEngine;
 
@@ -9,11 +7,13 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
     internal class SurfaceLayerBuilder : LayerBuilder
     {
         private const string LogTag = "layer.surface";
-        public string Name { get { return "surface"; } }
 
-        public void Build(MeshContext context, MeshRegion meshRegion)
+        public override string Name { get { return "surface"; } }
+
+        public override void Build(MeshContext context, MeshRegion meshRegion)
         {
             var colors = context.Colors;
+            var hashMap = context.TriangleMap;
             foreach (var fillRegion in meshRegion.FillRegions)
             {
                 var point = fillRegion.Anchor;
@@ -39,11 +39,14 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
 
         private Color GetColorBySplatId(int id)
         {
-            switch (id % 3)
+            switch (id%3)
             {
-                case 0: return Color.yellow;
-                case 1: return Color.green;
-                default: return Color.blue;
+                case 0:
+                    return Color.yellow;
+                case 1:
+                    return Color.green;
+                default:
+                    return Color.blue;
             }
         }
     }

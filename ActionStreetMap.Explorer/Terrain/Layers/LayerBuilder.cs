@@ -1,14 +1,7 @@
 ﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.Polygons.Meshing.Iterators;
-using ActionStreetMap.Core.Polygons.Tools;
 using ActionStreetMap.Core.Terrain;
-using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain.Layers
@@ -20,13 +13,16 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         void Build(MeshContext context, MeshRegion meshRegion);
     }
 
-    internal abstract class LayerBuilder
+    internal abstract class LayerBuilder : ILayerBuilder
     {
         [Dependency]
         public ITrace Trace { get; set; }
 
         [Dependency]
         public IElevationProvider ElevationProvider { get; set; }
+
+        public abstract string Name { get; }
+        public abstract void Build(MeshContext context, MeshRegion meshRegion);
 
         protected void BuildOffsetShape(MeshContext context, MeshRegion region, float deepLevel)
         {
@@ -42,14 +38,17 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                 {
                     var v2DIndex = i == (length - 1) ? 0 : i + 1;
 
-                    var ele1 = ElevationProvider.GetElevation(new MapPoint((float)contour[i].X, (float)contour[i].Y));
-                    var ele2 = ElevationProvider.GetElevation(new MapPoint((float)contour[v2DIndex].X, (float)contour[v2DIndex].Y));
+                    var p1 = new MapPoint((float) contour[i].X, (float) contour[i].Y);
+                    var p2 = new MapPoint((float) contour[v2DIndex].X, (float) contour[v2DIndex].Y);
+                    var ele1 = ElevationProvider.GetElevation(p1);
+                    var ele2 = ElevationProvider.GetElevation(p2);
 
-                    vertices.Add(new Vector3((float)contour[i].X, ele1, (float)contour[i].Y));
-                    vertices.Add(new Vector3((float)contour[v2DIndex].X, ele2, (float)contour[v2DIndex].Y));
-                    vertices.Add(new Vector3((float)contour[v2DIndex].X, ele2 - deepLevel, (float)contour[v2DIndex].Y));
-                    vertices.Add(new Vector3((float)contour[i].X, ele1 - deepLevel, (float)contour[i].Y));
+                    vertices.Add(new Vector3(p1.X, ele1, p1.Y));
+                    vertices.Add(new Vector3(p2.X, ele2, p2.Y));
+                    vertices.Add(new Vector3(p2.X, ele2 - deepLevel, p2.Y));
+                    vertices.Add(new Vector3(p1.X, ele1 - deepLevel,  p1.Y));
 
+                    // TODO detect color
                     colors.Add(Color.magenta);
                     colors.Add(Color.magenta);
                     colors.Add(Color.magenta);
@@ -59,7 +58,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                 // triangles
                 for (int i = 0; i < length; i++)
                 {
-                    var vIndex = vertOffset + i * 4;
+                    var vIndex = vertOffset + i*4;
                     triangles.Add(vIndex);
                     triangles.Add(vIndex + 2);
                     triangles.Add(vIndex + 1);

@@ -1,12 +1,7 @@
 ﻿using ActionStreetMap.Core.Polygons;
-using ActionStreetMap.Core.Polygons.Meshing.Iterators;
-using ActionStreetMap.Core.Polygons.Tools;
 using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
-using ActionStreetMap.Explorer.Terrain;
 using ActionStreetMap.Explorer.Utils;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Diagnostic;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain.Layers
@@ -16,19 +11,17 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         private const string LogTag = "layer.car";
         private const float RoadDeepLevel = 0.2f;
 
-        public string Name { get { return "car"; } }
+        public override string Name { get { return "car"; } }
 
-        [Dependency]
-        public ITrace Trace { get; set; }
-
-        public void Build(MeshContext context, MeshRegion meshRegion)
+        public override void Build(MeshContext context, MeshRegion meshRegion)
         {
             var colors = context.Colors;
             var vertices = context.Vertices;
+            var hashMap = context.TriangleMap;
             foreach (var region in meshRegion.FillRegions)
             {
                 var point = region.Anchor;
-                var start = (Triangle)context.Tree.Query(point.X, point.Y);
+                var start = (Triangle) context.Tree.Query(point.X, point.Y);
                 if (start == null)
                 {
                     Trace.Warn(LogTag, "Broken car road region");

@@ -30,7 +30,6 @@ namespace ActionStreetMap.Core.Polygons
 
         // Using hashsets for memory management should quite fast. 
         internal Dictionary<int, Triangle> triangles;
-
         internal Dictionary<int, Segment> subsegs;
         internal Dictionary<int, Vertex> vertices;
 

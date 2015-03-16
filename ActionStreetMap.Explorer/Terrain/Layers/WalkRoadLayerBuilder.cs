@@ -1,9 +1,5 @@
-﻿using ActionStreetMap.Core.Polygons.Meshing.Iterators;
-using ActionStreetMap.Core.Polygons.Tools;
-using ActionStreetMap.Core.Polygons.Topology;
+﻿using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Diagnostic;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain.Layers
@@ -12,11 +8,12 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
     {
         private const string LogTag = "layer.walk";
 
-        public string Name { get { return "walk"; } }
+        public override string Name { get { return "walk"; } }
 
-        public void Build(MeshContext context, MeshRegion meshRegion)
+        public override void Build(MeshContext context, MeshRegion meshRegion)
         {
             var colors = context.Colors;
+            var hashMap = context.TriangleMap;
             foreach (var region in meshRegion.FillRegions)
             {
                 var point = region.Anchor;

@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Polygons.Geometry;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
 using ActionStreetMap.Core.Polygons.Tools;
-using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Utils;
+using ActionStreetMap.Explorer.Terrain.Layers;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -34,19 +35,35 @@ namespace ActionStreetMap.Explorer.Terrain
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly MeshCellBuilder _meshCellBuilder;
 
+        private readonly ILayerBuilder _waterLayerBuilder;
+        private readonly ILayerBuilder _carRoadLayerBuilder;
+        private readonly ILayerBuilder _walkRoadLayerBuilder;
+        private readonly ILayerBuilder _surfaceRoadLayerBuilder;
+
         [Dependency]
         public ITrace Trace { get; set; }
 
         private float _maxCellSize = 100;
 
         [Dependency]
-        public MeshTerrainBuilder(IElevationProvider elevationProvider, IResourceProvider resourceProvider,
+        public MeshTerrainBuilder(
+            IElevationProvider elevationProvider,
+            IEnumerable<ILayerBuilder> layerBuilders,
+            IResourceProvider resourceProvider,
             IGameObjectFactory gameObjectFactory)
         {
             _elevationProvider = elevationProvider;
+
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
             _meshCellBuilder = new MeshCellBuilder();
+
+            var layerBuildersList = layerBuilders.ToArray();
+
+            _waterLayerBuilder = layerBuildersList.Single(l => l.Name == "water");
+            _carRoadLayerBuilder = layerBuildersList.Single(l => l.Name == "car");
+            _walkRoadLayerBuilder = layerBuildersList.Single(l => l.Name == "walk");
+            _surfaceRoadLayerBuilder = layerBuildersList.Single(l => l.Name == "surface");
         }
 
         public IGameObject Build(Tile tile, Rule rule)
@@ -58,8 +75,8 @@ namespace ActionStreetMap.Explorer.Terrain
             var terrainObject = _gameObjectFactory.CreateNew("terrain", tile.GameObject);
 
             // detect grid parameters
-            var cellRowCount = (int)Math.Ceiling(tile.Height / _maxCellSize);
-            var cellColumnCount = (int)Math.Ceiling(tile.Width / _maxCellSize);
+            var cellRowCount = (int) Math.Ceiling(tile.Height/_maxCellSize);
+            var cellColumnCount = (int) Math.Ceiling(tile.Width/_maxCellSize);
             var cellHeight = tile.Height/cellRowCount;
             var cellWidth = tile.Width/cellColumnCount;
 
@@ -76,8 +93,8 @@ namespace ActionStreetMap.Explorer.Terrain
                 {
                     var tileBottomLeft = tile.Rectangle.BottomLeft;
                     var rectangle = new Rectangle(
-                        tileBottomLeft.X + i * cellWidth,
-                        tileBottomLeft.Y + j * cellHeight,
+                        tileBottomLeft.X + i*cellWidth,
+                        tileBottomLeft.Y + j*cellHeight,
                         cellWidth,
                         cellHeight);
                     var name = String.Format("cell {0}_{1}", i, j);
@@ -114,7 +131,7 @@ namespace ActionStreetMap.Explorer.Terrain
             var triangles = new List<int>(terrainMesh.Triangles.Count);
             var colors = new List<Color>(terrainMesh.Vertices.Count);
 
-            var hashMap = new Dictionary<int, int>();
+            var triangleIndexMap = new Dictionary<int, int>();
             Trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
             foreach (var triangle in terrainMesh.Triangles)
             {
@@ -132,7 +149,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     new MapPoint((float) p1.X, (float) p1.Y));
                 var ele1 = _elevationProvider.GetElevation(coord1.Latitude, coord1.Longitude);
                 if (p1.Type == VertexType.FreeVertex)
-                    ele1 += Noise.Perlin3D(new Vector3((float)p1.X, 0, (float)p1.Y), 0.1f);
+                    ele1 += Noise.Perlin3D(new Vector3((float) p1.X, 0, (float) p1.Y), 0.1f);
                 vertices.Add(new Vector3((float) p1.X, ele1, (float) p1.Y));
 
                 var p2 = triangle.GetVertex(2);
@@ -140,7 +157,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     new MapPoint((float) p2.X, (float) p2.Y));
                 var ele2 = _elevationProvider.GetElevation(coord2.Latitude, coord2.Longitude);
                 if (p2.Type == VertexType.FreeVertex)
-                    ele2 += Noise.Perlin3D(new Vector3((float)p2.X, 0, (float)p2.Y), 0.1f);
+                    ele2 += Noise.Perlin3D(new Vector3((float) p2.X, 0, (float) p2.Y), 0.1f);
                 vertices.Add(new Vector3((float) p2.X, ele2, (float) p2.Y));
 
                 var index = vertices.Count;
@@ -155,206 +172,34 @@ namespace ActionStreetMap.Explorer.Terrain
                 colors.Add(triangleColor);
                 colors.Add(triangleColor);
 
-                hashMap.Add(triangle.GetHashCode(), index);
+                triangleIndexMap.Add(triangle.GetHashCode(), index);
             }
-            FillRegions(tile, cell, vertices, triangles, colors, hashMap);
+
+            BuildLayers(new MeshContext
+            {
+                Tree = new QuadTree(cell.Mesh),
+                Iterator = new RegionIterator(cell.Mesh),
+                TriangleMap = triangleIndexMap,
+                Vertices = vertices,
+                Triangles = triangles,
+                Colors = colors
+            }, cell);
 
             var goCell = _gameObjectFactory.CreateNew(name, terrainObject);
             Scheduler.MainThread.Schedule(() => BuildGameObject(rule, goCell, vertices, triangles, colors));
         }
 
-        private void FillRegions(Tile tile, MeshCell cell, List<Vector3> vertices, List<int> triangles, List<Color> colors, Dictionary<int, int> hashMap)
+        private void BuildLayers(MeshContext context, MeshCell cell)
         {
-            Trace.Debug(LogTag, "Start FillRegions");
-            // TODO this should be refactored
-            var tree = new QuadTree(cell.Mesh);
-            RegionIterator iterator = new RegionIterator(cell.Mesh);
-            var roadDeepLevel = 0.2f;
-            foreach (var region in cell.CarRoads.FillRegions)
-            {
-                var point = region.Anchor;
-                var start = (Triangle)tree.Query(point.X, point.Y);
-                if (start == null)
-                {
-                    Trace.Warn(LogTag, "Broken car road region");
-                    continue;
-                }
-
-                int count = 0;
-                var color = Color.red;
-   
-                iterator.Process(start, triangle =>
-                {
-                    var index = hashMap[triangle.GetHashCode()];
-                    colors[index] = color;
-                    colors[index + 1] = color;
-                    colors[index + 2] = color;
-
-                    var p1 = vertices[index];
-                    float ele1 = 0;
-                    if (triangle.GetVertex(0).Type == VertexType.FreeVertex)
-                        ele1 = Noise.Perlin3D(new Vector3(p1.x, 0, p1.z), 0.1f);
-                    vertices[index] = new Vector3(p1.x, p1.y - roadDeepLevel - ele1, p1.z);
-
-                    var p2 = vertices[index + 1];
-                    float ele2 = 0;
-                    if (triangle.GetVertex(1).Type == VertexType.FreeVertex)
-                        ele2 = Noise.Perlin3D(new Vector3(p2.x, 0, p2.z), 0.1f);
-         
-                    vertices[index + 1] = new Vector3(p2.x, p2.y - roadDeepLevel - ele2, p2.z);
-
-                    var p3= vertices[index + 2];
-                    float ele3 = 0;
-                    if (triangle.GetVertex(2).Type == VertexType.FreeVertex)
-                        ele3 = Noise.Perlin3D(new Vector3(p3.x, 0, p3.z), 0.1f);
-                    vertices[index + 2] = new Vector3(p3.x, p3.y - roadDeepLevel - ele3, p3.z);
-
-                    count++;
-                });
-                Trace.Debug(LogTag, "Car road region processed: {0}", count);
-            }
-
-            foreach (var region in cell.WalkRoads.FillRegions)
-            {
-                var point = region.Anchor;
-                var start = (Triangle)tree.Query(point.X, point.Y);
-                if (start == null)
-                {
-                    Trace.Warn(LogTag, "Broken walk road region");
-                    continue;
-                }
-                int count = 0;
-                var color = Color.yellow;
-
-                iterator.Process(start, triangle =>
-                {
-                    var index = hashMap[triangle.GetHashCode()];
-                    colors[index] = color;
-                    colors[index + 1] = color;
-                    colors[index + 2] = color;
-
-                    count++;
-                });
-                Trace.Debug(LogTag, "Walk road region processed: {0}", count);
-            }
-
-            foreach (var meshRegion in cell.Surfaces)
-                foreach (var fillRegion in meshRegion.FillRegions)
-                {
-                    var point = fillRegion.Anchor;
-                    var start = (Triangle) tree.Query(point.X, point.Y);
-                    if (start == null)
-                    {
-                        Trace.Warn(LogTag, "Broken surface region");
-                        continue;
-                    }
-                    int count = 0;
-                    var color = GetColorBySplatId(fillRegion.SplatId);
-                    iterator.Process(start, triangle =>
-                    {
-                        var index = hashMap[triangle.GetHashCode()];
-                        colors[index] = color;
-                        colors[index + 1] = color;
-                        colors[index + 2] = color;
-                        count++;
-                    });
-                    Trace.Debug(LogTag, "Surface region processed: {0}", count);
-                }
-
-            const float waterDeepLevel = 5;
-            foreach (var region in cell.Water.FillRegions)
-            {
-                var point = region.Anchor;
-                var start = (Triangle)tree.Query(point.X, point.Y);
-                if (start == null)
-                {
-                    Trace.Warn(LogTag, "Broken water region");
-                    continue;
-                }
-                int count = 0;
-     
-                iterator.Process(start, triangle =>
-                {
-                    var index = hashMap[triangle.GetHashCode()];
-
-                    var p1 = vertices[index];
-                    vertices[index] = new Vector3(p1.x, p1.y - waterDeepLevel, p1.z);
-
-                    var p2 = vertices[index+1];
-                    vertices[index + 1] = new Vector3(p2.x, p2.y - waterDeepLevel, p2.z);
-
-                    var p3 = vertices[index+2];
-                    vertices[index + 2] = new Vector3(p3.x, p3.y - waterDeepLevel, p3.z);
-
-                    count++;
-                });
-                Trace.Debug(LogTag, "Water region processed: {0}", count);
-
-            }
-            BuildOffsetShape(tile, cell.Water, vertices, triangles, colors, waterDeepLevel);
-            BuildOffsetShape(tile, cell.CarRoads, vertices, triangles, colors, roadDeepLevel);
-            Trace.Debug(LogTag, "End FillRegions");
+            _waterLayerBuilder.Build(context, cell.Water);
+            _carRoadLayerBuilder.Build(context, cell.CarRoads);
+            _walkRoadLayerBuilder.Build(context, cell.WalkRoads);
+            foreach (var surfaceRegion in cell.Surfaces)
+                _surfaceRoadLayerBuilder.Build(context, surfaceRegion);
         }
 
-        #region Offset processing
-
-        private void BuildOffsetShape(Tile tile, MeshRegion region, List<Vector3> vertices, List<int> triangles, List<Color> colors, float deepLevel)
-        {
-            foreach (var contour in region.Contours)
-            {
-                var length = contour.Count;
-                var vertOffset = vertices.Count;
-                // vertices
-                for (int i = 0; i < length; i++)
-                {
-                    var v2DIndex = i == (length - 1) ? 0 : i + 1;
-
-                    var coord1 = GeoProjection.ToGeoCoordinate(tile.RelativeNullPoint, (float)contour[i].X, (float)contour[i].Y);
-                    var ele1 = _elevationProvider.GetElevation(coord1.Latitude, coord1.Longitude);
-
-                    var coord2 = GeoProjection.ToGeoCoordinate(tile.RelativeNullPoint, (float)contour[v2DIndex].X, (float)contour[v2DIndex].Y);
-                    var ele2 = _elevationProvider.GetElevation(coord2.Latitude, coord2.Longitude);
-
-                    vertices.Add(new Vector3((float)contour[i].X, ele1, (float)contour[i].Y));
-                    vertices.Add(new Vector3((float)contour[v2DIndex].X, ele2, (float)contour[v2DIndex].Y));
-                    vertices.Add(new Vector3((float)contour[v2DIndex].X, ele2 - deepLevel, (float)contour[v2DIndex].Y));
-                    vertices.Add(new Vector3((float)contour[i].X, ele1 - deepLevel, (float)contour[i].Y));
-
-                    colors.Add(Color.magenta);
-                    colors.Add(Color.magenta);
-                    colors.Add(Color.magenta);
-                    colors.Add(Color.magenta);
-                }
-
-                // triangles
-                for (int i = 0; i < length; i++)
-                {
-                    var vIndex = vertOffset + i*4;
-                    triangles.Add(vIndex);
-                    triangles.Add(vIndex + 2);
-                    triangles.Add(vIndex + 1);
-
-                    triangles.Add(vIndex + 3);
-                    triangles.Add(vIndex + 2);
-                    triangles.Add(vIndex + 0);
-                }
-            }
-        }
-
-        #endregion
-
-        private Color GetColorBySplatId(int id)
-        {
-            switch (id%3)
-            {
-                case 0: return Color.yellow;
-                case 1: return Color.green;
-                default: return Color.blue;
-            }
-        }
-
-        private void BuildGameObject(Rule rule, IGameObject cellObject, 
-            List<Vector3> vertices, List<int> triangles, List<Color> colors)
+        private void BuildGameObject(Rule rule, IGameObject cellObject, List<Vector3> vertices,
+            List<int> triangles, List<Color> colors)
         {
             var gameObject = cellObject.GetComponent<GameObject>();
 
