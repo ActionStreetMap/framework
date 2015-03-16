@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using UnityEngine;
@@ -20,6 +21,9 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
 
         [Dependency]
         public IElevationProvider ElevationProvider { get; set; }
+
+        [Dependency]
+        public IResourceProvider ResourceProvider { get; set; }
 
         public abstract string Name { get; }
         public abstract void Build(MeshContext context, MeshRegion meshRegion);

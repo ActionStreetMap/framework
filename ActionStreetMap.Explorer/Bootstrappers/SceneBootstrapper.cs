@@ -60,6 +60,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IModelBuilder>().Use<SplatModelBuilder>().Named("splat").Singleton());
 
             // register layer builders
+            Container.Register(Component.For<ILayerBuilder>().Use<CanvasLayerBuilder>().Named("canvas").Singleton());
             Container.Register(Component.For<ILayerBuilder>().Use<WaterLayerBuilder>().Named("water").Singleton());
             Container.Register(Component.For<ILayerBuilder>().Use<CarRoadLayerBuilder>().Named("car").Singleton());
             Container.Register(Component.For<ILayerBuilder>().Use<WalkRoadLayerBuilder>().Named("walk").Singleton());

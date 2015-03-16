@@ -92,6 +92,7 @@
     <Compile Include="Scene\Geometry\TriangleUtils.cs" />
     <Compile Include="Scene\Infos\InfoStyle.cs" />
     <Compile Include="Scene\Infos\InfoStyleProvider.cs" />
+    <Compile Include="Terrain\Layers\CanvasLayerBuilder.cs" />
     <Compile Include="Terrain\Layers\CarRoadLayerBuilder.cs" />
     <Compile Include="Terrain\Layers\LayerBuilder.cs" />
     <Compile Include="Terrain\Layers\SurfaceLayerBuilder.cs" />
