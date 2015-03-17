@@ -20,6 +20,11 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain
 {
+    public interface ITerrainBuilder
+    {
+        IGameObject Build(Tile tile, Rule rule);
+    }
+
     internal class MeshTerrainBuilder : ITerrainBuilder, IConfigurable
     {
         private const string LogTag = "mesh.terrain";
