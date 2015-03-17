@@ -70,6 +70,7 @@
     <Compile Include="Scene\Buildings\Roofs\MansardRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\PyramidalRoofBuilder.cs" />
     <Compile Include="Scene\Geometry\CircleUtils.cs" />
+    <Compile Include="Scene\Geometry\LineUtils.cs" />
     <Compile Include="Scene\Geometry\PointUtils.cs" />
     <Compile Include="Scene\Geometry\Polygons\DouglasPeuckerReduction.cs" />
     <Compile Include="Scene\Geometry\Polygons\PolygonClipper.cs" />
