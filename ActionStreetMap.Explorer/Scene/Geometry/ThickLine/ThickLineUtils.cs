@@ -90,7 +90,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
                    point.Y >= minPoint.Y && point.Y <= maxPoint.Y;
         }
 
-        /// <summary> Find intesection point of segment with tile bordersю </summary>
+        /// <summary> Find intesection point of segment with tile borders </summary>
         private static MapPoint GetIntersectionPoint(MapPoint tilePoint, MapPoint nonTilePoint, MapPoint minPoint,
             MapPoint maxPoint)
         {

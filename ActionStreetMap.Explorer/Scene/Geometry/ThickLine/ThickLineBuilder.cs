@@ -262,7 +262,7 @@ namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
 
         private List<ThickLineSegment> GetThickSegments(LineElement lineElement)
         {
-            var points = LineUtils.GetIntermediatePoints(_elevationProvider, lineElement.Points, MaxPointDistance);
+            var points = LineUtils.DividePolyline(_elevationProvider, lineElement.Points, MaxPointDistance);
             var lineSegments = new List<ThickLineSegment>(points.Count);
             for (int i = 1; i < points.Count; i++)
                 lineSegments.Add(ThickLineHelper.GetThickSegment(points[i - 1], points[i], lineElement.Width));
