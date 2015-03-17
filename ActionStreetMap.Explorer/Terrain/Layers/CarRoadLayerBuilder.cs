@@ -19,7 +19,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
             var vertices = context.Vertices;
             var hashMap = context.TriangleMap;
             var gradient = ResourceProvider.GetGradient(1);
-            var eleNoiseFreq = 0.5f;
+            var eleNoiseFreq = 0.2f;
             foreach (var region in meshRegion.FillRegions)
             {
                 var point = region.Anchor;

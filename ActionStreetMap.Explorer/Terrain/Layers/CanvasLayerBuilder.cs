@@ -18,7 +18,8 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
             var vertices = context.Vertices;
             var triangles = context.Triangles;
             var triangleIndexMap = context.TriangleMap;
-            var eleNoiseFreq = 0.5f;
+            var eleNoiseFreq = 0.2f;
+            var colorNoiseFreq = 0.2f;
             foreach (var triangle in terrainMesh.Triangles)
             {
                 var v0 = triangle.GetVertex(0);
@@ -47,7 +48,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                 triangles.Add(--index);
                 triangles.Add(--index);
 
-                var triangleColor = GetColor(gradient, new Vector3((float)v0.X, ele0, (float)v0.Y), eleNoiseFreq);
+                var triangleColor = GetColor(gradient, new Vector3((float)v0.X, ele0, (float)v0.Y), colorNoiseFreq);
 
                 colors.Add(triangleColor);
                 colors.Add(triangleColor);

@@ -14,6 +14,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         {
             var colors = context.Colors;
             var hashMap = context.TriangleMap;
+            var colorNoiseFreq = 0.2f;
             foreach (var fillRegion in meshRegion.FillRegions)
             {
                 var point = fillRegion.Anchor;
@@ -24,29 +25,18 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                     continue;
                 }
                 int count = 0;
-                var color = GetColorBySplatId(fillRegion.SplatId);
+                var gradient = ResourceProvider.GetGradient(3);
                 context.Iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];
+                    var vertex = triangle.GetVertex(0);
+                    var color = GetColor(gradient, new Vector3((float)vertex.X, 0, (float)vertex.Y), colorNoiseFreq);
                     colors[index] = color;
                     colors[index + 1] = color;
                     colors[index + 2] = color;
                     count++;
                 });
                 Trace.Debug(LogTag, "Surface region processed: {0}", count);
-            }
-        }
-
-        private Color GetColorBySplatId(int id)
-        {
-            switch (id%3)
-            {
-                case 0:
-                    return Color.yellow;
-                case 1:
-                    return Color.green;
-                default:
-                    return Color.blue;
             }
         }
     }

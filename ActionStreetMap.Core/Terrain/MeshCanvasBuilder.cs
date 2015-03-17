@@ -208,7 +208,7 @@ namespace ActionStreetMap.Core.Terrain
             foreach (var carRoadEntry in roads)
             {
                 var offsetSolution = new Paths();
-                _offset.AddPaths(carRoadEntry.Value, JoinType.jtMiter, EndType.etOpenButt);
+                _offset.AddPaths(carRoadEntry.Value, JoinType.jtMiter, EndType.etOpenSquare);
                 _offset.Execute(ref offsetSolution, carRoadEntry.Key);
                 _clipper.AddPaths(offsetSolution, PolyType.ptSubject, true);
                 _offset.Clear();
