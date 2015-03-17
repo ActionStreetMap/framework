@@ -43,16 +43,18 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
 
         protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient, float deepLevel)
         {
+            var colorNoiseFreq = 0.2f;
+            var divideStep = 1f;
+            var errorTopFix = 0.02f;
+            var errorBottomFix = 0.1f;
+
             var vertices = context.Vertices;
             var triangles = context.Triangles;
             var colors = context.Colors;
-            var colorNoiseFreq = 0.2f;
-            var divideStep = 2f;
             var pointList = ObjectPool.NewList<MapPoint>(64);
             foreach (var contour in region.Contours)
             {
                 var length = contour.Count;
-                var vertOffset = vertices.Count;
                 for (int i = 0; i < length; i++)
                 {
                     var v2DIndex = i == (length - 1) ? 0 : i + 1;
@@ -69,10 +71,10 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
                         // vertices
                         var ele1 = ElevationProvider.GetElevation(p1);
                         var ele2 = ElevationProvider.GetElevation(p2);
-                        vertices.Add(new Vector3(p1.X, ele1, p1.Y));
-                        vertices.Add(new Vector3(p2.X, ele2, p2.Y));
-                        vertices.Add(new Vector3(p2.X, ele2 - deepLevel, p2.Y));
-                        vertices.Add(new Vector3(p1.X, ele1 - deepLevel, p1.Y));
+                        vertices.Add(new Vector3(p1.X, ele1 + errorTopFix, p1.Y));
+                        vertices.Add(new Vector3(p2.X, ele2 + errorTopFix, p2.Y));
+                        vertices.Add(new Vector3(p2.X, ele2 - deepLevel - errorBottomFix, p2.Y));
+                        vertices.Add(new Vector3(p1.X, ele1 - deepLevel - errorBottomFix, p1.Y));
 
                         // colors
                         var firstColor = GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
