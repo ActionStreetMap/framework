@@ -124,12 +124,13 @@ namespace ActionStreetMap.Core.Terrain
             var regions = new List<MeshCanvas.Region>();
             foreach (var group in _tile.Canvas.Areas.GroupBy(s => s.SplatIndex))
             {
-                _clipper.AddPaths(group.Select(a => a.Points
-                    .Select(p => new IntPoint(p.X*_scale, p.Y*_scale)).ToList()).ToList(),
-                    PolyType.ptSubject, true);
+                var paths = group.Select(a => a.Points
+                    .Select(p => new IntPoint(p.X*_scale, p.Y*_scale)).ToList())
+                    .ToList();
+                _clipper.AddPaths(paths, PolyType.ptSubject, true);
 
                 var surfacesUnion = new Paths();
-                _clipper.Execute(ClipType.ctUnion, surfacesUnion, PolyFillType.pftPositive, PolyFillType.pftPositive);
+                _clipper.Execute(ClipType.ctUnion, surfacesUnion);
 
                 _clipper.Clear();
                 _clipper.AddPaths(_carRoads.Shape, PolyType.ptClip, true);
