@@ -107,7 +107,6 @@ namespace ActionStreetMap.Explorer.Terrain
         private void BuildCell(Rectangle tileRect, Rule rule, IGameObject terrainObject, MeshCell cell, string name)
         {
             var terrainMesh = cell.Mesh;
-            Trace.Debug(LogTag, "Total triangles: {0}", terrainMesh.Triangles.Count);
             var rect = new MapRectangle((float)tileRect.Left, (float)tileRect.Bottom, 
                 (float)tileRect.Width, (float)tileRect.Height);
 
@@ -133,6 +132,7 @@ namespace ActionStreetMap.Explorer.Terrain
             foreach (var surfaceRegion in cell.Surfaces)
                 _surfaceRoadLayerBuilder.Build(context, surfaceRegion);
 
+            Trace.Debug(LogTag, "Total triangles: {0}", context.Triangles.Count);
             Scheduler.MainThread.Schedule(() => BuildGameObject(terrainObject, rule, name, context));
         }
 

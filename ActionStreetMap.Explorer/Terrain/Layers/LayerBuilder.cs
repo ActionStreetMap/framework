@@ -1,9 +1,11 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Explorer.Scene.Geometry;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
@@ -20,6 +22,9 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
     {
         [Dependency]
         public ITrace Trace { get; set; }
+
+        [Dependency]
+        public IObjectPool ObjectPool { get; set; }
 
         [Dependency]
         public IElevationProvider ElevationProvider { get; set; }
@@ -42,47 +47,57 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
             var triangles = context.Triangles;
             var colors = context.Colors;
             var colorNoiseFreq = 0.2f;
+            var divideStep = 2f;
+            var pointList = ObjectPool.NewList<MapPoint>(64);
             foreach (var contour in region.Contours)
             {
                 var length = contour.Count;
                 var vertOffset = vertices.Count;
-                // vertices
                 for (int i = 0; i < length; i++)
                 {
                     var v2DIndex = i == (length - 1) ? 0 : i + 1;
+                    var start = new MapPoint((float) contour[i].X, (float) contour[i].Y);
+                    var end = new MapPoint((float) contour[v2DIndex].X, (float) contour[v2DIndex].Y);
 
-                    var p1 = new MapPoint((float) contour[i].X, (float) contour[i].Y);
-                    var p2 = new MapPoint((float) contour[v2DIndex].X, (float) contour[v2DIndex].Y);
-                    var ele1 = ElevationProvider.GetElevation(p1);
-                    var ele2 = ElevationProvider.GetElevation(p2);
+                    LineUtils.DivideLine(ElevationProvider, start, end, pointList, divideStep);
 
-                    vertices.Add(new Vector3(p1.X, ele1, p1.Y));
-                    vertices.Add(new Vector3(p2.X, ele2, p2.Y));
-                    vertices.Add(new Vector3(p2.X, ele2 - deepLevel, p2.Y));
-                    vertices.Add(new Vector3(p1.X, ele1 - deepLevel,  p1.Y));
+                    for (int k = 1; k < pointList.Count; k++)
+                    {
+                        var p1 = pointList[k - 1];
+                        var p2 = pointList[k];
 
-                    var firstColor = GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
-                    var secondColor = GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
+                        // vertices
+                        var ele1 = ElevationProvider.GetElevation(p1);
+                        var ele2 = ElevationProvider.GetElevation(p2);
+                        vertices.Add(new Vector3(p1.X, ele1, p1.Y));
+                        vertices.Add(new Vector3(p2.X, ele2, p2.Y));
+                        vertices.Add(new Vector3(p2.X, ele2 - deepLevel, p2.Y));
+                        vertices.Add(new Vector3(p1.X, ele1 - deepLevel, p1.Y));
 
-                    colors.Add(firstColor);
-                    colors.Add(secondColor);
-                    colors.Add(secondColor);
-                    colors.Add(firstColor);
-                }
+                        // colors
+                        var firstColor = GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
+                        var secondColor = GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
 
-                // triangles
-                for (int i = 0; i < length; i++)
-                {
-                    var vIndex = vertOffset + i*4;
-                    triangles.Add(vIndex);
-                    triangles.Add(vIndex + 2);
-                    triangles.Add(vIndex + 1);
+                        colors.Add(firstColor);
+                        colors.Add(secondColor);
+                        colors.Add(secondColor);
+                        colors.Add(firstColor);
+                        
+                        // triangles
+                        var vIndex = vertices.Count - 4;
+                        triangles.Add(vIndex);
+                        triangles.Add(vIndex + 2);
+                        triangles.Add(vIndex + 1);
 
-                    triangles.Add(vIndex + 3);
-                    triangles.Add(vIndex + 2);
-                    triangles.Add(vIndex + 0);
+                        triangles.Add(vIndex + 3);
+                        triangles.Add(vIndex + 2);
+                        triangles.Add(vIndex + 0);
+                    }
+
+                    pointList.Clear();
                 }
             }
+            ObjectPool.StoreList(pointList);
         }
     }
 }
