@@ -99,7 +99,6 @@
     <Compile Include="Terrain\Layers\SurfaceLayerBuilder.cs" />
     <Compile Include="Terrain\Layers\WalkRoadLayerBuilder.cs" />
     <Compile Include="Terrain\Layers\WaterLayerBuilder.cs" />
-    <Compile Include="Terrain\ITerrainBuilder.cs" />
     <Compile Include="Terrain\MeshTerrainBuilder.cs" />
     <Compile Include="Scene\Utils\RandomHelper.cs" />
     <Compile Include="Scene\Utils\ResourceProvider.cs" />

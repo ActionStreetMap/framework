@@ -91,13 +91,13 @@ namespace ActionStreetMap.Maps.Data.Elevation
         }
 
         /// <inheritdoc />
-        public float GetElevation(double latitude, double longitude)
+        public float GetElevation(GeoCoordinate coordinate)
         {
-            int latDec = (int) latitude;
-            int lonDec = (int) longitude;
+            int latDec = (int)coordinate.Latitude;
+            int lonDec = (int)coordinate.Longitude;
 
-            float secondsLat = (float) (latitude - latDec)*3600;
-            float secondsLon = (float) (longitude - lonDec)*3600;
+            float secondsLat = (float)(coordinate.Latitude - latDec) * 3600;
+            float secondsLon = (float)(coordinate.Longitude - lonDec) * 3600;
 
             LoadTile(latDec, lonDec);
 
@@ -144,7 +144,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
         public float GetElevation(MapPoint point)
         {
             var geoCoordinate = GeoProjection.ToGeoCoordinate(_relativeNullPoint, point);
-            return GetElevation(geoCoordinate.Latitude, geoCoordinate.Longitude);
+            return GetElevation(geoCoordinate);
         }
 
         public void SetNullPoint(GeoCoordinate coordinate)
