@@ -4,6 +4,7 @@ using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Interactions;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -95,6 +96,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
             meshData.colors = colors.ToArray();
             meshData.RecalculateNormals();
 
+            gameObject.AddComponent<NoiseWaveBehavior>();
             gameObject.AddComponent<MeshRenderer>().material = context.Rule.GetMaterial("water", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
         }
