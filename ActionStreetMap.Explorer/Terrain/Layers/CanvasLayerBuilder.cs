@@ -12,7 +12,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
 
         public override void Build(MeshContext context, MeshRegion meshRegion)
         {
-            var gradient = ResourceProvider.GetGradient(0);
+            var gradient = ResourceProvider.GetGradient("canvas");
             var terrainMesh = context.Mesh;
             var colors = context.Colors;
             var vertices = context.Vertices;

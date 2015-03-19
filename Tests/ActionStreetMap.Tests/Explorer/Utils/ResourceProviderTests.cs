@@ -19,7 +19,7 @@ namespace ActionStreetMap.Tests.Explorer.Utils
             resourceProvider.Configure(configMock.Object);
 
             // ACT
-            var gradient = resourceProvider.GetGradient(0);
+            var gradient = resourceProvider.GetGradient("canvas");
 
             // ASSERT
             Assert.IsNotNull(gradient);

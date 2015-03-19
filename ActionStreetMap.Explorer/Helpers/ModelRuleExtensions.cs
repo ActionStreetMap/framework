@@ -13,6 +13,12 @@ namespace ActionStreetMap.Explorer.Helpers
             return resourceProvider.GetMatertial(@"Materials/" + path);
         }
 
+        public static Material GetMaterial(this Rule rule, string path, IResourceProvider resourceProvider)
+        {
+            var materialPath = rule.Evaluate<string>(path);
+            return resourceProvider.GetMatertial(@"Materials/" + materialPath);
+        }
+
         public static Texture GetTexture(this Rule rule, IResourceProvider resourceProvider)
         {
             var path = rule.Evaluate<string>("material");

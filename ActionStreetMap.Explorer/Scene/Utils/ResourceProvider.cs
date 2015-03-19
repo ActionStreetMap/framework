@@ -33,9 +33,9 @@ namespace ActionStreetMap.Explorer.Scene.Utils
         Texture2D GetTexture2D(string key);
 
         /// <summary> Gets gradient wrapper. </summary>
-        /// <param name="id">Id of gradient.</param>
+        /// <param name="key">Key.</param>
         /// <returns> Objects which wraps unity gradient.</returns>
-        GradientWrapper GetGradient(int id);
+        GradientWrapper GetGradient(string key);
     }
 
     /// <summary> Default, dictionary based implementation of IResourceProvider. </summary>
@@ -47,7 +47,7 @@ namespace ActionStreetMap.Explorer.Scene.Utils
         private readonly Dictionary<string, Texture> _textures = new Dictionary<string, Texture>();
         private readonly Dictionary<string, Texture2D> _textures2D = new Dictionary<string, Texture2D>();
 
-        private Dictionary<int, GradientWrapper> _gradients;
+        private Dictionary<string, GradientWrapper> _gradients;
 
         /// <summary> Creates instance of <see cref="UnityResourceProvider"/>. </summary>
         /// <param name="fileSystemService">File system service.</param>
@@ -94,9 +94,9 @@ namespace ActionStreetMap.Explorer.Scene.Utils
         }
 
         /// <inheritdoc />
-        public GradientWrapper GetGradient(int id)
+        public GradientWrapper GetGradient(string key)
         {
-            return _gradients[id];
+            return _gradients[key];
         }
 
         public void Configure(IConfigSection configSection)
@@ -105,16 +105,16 @@ namespace ActionStreetMap.Explorer.Scene.Utils
             _gradients = ParseGradients(gradientFilePath);
         }
 
-        private Dictionary<int, GradientWrapper> ParseGradients(string gradientFilePath)
+        private Dictionary<string, GradientWrapper> ParseGradients(string gradientFilePath)
         {
             var gradientContent = _fileSystemService.ReadText(gradientFilePath);
             var json = JSON.Parse(gradientContent);
 
             var jsonGradients = json["gradients"].AsArray;
-            var gradients = new Dictionary<int, GradientWrapper>(jsonGradients.Count);
+            var gradients = new Dictionary<string, GradientWrapper>(jsonGradients.Count);
             foreach (JSONNode jsonGrad in jsonGradients)
             {
-                var id = jsonGrad["id"].AsInt;
+                var name = jsonGrad["name"].Value;
                 // colors
                 var jsonColors = jsonGrad["color"].AsArray;
                 var colors = new GradientWrapper.ColorKey[jsonColors.Count];
@@ -139,7 +139,7 @@ namespace ActionStreetMap.Explorer.Scene.Utils
                     key.Time = float.Parse(jsonAlphas[i]["t"].Value);
                     alphas[i] = key;
                 }
-                gradients.Add(id, new GradientWrapper(colors, alphas));
+                gradients.Add(name, new GradientWrapper(colors, alphas));
             }
 
             return gradients;

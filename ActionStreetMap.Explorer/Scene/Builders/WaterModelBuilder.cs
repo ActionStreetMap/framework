@@ -67,30 +67,29 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(GetName(area));
             Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, rule, vector3Ds, triangles));
 
-            return gameObjectWrapper;
+            return null;//gameObjectWrapper;
         }
 
         /// <summary> Process unity specific data. </summary>
         protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule, Vector3[] points, int[] triangles)
         {
-            var gameObject = gameObjectWrapper.AddComponent(new GameObject());
-            var mesh = new Mesh();
-            mesh.vertices = points;
-            //mesh.uv = verticies.GetUV();
-            mesh.triangles = triangles;
+            //var gameObject = gameObjectWrapper.AddComponent(new GameObject());
+            //var mesh = new Mesh();
+            //mesh.vertices = points;
+            //mesh.triangles = triangles;
 
-            var meshFilter = gameObject.AddComponent<MeshFilter>();
-            meshFilter.mesh.Clear();
-            meshFilter.mesh = mesh;
-            meshFilter.mesh.RecalculateNormals();
+            //var meshFilter = gameObject.AddComponent<MeshFilter>();
+            //meshFilter.mesh.Clear();
+            //meshFilter.mesh = mesh;
+            //meshFilter.mesh.RecalculateNormals();
 
-            gameObject.AddComponent<MeshRenderer>();
-            gameObject.renderer.material = rule.GetMaterial(ResourceProvider);
-            gameObject.renderer.material.color = rule.GetFillUnityColor();
+            //gameObject.AddComponent<MeshRenderer>();
+            //gameObject.renderer.material = rule.GetMaterial(ResourceProvider);
+            //gameObject.renderer.material.color = rule.GetFillUnityColor();
 
-            var layerIndex = rule.GetLayerIndex(NoLayer);
-            if (layerIndex != NoLayer)
-                gameObject.layer = layerIndex;
+            //var layerIndex = rule.GetLayerIndex(NoLayer);
+            //if (layerIndex != NoLayer)
+            //    gameObject.layer = layerIndex;
         }
     }
 }

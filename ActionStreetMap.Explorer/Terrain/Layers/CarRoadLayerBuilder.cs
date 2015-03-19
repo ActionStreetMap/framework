@@ -18,7 +18,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
             var colors = context.Colors;
             var vertices = context.Vertices;
             var hashMap = context.TriangleMap;
-            var gradient = ResourceProvider.GetGradient(1);
+            var gradient = ResourceProvider.GetGradient("road.car");
             var eleNoiseFreq = 0.2f;
             foreach (var region in meshRegion.FillRegions)
             {

@@ -97,7 +97,7 @@ namespace ActionStreetMap.Explorer.Terrain
                     tasks.Add(Observable.Start(() =>
                     {
                         var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                        BuildCell(rectangle, rule, terrainObject, cell, name);
+                        BuildCell(rule, terrainObject, rectangle, cell, name);
                     }));
                 }
 
@@ -109,14 +109,19 @@ namespace ActionStreetMap.Explorer.Terrain
             return terrainObject;
         }
 
-        private void BuildCell(Rectangle tileRect, Rule rule, IGameObject terrainObject, MeshCell cell, string name)
+        private void BuildCell(Rule rule, IGameObject terrainObject, Rectangle cellRect, MeshCell cell, string name)
         {
             var terrainMesh = cell.Mesh;
-            var rect = new MapRectangle((float)tileRect.Left, (float)tileRect.Bottom, 
-                (float)tileRect.Width, (float)tileRect.Height);
+            var rect = new MapRectangle((float)cellRect.Left, (float)cellRect.Bottom, 
+                (float)cellRect.Width, (float)cellRect.Height);
+
+            var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
             var context = new MeshContext
             {
+                Object = cellGameObject,
+                Rule = rule,
+
                 Rectangle = rect,
                 Mesh = terrainMesh,
                 Tree = new QuadTree(cell.Mesh),
@@ -138,14 +143,12 @@ namespace ActionStreetMap.Explorer.Terrain
                 _surfaceRoadLayerBuilder.Build(context, surfaceRegion);
 
             Trace.Debug(LogTag, "Total triangles: {0}", context.Triangles.Count);
-            Scheduler.MainThread.Schedule(() => BuildGameObject(terrainObject, rule, name, context));
+            Scheduler.MainThread.Schedule(() => BuildGameObject(rule, cellGameObject, context));
         }
 
-        private void BuildGameObject(IGameObject parent, Rule rule, string name, MeshContext context)
+        private void BuildGameObject(Rule rule, IGameObject cellGameObject, MeshContext context)
         {
-            // create cell game object and attach it to parent
-            var gameObject = new GameObject(name);
-            gameObject.transform.parent = parent.GetComponent<GameObject>().transform;
+            var gameObject = cellGameObject.GetComponent<GameObject>();
 
             var meshData = new Mesh();
             meshData.vertices = context.Vertices.ToArray();

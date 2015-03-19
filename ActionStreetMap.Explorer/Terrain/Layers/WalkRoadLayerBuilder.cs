@@ -14,7 +14,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         {
             var colors = context.Colors;
             var hashMap = context.TriangleMap;
-            var gradient = ResourceProvider.GetGradient(2);
+            var gradient = ResourceProvider.GetGradient("road.walk");
             var colorNoiseFreq = 1f;
             foreach (var region in meshRegion.FillRegions)
             {
