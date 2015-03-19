@@ -89,14 +89,15 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         {
             var gameObject = new GameObject("water");
             // TODO attach to tile
-            //gameObject.transform.parent = context.Object.GetComponent<GameObject>().transform;
+            gameObject.transform.parent = context.Object.GetComponent<GameObject>().transform;
             var meshData = new Mesh();
             meshData.vertices = vertices.ToArray();
             meshData.triangles = triangles.ToArray();
             meshData.colors = colors.ToArray();
             meshData.RecalculateNormals();
 
-            gameObject.AddComponent<NoiseWaveBehavior>();
+            // NOTE this script is too expensive to run!
+            //gameObject.AddComponent<NoiseWaveBehavior>();
             gameObject.AddComponent<MeshRenderer>().material = context.Rule.GetMaterial("water", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
         }
