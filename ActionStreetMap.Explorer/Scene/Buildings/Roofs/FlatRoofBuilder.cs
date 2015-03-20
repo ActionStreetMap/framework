@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Polygons;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -33,9 +34,8 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
 
-            var buffer = ObjectPool.NewList<int>();
-            var triangles = Triangulator.Triangulate(building.Footprint, buffer);
-            ObjectPool.StoreList(buffer);
+            var triangles = ObjectPool.NewList<int>();
+            Triangulator.Triangulate(building.Footprint, triangles);
 
             return new MeshData
             {
@@ -46,22 +46,22 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             };
         }
 
-        private Vector3[] GetVerticies3D(List<MapPoint> footprint, float roofOffset)
+        private List<Vector3> GetVerticies3D(List<MapPoint> footprint, float roofOffset)
         {
             var length = footprint.Count;
-            var vertices3D = new Vector3[length];
+            var vertices3D = new List<Vector3>(length);
             
             for (int i = 0; i < length; i++)
-                vertices3D[i] = new Vector3(footprint[i].X, roofOffset, footprint[i].Y);
+                vertices3D.Add(new Vector3(footprint[i].X, roofOffset, footprint[i].Y));
 
             return vertices3D;
         }
 
-        private Vector2[] GetUV(List<MapPoint> footprint, BuildingStyle style)
+        private List<Vector2> GetUV(List<MapPoint> footprint, BuildingStyle style)
         {
-            var uv = new Vector2[footprint.Count];
-            for (int i = 0; i < uv.Length; i++)
-                uv[i] = style.Roof.FrontUvMap.RightUpper;
+            var uv = new List<Vector2>(footprint.Count);
+            for (int i = 0; i < footprint.Count; i++)
+                uv.Add(style.Roof.FrontUvMap.RightUpper);
 
             return uv;
         }

@@ -14,9 +14,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 {
-    /// <summary>
-    ///     Builds mansard roof.
-    /// </summary>
+    /// <summary> Builds mansard roof. </summary>
     public class MansardRoofBuilder : IRoofBuilder
     {
         /// <inheritdoc />
@@ -63,7 +61,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             };
         }
 
-        private Vector3[] GetVerticies3D(Polygon polygon, float offset,
+        private List<Vector3> GetVerticies3D(Polygon polygon, float offset,
             float roofOffset, float roofHeight)
         {
             var verticies = new List<Vector3>(polygon.Verticies.Length * 2);
@@ -97,10 +95,10 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
                 topVerticies.Add(new Vector3(ip1.x, roofTop, ip1.z));
             }
             verticies.AddRange(topVerticies);
-            return verticies.ToArray();
+            return verticies;
         }
 
-        private int[] GetTriangles(List<MapPoint> footprint)
+        private List<int> GetTriangles(List<MapPoint> footprint)
         {
             var triangles = new List<int>();
             for (int i = 0; i < footprint.Count; i++)
@@ -113,23 +111,22 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
                 });
             }
 
-            var buffer = ObjectPool.NewList<int>();
-            var topPartIndecies = Triangulator.Triangulate(footprint, buffer);
-            ObjectPool.StoreList(buffer);
+            var topPartIndecies = ObjectPool.NewList<int>();
+            Triangulator.Triangulate(footprint, topPartIndecies);
 
             var vertCount = footprint.Count * 4;
             triangles.AddRange(topPartIndecies.Select(i => i + vertCount));
 
-            return triangles.ToArray();
+            return triangles;
         }
 
-        private Vector2[] GetUV(List<MapPoint> footprint, BuildingStyle style)
+        private List<Vector2> GetUV(List<MapPoint> footprint, BuildingStyle style)
         {
             var count = footprint.Count;
-            var uv = new Vector2[count * 5];
-
-            for (int i = 0; i < uv.Length; i++)
-                uv[i] = style.Roof.FrontUvMap.RightUpper;
+            var uv = new List<Vector2>(count * 5);
+            var length = count*5;
+            for (int i = 0; i < length; i++)
+                uv.Add(style.Roof.FrontUvMap.RightUpper);
 
             return uv;
         }

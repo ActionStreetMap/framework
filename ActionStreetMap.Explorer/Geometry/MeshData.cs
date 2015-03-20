@@ -1,19 +1,20 @@
-﻿using ActionStreetMap.Core.Unity;
+﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Unity;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings
+namespace ActionStreetMap.Explorer.Geometry
 {
-    /// <summary> Stored data associated with mesh. </summary>
+    /// <summary> Stored data associated with mesh using arrays. </summary>
     public class MeshData
     {
         /// <summary> Vertices. </summary>
-        public Vector3[] Vertices;
+        public List<Vector3> Vertices;
 
         /// <summary> Triangles. </summary>
-        public int[] Triangles;
+        public List<int> Triangles;
 
         /// <summary> UV map. </summary>
-        public Vector2[] UV;
+        public List<Vector2> UV;
         
         /// <summary> Material key. </summary>
         public string MaterialKey;

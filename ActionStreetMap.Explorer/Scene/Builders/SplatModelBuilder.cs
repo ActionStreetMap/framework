@@ -44,7 +44,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var rnd = new Random(seed);
             // this cycle generate points inside each triangle
             // count of points is based on triangle area
-            for (int i = 0; i < triangles.Length;)
+            for (int i = 0; i < triangles.Count;)
             {
                 // get triangle vertices
                 var p1 = points[triangles[i++]];

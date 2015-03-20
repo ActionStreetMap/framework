@@ -43,10 +43,9 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             });
 
             // ASSERT
-
-            Assert.AreEqual(20, meshData.Vertices.Length);
-            Assert.AreEqual(30, meshData.Triangles.Length);
-            Assert.AreEqual(20, meshData.UV.Length);
+            Assert.AreEqual(20, meshData.Vertices.Count);
+            Assert.AreEqual(30, meshData.Triangles.Count);
+            Assert.AreEqual(20, meshData.UV.Count);
         }
 
         [Test]
@@ -78,9 +77,9 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(meshData);
-            Assert.AreEqual(14, meshData.Vertices.Length);
-            Assert.AreEqual(18, meshData.Triangles.Length);
-            Assert.AreEqual(14, meshData.UV.Length);
+            Assert.AreEqual(14, meshData.Vertices.Count);
+            Assert.AreEqual(18, meshData.Triangles.Count);
+            Assert.AreEqual(14, meshData.UV.Count);
         }
 
         [Test]

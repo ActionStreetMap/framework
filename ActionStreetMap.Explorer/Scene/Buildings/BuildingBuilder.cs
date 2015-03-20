@@ -1,6 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -73,10 +74,15 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
 
             var gameObject = new GameObject();
             var mesh = new Mesh();
-            mesh.vertices = meshData.Vertices;
-            mesh.triangles = meshData.Triangles;
-            mesh.uv = meshData.UV;
+            mesh.vertices = meshData.Vertices.ToArray();
+            mesh.triangles = meshData.Triangles.ToArray();
+            mesh.uv = meshData.UV.ToArray();
             mesh.RecalculateNormals();
+
+            // return lists to pool
+            _objectPool.StoreList(meshData.Vertices);
+            _objectPool.StoreList(meshData.Triangles);
+            _objectPool.StoreList(meshData.UV);
 
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
             gameObject.AddComponent<MeshCollider>();

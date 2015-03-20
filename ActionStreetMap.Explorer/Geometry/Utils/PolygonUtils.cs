@@ -14,12 +14,11 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         /// <param name="objectPool">Object pool.</param>
         /// <param name="reverse">Reverse points.</param>
         /// <returns>Triangles.</returns>
-        public static int[] Triangulate(List<MapPoint> points, IObjectPool objectPool, bool reverse = true)
+        public static List<int> Triangulate(List<MapPoint> points, IObjectPool objectPool, bool reverse = true)
         {
             var indices = objectPool.NewList<int>();
-            var result = Triangulator.Triangulate(points, indices, reverse);
-            objectPool.StoreList(indices);
-            return result;
+            Triangulator.Triangulate(points, indices, reverse);
+            return indices;
         }
 
         /// <summary> Calcs center of polygon. </summary>

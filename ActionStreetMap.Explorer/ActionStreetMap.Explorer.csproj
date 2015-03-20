@@ -63,7 +63,7 @@
     <Compile Include="Scene\Buildings\BuildingStyle.cs" />
     <Compile Include="Scene\Buildings\Facades\FlatFacadeBuilder.cs" />
     <Compile Include="Scene\Buildings\Facades\IFacadeBuilder.cs" />
-    <Compile Include="Scene\Buildings\MeshData.cs" />
+    <Compile Include="Geometry\MeshData.cs" />
     <Compile Include="Scene\Buildings\Roofs\DomeRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\FlatRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\GabledRoofBuilder.cs" />

@@ -26,9 +26,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         /// <inheritdoc />
         public bool CanBuild(Building building) { return true; }
 
-        /// <summary>
-        ///     Creates GabledRoofBuilder.
-        /// </summary>
+        /// <summary> Creates <see cref="GabledRoofBuilder"/>. </summary>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
         public GabledRoofBuilder(IObjectPool objectPool)
@@ -77,12 +75,11 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
             var result = new MeshData()
             {
-                Vertices = context.Points.ToArray(),
-                Triangles = context.Triangles.ToArray(),
-                UV = context.UV.ToArray(),
+                Vertices = context.Data.Vertices,
+                Triangles = context.Data.Triangles,
+                UV = context.Data.UV,
                 MaterialKey = style.Roof.Path,
             };
-            context.Dispose();
             return result;
         }
 
@@ -168,42 +165,44 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
         private void AddTriangle(Vector3 first, Vector3 second, Vector3 third, Context context)
         {
-            context.Points.Add(first);
-            context.Points.Add(second);
-            context.Points.Add(third);
+            var data = context.Data;
+            data.Vertices.Add(first);
+            data.Vertices.Add(second);
+            data.Vertices.Add(third);
 
-            context.Triangles.Add(context.TrisIndex + 0);
-            context.Triangles.Add(context.TrisIndex + 1);
-            context.Triangles.Add(context.TrisIndex + 2);
+            data.Triangles.Add(context.TrisIndex + 0);
+            data.Triangles.Add(context.TrisIndex + 1);
+            data.Triangles.Add(context.TrisIndex + 2);
 
             // TODO process UV map different way
-            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
 
             context.TrisIndex += 3;
         }
 
         private void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd, Context context)
         {
-            context.Points.Add(rightStart);
-            context.Points.Add(leftStart);
-            context.Points.Add(leftEnd);
-            context.Points.Add(rightEnd);
+            var data = context.Data;
+            data.Vertices.Add(rightStart);
+            data.Vertices.Add(leftStart);
+            data.Vertices.Add(leftEnd);
+            data.Vertices.Add(rightEnd);
 
-            context.Triangles.Add(context.TrisIndex + 0);
-            context.Triangles.Add(context.TrisIndex + 1);
-            context.Triangles.Add(context.TrisIndex + 2);
-            context.Triangles.Add(context.TrisIndex + 2);
-            context.Triangles.Add(context.TrisIndex + 3);
-            context.Triangles.Add(context.TrisIndex + 0);
+            data.Triangles.Add(context.TrisIndex + 0);
+            data.Triangles.Add(context.TrisIndex + 1);
+            data.Triangles.Add(context.TrisIndex + 2);
+            data.Triangles.Add(context.TrisIndex + 2);
+            data.Triangles.Add(context.TrisIndex + 3);
+            data.Triangles.Add(context.TrisIndex + 0);
             context.TrisIndex += 4;
 
             // TODO process UV map different way
-            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            context.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
         }
 
         /// <summary>
@@ -218,31 +217,20 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
         #region Nested classes
 
-        private sealed class Context: IDisposable
+        private sealed class Context
         {
-            private readonly IObjectPool _objectPool;
-
             public readonly BuildingStyle Style;
-            public readonly List<Vector3> Points;
-            public readonly List<int> Triangles;
-            public readonly List<Vector2> UV;
+            public MeshData Data;
             
             public int TrisIndex;          
 
             public Context(BuildingStyle style, IObjectPool objectPool)
             {
                 Style = style;
-                _objectPool = objectPool;
-                Points = objectPool.NewList<Vector3>(64);
-                Triangles = objectPool.NewList<int>(128);
-                UV = objectPool.NewList<Vector2>(64);
-            }
-
-            public void Dispose()
-            {
-                _objectPool.StoreList(Points);
-                _objectPool.StoreList(Triangles);
-                _objectPool.StoreList(UV);
+                Data = new MeshData();
+                Data.Vertices = objectPool.NewList<Vector3>(64);
+                Data.Triangles = objectPool.NewList<int>(128);
+                Data.UV = objectPool.NewList<Vector2>(64);
             }
         }
 

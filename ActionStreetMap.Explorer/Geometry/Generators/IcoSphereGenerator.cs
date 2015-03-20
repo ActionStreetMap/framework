@@ -7,15 +7,15 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
     {
         private struct TriangleIndices
         {
-            public int v1;
-            public int v2;
-            public int v3;
+            public int V1;
+            public int V2;
+            public int V3;
 
             public TriangleIndices(int v1, int v2, int v3)
             {
-                this.v1 = v1;
-                this.v2 = v2;
-                this.v3 = v3;
+                V1 = v1;
+                V2 = v2;
+                V3 = v3;
             }
         }
 
@@ -125,13 +125,13 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
                 foreach (var tri in faces)
                 {
                     // replace triangle by 4 triangles
-                    int a = GetMiddlePoint(tri.v1, tri.v2, ref vertList, ref middlePointIndexCache, radius);
-                    int b = GetMiddlePoint(tri.v2, tri.v3, ref vertList, ref middlePointIndexCache, radius);
-                    int c = GetMiddlePoint(tri.v3, tri.v1, ref vertList, ref middlePointIndexCache, radius);
+                    int a = GetMiddlePoint(tri.V1, tri.V2, ref vertList, ref middlePointIndexCache, radius);
+                    int b = GetMiddlePoint(tri.V2, tri.V3, ref vertList, ref middlePointIndexCache, radius);
+                    int c = GetMiddlePoint(tri.V3, tri.V1, ref vertList, ref middlePointIndexCache, radius);
 
-                    faces2.Add(new TriangleIndices(tri.v1, a, c));
-                    faces2.Add(new TriangleIndices(tri.v2, b, a));
-                    faces2.Add(new TriangleIndices(tri.v3, c, b));
+                    faces2.Add(new TriangleIndices(tri.V1, a, c));
+                    faces2.Add(new TriangleIndices(tri.V2, b, a));
+                    faces2.Add(new TriangleIndices(tri.V3, c, b));
                     faces2.Add(new TriangleIndices(a, b, c));
                 }
                 faces = faces2;
@@ -142,9 +142,9 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
             List<int> triList = new List<int>();
             for (int i = 0; i < faces.Count; i++)
             {
-                triList.Add(faces[i].v1);
-                triList.Add(faces[i].v2);
-                triList.Add(faces[i].v3);
+                triList.Add(faces[i].V1);
+                triList.Add(faces[i].V2);
+                triList.Add(faces[i].V3);
             }
             //mesh.triangles = triList.ToArray();
             //mesh.uv = new Vector2[vertices.Length];

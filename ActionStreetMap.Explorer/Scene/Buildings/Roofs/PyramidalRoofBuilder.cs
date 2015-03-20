@@ -40,39 +40,39 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             };
         }
 
-        private int[] GetTriangles(List<MapPoint> footprint)
+        private List<int> GetTriangles(List<MapPoint> footprint)
         {
             var length = footprint.Count * 3;
-            var triangles = new int[length];
+            var triangles = new List<int>(length);
 
             for (int i = 0; i < length; i++)
-                triangles[i] = i;
+                triangles.Add(i);
 
             return triangles;
         }
 
-        private Vector3[] GetVerticies3D(MapPoint center, List<MapPoint> footprint, float roofOffset, float roofHeight)
+        private List<Vector3> GetVerticies3D(MapPoint center, List<MapPoint> footprint, float roofOffset, float roofHeight)
         {
             var length = footprint.Count;
-            var verticies = new Vector3[length*3];
+            var verticies = new List<Vector3>(length*3);
             for (int i = 0; i < length; i++)
             {
-                var vertIndex = i*3;
                 var nextIndex = i == (length - 1) ? 0 : i + 1;
 
-                verticies[vertIndex] = new Vector3(footprint[i].X, roofOffset, footprint[i].Y);
-                verticies[vertIndex + 1] = new Vector3(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y);
-                verticies[vertIndex + 2] = new Vector3(center.X, roofOffset + roofHeight, center.Y);
+                verticies.Add(new Vector3(footprint[i].X, roofOffset, footprint[i].Y));
+                verticies.Add(new Vector3(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y));
+                verticies.Add(new Vector3(center.X, roofOffset + roofHeight, center.Y));
             }
 
             return verticies;
         }
 
-        private Vector2[] GetUV(List<MapPoint> footprint, BuildingStyle style)
+        private List<Vector2> GetUV(List<MapPoint> footprint, BuildingStyle style)
         {
-            var uv = new Vector2[footprint.Count * 3];
-            for (int i = 0; i < uv.Length; i++)
-                uv[i] = style.Roof.FrontUvMap.RightUpper;
+            var length = footprint.Count*3;
+            var uv = new List<Vector2>(length);
+            for (int i = 0; i < length; i++)
+                uv.Add(style.Roof.FrontUvMap.RightUpper);
 
             return uv;
         }

@@ -1,5 +1,6 @@
 ﻿
 using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Explorer.Geometry;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
 {

@@ -10,12 +10,10 @@ namespace ActionStreetMap.Explorer.Geometry.Polygons
         /// <param name="points">Points which represents polygon.</param>
         /// <param name="indices">Indices.</param>
         /// <param name="reverse">Reverse points.</param>
-        /// <returns>Triangles.</returns>
-        public static int[] Triangulate(List<MapPoint> points, List<int> indices, bool reverse = true)
+        public static void Triangulate(List<MapPoint> points, List<int> indices, bool reverse = true)
         {
             int n = points.Count;
-            if (n < 3)
-                return indices.ToArray();
+            if (n < 3) return;
 
             int[] V = new int[n];
             if (Area(points) > 0)
@@ -34,7 +32,7 @@ namespace ActionStreetMap.Explorer.Geometry.Polygons
             for (int v = nv - 1; nv > 2; )
             {
                 if ((count--) <= 0)
-                    return indices.ToArray();
+                    return;
 
                 int u = v;
                 if (nv <= u)
@@ -64,8 +62,6 @@ namespace ActionStreetMap.Explorer.Geometry.Polygons
             }
 
             if(reverse) indices.Reverse();
-
-            return indices.ToArray();
         }
 
         private static float Area(List<MapPoint> points)
