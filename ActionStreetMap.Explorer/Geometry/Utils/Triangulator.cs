@@ -3,14 +3,10 @@ using ActionStreetMap.Core;
 
 namespace ActionStreetMap.Explorer.Geometry.Polygons
 {
-    /// <summary>
-    ///     Provides logic to do triangulation.
-    /// </summary>
+    /// <summary> Provides logic to do triangulation. </summary>
     internal class Triangulator
     {
-        /// <summary>
-        ///     Triangulates given polygon.
-        /// </summary>
+        /// <summary> Triangulates given polygon. </summary>
         /// <param name="points">Points which represents polygon.</param>
         /// <param name="indices">Indices.</param>
         /// <param name="reverse">Reverse points.</param>

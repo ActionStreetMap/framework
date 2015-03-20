@@ -52,7 +52,7 @@
     <Compile Include="Commands\GeocodeCommand.cs" />
     <Compile Include="Commands\LocateCommand.cs" />
     <Compile Include="Commands\TagCommand.cs" />
-    <Compile Include="Geometry\Generators\IcoSphere.cs" />
+    <Compile Include="Geometry\Generators\IcoSphereGenerator.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
     <Compile Include="Helpers\ModelRuleExtensions.cs" />
@@ -74,12 +74,9 @@
     <Compile Include="Geometry\Utils\CircleUtils.cs" />
     <Compile Include="Geometry\Utils\LineUtils.cs" />
     <Compile Include="Geometry\Utils\PointUtils.cs" />
-    <Compile Include="Geometry\Polygons\DouglasPeuckerReduction.cs" />
-    <Compile Include="Geometry\Polygons\PolygonClipper.cs" />
-    <Compile Include="Geometry\Polygons\ScanLine.cs" />
-    <Compile Include="Geometry\Polygons\SimpleScanLine.cs" />
-    <Compile Include="Geometry\Polygons\StraightSkeleton.cs" />
-    <Compile Include="Geometry\Polygons\Triangulator.cs" />
+    <Compile Include="Geometry\Utils\DouglasPeuckerReduction.cs" />
+    <Compile Include="Geometry\Utils\StraightSkeleton.cs" />
+    <Compile Include="Geometry\Utils\Triangulator.cs" />
     <Compile Include="Geometry\Utils\PolygonUtils.cs" />
     <Compile Include="Geometry\Primitives\Polygon.cs" />
     <Compile Include="Geometry\Primitives\Rect.cs" />

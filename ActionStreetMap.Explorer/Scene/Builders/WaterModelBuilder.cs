@@ -1,22 +1,15 @@
-﻿using System.Linq;
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Core.Scene.Details;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary>  Provides logic to build water. </summary>
     public class WaterModelBuilder : ModelBuilder
     {
-        private const int NoLayer = -1;
-
         /// <inheritdoc />
         public override string Name { get { return "water"; } }
 
@@ -30,66 +23,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             // get polygon map points
             PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, verticies2D);
 
-            // detect minimal elevation for water
-            var elevation = verticies2D.Min(v => v.Elevation);
-
             tile.Canvas.AddWater(new Surface()
             {
-                Points = verticies2D.ToList(),
+                Points = verticies2D,
             });
 
-
-            // cut polygon by current tile
-            PolygonUtils.ClipPolygonByRect(tile.Rectangle, verticies2D);
-
-            // get offset points to prevent gaps between water polygon and terrain due to issues 
-            // on low terrain heightmap resolutions
-            // NOTE current polygon cut algorithm may produce self-intersection results
-            // TODO have to test current offset alhorithm
-            // TODO determine better offset constant or make it configurable
-            //var offsetPoints = ObjectPool.NewList<MapPoint>(verticies2D.Count);
-            //PolygonUtils.MakeOffset(verticies2D, offsetPoints, -2f);
-     
-            // TODO use this different way
-            // add elevation
-            /*tile.Canvas.AddElevation(new Surface
-            {
-                ZIndex = rule.GetZIndex(),
-                AverageElevation = elevation - 10,
-                Points = verticies2D
-            });*/
-
-            var vector3Ds = verticies2D.GetVerticies(elevation - 2.5f);
-            var triangles = PolygonUtils.Triangulate(verticies2D, ObjectPool);
-
-            //ObjectPool.Store(verticies2D);
-
-            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(GetName(area));
-            Scheduler.MainThread.Schedule(() => BuildObject(gameObjectWrapper, rule, vector3Ds, triangles));
-
-            return null;//gameObjectWrapper;
-        }
-
-        /// <summary> Process unity specific data. </summary>
-        protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule, Vector3[] points, int[] triangles)
-        {
-            //var gameObject = gameObjectWrapper.AddComponent(new GameObject());
-            //var mesh = new Mesh();
-            //mesh.vertices = points;
-            //mesh.triangles = triangles;
-
-            //var meshFilter = gameObject.AddComponent<MeshFilter>();
-            //meshFilter.mesh.Clear();
-            //meshFilter.mesh = mesh;
-            //meshFilter.mesh.RecalculateNormals();
-
-            //gameObject.AddComponent<MeshRenderer>();
-            //gameObject.renderer.material = rule.GetMaterial(ResourceProvider);
-            //gameObject.renderer.material.color = rule.GetFillUnityColor();
-
-            //var layerIndex = rule.GetLayerIndex(NoLayer);
-            //if (layerIndex != NoLayer)
-            //    gameObject.layer = layerIndex;
+            return null;
         }
     }
 }

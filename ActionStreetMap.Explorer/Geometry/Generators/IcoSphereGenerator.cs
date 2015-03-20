@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry.Generators
 {
-    internal class IcoSphere
+    internal class IcoSphereGenerator
     {
         private struct TriangleIndices
         {
