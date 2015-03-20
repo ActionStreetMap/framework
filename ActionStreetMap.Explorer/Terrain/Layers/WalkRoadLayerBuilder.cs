@@ -12,7 +12,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
 
         public override void Build(MeshContext context, MeshRegion meshRegion)
         {
-            var colors = context.Colors;
+            var colors = context.Data.Colors;
             var hashMap = context.TriangleMap;
             var gradient = ResourceProvider.GetGradient("road.walk");
             var colorNoiseFreq = 1f;

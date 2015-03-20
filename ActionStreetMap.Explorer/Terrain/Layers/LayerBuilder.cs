@@ -49,9 +49,9 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
             var errorTopFix = 0.02f;
             var errorBottomFix = 0.1f;
 
-            var vertices = context.Vertices;
-            var triangles = context.Triangles;
-            var colors = context.Colors;
+            var vertices = context.Data.Vertices;
+            var triangles = context.Data.Triangles;
+            var colors = context.Data.Colors;
             var pointList = ObjectPool.NewList<MapPoint>(64);
             foreach (var contour in region.Contours)
             {

@@ -4,14 +4,13 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Polygons.Meshing.Iterators;
 using ActionStreetMap.Core.Polygons.Tools;
-using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 
 namespace ActionStreetMap.Explorer.Terrain
 {
     public class MeshContext
     {
         public Rule Rule;
-        public IGameObject Object;
 
         public MapRectangle Rectangle;
         public Mesh Mesh;
@@ -20,8 +19,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         public Dictionary<int, int> TriangleMap;
 
-        public List<UnityEngine.Vector3> Vertices;
-        public List<int> Triangles;
-        public List<UnityEngine.Color> Colors;
+        public MeshData Data;
+
     }
 }

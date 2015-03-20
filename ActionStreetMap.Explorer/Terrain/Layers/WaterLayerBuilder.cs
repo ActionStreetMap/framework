@@ -31,7 +31,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         public override void Build(MeshContext context, MeshRegion meshRegion)
         {
             const float colorNoiseFreq = 0.2f;
-            var meshVertices = context.Vertices;
+            var meshVertices = context.Data.Vertices;
             var hashMap = context.TriangleMap;
 
             // TODO allocate from pool with some size
@@ -89,7 +89,7 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         {
             var gameObject = new GameObject("water");
             // TODO attach to tile
-            gameObject.transform.parent = context.Object.GetComponent<GameObject>().transform;
+            gameObject.transform.parent = context.Data.GameObject.GetComponent<GameObject>().transform;
             var meshData = new Mesh();
             meshData.vertices = vertices.ToArray();
             meshData.triangles = triangles.ToArray();

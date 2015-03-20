@@ -12,10 +12,12 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Terrain.Layers;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Terrain
@@ -31,6 +33,7 @@ namespace ActionStreetMap.Explorer.Terrain
 
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
+        private readonly IObjectPool _objectPool;
         private readonly MeshCellBuilder _meshCellBuilder;
 
         private readonly ILayerBuilder _canvasLayerBuilder;
@@ -46,11 +49,13 @@ namespace ActionStreetMap.Explorer.Terrain
 
         [Dependency]
         public MeshTerrainBuilder(IEnumerable<ILayerBuilder> layerBuilders,
-            IResourceProvider resourceProvider,
-            IGameObjectFactory gameObjectFactory)
+                                  IResourceProvider resourceProvider,
+                                  IGameObjectFactory gameObjectFactory,
+                                  IObjectPool objectPool)
         {
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
+            _objectPool = objectPool;
             _meshCellBuilder = new MeshCellBuilder();
 
             var layerBuildersList = layerBuilders.ToArray();
@@ -117,20 +122,22 @@ namespace ActionStreetMap.Explorer.Terrain
 
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
+            var meshData = _objectPool.CreateMeshData(
+                terrainMesh.Vertices.Count,
+                terrainMesh.Triangles.Count,
+                terrainMesh.Vertices.Count);
+            meshData.GameObject = cellGameObject;
+
             var context = new MeshContext
             {
-                Object = cellGameObject,
                 Rule = rule,
-
+                Data = meshData,
                 Rectangle = rect,
                 Mesh = terrainMesh,
                 Tree = new QuadTree(cell.Mesh),
                 Iterator = new RegionIterator(cell.Mesh),
                 // TODO use object pool
                 TriangleMap = new Dictionary<int, int>(),
-                Vertices = new List<Vector3>(terrainMesh.Vertices.Count),
-                Triangles = new List<int>(terrainMesh.Triangles.Count),
-                Colors = new List<Color>(terrainMesh.Vertices.Count)
             };
 
             // build canvas
@@ -142,7 +149,7 @@ namespace ActionStreetMap.Explorer.Terrain
             foreach (var surfaceRegion in cell.Surfaces)
                 _surfaceRoadLayerBuilder.Build(context, surfaceRegion);
 
-            Trace.Debug(LogTag, "Total triangles: {0}", context.Triangles.Count);
+            Trace.Debug(LogTag, "Total triangles: {0}", context.Data.Triangles.Count);
             Scheduler.MainThread.Schedule(() => BuildGameObject(rule, cellGameObject, context));
         }
 
@@ -151,10 +158,12 @@ namespace ActionStreetMap.Explorer.Terrain
             var gameObject = cellGameObject.GetComponent<GameObject>();
 
             var meshData = new Mesh();
-            meshData.vertices = context.Vertices.ToArray();
-            meshData.triangles = context.Triangles.ToArray();
-            meshData.colors = context.Colors.ToArray();
+            meshData.vertices = context.Data.Vertices.ToArray();
+            meshData.triangles = context.Data.Triangles.ToArray();
+            meshData.colors = context.Data.Colors.ToArray();
             meshData.RecalculateNormals();
+
+            _objectPool.RecycleMeshData(context.Data);
 
             gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial(_resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;

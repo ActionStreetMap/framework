@@ -15,8 +15,8 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
 
         public override void Build(MeshContext context, MeshRegion meshRegion)
         {
-            var colors = context.Colors;
-            var vertices = context.Vertices;
+            var colors = context.Data.Colors;
+            var vertices = context.Data.Vertices;
             var hashMap = context.TriangleMap;
             var gradient = ResourceProvider.GetGradient("road.car");
             var eleNoiseFreq = 0.2f;

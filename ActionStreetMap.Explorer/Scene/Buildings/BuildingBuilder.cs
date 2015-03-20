@@ -79,10 +79,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
             mesh.uv = meshData.UV.ToArray();
             mesh.RecalculateNormals();
 
-            // return lists to pool
-            _objectPool.StoreList(meshData.Vertices);
-            _objectPool.StoreList(meshData.Triangles);
-            _objectPool.StoreList(meshData.UV);
+            _objectPool.RecycleMeshData(meshData);
 
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
             gameObject.AddComponent<MeshCollider>();

@@ -14,9 +14,9 @@ namespace ActionStreetMap.Explorer.Terrain.Layers
         {
             var gradient = ResourceProvider.GetGradient("canvas");
             var terrainMesh = context.Mesh;
-            var colors = context.Colors;
-            var vertices = context.Vertices;
-            var triangles = context.Triangles;
+            var colors = context.Data.Colors;
+            var vertices = context.Data.Vertices;
+            var triangles = context.Data.Triangles;
             var triangleIndexMap = context.TriangleMap;
             var eleNoiseFreq = 0.2f;
             var colorNoiseFreq = 0.2f;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
-    /// <summary> Stored data associated with mesh using arrays. </summary>
+    /// <summary> Stored data associated with mesh. </summary>
     public class MeshData
     {
         /// <summary> Vertices. </summary>
@@ -15,6 +15,9 @@ namespace ActionStreetMap.Explorer.Geometry
 
         /// <summary> UV map. </summary>
         public List<Vector2> UV;
+
+        /// <summary> Colors. </summary>
+        public List<Color> Colors;
         
         /// <summary> Material key. </summary>
         public string MaterialKey;
