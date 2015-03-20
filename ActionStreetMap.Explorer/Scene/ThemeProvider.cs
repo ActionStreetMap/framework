@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using ActionStreetMap.Explorer.Scene.Infos;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.IO;
 using UnityEngine;
-using Rect = ActionStreetMap.Explorer.Scene.Geometry.Primitives.Rect;
+using Rect = ActionStreetMap.Explorer.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Explorer.Scene
 {

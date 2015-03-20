@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
+namespace ActionStreetMap.Explorer.Geometry.Primitives
 {
     /// <summary> Represent rectangle. </summary>
     public class Rect

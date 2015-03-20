@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Explorer.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
-
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
+namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     /// <summary> Builds thick 2D line in 3D space. Not thread safe. </summary>
     public class ThickLineBuilder: IDisposable

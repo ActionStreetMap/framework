@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
+namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     /// <summary> Represents line element. </summary>
     public class LineElement

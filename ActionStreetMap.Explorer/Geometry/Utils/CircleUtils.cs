@@ -5,7 +5,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Infrastructure.Primitives;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry
+namespace ActionStreetMap.Explorer.Geometry.Utils
 {
     /// <summary> Provides circle helper methods. </summary>
     public static class CircleUtils

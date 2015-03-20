@@ -1,9 +1,10 @@
 ﻿using System;
 using ActionStreetMap.Core;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
+namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     internal static class ThickLineHelper
     {

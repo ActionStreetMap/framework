@@ -1,7 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Core;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry
+namespace ActionStreetMap.Explorer.Geometry.Utils
 {
     /// <summary> Provides some triangle utility functions. </summary>
     public static class TriangleUtils

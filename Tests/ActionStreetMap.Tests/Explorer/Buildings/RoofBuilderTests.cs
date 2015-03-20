@@ -6,6 +6,7 @@ using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using NUnit.Framework;
 using UnityEngine;
+using Rect = ActionStreetMap.Explorer.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Tests.Explorer.Buildings
 {
@@ -35,7 +36,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 Roof = new BuildingStyle.RoofStyle()
                 {
                     Builders = new IRoofBuilder[] { new FlatRoofBuilder(), },
-                    FrontUvMap = new ActionStreetMap.Explorer.Scene.Geometry.Primitives.Rect(new Vector2(), new Vector2()),
+                    FrontUvMap = new Rect(new Vector2(), new Vector2()),
                     Material = "",
                 },
                 Facade = new BuildingStyle.FacadeStyle()
@@ -71,7 +72,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             {
                 Roof = new BuildingStyle.RoofStyle()
                 {
-                    FrontUvMap = new ActionStreetMap.Explorer.Scene.Geometry.Primitives.Rect(new Vector2(), new Vector2())
+                    FrontUvMap = new Rect(new Vector2(), new Vector2())
                 }
             });
 
@@ -105,7 +106,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             {
                 Roof = new BuildingStyle.RoofStyle()
                 {
-                    FrontUvMap = new ActionStreetMap.Explorer.Scene.Geometry.Primitives.Rect(new Vector2(), new Vector2())
+                    FrontUvMap = new Rect(new Vector2(), new Vector2())
                 }
             });
 

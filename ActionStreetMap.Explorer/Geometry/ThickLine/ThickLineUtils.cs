@@ -3,7 +3,7 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
+namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     /// <summary> Defines thick line util methods. </summary>
     internal class ThickLineUtils

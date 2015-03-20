@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Polygons;
+using ActionStreetMap.Explorer.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using NUnit.Framework;
 using UnityEngine;
 

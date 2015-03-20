@@ -1,5 +1,4 @@
-﻿using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
-using ActionStreetMap.Explorer.Scene.Geometry;
+﻿using ActionStreetMap.Explorer.Geometry.Primitives;
 
 namespace ActionStreetMap.Explorer.Scene.Infos
 {

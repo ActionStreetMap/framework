@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Utils
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Defines behavior of Unity's resource loader/provider. </summary>
     public interface IResourceProvider

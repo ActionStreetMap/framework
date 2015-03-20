@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Polygons;
+using ActionStreetMap.Explorer.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
-using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
-using ActionStreetMap.Explorer.Scene.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs

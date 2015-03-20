@@ -1,8 +1,8 @@
 ﻿using System;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Primitives;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry
+namespace ActionStreetMap.Explorer.Geometry.Utils
 {
     /// <summary> Segment utils. </summary>
     public class SegmentUtils

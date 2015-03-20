@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using ActionStreetMap.Core.Scene.Buildings;
-using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
+using ActionStreetMap.Explorer.Geometry.Polygons;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs

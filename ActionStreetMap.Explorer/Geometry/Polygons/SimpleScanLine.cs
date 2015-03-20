@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Polygons
+namespace ActionStreetMap.Explorer.Geometry.Polygons
 {
     /// <summary>
     ///     Provides implementation of simplified scan line algorithm to process polygons.

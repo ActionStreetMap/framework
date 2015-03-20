@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
-using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs

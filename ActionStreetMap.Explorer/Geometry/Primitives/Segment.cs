@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
+namespace ActionStreetMap.Explorer.Geometry.Primitives
 {
     /// <summary> Represent line segment. </summary>
     public struct Segment

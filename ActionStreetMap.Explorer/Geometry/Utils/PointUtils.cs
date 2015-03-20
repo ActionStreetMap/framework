@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry
+namespace ActionStreetMap.Explorer.Geometry.Utils
 {
     /// <summary> Provids some helper methods for points. </summary>
     public static class PointUtils

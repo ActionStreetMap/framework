@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Polygons
+namespace ActionStreetMap.Explorer.Geometry.Polygons
 {
     /// <summary>
     ///     Implements simple scan-line algorithm. Code ported from existing java code found in Internet.

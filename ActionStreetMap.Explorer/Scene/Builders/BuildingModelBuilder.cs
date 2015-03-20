@@ -6,10 +6,11 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Maps.Helpers;
 using ActionStreetMap.Explorer.Scene.Buildings;
-using ActionStreetMap.Explorer.Scene.Geometry;
 using ActionStreetMap.Explorer.Helpers;
 
 namespace ActionStreetMap.Explorer.Scene.Builders

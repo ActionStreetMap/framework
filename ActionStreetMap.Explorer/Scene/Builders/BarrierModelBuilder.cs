@@ -4,9 +4,10 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.ThickLine;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Helpers;
 
 using UnityEngine;

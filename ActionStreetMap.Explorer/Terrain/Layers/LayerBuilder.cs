@@ -1,7 +1,8 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Terrain;
-using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Utils;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;

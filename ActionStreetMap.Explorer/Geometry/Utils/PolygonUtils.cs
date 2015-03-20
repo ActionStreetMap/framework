@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Polygons;
+using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry
+namespace ActionStreetMap.Explorer.Geometry.Utils
 {
     /// <summary> Provides some polygon util methods. </summary>
     public static class PolygonUtils

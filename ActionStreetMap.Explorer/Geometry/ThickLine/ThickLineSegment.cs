@@ -1,7 +1,7 @@
 ﻿
-using ActionStreetMap.Explorer.Scene.Geometry.Primitives;
+using ActionStreetMap.Explorer.Geometry.Primitives;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
+namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     /// <summary> Represents thick line segment. </summary>
     public struct ThickLineSegment

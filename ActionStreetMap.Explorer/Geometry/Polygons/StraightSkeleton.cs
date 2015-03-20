@@ -3,7 +3,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Primitives;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Polygons
+namespace ActionStreetMap.Explorer.Geometry.Polygons
 {
     /// <summary>
     ///     Compute skeleton. Reused algorithm found in Internet.

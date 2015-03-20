@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Polygons;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
-using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps;
 using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Tests.Maps;
-using ActionStreetMap.Explorer.Scene.Geometry;
 using Moq;
 using NUnit.Framework;
 

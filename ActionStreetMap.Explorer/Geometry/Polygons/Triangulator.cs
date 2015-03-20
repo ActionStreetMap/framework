@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Polygons
+namespace ActionStreetMap.Explorer.Geometry.Polygons
 {
     /// <summary>
     ///     Provides logic to do triangulation.

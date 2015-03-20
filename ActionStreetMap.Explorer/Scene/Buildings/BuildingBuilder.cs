@@ -5,7 +5,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
-using ActionStreetMap.Explorer.Scene.Utils;
+using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings

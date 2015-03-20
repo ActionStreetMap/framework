@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Explorer.Scene.Utils;
+﻿using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Infrastructure.Config;
 using Moq;
 using NUnit.Framework;

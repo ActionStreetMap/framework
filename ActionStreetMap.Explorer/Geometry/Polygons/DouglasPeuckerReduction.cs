@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Polygons
+namespace ActionStreetMap.Explorer.Geometry.Polygons
 {
     /// <summary>
     ///     Implements the Douglas Peucker algorithim to reduce the number of points

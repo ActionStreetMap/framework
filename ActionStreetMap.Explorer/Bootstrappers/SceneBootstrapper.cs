@@ -8,7 +8,6 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
-using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Terrain;
 using ActionStreetMap.Explorer.Terrain.Layers;
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using UnityEngine;
 using ActionStreetMap.Infrastructure.Utilities;
+using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.ThickLine
+namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     /// <summary> Thick line with height and width in 3D space. Can be used to represent barriers. </summary>
     public class DimenLineBuilder : ThickLineBuilder

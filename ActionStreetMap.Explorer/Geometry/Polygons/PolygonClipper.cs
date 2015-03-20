@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 
-namespace ActionStreetMap.Explorer.Scene.Geometry.Polygons
+namespace ActionStreetMap.Explorer.Geometry.Polygons
 {
     /// <summary>
     ///     Sutherland-Hodgman algorithm implementation which provides the way to clip the subject polygon against the clip

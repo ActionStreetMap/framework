@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
-using ActionStreetMap.Explorer.Scene.Geometry;
-using ActionStreetMap.Explorer.Scene.Geometry.Polygons;
+using ActionStreetMap.Explorer.Geometry.Polygons;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Infrastructure.Dependencies;
 

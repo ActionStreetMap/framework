@@ -52,6 +52,7 @@
     <Compile Include="Commands\GeocodeCommand.cs" />
     <Compile Include="Commands\LocateCommand.cs" />
     <Compile Include="Commands\TagCommand.cs" />
+    <Compile Include="Geometry\Generators\IcoSphere.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
     <Compile Include="Helpers\ModelRuleExtensions.cs" />
@@ -70,28 +71,28 @@
     <Compile Include="Scene\Buildings\Roofs\IRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\MansardRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\PyramidalRoofBuilder.cs" />
-    <Compile Include="Scene\Geometry\CircleUtils.cs" />
-    <Compile Include="Scene\Geometry\LineUtils.cs" />
-    <Compile Include="Scene\Geometry\PointUtils.cs" />
-    <Compile Include="Scene\Geometry\Polygons\DouglasPeuckerReduction.cs" />
-    <Compile Include="Scene\Geometry\Polygons\PolygonClipper.cs" />
-    <Compile Include="Scene\Geometry\Polygons\ScanLine.cs" />
-    <Compile Include="Scene\Geometry\Polygons\SimpleScanLine.cs" />
-    <Compile Include="Scene\Geometry\Polygons\StraightSkeleton.cs" />
-    <Compile Include="Scene\Geometry\Polygons\Triangulator.cs" />
-    <Compile Include="Scene\Geometry\PolygonUtils.cs" />
-    <Compile Include="Scene\Geometry\Primitives\Polygon.cs" />
-    <Compile Include="Scene\Geometry\Primitives\Rect.cs" />
-    <Compile Include="Scene\Geometry\Primitives\Segment.cs" />
-    <Compile Include="Scene\Geometry\Primitives\Size.cs" />
-    <Compile Include="Scene\Geometry\SegmentUtils.cs" />
-    <Compile Include="Scene\Geometry\ThickLine\DimenLineBuilder.cs" />
-    <Compile Include="Scene\Geometry\ThickLine\LineElement.cs" />
-    <Compile Include="Scene\Geometry\ThickLine\ThickLineBuilder.cs" />
-    <Compile Include="Scene\Geometry\ThickLine\ThickLineHelper.cs" />
-    <Compile Include="Scene\Geometry\ThickLine\ThickLineSegment.cs" />
-    <Compile Include="Scene\Geometry\ThickLine\ThickLineUtils.cs" />
-    <Compile Include="Scene\Geometry\TriangleUtils.cs" />
+    <Compile Include="Geometry\Utils\CircleUtils.cs" />
+    <Compile Include="Geometry\Utils\LineUtils.cs" />
+    <Compile Include="Geometry\Utils\PointUtils.cs" />
+    <Compile Include="Geometry\Polygons\DouglasPeuckerReduction.cs" />
+    <Compile Include="Geometry\Polygons\PolygonClipper.cs" />
+    <Compile Include="Geometry\Polygons\ScanLine.cs" />
+    <Compile Include="Geometry\Polygons\SimpleScanLine.cs" />
+    <Compile Include="Geometry\Polygons\StraightSkeleton.cs" />
+    <Compile Include="Geometry\Polygons\Triangulator.cs" />
+    <Compile Include="Geometry\Utils\PolygonUtils.cs" />
+    <Compile Include="Geometry\Primitives\Polygon.cs" />
+    <Compile Include="Geometry\Primitives\Rect.cs" />
+    <Compile Include="Geometry\Primitives\Segment.cs" />
+    <Compile Include="Geometry\Primitives\Size.cs" />
+    <Compile Include="Geometry\Utils\SegmentUtils.cs" />
+    <Compile Include="Geometry\ThickLine\DimenLineBuilder.cs" />
+    <Compile Include="Geometry\ThickLine\LineElement.cs" />
+    <Compile Include="Geometry\ThickLine\ThickLineBuilder.cs" />
+    <Compile Include="Geometry\ThickLine\ThickLineHelper.cs" />
+    <Compile Include="Geometry\ThickLine\ThickLineSegment.cs" />
+    <Compile Include="Geometry\ThickLine\ThickLineUtils.cs" />
+    <Compile Include="Geometry\Utils\TriangleUtils.cs" />
     <Compile Include="Scene\Infos\InfoStyle.cs" />
     <Compile Include="Scene\Infos\InfoStyleProvider.cs" />
     <Compile Include="Terrain\Layers\CanvasLayerBuilder.cs" />
@@ -101,8 +102,8 @@
     <Compile Include="Terrain\Layers\WalkRoadLayerBuilder.cs" />
     <Compile Include="Terrain\Layers\WaterLayerBuilder.cs" />
     <Compile Include="Terrain\MeshTerrainBuilder.cs" />
-    <Compile Include="Scene\Utils\RandomHelper.cs" />
-    <Compile Include="Scene\Utils\ResourceProvider.cs" />
+    <Compile Include="Utils\RandomHelper.cs" />
+    <Compile Include="Scene\ResourceProvider.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="Infrastructure\ObjectPool.cs" />
     <Compile Include="Scene\Builders\BarrierModelBuilder.cs" />
@@ -151,6 +152,7 @@
       <Name>ActionStreetMap.Unity</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

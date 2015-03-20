@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace ActionStreetMap.Explorer.Scene.Utils
+namespace ActionStreetMap.Explorer.Utils
 {
     internal static class RandomHelper
     {

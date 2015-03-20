@@ -1,9 +1,10 @@
 ﻿using ActionStreetMap.Core;
-using ActionStreetMap.Explorer.Scene.Geometry;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Utils;
 
 namespace ActionStreetMap.Tests.Explorer.Geometry
 {

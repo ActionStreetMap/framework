@@ -1,4 +1,4 @@
-﻿namespace ActionStreetMap.Explorer.Scene.Geometry.Primitives
+﻿namespace ActionStreetMap.Explorer.Geometry.Primitives
 {
     /// <summary> Represents size type. </summary>
     public class Size
