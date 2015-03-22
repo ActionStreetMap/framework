@@ -5,20 +5,22 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Helpers;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Provides logic to build buildings. </summary>
     public class BuildingModelBuilder : ModelBuilder
     {
-        private readonly IBuildingBuilder _builder;
         private readonly IElevationProvider _elevationProvider;
         private readonly IEnumerable<IFacadeBuilder> _facadeBuilders;
         private readonly IEnumerable<IRoofBuilder> _roofBuilders;
@@ -28,10 +30,10 @@ namespace ActionStreetMap.Explorer.Scene
 
         /// <summary> Creates instance of <see cref="BuildingModelBuilder"/>. </summary>
         [Dependency]
-        public BuildingModelBuilder(IBuildingBuilder builder, IElevationProvider elevationProvider,
-            IEnumerable<IFacadeBuilder> facadeBuilders, IEnumerable<IRoofBuilder> roofBuilders)
+        public BuildingModelBuilder(IElevationProvider elevationProvider,
+                                    IEnumerable<IFacadeBuilder> facadeBuilders, 
+                                    IEnumerable<IRoofBuilder> roofBuilders)
         {
-            _builder = builder;
             _elevationProvider = elevationProvider;
 
             _facadeBuilders = facadeBuilders.ToArray();
@@ -108,11 +110,54 @@ namespace ActionStreetMap.Explorer.Scene
             var facadeBuilder = _facadeBuilders.Single(f => f.Name == building.FacadeType);
             var roofBuilder = _roofBuilders.Single(f => f.Name == building.RoofType);
 
-            _builder.Build(building, facadeBuilder, roofBuilder);
+            var facadeMeshData = facadeBuilder.Build(building);
+            var roofMeshData = roofBuilder.Build(building);
+
+            Scheduler.MainThread.Schedule(() =>
+            {
+                // NOTE use different gameObject only to support different materials
+                AttachChildGameObject(building.GameObject, "facade", facadeMeshData);
+                AttachChildGameObject(building.GameObject, "roof", roofMeshData);
+            });
 
             tile.Registry.RegisterGlobal(building.Id);
 
             return gameObjectWrapper;
+        }
+
+        /// <summary> Process unity's game object. </summary>
+        protected virtual void AttachChildGameObject(IGameObject parent, string name, MeshData meshData)
+        {
+            GameObject gameObject = GetGameObject(meshData);
+            gameObject.isStatic = true;
+            gameObject.transform.parent = parent.GetComponent<GameObject>().transform;
+            gameObject.name = name;
+            gameObject.renderer.sharedMaterial = ResourceProvider
+              .GetMatertial(meshData.MaterialKey);
+        }
+
+        private GameObject GetGameObject(MeshData meshData)
+        {
+            // GameObject was created directly in builder, so we can use it and ignore other meshData properties.
+            // also we expect that all components are defined
+            if (meshData.GameObject != null && !meshData.GameObject.IsEmpty)
+                return meshData.GameObject.GetComponent<GameObject>();
+
+            var gameObject = new GameObject();
+            var mesh = new Mesh();
+            mesh.vertices = meshData.Vertices.ToArray();
+            mesh.triangles = meshData.Triangles.ToArray();
+            mesh.colors = meshData.Colors.ToArray();
+
+            mesh.RecalculateNormals();
+
+            ObjectPool.RecycleMeshData(meshData);
+
+            gameObject.AddComponent<MeshFilter>().mesh = mesh;
+            gameObject.AddComponent<MeshCollider>();
+            gameObject.AddComponent<MeshRenderer>();
+
+            return gameObject;
         }
     }
 }

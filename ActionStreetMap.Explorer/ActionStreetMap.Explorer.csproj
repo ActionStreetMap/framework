@@ -59,7 +59,6 @@
     <Compile Include="Helpers\TerrainRuleExtensions.cs" />
     <Compile Include="Infrastructure\UnityGameObject.cs" />
     <Compile Include="Interactions\NoiseWaveBehavior.cs" />
-    <Compile Include="Scene\Buildings\BuildingBuilder.cs" />
     <Compile Include="Scene\Buildings\Facades\EmptySideBuilder.cs" />
     <Compile Include="Scene\Buildings\Facades\IFacadeBuilder.cs" />
     <Compile Include="Geometry\MeshData.cs" />
