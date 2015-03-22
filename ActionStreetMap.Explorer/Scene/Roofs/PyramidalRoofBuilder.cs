@@ -3,12 +3,11 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
+namespace ActionStreetMap.Explorer.Scene.Roofs
 {
     /// <summary>
     ///     Builds Pyramidal roof.

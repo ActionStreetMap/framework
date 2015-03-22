@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Dependencies;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
+namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal class MeshFacadeBuilder: IFacadeBuilder
     {

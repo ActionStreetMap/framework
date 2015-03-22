@@ -9,7 +9,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     internal interface ILayerBuilder
     {

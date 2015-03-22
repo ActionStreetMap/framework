@@ -1,5 +1,4 @@
-﻿using System;
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
@@ -7,7 +6,7 @@ using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
+namespace ActionStreetMap.Explorer.Scene.Roofs
 {
     /// <summary> Builds dome roof. </summary>
     public class DomeRoofBuilder : RoofBuilder

@@ -3,7 +3,7 @@ using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     internal class SurfaceLayerBuilder : LayerBuilder
     {

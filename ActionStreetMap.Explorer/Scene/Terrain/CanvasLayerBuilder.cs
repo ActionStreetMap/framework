@@ -1,12 +1,11 @@
 ﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     internal class CanvasLayerBuilder: LayerBuilder
     {

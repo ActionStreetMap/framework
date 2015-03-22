@@ -8,7 +8,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     internal class WaterLayerBuilder : LayerBuilder
     {

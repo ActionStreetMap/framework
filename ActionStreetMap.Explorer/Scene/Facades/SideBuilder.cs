@@ -5,7 +5,7 @@ using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
+namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal abstract class SideBuilder
     {

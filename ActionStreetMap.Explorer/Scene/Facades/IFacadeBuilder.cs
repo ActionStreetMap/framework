@@ -1,8 +1,7 @@
-﻿
-using ActionStreetMap.Core.Scene.Buildings;
+﻿using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
+namespace ActionStreetMap.Explorer.Scene.Facades
 {
     /// <summary> Defines facade builder logic. </summary>
     public interface IFacadeBuilder

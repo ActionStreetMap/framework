@@ -5,7 +5,7 @@ using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     internal class CarRoadLayerBuilder : LayerBuilder
     {

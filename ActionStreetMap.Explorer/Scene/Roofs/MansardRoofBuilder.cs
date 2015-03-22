@@ -10,7 +10,7 @@ using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
+namespace ActionStreetMap.Explorer.Scene.Roofs
 {
     /// <summary> Builds mansard roof. </summary>
     public class MansardRoofBuilder : RoofBuilder

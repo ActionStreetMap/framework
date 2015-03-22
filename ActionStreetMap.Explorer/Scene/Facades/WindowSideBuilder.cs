@@ -4,7 +4,7 @@ using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
+namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal class WindowSideBuilder : SideBuilder
     {

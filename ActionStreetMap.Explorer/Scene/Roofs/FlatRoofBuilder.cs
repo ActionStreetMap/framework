@@ -5,7 +5,7 @@ using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
+namespace ActionStreetMap.Explorer.Scene.Roofs
 {
     /// <summary> Builds flat roof. </summary>
     public class FlatRoofBuilder : RoofBuilder

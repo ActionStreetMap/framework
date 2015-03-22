@@ -3,7 +3,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
-using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
+using ActionStreetMap.Explorer.Scene.Roofs;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Buildings

@@ -5,7 +5,7 @@ using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
+namespace ActionStreetMap.Explorer.Scene.Roofs
 {
     /// <summary> Defines roof builder logic. </summary>
     public interface IRoofBuilder
