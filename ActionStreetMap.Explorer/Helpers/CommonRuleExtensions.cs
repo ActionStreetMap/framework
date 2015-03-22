@@ -37,12 +37,6 @@ namespace ActionStreetMap.Explorer.Helpers
             return null;
         }
 
-        /// <summary> Z-index is just the lowest y coordinate. </summary>
-        public static float GetZIndex(this Rule rule)
-        {
-            return rule.Evaluate<float>("z-index");
-        }
-
         /// <summary> Gets width. </summary>
         public static float GetWidth(this Rule rule)
         {

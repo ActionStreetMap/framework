@@ -29,7 +29,6 @@ namespace ActionStreetMap.Explorer.Scene
                 Id = way.Id,
                 Address = AddressExtractor.Extract(way.Tags),
                 Width = (int) Math.Round(rule.GetWidth() / 2),
-                ZIndex = rule.GetZIndex(),
                 Type = rule.GetRoadType(),
                 Points = points
             });

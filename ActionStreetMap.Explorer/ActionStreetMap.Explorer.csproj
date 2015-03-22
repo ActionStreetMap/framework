@@ -100,6 +100,7 @@
     <Compile Include="Scene\Terrain\Layers\WaterLayerBuilder.cs" />
     <Compile Include="Scene\Terrain\MeshTerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />
+    <Compile Include="Utils\GradientUtils.cs" />
     <Compile Include="Utils\ObjectPoolExtensions.cs" />
     <Compile Include="Utils\RandomHelper.cs" />
     <Compile Include="Infrastructure\ResourceProvider.cs" />
@@ -107,7 +108,6 @@
     <Compile Include="Infrastructure\ObjectPool.cs" />
     <Compile Include="Scene\BarrierModelBuilder.cs" />
     <Compile Include="Scene\BuildingModelBuilder.cs" />
-    <Compile Include="Scene\DetailModelBuilder.cs" />
     <Compile Include="Scene\InfoModelBuilder.cs" />
     <Compile Include="Scene\RoadModelBuilder.cs" />
     <Compile Include="Scene\SplatModelBuilder.cs" />

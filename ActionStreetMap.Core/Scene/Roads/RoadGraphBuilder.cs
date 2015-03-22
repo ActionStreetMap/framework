@@ -298,7 +298,6 @@ namespace ActionStreetMap.Core.Scene.Roads
                 Type = element.Type,
                 Address = element.Address,
                 Width = element.Width,
-                ZIndex = element.ZIndex,
                 Points = element.Points,
                 Start = element.Start,
                 End = element.End

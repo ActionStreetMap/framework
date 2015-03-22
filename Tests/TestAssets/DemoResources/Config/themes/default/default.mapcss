@@ -6,19 +6,18 @@ canvas {
 area[amenity],
 area[natural],
 area[historic=memorial],
-area[landuse]											{ builder: splat; splat: 2; z-index: 10; fill-color: #FF0000; }
-
+area[landuse]											{ builder: splat; splat: 2; fill-color: #ff0000; }
 
 /* buildings */
 area[man_made=tower],
 area[building:levels],
 area[building:shape],
 area[building:part],
-area[building]											{ z-index: 10; builder: building; behaviour: solid; height:12; min_height: 0; 
+area[building]											{ builder: building; behaviour: solid; height:12; min_height: 0; 
 														  facade-color:#f4f4f4; facade-builder:flat; facade-material:Materials/Buildings/Building;
 														  roof-color:#a5a5a5; roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
-area[amenity=shelter][shelter_type=public_transport]		{z-index: 9;  builder: building; behaviour: solid; height:3; 
+area[amenity=shelter][shelter_type=public_transport]		{ builder: building; behaviour: solid; height:3; min_height: 0;
 															facade-color:#f4f4f4; facade-builder:flat; facade-material:Materials/Buildings/Building;
 															roof-color:#a5a5a5; roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
@@ -155,7 +154,7 @@ area[building:shape=pyramidal]							{ roof-builder: pyramidal; height:0; roof-h
 
 area[roof:height]										{ roof-height: eval(num(tag('roof:height')))}
 
-area[man_made=bridge]									{ z-index: 9;  builder: building; behaviour: solid; height:0.5; min_height: 0; 
+area[man_made=bridge]									{ builder: building; behaviour: solid; height:0.5; min_height: 0; 
 														  facade-color:#000000; facade-builder:flat; facade-material:Materials/Buildings/Building;
 														  roof-color:#000000; roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
@@ -190,7 +189,7 @@ area[amenity=kindergarten] {
     fill-color: #f0f0d8;
 }
 
-/*area[tourism=attraction]								{ z-index: 10; fill-color: #f2caea;}*/
+/*area[tourism=attraction]								{  fill-color: #f2caea;}*/
 
 
 /* green zones */
@@ -200,7 +199,7 @@ area[landuse=village_green],
 area[landuse=grass],
 area[landuse=meadow],													
 area[landuse=industrial],		
-area[landuse=railway]									{ builder: splat; splat: 1; z-index: 10; fill-color:gray; }
+area[landuse=railway]									{ builder: splat; splat: 1; fill-color:gray; }
 
 area[natural=wood],		
 area[leisure=park],		
@@ -229,17 +228,17 @@ area[landuse=railway]									{ fill-color: #dfd1d6; }
 area[natural=water],	
 area[landuse=basin],	
 area[waterway=riverbank], 
-area[waterway=dock]										{ z-index: 9; fill-color: #a3c3ec; builder: water; material: Water/Daylight_Simple_Water; behaviour: water; layer:4;}
+area[waterway=dock]										{ fill-color: #a3c3ec; builder: water; material: Water/Daylight_Simple_Water; behaviour: water; layer:4;}
 
 
 /************************************************** WAYS ********************************************/
 way[waterway],
-way[waterway][name]										{ z-index: 9; fill-color: #a3c3ec; builder: water; material: Water/Daylight_Simple_Water; behaviour: water; layer:4;}
+way[waterway][name]										{ fill-color: #a3c3ec; builder: water; material: Water/Daylight_Simple_Water; behaviour: water; layer:4;}
 														
-/*way[barrier] :closed									{ z-index: 10; builder:flat; fill-color: #444444; width: 0.4;}*/
+/*way[barrier] :closed									{ builder:flat; fill-color: #444444; width: 0.4;}*/
 
 /* roads */
-way[highway]											{ z-index: 10; builder:road; width:3; type:pedestrian; }
+way[highway]											{ builder:road; width:3; type:pedestrian; }
 
 way[highway=tertiary],
 way[highway=residential],

@@ -24,9 +24,6 @@ namespace ActionStreetMap.Core.Scene.Roads
         /// <summary> Gets or sets middle points of road. </summary>
         public List<MapPoint> Points { get; set; }
 
-        /// <summary> Gets or sets height on terrain. </summary>
-        public float ZIndex { get; set; }
-
         /// <summary> Gets junction at start. </summary>
         public RoadJunction Start { get; set; }
 
