@@ -7,6 +7,7 @@ using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Polygons;
 using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -29,42 +30,41 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         {
             // TODO improve checking of non standard buildings which 
             // cannot be used with mansard roof building
-            
+
             // left condition: forced to use this builder from mapcss
             // right condition: in random scenario, prevent mansard to be used for buildings with many points in footprint
-            return building.RoofType == Name ||  building.Footprint.Count < 8;
+            return building.RoofType == Name || building.Footprint.Count < 8;
         }
 
         /// <inheritdoc />
-        public MeshData Build(Building building, BuildingStyle style)
+        public MeshData Build(Building building)
         {
             var polygon = new Polygon(building.Footprint);
             var offset = 2f; // TODO
 
-            var roofHeight = building.RoofHeight > 0 ? building.RoofHeight : style.Roof.Height;
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
 
-            if (Math.Abs(roofHeight) < 0.01f)
+            if (Math.Abs(building.RoofHeight) < 0.01f)
             {
-                var random = new System.Random((int)building.Id);
-                roofHeight = (float) random.NextDouble(0.5f, 3);
+                var random = new System.Random((int) building.Id);
+                building.RoofHeight = (float) random.NextDouble(0.5f, 3);
             }
 
-            var verticies3D = GetVerticies3D(polygon, offset, roofOffset, roofHeight);
+            var verticies3D = GetVertices(polygon, offset, roofOffset, building.RoofHeight);
 
             return new MeshData
             {
                 Vertices = verticies3D,
                 Triangles = GetTriangles(building.Footprint),
-                UV = GetUV(building.Footprint, style),
-                MaterialKey = style.Roof.Path
+                Colors = GetColors(building),
+                MaterialKey = building.RoofMaterial
             };
         }
 
-        private List<Vector3> GetVerticies3D(Polygon polygon, float offset,
+        private List<Vector3> GetVertices(Polygon polygon, float offset,
             float roofOffset, float roofHeight)
         {
-            var verticies = new List<Vector3>(polygon.Verticies.Length * 2);
+            var verticies = new List<Vector3>(polygon.Verticies.Length*2);
             var topVerticies = new List<Vector3>(polygon.Verticies.Length);
             var roofTop = roofOffset + roofHeight;
 
@@ -103,8 +103,8 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             var triangles = new List<int>();
             for (int i = 0; i < footprint.Count; i++)
             {
-                var offset = i * 4;
-                triangles.AddRange(new int[]
+                var offset = i*4;
+                triangles.AddRange(new[]
                 {
                     0 + offset, 2 + offset, 1 + offset,
                     3 + offset, 1 + offset, 2 + offset
@@ -114,21 +114,22 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             var topPartIndecies = ObjectPool.NewList<int>();
             Triangulator.Triangulate(footprint, topPartIndecies);
 
-            var vertCount = footprint.Count * 4;
+            var vertCount = footprint.Count*4;
             triangles.AddRange(topPartIndecies.Select(i => i + vertCount));
 
             return triangles;
         }
 
-        private List<Vector2> GetUV(List<MapPoint> footprint, BuildingStyle style)
+        private List<Color> GetColors(Building building)
         {
-            var count = footprint.Count;
-            var uv = new List<Vector2>(count * 5);
+            var count = building.Footprint.Count;
+            var colors = new List<Color>(count*5);
             var length = count*5;
+            var color = building.RoofColor.ToUnityColor();
             for (int i = 0; i < length; i++)
-                uv.Add(style.Roof.FrontUvMap.RightUpper);
+                colors.Add(color);
 
-            return uv;
+            return colors;
         }
     }
 }

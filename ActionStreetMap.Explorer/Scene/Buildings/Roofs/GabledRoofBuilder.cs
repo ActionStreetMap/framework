@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -35,11 +36,11 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         }
 
         /// <inheritdoc />
-        public MeshData Build(Building building, BuildingStyle style)
+        public MeshData Build(Building building)
         {
-            var context = new Context(style, _objectPool);
+            var context = new Context(building, _objectPool);
             var roofOffset = building.Elevation + building.Height + building.MinHeight;
-            var roofHeight = roofOffset + (building.RoofHeight > 0 ? building.RoofHeight : style.Roof.Height);
+            var roofHeight = roofOffset + building.RoofHeight;
 
             var polygon = new Polygon(building.Footprint, roofOffset);
 
@@ -77,8 +78,8 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             {
                 Vertices = context.Data.Vertices,
                 Triangles = context.Data.Triangles,
-                UV = context.Data.UV,
-                MaterialKey = style.Roof.Path,
+                Colors = context.Data.Colors,
+                MaterialKey = building.RoofMaterial
             };
             return result;
         }
@@ -137,7 +138,6 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             var count = polygon.Segments.Length;
             int i = secondIntersect.Item1;
             Vector3 startRidgePoint = default(Vector3);
-            Vector3 endRidgePoint = default(Vector3);
             do 
             {
                 var segment = polygon.Segments[i];
@@ -151,6 +151,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
                     continue;
                 }
                 // side faces
+                Vector3 endRidgePoint;
                 if (nextIndex == firstIntersect.Item1 || nextIndex == secondIntersect.Item1)
                     endRidgePoint = nextIndex == firstIntersect.Item1 ? firstIntersect.Item2 : secondIntersect.Item2;
                 else
@@ -174,10 +175,10 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             data.Triangles.Add(context.TrisIndex + 1);
             data.Triangles.Add(context.TrisIndex + 2);
 
-            // TODO process UV map different way
-            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            var color = context.Building.RoofColor.ToUnityColor();
+            data.Colors.Add(color);
+            data.Colors.Add(color);
+            data.Colors.Add(color);
 
             context.TrisIndex += 3;
         }
@@ -199,14 +200,16 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             context.TrisIndex += 4;
 
             // TODO process UV map different way
-            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
-            data.UV.Add(context.Style.Roof.FrontUvMap.RightUpper);
+            var color = context.Building.RoofColor.ToUnityColor();
+            data.Colors.Add(color);
+            data.Colors.Add(color);
+            data.Colors.Add(color);
+            data.Colors.Add(color);
         }
 
         /// <summary>
-        /// Gets point on line. See http://stackoverflow.com/questions/5227373/minimal-perpendicular-vector-between-a-point-and-a-line
+        ///     Gets point on line. 
+        ///     See http://stackoverflow.com/questions/5227373/minimal-perpendicular-vector-between-a-point-and-a-line
         /// </summary>
         private Vector3 GetPointOnLine(Vector3 a, Vector3 b, Vector3 p)
         {
@@ -219,18 +222,18 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
         private sealed class Context
         {
-            public readonly BuildingStyle Style;
+            public readonly Building Building;
             public MeshData Data;
             
-            public int TrisIndex;          
+            public int TrisIndex;
 
-            public Context(BuildingStyle style, IObjectPool objectPool)
+            public Context(Building building, IObjectPool objectPool)
             {
-                Style = style;
+                Building = building;
                 Data = new MeshData();
                 Data.Vertices = objectPool.NewList<Vector3>(64);
                 Data.Triangles = objectPool.NewList<int>(128);
-                Data.UV = objectPool.NewList<Vector2>(64);
+                Data.Colors = objectPool.NewList<Color>(64);
             }
         }
 

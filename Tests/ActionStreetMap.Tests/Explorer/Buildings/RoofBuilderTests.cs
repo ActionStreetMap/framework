@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
-using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 using NUnit.Framework;
-using UnityEngine;
-using Rect = ActionStreetMap.Explorer.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Tests.Explorer.Buildings
 {
@@ -30,22 +28,14 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                     new MapPoint(5, 0),
                 },
                 Elevation = 0,
-                Height = 1
-            }, new BuildingStyle()
-            {
-                Roof = new BuildingStyle.RoofStyle()
-                {
-                    Builders = new IRoofBuilder[] { new FlatRoofBuilder(), },
-                    FrontUvMap = new Rect(new Vector2(), new Vector2()),
-                    Material = "",
-                },
-                Facade = new BuildingStyle.FacadeStyle()
+                Height = 1,
+                RoofColor = new Color32(0, 0, 0, 0)
             });
 
             // ASSERT
             Assert.AreEqual(20, meshData.Vertices.Count);
             Assert.AreEqual(30, meshData.Triangles.Count);
-            Assert.AreEqual(20, meshData.UV.Count);
+            Assert.AreEqual(20, meshData.Colors.Count);
         }
 
         [Test]
@@ -66,20 +56,15 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 },
                 Elevation = 0,
                 Height = 10,
-                RoofHeight = 2
-            }, new BuildingStyle()
-            {
-                Roof = new BuildingStyle.RoofStyle()
-                {
-                    FrontUvMap = new Rect(new Vector2(), new Vector2())
-                }
+                RoofHeight = 2,
+                RoofColor = new Color32(0,0,0,0)
             });
 
             // ASSERT
             Assert.IsNotNull(meshData);
             Assert.AreEqual(14, meshData.Vertices.Count);
             Assert.AreEqual(18, meshData.Triangles.Count);
-            Assert.AreEqual(14, meshData.UV.Count);
+            Assert.AreEqual(14, meshData.Colors.Count);
         }
 
         [Test]
@@ -100,13 +85,8 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 },
                 Elevation = 0,
                 Height = 10,
-                RoofHeight = 2
-            }, new BuildingStyle()
-            {
-                Roof = new BuildingStyle.RoofStyle()
-                {
-                    FrontUvMap = new Rect(new Vector2(), new Vector2())
-                }
+                RoofHeight = 2,
+                RoofColor = new Color32(0, 0, 0, 0)
             });
 
             // ASSERT

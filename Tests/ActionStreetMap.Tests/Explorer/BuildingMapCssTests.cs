@@ -28,10 +28,10 @@ namespace ActionStreetMap.Tests.Explorer
 
             // ACT
             var rule = stylesheet.GetModelRule(building);
-            var style = rule.GetBuildingType();
+            var style = rule.GetFacadeBuilder();
 
             // ASSERT
-            Assert.AreEqual("residential", style);
+            Assert.AreEqual("flat", style);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
             _resourceProvider = resourceProvider;
         }
 
-        public MeshData Build(Building building, BuildingStyle style)
+        public MeshData Build(Building building)
         {
             var footprint = building.Footprint;
             var gradient = _resourceProvider.GetGradient("building.default");
@@ -28,7 +28,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
                 Vertices = new List<Vector3>(1024),
                 Triangles = new List<int>(2048),
                 Colors = new List<Color>(1024),
-                MaterialKey = style.Facade.Path
+                MaterialKey = building.FacadeMaterial
             };
 
             var simpleBuilder = new EmptySideBuilder(meshData, building.Height)

@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         }
 
         /// <inheritdoc />
-        public MeshData Build(Building building, BuildingStyle style)
+        public MeshData Build(Building building)
         {
             IGameObject gameObjectWrapper = _gameObjectFactory.CreateNew(Name);
 
@@ -50,11 +50,11 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
             center.SetElevation(building.Elevation + building.Height + building.MinHeight + offset);
 
-            Scheduler.MainThread.Schedule(() => ProcessObject(gameObjectWrapper, center, diameter, style));
+            Scheduler.MainThread.Schedule(() => ProcessObject(gameObjectWrapper, center, diameter));
 
             return new MeshData()
             {
-                MaterialKey = style.Roof.Path,
+                MaterialKey = building.RoofMaterial,
                 GameObject = gameObjectWrapper
             };
         }
@@ -63,19 +63,14 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         /// <param name="gameObjectWrapper">GameObject wrapper.</param>
         /// <param name="center">Sphere center.</param>
         /// <param name="diameter">Diameter.</param>
-        /// <param name="style">Building style.</param>
-        protected virtual void ProcessObject(IGameObject gameObjectWrapper, MapPoint center, float diameter, BuildingStyle style)
+        protected virtual void ProcessObject(IGameObject gameObjectWrapper, MapPoint center, float diameter)
         {
             var sphere = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Sphere));
             sphere.transform.localScale = new Vector3(diameter, diameter, diameter);
             sphere.transform.position = new Vector3(center.X, center.Elevation, center.Y);
 
-            // TODO Is there better way to set uv map?
+            // TODO set colors
             Mesh mesh = sphere.renderer.GetComponent<MeshFilter>().mesh;
-            var uv = mesh.uv;
-            for (int i = 0; i < uv.Length; i++)
-                uv[i] = style.Roof.FrontUvMap.RightUpper;
-            mesh.uv = uv;
         }
     }
 }

@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -16,8 +17,9 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
     {
         /// <summary> Builds building. </summary>
         /// <param name="building">Building.</param>
-        /// <param name="style">Style.</param>
-        void Build(Building building, BuildingStyle style);
+        /// <param name="facadeBuilder">Facade builder.</param>
+        /// <param name="roofBuilder">Roof builder.</param>
+        void Build(Building building, IFacadeBuilder facadeBuilder, IRoofBuilder roofBuilder);
     }
 
     /// <summary> Default building builder. </summary>
@@ -37,14 +39,10 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
         }
 
         /// <inheritdoc />
-        public void Build(Building building, BuildingStyle style)
+        public void Build(Building building, IFacadeBuilder facadeBuilder, IRoofBuilder roofBuilder)
         {
-            var facadeMeshData = style.Facade.Builders[RandomHelper
-                .GetIndex(building.Id, style.Facade.Builders.Length)]
-                .Build(building, style);
-
-            var roofMeshData = GetRoofBuilder(building, style.Roof.Builders)
-               .Build(building, style);
+            var facadeMeshData = facadeBuilder.Build(building);
+            var roofMeshData = roofBuilder.Build(building);
 
             Scheduler.MainThread.Schedule(() =>
             {
@@ -76,12 +74,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
             var mesh = new Mesh();
             mesh.vertices = meshData.Vertices.ToArray();
             mesh.triangles = meshData.Triangles.ToArray();
-
-            if (meshData.UV != null)
-                mesh.uv = meshData.UV.ToArray();
-
-            if (meshData.Colors != null)
-                mesh.colors = meshData.Colors.ToArray();
+            mesh.colors = meshData.Colors.ToArray();
 
             mesh.RecalculateNormals();
 
@@ -92,42 +85,6 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
             gameObject.AddComponent<MeshRenderer>();
 
             return gameObject;
-        }
-
-        private IRoofBuilder GetRoofBuilder(Building building, IRoofBuilder[] roofBuildings)
-        {
-            // for most of buildings, roof type isn't defined, but we want to use different types
-            // however, we have to check whether we can build roof using random roof builder
-            // contains true for index of roof builder if it can build roof for given building
-            var ids = _objectPool.NewList<int>();
-
-            int count = 0;
-            for (int i = 0; i < roofBuildings.Length; i++)
-            {
-                if (roofBuildings[i].CanBuild(building))
-                {
-                    // strong match
-                    if (roofBuildings[i].Name == building.RoofType)
-                    {
-                        ids.Clear();
-                        ids.Add(i);
-                        count = 1;
-                        break;
-                    }
-
-                    ids.Add(i);
-                    count++;
-                }
-            }
-
-            if (count == 0)
-                throw new InvalidOperationException(String.Format(Strings.CannotFindRoofBuilder, building.Address));
-
-            // however, we don't want to use first occurrence, use building Id as seed
-            var index = ids[(int) building.Id % count];
-
-            _objectPool.StoreList(ids);
-            return roofBuildings[index];
         }
     }
 }

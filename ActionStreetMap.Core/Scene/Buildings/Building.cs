@@ -46,13 +46,16 @@ namespace ActionStreetMap.Core.Scene.Buildings
         /// <summary> Gets or sets facade color. </summary>
         public Color32 FacadeColor { get; set; }
 
-        /// <summary> Gets or sets facade material (see OSM materials). </summary>
+        /// <summary> Gets or sets facade material. </summary>
         public string FacadeMaterial { get; set; }
+
+        /// <summary> Gets or ses facade type </summary>
+        public string FacadeType { get; set; }
 
         /// <summary> Gets or sets roof color. </summary>
         public Color32 RoofColor { get; set; }
 
-        /// <summary> Gets or sets roof material (see OSM materials). </summary>
+        /// <summary> Gets or sets roof material. </summary>
         public string RoofMaterial { get; set; }
 
         /// <summary> Gets or sets roof type (see OSM roof types). </summary>

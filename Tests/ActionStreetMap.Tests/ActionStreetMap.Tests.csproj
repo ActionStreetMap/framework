@@ -111,8 +111,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="TestPathResolver.cs" />
-    <Compile Include="Explorer\Themes\BuildingTextureBalancerTests.cs" />
-    <Compile Include="Explorer\Themes\ThemeProviderTests.cs" />
     <Compile Include="Explorer\Tiles\TestBootstrapperPlugin.cs" />
     <Compile Include="Core\Tiling\TileManagerTests.cs" />
     <Compile Include="Explorer\Tiles\RealTileManagerTests.cs" />

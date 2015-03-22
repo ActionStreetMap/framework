@@ -68,8 +68,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             // register core behaviours
             // NOTE no standard behaviours so far
 
-            // buildings
-            Container.Register(Component.For<IBuildingStyleProvider>().Use<BuildingStyleProvider>().Singleton());
             // facades
             Container.Register(Component.For<IBuildingBuilder>().Use<BuildingBuilder>().Singleton());
             Container.Register(Component.For<IFacadeBuilder>().Use<MeshFacadeBuilder>().Named("flat").Singleton());

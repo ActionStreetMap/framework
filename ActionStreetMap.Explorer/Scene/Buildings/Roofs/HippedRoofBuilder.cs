@@ -3,6 +3,7 @@ using System.Linq;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Polygons;
+using ActionStreetMap.Explorer.Infrastructure;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
@@ -17,9 +18,8 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         public virtual bool CanBuild(Building building) { return true; }
 
         /// <inheritdoc />
-        public virtual MeshData Build(Building building, BuildingStyle style)
+        public virtual MeshData Build(Building building)
         {
-            var roofHeight = building.RoofHeight > 0 ? building.RoofHeight : style.Roof.Height;
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
 
             var skeleton = StraightSkeleton.Calculate(building.Footprint);
@@ -29,23 +29,24 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
             var vertices = new List<Vector3>(skeletVertices.Count);
             var triangles = new List<int>(skeletVertices.Count);
-            var uv = new List<Vector2>(skeletVertices.Count);
+            var colors = new List<Color>(skeletVertices.Count);
 
+            var color = building.RoofColor.ToUnityColor();
             for (int i = 0; i < skeletVertices.Count; i++)
             {
                 var vertex = skeletVertices[i];
-                var y = skeleton.Item2.Any(t => vertex == t) ? roofHeight + roofOffset : roofOffset;
+                var y = skeleton.Item2.Any(t => vertex == t) ? building.RoofHeight + roofOffset : roofOffset;
                 vertices.Add(new Vector3(vertex.x, y, vertex.y));
                 triangles.Add(i);
-                uv.Add(style.Roof.FrontUvMap.RightUpper);
+                colors.Add(color);
             }
            
             return new MeshData()
             {
                 Vertices = vertices,
                 Triangles = triangles,
-                UV = uv,
-                MaterialKey = style.Roof.Path,
+                Colors = colors,
+                MaterialKey = building.RoofMaterial,
             };
         }
     }

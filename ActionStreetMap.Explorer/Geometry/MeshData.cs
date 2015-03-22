@@ -13,9 +13,6 @@ namespace ActionStreetMap.Explorer.Geometry
         /// <summary> Triangles. </summary>
         public List<int> Triangles;
 
-        /// <summary> UV map. </summary>
-        public List<Vector2> UV;
-
         /// <summary> Colors. </summary>
         public List<Color> Colors;
         

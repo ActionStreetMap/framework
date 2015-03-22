@@ -60,9 +60,7 @@
     <Compile Include="Infrastructure\UnityGameObject.cs" />
     <Compile Include="Interactions\NoiseWaveBehavior.cs" />
     <Compile Include="Scene\Buildings\BuildingBuilder.cs" />
-    <Compile Include="Scene\Buildings\BuildingStyle.cs" />
     <Compile Include="Scene\Buildings\Facades\EmptySideBuilder.cs" />
-    <Compile Include="Scene\Buildings\Facades\FlatFacadeBuilder.cs" />
     <Compile Include="Scene\Buildings\Facades\IFacadeBuilder.cs" />
     <Compile Include="Geometry\MeshData.cs" />
     <Compile Include="Scene\Buildings\Facades\MeshFacadeBuilder.cs" />
@@ -103,6 +101,7 @@
     <Compile Include="Terrain\Layers\WalkRoadLayerBuilder.cs" />
     <Compile Include="Terrain\Layers\WaterLayerBuilder.cs" />
     <Compile Include="Terrain\MeshTerrainBuilder.cs" />
+    <Compile Include="Infrastructure\CoreExtensions.cs" />
     <Compile Include="Utils\ObjectPoolExtensions.cs" />
     <Compile Include="Utils\RandomHelper.cs" />
     <Compile Include="Scene\ResourceProvider.cs" />
@@ -130,7 +129,6 @@
     <Compile Include="Infrastructure\UnityConsoleTrace.cs" />
     <Compile Include="Terrain\MeshContext.cs" />
     <Compile Include="Tiling\TileActivator.cs" />
-    <Compile Include="Scene\Buildings\BuildingStyleProvider.cs" />
     <Compile Include="Scene\ThemeProvider.cs" />
     <Compile Include="Scene\Theme.cs" />
     <Compile Include="Tiling\TileModelLoader.cs" />

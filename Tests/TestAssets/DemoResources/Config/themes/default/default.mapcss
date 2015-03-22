@@ -1,201 +1,183 @@
 canvas { 
-	z-index: 0; 
-
-	pixelMapError: 30;
-	resolution: 512;
-	
-	splat: 0, Asphalt_background, 5, 5;
-	splat: 1, Grass, 5, 5;
-	splat: 2, Pebbles, 5, 5;
-	
-	detail: 0, Weed2;
+	material: Terrain/TerrainColored;
+	water: Water/TerrainWater;
 }
 /* flat areas, general rules */
 area[amenity],
 area[natural],
 area[historic=memorial],
-area[landuse]											{ builder: splat; splat: 2; z-index: 10; fill-color: #FF0000;}
+area[landuse]											{ builder: splat; splat: 2; z-index: 10; fill-color: #FF0000; }
 
 
 /* buildings */
-/* Take note that building-style is set to residential. We have to distinguish different types */
-/*area[barrier=fence],*/
 area[man_made=tower],
 area[building:levels],
 area[building:shape],
 area[building:part],
-area[building]											{ z-index: 10; builder: building; behaviour: solid; height:12; min_height: 0; building-style:residential; fill-color:#f4f4f4; roof-color:#a5a5a5; roof-style:flat;}
+area[building]											{ z-index: 10; builder: building; behaviour: solid; height:12; min_height: 0; 
+														  facade-color:#f4f4f4; facade-builder:flat; facade-material:Materials/Buildings/Building;
+														  roof-color:#a5a5a5; roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
-area[amenity=shelter][shelter_type=public_transport]						{z-index: 9;  builder: building; behaviour: solid; height:3; building-style:residential; fill-color:#f4f4f4; roof-color:#a5a5a5; roof-style:flat;}
+area[amenity=shelter][shelter_type=public_transport]		{z-index: 9;  builder: building; behaviour: solid; height:3; 
+															facade-color:#f4f4f4; facade-builder:flat; facade-material:Materials/Buildings/Building;
+															roof-color:#a5a5a5; roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
-/* TODO: Dangerous rules! Sometimes builder is missed but this rule is applied */
+area[height]												{ height: eval(num(tag('height'))); }
+area[building:height]									{ height: eval(num(tag('building:height'))); }
+area[building:height][roof:height]						{ height: eval(num(tag('building:height')) - num(tag('roof:height'))); }
 
-/* some of the buildings have set layer=1 instead of min_height*/
-/*area[building][layer>0]								{ min_height: eval(num(tag('layer')) * num(3));}*/
-
-/*area[building:levels]									{ height: eval(num(tag('building:levels')) * num(5));}*/
-area[height]												{ height: eval(num(tag('height')));}
-area[building:height]									{ height: eval(num(tag('building:height')));}
-area[building:height][roof:height]						{ height: eval(num(tag('building:height')) - num(tag('roof:height')));}
-
-area[building:min_height]								{ min_height: eval(num(tag('building:min_height')));}
-area[min_height]											{ min_height: eval(num(tag('min_height')));}
+area[building:min_height]								{ min_height: eval(num(tag('building:min_height'))); }
+area[min_height]											{ min_height: eval(num(tag('min_height'))); }
 
 area[building=residential], 	
-area[building=yes]										{ builder: building; building-style:residential;}
-area[building:part],area[building=yes]					{ part: true; building-style: part;}	
+area[building:part],area[building=yes]					{ part: true; }	
 
-area[building:shape=sphere]								{ builder: sphere; material: Buildings/Building;}
-area[building:shape=cylinder]							{ builder: cylinder; material: Buildings/Building;}					
+area[building:shape=sphere]								{ builder: sphere; }
+area[building:shape=cylinder]							{ builder: cylinder; }					
 
 
-area[building=bridge]									{height:0.1;}
-/*area[building=tourism]								{ fill-color: #0066ff;}
-area[building=commercial] 								{ fill-color: #efc8c8;}
-area[building=garage] 									{ fill-color: #bca9a9;}
-area[building=apartments]								{ fill-color: #bca9a9;}*/
-
-/* Color mapping*/
-/*area[building:material]									{ facade-material: eval(tag('building:material'));} */
+area[building=bridge]									{ height:0.1; }
 
 area[building:material=brick],
 area[building:facade:material=brick],
-area[building:cladding=brick]											{fill-color:#cc7755}
+area[building:cladding=brick]											{ facade-color:#cc7755; }
 area[building:roof:material=brick],
-area[roof:material=brick]												{roof-color:#cc7755}
+area[roof:material=brick]												{ roof-color:#cc7755; }
 
 area[building:material=bronze],
 area[building:facade:material=bronze],
-area[building:cladding=bronze]											{fill-color:#ffeecc}
+area[building:cladding=bronze]											{ facade-color:#ffeecc; }
 area[building:roof:material=bronze],
-area[roof:material=bronze]												{roof-color:#ffeecc}
+area[roof:material=bronze]												{ roof-color:#ffeecc; }
 
 area[building:material=canvas],
 area[building:facade:material=canvas],
-area[building:cladding=canvas]											{fill-color:#fff8f0}
+area[building:cladding=canvas]											{ facade-color:#fff8f0; }
 area[building:roof:material=canvas],
-area[roof:material=canvas]												{roof-color:#fff8f0}
+area[roof:material=canvas]												{ roof-color:#fff8f0; }
 
 area[building:material=concrete],
 area[building:facade:material=concrete],
-area[building:cladding=concrete]											{fill-color:#a5a5a5}
+area[building:cladding=concrete]											{ facade-color:#a5a5a5;}
 area[building:roof:material=concrete],
-area[roof:material=concrete]												{roof-color:#a5a5a5}
+area[roof:material=concrete]												{ roof-color:#a5a5a5; }
 
 area[building:material=copper],
 area[building:facade:material=copper],
-area[building:cladding=copper]											{fill-color:#a0e0d0}
+area[building:cladding=copper]											{ facade-color:#a0e0d0; }
 area[building:roof:material=copper],
-area[roof:material=copper]												{roof-color:#a0e0d0}
+area[roof:material=copper]												{ roof-color:#a0e0d0; }
 
 area[building:material=glass],
 area[building:facade:material=glass],
-area[building:cladding=glass]											{fill-color:#e8f8f8}
+area[building:cladding=glass]											{ facade-color:#e8f8f8; }
 area[building:roof:material=glass],
-area[roof:material=glass]												{roof-color:#e8f8f8}
+area[roof:material=glass]												{ roof-color:#e8f8f8; }
 
 area[building:material=gold],
 area[building:facade:material=gold],
-area[building:cladding=gold]												{fill-color:#ffcc00}
+area[building:cladding=gold]												{ facade-color:#ffcc00; }
 area[building:roof:material=gold],
-area[roof:material=gold]													{roof-color:#ffcc00}
+area[roof:material=gold]													{ roof-color:#ffcc00; }
 
 area[building:material=plants],
 area[building:facade:material=plants],
-area[building:cladding=plants]											{fill-color:#009933}
+area[building:cladding=plants]											{ facade-color:#009933; }
 area[building:roof:material=plants],
-area[roof:material=plants]												{roof-color:#009933}
+area[roof:material=plants]												{ roof-color:#009933; }
 
 area[building:material=metal],
 area[building:facade:material=metal],
-area[building:cladding=metal]											{fill-color:#aaaaaa}
+area[building:cladding=metal]											{ facade-color:#aaaaaa; }
 area[building:roof:material=metal],
-area[roof:material=metal]												{roof-color:#aaaaaa}
+area[roof:material=metal]												{ roof-color:#aaaaaa; }
 
 area[building:material=panel],
 area[building:facade:material=panel],
-area[building:cladding=panel]											{fill-color:#fff8f0}
+area[building:cladding=panel]											{ facade-color:#fff8f0; }
 area[building:roof:material=panel],
-area[roof:material=panel]												{roof-color:#fff8f0}
+area[roof:material=panel]												{ roof-color:#fff8f0; }
 
 area[building:material=plaster],
 area[building:facade:material=plaster],
-area[building:cladding=plaster]											{fill-color:#999999}
+area[building:cladding=plaster]											{ facade-color:#999999; }
 area[building:roof:material=plaster],
-area[roof:material=plaster]												{roof-color:#999999}
+area[roof:material=plaster]												{ roof-color:#999999; }
 
 area[building:material=roof_tiles],
 area[building:facade:material=roof_tiles],
-area[building:cladding=roof_tiles]										{fill-color:#f08060}
+area[building:cladding=roof_tiles]										{ facade-color:#f08060; }
 area[building:roof:material=roof_tiles],
-area[roof:material=roof_tiles]											{roof-color:#f08060}
+area[roof:material=roof_tiles]											{ roof-color:#f08060; }
 
 area[building:material=silver],
 area[building:facade:material=silver],
-area[building:cladding=silver]											{fill-color:#cccccc}
+area[building:cladding=silver]											{ facade-color:#cccccc; }
 area[building:roof:material=silver],
-area[roof:material=silver]												{roof-color:#cccccc}
+area[roof:material=silver]												{ roof-color:#cccccc; }
 
 area[building:material=slate],
 area[building:facade:material=slate],
-area[building:cladding=slate]											{fill-color:#666666}
+area[building:cladding=slate]											{ facade-color:#666666; }
 area[building:roof:material=slate],
-area[roof:material=slate]												{roof-color:#666666}
+area[roof:material=slate]												{ roof-color:#666666; }
 
 area[building:material=stone],
 area[building:facade:material=stone],
-area[building:cladding=stone]											{fill-color:#996666}
+area[building:cladding=stone]											{ facade-color:#996666; }
 area[building:roof:material=stone],
-area[roof:material=stone]												{roof-color:#996666}
+area[roof:material=stone]												{ roof-color:#996666; }
 
 area[building:material=tar_paper],
 area[building:facade:material=tar_paper],
-area[building:cladding=tar_paper]										{fill-color:#333333}
+area[building:cladding=tar_paper]										{ facade-color:#333333; }
 area[building:roof:material=tar_paper],
-area[roof:material=tar_paper]											{roof-color:#333333}
+area[roof:material=tar_paper]											{ roof-color:#333333; }
 
 area[building:material=wood],
 area[building:facade:material=wood],
-area[building:cladding=wood]												{fill-color:#deb887}
+area[building:cladding=wood]											{ facade-color:#deb887; }
 area[building:roof:material=wood],
-area[roof:material=wood]													{roof-color:#deb887}
+area[roof:material=wood]												{ roof-color:#deb887; }
 
-area[building:colour]													{ fill-color:eval(color(tag('building:colour')));}
-area[building:color]														{ fill-color:eval(color(tag('building:color')));}
+area[building:colour]													{ facade-color:eval(color(tag('building:colour'))); }
+area[building:color]													{ facade-color:eval(color(tag('building:color'))); }
 
 /* support only mansard/flat so far, so don't eval */
-area[roof:shape=flat]									{ roof-style: flat;}
-area[roof:shape=mansard]									{ roof-style: flat;}
-area[roof:shape=dome]									{ roof-style: dome;}
-area[roof:shape=pyramidal]								{ roof-style: pyramidal;}
-area[roof:shape=gabled]									{ roof-style: gabled;}
-area[roof:shape=hipped]									{ roof-style: hipped;}
+area[roof:shape=flat]									{ roof-builder: flat; }
+area[roof:shape=mansard]									{ roof-builder: flat; }
+area[roof:shape=dome]									{ roof-builder: dome; }
+area[roof:shape=pyramidal]								{ roof-builder: pyramidal; }
+area[roof:shape=gabled]									{ roof-builder: gabled; }
+area[roof:shape=hipped]									{ roof-builder: hipped; }
 /* checked on Eiffel tower, Paris */
-area[building:shape=pyramidal]							{ roof-style: pyramidal; height:0; roof-height: eval(num(tag('height')));}
+area[building:shape=pyramidal]							{ roof-builder: pyramidal; height:0; roof-height: eval(num(tag('height'))); }
 
-area[roof:height]										{roof-height: eval(num(tag('roof:height')))}
+area[roof:height]										{ roof-height: eval(num(tag('roof:height')))}
 
-area[man_made=bridge]									{ z-index: 9;  builder: building; behaviour: solid; height:0.5; min_height: 0; fill-color:#000000; roof-color:#000000; building-style:bridge;}
+area[man_made=bridge]									{ z-index: 9;  builder: building; behaviour: solid; height:0.5; min_height: 0; 
+														  facade-color:#000000; facade-builder:flat; facade-material:Materials/Buildings/Building;
+														  roof-color:#000000; roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
-area[landuse=residential]								{ fill-color: #dddddd;}
+area[landuse=residential]								{ fill-color: #dddddd; }
 
 area[landuse=cemetery],
 area[landuse=grave_yard],
-area[amenity=grave_yard] 								{ fill-color: #aacbaf;}
+area[amenity=grave_yard] 								{ fill-color: #aacbaf; }
 
 area[landuse=farm],
-area[landuse=farmland] 									{ fill-color: #ead8bd;}
+area[landuse=farmland] 									{ fill-color: #ead8bd; }
 
-area[landuse=commercial]								{ fill-color: #7A96A3;}
+area[landuse=commercial]									{ fill-color: #7A96A3; }
 
 area[landuse=retail] 									{ fill-color: #f1dada;	}
 
 area[landuse=brownfield],
 area[landuse=landfill],
 area[landuse=greenfield],
-area[landuse=construction] 								{ fill-color: #9d9d6c; fill-opacity: 0.7;}
+area[landuse=construction] 								{ fill-color: #9d9d6c; fill-opacity: 0.7; }
 
-area[amenity=parking][parking=surface]					{ fill-color: #f7efb7;}
+area[amenity=parking][parking=surface]					{ fill-color: #f7efb7; }
 
 /*area[amenity],*/
 area[natural=beach]										{ fill-color: #22FF11; }
@@ -218,14 +200,14 @@ area[landuse=village_green],
 area[landuse=grass],
 area[landuse=meadow],													
 area[landuse=industrial],		
-area[landuse=railway]									{ builder: splat; splat: 1; z-index: 10; fill-color:gray}
+area[landuse=railway]									{ builder: splat; splat: 1; z-index: 10; fill-color:gray; }
 
 area[natural=wood],		
 area[leisure=park],		
 area[landuse=forest] 									{ builder: splat; splat: 1; terrainDetail:0; fill-color: #8dc56c; }
 
 area[natural=wood],	
-area[landuse=forest]										{ forest:true;}
+area[landuse=forest]										{ forest:true; }
 
 area[landuse=meadow],
 area[landuse=farmland],
@@ -233,15 +215,15 @@ area[landuse=scrub],
 area[landuse=grass]										{ builder: splat; splat: 1; terrainDetail:0; fill-color:#e9efda; }
 
 area[landuse=village_green],
-area[amenity=kindergarten]								{ fill-color: #22FF11;}
+area[amenity=kindergarten]								{ fill-color: #22FF11; }
 
 area[landuse=grass],
-area[landuse=meadow]									{ builder: splat; splat: 1; terrainDetail:0; fill-color: #cfeca8;}
+area[landuse=meadow]										{ builder: splat; splat: 1; terrainDetail:0; fill-color: #cfeca8; }
 
 area[leisure=recreation_ground]							{ builder: splat; splat: 1; terrainDetail:0; fill-color: #b6fdb6; }
 
 area[landuse=industrial],		
-area[landuse=railway]									{ fill-color: #dfd1d6;}
+area[landuse=railway]									{ fill-color: #dfd1d6; }
 
 /* water */
 area[natural=water],	
@@ -263,7 +245,7 @@ way[highway=tertiary],
 way[highway=residential],
 way[highway=service],
 way[highway=unclassified],
-way[highway=road]										{ fill-color: #bbbbbb; width:12; type:car;}
+way[highway=road]										{ fill-color: #bbbbbb; width:12; type:car; }
 way[highway=living_street]								{ fill-color: #000000; width:10.5; type:car; }
 
 way[highway=trunk],
@@ -271,22 +253,22 @@ way[highway=trunk_link],
 way[highway=primary],
 way[highway=primary_link],
 way[highway=motorway],
-way[highway=motorway_link]								{ fill-color: #e7c930; width:11; type:car;}
+way[highway=motorway_link]								{ fill-color: #e7c930; width:11; type:car; }
 
 
 			
 way[highway=secondary],
-way[highway=secondary_link]								{ fill-color: #a37b48; width:9; type:car;}
+way[highway=secondary_link]								{ fill-color: #a37b48; width:9; type:car; }
 
 way[highway=tertiary],
-way[highway=tertiary_link]								{ fill-color: #e7c930; width:11; type:car;}
+way[highway=tertiary_link]								{ fill-color: #e7c930; width:11; type:car; }
 
 
 way[highway=path][foot=designated]						{ fill-color: #FA8072; width:3.5; type:pedestrian; }
 
 way[highway=service]									{ fill-color: #FFFFFF; width:3; type:pedestrian; }
 
-way[highway=footway] 									{width:2; type:pedestrian;}
+way[highway=footway] 									{ width:2; type:pedestrian; }
 
 way[barrier]											{ builder: barrier; material: Roads/Road; texture:Roads/Road; height:2; width:0.2;  }
 
@@ -294,13 +276,6 @@ way[barrier]											{ builder: barrier; material: Roads/Road; texture:Roads/R
 /************************************************** NODES ********************************************/
 
 node[natural=tree]										{ builder:tree; }
-/*node[highway=traffic_signals]							{ z-index: 2.6; builder:detail; detail:Prefabs/Details/Traffic_light_1; roadFix:true; rotation:180;}
-node[highway=bus_stop]									{ z-index: 1.1; builder:detail; detail:Prefabs/Details/Bus_stop_1; roadFix:true; rotation:-40;}
-node[railway=tram_stop]									{ z-index: 1.1; builder:detail; detail:Prefabs/Details/Bus_stop_1; roadFix:true; rotation:-40;}
-node[amenity=recycling]									{ z-index: 0.45; builder:detail; detail:Prefabs/Details/trashbox_1; roadFix:true;}
-node[amenity=telephone]									{ z-index: 1; builder:detail; detail:Prefabs/Details/Phone_1; roadFix:true;}
-node[amenity=atm]										{ z-index: 0.3; builder:detail; detail:Prefabs/Details/atm_1; roadFix:true;}*/
-
 
 /* Info */
 node[tourism=alpinehut]							                { z-index:16; builder:info; key:accommodation_alpinehut; collider:false; }
@@ -309,24 +284,24 @@ node[tourism=camp_site]							                { z-index:16; builder:info; key:ac
 node[tourism=caravan_site]							                { z-index:16; builder:info; key:accommodation_caravan_park; collider:false; }
 node[tourism=chalet]							                { z-index:16; builder:info; key:accommodation_chalet; collider:false; }
 node[tourism=hostel]							                { z-index:16; builder:info; key:accommodation_hostel; collider:false; }
-node[tourism=hotel]							                { z-index:16; builder:info; key:accommodation_hotel; collider:false; }
-node[tourism=motel]							                { z-index:16; builder:info; key:accommodation_motel; collider:false; }
+node[tourism=hotel]							                	{ z-index:16; builder:info; key:accommodation_hotel; collider:false; }
+node[tourism=motel]							                	{ z-index:16; builder:info; key:accommodation_motel; collider:false; }
 node[amenity=shelter]							                { z-index:16; builder:info; key:accommodation_shelter; collider:false; }
 
-node[tourism=youth_hostel]							                { z-index:16; builder:info; key:accommodation_youth_hostel; collider:false; }
+node[tourism=youth_hostel]							         { z-index:16; builder:info; key:accommodation_youth_hostel; collider:false; }
 
-node[amenity=bench]							                { z-index:16; builder:info; key:amenity_bench; collider:false; }
-node[amenity=courthouse]							                { z-index:16; builder:info; key:amenity_court; collider:false; }
-node[amenity=fire_station]							                { z-index:16; builder:info; key:amenity_firestation; collider:false; }
+node[amenity=bench]							                	{ z-index:16; builder:info; key:amenity_bench; collider:false; }
+node[amenity=courthouse]							        { z-index:16; builder:info; key:amenity_court; collider:false; }
+node[amenity=fire_station]							        { z-index:16; builder:info; key:amenity_firestation; collider:false; }
 node[amenity=fountain]							                { z-index:16; builder:info; key:amenity_fountain; collider:false; }
 node[amenity=library]							                { z-index:16; builder:info; key:amenity_library; collider:false; }
-node[leisure=playground]							                { z-index:16; builder:info; key:amenity_playground; collider:false; }
+node[leisure=playground]							          z-index:16; builder:info; key:amenity_playground; collider:false; }
 node[amenity=police]							                { z-index:16; builder:info; key:amenity_police; collider:false; }
 node[amenity=post_box]							                { z-index:16; builder:info; key:amenity_post_box; collider:false; }
-node[amenity=post_office]							                { z-index:16; builder:info; key:amenity_post_office; collider:false; }
+node[amenity=post_office]							          z-index:16; builder:info; key:amenity_post_office; collider:false; }
 
 node[amenity=prison]							                { z-index:16; builder:info; key:amenity_prison; collider:false; }
-node[amenity=public_building]							                { z-index:16; builder:info; key:amenity_public_building; collider:false; }
+node[amenity=public_building]							{ z-index:16; builder:info; key:amenity_public_building; collider:false; }
 node[amenity=recycling]							                { z-index:16; builder:info; key:amenity_recycling; collider:false; }
 node[man_made=survey_point]							                { z-index:16; builder:info; key:amenity_survey_point; collider:false; }
 node[amenity=telephone]							                { z-index:16; builder:info; key:amenity_telephone; collider:false; }
@@ -337,13 +312,13 @@ node[amenity=toilets_women]							                { z-index:16; builder:info; ke
 node[amenity=townhall]							                { z-index:16; builder:info; key:amenity_town_hall; collider:false; }
 
 node[waste],node[amenity=waste_basket]							                { z-index:16; builder:info; key:amenity_waste_bin; collider:false; }
-node[barrier=block]							                { z-index:16; builder:info; key:barrier_blocks; collider:false; }
+node[barrier=block]							                	{ z-index:16; builder:info; key:barrier_blocks; collider:false; }
 node[barrier=bollard]							                { z-index:1; builder:info; key:barrier_bollard; collider:false; }
 node[barrier=cattle_grid]							                { z-index:16; builder:info; key:barrier_cattle_grid; collider:false; }
 node[barrier=cycle_barrier]							                { z-index:16; builder:info; key:barrier_cycle_barrier; collider:false; }
 node[barrier=entrance]							                { z-index:16; builder:info; key:barrier_entrance; collider:false; }
-node[barrier=exit]							                { z-index:16; builder:info; key:barrier_exit; collider:false; }
-node[barrier=gate]							                { z-index:16; builder:info; key:barrier_gate; collider:false; }
+node[barrier=exit]							               		  z-index:16; builder:info; key:barrier_exit; collider:false; }
+node[barrier=gate]							                	{ z-index:16; builder:info; key:barrier_gate; collider:false; }
 node[barrier=kissing_gate]							                { z-index:16; builder:info; key:barrier_kissing_gate; collider:false; }
 node[barrier=lift_gate]							                { z-index:16; builder:info; key:barrier_lift_gate; collider:false; }
 node[barrier=step]							                { z-index:16; builder:info; key:barrier_steps; collider:false; }

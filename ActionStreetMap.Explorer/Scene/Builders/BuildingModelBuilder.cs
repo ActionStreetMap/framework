@@ -6,12 +6,13 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Maps.Helpers;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Scene.Buildings.Facades;
+using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -20,19 +21,23 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     {
         private readonly IBuildingBuilder _builder;
         private readonly IElevationProvider _elevationProvider;
+        private readonly IEnumerable<IFacadeBuilder> _facadeBuilders;
+        private readonly IEnumerable<IRoofBuilder> _roofBuilders;
 
         /// <inheritdoc />
         public override string Name { get { return "building"; } }
 
         /// <summary> Creates instance of <see cref="BuildingModelBuilder"/>. </summary>
         [Dependency]
-        public BuildingModelBuilder(IBuildingBuilder builder, IElevationProvider elevationProvider)
+        public BuildingModelBuilder(IBuildingBuilder builder, IElevationProvider elevationProvider,
+            IEnumerable<IFacadeBuilder> facadeBuilders, IEnumerable<IRoofBuilder> roofBuilders)
         {
             _builder = builder;
             _elevationProvider = elevationProvider;
-        }
 
-        private const int NoValue = 0;
+            _facadeBuilders = facadeBuilders.ToArray();
+            _roofBuilders = roofBuilders.ToArray();
+        }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
@@ -76,7 +81,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             // TODO this should be done in mapcss, but stylesheet doesn't support multiply eval operations
             // on the same tag
 
-            var height = rule.GetHeight(NoValue);
+            var height = rule.GetHeight();
             if (rule.IsPart())
                 height -= minHeight;
 
@@ -87,12 +92,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 Address = AddressExtractor.Extract(model.Tags),
                 GameObject = gameObjectWrapper,
                 Height = height,
-                Levels = rule.GetLevels(NoValue),
+                Levels = rule.GetLevels(),
                 MinHeight = minHeight,
-                Type = rule.GetBuildingType(),
-                FacadeColor = rule.GetFillColor(),
+                Type = rule.GetFacadeBuilder(),
+                FacadeType = rule.GetFacadeBuilder(),
+                FacadeColor = rule.GetFacadeColor(),
                 FacadeMaterial = rule.GetFacadeMaterial(),
-                RoofType = rule.GetRoofType(),
+                RoofType = rule.GetRoofBuilder(),
                 RoofColor = rule.GetRoofColor(),
                 RoofMaterial = rule.GetRoofMaterial(),
                 RoofHeight = rule.GetRoofHeight(),
@@ -100,10 +106,10 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 Footprint = points,
             };
 
-            var theme = ThemeProvider.Get();
-            BuildingStyle style = theme.GetBuildingStyle(building);
+            var facadeBuilder = _facadeBuilders.Single(f => f.Name == building.FacadeType);
+            var roofBuilder = _roofBuilders.Single(f => f.Name == building.RoofType);
 
-            _builder.Build(building, style);
+            _builder.Build(building, facadeBuilder, roofBuilder);
 
             tile.Registry.Register(building);
             tile.Registry.RegisterGlobal(building.Id);

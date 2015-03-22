@@ -3,6 +3,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Explorer.Infrastructure;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
@@ -24,19 +25,18 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         }
 
         /// <inheritdoc />
-        public MeshData Build(Building building, BuildingStyle style)
+        public MeshData Build(Building building)
         {
-            var roofHeight = (building.RoofHeight > 0 ? building.RoofHeight : style.Roof.Height);
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
             
             var center = PolygonUtils.GetCentroid(building.Footprint);
 
             return new MeshData()
             {
-                Vertices = GetVerticies3D(center, building.Footprint, roofOffset, roofHeight),
+                Vertices = GetVertices(center, building.Footprint, roofOffset, building.RoofHeight),
                 Triangles = GetTriangles(building.Footprint),
-                UV = GetUV(building.Footprint, style),
-                MaterialKey = style.Roof.Path,
+                Colors = GetColors(building),
+                MaterialKey = building.RoofMaterial,
             };
         }
 
@@ -51,7 +51,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             return triangles;
         }
 
-        private List<Vector3> GetVerticies3D(MapPoint center, List<MapPoint> footprint, float roofOffset, float roofHeight)
+        private List<Vector3> GetVertices(MapPoint center, List<MapPoint> footprint, float roofOffset, float roofHeight)
         {
             var length = footprint.Count;
             var verticies = new List<Vector3>(length*3);
@@ -67,14 +67,15 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             return verticies;
         }
 
-        private List<Vector2> GetUV(List<MapPoint> footprint, BuildingStyle style)
+        private List<Color> GetColors(Building building)
         {
-            var length = footprint.Count*3;
-            var uv = new List<Vector2>(length);
+            var length = building.Footprint.Count * 3;
+            var colors = new List<Color>(length);
+            var color = building.RoofColor.ToUnityColor();
             for (int i = 0; i < length; i++)
-                uv.Add(style.Roof.FrontUvMap.RightUpper);
+                colors.Add(color);
 
-            return uv;
+            return colors;
         }
     }
 }

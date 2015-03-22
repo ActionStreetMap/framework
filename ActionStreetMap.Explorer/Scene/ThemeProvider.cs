@@ -27,7 +27,6 @@ namespace ActionStreetMap.Explorer.Scene
     /// <summary> Default theme provider which uses json files with style definitions. </summary>
     internal class ThemeProvider : IThemeProvider, IConfigurable
     {
-        private const string BuildingsThemeFile = @"buildings";
         private const string InfosThemeFile = @"infos";
 
         private readonly IFileSystemService _fileSystemService;
@@ -38,16 +37,10 @@ namespace ActionStreetMap.Explorer.Scene
 
         /// <summary> Creates ThemeProvider. </summary>
         /// <param name="fileSystemService">File system service.</param>
-        /// <param name="facadeBuilders">Facade builders.</param>
-        /// <param name="roofBuilders">Roof builders.</param>
         [Dependency]
-        public ThemeProvider(IFileSystemService fileSystemService,
-            IEnumerable<IFacadeBuilder> facadeBuilders,
-            IEnumerable<IRoofBuilder> roofBuilders)
+        public ThemeProvider(IFileSystemService fileSystemService)
         {
             _fileSystemService = fileSystemService;
-            _facadeBuilders = facadeBuilders.ToArray();
-            _roofBuilders = roofBuilders.ToArray();
         }
 
         /// <inheritdoc />
@@ -59,98 +52,9 @@ namespace ActionStreetMap.Explorer.Scene
         /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
-            var buildingStyleProvider = GetBuildingStyleProvider(configSection);
             var infoStyleProvider = GetInfoStyleProvider(configSection);
-            _theme = new Theme(buildingStyleProvider, infoStyleProvider);
+            _theme = new Theme(infoStyleProvider);
         }
-
-        #region Buildings
-
-        private IBuildingStyleProvider GetBuildingStyleProvider(IConfigSection configSection)
-        {
-            var facadeStyleMapping = new Dictionary<string, List<BuildingStyle.FacadeStyle>>();
-            var roofStyleMapping = new Dictionary<string, List<BuildingStyle.RoofStyle>>();
-            foreach (var buildThemeConfig in configSection.GetSections(BuildingsThemeFile))
-            {
-                var path = buildThemeConfig.GetString("path", null);
-
-                var jsonStr = _fileSystemService.ReadText(path);
-                var json = JSON.Parse(jsonStr);
-
-                var facadeStyles = GetFacadeStyles(json);
-                var roofStyles = GetRoofStyles(json);
-
-                var types = json["name"].AsArray.Childs.Select(t => t.Value);
-                foreach (var type in types)
-                {
-                    facadeStyleMapping.Add(type, facadeStyles);
-                    roofStyleMapping.Add(type, roofStyles);
-                }
-
-            }
-            return new BuildingStyleProvider(facadeStyleMapping, roofStyleMapping);
-        }
-
-        private List<BuildingStyle.FacadeStyle> GetFacadeStyles(JSONNode json)
-        {
-            var facadeStyles = new List<BuildingStyle.FacadeStyle>();
-            foreach (JSONNode node in json["facades"].AsArray)
-            {
-                var builders = node["builders"].AsArray.Childs
-                    .Select(t => _facadeBuilders.Single(b => b.Name == t.Value)).ToArray();
-                var path = node["path"].Value;
-                var size = new Size(node["size"]["width"].AsInt, node["size"]["height"].AsInt);
-                foreach (JSONNode textureNode in node["textures"].AsArray)
-                {
-                    var map = textureNode["map"];
-                    facadeStyles.Add(new BuildingStyle.FacadeStyle
-                    {
-                        Height = textureNode["height"].AsInt,
-                        Width = textureNode["width"].AsInt,
-                        Material = String.Intern(textureNode["material"].Value),
-                        Color = ColorUtility.FromUnknown(textureNode["color"].Value),
-                        Builders = builders,
-                        Path = path,
-                        FrontUvMap = GetUvMap(map["front"], size),
-                        BackUvMap = GetUvMap(map["back"], size),
-                        SideUvMap = GetUvMap(map["side"], size)
-                    });
-                }
-            }
-            return facadeStyles;
-        }
-
-        private List<BuildingStyle.RoofStyle> GetRoofStyles(JSONNode json)
-        {
-            var roofStyles = new List<BuildingStyle.RoofStyle>();
-            foreach (JSONNode node in json["roofs"].AsArray)
-            {
-                var builders = node["builders"].AsArray.Childs
-                    .Select(t => _roofBuilders.Single(b => b.Name == t.Value)).ToArray();
-                var path = node["path"].Value;
-                var size = new Size(node["size"]["width"].AsInt, node["size"]["height"].AsInt);
-                foreach (JSONNode textureNode in node["textures"].AsArray)
-                {
-                    var map = textureNode["map"];
-                    roofStyles.Add(new BuildingStyle.RoofStyle
-                    {
-                        Type = String.Intern(textureNode["type"].Value),
-                        Height = textureNode["height"].AsInt,
-                        Material = String.Intern(textureNode["material"].Value),
-                        Color = ColorUtility.FromUnknown(textureNode["color"].Value),
-                        Builders = builders,
-                        Path = path,
-                        FrontUvMap = GetUvMap(map["front"], size),
-                        SideUvMap = GetUvMap(map["side"], size),
-                    });
-                }
-            }
-
-            return roofStyles;
-        }
-
-        #endregion
-
 
         private IInfoStyleProvider GetInfoStyleProvider(IConfigSection configSection)
         {
