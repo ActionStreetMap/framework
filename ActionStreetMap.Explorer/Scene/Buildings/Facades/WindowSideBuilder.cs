@@ -9,6 +9,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
     internal class WindowSideBuilder : SideBuilder
     {
         private GradientWrapper _facadeGradient;
+        private float _groundFloorEntranceWidth = 12;
 
         public WindowSideBuilder(MeshData meshData, float height) :
             base(meshData, height)
@@ -21,22 +22,28 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
             return this;
         }
 
+        public WindowSideBuilder SetGroundFloorEntranceWidth(float width)
+        {
+            _groundFloorEntranceWidth = width;
+            return this;
+        }
+
         protected override void BuildGroundFloor(MapPoint start, MapPoint end, float floorHeight)
         {
-            var width = 12f;
-            var floor = 0;
+            var floor = Elevation;
+            var ceiling = floor + floorHeight;
 
             var distance = start.DistanceTo(end);
-            var count = (float) Math.Ceiling(distance/width);
-            var ceiling = floorHeight;
+            var count = (float)Math.Ceiling(distance / _groundFloorEntranceWidth);
 
-            var widthStep = distance/count;
+
+            var widthStep = distance / count;
 
             var direction = (end - start).Normalize();
             for (int k = 0; k < count; k++)
             {
-                var p1 = start + direction*(widthStep*k);
-                var p2 = start + direction*(widthStep*(k + 1));
+                var p1 = start + direction * (widthStep * k);
+                var p2 = start + direction * (widthStep * (k + 1));
 
                 var floorNoise1 = GetPositionNoise(new Vector3(p1.X, floor, p1.Y));
                 var floorNoise2 = GetPositionNoise(new Vector3(p2.X, floor, p2.Y));
@@ -56,12 +63,12 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
             var side2 = c - a;
 
             var perp = Vector3.Cross(side2, side1).normalized;
-            var offsetVector = perp*0f;
+            var offsetVector = perp * 0f;
 
-            var isWindowOffset = step%2 == 1;
+            var isWindowOffset = step % 2 == 1;
             if (isWindowOffset)
             {
-                offsetVector = perp*2;
+                offsetVector = perp * 2;
                 AddPlane(Color.yellow, a, b, b + offsetVector, a + offsetVector);
                 AddPlane(Color.yellow, b, c, c + offsetVector, b + offsetVector);
                 AddPlane(Color.yellow, c, d, d + offsetVector, c + offsetVector);

@@ -76,7 +76,13 @@ namespace ActionStreetMap.Explorer.Scene.Buildings
             var mesh = new Mesh();
             mesh.vertices = meshData.Vertices.ToArray();
             mesh.triangles = meshData.Triangles.ToArray();
-            mesh.uv = meshData.UV.ToArray();
+
+            if (meshData.UV != null)
+                mesh.uv = meshData.UV.ToArray();
+
+            if (meshData.Colors != null)
+                mesh.colors = meshData.Colors.ToArray();
+
             mesh.RecalculateNormals();
 
             _objectPool.RecycleMeshData(meshData);

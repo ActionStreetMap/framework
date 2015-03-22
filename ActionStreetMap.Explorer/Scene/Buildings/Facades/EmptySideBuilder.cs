@@ -9,6 +9,8 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
     internal class EmptySideBuilder : SideBuilder
     {
         private GradientWrapper _facadeGradient;
+        private float _maxWidth = 4f;
+        private float _entranceCount;
 
         public EmptySideBuilder(MeshData meshData, float height)
             : base(meshData, height)
@@ -21,22 +23,45 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
             return this;
         }
 
+        public EmptySideBuilder SetMaxWidth(float width)
+        {
+            _maxWidth = width;
+            return this;
+        }
+
+        public override void Build(MapPoint start, MapPoint end)
+        {
+            var distance = start.DistanceTo(end);
+            if (distance <= _maxWidth) _entranceCount = 1;
+            else _entranceCount = (float)Math.Ceiling(distance / _maxWidth);
+
+            base.Build(start, end);
+        }
+
+        public override bool CanBuild(MapPoint start, MapPoint end)
+        {
+            return true;
+        }
+
+        protected override float GetEntranceCount(float distance)
+        {
+            return _entranceCount;
+        }
+
         protected override void BuildGroundFloor(MapPoint start, MapPoint end, float floorHeight)
         {
-            var width = 12f;
-            var floor = 0;
+            var floor = Elevation;
+            var ceiling = floor + floorHeight;
 
             var distance = start.DistanceTo(end);
-            var count = (float) Math.Ceiling(distance/width);
-            var ceiling = floorHeight;
-
-            var widthStep = distance/count;
+            var count = (float)Math.Ceiling(distance / _maxWidth);
+            var widthStep = distance / count;
 
             var direction = (end - start).Normalize();
             for (int k = 0; k < count; k++)
             {
-                var p1 = start + direction*(widthStep*k);
-                var p2 = start + direction*(widthStep*(k + 1));
+                var p1 = start + direction * (widthStep * k);
+                var p2 = start + direction * (widthStep * (k + 1));
 
                 var floorNoise1 = GetPositionNoise(new Vector3(p1.X, floor, p1.Y));
                 var floorNoise2 = GetPositionNoise(new Vector3(p2.X, floor, p2.Y));
@@ -64,7 +89,6 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
 
         protected override void BuildGlass(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
         {
-
         }
     }
 }

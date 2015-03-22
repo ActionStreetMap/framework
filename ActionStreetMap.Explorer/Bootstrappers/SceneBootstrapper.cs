@@ -72,7 +72,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IBuildingStyleProvider>().Use<BuildingStyleProvider>().Singleton());
             // facades
             Container.Register(Component.For<IBuildingBuilder>().Use<BuildingBuilder>().Singleton());
-            Container.Register(Component.For<IFacadeBuilder>().Use<FlatFacadeBuilder>().Named("flat").Singleton());
+            Container.Register(Component.For<IFacadeBuilder>().Use<MeshFacadeBuilder>().Named("flat").Singleton());
             
             // roofs
             Container.Register(Component.For<IRoofBuilder>().Use<GabledRoofBuilder>().Named("gabled").Singleton());
