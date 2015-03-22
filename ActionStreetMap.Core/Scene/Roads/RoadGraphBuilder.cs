@@ -35,8 +35,7 @@ namespace ActionStreetMap.Core.Scene.Roads
                 .ToArray();
 
             var junctions = _junctionsMap.Values
-                .SelectMany(j => j.Values)
-                .Select(r => RoadJunctionUtils.Complete(r, objectPool)).ToArray();
+                .SelectMany(j => j.Values).ToArray();
 
             _elements.Clear();
             _junctionsMap.Clear();

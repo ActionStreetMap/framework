@@ -132,7 +132,6 @@
     <Compile Include="Scene\Roads\RoadGraph.cs" />
     <Compile Include="Scene\Roads\RoadGraphBuilder.cs" />
     <Compile Include="Scene\Roads\RoadJunction.cs" />
-    <Compile Include="Scene\Roads\RoadJunctionUtils.cs" />
     <Compile Include="Scene\Roads\RoadType.cs" />
     <Compile Include="Scene\Roads\TrafficLight.cs" />
     <Compile Include="Tiling\Models\TagCollection.cs" />
