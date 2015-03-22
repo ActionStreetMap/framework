@@ -145,6 +145,9 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
                     case "color":
                         PushToColor();
                         break;
+                    case "gradient":
+                        PushToGradient();
+                        break;
                     default:
                         throw new NotSupportedException(String.Format("Unary operation {0} is not supported", opName));
                 }
@@ -230,6 +233,12 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
             {
                 Expression<Func<string, Color32>> toColor = s => ColorUtility.FromUnknown(s);
                 _expressions.Push(toColor);
+            }
+
+            private void PushToGradient()
+            {
+                Expression<Func<string, string>> toGradient = s => ColorUtility.ColorToGradient(s);
+                _expressions.Push(toGradient);
             }
 
             #endregion

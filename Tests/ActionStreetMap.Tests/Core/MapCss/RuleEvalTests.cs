@@ -350,6 +350,26 @@ namespace ActionStreetMap.Tests.Core.MapCss
         }
 
         [Test]
+        public void CanEvaluateGradient()
+        {
+            // ARRANGE
+            var stylesheet = MapCssHelper
+                .GetStylesheetFromContent(String.Format("node[*] {{ facade: eval(gradient(tag('colour')));}}\n"));
+
+            // ACT
+            var node = MapCssHelper.GetNode(new Dictionary<string, string>()
+                {
+                    {"colour", "#0fff8f"},
+                }.ToTags());
+
+            // ASSERT
+            var rule = stylesheet.GetModelRule(node);
+            var facadeGradient = rule.Evaluate<string>("facade");
+            Assert.IsNotEmpty(facadeGradient);
+            Assert.AreEqual("gradient(#0fff8f, #0fff8f 50%, #099956)", facadeGradient);
+        }
+
+        [Test]
         public void CanUseGradient()
         {
             // ARRANGE
@@ -370,6 +390,6 @@ namespace ActionStreetMap.Tests.Core.MapCss
         private ActionStreetMap.Core.Unity.Color32 GetOriginalColorTypeObject(Color32 color)
         {
             return new ActionStreetMap.Core.Unity.Color32(color.r, color.g, color.b, color.a);
-        }
+        }      
     }
 }

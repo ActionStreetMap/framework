@@ -13,17 +13,11 @@
 			"remote.schema": "Config/srtm.schema.txt"
 		}
 	},
-	"theme": {
-			"buildings":[{"path":"Config/themes/default/building.default.json"}],
-			"roads":[{"path":"Config/themes/default/road.default.json"}],
-			"infos":[{"path":"Config/themes/default/info.default.json"}],
-			"gradients": "Config/themes/default/gradients.default.json"
-	},
 	"mapcss":"Config/themes/default/default.mapcss",
 	"geocoding":"http://nominatim.openstreetmap.org/search",
 	"tile": {
-		"size":500,
-		"offset":100,
+		"size":300,
+		"offset":50,
 		"heightmap":1025,
 		"flat":false,
 	}

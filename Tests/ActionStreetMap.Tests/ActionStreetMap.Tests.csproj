@@ -58,7 +58,6 @@
     <Compile Include="Core\Scene\RoadGraphBugFixTests.cs" />
     <Compile Include="Core\Scene\RoadGraphTests.cs" />
     <Compile Include="Core\Tiling\TagCollectionTests.cs" />
-    <Compile Include="Expiremental\ColorUtils.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="Explorer\Geometry\LineUtilsTests.cs" />
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />

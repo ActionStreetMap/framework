@@ -139,8 +139,8 @@ area[building:cladding=wood]								{ facade-color:gradient(#0eff94, #0deb88 50%
 area[building:roof:material=wood],
 area[roof:material=wood]									{ roof-color:gradient(#0eff94, #0deb88 50%, #07854d); }
 
-area[building:colour]									{ facade-color:eval(color(tag('building:colour'))); }
-area[building:color]										{ facade-color:eval(color(tag('building:color'))); }
+area[building:colour]									{ facade-color:eval(gradient(tag('building:colour'))); }
+area[building:color]										{ facade-color:eval(gradient(tag('building:color'))); }
 
 /* support only mansard/flat so far, so don't eval */
 area[roof:shape=flat]									{ roof-builder: flat; }

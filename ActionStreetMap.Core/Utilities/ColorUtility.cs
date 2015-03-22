@@ -4,9 +4,7 @@ using ActionStreetMap.Core.Unity;
 
 namespace ActionStreetMap.Core.Utilities
 {
-    /// <summary>
-    ///     Provides helper method to work with colors.
-    /// </summary>
+    /// <summary> Provides helper method to work with colors. </summary>
     public static class ColorUtility
     {
         // TODO replace before release with different color
@@ -196,9 +194,7 @@ namespace ActionStreetMap.Core.Utilities
         };
         #endregion
 
-        /// <summary>
-        ///     Gets color from given name.
-        /// </summary>
+        /// <summary> Gets color from given name. </summary>
         /// <param name="name">Name.</param>
         /// <returns>Color.</returns>
         public static Color32 FromName(string name)
@@ -209,9 +205,7 @@ namespace ActionStreetMap.Core.Utilities
                 KnownColors[DefaultColor];
         }
 
-        /// <summary>
-        ///     Gets color from its hex representation.
-        /// </summary>
+        /// <summary> Gets color from its hex representation. </summary>
         /// <param name="color">Hex color string.</param>
         /// <returns>Color.</returns>
         public static Color32 FromHex(string color)
@@ -223,9 +217,7 @@ namespace ActionStreetMap.Core.Utilities
             return finalColor;
         }
 
-        /// <summary>
-        ///     Gets color from its unknown representation. Supports name or hex
-        /// </summary>
+        /// <summary> Gets color from its unknown representation. Supports name or hex. </summary>
         /// <param name="colorString">Color string.</param>
         /// <returns>Color.</returns>
         public static Color32 FromUnknown(string colorString)
@@ -258,6 +250,95 @@ namespace ActionStreetMap.Core.Utilities
                 case 'f': return 15;
 	        }
             throw new ArgumentException(String.Format("Unknown hex: {0}", hexChar));
+        }
+
+        public static string ColorToGradient(string colorString)
+        {
+            var color = FromUnknown(colorString);
+            var prevColor = EnlightColor(color, 0.4);
+            var nextColor = EnlightColor(color, -0.4);
+
+            return String.Format("gradient({0}, {1} 50%, {2})",
+                prevColor.ToHex(),
+                color.ToHex(),
+                nextColor.ToHex());
+        }
+
+        public static Color32 EnlightColor(Color32 color, double ratio)
+        {
+            double hue, saturation, value;
+            ColorToHSV(color, out hue, out saturation, out value);
+
+            value += ratio;
+            var newColor = ColorFromHSV(hue, saturation, value);
+
+            return newColor;
+        }
+
+        //See http://stackoverflow.com/questions/359612/how-to-change-rgb-color-to-hsv
+        public static void ColorToHSV(Color32 color, out double hue, out double saturation, out double value)
+        {
+            int max = Math.Max(color.R, Math.Max(color.G, color.B));
+            int min = Math.Min(color.R, Math.Min(color.G, color.B));
+
+            hue = color.GetHue();
+            saturation = (max == 0) ? 0 : 1d - (1d * min / max);
+            value = max / 255d;
+        }
+
+        public static Color32 ColorFromHSV(double hue, double saturation, double value)
+        {
+            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+            double f = hue / 60 - Math.Floor(hue / 60);
+
+            value = value * 255;
+            value = value > 255 ? 255 : value;
+            value = value < 0 ? 0 : value;
+            var v = Convert.ToByte(value);
+            var p = Convert.ToByte(value * (1 - saturation));
+            var q = Convert.ToByte(value * (1 - f * saturation));
+            var t = Convert.ToByte(value * (1 - (1 - f) * saturation));
+
+            if (hi == 0)
+                return new Color32(v, t, p, 255);
+            if (hi == 1)
+                return new Color32(q, v, p, 255);
+            if (hi == 2)
+                return new Color32(p, v, t, 255);
+            if (hi == 3)
+                return new Color32(p, q, v, 255);
+            if (hi == 4)
+                return new Color32(t, p, v, 255);
+            return new Color32(v, p, q, 255);
+        }
+
+        public static string ToHex(this Color32 color)
+        {
+            return String.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
+        }
+
+        public static int GetHue(this Color32 color)
+        {
+            return GetHue(color.R, color.G, color.B);
+        }
+
+        public static int GetHue(int red, int green, int blue)
+        {
+            float min = Math.Min(Math.Min(red, green), blue);
+            float max = Math.Max(Math.Max(red, green), blue);
+
+            float hue;
+            if (max == red)
+                hue = (green - blue) / (max - min);
+            else if (max == green)
+                hue = 2f + (blue - red) / (max - min);
+            else
+                hue = 4f + (red - green) / (max - min);
+
+            hue = hue * 60;
+            if (hue < 0) hue = hue + 360;
+
+            return (int)Math.Round(hue);
         }
     }
 }
