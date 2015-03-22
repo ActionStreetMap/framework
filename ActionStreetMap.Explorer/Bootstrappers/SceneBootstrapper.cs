@@ -1,15 +1,15 @@
 ﻿using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene;
-using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
-using ActionStreetMap.Explorer.Terrain;
-using ActionStreetMap.Explorer.Terrain.Layers;
+using ActionStreetMap.Explorer.Scene.Terrain;
+using ActionStreetMap.Explorer.Scene.Terrain.Layers;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
@@ -31,13 +31,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .Singleton());
 
             Container.Register(Component.For<IModelLoader>().Use<TileModelLoader>().Singleton());
-
-            // register theme provider
-            Container.Register(Component
-                .For<IThemeProvider>()
-                .Use<ThemeProvider>()
-                .SetConfig(GlobalConfigSection.GetSection(ThemeKey))
-                .Singleton());
 
             // register stylesheet provider
             Container.Register(Component

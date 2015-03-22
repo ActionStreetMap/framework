@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
-using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Interactions;
-using ActionStreetMap.Explorer.Scene;
-using ActionStreetMap.Explorer.Scene.Builders;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
 {
     internal class WaterLayerBuilder : LayerBuilder
     {

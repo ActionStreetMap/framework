@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
 {
     internal class CanvasLayerBuilder: LayerBuilder
     {

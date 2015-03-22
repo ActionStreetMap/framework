@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Explorer.Helpers;
-
+using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Builders
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary>  Provides logic to build various barriers. </summary>
     public class BarrierModelBuilder: ModelBuilder

@@ -6,7 +6,7 @@ using ActionStreetMap.Core.Polygons.Meshing.Iterators;
 using ActionStreetMap.Core.Polygons.Tools;
 using ActionStreetMap.Explorer.Geometry;
 
-namespace ActionStreetMap.Explorer.Terrain
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     public class MeshContext
     {

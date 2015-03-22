@@ -2,7 +2,6 @@
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Geometry;
-using ActionStreetMap.Explorer.Geometry.Polygons;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Config;

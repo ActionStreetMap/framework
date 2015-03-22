@@ -6,7 +6,7 @@ using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Infrastructure
 {
     /// <summary> Defines behavior of Unity's resource loader/provider. </summary>
     public interface IResourceProvider

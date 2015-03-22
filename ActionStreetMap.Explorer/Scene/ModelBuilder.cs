@@ -3,11 +3,12 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Builders
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Defines model builder logic. </summary>
     public interface IModelBuilder
@@ -56,10 +57,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <summary> Game object factory. </summary>
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
-
-        /// <summary> Gets theme provider. </summary>
-        [Dependency]
-        public IThemeProvider ThemeProvider { get; set; }
 
         /// <summary> Gets resource provider. </summary>
         [Dependency]

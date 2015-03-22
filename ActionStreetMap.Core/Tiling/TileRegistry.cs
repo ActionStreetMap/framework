@@ -1,7 +1,4 @@
 ﻿using System;
-using ActionStreetMap.Core.Scene.Buildings;
-using ActionStreetMap.Core.Scene.Infos;
-using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Tiling
@@ -28,31 +25,10 @@ namespace ActionStreetMap.Core.Tiling
 
         #region Registrations
 
-        /// <summary>
-        ///     Registers building ьщвуд.
-        /// </summary>
-        /// <param name="building">Building.</param>
-        public void Register(Building building)
+        /// <summary> Registers model id. </summary>
+        public void Register(long id)
         {
-            _localIds.TryAdd(building.Id);
-        }
-
-        /// <summary>
-        ///    Registres road. 
-        /// </summary>
-        /// <param name="road">Road.</param>
-        public void Register(Road road)
-        {
-            road.Elements.ForEach(e => _localIds.TryAdd(e.Id));
-        }
-
-        /// <summary>
-        ///     Registers info.
-        /// </summary>
-        /// <param name="info">Info.</param>
-        public void Register(Info info)
-        {
-            _localIds.TryAdd(info.Id);
+            _localIds.TryAdd(id);
         }
 
         /// <summary>

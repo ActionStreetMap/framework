@@ -3,11 +3,11 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
-using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Builders
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Provides logic to build details. </summary>
     public class DetailModelBuilder: ModelBuilder

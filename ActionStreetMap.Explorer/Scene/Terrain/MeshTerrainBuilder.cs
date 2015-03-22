@@ -10,8 +10,8 @@ using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Scene;
-using ActionStreetMap.Explorer.Terrain.Layers;
+using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Scene.Terrain.Layers;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -20,7 +20,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     public interface ITerrainBuilder
     {

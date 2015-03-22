@@ -1,8 +1,7 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Terrain;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Explorer.Scene;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
@@ -10,7 +9,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Terrain.Layers
+namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
 {
     internal interface ILayerBuilder
     {

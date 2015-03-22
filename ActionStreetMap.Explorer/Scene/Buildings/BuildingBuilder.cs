@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;

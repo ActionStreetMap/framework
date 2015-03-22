@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Explorer.Geometry.Polygons;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Geometry.Utils

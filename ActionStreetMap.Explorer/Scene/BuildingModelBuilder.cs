@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Maps.Helpers;
-using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Buildings.Facades;
 using ActionStreetMap.Explorer.Scene.Buildings.Roofs;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Maps.Helpers;
 
-namespace ActionStreetMap.Explorer.Scene.Builders
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Provides logic to build buildings. </summary>
     public class BuildingModelBuilder : ModelBuilder
@@ -53,7 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             //var simplified = ObjectPool.NewList<MapPoint>();
 
             PointUtils.GetClockwisePolygonPoints(_elevationProvider, tile.RelativeNullPoint, footPrint, points);
-            var minHeight = rule.GetMinHeight();
+            var minHeight = BuildingRuleExtensions.GetMinHeight(rule);
 
             // NOTE simplification is important to build hipped/gabled roofs
             //PolygonUtils.Simplify(points, simplified);
@@ -111,7 +110,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             _builder.Build(building, facadeBuilder, roofBuilder);
 
-            tile.Registry.Register(building);
             tile.Registry.RegisterGlobal(building.Id);
 
             return gameObjectWrapper;

@@ -1,10 +1,9 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utilities;
 
-namespace ActionStreetMap.Explorer.Scene.Builders
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Provides the way to process trees. </summary>
     public class TreeModelBuilder : ModelBuilder

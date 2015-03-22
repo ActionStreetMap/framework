@@ -2,7 +2,7 @@
 using System.Linq;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
-using ActionStreetMap.Explorer.Geometry.Polygons;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
 using UnityEngine;
 

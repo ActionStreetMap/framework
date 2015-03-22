@@ -1,11 +1,11 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
+using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Explorer.Geometry.Utils;
 
-namespace ActionStreetMap.Explorer.Scene.Builders
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary>  Provides logic to build water. </summary>
     public class WaterModelBuilder : ModelBuilder

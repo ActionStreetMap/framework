@@ -1,5 +1,5 @@
 ﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene.Infos;
+
 using ActionStreetMap.Core.Tiling.Models;
 using NUnit.Framework;
 
@@ -17,7 +17,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             var tile = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), null, 100, 100);
 
             // ACT
-            tile.Registry.Register(new Info() { Id = testId });
+            tile.Registry.Register(testId);
 
             // ASSERT
             Assert.IsTrue(tile.Registry.Contains(testId));
@@ -35,7 +35,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
 
             // ACT
             tile1.Registry.RegisterGlobal(testId);
-            tile1.Registry.Register(new Info() { Id = otherId });
+            tile1.Registry.Register(testId);
 
             // ASSERT
             Assert.IsTrue(tile1.Registry.Contains(testId));

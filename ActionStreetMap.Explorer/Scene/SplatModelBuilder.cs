@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
+using ActionStreetMap.Core.Scene.Details;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Core.Scene.Details;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Explorer.Helpers;
 
-namespace ActionStreetMap.Explorer.Scene.Builders
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Provides the way to process splat areas. </summary>
     public class SplatModelBuilder : ModelBuilder
