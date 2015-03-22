@@ -11,7 +11,7 @@ canvas {
 area[amenity],
 area[natural],
 area[historic=memorial],
-area[landuse]											{ builder: splat; splat: 2; fill-color: gradient(#10ff00, #0ff000 50%, #098a00); }
+area[landuse]											{ builder: splat; fill-color: gradient(#10ff00, #0ff000 50%, #098a00); }
 
 /* buildings */
 area[man_made=tower],
@@ -204,11 +204,11 @@ area[landuse=village_green],
 area[landuse=grass],
 area[landuse=meadow],													
 area[landuse=industrial],		
-area[landuse=railway]									{ builder: splat; splat: 1; fill-color:gray; }
+area[landuse=railway]									{ builder: splat; fill-color:gray; }
 
 area[natural=wood],		
 area[leisure=park],		
-area[landuse=forest] 									{ builder: splat; splat: 1; terrainDetail:0; fill-color: gradient(#09ff64, #08dc56 50%, #04762e); }
+area[landuse=forest] 									{ builder: splat; fill-color: gradient(#09ff64, #08dc56 50%, #04762e); }
 
 area[natural=wood],	
 area[landuse=forest]										{ forest:true; }
@@ -216,15 +216,15 @@ area[landuse=forest]										{ forest:true; }
 area[landuse=meadow],
 area[landuse=farmland],
 area[landuse=scrub],
-area[landuse=grass]										{ builder: splat; splat: 1; terrainDetail:0; fill-color:gradient(#0e9fff, #0e9efd 50%, #085e97); }
+area[landuse=grass]										{ builder: splat; fill-color:gradient(#0e9fff, #0e9efd 50%, #085e97); }
 
 area[landuse=village_green],
 area[amenity=kindergarten]								{ fill-color: gradient(#0232ff, #022ff1 50%, #011b8b); }
 
 area[landuse=grass],
-area[landuse=meadow]										{ builder: splat; splat: 1; terrainDetail:0; fill-color: gradient(#0cffcb, #0cfeca 50%, #079879); }
+area[landuse=meadow]										{ builder: splat; fill-color: gradient(#0cffcb, #0cfeca 50%, #079879); }
 
-area[leisure=recreation_ground]							{ builder: splat; splat: 1; terrainDetail:0; fill-color: gradient(#0d81ff, #0b6fdb 50%, #063b75); }
+area[leisure=recreation_ground]							{ builder: splat; fill-color: gradient(#0d81ff, #0b6fdb 50%, #063b75); }
 
 area[landuse=industrial],		
 area[landuse=railway]									{ fill-color: gradient(#0dff1d, #0dfd1d 50%, #089711); }
