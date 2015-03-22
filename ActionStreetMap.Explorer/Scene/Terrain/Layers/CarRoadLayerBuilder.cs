@@ -55,7 +55,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
                     vertices[index + 2] = new Vector3(p2.x, p2.y - RoadDeepLevel - ele2, p2.z);
 
                     // use position of first point only
-                    var triangleColor = GetColor(gradient, vertices[index], 0.2f);
+                    var triangleColor = GradientUtils.GetColor(gradient, vertices[index], 0.2f);
 
                     colors[index] = triangleColor;
                     colors[index + 1] = triangleColor;

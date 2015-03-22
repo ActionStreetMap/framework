@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Formats.Json;
@@ -38,23 +39,13 @@ namespace ActionStreetMap.Explorer.Infrastructure
     }
 
     /// <summary> Default, dictionary based implementation of IResourceProvider. </summary>
-    internal class UnityResourceProvider : IResourceProvider, IConfigurable
+    internal class UnityResourceProvider : IResourceProvider
     {
-        private readonly IFileSystemService _fileSystemService;
         private readonly Dictionary<string, GameObject> _gameObjects = new Dictionary<string, GameObject>();
         private readonly Dictionary<string, Material> _materials = new Dictionary<string, Material>();
         private readonly Dictionary<string, Texture> _textures = new Dictionary<string, Texture>();
         private readonly Dictionary<string, Texture2D> _textures2D = new Dictionary<string, Texture2D>();
-
-        private Dictionary<string, GradientWrapper> _gradients;
-
-        /// <summary> Creates instance of <see cref="UnityResourceProvider"/>. </summary>
-        /// <param name="fileSystemService">File system service.</param>
-        [Dependency]
-        public UnityResourceProvider(IFileSystemService fileSystemService)
-        {
-            _fileSystemService = fileSystemService;
-        }
+        private readonly Dictionary<string, GradientWrapper> _gradients = new Dictionary<string, GradientWrapper>(16);
 
         /// <inheritdoc />
         public GameObject GetGameObject(string key)
@@ -95,53 +86,19 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <inheritdoc />
         public GradientWrapper GetGradient(string key)
         {
-            return _gradients[key];
-        }
-
-        public void Configure(IConfigSection configSection)
-        {
-            var gradientFilePath = configSection.GetString(@"gradients", null);
-            _gradients = ParseGradients(gradientFilePath);
-        }
-
-        private Dictionary<string, GradientWrapper> ParseGradients(string gradientFilePath)
-        {
-            var gradientContent = _fileSystemService.ReadText(gradientFilePath);
-            var json = JSON.Parse(gradientContent);
-
-            var jsonGradients = json["gradients"].AsArray;
-            var gradients = new Dictionary<string, GradientWrapper>(jsonGradients.Count);
-            foreach (JSONNode jsonGrad in jsonGradients)
+            if (!_gradients.ContainsKey(key))
             {
-                var name = jsonGrad["name"].Value;
-                // colors
-                var jsonColors = jsonGrad["color"].AsArray;
-                var colors = new GradientWrapper.ColorKey[jsonColors.Count];
-                for (var i = 0; i < jsonColors.Count; i++)
+                lock (_gradients)
                 {
-                    var key = new GradientWrapper.ColorKey();
-                    var colorArray = jsonColors[i]["c"].Value.Split(',');
-                    key.Color = new Color(
-                        int.Parse(colorArray[0]) / 255f, 
-                        int.Parse(colorArray[1]) / 255f,
-                        int.Parse(colorArray[2]) / 255f);
-                    key.Time = float.Parse(jsonColors[i]["t"].Value);
-                    colors[i] = key;
+                    if (!_gradients.ContainsKey(key))
+                    {
+                        var value = GradientUtils.ParseGradient(key);
+                        _gradients.Add(key, value);
+                        return value;
+                    }
                 }
-                // alphas
-                var jsonAlphas = jsonGrad["alpha"].AsArray;
-                var alphas = new GradientWrapper.AlphaKey[jsonAlphas.Count];
-                for (int i = 0; i < jsonAlphas.Count; i++)
-                {
-                    var key = new GradientWrapper.AlphaKey();
-                    key.Alpha = float.Parse(jsonAlphas[i]["a"].Value);
-                    key.Time = float.Parse(jsonAlphas[i]["t"].Value);
-                    alphas[i] = key;
-                }
-                gradients.Add(name, new GradientWrapper(colors, alphas));
             }
-
-            return gradients;
+            return _gradients[key];
         }
     }
 }

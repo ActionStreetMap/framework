@@ -23,7 +23,7 @@ namespace ActionStreetMap.Tests.Explorer
 
             // ASSERT
             // NOTE change this value if you add/remove model builders
-            Assert.AreEqual(10, modelBuilders.Count);
+            Assert.AreEqual(9, modelBuilders.Count);
         }
     }
 }

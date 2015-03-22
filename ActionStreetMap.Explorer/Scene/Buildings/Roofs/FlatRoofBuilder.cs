@@ -1,66 +1,51 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Explorer.Infrastructure;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 {
     /// <summary> Builds flat roof. </summary>
-    public class FlatRoofBuilder : IRoofBuilder
+    public class FlatRoofBuilder : RoofBuilder
     {
         /// <inheritdoc />
-        public string Name { get { return "flat"; } }
-
-        /// <inheritdoc />
-        [Dependency]
-        public IObjectPool ObjectPool { get; set; }
+        public override string Name { get { return "flat"; } }
 
         /// <summary> Flat builder can be used for every type of building. </summary>
         /// <param name="building"> Building. </param>
         /// <returns> Always true. </returns>
-        public bool CanBuild(Building building) { return true; }
+        public override bool CanBuild(Building building) { return true; }
 
         /// <inheritdoc />
-        public MeshData Build(Building building)
+        public override MeshData Build(Building building)
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
 
             var triangles = ObjectPool.NewList<int>();
             Triangulator.Triangulate(building.Footprint, triangles);
 
+            var footprint = building.Footprint;
+            var count = building.Footprint.Count;
+            var vertices = new List<Vector3>(count);
+            var colors = new List<Color>(count);
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);
+
+            for (int i = 0; i < count; i++)
+            {
+                var vertex = new Vector3(footprint[i].X, roofOffset, footprint[i].Y);
+                vertices.Add(vertex);
+                colors.Add(GradientUtils.GetColor(gradient, vertex, 0.2f));
+            }
+
             return new MeshData
             {
-                Vertices = GetVertices(building.Footprint, roofOffset),
+                Vertices = vertices,
                 Triangles = triangles,
-                Colors = GetColors(building),
+                Colors = colors,
                 MaterialKey = building.RoofMaterial
             };
-        }
-
-        private List<Vector3> GetVertices(List<MapPoint> footprint, float roofOffset)
-        {
-            var length = footprint.Count;
-            var vertices3D = new List<Vector3>(length);
-
-            for (int i = 0; i < length; i++)
-                vertices3D.Add(new Vector3(footprint[i].X, roofOffset, footprint[i].Y));
-
-            return vertices3D;
-        }
-
-        private List<Color> GetColors(Building building)
-        {
-            var count = building.Footprint.Count;
-            var colors = new List<Color>(count);
-            var color = building.RoofColor.ToUnityColor();
-            for (int i = 0; i < count; i++)
-                colors.Add(color);
-            return colors;
         }
     }
 }

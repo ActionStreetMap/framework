@@ -12,9 +12,9 @@ namespace ActionStreetMap.Explorer.Helpers
             return rule.Evaluate<string>("facade-builder");
         }
 
-        public static Core.Unity.Color32 GetFacadeColor(this Rule rule)
+        public static string GetFacadeColor(this Rule rule)
         {
-            return rule.Evaluate<Core.Unity.Color32>("facade-color", ColorUtility.FromUnknown);
+            return rule.Evaluate<string>("facade-color");
         }
 
         public static string GetFacadeMaterial(this Rule rule, string @default = null)
@@ -31,9 +31,9 @@ namespace ActionStreetMap.Explorer.Helpers
             return rule.EvaluateDefault<string>("roof-builder", @default);
         }
 
-        public static Core.Unity.Color32 GetRoofColor(this Rule rule)
+        public static string GetRoofColor(this Rule rule)
         {
-            return rule.Evaluate<Core.Unity.Color32>("roof-color", ColorUtility.FromUnknown);
+            return rule.Evaluate<string>("roof-color");
         }
 
         public static float GetRoofHeight(this Rule rule, float defaultValue = 0)

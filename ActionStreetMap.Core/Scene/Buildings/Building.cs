@@ -44,7 +44,7 @@ namespace ActionStreetMap.Core.Scene.Buildings
         #region Appearance
 
         /// <summary> Gets or sets facade color. </summary>
-        public Color32 FacadeColor { get; set; }
+        public string FacadeColor { get; set; }
 
         /// <summary> Gets or sets facade material. </summary>
         public string FacadeMaterial { get; set; }
@@ -53,7 +53,7 @@ namespace ActionStreetMap.Core.Scene.Buildings
         public string FacadeType { get; set; }
 
         /// <summary> Gets or sets roof color. </summary>
-        public Color32 RoofColor { get; set; }
+        public string RoofColor { get; set; }
 
         /// <summary> Gets or sets roof material. </summary>
         public string RoofMaterial { get; set; }

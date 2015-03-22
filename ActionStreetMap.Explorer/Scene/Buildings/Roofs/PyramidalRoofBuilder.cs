@@ -4,6 +4,8 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Utils;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
@@ -12,32 +14,60 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
     ///     Builds Pyramidal roof.
     ///     See http://wiki.openstreetmap.org/wiki/Key:roof:shape#Roof
     /// </summary>
-    public class PyramidalRoofBuilder: IRoofBuilder
+    public class PyramidalRoofBuilder: RoofBuilder
     {
         /// <inheritdoc />
-        public string Name { get { return "pyramidal"; } }
+        public override string Name { get { return "pyramidal"; } }
 
         /// <inheritdoc />
-        public bool CanBuild(Building building)
+        public override bool CanBuild(Building building)
         {
             // TODO actually, we cannot use pyramidal for non-convex polygons
             return true;
         }
 
         /// <inheritdoc />
-        public MeshData Build(Building building)
+        public override MeshData Build(Building building)
+        {
+            var center = PolygonUtils.GetCentroid(building.Footprint);
+            var meshData = new MeshData();
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);
+
+            SetMeshData(building, meshData, gradient, center);
+            return meshData;
+        }
+
+        private void SetMeshData(Building building, MeshData meshData, GradientWrapper gradient, MapPoint center)
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
-            
-            var center = PolygonUtils.GetCentroid(building.Footprint);
 
-            return new MeshData()
+            var footprint = building.Footprint;
+            var roofHeight = building.RoofHeight;
+
+            var length = footprint.Count;
+            var verticies = new List<Vector3>(length*3);
+            var colors = new List<Color>(length*3);
+            for (int i = 0; i < length; i++)
             {
-                Vertices = GetVertices(center, building.Footprint, roofOffset, building.RoofHeight),
-                Triangles = GetTriangles(building.Footprint),
-                Colors = GetColors(building),
-                MaterialKey = building.RoofMaterial,
-            };
+                var nextIndex = i == (length - 1) ? 0 : i + 1;
+
+                var v0 = new Vector3(footprint[i].X, roofOffset, footprint[i].Y);
+                verticies.Add(v0);
+                colors.Add(GradientUtils.GetColor(gradient, v0, 0.2f));
+
+                var v1 = new Vector3(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y);
+                verticies.Add(v1);
+                colors.Add(GradientUtils.GetColor(gradient, v1, 0.2f));
+
+                var v2 = new Vector3(center.X, roofOffset + roofHeight, center.Y);
+                verticies.Add(v2);
+                colors.Add(GradientUtils.GetColor(gradient, v2, 0.2f));
+            }
+
+            meshData.Vertices = verticies;
+            meshData.Triangles = GetTriangles(building.Footprint);
+            meshData.Colors = colors;
+            meshData.MaterialKey = building.RoofMaterial;
         }
 
         private List<int> GetTriangles(List<MapPoint> footprint)
@@ -49,33 +79,6 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
                 triangles.Add(i);
 
             return triangles;
-        }
-
-        private List<Vector3> GetVertices(MapPoint center, List<MapPoint> footprint, float roofOffset, float roofHeight)
-        {
-            var length = footprint.Count;
-            var verticies = new List<Vector3>(length*3);
-            for (int i = 0; i < length; i++)
-            {
-                var nextIndex = i == (length - 1) ? 0 : i + 1;
-
-                verticies.Add(new Vector3(footprint[i].X, roofOffset, footprint[i].Y));
-                verticies.Add(new Vector3(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y));
-                verticies.Add(new Vector3(center.X, roofOffset + roofHeight, center.Y));
-            }
-
-            return verticies;
-        }
-
-        private List<Color> GetColors(Building building)
-        {
-            var length = building.Footprint.Count * 3;
-            var colors = new List<Color>(length);
-            var color = building.RoofColor.ToUnityColor();
-            for (int i = 0; i < length; i++)
-                colors.Add(color);
-
-            return colors;
         }
     }
 }

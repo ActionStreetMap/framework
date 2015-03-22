@@ -5,10 +5,10 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Explorer.Infrastructure;
-using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
@@ -17,28 +17,19 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
     ///     Builds gabled roof.
     ///     See http://wiki.openstreetmap.org/wiki/Key:roof:shape#Roof
     /// </summary>
-    public class GabledRoofBuilder : IRoofBuilder
+    public class GabledRoofBuilder : RoofBuilder
     {
-        private readonly IObjectPool _objectPool;
+        /// <inheritdoc />
+        public override string Name { get { return "gabled"; } }
 
         /// <inheritdoc />
-        public string Name { get { return "gabled"; } }
+        public override bool CanBuild(Building building) { return true; }
 
         /// <inheritdoc />
-        public bool CanBuild(Building building) { return true; }
-
-        /// <summary> Creates <see cref="GabledRoofBuilder"/>. </summary>
-        /// <param name="objectPool">Object pool.</param>
-        [Dependency]
-        public GabledRoofBuilder(IObjectPool objectPool)
+        public override MeshData Build(Building building)
         {
-            _objectPool = objectPool;
-        }
-
-        /// <inheritdoc />
-        public MeshData Build(Building building)
-        {
-            var context = new Context(building, _objectPool);
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);
+            var context = new Context(building, gradient, ObjectPool);
             var roofOffset = building.Elevation + building.Height + building.MinHeight;
             var roofHeight = roofOffset + building.RoofHeight;
 
@@ -86,8 +77,8 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
         private Segment GetLongestSegment(List<MapPoint> footprint, out float length)
         {
-            var result = _objectPool.NewList<MapPoint>();
-            PolygonUtils.Simplify(footprint, result, 1, _objectPool);
+            var result = ObjectPool.NewList<MapPoint>();
+            PolygonUtils.Simplify(footprint, result, 1, ObjectPool);
             var polygon = new Polygon(result);
             Segment longestSegment = default(Segment);
             length = 0;
@@ -101,7 +92,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
                     length = segmentLength;
                 }
             }
-            _objectPool.StoreList(result);
+            ObjectPool.StoreList(result);
             return longestSegment;
         }
 
@@ -175,10 +166,9 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             data.Triangles.Add(context.TrisIndex + 1);
             data.Triangles.Add(context.TrisIndex + 2);
 
-            var color = context.Building.RoofColor.ToUnityColor();
-            data.Colors.Add(color);
-            data.Colors.Add(color);
-            data.Colors.Add(color);
+            data.Colors.Add(GradientUtils.GetColor(context.Gradient, first, 0.2f));
+            data.Colors.Add(GradientUtils.GetColor(context.Gradient, second, 0.2f));
+            data.Colors.Add(GradientUtils.GetColor(context.Gradient, third, 0.2f));
 
             context.TrisIndex += 3;
         }
@@ -199,12 +189,10 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             data.Triangles.Add(context.TrisIndex + 0);
             context.TrisIndex += 4;
 
-            // TODO process UV map different way
-            var color = context.Building.RoofColor.ToUnityColor();
-            data.Colors.Add(color);
-            data.Colors.Add(color);
-            data.Colors.Add(color);
-            data.Colors.Add(color);
+            data.Colors.Add(GradientUtils.GetColor(context.Gradient, rightStart, 0.2f));
+            data.Colors.Add(GradientUtils.GetColor(context.Gradient, leftStart, 0.2f));
+            data.Colors.Add(GradientUtils.GetColor(context.Gradient, leftEnd, 0.2f));
+            data.Colors.Add(GradientUtils.GetColor(context.Gradient, rightEnd, 0.2f));
         }
 
         /// <summary>
@@ -224,13 +212,16 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         {
             public readonly Building Building;
             public MeshData Data;
+            public GradientWrapper Gradient;
             
             public int TrisIndex;
 
-            public Context(Building building, IObjectPool objectPool)
+            public Context(Building building, GradientWrapper gradient, IObjectPool objectPool)
             {
                 Building = building;
                 Data = new MeshData();
+                Gradient = gradient;
+
                 Data.Vertices = objectPool.NewList<Vector3>(64);
                 Data.Triangles = objectPool.NewList<int>(128);
                 Data.Colors = objectPool.NewList<Color>(64);

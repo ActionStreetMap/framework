@@ -3,22 +3,22 @@ using System.Linq;
 using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 {
     /// <summary> Builds hipped roof. </summary>
-    public class HippedRoofBuilder: IRoofBuilder
+    public class HippedRoofBuilder: RoofBuilder
     {
         /// <inheritdoc />
-        public virtual string Name { get { return "hipped"; } }
+        public override string Name { get { return "hipped"; } }
 
         /// <inheritdoc />
-        public virtual bool CanBuild(Building building) { return true; }
+        public override bool CanBuild(Building building) { return true; }
 
         /// <inheritdoc />
-        public virtual MeshData Build(Building building)
+        public override MeshData Build(Building building)
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
 
@@ -31,14 +31,14 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             var triangles = new List<int>(skeletVertices.Count);
             var colors = new List<Color>(skeletVertices.Count);
 
-            var color = building.RoofColor.ToUnityColor();
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);
             for (int i = 0; i < skeletVertices.Count; i++)
             {
                 var vertex = skeletVertices[i];
                 var y = skeleton.Item2.Any(t => vertex == t) ? building.RoofHeight + roofOffset : roofOffset;
                 vertices.Add(new Vector3(vertex.x, y, vertex.y));
                 triangles.Add(i);
-                colors.Add(color);
+                colors.Add(GradientUtils.GetColor(gradient, vertex, 0.2f));
             }
            
             return new MeshData()

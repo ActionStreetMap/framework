@@ -6,26 +6,20 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 {
     /// <summary> Builds mansard roof. </summary>
-    public class MansardRoofBuilder : IRoofBuilder
+    public class MansardRoofBuilder : RoofBuilder
     {
         /// <inheritdoc />
-        public string Name { get { return "mansard"; } }
+        public override string Name { get { return "mansard"; } }
 
         /// <inheritdoc />
-        [Dependency]
-        public IObjectPool ObjectPool { get; set; }
-
-        /// <inheritdoc />
-        public bool CanBuild(Building building)
+        public override bool CanBuild(Building building)
         {
             // TODO improve checking of non standard buildings which 
             // cannot be used with mansard roof building
@@ -36,12 +30,10 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         }
 
         /// <inheritdoc />
-        public MeshData Build(Building building)
+        public override MeshData Build(Building building)
         {
             var polygon = new Polygon(building.Footprint);
             var offset = 2f; // TODO
-
-            var roofOffset = building.Elevation + building.MinHeight + building.Height;
 
             if (Math.Abs(building.RoofHeight) < 0.01f)
             {
@@ -49,23 +41,24 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
                 building.RoofHeight = (float) random.NextDouble(0.5f, 3);
             }
 
-            var verticies3D = GetVertices(polygon, offset, roofOffset, building.RoofHeight);
+            var meshData = new MeshData();
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
-            return new MeshData
-            {
-                Vertices = verticies3D,
-                Triangles = GetTriangles(building.Footprint),
-                Colors = GetColors(building),
-                MaterialKey = building.RoofMaterial
-            };
+            SetMeshData(building, polygon, meshData, gradient, offset);
+            return meshData;
         }
 
-        private List<Vector3> GetVertices(Polygon polygon, float offset,
-            float roofOffset, float roofHeight)
+        private void SetMeshData(Building building, Polygon polygon, MeshData meshData, GradientWrapper gradient,
+            float offset)
         {
-            var verticies = new List<Vector3>(polygon.Verticies.Length*2);
-            var topVerticies = new List<Vector3>(polygon.Verticies.Length);
-            var roofTop = roofOffset + roofHeight;
+            var roofOffset = building.Elevation + building.MinHeight + building.Height;
+
+            var vertices = new List<Vector3>(polygon.Verticies.Length*2);
+            var colors = new List<Color>(polygon.Verticies.Length * 2);
+
+            // TODO something wrong with this collection
+            var topVertices = new List<Vector3>(polygon.Verticies.Length);
+            var roofTop = roofOffset + building.RoofHeight;
 
             for (int i = 0; i < polygon.Segments.Length; i++)
             {
@@ -85,16 +78,33 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 
                 // TODO check whether offset is correct for intersection
 
-                verticies.Add(new Vector3(segment1.End.x, roofOffset, segment1.End.z));
-                verticies.Add(new Vector3(ip1.x, roofTop, ip1.z));
+                var v0 = new Vector3(segment1.End.x, roofOffset, segment1.End.z);
+                vertices.Add(v0);
+                colors.Add(GradientUtils.GetColor(gradient, v0, 0.2f));
 
-                verticies.Add(new Vector3(segment2.End.x, roofOffset, segment2.End.z));
-                verticies.Add(new Vector3(ip2.x, roofTop, ip2.z));
+                var v1 = new Vector3(ip1.x, roofTop, ip1.z);
+                vertices.Add(v1);
+                colors.Add(GradientUtils.GetColor(gradient, v1, 0.2f));
 
-                topVerticies.Add(new Vector3(ip1.x, roofTop, ip1.z));
+                var v2 = new Vector3(segment2.End.x, roofOffset, segment2.End.z);
+                vertices.Add(v2);
+                colors.Add(GradientUtils.GetColor(gradient, v2, 0.2f));
+
+                var v3 = new Vector3(ip2.x, roofTop, ip2.z);
+                vertices.Add(v3);
+                colors.Add(GradientUtils.GetColor(gradient, v3, 0.2f));
+
+                topVertices.Add(new Vector3(ip1.x, roofTop, ip1.z));
+
             }
-            verticies.AddRange(topVerticies);
-            return verticies;
+            vertices.AddRange(topVertices);
+            foreach (var topVertex in topVertices)
+                colors.Add(GradientUtils.GetColor(gradient, topVertex, 0.2f));
+
+            meshData.Vertices = vertices;
+            meshData.Triangles = GetTriangles(building.Footprint);
+            meshData.Colors = colors;
+            meshData.MaterialKey = building.RoofMaterial;
         }
 
         private List<int> GetTriangles(List<MapPoint> footprint)
@@ -117,18 +127,6 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
             triangles.AddRange(topPartIndecies.Select(i => i + vertCount));
 
             return triangles;
-        }
-
-        private List<Color> GetColors(Building building)
-        {
-            var count = building.Footprint.Count;
-            var colors = new List<Color>(count*5);
-            var length = count*5;
-            var color = building.RoofColor.ToUnityColor();
-            for (int i = 0; i < length; i++)
-                colors.Add(color);
-
-            return colors;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
 
             // ASSERT
             Assert.IsTrue(tile1.Registry.Contains(testId));
-            Assert.IsTrue(tile1.Registry.Contains(otherId));
+            Assert.IsFalse(tile1.Registry.Contains(otherId));
             Assert.IsTrue(tile2.Registry.Contains(testId));
             Assert.IsFalse(tile2.Registry.Contains(otherId));
         }

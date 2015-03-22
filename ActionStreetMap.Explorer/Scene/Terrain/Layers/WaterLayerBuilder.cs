@@ -3,6 +3,7 @@ using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
@@ -64,7 +65,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
                     meshVertices[index + 2] = new Vector3(p2.x, p2.y - BottomLevelOffset, p2.z);
                     vertices.Add(new Vector3(p2.x, p2.y - WaterLevelOffset, p2.z));
 
-                    var color = GetColor(gradient, new Vector3(p0.x, p0.y, p0.y), colorNoiseFreq);
+                    var color = GradientUtils.GetColor(gradient, new Vector3(p0.x, p0.y, p0.y), colorNoiseFreq);
                     colors.Add(color);
                     colors.Add(color);
                     colors.Add(color);

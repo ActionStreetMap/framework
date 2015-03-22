@@ -1,5 +1,9 @@
 ﻿using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 {
@@ -18,5 +22,26 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         /// <param name="building"> Building.</param>
         /// <returns> MeshData.</returns>
         MeshData Build(Building building);
+    }
+
+    public abstract class RoofBuilder : IRoofBuilder
+    {
+        /// <inheritdoc />
+        public abstract string Name { get; }
+
+        /// <inheritdoc />
+        public abstract bool CanBuild(Building building);
+
+        /// <inheritdoc />
+        public abstract MeshData Build(Building building);
+
+        [Dependency]
+        public IObjectPool ObjectPool { get; set; }
+
+        [Dependency]
+        public IResourceProvider ResourceProvider { get; set; }
+
+        [Dependency]
+        public IGameObjectFactory GameObjectFactory { get; set; }
     }
 }

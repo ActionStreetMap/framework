@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
@@ -346,6 +347,24 @@ namespace ActionStreetMap.Tests.Core.MapCss
 
             // ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(node).IsApplicable);
+        }
+
+        [Test]
+        public void CanUseGradient()
+        {
+            // ARRANGE
+            const string gradientString = "gradient(#f4f4f4, yellow 10%, green 20%)";
+            var stylesheet = MapCssHelper
+                .GetStylesheetFromContent(String.Format("node[*] {{ facade: {0};}}\n", gradientString));
+
+            // ACT
+            var node = MapCssHelper.GetNode(new Dictionary<string, string>().ToTags());
+
+            // ASSERT
+            var rule = stylesheet.GetModelRule(node);
+            var facadeGradient = rule.Evaluate<string>("facade");
+            Assert.IsNotEmpty(facadeGradient);
+            Assert.AreEqual(gradientString, facadeGradient);
         }
 
         private ActionStreetMap.Core.Unity.Color32 GetOriginalColorTypeObject(Color32 color)

@@ -15,10 +15,12 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         public void CanBuildMansardWithValidData()
         {
             // ARRANGE
-            var builder = new MansardRoofBuilder();
-            builder.ObjectPool = new ObjectPool();
+            var roofBuilder = new MansardRoofBuilder();
+            roofBuilder.ObjectPool = new ObjectPool();
+            roofBuilder.ResourceProvider = new UnityResourceProvider();
+
             // ACT
-            var meshData = builder.Build(new Building()
+            var meshData = roofBuilder.Build(new Building()
             {
                 Footprint = new List<MapPoint>()
                 {
@@ -29,7 +31,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 },
                 Elevation = 0,
                 Height = 1,
-                RoofColor = new Color32(0, 0, 0, 0)
+                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
             });
 
             // ASSERT
@@ -42,8 +44,9 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         public void CanBuildGabled()
         {
             // ARRANGE
-            var roofBuilder = new GabledRoofBuilder(new ObjectPool());
-
+            var roofBuilder = new GabledRoofBuilder();
+            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            roofBuilder.ObjectPool = new ObjectPool();
             // ACT
             var meshData = roofBuilder.Build(new Building()
             {
@@ -57,7 +60,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 Elevation = 0,
                 Height = 10,
                 RoofHeight = 2,
-                RoofColor = new Color32(0,0,0,0)
+                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
             });
 
             // ASSERT
@@ -72,7 +75,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new HippedRoofBuilder();
-
+            roofBuilder.ResourceProvider = new UnityResourceProvider();
             // ACT
             var meshData = roofBuilder.Build(new Building()
             {
@@ -86,7 +89,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 Elevation = 0,
                 Height = 10,
                 RoofHeight = 2,
-                RoofColor = new Color32(0, 0, 0, 0)
+                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
             });
 
             // ASSERT

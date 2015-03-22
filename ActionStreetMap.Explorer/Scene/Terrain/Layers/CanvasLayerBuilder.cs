@@ -48,7 +48,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
                 triangles.Add(--index);
                 triangles.Add(--index);
 
-                var triangleColor = GetColor(gradient, new Vector3((float)v0.X, ele0, (float)v0.Y), colorNoiseFreq);
+                var triangleColor = GradientUtils.GetColor(gradient, new Vector3((float)v0.X, ele0, (float)v0.Y), colorNoiseFreq);
 
                 colors.Add(triangleColor);
                 colors.Add(triangleColor);

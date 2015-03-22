@@ -35,12 +35,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
         public abstract string Name { get; }
         public abstract void Build(MeshContext context, MeshRegion meshRegion);
 
-        public Color GetColor(GradientWrapper gradientWrapper, Vector3 point, float freq)
-        {
-            var value = (Noise.Perlin3D(point, freq) + 1f) / 2f;
-            return gradientWrapper.Evaluate(value);
-        }
-
         protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient, float deepLevel)
         {
             var colorNoiseFreq = 0.2f;
@@ -77,8 +71,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
                         vertices.Add(new Vector3(p1.X, ele1 - deepLevel - errorBottomFix, p1.Y));
 
                         // colors
-                        var firstColor = GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
-                        var secondColor = GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
+                        var firstColor = GradientUtils.GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
+                        var secondColor = GradientUtils.GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
 
                         colors.Add(firstColor);
                         colors.Add(secondColor);

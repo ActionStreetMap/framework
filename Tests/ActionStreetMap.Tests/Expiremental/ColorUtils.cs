@@ -15,10 +15,10 @@ namespace ActionStreetMap.Tests.Expiremental
             var prevColor = EnlightColor(color, 0.4);
             var nextColor = EnlightColor(color, -0.4);
 
-            return String.Format("{0}_0_{1}_.5_{2}_1__1_0_1_1", 
-                ColorTranslator.ToHtml(prevColor).Substring(1),
-                ColorTranslator.ToHtml(color).Substring(1),
-                ColorTranslator.ToHtml(nextColor).Substring(1));
+            return String.Format("gradient({0}, {1} 50%, {2})", 
+                ColorTranslator.ToHtml(prevColor).ToLower(),
+                ColorTranslator.ToHtml(color).ToLower(),
+                ColorTranslator.ToHtml(nextColor)).ToLower();
         }
 
         public static Color EnlightColor(Color color, double ratio)

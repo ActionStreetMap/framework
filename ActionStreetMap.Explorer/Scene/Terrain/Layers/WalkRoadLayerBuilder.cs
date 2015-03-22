@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
@@ -31,7 +32,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
                 {
                     var vertex = triangle.GetVertex(0);
                     var index = hashMap[triangle.GetHashCode()];
-                    var color = GetColor(gradient, new Vector3((float) vertex.X, 0, (float) vertex.Y), colorNoiseFreq);
+                    var color = GradientUtils.GetColor(gradient, new Vector3((float) vertex.X, 0, (float) vertex.Y), colorNoiseFreq);
                     colors[index] = color;
                     colors[index + 1] = color;
                     colors[index + 2] = color;

@@ -4,29 +4,19 @@ using ActionStreetMap.Core.Scene.Buildings;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
-using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
 {
     /// <summary> Builds dome roof. </summary>
-    public class DomeRoofBuilder: IRoofBuilder
+    public class DomeRoofBuilder : RoofBuilder
     {
-        private readonly IGameObjectFactory _gameObjectFactory;
+        /// <inheritdoc />
+        public override string Name { get { return "dome"; } }
 
         /// <inheritdoc />
-        public string Name { get { return "dome"; } }
-
-        /// <summary> Creates DomeRoofBuilder. </summary>
-        [Dependency]
-        public DomeRoofBuilder(IGameObjectFactory gameObjectFactory)
-        {
-            _gameObjectFactory = gameObjectFactory;
-        }
-
-        /// <inheritdoc />
-        public bool CanBuild(Building building)
+        public override bool CanBuild(Building building)
         {
             // we should use this builder only in case of dome type defined explicitly
             // cause we expect that footprint of building has the coresponding shape (circle)
@@ -34,9 +24,9 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Roofs
         }
 
         /// <inheritdoc />
-        public MeshData Build(Building building)
+        public override MeshData Build(Building building)
         {
-            IGameObject gameObjectWrapper = _gameObjectFactory.CreateNew(Name);
+            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(Name);
 
             var tuple = CircleUtils.GetCircle(building.Footprint);
 
