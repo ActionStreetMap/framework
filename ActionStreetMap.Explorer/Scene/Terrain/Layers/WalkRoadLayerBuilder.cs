@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
         {
             var colors = context.Data.Colors;
             var hashMap = context.TriangleMap;
-            var gradient = ResourceProvider.GetGradient("road.walk");
+            var gradient = context.Rule.GetPedestrianLayerGradient(ResourceProvider);
             var colorNoiseFreq = 1f;
             foreach (var region in meshRegion.FillRegions)
             {

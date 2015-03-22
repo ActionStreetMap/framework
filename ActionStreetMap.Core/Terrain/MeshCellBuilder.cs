@@ -89,7 +89,7 @@ namespace ActionStreetMap.Core.Terrain
                     polygon.AddContour(vertices);
                     fillRegions.Add(new MeshFillRegion
                     {
-                        SplatId = region.SplatId,
+                        GradientKey = region.GradientKey,
                         Anchor = vertex
                     });
                     contours.AddRange(GetContour(rectangle, path));

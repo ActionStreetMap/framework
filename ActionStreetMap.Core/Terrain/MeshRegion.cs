@@ -14,7 +14,7 @@ namespace ActionStreetMap.Core.Terrain
 
     internal class MeshFillRegion
     {
-        public int SplatId;
+        public string GradientKey;
         public Vertex Anchor;
     }
 }

@@ -18,7 +18,5 @@
 	"tile": {
 		"size":300,
 		"offset":50,
-		"heightmap":1025,
-		"flat":false,
 	}
 }

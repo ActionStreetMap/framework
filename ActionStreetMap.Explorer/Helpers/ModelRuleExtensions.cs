@@ -32,9 +32,9 @@ namespace ActionStreetMap.Explorer.Helpers
             return new Color32(coreColor.R, coreColor.G, coreColor.B, coreColor.A);
         }
 
-        public static Core.Unity.Color32 GetFillColor(this Rule rule)
+        public static string GetFillColor(this Rule rule)
         {
-            return rule.Evaluate<Core.Unity.Color32>("fill-color", ColorUtility.FromUnknown);
+            return rule.Evaluate<string>("fill-color");
         }
 
         public static bool IsSkipped(this Rule rule)

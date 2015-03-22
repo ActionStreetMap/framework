@@ -23,7 +23,7 @@ namespace ActionStreetMap.Explorer.Scene
             PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, points);
             tile.Canvas.AddArea(new Surface()
             {
-                SplatIndex = rule.GetSplatIndex(),
+                GradientKey = rule.GetFillColor(),
                 Points = points
             });
 

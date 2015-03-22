@@ -15,7 +15,7 @@ namespace ActionStreetMap.Core.Terrain
 
         internal class Region
         {
-            public int SplatId;
+            public string GradientKey;
             public Paths Shape;
         }
     }

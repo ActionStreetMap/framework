@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
             var triangles = new List<int>();
             var colors = new List<Color>();
 
-            var gradient = ResourceProvider.GetGradient("water.simple");
+            var gradient = context.Rule.GetWaterLayerGradient(ResourceProvider);
 
             foreach (var region in meshRegion.FillRegions)
             {
@@ -78,7 +78,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
                 Trace.Debug(LogTag, "Water region processed triangles: {0}", count /3);
             }
 
-            BuildOffsetShape(context, meshRegion, ResourceProvider.GetGradient("canvas"), BottomLevelOffset);
+            BuildOffsetShape(context, meshRegion, context.Rule.GetCanvasLayerGradient(ResourceProvider), BottomLevelOffset);
             Scheduler.MainThread.Schedule(() => BuildWaterObject(context, vertices, triangles, colors));
         }
 

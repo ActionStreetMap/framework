@@ -110,7 +110,6 @@ namespace ActionStreetMap.Core.Terrain
             _clipper.Clear();
             _water = new MeshCanvas.Region
             {
-                SplatId = 0,
                 Shape = ClipByTile(solution)
             };
         }
@@ -122,7 +121,7 @@ namespace ActionStreetMap.Core.Terrain
         private void BuildSurfaces()
         {
             var regions = new List<MeshCanvas.Region>();
-            foreach (var group in _tile.Canvas.Areas.GroupBy(s => s.SplatIndex))
+            foreach (var group in _tile.Canvas.Areas.GroupBy(s => s.GradientKey))
             {
                 var paths = group.Select(a => a.Points
                     .Select(p => new IntPoint(p.X*_scale, p.Y*_scale)).ToList())
@@ -144,7 +143,7 @@ namespace ActionStreetMap.Core.Terrain
                 _clipper.Clear();
                 regions.Add(new MeshCanvas.Region
                 {
-                    SplatId = group.Key,
+                    GradientKey = group.Key,
                     Shape = ClipByTile(surfacesResult)
                 });
             }
@@ -179,7 +178,6 @@ namespace ActionStreetMap.Core.Terrain
             _clipper.Clear();
             return new MeshCanvas.Region
             {
-                SplatId = 0,
                 Shape = ClipByTile(resultRoads)
             };
         }

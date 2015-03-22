@@ -1,6 +1,7 @@
 ﻿using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
             var colors = context.Data.Colors;
             var vertices = context.Data.Vertices;
             var hashMap = context.TriangleMap;
-            var gradient = ResourceProvider.GetGradient("road.car");
+            var gradient = context.Rule.GetCarLayerGradient(ResourceProvider);
             var eleNoiseFreq = 0.2f;
             foreach (var region in meshRegion.FillRegions)
             {

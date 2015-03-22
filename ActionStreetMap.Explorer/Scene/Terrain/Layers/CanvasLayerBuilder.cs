@@ -1,6 +1,8 @@
 ﻿using ActionStreetMap.Core;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
@@ -12,7 +14,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
 
         public override void Build(MeshContext context, MeshRegion meshRegion)
         {
-            var gradient = ResourceProvider.GetGradient("canvas");
+            var gradient = context.Rule.GetCanvasLayerGradient(ResourceProvider);
             var terrainMesh = context.Mesh;
             var colors = context.Data.Colors;
             var vertices = context.Data.Vertices;

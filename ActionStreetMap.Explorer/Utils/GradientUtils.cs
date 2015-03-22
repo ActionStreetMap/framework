@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Unity.Wrappers;
@@ -12,9 +13,12 @@ namespace ActionStreetMap.Explorer.Utils
         public static GradientWrapper ParseGradient(string gradientString)
         {
             var results = MapCssGradientRegEx.Matches(gradientString);
+            var count = results.Count;
+            if (count == 0)
+                throw new ArgumentException(String.Format(Strings.InvalidGradientString, gradientString));
 
-            var colorKeys = new GradientWrapper.ColorKey[results.Count];
-            for (int i = 0; i < results.Count; i++)
+            var colorKeys = new GradientWrapper.ColorKey[count];
+            for (int i = 0; i < count; i++)
             {
                 var values = results[i].Groups[0].Value.Split(' ');
                 var color = ColorUtility.FromUnknown(values[0]);

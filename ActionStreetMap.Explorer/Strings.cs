@@ -17,8 +17,7 @@
         public static string BugInPolygonOrderAlgorithm = "Bug in polygon order algorithm!";
         public static string GabledRoofGenFailed = "Gabled roof generation algorithm is faled for {0}";
 
-        public static string TerrainScanLineAlgorithmBug =
-            "Bug in algorithm! We're expecting to have even number of intersection _pointsBuffer: (_pointsBuffer.Count % 2 != 0)";
+        public static string InvalidGradientString = "Invalid gradient string: {0}";
 
         #region Commands
 

@@ -5,8 +5,8 @@ namespace ActionStreetMap.Core.Scene.Details
     /// <summary> Represents surface. </summary>
     public class Surface
     {
-        /// <summary> Gets or sets splat index. </summary>
-        public int SplatIndex { get; set; }
+        /// <summary> Gets or sets gradient key. </summary>
+        public string GradientKey { get; set; }
 
         /// <summary> Gets or sets average elevation. </summary>
         public float AverageElevation { get; set; }

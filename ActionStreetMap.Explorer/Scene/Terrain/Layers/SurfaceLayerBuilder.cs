@@ -26,7 +26,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain.Layers
                     continue;
                 }
                 int count = 0;
-                var gradient = ResourceProvider.GetGradient("surface.park");
+                var gradient = ResourceProvider.GetGradient(fillRegion.GradientKey);
                 context.Iterator.Process(start, triangle =>
                 {
                     var index = hashMap[triangle.GetHashCode()];

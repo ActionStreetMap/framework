@@ -23,7 +23,7 @@ namespace ActionStreetMap.Explorer.Scene.Buildings.Facades
         public MeshData Build(Building building)
         {
             var footprint = building.Footprint;
-            var gradient = _resourceProvider.GetGradient("building.default");
+            var gradient = _resourceProvider.GetGradient(building.FacadeColor);
             var meshData = new MeshData
             {
                 Vertices = new List<Vector3>(1024),
