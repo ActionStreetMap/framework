@@ -5,7 +5,6 @@ using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Explorer.Scene.Buildings;
 using ActionStreetMap.Explorer.Scene.Facades;
 using ActionStreetMap.Explorer.Scene.Roofs;
 using ActionStreetMap.Explorer.Scene.Terrain;
@@ -60,7 +59,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             // NOTE no standard behaviours so far
 
             // facades
-            Container.Register(Component.For<IFacadeBuilder>().Use<MeshFacadeBuilder>().Named("flat").Singleton());
+            Container.Register(Component.For<IFacadeBuilder>().Use<FlatFacadeBuilder>().Named("flat").Singleton());
             
             // roofs
             Container.Register(Component.For<IRoofBuilder>().Use<GabledRoofBuilder>().Named("gabled").Singleton());

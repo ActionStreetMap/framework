@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Facades
 {
-    internal class MeshFacadeBuilder: IFacadeBuilder
+    internal class FlatFacadeBuilder: IFacadeBuilder
     {
         private readonly IResourceProvider _resourceProvider;
 
         public string Name { get { return "flat"; } }
 
         [Dependency]
-        public MeshFacadeBuilder(IResourceProvider resourceProvider)
+        public FlatFacadeBuilder(IResourceProvider resourceProvider)
         {
             _resourceProvider = resourceProvider;
         }
