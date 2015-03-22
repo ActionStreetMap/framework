@@ -61,9 +61,13 @@
     <Compile Include="Interactions\NoiseWaveBehavior.cs" />
     <Compile Include="Scene\Buildings\BuildingBuilder.cs" />
     <Compile Include="Scene\Buildings\BuildingStyle.cs" />
+    <Compile Include="Scene\Buildings\Facades\EmptySideBuilder.cs" />
     <Compile Include="Scene\Buildings\Facades\FlatFacadeBuilder.cs" />
     <Compile Include="Scene\Buildings\Facades\IFacadeBuilder.cs" />
     <Compile Include="Geometry\MeshData.cs" />
+    <Compile Include="Scene\Buildings\Facades\MeshFacadeBuilder.cs" />
+    <Compile Include="Scene\Buildings\Facades\SideBuilder.cs" />
+    <Compile Include="Scene\Buildings\Facades\WindowSideBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\DomeRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\FlatRoofBuilder.cs" />
     <Compile Include="Scene\Buildings\Roofs\GabledRoofBuilder.cs" />
