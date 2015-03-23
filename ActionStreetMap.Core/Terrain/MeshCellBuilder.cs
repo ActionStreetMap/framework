@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Polygons.Geometry;
@@ -18,7 +17,7 @@ namespace ActionStreetMap.Core.Terrain
         internal const float DoubleScale = Scale*Scale;
         private float _maximumArea = 8;
 
-        private readonly object _lock = new object();
+        private readonly object _objLock = new object();
 
         #region Public methods
 
@@ -78,9 +77,9 @@ namespace ActionStreetMap.Core.Terrain
                 }
                 else
                 {
-                    polygon.AddContour(vertices);
+                    polygon.AddContour(vertices, 0, true);
                     var contour = GetContour(rectangle, path);
-                    contour.ForEach(g => g.Reverse());
+                    contour.ForEach(c => c.Reverse());
                     contours.AddRange(contour);
                 }
             }
@@ -96,7 +95,7 @@ namespace ActionStreetMap.Core.Terrain
 
         private Mesh GetMesh(Polygon polygon)
         {
-            lock (_lock)
+            lock (_objLock)
             {
                 return polygon.Triangulate(new ConstraintOptions {UseRegions = true},
                     new QualityOptions {MaximumArea = _maximumArea});
