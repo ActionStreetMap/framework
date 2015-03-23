@@ -19,6 +19,7 @@ namespace ActionStreetMap.Core.Terrain
         private Rectangle _tileRect;
         private float _scale;
 
+        private MeshCanvas.Region _background;
         private MeshCanvas.Region _water;
         private MeshCanvas.Region _carRoads;
         private MeshCanvas.Region _walkRoads;
@@ -49,10 +50,12 @@ namespace ActionStreetMap.Core.Terrain
             BuildWater();
             BuildRoads();
             BuildSurfaces();
+            BuildBackground();
 
             return new MeshCanvas
             {
                 Rect = _tileRect,
+                Background = _background,
                 Water = _water,
                 CarRoads = _carRoads,
                 WalkRoads = _walkRoads,
@@ -94,6 +97,37 @@ namespace ActionStreetMap.Core.Terrain
             _clipper.Execute(ClipType.ctIntersection, solution);
             _clipper.Clear();
             return solution;
+        }
+
+        #endregion
+
+        #region Background
+
+        private void BuildBackground()
+        {
+            // TODO convert and reuse rect
+            var rect = _tileRect;
+            _clipper.AddPath(new Path
+            {
+                new IntPoint(rect.Left*_scale, rect.Bottom*_scale),
+                new IntPoint(rect.Right*_scale, rect.Bottom*_scale),
+                new IntPoint(rect.Right*_scale, rect.Top*_scale),
+                new IntPoint(rect.Left*_scale, rect.Top*_scale)
+            }, PolyType.ptSubject, true);
+
+            _clipper.AddPaths(_carRoads.Shape, PolyType.ptClip, true);
+            _clipper.AddPaths(_walkRoads.Shape, PolyType.ptClip, true);
+            _clipper.AddPaths(_water.Shape, PolyType.ptClip, true);
+            _clipper.AddPaths(_surfaces.SelectMany(r => r.Shape).ToList(), PolyType.ptClip, true);
+            var solution = new Paths();
+            _clipper.Execute(ClipType.ctDifference, solution, PolyFillType.pftPositive,
+                PolyFillType.pftPositive);
+            _clipper.Clear();
+
+            _background = new MeshCanvas.Region()
+            {
+                Shape = solution
+            };
         }
 
         #endregion

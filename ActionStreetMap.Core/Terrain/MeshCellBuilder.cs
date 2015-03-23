@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ActionStreetMap.Core.Polygons;
@@ -13,7 +14,8 @@ namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshCellBuilder
     {
-        internal const float Scale = 100000f;
+        internal const float Scale = 1000f;
+        internal const float DoubleScale = Scale*Scale;
         private float _maximumArea = 8;
 
         private readonly object _lock = new object();
@@ -22,38 +24,20 @@ namespace ActionStreetMap.Core.Terrain
 
         public MeshCell Build(Rectangle rectangle, MeshCanvas content)
         {
-            // build polygon
-            var polygon = new Polygon();
-            var options = new ConstraintOptions {UseRegions = true};
-            var quality = new QualityOptions {MaximumArea = _maximumArea};
-            polygon.AddContour(new Collection<Vertex>
-            {
-                new Vertex(rectangle.Left, rectangle.Bottom),
-                new Vertex(rectangle.Right, rectangle.Bottom),
-                new Vertex(rectangle.Right, rectangle.Top),
-                new Vertex(rectangle.Left, rectangle.Top)
-            });
-
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(polygon, rectangle, content.Water);
-            var resultCarRoads = CreateMeshRegions(polygon, rectangle, content.CarRoads);
-            var resultWalkRoads = CreateMeshRegions(polygon, rectangle, content.WalkRoads);
-            var resultSurface = CreateMeshRegions(polygon, rectangle, content.Surfaces);
-
-            Mesh mesh;
-            // NOTE this operation is not thread safe
-            lock (_lock)
-            {
-                mesh = polygon.Triangulate(options, quality);
-            }
+            var water = CreateMeshRegions(rectangle, content.Water);
+            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads);
+            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads);
+            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces);
+            var background = CreateMeshRegions(rectangle, content.Background);
 
             return new MeshCell
             {
-                Mesh = mesh,
                 Water = water,
                 CarRoads = resultCarRoads,
                 WalkRoads = resultWalkRoads,
-                Surfaces = resultSurface
+                Surfaces = resultSurface,
+                Background = background
             };
         }
 
@@ -64,50 +48,59 @@ namespace ActionStreetMap.Core.Terrain
 
         #endregion
 
-        private List<MeshRegion> CreateMeshRegions(Polygon polygon, Rectangle rectangle, List<MeshCanvas.Region> regionDatas)
+        private List<MeshRegion> CreateMeshRegions(Rectangle rectangle, List<MeshCanvas.Region> regionDatas)
         {
             var meshRegions = new List<MeshRegion>();
             foreach (var regionData in regionDatas)
-                meshRegions.Add(CreateMeshRegions(polygon, rectangle, regionData));
+                meshRegions.Add(CreateMeshRegions(rectangle, regionData));
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(Polygon polygon, Rectangle rectangle, MeshCanvas.Region region)
+        private MeshRegion CreateMeshRegions(Rectangle rectangle, MeshCanvas.Region region)
         {
-            var fillRegions = new List<MeshFillRegion>();
-            var simplifiedPath = Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape));
+            var polygon = new Polygon();
+            var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
             var contours = new VertexPaths(4);
             var holes = new VertexPaths(2);
             foreach (var path in simplifiedPath)
             {
-                var orientation = Clipper.Orientation(path);
+                var area = Clipper.Area(path);
+                // skip small polygons to prevent triangulation issues
+                if(Math.Abs(area / DoubleScale)<1) 
+                    continue;
+
                 var vertices = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
-                if (orientation)
+                // sign of area defines polygon orientation
+                if (area > 0)
                 {
-                    var vertex = GetAnyPointInsidePolygon(path);
-                    polygon.Regions.Add(new RegionPointer(vertex.X, vertex.Y, 0));
                     polygon.AddContour(vertices);
-                    fillRegions.Add(new MeshFillRegion
-                    {
-                        GradientKey = region.GradientKey,
-                        Anchor = vertex
-                    });
                     contours.AddRange(GetContour(rectangle, path));
                 }
                 else
                 {
                     polygon.AddContour(vertices);
-                    var ggg = GetContour(rectangle, path);
-                    ggg.ForEach(g => g.Reverse());
-                    contours.AddRange(ggg);
+                    var contour = GetContour(rectangle, path);
+                    contour.ForEach(g => g.Reverse());
+                    contours.AddRange(contour);
                 }
             }
+            var mesh = contours.Any() ? GetMesh(polygon) : null;
             return new MeshRegion
             {
                 Contours = contours,
                 Holes = holes,
-                FillRegions = fillRegions
+                GradientKey = region.GradientKey,
+                Mesh = mesh
             };
+        }
+
+        private Mesh GetMesh(Polygon polygon)
+        {
+            lock (_lock)
+            {
+                return polygon.Triangulate(new ConstraintOptions {UseRegions = true},
+                    new QualityOptions {MaximumArea = _maximumArea});
+            }
         }
 
         private Paths ClipByRectangle(Rectangle rect, Paths subjects)
@@ -160,45 +153,6 @@ namespace ActionStreetMap.Core.Terrain
             clipper.Execute(ClipType.ctIntersection, solution);
 
             return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
-        }
-
-        private Vertex GetAnyPointInsidePolygon(Path path)
-        {
-            if (path.Count == 3)
-            {
-                var p1 = path[0];
-                var p2 = path[1];
-                var p3 = path[2];
-
-                const float scaleDown = Scale*3f;
-                return new Vertex((p1.X + p2.X + p3.X)/scaleDown, (p1.Y + p2.Y + p3.Y)/scaleDown);
-            }
-
-            // see http://stackoverflow.com/questions/9797448/get-a-point-inside-the-polygon
-            // Chose first 3 consecutive points from the polygon
-            // Check, if the halfway point between the first and the third point is inside the polygon
-            // If yes: You found your point
-            // If no: Drop first point, add next point and goto 2.
-            // This is guaranteed to end, as every strictly closed polygon  has at least one triangle, 
-            // that is completly part of the polygon.
-            var count = path.Count;
-            var circleIndex = count - 2;
-            for (int i = 0; i < count; i++)
-            {
-                IntPoint p1 = path[i];
-                IntPoint p3;
-                if (i < circleIndex)
-                    p3 = path[i + 2];
-                else if (i == count - 2)
-                    p3 = path[0];
-                else
-                    p3 = path[1];
-
-                var middlePoint = new IntPoint((p1.X + p3.X)/2, (p1.Y + p3.Y)/2);
-                if (Clipper.PointInPolygon(middlePoint, path) > 0)
-                    return new Vertex(middlePoint.X/Scale, middlePoint.Y/Scale);
-            }
-            throw new AlgorithmException("Cannot find point inside polygon");
         }
     }
 }

@@ -20,7 +20,7 @@ namespace ActionStreetMap.Explorer.Utils
         {
             objectPool.StoreList(meshData.Vertices);
             objectPool.StoreList(meshData.Triangles);
-            //objectPool.StoreList(meshData.UV);
+            objectPool.StoreList(meshData.Colors);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace ActionStreetMap.Core.Terrain
     {
         public Rectangle Rect;
 
+        public Region Background;
         public Region Water;
         public List<Region> Surfaces;
         public Region CarRoads;
