@@ -5,12 +5,8 @@ namespace ActionStreetMap.Core.Terrain
 {
     internal class MeshRegion
     {
-        public Mesh Mesh;
-
-        public VertexPaths Contours;
-        public VertexPaths Holes;
-
         public string GradientKey;
-
+        public Mesh Mesh;
+        public VertexPaths Contours;
     }
 }

@@ -60,14 +60,12 @@ namespace ActionStreetMap.Core.Terrain
             var polygon = new Polygon();
             var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
             var contours = new VertexPaths(4);
-            var holes = new VertexPaths(2);
             foreach (var path in simplifiedPath)
             {
                 var area = Clipper.Area(path);
                 // skip small polygons to prevent triangulation issues
-                if(Math.Abs(area / DoubleScale)<1) 
+                if(Math.Abs(area / DoubleScale) < 1) 
                     continue;
-
                 var vertices = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
                 // sign of area defines polygon orientation
                 if (area > 0)
@@ -87,7 +85,6 @@ namespace ActionStreetMap.Core.Terrain
             return new MeshRegion
             {
                 Contours = contours,
-                Holes = holes,
                 GradientKey = region.GradientKey,
                 Mesh = mesh
             };
