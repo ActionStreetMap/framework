@@ -2,8 +2,10 @@
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
@@ -24,38 +26,26 @@ namespace ActionStreetMap.Explorer.Scene
                 return null;
 
             var circle = CircleUtils.GetCircle(tile.RelativeNullPoint, area.Points);
-            var diameter = circle.Item1;
-            var sphereCenter = circle.Item2;
+            var radius = circle.Item1 / 2;
+            var center = circle.Item2;
             var minHeight = rule.GetMinHeight();
 
-            var elevation = ElevationProvider.GetElevation(sphereCenter);
-
-            IGameObject gameObjectWrapper = GameObjectFactory.CreateNew(GetName(area));
+            var elevation = ElevationProvider.GetElevation(center);
 
             tile.Registry.RegisterGlobal(area.Id);
 
-            Scheduler.MainThread.Schedule(() => BuildSphere(gameObjectWrapper, rule, area, sphereCenter, diameter, elevation + minHeight));
+            var color = rule.GetFillColor();
+            var gradient = ResourceProvider.GetGradient(color);
 
-            return gameObjectWrapper;
-        }
+            var meshData = ObjectPool.CreateMeshData();
+            meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
+            meshData.MaterialKey = rule.GetMaterial();
 
-        /// <summary> Process unity specific data. </summary>
-        protected virtual void BuildSphere(IGameObject gameObjectWrapper, Rule rule, Model model, 
-            MapPoint sphereCenter, float diameter, float heightOffset)
-        {
-            var sphere = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Sphere));
-            sphere.isStatic = true;
-            sphere.renderer.sharedMaterial = rule.GetMaterial(ResourceProvider);
+            IcoSphereGenerator.Generate(meshData, new Vector3(center.X, elevation + minHeight, center.Y), radius, 2, gradient);
 
-            // TODO use defined color
-            Mesh mesh = sphere.renderer.GetComponent<MeshFilter>().mesh;
-            var uv = mesh.uv;
-            for (int i = 0; i < uv.Length; i++)
-                uv[i] = new Vector2(0, 0);
-            mesh.uv = uv;
+            BuildObject(tile.GameObject, meshData);
 
-            sphere.transform.localScale = new Vector3(diameter, diameter, diameter);
-            sphere.transform.position = new Vector3(sphereCenter.X, heightOffset + diameter/2, sphereCenter.Y);
+            return meshData.GameObject;
         }
     }
 }

@@ -3,10 +3,14 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
 {
@@ -87,6 +91,33 @@ namespace ActionStreetMap.Explorer.Scene
         {
             //Trace.Normal(String.Format("{0}: building node {1}", Name, node.Id));
             return null;
+        }
+
+        /// <summary> Builds game object from meshData </summary>
+        protected void BuildObject(IGameObject parent, MeshData meshData)
+        {
+            var vertices = meshData.Vertices.ToArray();
+            var triangles = meshData.Triangles.ToArray();
+            var colors = meshData.Colors.ToArray();
+            ObjectPool.RecycleMeshData(meshData);
+
+            Scheduler.MainThread.Schedule(() =>
+            {
+                var gameObject = meshData.GameObject.AddComponent(new GameObject());
+                var mesh = new Mesh();
+                mesh.vertices = vertices;
+                mesh.triangles = triangles;
+                mesh.colors = colors;
+                mesh.RecalculateNormals();
+
+                gameObject.AddComponent<MeshFilter>().mesh = mesh;
+                gameObject.AddComponent<MeshCollider>();
+                gameObject.AddComponent<MeshRenderer>().material = ResourceProvider
+                    .GetMaterial(meshData.MaterialKey);
+
+                gameObject.isStatic = true;
+                gameObject.transform.parent = parent.GetComponent<GameObject>().transform;
+            });
         }
 
         /// <summary> Returns name of game object. </summary>

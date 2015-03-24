@@ -1,7 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
-using ActionStreetMap.Explorer.Scene;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Helpers
@@ -11,13 +10,18 @@ namespace ActionStreetMap.Explorer.Helpers
         public static Material GetMaterial(this Rule rule, IResourceProvider resourceProvider)
         {
             var path = rule.Evaluate<string>("material");
-            return resourceProvider.GetMatertial(@"Materials/" + path);
+            return resourceProvider.GetMaterial(@"Materials/" + path);
         }
 
         public static Material GetMaterial(this Rule rule, string path, IResourceProvider resourceProvider)
         {
             var materialPath = rule.Evaluate<string>(path);
-            return resourceProvider.GetMatertial(@"Materials/" + materialPath);
+            return resourceProvider.GetMaterial(@"Materials/" + materialPath);
+        }
+
+        public static string GetMaterial(this Rule rule)
+        {
+            return rule.Evaluate<string>("material");
         }
 
         public static Texture GetTexture(this Rule rule, IResourceProvider resourceProvider)

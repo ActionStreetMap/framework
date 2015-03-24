@@ -107,57 +107,23 @@ namespace ActionStreetMap.Explorer.Scene
                 Footprint = points,
             };
 
-            var facadeBuilder = _facadeBuilders.Single(f => f.Name == building.FacadeType);
-            var roofBuilder = _roofBuilders.Single(f => f.Name == building.RoofType);
-
-            var facadeMeshData = facadeBuilder.Build(building);
-            var roofMeshData = roofBuilder.Build(building);
-
-            Scheduler.MainThread.Schedule(() =>
-            {
-                // NOTE use different gameObject only to support different materials
-                AttachChildGameObject(building.GameObject, "facade", facadeMeshData);
-                AttachChildGameObject(building.GameObject, "roof", roofMeshData);
-            });
-
             tile.Registry.RegisterGlobal(building.Id);
 
+            // facade
+            var facadeBuilder = _facadeBuilders.Single(f => f.Name == building.FacadeType);
+            var facadeMeshData = facadeBuilder.Build(building);
+            facadeMeshData.GameObject = GameObjectFactory.CreateNew("facade");
+            facadeMeshData.MaterialKey = building.FacadeMaterial;
+            BuildObject(gameObjectWrapper, facadeMeshData);
+
+            // roof
+            var roofBuilder = _roofBuilders.Single(f => f.Name == building.RoofType);
+            var roofMeshData = roofBuilder.Build(building);
+            roofMeshData.GameObject = GameObjectFactory.CreateNew("roof");
+            roofMeshData.MaterialKey = building.RoofMaterial;
+            BuildObject(gameObjectWrapper, roofMeshData);
+
             return gameObjectWrapper;
-        }
-
-        /// <summary> Process unity's game object. </summary>
-        protected virtual void AttachChildGameObject(IGameObject parent, string name, MeshData meshData)
-        {
-            GameObject gameObject = GetGameObject(meshData);
-            gameObject.isStatic = true;
-            gameObject.transform.parent = parent.GetComponent<GameObject>().transform;
-            gameObject.name = name;
-            gameObject.renderer.sharedMaterial = ResourceProvider
-              .GetMatertial(meshData.MaterialKey);
-        }
-
-        private GameObject GetGameObject(MeshData meshData)
-        {
-            // GameObject was created directly in builder, so we can use it and ignore other meshData properties.
-            // also we expect that all components are defined
-            if (meshData.GameObject != null && !meshData.GameObject.IsEmpty)
-                return meshData.GameObject.GetComponent<GameObject>();
-
-            var gameObject = new GameObject();
-            var mesh = new Mesh();
-            mesh.vertices = meshData.Vertices.ToArray();
-            mesh.triangles = meshData.Triangles.ToArray();
-            mesh.colors = meshData.Colors.ToArray();
-
-            mesh.RecalculateNormals();
-
-            ObjectPool.RecycleMeshData(meshData);
-
-            gameObject.AddComponent<MeshFilter>().mesh = mesh;
-            gameObject.AddComponent<MeshCollider>();
-            gameObject.AddComponent<MeshRenderer>();
-
-            return gameObject;
         }
     }
 }

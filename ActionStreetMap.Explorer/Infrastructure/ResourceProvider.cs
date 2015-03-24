@@ -20,7 +20,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <summary> Gets material. </summary>
         /// <param name="key">Key.</param>
         /// <returns>Material.</returns>
-        Material GetMatertial(string key);
+        Material GetMaterial(string key);
 
         /// <summary> Gets Texture. </summary>
         /// <param name="key">Key.</param>
@@ -57,7 +57,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <inheritdoc />
-        public Material GetMatertial(string key)
+        public Material GetMaterial(string key)
         {
             if (!_materials.ContainsKey(key))
                 _materials[key] = Resources.Load<Material>(key);
