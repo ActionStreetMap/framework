@@ -6,7 +6,7 @@ namespace ActionStreetMap.Explorer.Utils
 {
     internal static class ObjectPoolExtensions
     {
-        public static MeshData CreateMeshData(this IObjectPool objectPool, int vertexCount, int trisCount, int colorCount)
+        public static MeshData CreateMeshData(this IObjectPool objectPool, int vertexCount = 128, int trisCount = 256, int colorCount = 128)
         {
             return new MeshData()
             {

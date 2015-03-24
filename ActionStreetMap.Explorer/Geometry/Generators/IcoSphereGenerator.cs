@@ -5,16 +5,18 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry.Generators
 {
+    /// <summary>
+    ///     Builds icosphere.
+    ///     See http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
+    /// </summary>
     internal class IcoSphereGenerator
     {
-        public static MeshData Generate(Context context)
+        public static void Generate(MeshData meshData, Vector3 center, float radius, float recursionLevel, 
+            GradientWrapper gradient, float vertNoiseFreq = 0.2f, float colorNoiseFreq = 0.2f)
         {
             var vertList = new List<Vector3>();
             var middlePointIndexCache = new Dictionary<long, int>();
 
-            var radius = context.Radius;
-            var recursionLevel = context.RecursionLevel;
-         
             // create 12 vertices of a icosahedron
             float t = (1f + Mathf.Sqrt(5f)) / 2f;
 
@@ -32,7 +34,6 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
             vertList.Add(new Vector3(t, 0f, 1f).normalized * radius);
             vertList.Add(new Vector3(-t, 0f, -1f).normalized * radius);
             vertList.Add(new Vector3(-t, 0f, 1f).normalized * radius);
-
 
             // create 20 triangles of the icosahedron
             var faces = new List<TriangleIndices>();
@@ -84,52 +85,45 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
                 faces = faces2;
             }
 
-            return GenerateMeshData(context, faces, vertList);
+            GenerateMeshData(meshData, center, gradient, vertNoiseFreq, colorNoiseFreq, faces, vertList);
         }
 
         /// <summary> Generates mesh data in flat shading style. </summary>
-        private static MeshData GenerateMeshData(Context context, List<TriangleIndices> faces, List<Vector3> vertList)
+        private static void GenerateMeshData(MeshData meshData, Vector3 center, GradientWrapper gradient, 
+            float vertNoiseFreq, float colorNoiseFreq, List<TriangleIndices> faces, List<Vector3> vertList)
         {
-            var colors = new List<Color>(faces.Count * 3);
-            var vertices = new List<Vector3>(faces.Count * 3);
-            var triangles = new List<int>(faces.Count * 3);
-            var vertNoiseFreq = context.VertNoiseFreq;
-            var useVertNoise = context.UseVertNoise;
-            var color = Color.green;
+            var vertices = meshData.Vertices;
+            var triangles = meshData.Triangles;
+            var colors = meshData.Colors;
+
             for (int i = 0; i < faces.Count; i++)
             {
                 var face = faces[i];
 
                 var v0 = vertList[face.V1];
 
-                var noise = useVertNoise ? (Noise.Perlin2D(v0, vertNoiseFreq) + 1f) / 2f : 0;
-                vertices.Add(new Vector3(v0.x + noise, v0.y + noise, v0.z + noise));
+                var noise = vertNoiseFreq != 0 ? (Noise.Perlin2D(v0, vertNoiseFreq) + 1f) / 2f : 0;
+                vertices.Add(new Vector3(v0.x + noise, v0.y + noise, v0.z + noise) + center);
 
                 var v1 = vertList[face.V2];
-                noise = useVertNoise ? (Noise.Perlin2D(v1, vertNoiseFreq) + 1f) / 2f : 0;
-                vertices.Add(new Vector3(v1.x + noise, v1.y + noise, v1.z + noise));
+                noise = vertNoiseFreq != 0 ? (Noise.Perlin2D(v1, vertNoiseFreq) + 1f) / 2f : 0;
+                vertices.Add(new Vector3(v1.x + noise, v1.y + noise, v1.z + noise) + center);
 
                 var v2 = vertList[face.V3];
-                noise = useVertNoise ? (Noise.Perlin2D(v2, vertNoiseFreq) + 1f) / 2f : 0;
-                vertices.Add(new Vector3(v2.x + noise, v2.y + noise, v2.z + noise));
+                noise = vertNoiseFreq != 0 ? (Noise.Perlin2D(v2, vertNoiseFreq) + 1f) / 2f : 0;
+                vertices.Add(new Vector3(v2.x + noise, v2.y + noise, v2.z + noise) + center);
 
-                var ggg = vertList.Count - 3;
+                var tris = vertices.Count - 3;
 
-                triangles.Add(ggg);
-                triangles.Add(ggg + 2);
-                triangles.Add(ggg + 1);
+                triangles.Add(tris);
+                triangles.Add(tris + 2);
+                triangles.Add(tris + 1);
 
+                var color = GradientUtils.GetColor(gradient, v1, colorNoiseFreq);
                 colors.Add(color);
                 colors.Add(color);
                 colors.Add(color);
             }
-
-            return new MeshData()
-            {
-                Vertices = vertices,
-                Triangles = triangles,
-                Colors = colors
-            };   
         }
 
         // return index of point in the middle of p1 and p2
@@ -179,20 +173,6 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
                 V2 = v2;
                 V3 = v3;
             }
-        }
-
-        public class Context
-        {
-            public float Radius;
-            public int RecursionLevel;
-
-            public bool UseVertNoise;
-            public float VertNoiseFreq = 0.2f;
-
-            public bool UseColorNoise;
-            public float ColorNoiseFreq;
-
-            public GradientWrapper Gradient;
         }
 
         #endregion
