@@ -41,7 +41,8 @@ namespace ActionStreetMap.Explorer.Scene
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
             meshData.MaterialKey = rule.GetMaterialKey();
 
-            IcoSphereGenerator.Generate(meshData, new Vector3(center.X, elevation + minHeight, center.Y), radius, 2, gradient);
+            IcoSphereGenerator.Generate(meshData, new Vector3(center.X, elevation + minHeight, center.Y), 
+                radius, 2, gradient);
 
             BuildObject(tile.GameObject, meshData);
 

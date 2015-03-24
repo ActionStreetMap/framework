@@ -8,12 +8,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
     {
         public static T Wait<T>(this IObservable<T> source)
         {
-            return WaitCore(source, true, InfiniteTimeSpan);
+            return WaitCore(source, false, InfiniteTimeSpan);
         }
 
         public static T Wait<T>(this IObservable<T> source, TimeSpan timeout)
         {
-            return WaitCore(source, true, timeout);
+            return WaitCore(source, false, timeout);
         }
 
         static T WaitCore<T>(IObservable<T> source, bool throwOnEmpty, TimeSpan timeout)

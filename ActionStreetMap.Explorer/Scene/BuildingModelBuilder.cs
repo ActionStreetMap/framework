@@ -5,16 +5,12 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Facades;
 using ActionStreetMap.Explorer.Scene.Roofs;
-using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Helpers;
-using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
 {

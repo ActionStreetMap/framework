@@ -25,7 +25,8 @@ namespace ActionStreetMap.Infrastructure.Reactive
         public static IObservable<string> Get(string url, Hash headers = null, IProgress<float> progress = null)
         {
 #if !CONSOLE
-            return ObservableUnity.FromCoroutine<string>((observer, cancellation) => FetchText(new WWW(url, null, (headers ?? new Hash())), observer, progress, cancellation));
+            return ObservableUnity.FromCoroutine<string>((observer, cancellation) => FetchText(new WWW(url, null, (headers ?? new Hash())), observer, progress, cancellation))
+                .SubscribeOn(Scheduler.MainThread); 
 #else
             var webClient = new WebClient();
             var query = Observable.FromEventPattern<DownloadStringCompletedEventHandler, DownloadStringCompletedEventArgs>
@@ -43,7 +44,8 @@ namespace ActionStreetMap.Infrastructure.Reactive
         public static IObservable<byte[]> GetAndGetBytes(string url, Hash headers = null, IProgress<float> progress = null)
         {
 #if !CONSOLE
-            return ObservableUnity.FromCoroutine<byte[]>((observer, cancellation) => FetchBytes(new WWW(url, null, (headers ?? new Hash())), observer, progress, cancellation));
+            return ObservableUnity.FromCoroutine<byte[]>((observer, cancellation) => FetchBytes(new WWW(url, null, (headers ?? new Hash())), observer, progress, cancellation))
+                .SubscribeOn(Scheduler.MainThread);
 #else
             var webClient = new WebClient();
             var query = Observable
