@@ -275,7 +275,10 @@ namespace ActionStreetMap.Core.Utils
             return newColor;
         }
 
-        //See http://stackoverflow.com/questions/359612/how-to-change-rgb-color-to-hsv
+        /// <summary>
+        ///  Converts color to HSV reprsentation.
+        ///  See http://stackoverflow.com/questions/359612/how-to-change-rgb-color-to-hsv
+        /// </summary>
         public static void ColorToHSV(Color32 color, out double hue, out double saturation, out double value)
         {
             int max = Math.Max(color.R, Math.Max(color.G, color.B));
@@ -286,6 +289,10 @@ namespace ActionStreetMap.Core.Utils
             value = max / 255d;
         }
 
+        /// <summary>
+        ///  Converts HSV reprsentation to Color.
+        ///  See http://stackoverflow.com/questions/359612/how-to-change-rgb-color-to-hsv
+        /// </summary>
         public static Color32 ColorFromHSV(double hue, double saturation, double value)
         {
             int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
@@ -312,17 +319,17 @@ namespace ActionStreetMap.Core.Utils
             return new Color32(v, p, q, 255);
         }
 
-        public static string ToHex(this Color32 color)
+        private static string ToHex(this Color32 color)
         {
             return String.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
         }
 
-        public static int GetHue(this Color32 color)
+        private static int GetHue(this Color32 color)
         {
             return GetHue(color.R, color.G, color.B);
         }
 
-        public static int GetHue(int red, int green, int blue)
+        private static int GetHue(int red, int green, int blue)
         {
             float min = Math.Min(Math.Min(red, green), blue);
             float max = Math.Max(Math.Max(red, green), blue);

@@ -2,21 +2,15 @@
 
 namespace ActionStreetMap.Core.Utils
 {
-    /// <summary>
-    ///     Provides the methods to convert geo coordinates to map coordinates and vice versa
-    /// </summary>
+    /// <summary> Provides the methods to convert geo coordinates to map coordinates and vice versa. </summary>
     public static class GeoProjection
     {
         #region Coordinate convertion
 
-        /// <summary>
-        ///     The circumference at the equator (latitude 0)
-        /// </summary>
+        /// <summary> The circumference at the equator (latitude 0). </summary>
         private const int LatitudeEquator = 40075160;
 
-        /// <summary>
-        ///     distance of full circle around the earth through the poles
-        /// </summary>
+        /// <summary> Distance of full circle around the earth through the poles. </summary>
         private const int CircleDistance = 40008000;
 
         /// <summary>
@@ -34,17 +28,13 @@ namespace ActionStreetMap.Core.Utils
             return new MapPoint((float) resultX, (float) resultY);
         }
 
-        /// <summary>
-        ///     Calculates geo coordinate from map coordinate. Reverse operation to ToMapCoordinates()
-        /// </summary>
+        /// <summary> Calculates geo coordinate from map coordinate. </summary>
         public static GeoCoordinate ToGeoCoordinate(GeoCoordinate relativeNullPoint, MapPoint mapPoint)
         {
             return ToGeoCoordinate(relativeNullPoint, mapPoint.X, mapPoint.Y);
         }
 
-        /// <summary>
-        ///     Calculates geo coordinate from map coordinate. Reverse operation to ToMapCoordinates()
-        /// </summary>
+        /// <summary> Calculates geo coordinate from map coordinate. </summary>
         public static GeoCoordinate ToGeoCoordinate(GeoCoordinate relativeNullPoint, float x, float y)
         {
             double latitudeCircumference = LatitudeEquator*Math.Cos(MathUtils.Deg2Rad(relativeNullPoint.Latitude));
@@ -64,9 +54,7 @@ namespace ActionStreetMap.Core.Utils
         private const double WGS84_a = 6378137.0; // Major semiaxis [m]
         private const double WGS84_b = 6356752.3; // Minor semiaxis [m]
 
-        /// <summary>
-        ///     Calculates distance between two coordinates.
-        /// </summary>
+        /// <summary> Calculates distance between two coordinates. </summary>
         /// <param name="first">First coordinate.</param>
         /// <param name="second">Second coordinate.</param>
         /// <returns>Distance.</returns>
@@ -88,9 +76,7 @@ namespace ActionStreetMap.Core.Utils
             return radius * c;
         }
 
-        /// <summary>
-        ///     Earth radius at a given latitude, according to the WGS-84 ellipsoid [m]
-        /// </summary>
+        /// <summary> Earth radius at a given latitude, according to the WGS-84 ellipsoid [m]. </summary>
         public static double WGS84EarthRadius(double lat)
         {
             // http://en.wikipedia.org/wiki/Earth_radius
