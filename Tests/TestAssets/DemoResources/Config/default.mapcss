@@ -1,11 +1,11 @@
 canvas { 
-	material: Terrain/TerrainColored;
-	water: Water/TerrainWater;
+	material_background: Terrain/TerrainColored;
+	material_water: Water/TerrainWater;
 	
-	layer_canvas:            							gradient(#f5f5f5, #dcdcdc 5%, #cococo 10%, #a9a9a9 70%, #808080);
-	layer_water:             							gradient(#87cefa, #1e90ff);
-	layer_cars:											gradient(#4d4d4d, #404040);
-	layer_pedestrian:									gradient(#636363, #4d4d4d);
+	gradient_background:            						gradient(#f5f5f5, #dcdcdc 5%, #cococo 10%, #a9a9a9 70%, #808080);
+	gradient_water:             							gradient(#87cefa, #1e90ff);
+	gradient_cars:											gradient(#4d4d4d, #404040);
+	gradient_pedestrian:									gradient(#636363, #4d4d4d);
 }
 /* flat areas, general rules */
 area[amenity],

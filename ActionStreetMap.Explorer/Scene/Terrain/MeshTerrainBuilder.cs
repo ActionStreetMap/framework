@@ -162,7 +162,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             var vertices = context.Data.Vertices;
 
-            var bottomGradient = context.Rule.GetCanvasLayerGradient(_resourceProvider);
+            var bottomGradient = context.Rule.GetBackgroundLayerGradient(_resourceProvider);
             var waterSurfaceGradient = context.Rule.GetWaterLayerGradient(_resourceProvider);
             int count = 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
@@ -189,24 +189,26 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 waterTriangles.Add(count + 1);
                 count += 3;
             }
-            BuildOffsetShape(context, meshRegion, context.Rule.GetCanvasLayerGradient(_resourceProvider), WaterBottomLevelOffset);
-            Scheduler.MainThread.Schedule(() => BuildWaterObject(context, waterVertices, waterTriangles, waterColors));
+            BuildOffsetShape(context, meshRegion, context.Rule.GetBackgroundLayerGradient(_resourceProvider), WaterBottomLevelOffset);
+            var vs = waterVertices.ToArray();
+            var ts = waterTriangles.ToArray();
+            var cs = waterColors.ToArray();
+            Scheduler.MainThread.Schedule(() => BuildWaterObject(context, vs, ts, cs));
         }
 
-        private void BuildWaterObject(MeshContext context, List<Vector3> vertices, List<int> triangles, List<Color> colors)
+        private void BuildWaterObject(MeshContext context, Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = new GameObject("water");
-            // TODO attach to tile
             gameObject.transform.parent = context.Data.GameObject.GetComponent<GameObject>().transform;
             var meshData = new Mesh();
-            meshData.vertices = vertices.ToArray();
-            meshData.triangles = triangles.ToArray();
-            meshData.colors = colors.ToArray();
+            meshData.vertices = vertices;
+            meshData.triangles = triangles;
+            meshData.colors = colors;
             meshData.RecalculateNormals();
 
             // NOTE this script is too expensive to run!
             //gameObject.AddComponent<NoiseWaveBehavior>();
-            gameObject.AddComponent<MeshRenderer>().material = context.Rule.GetMaterial("water", _resourceProvider);
+            gameObject.AddComponent<MeshRenderer>().material = context.Rule.GetMaterial("material_water", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
         }
 
@@ -217,7 +219,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         protected void BuildBackground(MeshContext context, MeshRegion meshRegion)
         {
             if (meshRegion.Mesh == null) return;
-            var gradient = context.Rule.GetCanvasLayerGradient(_resourceProvider);
+            var gradient = context.Rule.GetBackgroundLayerGradient(_resourceProvider);
 
             const float eleNoiseFreq = 0.2f;
             const float colorNoiseFreq = 0.2f;
@@ -388,7 +390,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             meshData.colors = colors;
             meshData.RecalculateNormals();
 
-            gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial(_resourceProvider);
+            gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial("material_background", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
             gameObject.AddComponent<MeshCollider>();
         }
