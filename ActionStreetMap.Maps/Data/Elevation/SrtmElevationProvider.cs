@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utils;
@@ -51,22 +52,61 @@ namespace ActionStreetMap.Maps.Data.Elevation
             _trace = trace;
         }
 
-        private bool HasElevation(double latitude, double longitude)
+        /// <inheritdoc />
+        public bool HasElevation(BoundingBox bbox)
         {
-            return (_srtmLat == ((int)latitude) && _srtmLon == ((int)longitude)) ||
-                _fileSystemService.Exists(GetFilePath((int)latitude, (int)longitude));
+            bool hasAllElevationData = true;
+            CheckBoundingBox(bbox, (coordinate) => hasAllElevationData = false);
+            return hasAllElevationData;
         }
 
-
-        private IObservable<Unit> Download(double latitude, double longitude)
+        /// <inheritdoc />
+        public IObservable<Unit> Download(BoundingBox bbox)
         {
-            _trace.Info(LogTag, "downloading data for {0}:{1}", latitude, longitude);
-            return _downloader.Download(new GeoCoordinate(latitude, longitude))
+            var tasks = new List<IObservable<Unit>>();
+            CheckBoundingBox(bbox, (coordinate) => tasks.Add(Download(coordinate)));
+            if (tasks.Any())
+                return tasks.WhenAll().AsCompletion();
+            return Observable.Empty<Unit>();
+        }
+
+        private void CheckBoundingBox(BoundingBox bbox, Action<GeoCoordinate> action)
+        {
+            var minLat = (int)bbox.MinPoint.Latitude;
+            var minLon = (int)bbox.MinPoint.Longitude;
+
+            var maxLat = (int)bbox.MaxPoint.Latitude;
+            var maxLon = (int)bbox.MaxPoint.Longitude;
+
+            var latDiff = maxLat - minLat;
+            var lonDiff = maxLon - minLon;
+            var minPoint = bbox.MinPoint;
+            for (int j = 0; j <= latDiff; j++)
+                for (int i = 0; i <= lonDiff; i++)
+                {
+                    var coordinate = new GeoCoordinate(minPoint.Latitude + j, minPoint.Longitude + i);
+                    if (!HasElevation(coordinate))
+                        action(coordinate);
+                }
+        }
+
+        private bool HasElevation(GeoCoordinate coordinate)
+        {
+            var latitude = (int)coordinate.Latitude;
+            var longitude = (int)coordinate.Longitude;
+            return (_srtmLat == (latitude) && _srtmLon == (longitude)) ||
+                _fileSystemService.Exists(GetFilePath(latitude, longitude));
+        }
+
+        private IObservable<Unit> Download(GeoCoordinate coordinate)
+        {
+            _trace.Info(LogTag, "downloading data for {0}", coordinate);
+            return _downloader.Download(coordinate)
                     .SelectMany(bytes =>
                     {
                         _trace.Info(LogTag, "downloaded {0} bytes", bytes.Length);
                         _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
-                        InitData((int)latitude, (int)longitude);
+                        InitData((int)coordinate.Latitude, (int)coordinate.Longitude);
                         // store data to disk
                         var path = GetFilePath(_srtmLat, _srtmLon);
                         _trace.Info(LogTag, "storing as {0}", path);
@@ -75,19 +115,6 @@ namespace ActionStreetMap.Maps.Data.Elevation
 
                         return Observable.Return<Unit>(Unit.Default);
                     });
-        }
-
-        /// <inheritdoc />
-        public bool HasElevation(BoundingBox bbox)
-        {
-            // TODO implement this
-            return true;
-        }
-
-        /// <inheritdoc />
-        public IObservable<Unit> Download(BoundingBox bbox)
-        {
-            throw new NotImplementedException();
         }
 
         /// <inheritdoc />

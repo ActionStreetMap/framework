@@ -62,7 +62,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
                 String.Format("Cannot find {0} on {1}", prefix, _schemaPath)));
         }
 
-        /// <summary> Downloads SRTM for given boudning box. </summary>
+        /// <summary> Downloads SRTM for given bounding box. </summary>
         /// <param name="boundingBox"></param>
         /// <returns>Streams</returns>
         public IObservable<byte[]> Download(BoundingBox boundingBox)

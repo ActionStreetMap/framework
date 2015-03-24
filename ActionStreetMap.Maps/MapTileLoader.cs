@@ -46,7 +46,7 @@ namespace ActionStreetMap.Maps
 
             // download elevation data if necessary
             if (!_elevationProvider.HasElevation(tile.BoundingBox))
-                _elevationProvider.Download(tile.BoundingBox);
+                _elevationProvider.Download(tile.BoundingBox).Wait();
 
             // prepare tile
             tile.Accept(tile, _modelLoader);
