@@ -135,7 +135,15 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 BuildSurface(context, surfaceRegion);
 
             Trace.Debug(LogTag, "Total triangles: {0}", context.Data.Triangles.Count);
-            Scheduler.MainThread.Schedule(() => BuildGameObject(rule, cellGameObject, context));
+
+            // copy on non-UI thread
+            var vertices = context.Data.Vertices.ToArray();
+            var triangles = context.Data.Triangles.ToArray();
+            var colors = context.Data.Colors.ToArray();
+            _objectPool.RecycleMeshData(context.Data);
+
+            Scheduler.MainThread.Schedule(() => BuildGameObject(rule, cellGameObject, 
+                vertices, triangles, colors));
         }
 
         #region Water layer
@@ -369,17 +377,16 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildGameObject(Rule rule, IGameObject cellGameObject, MeshContext context)
+        private void BuildGameObject(Rule rule, IGameObject cellGameObject, 
+            Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = cellGameObject.GetComponent<GameObject>();
 
             var meshData = new Mesh();
-            meshData.vertices = context.Data.Vertices.ToArray();
-            meshData.triangles = context.Data.Triangles.ToArray();
-            meshData.colors = context.Data.Colors.ToArray();
+            meshData.vertices = vertices;
+            meshData.triangles = triangles;
+            meshData.colors = colors;
             meshData.RecalculateNormals();
-
-            _objectPool.RecycleMeshData(context.Data);
 
             gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial(_resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;

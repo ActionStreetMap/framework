@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
@@ -37,11 +36,17 @@ namespace ActionStreetMap.Explorer.Scene
             var dimenLineBuilder = new DimenLineBuilder(2, ElevationProvider, ObjectPool);
             dimenLineBuilder.Height = rule.GetHeight();
             dimenLineBuilder.Build(tile.Rectangle, lines,
-                (p, t, u) => Scheduler.MainThread.Schedule(() =>
+                (p, t, u) =>
                 {
-                    BuildObject(gameObjectWrapper, rule, p, t, u);
-                    dimenLineBuilder.Dispose();
-                }));
+                    var vertices = p.ToArray();
+                    var triangles = t.ToArray();
+                    var uvs = u.ToArray();
+                    Scheduler.MainThread.Schedule(() =>
+                    {
+                        BuildObject(gameObjectWrapper, rule, vertices, triangles, uvs);
+                        dimenLineBuilder.Dispose();
+                    });
+                });
 
             ObjectPool.StoreList(lines);
             ObjectPool.StoreList(points);
@@ -51,14 +56,14 @@ namespace ActionStreetMap.Explorer.Scene
 
         /// <summary> Process unity specific data. </summary>
         protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule,
-            List<Vector3> p, List<int> t, List<Vector2> u)
+            Vector3[] vertices, int[] triangles, Vector2[] uvs)
         {
             var gameObject = gameObjectWrapper.AddComponent(new GameObject());
 
             Mesh mesh = new Mesh();
-            mesh.vertices = p.ToArray();
-            mesh.triangles = t.ToArray();
-            mesh.uv = u.ToArray();
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.uv = uvs;
             mesh.RecalculateNormals();
 
             var meshFilter = gameObject.AddComponent<MeshFilter>();
