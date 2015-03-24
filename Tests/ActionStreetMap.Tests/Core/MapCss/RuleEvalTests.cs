@@ -4,7 +4,7 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling.Models;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Helpers;
 using NUnit.Framework;
@@ -277,7 +277,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var rule = stylesheet.GetModelRule(buildingWithColorCode);
 
             // ASSERT
-            Assert.AreEqual(ColorUtility.FromName("red"),
+            Assert.AreEqual(ColorUtils.FromName("red"),
                 GetOriginalColorTypeObject(rule.GetFillUnityColor()));
         }
 
@@ -302,7 +302,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var rule = stylesheet.GetModelRule(buildingWithColorName);
 
             // ASSERT
-            Assert.AreEqual(ColorUtility.FromName("salmon"),
+            Assert.AreEqual(ColorUtils.FromName("salmon"),
                 GetOriginalColorTypeObject(rule.GetFillUnityColor()));
         }
 
@@ -328,7 +328,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var rule = stylesheet.GetModelRule(buildingWithColorCode);
 
             // ASSERT
-            Assert.AreEqual(ColorUtility.FromUnknown("#cfc6b5"),
+            Assert.AreEqual(ColorUtils.FromUnknown("#cfc6b5"),
                 GetOriginalColorTypeObject(rule.GetFillUnityColor()));
         }
 

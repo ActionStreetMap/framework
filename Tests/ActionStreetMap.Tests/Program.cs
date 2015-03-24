@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Polygons;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Core.Tiling;
@@ -11,14 +10,14 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 
-using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
-using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.52204, 13.39385);//52.51372, 13.37734);
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.5239010, 13.3782635);//52.51372, 13.37734);
         public static readonly Container _container = new Container();
 
         private const string LogTag = "host";

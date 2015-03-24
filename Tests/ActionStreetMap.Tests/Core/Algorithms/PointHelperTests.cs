@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using NUnit.Framework;

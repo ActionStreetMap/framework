@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Utilities;
 using ActionStreetMap.Maps.Entities;
 using Area = ActionStreetMap.Core.Tiling.Models.Area;
 using TagCollection = ActionStreetMap.Core.Tiling.Models.TagCollection;

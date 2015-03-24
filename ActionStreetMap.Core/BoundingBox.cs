@@ -1,5 +1,5 @@
 ﻿using System;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Core
 {
@@ -69,8 +69,8 @@ namespace ActionStreetMap.Core
             // Bounding box surrounding the point at given coordinates,
             // assuming local approximation of Earth surface as a sphere
             // of radius given by WGS84
-            var lat = MathUtility.Deg2Rad(center.Latitude);
-            var lon = MathUtility.Deg2Rad(center.Longitude);
+            var lat = MathUtils.Deg2Rad(center.Latitude);
+            var lon = MathUtils.Deg2Rad(center.Longitude);
 
             // Radius of Earth at given latitude
             var radius = GeoProjection.WGS84EarthRadius(lat);
@@ -86,8 +86,8 @@ namespace ActionStreetMap.Core
             var lonMax = lon + dHeight;
 
             return new BoundingBox(
-                new GeoCoordinate(MathUtility.Rad2Deg(latMin), MathUtility.Rad2Deg(lonMin)),
-                new GeoCoordinate(MathUtility.Rad2Deg(latMax), MathUtility.Rad2Deg(lonMax)));
+                new GeoCoordinate(MathUtils.Rad2Deg(latMin), MathUtils.Rad2Deg(lonMin)),
+                new GeoCoordinate(MathUtils.Rad2Deg(latMax), MathUtils.Rad2Deg(lonMax)));
         }
 
         /// <summary> Creates bounding box as square. </summary>

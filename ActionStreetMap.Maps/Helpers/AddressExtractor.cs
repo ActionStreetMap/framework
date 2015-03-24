@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Maps.Helpers
 {

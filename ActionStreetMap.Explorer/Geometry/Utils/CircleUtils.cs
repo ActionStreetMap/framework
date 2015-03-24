@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Explorer.Geometry.Utils

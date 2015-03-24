@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core.Polygons;
-using ActionStreetMap.Core.Polygons.Geometry;
+using ActionStreetMap.Core.Geometry.Clipping;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Tiling.Models;
-using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
-using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Core.Terrain
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core.Polygons.Geometry;
-using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Core.Terrain
 {

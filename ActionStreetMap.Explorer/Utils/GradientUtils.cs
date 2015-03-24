@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
@@ -21,7 +21,7 @@ namespace ActionStreetMap.Explorer.Utils
             for (int i = 0; i < count; i++)
             {
                 var values = results[i].Groups[0].Value.Split(' ');
-                var color = ColorUtility.FromUnknown(values[0]);
+                var color = ColorUtils.FromUnknown(values[0]);
                 float time = i == 0 ? 0 :
                     (i == results.Count - 1) ? 1 :
                     float.Parse(values[1].Substring(0, values[1].Length - 1)) / 100f;

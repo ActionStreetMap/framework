@@ -2,7 +2,7 @@
 using System.Text;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;

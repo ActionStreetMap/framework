@@ -1,5 +1,5 @@
-﻿using ActionStreetMap.Core.Polygons;
-using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.Geometry.Vertex>>;
+﻿using ActionStreetMap.Core.Geometry.Triangle;
+using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
 
 namespace ActionStreetMap.Core.Terrain
 {

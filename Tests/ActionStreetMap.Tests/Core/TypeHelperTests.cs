@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Core.Utilities;
+﻿using ActionStreetMap.Core.Utils;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core

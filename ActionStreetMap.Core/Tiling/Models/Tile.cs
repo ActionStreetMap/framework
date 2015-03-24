@@ -1,5 +1,5 @@
 ﻿using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Core.Tiling.Models
 {

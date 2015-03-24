@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Core.Utilities;
+﻿using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Core
 {
@@ -23,8 +23,8 @@ namespace ActionStreetMap.Core
         /// <summary> Compares two geo coordinates. </summary>
         public static bool operator ==(GeoCoordinate a, GeoCoordinate b)
         {
-            return MathUtility.AreEqual(a.Latitude, b.Latitude) &&
-                   MathUtility.AreEqual(a.Longitude, b.Longitude);
+            return MathUtils.AreEqual(a.Latitude, b.Latitude) &&
+                   MathUtils.AreEqual(a.Longitude, b.Longitude);
         }
 
         /// <summary> Compares two geo coordinates. </summary>
@@ -39,8 +39,8 @@ namespace ActionStreetMap.Core
             if (!(other is GeoCoordinate))
                 return false;
             var coord = (GeoCoordinate) other;
-            return MathUtility.AreEqual(Latitude, coord.Latitude) &&
-                   MathUtility.AreEqual(Longitude, coord.Longitude);
+            return MathUtils.AreEqual(Latitude, coord.Latitude) &&
+                   MathUtils.AreEqual(Longitude, coord.Longitude);
         }
 
         /// <inheritdoc />

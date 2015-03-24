@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry.Triangle;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
 using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Polygons;
-using ActionStreetMap.Core.Polygons.Geometry;
-using ActionStreetMap.Core.Polygons.Topology;
 using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;

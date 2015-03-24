@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Tiling.Models;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using Antlr.Runtime.Tree;
 
 namespace ActionStreetMap.Core.MapCss.Visitors.Eval
@@ -187,12 +187,12 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
 
             private void PushToColor()
             {
-                _expressions.Push(ColorUtility.FromUnknown((string)Pop()));
+                _expressions.Push(ColorUtils.FromUnknown((string)Pop()));
             }
 
             private void PushToGradient()
             {
-                _expressions.Push(ColorUtility.ColorToGradient((string)Pop()));
+                _expressions.Push(ColorUtils.ColorToGradient((string)Pop()));
             }
 
             #endregion

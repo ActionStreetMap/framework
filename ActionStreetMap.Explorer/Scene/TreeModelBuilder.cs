@@ -1,7 +1,7 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Explorer.Scene
 {

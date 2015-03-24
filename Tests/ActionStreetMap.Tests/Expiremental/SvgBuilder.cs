@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using ActionStreetMap.Core.Polygons;
-using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
-using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+using ActionStreetMap.Core.Geometry.Clipping;
+using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Tests.Expiremental
 {

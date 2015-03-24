@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using Antlr.Runtime.Tree;
 
 namespace ActionStreetMap.Core.MapCss.Visitors.Eval
@@ -231,13 +231,13 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
 
             private void PushToColor()
             {
-                Expression<Func<string, Color32>> toColor = s => ColorUtility.FromUnknown(s);
+                Expression<Func<string, Color32>> toColor = s => ColorUtils.FromUnknown(s);
                 _expressions.Push(toColor);
             }
 
             private void PushToGradient()
             {
-                Expression<Func<string, string>> toGradient = s => ColorUtility.ColorToGradient(s);
+                Expression<Func<string, string>> toGradient = s => ColorUtils.ColorToGradient(s);
                 _expressions.Push(toGradient);
             }
 

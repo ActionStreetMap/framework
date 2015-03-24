@@ -1,5 +1,5 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Utilities;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene;
 using UnityEngine;
@@ -28,7 +28,7 @@ namespace ActionStreetMap.Explorer.Helpers
 
         public static Color32 GetFillUnityColor(this Rule rule)
         {
-            var coreColor = rule.Evaluate<Core.Unity.Color32>("fill-color", ColorUtility.FromUnknown);
+            var coreColor = rule.Evaluate<Core.Unity.Color32>("fill-color", ColorUtils.FromUnknown);
             return new Color32(coreColor.R, coreColor.G, coreColor.B, coreColor.A);
         }
 

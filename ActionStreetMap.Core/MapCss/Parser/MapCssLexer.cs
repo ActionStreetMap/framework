@@ -20,6991 +20,6992 @@
 #pragma warning disable 3019
 
 
-using System.Collections.Generic;
 using Antlr.Runtime;
-using Antlr.Runtime.Misc;
 
-[System.Diagnostics.DebuggerNonUserCodeAttribute]
-[System.CodeDom.Compiler.GeneratedCode("ANTLR", "3.5.0.2")]
-internal partial class MapCssLexer : Antlr.Runtime.Lexer
+namespace ActionStreetMap.Core.MapCss.Parser
 {
-	public const int EOF=-1;
-	public const int ATTRIBUTE_SELECTOR=4;
-	public const int CHAR=5;
-	public const int CHILD_COMBINATOR=6;
-	public const int CLASS_SELECTOR=7;
-	public const int COLON=8;
-	public const int CSS_IDENT=9;
-	public const int DECLARATION=10;
-	public const int DECLARATION_BLOCK=11;
-	public const int DESCENDANT_COMBINATOR=12;
-	public const int DIGIT=13;
-	public const int DIV=14;
-	public const int DQUOTED_STRING=15;
-	public const int EBACKSLASH=16;
-	public const int EDQUOTE=17;
-	public const int ESQUOTE=18;
-	public const int EVAL=19;
-	public const int EVAL_CALL=20;
-	public const int FUNCTION_CALL=21;
-	public const int HEXCOLOR=22;
-	public const int HEXDIGIT=23;
-	public const int HWS=24;
-	public const int IDENTS=25;
-	public const int IMPORT=26;
-	public const int INCREMENT=27;
-	public const int INDEX=28;
-	public const int INDEX_SELECTOR=29;
-	public const int LAYER_ID_SELECTOR=30;
-	public const int LBRACE=31;
-	public const int LBRACKET=32;
-	public const int LIST=33;
-	public const int ML_COMMENT=34;
-	public const int NCOMPONENT=35;
-	public const int NEGATIVE_FLOAT=36;
-	public const int NEGATIVE_INT=37;
-	public const int NMCHAR=38;
-	public const int NMSTART=39;
-	public const int NONASCII=40;
-	public const int NUMBER=41;
-	public const int OP_AND=42;
-	public const int OP_CONTAINS=43;
-	public const int OP_DIV=44;
-	public const int OP_ENDS_WITH=45;
-	public const int OP_EQ=46;
-	public const int OP_EXIST=47;
-	public const int OP_GE=48;
-	public const int OP_GT=49;
-	public const int OP_LE=50;
-	public const int OP_LT=51;
-	public const int OP_MATCH=52;
-	public const int OP_MINUS=53;
-	public const int OP_MOD=54;
-	public const int OP_MUL=55;
-	public const int OP_NEGATE=56;
-	public const int OP_NEQ=57;
-	public const int OP_NOT=58;
-	public const int OP_NOT_EXIST=59;
-	public const int OP_OR=60;
-	public const int OP_PLUS=61;
-	public const int OP_STARTS_WITH=62;
-	public const int OP_SUBSTRING=63;
-	public const int OP_TRUTHY=64;
-	public const int OSM_TAG=65;
-	public const int P=66;
-	public const int PARENT_COMBINATOR=67;
-	public const int PERCENTAGE=68;
-	public const int PIXELS=69;
-	public const int POINTS=70;
-	public const int POSITIVE_FLOAT=71;
-	public const int POSITIVE_INT=72;
-	public const int PREDICATE=73;
-	public const int PSEUDO_CLASS_SELECTOR=74;
-	public const int RANGE=75;
-	public const int RBRACE=76;
-	public const int RBRACKET=77;
-	public const int REGEXP=78;
-	public const int REGEX_CHAR=79;
-	public const int REGEX_ESCAPE=80;
-	public const int REGEX_START=81;
-	public const int RGB=82;
-	public const int RGBA=83;
-	public const int ROLE=84;
-	public const int ROLE_SELECTOR=85;
-	public const int RULE=86;
-	public const int SEMICOLON=87;
-	public const int SIMPLE_SELECTOR=88;
-	public const int SL_COMMENT=89;
-	public const int SQUOTED_STRING=90;
-	public const int STYLESHEET=91;
-	public const int T=92;
-	public const int TAGSEPARATOR=93;
-	public const int TYPE_SELECTOR=94;
-	public const int UNICODE=95;
-	public const int URL=96;
-	public const int URLCONTENT=97;
-	public const int VALUE_FLOAT=98;
-	public const int VALUE_INCREMENT=99;
-	public const int VALUE_INT=100;
-	public const int VALUE_KEYWORD=101;
-	public const int VALUE_LIST=102;
-	public const int VALUE_PERCENTAGE=103;
-	public const int VALUE_PIXELS=104;
-	public const int VALUE_POINTS=105;
-	public const int VALUE_QUOTED=106;
-	public const int VALUE_REGEXP=107;
-	public const int VALUE_RGB=108;
-	public const int VALUE_RGBA=109;
-	public const int VALUE_URL=110;
-	public const int WS=111;
-	public const int X=112;
-	public const int ZOOM_SELECTOR=113;
-	public const int T__114=114;
-	public const int T__115=115;
-	public const int T__116=116;
-	public const int T__117=117;
-	public const int T__118=118;
-	public const int T__119=119;
-	public const int T__120=120;
-	public const int T__121=121;
-	public const int T__122=122;
-	public const int T__123=123;
-	public const int T__124=124;
-
-	    /// true, if the scanner is in a state, where OSM tag names are 
-	    /// valid identifiers  '[highway=residential]'
-		bool isOsmTagAllowed = false;	
-		/// true, if the lexer is currently in a declaration block
-		bool isInDeclarationBlock = false;
-
-
-	// delegates
-	// delegators
-
-	public MapCssLexer()
-	{
-		OnCreated();
-	}
-
-	public MapCssLexer(ICharStream input )
-		: this(input, new RecognizerSharedState())
-	{
-	}
-
-	public MapCssLexer(ICharStream input, RecognizerSharedState state)
-		: base(input, state)
-	{
-
-		OnCreated();
-	}
-	public override string GrammarFileName { get { return "c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g"; } }
-
-
-	partial void OnCreated();
-	partial void EnterRule(string ruleName, int ruleIndex);
-	partial void LeaveRule(string ruleName, int ruleIndex);
-
-	partial void EnterRule_OP_AND();
-	partial void LeaveRule_OP_AND();
-
-	// $ANTLR start "OP_AND"
-	[GrammarRule("OP_AND")]
-	private void mOP_AND()
-	{
-		EnterRule_OP_AND();
-		EnterRule("OP_AND", 1);
-		TraceIn("OP_AND", 1);
-		try
-		{
-			int _type = OP_AND;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:15:8: ( '&&' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:15:10: '&&'
-			{
-			DebugLocation(15, 10);
-			Match("&&"); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_AND", 1);
-			LeaveRule("OP_AND", 1);
-			LeaveRule_OP_AND();
-		}
-	}
-	// $ANTLR end "OP_AND"
-
-	partial void EnterRule_OP_CONTAINS();
-	partial void LeaveRule_OP_CONTAINS();
-
-	// $ANTLR start "OP_CONTAINS"
-	[GrammarRule("OP_CONTAINS")]
-	private void mOP_CONTAINS()
-	{
-		EnterRule_OP_CONTAINS();
-		EnterRule("OP_CONTAINS", 2);
-		TraceIn("OP_CONTAINS", 2);
-		try
-		{
-			int _type = OP_CONTAINS;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:16:13: ( '~=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:16:15: '~='
-			{
-			DebugLocation(16, 15);
-			Match("~="); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_CONTAINS", 2);
-			LeaveRule("OP_CONTAINS", 2);
-			LeaveRule_OP_CONTAINS();
-		}
-	}
-	// $ANTLR end "OP_CONTAINS"
-
-	partial void EnterRule_OP_ENDS_WITH();
-	partial void LeaveRule_OP_ENDS_WITH();
-
-	// $ANTLR start "OP_ENDS_WITH"
-	[GrammarRule("OP_ENDS_WITH")]
-	private void mOP_ENDS_WITH()
-	{
-		EnterRule_OP_ENDS_WITH();
-		EnterRule("OP_ENDS_WITH", 3);
-		TraceIn("OP_ENDS_WITH", 3);
-		try
-		{
-			int _type = OP_ENDS_WITH;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:17:14: ( '$=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:17:16: '$='
-			{
-			DebugLocation(17, 16);
-			Match("$="); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_ENDS_WITH", 3);
-			LeaveRule("OP_ENDS_WITH", 3);
-			LeaveRule_OP_ENDS_WITH();
-		}
-	}
-	// $ANTLR end "OP_ENDS_WITH"
-
-	partial void EnterRule_OP_EQ();
-	partial void LeaveRule_OP_EQ();
-
-	// $ANTLR start "OP_EQ"
-	[GrammarRule("OP_EQ")]
-	private void mOP_EQ()
-	{
-		EnterRule_OP_EQ();
-		EnterRule("OP_EQ", 4);
-		TraceIn("OP_EQ", 4);
-		try
-		{
-			int _type = OP_EQ;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:18:7: ( '=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:18:9: '='
-			{
-			DebugLocation(18, 9);
-			Match('='); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_EQ", 4);
-			LeaveRule("OP_EQ", 4);
-			LeaveRule_OP_EQ();
-		}
-	}
-	// $ANTLR end "OP_EQ"
-
-	partial void EnterRule_OP_GE();
-	partial void LeaveRule_OP_GE();
-
-	// $ANTLR start "OP_GE"
-	[GrammarRule("OP_GE")]
-	private void mOP_GE()
-	{
-		EnterRule_OP_GE();
-		EnterRule("OP_GE", 5);
-		TraceIn("OP_GE", 5);
-		try
-		{
-			int _type = OP_GE;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:19:7: ( '>=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:19:9: '>='
-			{
-			DebugLocation(19, 9);
-			Match(">="); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_GE", 5);
-			LeaveRule("OP_GE", 5);
-			LeaveRule_OP_GE();
-		}
-	}
-	// $ANTLR end "OP_GE"
-
-	partial void EnterRule_OP_GT();
-	partial void LeaveRule_OP_GT();
-
-	// $ANTLR start "OP_GT"
-	[GrammarRule("OP_GT")]
-	private void mOP_GT()
-	{
-		EnterRule_OP_GT();
-		EnterRule("OP_GT", 6);
-		TraceIn("OP_GT", 6);
-		try
-		{
-			int _type = OP_GT;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:20:7: ( '>' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:20:9: '>'
-			{
-			DebugLocation(20, 9);
-			Match('>'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_GT", 6);
-			LeaveRule("OP_GT", 6);
-			LeaveRule_OP_GT();
-		}
-	}
-	// $ANTLR end "OP_GT"
-
-	partial void EnterRule_OP_LE();
-	partial void LeaveRule_OP_LE();
-
-	// $ANTLR start "OP_LE"
-	[GrammarRule("OP_LE")]
-	private void mOP_LE()
-	{
-		EnterRule_OP_LE();
-		EnterRule("OP_LE", 7);
-		TraceIn("OP_LE", 7);
-		try
-		{
-			int _type = OP_LE;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:21:7: ( '<=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:21:9: '<='
-			{
-			DebugLocation(21, 9);
-			Match("<="); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_LE", 7);
-			LeaveRule("OP_LE", 7);
-			LeaveRule_OP_LE();
-		}
-	}
-	// $ANTLR end "OP_LE"
-
-	partial void EnterRule_OP_LT();
-	partial void LeaveRule_OP_LT();
-
-	// $ANTLR start "OP_LT"
-	[GrammarRule("OP_LT")]
-	private void mOP_LT()
-	{
-		EnterRule_OP_LT();
-		EnterRule("OP_LT", 8);
-		TraceIn("OP_LT", 8);
-		try
-		{
-			int _type = OP_LT;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:22:7: ( '<' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:22:9: '<'
-			{
-			DebugLocation(22, 9);
-			Match('<'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_LT", 8);
-			LeaveRule("OP_LT", 8);
-			LeaveRule_OP_LT();
-		}
-	}
-	// $ANTLR end "OP_LT"
-
-	partial void EnterRule_OP_MATCH();
-	partial void LeaveRule_OP_MATCH();
-
-	// $ANTLR start "OP_MATCH"
-	[GrammarRule("OP_MATCH")]
-	private void mOP_MATCH()
-	{
-		EnterRule_OP_MATCH();
-		EnterRule("OP_MATCH", 9);
-		TraceIn("OP_MATCH", 9);
-		try
-		{
-			int _type = OP_MATCH;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:23:10: ( '=~' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:23:12: '=~'
-			{
-			DebugLocation(23, 12);
-			Match("=~"); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_MATCH", 9);
-			LeaveRule("OP_MATCH", 9);
-			LeaveRule_OP_MATCH();
-		}
-	}
-	// $ANTLR end "OP_MATCH"
-
-	partial void EnterRule_OP_MOD();
-	partial void LeaveRule_OP_MOD();
-
-	// $ANTLR start "OP_MOD"
-	[GrammarRule("OP_MOD")]
-	private void mOP_MOD()
-	{
-		EnterRule_OP_MOD();
-		EnterRule("OP_MOD", 10);
-		TraceIn("OP_MOD", 10);
-		try
-		{
-			int _type = OP_MOD;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:24:8: ( '%' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:24:10: '%'
-			{
-			DebugLocation(24, 10);
-			Match('%'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_MOD", 10);
-			LeaveRule("OP_MOD", 10);
-			LeaveRule_OP_MOD();
-		}
-	}
-	// $ANTLR end "OP_MOD"
-
-	partial void EnterRule_OP_MUL();
-	partial void LeaveRule_OP_MUL();
-
-	// $ANTLR start "OP_MUL"
-	[GrammarRule("OP_MUL")]
-	private void mOP_MUL()
-	{
-		EnterRule_OP_MUL();
-		EnterRule("OP_MUL", 11);
-		TraceIn("OP_MUL", 11);
-		try
-		{
-			int _type = OP_MUL;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:25:8: ( '*' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:25:10: '*'
-			{
-			DebugLocation(25, 10);
-			Match('*'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_MUL", 11);
-			LeaveRule("OP_MUL", 11);
-			LeaveRule_OP_MUL();
-		}
-	}
-	// $ANTLR end "OP_MUL"
-
-	partial void EnterRule_OP_NEQ();
-	partial void LeaveRule_OP_NEQ();
-
-	// $ANTLR start "OP_NEQ"
-	[GrammarRule("OP_NEQ")]
-	private void mOP_NEQ()
-	{
-		EnterRule_OP_NEQ();
-		EnterRule("OP_NEQ", 12);
-		TraceIn("OP_NEQ", 12);
-		try
-		{
-			int _type = OP_NEQ;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:26:8: ( '!=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:26:10: '!='
-			{
-			DebugLocation(26, 10);
-			Match("!="); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_NEQ", 12);
-			LeaveRule("OP_NEQ", 12);
-			LeaveRule_OP_NEQ();
-		}
-	}
-	// $ANTLR end "OP_NEQ"
-
-	partial void EnterRule_OP_OR();
-	partial void LeaveRule_OP_OR();
-
-	// $ANTLR start "OP_OR"
-	[GrammarRule("OP_OR")]
-	private void mOP_OR()
-	{
-		EnterRule_OP_OR();
-		EnterRule("OP_OR", 13);
-		TraceIn("OP_OR", 13);
-		try
-		{
-			int _type = OP_OR;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:27:7: ( '||' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:27:9: '||'
-			{
-			DebugLocation(27, 9);
-			Match("||"); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_OR", 13);
-			LeaveRule("OP_OR", 13);
-			LeaveRule_OP_OR();
-		}
-	}
-	// $ANTLR end "OP_OR"
-
-	partial void EnterRule_OP_PLUS();
-	partial void LeaveRule_OP_PLUS();
-
-	// $ANTLR start "OP_PLUS"
-	[GrammarRule("OP_PLUS")]
-	private void mOP_PLUS()
-	{
-		EnterRule_OP_PLUS();
-		EnterRule("OP_PLUS", 14);
-		TraceIn("OP_PLUS", 14);
-		try
-		{
-			int _type = OP_PLUS;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:28:9: ( '+' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:28:11: '+'
-			{
-			DebugLocation(28, 11);
-			Match('+'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_PLUS", 14);
-			LeaveRule("OP_PLUS", 14);
-			LeaveRule_OP_PLUS();
-		}
-	}
-	// $ANTLR end "OP_PLUS"
-
-	partial void EnterRule_OP_STARTS_WITH();
-	partial void LeaveRule_OP_STARTS_WITH();
-
-	// $ANTLR start "OP_STARTS_WITH"
-	[GrammarRule("OP_STARTS_WITH")]
-	private void mOP_STARTS_WITH()
-	{
-		EnterRule_OP_STARTS_WITH();
-		EnterRule("OP_STARTS_WITH", 15);
-		TraceIn("OP_STARTS_WITH", 15);
-		try
-		{
-			int _type = OP_STARTS_WITH;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:29:16: ( '^=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:29:18: '^='
-			{
-			DebugLocation(29, 18);
-			Match("^="); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_STARTS_WITH", 15);
-			LeaveRule("OP_STARTS_WITH", 15);
-			LeaveRule_OP_STARTS_WITH();
-		}
-	}
-	// $ANTLR end "OP_STARTS_WITH"
-
-	partial void EnterRule_OP_SUBSTRING();
-	partial void LeaveRule_OP_SUBSTRING();
-
-	// $ANTLR start "OP_SUBSTRING"
-	[GrammarRule("OP_SUBSTRING")]
-	private void mOP_SUBSTRING()
-	{
-		EnterRule_OP_SUBSTRING();
-		EnterRule("OP_SUBSTRING", 16);
-		TraceIn("OP_SUBSTRING", 16);
-		try
-		{
-			int _type = OP_SUBSTRING;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:30:14: ( '*=' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:30:16: '*='
-			{
-			DebugLocation(30, 16);
-			Match("*="); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("OP_SUBSTRING", 16);
-			LeaveRule("OP_SUBSTRING", 16);
-			LeaveRule_OP_SUBSTRING();
-		}
-	}
-	// $ANTLR end "OP_SUBSTRING"
-
-	partial void EnterRule_T__114();
-	partial void LeaveRule_T__114();
-
-	// $ANTLR start "T__114"
-	[GrammarRule("T__114")]
-	private void mT__114()
-	{
-		EnterRule_T__114();
-		EnterRule("T__114", 17);
-		TraceIn("T__114", 17);
-		try
-		{
-			int _type = T__114;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:31:8: ( '!' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:31:10: '!'
-			{
-			DebugLocation(31, 10);
-			Match('!'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__114", 17);
-			LeaveRule("T__114", 17);
-			LeaveRule_T__114();
-		}
-	}
-	// $ANTLR end "T__114"
-
-	partial void EnterRule_T__115();
-	partial void LeaveRule_T__115();
-
-	// $ANTLR start "T__115"
-	[GrammarRule("T__115")]
-	private void mT__115()
-	{
-		EnterRule_T__115();
-		EnterRule("T__115", 18);
-		TraceIn("T__115", 18);
-		try
-		{
-			int _type = T__115;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:32:8: ( '!.' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:32:10: '!.'
-			{
-			DebugLocation(32, 10);
-			Match("!."); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__115", 18);
-			LeaveRule("T__115", 18);
-			LeaveRule_T__115();
-		}
-	}
-	// $ANTLR end "T__115"
-
-	partial void EnterRule_T__116();
-	partial void LeaveRule_T__116();
-
-	// $ANTLR start "T__116"
-	[GrammarRule("T__116")]
-	private void mT__116()
-	{
-		EnterRule_T__116();
-		EnterRule("T__116", 19);
-		TraceIn("T__116", 19);
-		try
-		{
-			int _type = T__116;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:33:8: ( '!:' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:33:10: '!:'
-			{
-			DebugLocation(33, 10);
-			Match("!:"); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__116", 19);
-			LeaveRule("T__116", 19);
-			LeaveRule_T__116();
-		}
-	}
-	// $ANTLR end "T__116"
-
-	partial void EnterRule_T__117();
-	partial void LeaveRule_T__117();
-
-	// $ANTLR start "T__117"
-	[GrammarRule("T__117")]
-	private void mT__117()
-	{
-		EnterRule_T__117();
-		EnterRule("T__117", 20);
-		TraceIn("T__117", 20);
-		try
-		{
-			int _type = T__117;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:34:8: ( '(' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:34:10: '('
-			{
-			DebugLocation(34, 10);
-			Match('('); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__117", 20);
-			LeaveRule("T__117", 20);
-			LeaveRule_T__117();
-		}
-	}
-	// $ANTLR end "T__117"
-
-	partial void EnterRule_T__118();
-	partial void LeaveRule_T__118();
-
-	// $ANTLR start "T__118"
-	[GrammarRule("T__118")]
-	private void mT__118()
-	{
-		EnterRule_T__118();
-		EnterRule("T__118", 21);
-		TraceIn("T__118", 21);
-		try
-		{
-			int _type = T__118;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:35:8: ( ')' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:35:10: ')'
-			{
-			DebugLocation(35, 10);
-			Match(')'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__118", 21);
-			LeaveRule("T__118", 21);
-			LeaveRule_T__118();
-		}
-	}
-	// $ANTLR end "T__118"
-
-	partial void EnterRule_T__119();
-	partial void LeaveRule_T__119();
-
-	// $ANTLR start "T__119"
-	[GrammarRule("T__119")]
-	private void mT__119()
-	{
-		EnterRule_T__119();
-		EnterRule("T__119", 22);
-		TraceIn("T__119", 22);
-		try
-		{
-			int _type = T__119;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:36:8: ( ',' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:36:10: ','
-			{
-			DebugLocation(36, 10);
-			Match(','); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__119", 22);
-			LeaveRule("T__119", 22);
-			LeaveRule_T__119();
-		}
-	}
-	// $ANTLR end "T__119"
-
-	partial void EnterRule_T__120();
-	partial void LeaveRule_T__120();
-
-	// $ANTLR start "T__120"
-	[GrammarRule("T__120")]
-	private void mT__120()
-	{
-		EnterRule_T__120();
-		EnterRule("T__120", 23);
-		TraceIn("T__120", 23);
-		try
-		{
-			int _type = T__120;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:37:8: ( '-' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:37:10: '-'
-			{
-			DebugLocation(37, 10);
-			Match('-'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__120", 23);
-			LeaveRule("T__120", 23);
-			LeaveRule_T__120();
-		}
-	}
-	// $ANTLR end "T__120"
-
-	partial void EnterRule_T__121();
-	partial void LeaveRule_T__121();
-
-	// $ANTLR start "T__121"
-	[GrammarRule("T__121")]
-	private void mT__121()
-	{
-		EnterRule_T__121();
-		EnterRule("T__121", 24);
-		TraceIn("T__121", 24);
-		try
-		{
-			int _type = T__121;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:38:8: ( '.' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:38:10: '.'
-			{
-			DebugLocation(38, 10);
-			Match('.'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__121", 24);
-			LeaveRule("T__121", 24);
-			LeaveRule_T__121();
-		}
-	}
-	// $ANTLR end "T__121"
-
-	partial void EnterRule_T__122();
-	partial void LeaveRule_T__122();
-
-	// $ANTLR start "T__122"
-	[GrammarRule("T__122")]
-	private void mT__122()
-	{
-		EnterRule_T__122();
-		EnterRule("T__122", 25);
-		TraceIn("T__122", 25);
-		try
-		{
-			int _type = T__122;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:39:8: ( ':!' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:39:10: ':!'
-			{
-			DebugLocation(39, 10);
-			Match(":!"); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__122", 25);
-			LeaveRule("T__122", 25);
-			LeaveRule_T__122();
-		}
-	}
-	// $ANTLR end "T__122"
-
-	partial void EnterRule_T__123();
-	partial void LeaveRule_T__123();
-
-	// $ANTLR start "T__123"
-	[GrammarRule("T__123")]
-	private void mT__123()
-	{
-		EnterRule_T__123();
-		EnterRule("T__123", 26);
-		TraceIn("T__123", 26);
-		try
-		{
-			int _type = T__123;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:40:8: ( '::' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:40:10: '::'
-			{
-			DebugLocation(40, 10);
-			Match("::"); if (state.failed) return;
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__123", 26);
-			LeaveRule("T__123", 26);
-			LeaveRule_T__123();
-		}
-	}
-	// $ANTLR end "T__123"
-
-	partial void EnterRule_T__124();
-	partial void LeaveRule_T__124();
-
-	// $ANTLR start "T__124"
-	[GrammarRule("T__124")]
-	private void mT__124()
-	{
-		EnterRule_T__124();
-		EnterRule("T__124", 27);
-		TraceIn("T__124", 27);
-		try
-		{
-			int _type = T__124;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:41:8: ( '?' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:41:10: '?'
-			{
-			DebugLocation(41, 10);
-			Match('?'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("T__124", 27);
-			LeaveRule("T__124", 27);
-			LeaveRule_T__124();
-		}
-	}
-	// $ANTLR end "T__124"
-
-	partial void EnterRule_EBACKSLASH();
-	partial void LeaveRule_EBACKSLASH();
-
-	// $ANTLR start "EBACKSLASH"
-	[GrammarRule("EBACKSLASH")]
-	private void mEBACKSLASH()
-	{
-		EnterRule_EBACKSLASH();
-		EnterRule("EBACKSLASH", 28);
-		TraceIn("EBACKSLASH", 28);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:412:20: ( '\\\\\\\\' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:412:22: '\\\\\\\\'
-			{
-			DebugLocation(412, 22);
-			Match("\\\\"); if (state.failed) return;
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("EBACKSLASH", 28);
-			LeaveRule("EBACKSLASH", 28);
-			LeaveRule_EBACKSLASH();
-		}
-	}
-	// $ANTLR end "EBACKSLASH"
-
-	partial void EnterRule_UNICODE();
-	partial void LeaveRule_UNICODE();
-
-	// $ANTLR start "UNICODE"
-	[GrammarRule("UNICODE")]
-	private void mUNICODE()
-	{
-		EnterRule_UNICODE();
-		EnterRule("UNICODE", 29);
-		TraceIn("UNICODE", 29);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:413:17: ( '\\u0080' .. '\\uFFFF' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(413, 17);
-			if ((input.LA(1)>='\u0080' && input.LA(1)<='\uFFFF'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("UNICODE", 29);
-			LeaveRule("UNICODE", 29);
-			LeaveRule_UNICODE();
-		}
-	}
-	// $ANTLR end "UNICODE"
-
-	partial void EnterRule_RGB();
-	partial void LeaveRule_RGB();
-
-	// $ANTLR start "RGB"
-	[GrammarRule("RGB")]
-	private void mRGB()
-	{
-		EnterRule_RGB();
-		EnterRule("RGB", 30);
-		TraceIn("RGB", 30);
-		try
-		{
-			int _type = RGB;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:416:4: ( ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:416:6: ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' )
-			{
-			DebugLocation(416, 6);
-			if (input.LA(1)=='R'||input.LA(1)=='r')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(416, 18);
-			if (input.LA(1)=='G'||input.LA(1)=='g')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(416, 30);
-			if (input.LA(1)=='B'||input.LA(1)=='b')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("RGB", 30);
-			LeaveRule("RGB", 30);
-			LeaveRule_RGB();
-		}
-	}
-	// $ANTLR end "RGB"
-
-	partial void EnterRule_RGBA();
-	partial void LeaveRule_RGBA();
-
-	// $ANTLR start "RGBA"
-	[GrammarRule("RGBA")]
-	private void mRGBA()
-	{
-		EnterRule_RGBA();
-		EnterRule("RGBA", 31);
-		TraceIn("RGBA", 31);
-		try
-		{
-			int _type = RGBA;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:417:5: ( ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' ) ( 'a' | 'A' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:417:7: ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' ) ( 'a' | 'A' )
-			{
-			DebugLocation(417, 7);
-			if (input.LA(1)=='R'||input.LA(1)=='r')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(417, 19);
-			if (input.LA(1)=='G'||input.LA(1)=='g')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(417, 31);
-			if (input.LA(1)=='B'||input.LA(1)=='b')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(417, 43);
-			if (input.LA(1)=='A'||input.LA(1)=='a')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("RGBA", 31);
-			LeaveRule("RGBA", 31);
-			LeaveRule_RGBA();
-		}
-	}
-	// $ANTLR end "RGBA"
-
-	partial void EnterRule_ROLE();
-	partial void LeaveRule_ROLE();
-
-	// $ANTLR start "ROLE"
-	[GrammarRule("ROLE")]
-	private void mROLE()
-	{
-		EnterRule_ROLE();
-		EnterRule("ROLE", 32);
-		TraceIn("ROLE", 32);
-		try
-		{
-			int _type = ROLE;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:418:5: ( ( 'r' | 'R' ) ( 'o' | 'O' ) ( 'l' | 'L' ) ( 'e' | 'E' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:418:7: ( 'r' | 'R' ) ( 'o' | 'O' ) ( 'l' | 'L' ) ( 'e' | 'E' )
-			{
-			DebugLocation(418, 7);
-			if (input.LA(1)=='R'||input.LA(1)=='r')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(418, 19);
-			if (input.LA(1)=='O'||input.LA(1)=='o')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(418, 31);
-			if (input.LA(1)=='L'||input.LA(1)=='l')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(418, 43);
-			if (input.LA(1)=='E'||input.LA(1)=='e')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("ROLE", 32);
-			LeaveRule("ROLE", 32);
-			LeaveRule_ROLE();
-		}
-	}
-	// $ANTLR end "ROLE"
-
-	partial void EnterRule_INDEX();
-	partial void LeaveRule_INDEX();
-
-	// $ANTLR start "INDEX"
-	[GrammarRule("INDEX")]
-	private void mINDEX()
-	{
-		EnterRule_INDEX();
-		EnterRule("INDEX", 33);
-		TraceIn("INDEX", 33);
-		try
-		{
-			int _type = INDEX;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:419:6: ( ( 'i' | 'I' ) ( 'n' | 'N' ) ( 'd' | 'D' ) ( 'e' | 'E' ) ( 'x' | 'X' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:419:8: ( 'i' | 'I' ) ( 'n' | 'N' ) ( 'd' | 'D' ) ( 'e' | 'E' ) ( 'x' | 'X' )
-			{
-			DebugLocation(419, 8);
-			if (input.LA(1)=='I'||input.LA(1)=='i')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(419, 20);
-			if (input.LA(1)=='N'||input.LA(1)=='n')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(419, 32);
-			if (input.LA(1)=='D'||input.LA(1)=='d')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(419, 44);
-			if (input.LA(1)=='E'||input.LA(1)=='e')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(419, 56);
-			if (input.LA(1)=='X'||input.LA(1)=='x')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("INDEX", 33);
-			LeaveRule("INDEX", 33);
-			LeaveRule_INDEX();
-		}
-	}
-	// $ANTLR end "INDEX"
-
-	partial void EnterRule_EVAL();
-	partial void LeaveRule_EVAL();
-
-	// $ANTLR start "EVAL"
-	[GrammarRule("EVAL")]
-	private void mEVAL()
-	{
-		EnterRule_EVAL();
-		EnterRule("EVAL", 34);
-		TraceIn("EVAL", 34);
-		try
-		{
-			int _type = EVAL;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:420:5: ( ( 'e' | 'E' ) ( 'v' | 'V' ) ( 'a' | 'A' ) ( 'l' | 'L' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:420:7: ( 'e' | 'E' ) ( 'v' | 'V' ) ( 'a' | 'A' ) ( 'l' | 'L' )
-			{
-			DebugLocation(420, 7);
-			if (input.LA(1)=='E'||input.LA(1)=='e')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(420, 19);
-			if (input.LA(1)=='V'||input.LA(1)=='v')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(420, 31);
-			if (input.LA(1)=='A'||input.LA(1)=='a')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(420, 43);
-			if (input.LA(1)=='L'||input.LA(1)=='l')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("EVAL", 34);
-			LeaveRule("EVAL", 34);
-			LeaveRule_EVAL();
-		}
-	}
-	// $ANTLR end "EVAL"
-
-	partial void EnterRule_LIST();
-	partial void LeaveRule_LIST();
-
-	// $ANTLR start "LIST"
-	[GrammarRule("LIST")]
-	private void mLIST()
-	{
-		EnterRule_LIST();
-		EnterRule("LIST", 35);
-		TraceIn("LIST", 35);
-		try
-		{
-			int _type = LIST;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:421:5: ( ( 'l' | 'L' ) ( 'i' | 'I' ) ( 's' | 'S' ) ( 't' | 'T' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:421:7: ( 'l' | 'L' ) ( 'i' | 'I' ) ( 's' | 'S' ) ( 't' | 'T' )
-			{
-			DebugLocation(421, 7);
-			if (input.LA(1)=='L'||input.LA(1)=='l')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(421, 19);
-			if (input.LA(1)=='I'||input.LA(1)=='i')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(421, 31);
-			if (input.LA(1)=='S'||input.LA(1)=='s')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(421, 43);
-			if (input.LA(1)=='T'||input.LA(1)=='t')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("LIST", 35);
-			LeaveRule("LIST", 35);
-			LeaveRule_LIST();
-		}
-	}
-	// $ANTLR end "LIST"
-
-	partial void EnterRule_IMPORT();
-	partial void LeaveRule_IMPORT();
-
-	// $ANTLR start "IMPORT"
-	[GrammarRule("IMPORT")]
-	private void mIMPORT()
-	{
-		EnterRule_IMPORT();
-		EnterRule("IMPORT", 36);
-		TraceIn("IMPORT", 36);
-		try
-		{
-			int _type = IMPORT;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:422:7: ( '@' ( 'i' | 'I' ) ( 'm' | 'M' ) ( 'p' | 'P' ) ( 'o' | 'O' ) ( 'r' | 'R' ) ( 't' | 'T' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:422:9: '@' ( 'i' | 'I' ) ( 'm' | 'M' ) ( 'p' | 'P' ) ( 'o' | 'O' ) ( 'r' | 'R' ) ( 't' | 'T' )
-			{
-			DebugLocation(422, 9);
-			Match('@'); if (state.failed) return;
-			DebugLocation(422, 13);
-			if (input.LA(1)=='I'||input.LA(1)=='i')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(422, 25);
-			if (input.LA(1)=='M'||input.LA(1)=='m')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(422, 37);
-			if (input.LA(1)=='P'||input.LA(1)=='p')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(422, 49);
-			if (input.LA(1)=='O'||input.LA(1)=='o')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(422, 60);
-			if (input.LA(1)=='R'||input.LA(1)=='r')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(422, 72);
-			if (input.LA(1)=='T'||input.LA(1)=='t')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("IMPORT", 36);
-			LeaveRule("IMPORT", 36);
-			LeaveRule_IMPORT();
-		}
-	}
-	// $ANTLR end "IMPORT"
-
-	partial void EnterRule_HWS();
-	partial void LeaveRule_HWS();
-
-	// $ANTLR start "HWS"
-	[GrammarRule("HWS")]
-	private void mHWS()
-	{
-		EnterRule_HWS();
-		EnterRule("HWS", 37);
-		TraceIn("HWS", 37);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:424:13: ( ( ' ' | '\\t' | '\\f' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(424, 13);
-			if (input.LA(1)=='\t'||input.LA(1)=='\f'||input.LA(1)==' ')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("HWS", 37);
-			LeaveRule("HWS", 37);
-			LeaveRule_HWS();
-		}
-	}
-	// $ANTLR end "HWS"
-
-	partial void EnterRule_URLCONTENT();
-	partial void LeaveRule_URLCONTENT();
-
-	// $ANTLR start "URLCONTENT"
-	[GrammarRule("URLCONTENT")]
-	private void mURLCONTENT()
-	{
-		EnterRule_URLCONTENT();
-		EnterRule("URLCONTENT", 38);
-		TraceIn("URLCONTENT", 38);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:425:20: ( ( '!' | '#' | '$' | '%' | '&' | '*' .. '[' | ']' .. '~' | NONASCII )+ )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:425:22: ( '!' | '#' | '$' | '%' | '&' | '*' .. '[' | ']' .. '~' | NONASCII )+
-			{
-			DebugLocation(425, 22);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:425:22: ( '!' | '#' | '$' | '%' | '&' | '*' .. '[' | ']' .. '~' | NONASCII )+
-			int cnt1=0;
-			try { DebugEnterSubRule(1);
-			while (true)
-			{
-				int alt1=2;
-				try { DebugEnterDecision(1, false);
-				int LA1_1 = input.LA(1);
-
-				if ((LA1_1=='!'||(LA1_1>='#' && LA1_1<='&')||(LA1_1>='*' && LA1_1<='[')||(LA1_1>=']' && LA1_1<='~')||(LA1_1>='\u00A0' && LA1_1<='\uFFFF')))
-				{
-					alt1 = 1;
-				}
-
-
-				} finally { DebugExitDecision(1); }
-				switch (alt1)
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-					{
-					DebugLocation(425, 22);
-					input.Consume();
-					state.failed=false;
-
-					}
-					break;
-
-				default:
-					if (cnt1 >= 1)
-						goto loop1;
-
-					if (state.backtracking>0) {state.failed=true; return;}
-					EarlyExitException eee1 = new EarlyExitException( 1, input );
-					DebugRecognitionException(eee1);
-					throw eee1;
-				}
-				cnt1++;
-			}
-			loop1:
-				;
-
-			} finally { DebugExitSubRule(1); }
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("URLCONTENT", 38);
-			LeaveRule("URLCONTENT", 38);
-			LeaveRule_URLCONTENT();
-		}
-	}
-	// $ANTLR end "URLCONTENT"
-
-	partial void EnterRule_URL();
-	partial void LeaveRule_URL();
-
-	// $ANTLR start "URL"
-	[GrammarRule("URL")]
-	private void mURL()
-	{
-		EnterRule_URL();
-		EnterRule("URL", 39);
-		TraceIn("URL", 39);
-		try
-		{
-			int _type = URL;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:4: ( ( 'u' | 'U' ) ( 'r' | 'R' ) ( 'l' | 'L' ) ( HWS )* '(' ( HWS )* ( URLCONTENT | '\"' URLCONTENT '\"' | '\\'' URLCONTENT '\\'' ) ( HWS )* ')' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:6: ( 'u' | 'U' ) ( 'r' | 'R' ) ( 'l' | 'L' ) ( HWS )* '(' ( HWS )* ( URLCONTENT | '\"' URLCONTENT '\"' | '\\'' URLCONTENT '\\'' ) ( HWS )* ')'
-			{
-			DebugLocation(426, 6);
-			if (input.LA(1)=='U'||input.LA(1)=='u')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(426, 18);
-			if (input.LA(1)=='R'||input.LA(1)=='r')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(426, 30);
-			if (input.LA(1)=='L'||input.LA(1)=='l')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(426, 42);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:42: ( HWS )*
-			try { DebugEnterSubRule(2);
-			while (true)
-			{
-				int alt2=2;
-				try { DebugEnterDecision(2, false);
-				int LA2_1 = input.LA(1);
-
-				if ((LA2_1=='\t'||LA2_1=='\f'||LA2_1==' '))
-				{
-					alt2 = 1;
-				}
-
-
-				} finally { DebugExitDecision(2); }
-				switch ( alt2 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-					{
-					DebugLocation(426, 42);
-					input.Consume();
-					state.failed=false;
-
-					}
-					break;
-
-				default:
-					goto loop2;
-				}
-			}
-
-			loop2:
-				;
-
-			} finally { DebugExitSubRule(2); }
-
-			DebugLocation(426, 47);
-			Match('('); if (state.failed) return;
-			DebugLocation(426, 51);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:51: ( HWS )*
-			try { DebugEnterSubRule(3);
-			while (true)
-			{
-				int alt3=2;
-				try { DebugEnterDecision(3, false);
-				int LA3_1 = input.LA(1);
-
-				if ((LA3_1=='\t'||LA3_1=='\f'||LA3_1==' '))
-				{
-					alt3 = 1;
-				}
-
-
-				} finally { DebugExitDecision(3); }
-				switch ( alt3 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-					{
-					DebugLocation(426, 51);
-					input.Consume();
-					state.failed=false;
-
-					}
-					break;
-
-				default:
-					goto loop3;
-				}
-			}
-
-			loop3:
-				;
-
-			} finally { DebugExitSubRule(3); }
-
-			DebugLocation(427, 6);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:427:6: ( URLCONTENT | '\"' URLCONTENT '\"' | '\\'' URLCONTENT '\\'' )
-			int alt4=3;
-			try { DebugEnterSubRule(4);
-			try { DebugEnterDecision(4, false);
-			int LA4_1 = input.LA(1);
-
-			if ((LA4_1=='!'||(LA4_1>='#' && LA4_1<='&')||(LA4_1>='*' && LA4_1<='[')||(LA4_1>=']' && LA4_1<='~')||(LA4_1>='\u00A0' && LA4_1<='\uFFFF')))
-			{
-				alt4 = 1;
-			}
-			else if ((LA4_1=='\"'))
-			{
-				alt4 = 2;
-			}
-			else if ((LA4_1=='\''))
-			{
-				alt4 = 3;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				NoViableAltException nvae = new NoViableAltException("", 4, 0, input, 1);
-				DebugRecognitionException(nvae);
-				throw nvae;
-			}
-			} finally { DebugExitDecision(4); }
-			switch (alt4)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:428:11: URLCONTENT
-				{
-				DebugLocation(428, 11);
-				mURLCONTENT(); if (state.failed) return;
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:429:7: '\"' URLCONTENT '\"'
-				{
-				DebugLocation(429, 7);
-				Match('\"'); if (state.failed) return;
-				DebugLocation(429, 11);
-				mURLCONTENT(); if (state.failed) return;
-				DebugLocation(429, 22);
-				Match('\"'); if (state.failed) return;
-
-				}
-				break;
-			case 3:
-				DebugEnterAlt(3);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:430:7: '\\'' URLCONTENT '\\''
-				{
-				DebugLocation(430, 7);
-				Match('\''); if (state.failed) return;
-				DebugLocation(430, 12);
-				mURLCONTENT(); if (state.failed) return;
-				DebugLocation(430, 23);
-				Match('\''); if (state.failed) return;
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(4); }
-
-			DebugLocation(432, 6);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:432:6: ( HWS )*
-			try { DebugEnterSubRule(5);
-			while (true)
-			{
-				int alt5=2;
-				try { DebugEnterDecision(5, false);
-				int LA5_1 = input.LA(1);
-
-				if ((LA5_1=='\t'||LA5_1=='\f'||LA5_1==' '))
-				{
-					alt5 = 1;
-				}
-
-
-				} finally { DebugExitDecision(5); }
-				switch ( alt5 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-					{
-					DebugLocation(432, 6);
-					input.Consume();
-					state.failed=false;
-
-					}
-					break;
-
-				default:
-					goto loop5;
-				}
-			}
-
-			loop5:
-				;
-
-			} finally { DebugExitSubRule(5); }
-
-			DebugLocation(432, 11);
-			Match(')'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("URL", 39);
-			LeaveRule("URL", 39);
-			LeaveRule_URL();
-		}
-	}
-	// $ANTLR end "URL"
-
-	partial void EnterRule_DIGIT();
-	partial void LeaveRule_DIGIT();
-
-	// $ANTLR start "DIGIT"
-	[GrammarRule("DIGIT")]
-	private void mDIGIT()
-	{
-		EnterRule_DIGIT();
-		EnterRule("DIGIT", 40);
-		TraceIn("DIGIT", 40);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:434:15: ( '0' .. '9' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(434, 15);
-			if ((input.LA(1)>='0' && input.LA(1)<='9'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("DIGIT", 40);
-			LeaveRule("DIGIT", 40);
-			LeaveRule_DIGIT();
-		}
-	}
-	// $ANTLR end "DIGIT"
-
-	partial void EnterRule_CHAR();
-	partial void LeaveRule_CHAR();
-
-	// $ANTLR start "CHAR"
-	[GrammarRule("CHAR")]
-	private void mCHAR()
-	{
-		EnterRule_CHAR();
-		EnterRule("CHAR", 41);
-		TraceIn("CHAR", 41);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:435:14: ( 'a' .. 'z' | 'A' .. 'Z' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(435, 14);
-			if ((input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("CHAR", 41);
-			LeaveRule("CHAR", 41);
-			LeaveRule_CHAR();
-		}
-	}
-	// $ANTLR end "CHAR"
-
-	partial void EnterRule_NONASCII();
-	partial void LeaveRule_NONASCII();
-
-	// $ANTLR start "NONASCII"
-	[GrammarRule("NONASCII")]
-	private void mNONASCII()
-	{
-		EnterRule_NONASCII();
-		EnterRule("NONASCII", 42);
-		TraceIn("NONASCII", 42);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:439:18: (~ ( '\\u0000' .. '\\u009F' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(439, 18);
-			if ((input.LA(1)>='\u00A0' && input.LA(1)<='\uFFFF'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("NONASCII", 42);
-			LeaveRule("NONASCII", 42);
-			LeaveRule_NONASCII();
-		}
-	}
-	// $ANTLR end "NONASCII"
-
-	partial void EnterRule_NMSTART();
-	partial void LeaveRule_NMSTART();
-
-	// $ANTLR start "NMSTART"
-	[GrammarRule("NMSTART")]
-	private void mNMSTART()
-	{
-		EnterRule_NMSTART();
-		EnterRule("NMSTART", 43);
-		TraceIn("NMSTART", 43);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:440:17: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | NONASCII )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(440, 17);
-			if ((input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z')||(input.LA(1)>='\u00A0' && input.LA(1)<='\uFFFF'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("NMSTART", 43);
-			LeaveRule("NMSTART", 43);
-			LeaveRule_NMSTART();
-		}
-	}
-	// $ANTLR end "NMSTART"
-
-	partial void EnterRule_NMCHAR();
-	partial void LeaveRule_NMCHAR();
-
-	// $ANTLR start "NMCHAR"
-	[GrammarRule("NMCHAR")]
-	private void mNMCHAR()
-	{
-		EnterRule_NMCHAR();
-		EnterRule("NMCHAR", 44);
-		TraceIn("NMCHAR", 44);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:441:16: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | NONASCII )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(441, 16);
-			if (input.LA(1)=='-'||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z')||(input.LA(1)>='\u00A0' && input.LA(1)<='\uFFFF'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("NMCHAR", 44);
-			LeaveRule("NMCHAR", 44);
-			LeaveRule_NMCHAR();
-		}
-	}
-	// $ANTLR end "NMCHAR"
-
-	partial void EnterRule_NCOMPONENT();
-	partial void LeaveRule_NCOMPONENT();
-
-	// $ANTLR start "NCOMPONENT"
-	[GrammarRule("NCOMPONENT")]
-	private void mNCOMPONENT()
-	{
-		EnterRule_NCOMPONENT();
-		EnterRule("NCOMPONENT", 45);
-		TraceIn("NCOMPONENT", 45);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:444:20: ( ( CHAR | '_' ) ( CHAR | DIGIT | '_' | '-' )* )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:444:22: ( CHAR | '_' ) ( CHAR | DIGIT | '_' | '-' )*
-			{
-			DebugLocation(444, 22);
-			if ((input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(444, 35);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:444:35: ( CHAR | DIGIT | '_' | '-' )*
-			try { DebugEnterSubRule(6);
-			while (true)
-			{
-				int alt6=2;
-				try { DebugEnterDecision(6, false);
-				int LA6_1 = input.LA(1);
-
-				if ((LA6_1=='-'||(LA6_1>='0' && LA6_1<='9')||(LA6_1>='A' && LA6_1<='Z')||LA6_1=='_'||(LA6_1>='a' && LA6_1<='z')))
-				{
-					alt6 = 1;
-				}
-
-
-				} finally { DebugExitDecision(6); }
-				switch ( alt6 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-					{
-					DebugLocation(444, 35);
-					input.Consume();
-					state.failed=false;
-
-					}
-					break;
-
-				default:
-					goto loop6;
-				}
-			}
-
-			loop6:
-				;
-
-			} finally { DebugExitSubRule(6); }
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("NCOMPONENT", 45);
-			LeaveRule("NCOMPONENT", 45);
-			LeaveRule_NCOMPONENT();
-		}
-	}
-	// $ANTLR end "NCOMPONENT"
-
-	partial void EnterRule_TAGSEPARATOR();
-	partial void LeaveRule_TAGSEPARATOR();
-
-	// $ANTLR start "TAGSEPARATOR"
-	[GrammarRule("TAGSEPARATOR")]
-	private void mTAGSEPARATOR()
-	{
-		EnterRule_TAGSEPARATOR();
-		EnterRule("TAGSEPARATOR", 46);
-		TraceIn("TAGSEPARATOR", 46);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:445:22: ( ( ':' ) | ( '.' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(445, 22);
-			if (input.LA(1)=='.'||input.LA(1)==':')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("TAGSEPARATOR", 46);
-			LeaveRule("TAGSEPARATOR", 46);
-			LeaveRule_TAGSEPARATOR();
-		}
-	}
-	// $ANTLR end "TAGSEPARATOR"
-
-	partial void EnterRule_CSS_IDENT();
-	partial void LeaveRule_CSS_IDENT();
-
-	// $ANTLR start "CSS_IDENT"
-	[GrammarRule("CSS_IDENT")]
-	private void mCSS_IDENT()
-	{
-		EnterRule_CSS_IDENT();
-		EnterRule("CSS_IDENT", 47);
-		TraceIn("CSS_IDENT", 47);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:448:19: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:448:20: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("CSS_IDENT", 47);
-			LeaveRule("CSS_IDENT", 47);
-			LeaveRule_CSS_IDENT();
-		}
-	}
-	// $ANTLR end "CSS_IDENT"
-
-	partial void EnterRule_OSM_TAG();
-	partial void LeaveRule_OSM_TAG();
-
-	// $ANTLR start "OSM_TAG"
-	[GrammarRule("OSM_TAG")]
-	private void mOSM_TAG()
-	{
-		EnterRule_OSM_TAG();
-		EnterRule("OSM_TAG", 48);
-		TraceIn("OSM_TAG", 48);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:449:17: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:449:18: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("OSM_TAG", 48);
-			LeaveRule("OSM_TAG", 48);
-			LeaveRule_OSM_TAG();
-		}
-	}
-	// $ANTLR end "OSM_TAG"
-
-	partial void EnterRule_IDENTS();
-	partial void LeaveRule_IDENTS();
-
-	// $ANTLR start "IDENTS"
-	[GrammarRule("IDENTS")]
-	private void mIDENTS()
-	{
-		EnterRule_IDENTS();
-		EnterRule("IDENTS", 49);
-		TraceIn("IDENTS", 49);
-		try
-		{
-			int _type = IDENTS;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:450:7: ( ( '-' )? NCOMPONENT ({...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |) |) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:2: ( '-' )? NCOMPONENT ({...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |) |)
-			{
-			DebugLocation(451, 2);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:2: ( '-' )?
-			int alt7=2;
-			try { DebugEnterSubRule(7);
-			try { DebugEnterDecision(7, false);
-			int LA7_1 = input.LA(1);
-
-			if ((LA7_1=='-'))
-			{
-				alt7 = 1;
-			}
-			} finally { DebugExitDecision(7); }
-			switch (alt7)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:2: '-'
-				{
-				DebugLocation(451, 2);
-				Match('-'); if (state.failed) return;
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(7); }
-
-			DebugLocation(451, 9);
-			mNCOMPONENT(); if (state.failed) return;
-			DebugLocation(451, 20);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:20: ({...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |) |)
-			int alt10=2;
-			try { DebugEnterSubRule(10);
-			try { DebugEnterDecision(10, false);
-			int LA10_1 = input.LA(1);
-
-			if ((LA10_1=='.'||LA10_1==':') && ((isOsmTagAllowed)))
-			{
-				alt10 = 1;
-			}
-			else if (((isOsmTagAllowed)))
-			{
-				alt10 = 1;
-			}
-			else if ((true))
-			{
-				alt10 = 2;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				NoViableAltException nvae = new NoViableAltException("", 10, 0, input, 1);
-				DebugRecognitionException(nvae);
-				throw nvae;
-			}
-			} finally { DebugExitDecision(10); }
-			switch (alt10)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:452:8: {...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |)
-				{
-				DebugLocation(452, 8);
-				if (!((isOsmTagAllowed)))
-				{
-					if (state.backtracking>0) {state.failed=true; return;}
-					throw new FailedPredicateException(input, "IDENTS", "isOsmTagAllowed");
-				}
-				DebugLocation(452, 31);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:452:31: ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |)
-				int alt9=2;
-				try { DebugEnterSubRule(9);
-				try { DebugEnterDecision(9, false);
-				int LA9_1 = input.LA(1);
-
-				if ((LA9_1=='.'||LA9_1==':') && (EvaluatePredicate(synpred1_MapCss_fragment)))
-				{
-					alt9 = 1;
-				}
-				else
-				{
-					alt9 = 2;
-				}
-				} finally { DebugExitDecision(9); }
-				switch (alt9)
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:12: ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )*
-					{
-					DebugLocation(453, 31);
-					mTAGSEPARATOR(); if (state.failed) return;
-					DebugLocation(453, 44);
-					mNCOMPONENT(); if (state.failed) return;
-					DebugLocation(453, 55);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:55: ( TAGSEPARATOR NCOMPONENT )*
-					try { DebugEnterSubRule(8);
-					while (true)
-					{
-						int alt8=2;
-						try { DebugEnterDecision(8, false);
-						int LA8_1 = input.LA(1);
-
-						if ((LA8_1=='.'||LA8_1==':'))
-						{
-							alt8 = 1;
-						}
-
-
-						} finally { DebugExitDecision(8); }
-						switch ( alt8 )
-						{
-						case 1:
-							DebugEnterAlt(1);
-							// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:56: TAGSEPARATOR NCOMPONENT
-							{
-							DebugLocation(453, 56);
-							mTAGSEPARATOR(); if (state.failed) return;
-							DebugLocation(453, 69);
-							mNCOMPONENT(); if (state.failed) return;
-
-							}
-							break;
-
-						default:
-							goto loop8;
-						}
-					}
-
-					loop8:
-						;
-
-					} finally { DebugExitSubRule(8); }
-
-					DebugLocation(453, 83);
-					if (state.backtracking == 0)
-					{
-						_type=OSM_TAG;
-					}
-
-					}
-					break;
-				case 2:
-					DebugEnterAlt(2);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:454:12: 
-					{
-					DebugLocation(454, 12);
-					if (state.backtracking == 0)
-					{
-						_type=CSS_IDENT;
-					}
-
-					}
-					break;
-
-				}
-				} finally { DebugExitSubRule(9); }
-
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:456:8: 
-				{
-				DebugLocation(456, 8);
-				if (state.backtracking == 0)
-				{
-					_type=CSS_IDENT;
-				}
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(10); }
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("IDENTS", 49);
-			LeaveRule("IDENTS", 49);
-			LeaveRule_IDENTS();
-		}
-	}
-	// $ANTLR end "IDENTS"
-
-	partial void EnterRule_LBRACKET();
-	partial void LeaveRule_LBRACKET();
-
-	// $ANTLR start "LBRACKET"
-	[GrammarRule("LBRACKET")]
-	private void mLBRACKET()
-	{
-		EnterRule_LBRACKET();
-		EnterRule("LBRACKET", 50);
-		TraceIn("LBRACKET", 50);
-		try
-		{
-			int _type = LBRACKET;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:464:3: ( '[' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:464:5: '['
-			{
-			DebugLocation(464, 5);
-			Match('['); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-			if (state.backtracking == 0)
-			{
-				isOsmTagAllowed=true;
-			}
-		}
-		finally
-		{
-			TraceOut("LBRACKET", 50);
-			LeaveRule("LBRACKET", 50);
-			LeaveRule_LBRACKET();
-		}
-	}
-	// $ANTLR end "LBRACKET"
-
-	partial void EnterRule_RBRACKET();
-	partial void LeaveRule_RBRACKET();
-
-	// $ANTLR start "RBRACKET"
-	[GrammarRule("RBRACKET")]
-	private void mRBRACKET()
-	{
-		EnterRule_RBRACKET();
-		EnterRule("RBRACKET", 51);
-		TraceIn("RBRACKET", 51);
-		try
-		{
-			int _type = RBRACKET;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:468:3: ( ']' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:468:5: ']'
-			{
-			DebugLocation(468, 5);
-			Match(']'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-			if (state.backtracking == 0)
-			{
-				isOsmTagAllowed=false;
-			}
-		}
-		finally
-		{
-			TraceOut("RBRACKET", 51);
-			LeaveRule("RBRACKET", 51);
-			LeaveRule_RBRACKET();
-		}
-	}
-	// $ANTLR end "RBRACKET"
-
-	partial void EnterRule_LBRACE();
-	partial void LeaveRule_LBRACE();
-
-	// $ANTLR start "LBRACE"
-	[GrammarRule("LBRACE")]
-	private void mLBRACE()
-	{
-		EnterRule_LBRACE();
-		EnterRule("LBRACE", 52);
-		TraceIn("LBRACE", 52);
-		try
-		{
-			int _type = LBRACE;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:481:3: ( '{' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:481:5: '{'
-			{
-			DebugLocation(481, 5);
-			Match('{'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-			if (state.backtracking == 0)
-			{
-
-				    isInDeclarationBlock=true;
-				    isOsmTagAllowed=false;
+    [System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [System.CodeDom.Compiler.GeneratedCode("ANTLR", "3.5.0.2")]
+    internal partial class MapCssLexer : Antlr.Runtime.Lexer
+    {
+        public const int EOF=-1;
+        public const int ATTRIBUTE_SELECTOR=4;
+        public const int CHAR=5;
+        public const int CHILD_COMBINATOR=6;
+        public const int CLASS_SELECTOR=7;
+        public const int COLON=8;
+        public const int CSS_IDENT=9;
+        public const int DECLARATION=10;
+        public const int DECLARATION_BLOCK=11;
+        public const int DESCENDANT_COMBINATOR=12;
+        public const int DIGIT=13;
+        public const int DIV=14;
+        public const int DQUOTED_STRING=15;
+        public const int EBACKSLASH=16;
+        public const int EDQUOTE=17;
+        public const int ESQUOTE=18;
+        public const int EVAL=19;
+        public const int EVAL_CALL=20;
+        public const int FUNCTION_CALL=21;
+        public const int HEXCOLOR=22;
+        public const int HEXDIGIT=23;
+        public const int HWS=24;
+        public const int IDENTS=25;
+        public const int IMPORT=26;
+        public const int INCREMENT=27;
+        public const int INDEX=28;
+        public const int INDEX_SELECTOR=29;
+        public const int LAYER_ID_SELECTOR=30;
+        public const int LBRACE=31;
+        public const int LBRACKET=32;
+        public const int LIST=33;
+        public const int ML_COMMENT=34;
+        public const int NCOMPONENT=35;
+        public const int NEGATIVE_FLOAT=36;
+        public const int NEGATIVE_INT=37;
+        public const int NMCHAR=38;
+        public const int NMSTART=39;
+        public const int NONASCII=40;
+        public const int NUMBER=41;
+        public const int OP_AND=42;
+        public const int OP_CONTAINS=43;
+        public const int OP_DIV=44;
+        public const int OP_ENDS_WITH=45;
+        public const int OP_EQ=46;
+        public const int OP_EXIST=47;
+        public const int OP_GE=48;
+        public const int OP_GT=49;
+        public const int OP_LE=50;
+        public const int OP_LT=51;
+        public const int OP_MATCH=52;
+        public const int OP_MINUS=53;
+        public const int OP_MOD=54;
+        public const int OP_MUL=55;
+        public const int OP_NEGATE=56;
+        public const int OP_NEQ=57;
+        public const int OP_NOT=58;
+        public const int OP_NOT_EXIST=59;
+        public const int OP_OR=60;
+        public const int OP_PLUS=61;
+        public const int OP_STARTS_WITH=62;
+        public const int OP_SUBSTRING=63;
+        public const int OP_TRUTHY=64;
+        public const int OSM_TAG=65;
+        public const int P=66;
+        public const int PARENT_COMBINATOR=67;
+        public const int PERCENTAGE=68;
+        public const int PIXELS=69;
+        public const int POINTS=70;
+        public const int POSITIVE_FLOAT=71;
+        public const int POSITIVE_INT=72;
+        public const int PREDICATE=73;
+        public const int PSEUDO_CLASS_SELECTOR=74;
+        public const int RANGE=75;
+        public const int RBRACE=76;
+        public const int RBRACKET=77;
+        public const int REGEXP=78;
+        public const int REGEX_CHAR=79;
+        public const int REGEX_ESCAPE=80;
+        public const int REGEX_START=81;
+        public const int RGB=82;
+        public const int RGBA=83;
+        public const int ROLE=84;
+        public const int ROLE_SELECTOR=85;
+        public const int RULE=86;
+        public const int SEMICOLON=87;
+        public const int SIMPLE_SELECTOR=88;
+        public const int SL_COMMENT=89;
+        public const int SQUOTED_STRING=90;
+        public const int STYLESHEET=91;
+        public const int T=92;
+        public const int TAGSEPARATOR=93;
+        public const int TYPE_SELECTOR=94;
+        public const int UNICODE=95;
+        public const int URL=96;
+        public const int URLCONTENT=97;
+        public const int VALUE_FLOAT=98;
+        public const int VALUE_INCREMENT=99;
+        public const int VALUE_INT=100;
+        public const int VALUE_KEYWORD=101;
+        public const int VALUE_LIST=102;
+        public const int VALUE_PERCENTAGE=103;
+        public const int VALUE_PIXELS=104;
+        public const int VALUE_POINTS=105;
+        public const int VALUE_QUOTED=106;
+        public const int VALUE_REGEXP=107;
+        public const int VALUE_RGB=108;
+        public const int VALUE_RGBA=109;
+        public const int VALUE_URL=110;
+        public const int WS=111;
+        public const int X=112;
+        public const int ZOOM_SELECTOR=113;
+        public const int T__114=114;
+        public const int T__115=115;
+        public const int T__116=116;
+        public const int T__117=117;
+        public const int T__118=118;
+        public const int T__119=119;
+        public const int T__120=120;
+        public const int T__121=121;
+        public const int T__122=122;
+        public const int T__123=123;
+        public const int T__124=124;
+
+        /// true, if the scanner is in a state, where OSM tag names are 
+        /// valid identifiers  '[highway=residential]'
+        bool isOsmTagAllowed = false;	
+        /// true, if the lexer is currently in a declaration block
+        bool isInDeclarationBlock = false;
+
+
+        // delegates
+        // delegators
+
+        public MapCssLexer()
+        {
+            OnCreated();
+        }
+
+        public MapCssLexer(ICharStream input )
+            : this(input, new RecognizerSharedState())
+        {
+        }
+
+        public MapCssLexer(ICharStream input, RecognizerSharedState state)
+            : base(input, state)
+        {
+
+            OnCreated();
+        }
+        public override string GrammarFileName { get { return "c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g"; } }
+
+
+        partial void OnCreated();
+        partial void EnterRule(string ruleName, int ruleIndex);
+        partial void LeaveRule(string ruleName, int ruleIndex);
+
+        partial void EnterRule_OP_AND();
+        partial void LeaveRule_OP_AND();
+
+        // $ANTLR start "OP_AND"
+        [GrammarRule("OP_AND")]
+        private void mOP_AND()
+        {
+            EnterRule_OP_AND();
+            EnterRule("OP_AND", 1);
+            TraceIn("OP_AND", 1);
+            try
+            {
+                int _type = OP_AND;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:15:8: ( '&&' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:15:10: '&&'
+                {
+                    DebugLocation(15, 10);
+                    Match("&&"); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_AND", 1);
+                LeaveRule("OP_AND", 1);
+                LeaveRule_OP_AND();
+            }
+        }
+        // $ANTLR end "OP_AND"
+
+        partial void EnterRule_OP_CONTAINS();
+        partial void LeaveRule_OP_CONTAINS();
+
+        // $ANTLR start "OP_CONTAINS"
+        [GrammarRule("OP_CONTAINS")]
+        private void mOP_CONTAINS()
+        {
+            EnterRule_OP_CONTAINS();
+            EnterRule("OP_CONTAINS", 2);
+            TraceIn("OP_CONTAINS", 2);
+            try
+            {
+                int _type = OP_CONTAINS;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:16:13: ( '~=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:16:15: '~='
+                {
+                    DebugLocation(16, 15);
+                    Match("~="); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_CONTAINS", 2);
+                LeaveRule("OP_CONTAINS", 2);
+                LeaveRule_OP_CONTAINS();
+            }
+        }
+        // $ANTLR end "OP_CONTAINS"
+
+        partial void EnterRule_OP_ENDS_WITH();
+        partial void LeaveRule_OP_ENDS_WITH();
+
+        // $ANTLR start "OP_ENDS_WITH"
+        [GrammarRule("OP_ENDS_WITH")]
+        private void mOP_ENDS_WITH()
+        {
+            EnterRule_OP_ENDS_WITH();
+            EnterRule("OP_ENDS_WITH", 3);
+            TraceIn("OP_ENDS_WITH", 3);
+            try
+            {
+                int _type = OP_ENDS_WITH;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:17:14: ( '$=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:17:16: '$='
+                {
+                    DebugLocation(17, 16);
+                    Match("$="); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_ENDS_WITH", 3);
+                LeaveRule("OP_ENDS_WITH", 3);
+                LeaveRule_OP_ENDS_WITH();
+            }
+        }
+        // $ANTLR end "OP_ENDS_WITH"
+
+        partial void EnterRule_OP_EQ();
+        partial void LeaveRule_OP_EQ();
+
+        // $ANTLR start "OP_EQ"
+        [GrammarRule("OP_EQ")]
+        private void mOP_EQ()
+        {
+            EnterRule_OP_EQ();
+            EnterRule("OP_EQ", 4);
+            TraceIn("OP_EQ", 4);
+            try
+            {
+                int _type = OP_EQ;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:18:7: ( '=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:18:9: '='
+                {
+                    DebugLocation(18, 9);
+                    Match('='); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_EQ", 4);
+                LeaveRule("OP_EQ", 4);
+                LeaveRule_OP_EQ();
+            }
+        }
+        // $ANTLR end "OP_EQ"
+
+        partial void EnterRule_OP_GE();
+        partial void LeaveRule_OP_GE();
+
+        // $ANTLR start "OP_GE"
+        [GrammarRule("OP_GE")]
+        private void mOP_GE()
+        {
+            EnterRule_OP_GE();
+            EnterRule("OP_GE", 5);
+            TraceIn("OP_GE", 5);
+            try
+            {
+                int _type = OP_GE;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:19:7: ( '>=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:19:9: '>='
+                {
+                    DebugLocation(19, 9);
+                    Match(">="); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_GE", 5);
+                LeaveRule("OP_GE", 5);
+                LeaveRule_OP_GE();
+            }
+        }
+        // $ANTLR end "OP_GE"
+
+        partial void EnterRule_OP_GT();
+        partial void LeaveRule_OP_GT();
+
+        // $ANTLR start "OP_GT"
+        [GrammarRule("OP_GT")]
+        private void mOP_GT()
+        {
+            EnterRule_OP_GT();
+            EnterRule("OP_GT", 6);
+            TraceIn("OP_GT", 6);
+            try
+            {
+                int _type = OP_GT;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:20:7: ( '>' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:20:9: '>'
+                {
+                    DebugLocation(20, 9);
+                    Match('>'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_GT", 6);
+                LeaveRule("OP_GT", 6);
+                LeaveRule_OP_GT();
+            }
+        }
+        // $ANTLR end "OP_GT"
+
+        partial void EnterRule_OP_LE();
+        partial void LeaveRule_OP_LE();
+
+        // $ANTLR start "OP_LE"
+        [GrammarRule("OP_LE")]
+        private void mOP_LE()
+        {
+            EnterRule_OP_LE();
+            EnterRule("OP_LE", 7);
+            TraceIn("OP_LE", 7);
+            try
+            {
+                int _type = OP_LE;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:21:7: ( '<=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:21:9: '<='
+                {
+                    DebugLocation(21, 9);
+                    Match("<="); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_LE", 7);
+                LeaveRule("OP_LE", 7);
+                LeaveRule_OP_LE();
+            }
+        }
+        // $ANTLR end "OP_LE"
+
+        partial void EnterRule_OP_LT();
+        partial void LeaveRule_OP_LT();
+
+        // $ANTLR start "OP_LT"
+        [GrammarRule("OP_LT")]
+        private void mOP_LT()
+        {
+            EnterRule_OP_LT();
+            EnterRule("OP_LT", 8);
+            TraceIn("OP_LT", 8);
+            try
+            {
+                int _type = OP_LT;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:22:7: ( '<' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:22:9: '<'
+                {
+                    DebugLocation(22, 9);
+                    Match('<'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_LT", 8);
+                LeaveRule("OP_LT", 8);
+                LeaveRule_OP_LT();
+            }
+        }
+        // $ANTLR end "OP_LT"
+
+        partial void EnterRule_OP_MATCH();
+        partial void LeaveRule_OP_MATCH();
+
+        // $ANTLR start "OP_MATCH"
+        [GrammarRule("OP_MATCH")]
+        private void mOP_MATCH()
+        {
+            EnterRule_OP_MATCH();
+            EnterRule("OP_MATCH", 9);
+            TraceIn("OP_MATCH", 9);
+            try
+            {
+                int _type = OP_MATCH;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:23:10: ( '=~' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:23:12: '=~'
+                {
+                    DebugLocation(23, 12);
+                    Match("=~"); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_MATCH", 9);
+                LeaveRule("OP_MATCH", 9);
+                LeaveRule_OP_MATCH();
+            }
+        }
+        // $ANTLR end "OP_MATCH"
+
+        partial void EnterRule_OP_MOD();
+        partial void LeaveRule_OP_MOD();
+
+        // $ANTLR start "OP_MOD"
+        [GrammarRule("OP_MOD")]
+        private void mOP_MOD()
+        {
+            EnterRule_OP_MOD();
+            EnterRule("OP_MOD", 10);
+            TraceIn("OP_MOD", 10);
+            try
+            {
+                int _type = OP_MOD;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:24:8: ( '%' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:24:10: '%'
+                {
+                    DebugLocation(24, 10);
+                    Match('%'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_MOD", 10);
+                LeaveRule("OP_MOD", 10);
+                LeaveRule_OP_MOD();
+            }
+        }
+        // $ANTLR end "OP_MOD"
+
+        partial void EnterRule_OP_MUL();
+        partial void LeaveRule_OP_MUL();
+
+        // $ANTLR start "OP_MUL"
+        [GrammarRule("OP_MUL")]
+        private void mOP_MUL()
+        {
+            EnterRule_OP_MUL();
+            EnterRule("OP_MUL", 11);
+            TraceIn("OP_MUL", 11);
+            try
+            {
+                int _type = OP_MUL;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:25:8: ( '*' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:25:10: '*'
+                {
+                    DebugLocation(25, 10);
+                    Match('*'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_MUL", 11);
+                LeaveRule("OP_MUL", 11);
+                LeaveRule_OP_MUL();
+            }
+        }
+        // $ANTLR end "OP_MUL"
+
+        partial void EnterRule_OP_NEQ();
+        partial void LeaveRule_OP_NEQ();
+
+        // $ANTLR start "OP_NEQ"
+        [GrammarRule("OP_NEQ")]
+        private void mOP_NEQ()
+        {
+            EnterRule_OP_NEQ();
+            EnterRule("OP_NEQ", 12);
+            TraceIn("OP_NEQ", 12);
+            try
+            {
+                int _type = OP_NEQ;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:26:8: ( '!=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:26:10: '!='
+                {
+                    DebugLocation(26, 10);
+                    Match("!="); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_NEQ", 12);
+                LeaveRule("OP_NEQ", 12);
+                LeaveRule_OP_NEQ();
+            }
+        }
+        // $ANTLR end "OP_NEQ"
+
+        partial void EnterRule_OP_OR();
+        partial void LeaveRule_OP_OR();
+
+        // $ANTLR start "OP_OR"
+        [GrammarRule("OP_OR")]
+        private void mOP_OR()
+        {
+            EnterRule_OP_OR();
+            EnterRule("OP_OR", 13);
+            TraceIn("OP_OR", 13);
+            try
+            {
+                int _type = OP_OR;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:27:7: ( '||' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:27:9: '||'
+                {
+                    DebugLocation(27, 9);
+                    Match("||"); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_OR", 13);
+                LeaveRule("OP_OR", 13);
+                LeaveRule_OP_OR();
+            }
+        }
+        // $ANTLR end "OP_OR"
+
+        partial void EnterRule_OP_PLUS();
+        partial void LeaveRule_OP_PLUS();
+
+        // $ANTLR start "OP_PLUS"
+        [GrammarRule("OP_PLUS")]
+        private void mOP_PLUS()
+        {
+            EnterRule_OP_PLUS();
+            EnterRule("OP_PLUS", 14);
+            TraceIn("OP_PLUS", 14);
+            try
+            {
+                int _type = OP_PLUS;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:28:9: ( '+' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:28:11: '+'
+                {
+                    DebugLocation(28, 11);
+                    Match('+'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_PLUS", 14);
+                LeaveRule("OP_PLUS", 14);
+                LeaveRule_OP_PLUS();
+            }
+        }
+        // $ANTLR end "OP_PLUS"
+
+        partial void EnterRule_OP_STARTS_WITH();
+        partial void LeaveRule_OP_STARTS_WITH();
+
+        // $ANTLR start "OP_STARTS_WITH"
+        [GrammarRule("OP_STARTS_WITH")]
+        private void mOP_STARTS_WITH()
+        {
+            EnterRule_OP_STARTS_WITH();
+            EnterRule("OP_STARTS_WITH", 15);
+            TraceIn("OP_STARTS_WITH", 15);
+            try
+            {
+                int _type = OP_STARTS_WITH;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:29:16: ( '^=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:29:18: '^='
+                {
+                    DebugLocation(29, 18);
+                    Match("^="); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_STARTS_WITH", 15);
+                LeaveRule("OP_STARTS_WITH", 15);
+                LeaveRule_OP_STARTS_WITH();
+            }
+        }
+        // $ANTLR end "OP_STARTS_WITH"
+
+        partial void EnterRule_OP_SUBSTRING();
+        partial void LeaveRule_OP_SUBSTRING();
+
+        // $ANTLR start "OP_SUBSTRING"
+        [GrammarRule("OP_SUBSTRING")]
+        private void mOP_SUBSTRING()
+        {
+            EnterRule_OP_SUBSTRING();
+            EnterRule("OP_SUBSTRING", 16);
+            TraceIn("OP_SUBSTRING", 16);
+            try
+            {
+                int _type = OP_SUBSTRING;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:30:14: ( '*=' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:30:16: '*='
+                {
+                    DebugLocation(30, 16);
+                    Match("*="); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("OP_SUBSTRING", 16);
+                LeaveRule("OP_SUBSTRING", 16);
+                LeaveRule_OP_SUBSTRING();
+            }
+        }
+        // $ANTLR end "OP_SUBSTRING"
+
+        partial void EnterRule_T__114();
+        partial void LeaveRule_T__114();
+
+        // $ANTLR start "T__114"
+        [GrammarRule("T__114")]
+        private void mT__114()
+        {
+            EnterRule_T__114();
+            EnterRule("T__114", 17);
+            TraceIn("T__114", 17);
+            try
+            {
+                int _type = T__114;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:31:8: ( '!' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:31:10: '!'
+                {
+                    DebugLocation(31, 10);
+                    Match('!'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__114", 17);
+                LeaveRule("T__114", 17);
+                LeaveRule_T__114();
+            }
+        }
+        // $ANTLR end "T__114"
+
+        partial void EnterRule_T__115();
+        partial void LeaveRule_T__115();
+
+        // $ANTLR start "T__115"
+        [GrammarRule("T__115")]
+        private void mT__115()
+        {
+            EnterRule_T__115();
+            EnterRule("T__115", 18);
+            TraceIn("T__115", 18);
+            try
+            {
+                int _type = T__115;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:32:8: ( '!.' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:32:10: '!.'
+                {
+                    DebugLocation(32, 10);
+                    Match("!."); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__115", 18);
+                LeaveRule("T__115", 18);
+                LeaveRule_T__115();
+            }
+        }
+        // $ANTLR end "T__115"
+
+        partial void EnterRule_T__116();
+        partial void LeaveRule_T__116();
+
+        // $ANTLR start "T__116"
+        [GrammarRule("T__116")]
+        private void mT__116()
+        {
+            EnterRule_T__116();
+            EnterRule("T__116", 19);
+            TraceIn("T__116", 19);
+            try
+            {
+                int _type = T__116;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:33:8: ( '!:' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:33:10: '!:'
+                {
+                    DebugLocation(33, 10);
+                    Match("!:"); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__116", 19);
+                LeaveRule("T__116", 19);
+                LeaveRule_T__116();
+            }
+        }
+        // $ANTLR end "T__116"
+
+        partial void EnterRule_T__117();
+        partial void LeaveRule_T__117();
+
+        // $ANTLR start "T__117"
+        [GrammarRule("T__117")]
+        private void mT__117()
+        {
+            EnterRule_T__117();
+            EnterRule("T__117", 20);
+            TraceIn("T__117", 20);
+            try
+            {
+                int _type = T__117;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:34:8: ( '(' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:34:10: '('
+                {
+                    DebugLocation(34, 10);
+                    Match('('); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__117", 20);
+                LeaveRule("T__117", 20);
+                LeaveRule_T__117();
+            }
+        }
+        // $ANTLR end "T__117"
+
+        partial void EnterRule_T__118();
+        partial void LeaveRule_T__118();
+
+        // $ANTLR start "T__118"
+        [GrammarRule("T__118")]
+        private void mT__118()
+        {
+            EnterRule_T__118();
+            EnterRule("T__118", 21);
+            TraceIn("T__118", 21);
+            try
+            {
+                int _type = T__118;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:35:8: ( ')' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:35:10: ')'
+                {
+                    DebugLocation(35, 10);
+                    Match(')'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__118", 21);
+                LeaveRule("T__118", 21);
+                LeaveRule_T__118();
+            }
+        }
+        // $ANTLR end "T__118"
+
+        partial void EnterRule_T__119();
+        partial void LeaveRule_T__119();
+
+        // $ANTLR start "T__119"
+        [GrammarRule("T__119")]
+        private void mT__119()
+        {
+            EnterRule_T__119();
+            EnterRule("T__119", 22);
+            TraceIn("T__119", 22);
+            try
+            {
+                int _type = T__119;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:36:8: ( ',' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:36:10: ','
+                {
+                    DebugLocation(36, 10);
+                    Match(','); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__119", 22);
+                LeaveRule("T__119", 22);
+                LeaveRule_T__119();
+            }
+        }
+        // $ANTLR end "T__119"
+
+        partial void EnterRule_T__120();
+        partial void LeaveRule_T__120();
+
+        // $ANTLR start "T__120"
+        [GrammarRule("T__120")]
+        private void mT__120()
+        {
+            EnterRule_T__120();
+            EnterRule("T__120", 23);
+            TraceIn("T__120", 23);
+            try
+            {
+                int _type = T__120;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:37:8: ( '-' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:37:10: '-'
+                {
+                    DebugLocation(37, 10);
+                    Match('-'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__120", 23);
+                LeaveRule("T__120", 23);
+                LeaveRule_T__120();
+            }
+        }
+        // $ANTLR end "T__120"
+
+        partial void EnterRule_T__121();
+        partial void LeaveRule_T__121();
+
+        // $ANTLR start "T__121"
+        [GrammarRule("T__121")]
+        private void mT__121()
+        {
+            EnterRule_T__121();
+            EnterRule("T__121", 24);
+            TraceIn("T__121", 24);
+            try
+            {
+                int _type = T__121;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:38:8: ( '.' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:38:10: '.'
+                {
+                    DebugLocation(38, 10);
+                    Match('.'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__121", 24);
+                LeaveRule("T__121", 24);
+                LeaveRule_T__121();
+            }
+        }
+        // $ANTLR end "T__121"
+
+        partial void EnterRule_T__122();
+        partial void LeaveRule_T__122();
+
+        // $ANTLR start "T__122"
+        [GrammarRule("T__122")]
+        private void mT__122()
+        {
+            EnterRule_T__122();
+            EnterRule("T__122", 25);
+            TraceIn("T__122", 25);
+            try
+            {
+                int _type = T__122;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:39:8: ( ':!' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:39:10: ':!'
+                {
+                    DebugLocation(39, 10);
+                    Match(":!"); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__122", 25);
+                LeaveRule("T__122", 25);
+                LeaveRule_T__122();
+            }
+        }
+        // $ANTLR end "T__122"
+
+        partial void EnterRule_T__123();
+        partial void LeaveRule_T__123();
+
+        // $ANTLR start "T__123"
+        [GrammarRule("T__123")]
+        private void mT__123()
+        {
+            EnterRule_T__123();
+            EnterRule("T__123", 26);
+            TraceIn("T__123", 26);
+            try
+            {
+                int _type = T__123;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:40:8: ( '::' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:40:10: '::'
+                {
+                    DebugLocation(40, 10);
+                    Match("::"); if (state.failed) return;
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__123", 26);
+                LeaveRule("T__123", 26);
+                LeaveRule_T__123();
+            }
+        }
+        // $ANTLR end "T__123"
+
+        partial void EnterRule_T__124();
+        partial void LeaveRule_T__124();
+
+        // $ANTLR start "T__124"
+        [GrammarRule("T__124")]
+        private void mT__124()
+        {
+            EnterRule_T__124();
+            EnterRule("T__124", 27);
+            TraceIn("T__124", 27);
+            try
+            {
+                int _type = T__124;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:41:8: ( '?' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:41:10: '?'
+                {
+                    DebugLocation(41, 10);
+                    Match('?'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("T__124", 27);
+                LeaveRule("T__124", 27);
+                LeaveRule_T__124();
+            }
+        }
+        // $ANTLR end "T__124"
+
+        partial void EnterRule_EBACKSLASH();
+        partial void LeaveRule_EBACKSLASH();
+
+        // $ANTLR start "EBACKSLASH"
+        [GrammarRule("EBACKSLASH")]
+        private void mEBACKSLASH()
+        {
+            EnterRule_EBACKSLASH();
+            EnterRule("EBACKSLASH", 28);
+            TraceIn("EBACKSLASH", 28);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:412:20: ( '\\\\\\\\' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:412:22: '\\\\\\\\'
+                {
+                    DebugLocation(412, 22);
+                    Match("\\\\"); if (state.failed) return;
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("EBACKSLASH", 28);
+                LeaveRule("EBACKSLASH", 28);
+                LeaveRule_EBACKSLASH();
+            }
+        }
+        // $ANTLR end "EBACKSLASH"
+
+        partial void EnterRule_UNICODE();
+        partial void LeaveRule_UNICODE();
+
+        // $ANTLR start "UNICODE"
+        [GrammarRule("UNICODE")]
+        private void mUNICODE()
+        {
+            EnterRule_UNICODE();
+            EnterRule("UNICODE", 29);
+            TraceIn("UNICODE", 29);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:413:17: ( '\\u0080' .. '\\uFFFF' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(413, 17);
+                    if ((input.LA(1)>='\u0080' && input.LA(1)<='\uFFFF'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("UNICODE", 29);
+                LeaveRule("UNICODE", 29);
+                LeaveRule_UNICODE();
+            }
+        }
+        // $ANTLR end "UNICODE"
+
+        partial void EnterRule_RGB();
+        partial void LeaveRule_RGB();
+
+        // $ANTLR start "RGB"
+        [GrammarRule("RGB")]
+        private void mRGB()
+        {
+            EnterRule_RGB();
+            EnterRule("RGB", 30);
+            TraceIn("RGB", 30);
+            try
+            {
+                int _type = RGB;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:416:4: ( ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:416:6: ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' )
+                {
+                    DebugLocation(416, 6);
+                    if (input.LA(1)=='R'||input.LA(1)=='r')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(416, 18);
+                    if (input.LA(1)=='G'||input.LA(1)=='g')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(416, 30);
+                    if (input.LA(1)=='B'||input.LA(1)=='b')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("RGB", 30);
+                LeaveRule("RGB", 30);
+                LeaveRule_RGB();
+            }
+        }
+        // $ANTLR end "RGB"
+
+        partial void EnterRule_RGBA();
+        partial void LeaveRule_RGBA();
+
+        // $ANTLR start "RGBA"
+        [GrammarRule("RGBA")]
+        private void mRGBA()
+        {
+            EnterRule_RGBA();
+            EnterRule("RGBA", 31);
+            TraceIn("RGBA", 31);
+            try
+            {
+                int _type = RGBA;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:417:5: ( ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' ) ( 'a' | 'A' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:417:7: ( 'r' | 'R' ) ( 'g' | 'G' ) ( 'b' | 'B' ) ( 'a' | 'A' )
+                {
+                    DebugLocation(417, 7);
+                    if (input.LA(1)=='R'||input.LA(1)=='r')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(417, 19);
+                    if (input.LA(1)=='G'||input.LA(1)=='g')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(417, 31);
+                    if (input.LA(1)=='B'||input.LA(1)=='b')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(417, 43);
+                    if (input.LA(1)=='A'||input.LA(1)=='a')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("RGBA", 31);
+                LeaveRule("RGBA", 31);
+                LeaveRule_RGBA();
+            }
+        }
+        // $ANTLR end "RGBA"
+
+        partial void EnterRule_ROLE();
+        partial void LeaveRule_ROLE();
+
+        // $ANTLR start "ROLE"
+        [GrammarRule("ROLE")]
+        private void mROLE()
+        {
+            EnterRule_ROLE();
+            EnterRule("ROLE", 32);
+            TraceIn("ROLE", 32);
+            try
+            {
+                int _type = ROLE;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:418:5: ( ( 'r' | 'R' ) ( 'o' | 'O' ) ( 'l' | 'L' ) ( 'e' | 'E' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:418:7: ( 'r' | 'R' ) ( 'o' | 'O' ) ( 'l' | 'L' ) ( 'e' | 'E' )
+                {
+                    DebugLocation(418, 7);
+                    if (input.LA(1)=='R'||input.LA(1)=='r')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(418, 19);
+                    if (input.LA(1)=='O'||input.LA(1)=='o')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(418, 31);
+                    if (input.LA(1)=='L'||input.LA(1)=='l')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(418, 43);
+                    if (input.LA(1)=='E'||input.LA(1)=='e')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("ROLE", 32);
+                LeaveRule("ROLE", 32);
+                LeaveRule_ROLE();
+            }
+        }
+        // $ANTLR end "ROLE"
+
+        partial void EnterRule_INDEX();
+        partial void LeaveRule_INDEX();
+
+        // $ANTLR start "INDEX"
+        [GrammarRule("INDEX")]
+        private void mINDEX()
+        {
+            EnterRule_INDEX();
+            EnterRule("INDEX", 33);
+            TraceIn("INDEX", 33);
+            try
+            {
+                int _type = INDEX;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:419:6: ( ( 'i' | 'I' ) ( 'n' | 'N' ) ( 'd' | 'D' ) ( 'e' | 'E' ) ( 'x' | 'X' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:419:8: ( 'i' | 'I' ) ( 'n' | 'N' ) ( 'd' | 'D' ) ( 'e' | 'E' ) ( 'x' | 'X' )
+                {
+                    DebugLocation(419, 8);
+                    if (input.LA(1)=='I'||input.LA(1)=='i')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(419, 20);
+                    if (input.LA(1)=='N'||input.LA(1)=='n')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(419, 32);
+                    if (input.LA(1)=='D'||input.LA(1)=='d')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(419, 44);
+                    if (input.LA(1)=='E'||input.LA(1)=='e')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(419, 56);
+                    if (input.LA(1)=='X'||input.LA(1)=='x')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("INDEX", 33);
+                LeaveRule("INDEX", 33);
+                LeaveRule_INDEX();
+            }
+        }
+        // $ANTLR end "INDEX"
+
+        partial void EnterRule_EVAL();
+        partial void LeaveRule_EVAL();
+
+        // $ANTLR start "EVAL"
+        [GrammarRule("EVAL")]
+        private void mEVAL()
+        {
+            EnterRule_EVAL();
+            EnterRule("EVAL", 34);
+            TraceIn("EVAL", 34);
+            try
+            {
+                int _type = EVAL;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:420:5: ( ( 'e' | 'E' ) ( 'v' | 'V' ) ( 'a' | 'A' ) ( 'l' | 'L' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:420:7: ( 'e' | 'E' ) ( 'v' | 'V' ) ( 'a' | 'A' ) ( 'l' | 'L' )
+                {
+                    DebugLocation(420, 7);
+                    if (input.LA(1)=='E'||input.LA(1)=='e')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(420, 19);
+                    if (input.LA(1)=='V'||input.LA(1)=='v')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(420, 31);
+                    if (input.LA(1)=='A'||input.LA(1)=='a')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(420, 43);
+                    if (input.LA(1)=='L'||input.LA(1)=='l')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("EVAL", 34);
+                LeaveRule("EVAL", 34);
+                LeaveRule_EVAL();
+            }
+        }
+        // $ANTLR end "EVAL"
+
+        partial void EnterRule_LIST();
+        partial void LeaveRule_LIST();
+
+        // $ANTLR start "LIST"
+        [GrammarRule("LIST")]
+        private void mLIST()
+        {
+            EnterRule_LIST();
+            EnterRule("LIST", 35);
+            TraceIn("LIST", 35);
+            try
+            {
+                int _type = LIST;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:421:5: ( ( 'l' | 'L' ) ( 'i' | 'I' ) ( 's' | 'S' ) ( 't' | 'T' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:421:7: ( 'l' | 'L' ) ( 'i' | 'I' ) ( 's' | 'S' ) ( 't' | 'T' )
+                {
+                    DebugLocation(421, 7);
+                    if (input.LA(1)=='L'||input.LA(1)=='l')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(421, 19);
+                    if (input.LA(1)=='I'||input.LA(1)=='i')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(421, 31);
+                    if (input.LA(1)=='S'||input.LA(1)=='s')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(421, 43);
+                    if (input.LA(1)=='T'||input.LA(1)=='t')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("LIST", 35);
+                LeaveRule("LIST", 35);
+                LeaveRule_LIST();
+            }
+        }
+        // $ANTLR end "LIST"
+
+        partial void EnterRule_IMPORT();
+        partial void LeaveRule_IMPORT();
+
+        // $ANTLR start "IMPORT"
+        [GrammarRule("IMPORT")]
+        private void mIMPORT()
+        {
+            EnterRule_IMPORT();
+            EnterRule("IMPORT", 36);
+            TraceIn("IMPORT", 36);
+            try
+            {
+                int _type = IMPORT;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:422:7: ( '@' ( 'i' | 'I' ) ( 'm' | 'M' ) ( 'p' | 'P' ) ( 'o' | 'O' ) ( 'r' | 'R' ) ( 't' | 'T' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:422:9: '@' ( 'i' | 'I' ) ( 'm' | 'M' ) ( 'p' | 'P' ) ( 'o' | 'O' ) ( 'r' | 'R' ) ( 't' | 'T' )
+                {
+                    DebugLocation(422, 9);
+                    Match('@'); if (state.failed) return;
+                    DebugLocation(422, 13);
+                    if (input.LA(1)=='I'||input.LA(1)=='i')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(422, 25);
+                    if (input.LA(1)=='M'||input.LA(1)=='m')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(422, 37);
+                    if (input.LA(1)=='P'||input.LA(1)=='p')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(422, 49);
+                    if (input.LA(1)=='O'||input.LA(1)=='o')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(422, 60);
+                    if (input.LA(1)=='R'||input.LA(1)=='r')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(422, 72);
+                    if (input.LA(1)=='T'||input.LA(1)=='t')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("IMPORT", 36);
+                LeaveRule("IMPORT", 36);
+                LeaveRule_IMPORT();
+            }
+        }
+        // $ANTLR end "IMPORT"
+
+        partial void EnterRule_HWS();
+        partial void LeaveRule_HWS();
+
+        // $ANTLR start "HWS"
+        [GrammarRule("HWS")]
+        private void mHWS()
+        {
+            EnterRule_HWS();
+            EnterRule("HWS", 37);
+            TraceIn("HWS", 37);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:424:13: ( ( ' ' | '\\t' | '\\f' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(424, 13);
+                    if (input.LA(1)=='\t'||input.LA(1)=='\f'||input.LA(1)==' ')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("HWS", 37);
+                LeaveRule("HWS", 37);
+                LeaveRule_HWS();
+            }
+        }
+        // $ANTLR end "HWS"
+
+        partial void EnterRule_URLCONTENT();
+        partial void LeaveRule_URLCONTENT();
+
+        // $ANTLR start "URLCONTENT"
+        [GrammarRule("URLCONTENT")]
+        private void mURLCONTENT()
+        {
+            EnterRule_URLCONTENT();
+            EnterRule("URLCONTENT", 38);
+            TraceIn("URLCONTENT", 38);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:425:20: ( ( '!' | '#' | '$' | '%' | '&' | '*' .. '[' | ']' .. '~' | NONASCII )+ )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:425:22: ( '!' | '#' | '$' | '%' | '&' | '*' .. '[' | ']' .. '~' | NONASCII )+
+                {
+                    DebugLocation(425, 22);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:425:22: ( '!' | '#' | '$' | '%' | '&' | '*' .. '[' | ']' .. '~' | NONASCII )+
+                    int cnt1=0;
+                    try { DebugEnterSubRule(1);
+                        while (true)
+                        {
+                            int alt1=2;
+                            try { DebugEnterDecision(1, false);
+                                int LA1_1 = input.LA(1);
+
+                                if ((LA1_1=='!'||(LA1_1>='#' && LA1_1<='&')||(LA1_1>='*' && LA1_1<='[')||(LA1_1>=']' && LA1_1<='~')||(LA1_1>='\u00A0' && LA1_1<='\uFFFF')))
+                                {
+                                    alt1 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(1); }
+                            switch (alt1)
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                {
+                                    DebugLocation(425, 22);
+                                    input.Consume();
+                                    state.failed=false;
+
+                                }
+                                    break;
+
+                                default:
+                                    if (cnt1 >= 1)
+                                        goto loop1;
+
+                                    if (state.backtracking>0) {state.failed=true; return;}
+                                    EarlyExitException eee1 = new EarlyExitException( 1, input );
+                                    DebugRecognitionException(eee1);
+                                    throw eee1;
+                            }
+                            cnt1++;
+                        }
+                        loop1:
+                        ;
+
+                    } finally { DebugExitSubRule(1); }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("URLCONTENT", 38);
+                LeaveRule("URLCONTENT", 38);
+                LeaveRule_URLCONTENT();
+            }
+        }
+        // $ANTLR end "URLCONTENT"
+
+        partial void EnterRule_URL();
+        partial void LeaveRule_URL();
+
+        // $ANTLR start "URL"
+        [GrammarRule("URL")]
+        private void mURL()
+        {
+            EnterRule_URL();
+            EnterRule("URL", 39);
+            TraceIn("URL", 39);
+            try
+            {
+                int _type = URL;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:4: ( ( 'u' | 'U' ) ( 'r' | 'R' ) ( 'l' | 'L' ) ( HWS )* '(' ( HWS )* ( URLCONTENT | '\"' URLCONTENT '\"' | '\\'' URLCONTENT '\\'' ) ( HWS )* ')' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:6: ( 'u' | 'U' ) ( 'r' | 'R' ) ( 'l' | 'L' ) ( HWS )* '(' ( HWS )* ( URLCONTENT | '\"' URLCONTENT '\"' | '\\'' URLCONTENT '\\'' ) ( HWS )* ')'
+                {
+                    DebugLocation(426, 6);
+                    if (input.LA(1)=='U'||input.LA(1)=='u')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(426, 18);
+                    if (input.LA(1)=='R'||input.LA(1)=='r')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(426, 30);
+                    if (input.LA(1)=='L'||input.LA(1)=='l')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(426, 42);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:42: ( HWS )*
+                    try { DebugEnterSubRule(2);
+                        while (true)
+                        {
+                            int alt2=2;
+                            try { DebugEnterDecision(2, false);
+                                int LA2_1 = input.LA(1);
+
+                                if ((LA2_1=='\t'||LA2_1=='\f'||LA2_1==' '))
+                                {
+                                    alt2 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(2); }
+                            switch ( alt2 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                {
+                                    DebugLocation(426, 42);
+                                    input.Consume();
+                                    state.failed=false;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop2;
+                            }
+                        }
+
+                        loop2:
+                        ;
+
+                    } finally { DebugExitSubRule(2); }
+
+                    DebugLocation(426, 47);
+                    Match('('); if (state.failed) return;
+                    DebugLocation(426, 51);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:426:51: ( HWS )*
+                    try { DebugEnterSubRule(3);
+                        while (true)
+                        {
+                            int alt3=2;
+                            try { DebugEnterDecision(3, false);
+                                int LA3_1 = input.LA(1);
+
+                                if ((LA3_1=='\t'||LA3_1=='\f'||LA3_1==' '))
+                                {
+                                    alt3 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(3); }
+                            switch ( alt3 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                {
+                                    DebugLocation(426, 51);
+                                    input.Consume();
+                                    state.failed=false;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop3;
+                            }
+                        }
+
+                        loop3:
+                        ;
+
+                    } finally { DebugExitSubRule(3); }
+
+                    DebugLocation(427, 6);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:427:6: ( URLCONTENT | '\"' URLCONTENT '\"' | '\\'' URLCONTENT '\\'' )
+                    int alt4=3;
+                    try { DebugEnterSubRule(4);
+                        try { DebugEnterDecision(4, false);
+                            int LA4_1 = input.LA(1);
+
+                            if ((LA4_1=='!'||(LA4_1>='#' && LA4_1<='&')||(LA4_1>='*' && LA4_1<='[')||(LA4_1>=']' && LA4_1<='~')||(LA4_1>='\u00A0' && LA4_1<='\uFFFF')))
+                            {
+                                alt4 = 1;
+                            }
+                            else if ((LA4_1=='\"'))
+                            {
+                                alt4 = 2;
+                            }
+                            else if ((LA4_1=='\''))
+                            {
+                                alt4 = 3;
+                            }
+                            else
+                            {
+                                if (state.backtracking>0) {state.failed=true; return;}
+                                NoViableAltException nvae = new NoViableAltException("", 4, 0, input, 1);
+                                DebugRecognitionException(nvae);
+                                throw nvae;
+                            }
+                        } finally { DebugExitDecision(4); }
+                        switch (alt4)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:428:11: URLCONTENT
+                            {
+                                DebugLocation(428, 11);
+                                mURLCONTENT(); if (state.failed) return;
+
+                            }
+                                break;
+                            case 2:
+                                DebugEnterAlt(2);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:429:7: '\"' URLCONTENT '\"'
+                            {
+                                DebugLocation(429, 7);
+                                Match('\"'); if (state.failed) return;
+                                DebugLocation(429, 11);
+                                mURLCONTENT(); if (state.failed) return;
+                                DebugLocation(429, 22);
+                                Match('\"'); if (state.failed) return;
+
+                            }
+                                break;
+                            case 3:
+                                DebugEnterAlt(3);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:430:7: '\\'' URLCONTENT '\\''
+                            {
+                                DebugLocation(430, 7);
+                                Match('\''); if (state.failed) return;
+                                DebugLocation(430, 12);
+                                mURLCONTENT(); if (state.failed) return;
+                                DebugLocation(430, 23);
+                                Match('\''); if (state.failed) return;
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(4); }
+
+                    DebugLocation(432, 6);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:432:6: ( HWS )*
+                    try { DebugEnterSubRule(5);
+                        while (true)
+                        {
+                            int alt5=2;
+                            try { DebugEnterDecision(5, false);
+                                int LA5_1 = input.LA(1);
+
+                                if ((LA5_1=='\t'||LA5_1=='\f'||LA5_1==' '))
+                                {
+                                    alt5 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(5); }
+                            switch ( alt5 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                {
+                                    DebugLocation(432, 6);
+                                    input.Consume();
+                                    state.failed=false;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop5;
+                            }
+                        }
+
+                        loop5:
+                        ;
+
+                    } finally { DebugExitSubRule(5); }
+
+                    DebugLocation(432, 11);
+                    Match(')'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("URL", 39);
+                LeaveRule("URL", 39);
+                LeaveRule_URL();
+            }
+        }
+        // $ANTLR end "URL"
+
+        partial void EnterRule_DIGIT();
+        partial void LeaveRule_DIGIT();
+
+        // $ANTLR start "DIGIT"
+        [GrammarRule("DIGIT")]
+        private void mDIGIT()
+        {
+            EnterRule_DIGIT();
+            EnterRule("DIGIT", 40);
+            TraceIn("DIGIT", 40);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:434:15: ( '0' .. '9' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(434, 15);
+                    if ((input.LA(1)>='0' && input.LA(1)<='9'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("DIGIT", 40);
+                LeaveRule("DIGIT", 40);
+                LeaveRule_DIGIT();
+            }
+        }
+        // $ANTLR end "DIGIT"
+
+        partial void EnterRule_CHAR();
+        partial void LeaveRule_CHAR();
+
+        // $ANTLR start "CHAR"
+        [GrammarRule("CHAR")]
+        private void mCHAR()
+        {
+            EnterRule_CHAR();
+            EnterRule("CHAR", 41);
+            TraceIn("CHAR", 41);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:435:14: ( 'a' .. 'z' | 'A' .. 'Z' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(435, 14);
+                    if ((input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("CHAR", 41);
+                LeaveRule("CHAR", 41);
+                LeaveRule_CHAR();
+            }
+        }
+        // $ANTLR end "CHAR"
+
+        partial void EnterRule_NONASCII();
+        partial void LeaveRule_NONASCII();
+
+        // $ANTLR start "NONASCII"
+        [GrammarRule("NONASCII")]
+        private void mNONASCII()
+        {
+            EnterRule_NONASCII();
+            EnterRule("NONASCII", 42);
+            TraceIn("NONASCII", 42);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:439:18: (~ ( '\\u0000' .. '\\u009F' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(439, 18);
+                    if ((input.LA(1)>='\u00A0' && input.LA(1)<='\uFFFF'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("NONASCII", 42);
+                LeaveRule("NONASCII", 42);
+                LeaveRule_NONASCII();
+            }
+        }
+        // $ANTLR end "NONASCII"
+
+        partial void EnterRule_NMSTART();
+        partial void LeaveRule_NMSTART();
+
+        // $ANTLR start "NMSTART"
+        [GrammarRule("NMSTART")]
+        private void mNMSTART()
+        {
+            EnterRule_NMSTART();
+            EnterRule("NMSTART", 43);
+            TraceIn("NMSTART", 43);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:440:17: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | NONASCII )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(440, 17);
+                    if ((input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z')||(input.LA(1)>='\u00A0' && input.LA(1)<='\uFFFF'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("NMSTART", 43);
+                LeaveRule("NMSTART", 43);
+                LeaveRule_NMSTART();
+            }
+        }
+        // $ANTLR end "NMSTART"
+
+        partial void EnterRule_NMCHAR();
+        partial void LeaveRule_NMCHAR();
+
+        // $ANTLR start "NMCHAR"
+        [GrammarRule("NMCHAR")]
+        private void mNMCHAR()
+        {
+            EnterRule_NMCHAR();
+            EnterRule("NMCHAR", 44);
+            TraceIn("NMCHAR", 44);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:441:16: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | NONASCII )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(441, 16);
+                    if (input.LA(1)=='-'||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z')||(input.LA(1)>='\u00A0' && input.LA(1)<='\uFFFF'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("NMCHAR", 44);
+                LeaveRule("NMCHAR", 44);
+                LeaveRule_NMCHAR();
+            }
+        }
+        // $ANTLR end "NMCHAR"
+
+        partial void EnterRule_NCOMPONENT();
+        partial void LeaveRule_NCOMPONENT();
+
+        // $ANTLR start "NCOMPONENT"
+        [GrammarRule("NCOMPONENT")]
+        private void mNCOMPONENT()
+        {
+            EnterRule_NCOMPONENT();
+            EnterRule("NCOMPONENT", 45);
+            TraceIn("NCOMPONENT", 45);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:444:20: ( ( CHAR | '_' ) ( CHAR | DIGIT | '_' | '-' )* )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:444:22: ( CHAR | '_' ) ( CHAR | DIGIT | '_' | '-' )*
+                {
+                    DebugLocation(444, 22);
+                    if ((input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(444, 35);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:444:35: ( CHAR | DIGIT | '_' | '-' )*
+                    try { DebugEnterSubRule(6);
+                        while (true)
+                        {
+                            int alt6=2;
+                            try { DebugEnterDecision(6, false);
+                                int LA6_1 = input.LA(1);
+
+                                if ((LA6_1=='-'||(LA6_1>='0' && LA6_1<='9')||(LA6_1>='A' && LA6_1<='Z')||LA6_1=='_'||(LA6_1>='a' && LA6_1<='z')))
+                                {
+                                    alt6 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(6); }
+                            switch ( alt6 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                {
+                                    DebugLocation(444, 35);
+                                    input.Consume();
+                                    state.failed=false;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop6;
+                            }
+                        }
+
+                        loop6:
+                        ;
+
+                    } finally { DebugExitSubRule(6); }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("NCOMPONENT", 45);
+                LeaveRule("NCOMPONENT", 45);
+                LeaveRule_NCOMPONENT();
+            }
+        }
+        // $ANTLR end "NCOMPONENT"
+
+        partial void EnterRule_TAGSEPARATOR();
+        partial void LeaveRule_TAGSEPARATOR();
+
+        // $ANTLR start "TAGSEPARATOR"
+        [GrammarRule("TAGSEPARATOR")]
+        private void mTAGSEPARATOR()
+        {
+            EnterRule_TAGSEPARATOR();
+            EnterRule("TAGSEPARATOR", 46);
+            TraceIn("TAGSEPARATOR", 46);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:445:22: ( ( ':' ) | ( '.' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(445, 22);
+                    if (input.LA(1)=='.'||input.LA(1)==':')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("TAGSEPARATOR", 46);
+                LeaveRule("TAGSEPARATOR", 46);
+                LeaveRule_TAGSEPARATOR();
+            }
+        }
+        // $ANTLR end "TAGSEPARATOR"
+
+        partial void EnterRule_CSS_IDENT();
+        partial void LeaveRule_CSS_IDENT();
+
+        // $ANTLR start "CSS_IDENT"
+        [GrammarRule("CSS_IDENT")]
+        private void mCSS_IDENT()
+        {
+            EnterRule_CSS_IDENT();
+            EnterRule("CSS_IDENT", 47);
+            TraceIn("CSS_IDENT", 47);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:448:19: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:448:20: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("CSS_IDENT", 47);
+                LeaveRule("CSS_IDENT", 47);
+                LeaveRule_CSS_IDENT();
+            }
+        }
+        // $ANTLR end "CSS_IDENT"
+
+        partial void EnterRule_OSM_TAG();
+        partial void LeaveRule_OSM_TAG();
+
+        // $ANTLR start "OSM_TAG"
+        [GrammarRule("OSM_TAG")]
+        private void mOSM_TAG()
+        {
+            EnterRule_OSM_TAG();
+            EnterRule("OSM_TAG", 48);
+            TraceIn("OSM_TAG", 48);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:449:17: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:449:18: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("OSM_TAG", 48);
+                LeaveRule("OSM_TAG", 48);
+                LeaveRule_OSM_TAG();
+            }
+        }
+        // $ANTLR end "OSM_TAG"
+
+        partial void EnterRule_IDENTS();
+        partial void LeaveRule_IDENTS();
+
+        // $ANTLR start "IDENTS"
+        [GrammarRule("IDENTS")]
+        private void mIDENTS()
+        {
+            EnterRule_IDENTS();
+            EnterRule("IDENTS", 49);
+            TraceIn("IDENTS", 49);
+            try
+            {
+                int _type = IDENTS;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:450:7: ( ( '-' )? NCOMPONENT ({...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |) |) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:2: ( '-' )? NCOMPONENT ({...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |) |)
+                {
+                    DebugLocation(451, 2);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:2: ( '-' )?
+                    int alt7=2;
+                    try { DebugEnterSubRule(7);
+                        try { DebugEnterDecision(7, false);
+                            int LA7_1 = input.LA(1);
+
+                            if ((LA7_1=='-'))
+                            {
+                                alt7 = 1;
+                            }
+                        } finally { DebugExitDecision(7); }
+                        switch (alt7)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:2: '-'
+                            {
+                                DebugLocation(451, 2);
+                                Match('-'); if (state.failed) return;
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(7); }
+
+                    DebugLocation(451, 9);
+                    mNCOMPONENT(); if (state.failed) return;
+                    DebugLocation(451, 20);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:451:20: ({...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |) |)
+                    int alt10=2;
+                    try { DebugEnterSubRule(10);
+                        try { DebugEnterDecision(10, false);
+                            int LA10_1 = input.LA(1);
+
+                            if ((LA10_1=='.'||LA10_1==':') && ((isOsmTagAllowed)))
+                            {
+                                alt10 = 1;
+                            }
+                            else if (((isOsmTagAllowed)))
+                            {
+                                alt10 = 1;
+                            }
+                            else if ((true))
+                            {
+                                alt10 = 2;
+                            }
+                            else
+                            {
+                                if (state.backtracking>0) {state.failed=true; return;}
+                                NoViableAltException nvae = new NoViableAltException("", 10, 0, input, 1);
+                                DebugRecognitionException(nvae);
+                                throw nvae;
+                            }
+                        } finally { DebugExitDecision(10); }
+                        switch (alt10)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:452:8: {...}? => ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |)
+                            {
+                                DebugLocation(452, 8);
+                                if (!((isOsmTagAllowed)))
+                                {
+                                    if (state.backtracking>0) {state.failed=true; return;}
+                                    throw new FailedPredicateException(input, "IDENTS", "isOsmTagAllowed");
+                                }
+                                DebugLocation(452, 31);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:452:31: ( ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )* |)
+                                int alt9=2;
+                                try { DebugEnterSubRule(9);
+                                    try { DebugEnterDecision(9, false);
+                                        int LA9_1 = input.LA(1);
+
+                                        if ((LA9_1=='.'||LA9_1==':') && (EvaluatePredicate(synpred1_MapCss_fragment)))
+                                        {
+                                            alt9 = 1;
+                                        }
+                                        else
+                                        {
+                                            alt9 = 2;
+                                        }
+                                    } finally { DebugExitDecision(9); }
+                                    switch (alt9)
+                                    {
+                                        case 1:
+                                            DebugEnterAlt(1);
+                                            // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:12: ( TAGSEPARATOR )=> TAGSEPARATOR NCOMPONENT ( TAGSEPARATOR NCOMPONENT )*
+                                        {
+                                            DebugLocation(453, 31);
+                                            mTAGSEPARATOR(); if (state.failed) return;
+                                            DebugLocation(453, 44);
+                                            mNCOMPONENT(); if (state.failed) return;
+                                            DebugLocation(453, 55);
+                                            // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:55: ( TAGSEPARATOR NCOMPONENT )*
+                                            try { DebugEnterSubRule(8);
+                                                while (true)
+                                                {
+                                                    int alt8=2;
+                                                    try { DebugEnterDecision(8, false);
+                                                        int LA8_1 = input.LA(1);
+
+                                                        if ((LA8_1=='.'||LA8_1==':'))
+                                                        {
+                                                            alt8 = 1;
+                                                        }
+
+
+                                                    } finally { DebugExitDecision(8); }
+                                                    switch ( alt8 )
+                                                    {
+                                                        case 1:
+                                                            DebugEnterAlt(1);
+                                                            // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:56: TAGSEPARATOR NCOMPONENT
+                                                        {
+                                                            DebugLocation(453, 56);
+                                                            mTAGSEPARATOR(); if (state.failed) return;
+                                                            DebugLocation(453, 69);
+                                                            mNCOMPONENT(); if (state.failed) return;
+
+                                                        }
+                                                            break;
+
+                                                        default:
+                                                            goto loop8;
+                                                    }
+                                                }
+
+                                                loop8:
+                                                ;
+
+                                            } finally { DebugExitSubRule(8); }
+
+                                            DebugLocation(453, 83);
+                                            if (state.backtracking == 0)
+                                            {
+                                                _type=OSM_TAG;
+                                            }
+
+                                        }
+                                            break;
+                                        case 2:
+                                            DebugEnterAlt(2);
+                                            // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:454:12: 
+                                        {
+                                            DebugLocation(454, 12);
+                                            if (state.backtracking == 0)
+                                            {
+                                                _type=CSS_IDENT;
+                                            }
+
+                                        }
+                                            break;
+
+                                    }
+                                } finally { DebugExitSubRule(9); }
+
+
+                            }
+                                break;
+                            case 2:
+                                DebugEnterAlt(2);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:456:8: 
+                            {
+                                DebugLocation(456, 8);
+                                if (state.backtracking == 0)
+                                {
+                                    _type=CSS_IDENT;
+                                }
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(10); }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("IDENTS", 49);
+                LeaveRule("IDENTS", 49);
+                LeaveRule_IDENTS();
+            }
+        }
+        // $ANTLR end "IDENTS"
+
+        partial void EnterRule_LBRACKET();
+        partial void LeaveRule_LBRACKET();
+
+        // $ANTLR start "LBRACKET"
+        [GrammarRule("LBRACKET")]
+        private void mLBRACKET()
+        {
+            EnterRule_LBRACKET();
+            EnterRule("LBRACKET", 50);
+            TraceIn("LBRACKET", 50);
+            try
+            {
+                int _type = LBRACKET;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:464:3: ( '[' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:464:5: '['
+                {
+                    DebugLocation(464, 5);
+                    Match('['); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+                if (state.backtracking == 0)
+                {
+                    isOsmTagAllowed=true;
+                }
+            }
+            finally
+            {
+                TraceOut("LBRACKET", 50);
+                LeaveRule("LBRACKET", 50);
+                LeaveRule_LBRACKET();
+            }
+        }
+        // $ANTLR end "LBRACKET"
+
+        partial void EnterRule_RBRACKET();
+        partial void LeaveRule_RBRACKET();
+
+        // $ANTLR start "RBRACKET"
+        [GrammarRule("RBRACKET")]
+        private void mRBRACKET()
+        {
+            EnterRule_RBRACKET();
+            EnterRule("RBRACKET", 51);
+            TraceIn("RBRACKET", 51);
+            try
+            {
+                int _type = RBRACKET;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:468:3: ( ']' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:468:5: ']'
+                {
+                    DebugLocation(468, 5);
+                    Match(']'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+                if (state.backtracking == 0)
+                {
+                    isOsmTagAllowed=false;
+                }
+            }
+            finally
+            {
+                TraceOut("RBRACKET", 51);
+                LeaveRule("RBRACKET", 51);
+                LeaveRule_RBRACKET();
+            }
+        }
+        // $ANTLR end "RBRACKET"
+
+        partial void EnterRule_LBRACE();
+        partial void LeaveRule_LBRACE();
+
+        // $ANTLR start "LBRACE"
+        [GrammarRule("LBRACE")]
+        private void mLBRACE()
+        {
+            EnterRule_LBRACE();
+            EnterRule("LBRACE", 52);
+            TraceIn("LBRACE", 52);
+            try
+            {
+                int _type = LBRACE;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:481:3: ( '{' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:481:5: '{'
+                {
+                    DebugLocation(481, 5);
+                    Match('{'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+                if (state.backtracking == 0)
+                {
+
+                    isInDeclarationBlock=true;
+                    isOsmTagAllowed=false;
 				  
-			}
-		}
-		finally
-		{
-			TraceOut("LBRACE", 52);
-			LeaveRule("LBRACE", 52);
-			LeaveRule_LBRACE();
-		}
-	}
-	// $ANTLR end "LBRACE"
+                }
+            }
+            finally
+            {
+                TraceOut("LBRACE", 52);
+                LeaveRule("LBRACE", 52);
+                LeaveRule_LBRACE();
+            }
+        }
+        // $ANTLR end "LBRACE"
 
-	partial void EnterRule_RBRACE();
-	partial void LeaveRule_RBRACE();
+        partial void EnterRule_RBRACE();
+        partial void LeaveRule_RBRACE();
 
-	// $ANTLR start "RBRACE"
-	[GrammarRule("RBRACE")]
-	private void mRBRACE()
-	{
-		EnterRule_RBRACE();
-		EnterRule("RBRACE", 53);
-		TraceIn("RBRACE", 53);
-		try
-		{
-			int _type = RBRACE;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:488:3: ( '}' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:488:5: '}'
-			{
-			DebugLocation(488, 5);
-			Match('}'); if (state.failed) return;
+        // $ANTLR start "RBRACE"
+        [GrammarRule("RBRACE")]
+        private void mRBRACE()
+        {
+            EnterRule_RBRACE();
+            EnterRule("RBRACE", 53);
+            TraceIn("RBRACE", 53);
+            try
+            {
+                int _type = RBRACE;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:488:3: ( '}' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:488:5: '}'
+                {
+                    DebugLocation(488, 5);
+                    Match('}'); if (state.failed) return;
 
-			}
+                }
 
-			state.type = _type;
-			state.channel = _channel;
-			if (state.backtracking == 0)
-			{
+                state.type = _type;
+                state.channel = _channel;
+                if (state.backtracking == 0)
+                {
 
-				    isInDeclarationBlock=false;
-				    isOsmTagAllowed=false;
+                    isInDeclarationBlock=false;
+                    isOsmTagAllowed=false;
 				  
-			}
-		}
-		finally
-		{
-			TraceOut("RBRACE", 53);
-			LeaveRule("RBRACE", 53);
-			LeaveRule_RBRACE();
-		}
-	}
-	// $ANTLR end "RBRACE"
+                }
+            }
+            finally
+            {
+                TraceOut("RBRACE", 53);
+                LeaveRule("RBRACE", 53);
+                LeaveRule_RBRACE();
+            }
+        }
+        // $ANTLR end "RBRACE"
 
-	partial void EnterRule_COLON();
-	partial void LeaveRule_COLON();
+        partial void EnterRule_COLON();
+        partial void LeaveRule_COLON();
 
-	// $ANTLR start "COLON"
-	[GrammarRule("COLON")]
-	private void mCOLON()
-	{
-		EnterRule_COLON();
-		EnterRule("COLON", 54);
-		TraceIn("COLON", 54);
-		try
-		{
-			int _type = COLON;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:494:3: ( ':' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:494:5: ':'
-			{
-			DebugLocation(494, 5);
-			Match(':'); if (state.failed) return;
+        // $ANTLR start "COLON"
+        [GrammarRule("COLON")]
+        private void mCOLON()
+        {
+            EnterRule_COLON();
+            EnterRule("COLON", 54);
+            TraceIn("COLON", 54);
+            try
+            {
+                int _type = COLON;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:494:3: ( ':' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:494:5: ':'
+                {
+                    DebugLocation(494, 5);
+                    Match(':'); if (state.failed) return;
 
-			}
+                }
 
-			state.type = _type;
-			state.channel = _channel;
-			if (state.backtracking == 0)
-			{
+                state.type = _type;
+                state.channel = _channel;
+                if (state.backtracking == 0)
+                {
 
-				    isOsmTagAllowed=isInDeclarationBlock;
+                    isOsmTagAllowed=isInDeclarationBlock;
 				  
-			}
-		}
-		finally
-		{
-			TraceOut("COLON", 54);
-			LeaveRule("COLON", 54);
-			LeaveRule_COLON();
-		}
-	}
-	// $ANTLR end "COLON"
+                }
+            }
+            finally
+            {
+                TraceOut("COLON", 54);
+                LeaveRule("COLON", 54);
+                LeaveRule_COLON();
+            }
+        }
+        // $ANTLR end "COLON"
 
-	partial void EnterRule_SEMICOLON();
-	partial void LeaveRule_SEMICOLON();
+        partial void EnterRule_SEMICOLON();
+        partial void LeaveRule_SEMICOLON();
 
-	// $ANTLR start "SEMICOLON"
-	[GrammarRule("SEMICOLON")]
-	private void mSEMICOLON()
-	{
-		EnterRule_SEMICOLON();
-		EnterRule("SEMICOLON", 55);
-		TraceIn("SEMICOLON", 55);
-		try
-		{
-			int _type = SEMICOLON;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:500:3: ( ';' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:500:5: ';'
-			{
-			DebugLocation(500, 5);
-			Match(';'); if (state.failed) return;
+        // $ANTLR start "SEMICOLON"
+        [GrammarRule("SEMICOLON")]
+        private void mSEMICOLON()
+        {
+            EnterRule_SEMICOLON();
+            EnterRule("SEMICOLON", 55);
+            TraceIn("SEMICOLON", 55);
+            try
+            {
+                int _type = SEMICOLON;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:500:3: ( ';' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:500:5: ';'
+                {
+                    DebugLocation(500, 5);
+                    Match(';'); if (state.failed) return;
 
-			}
+                }
 
-			state.type = _type;
-			state.channel = _channel;
-			if (state.backtracking == 0)
-			{
+                state.type = _type;
+                state.channel = _channel;
+                if (state.backtracking == 0)
+                {
 
-				    isOsmTagAllowed=false;
+                    isOsmTagAllowed=false;
 				  
-			}
-		}
-		finally
-		{
-			TraceOut("SEMICOLON", 55);
-			LeaveRule("SEMICOLON", 55);
-			LeaveRule_SEMICOLON();
-		}
-	}
-	// $ANTLR end "SEMICOLON"
-
-	partial void EnterRule_EDQUOTE();
-	partial void LeaveRule_EDQUOTE();
-
-	// $ANTLR start "EDQUOTE"
-	[GrammarRule("EDQUOTE")]
-	private void mEDQUOTE()
-	{
-		EnterRule_EDQUOTE();
-		EnterRule("EDQUOTE", 56);
-		TraceIn("EDQUOTE", 56);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:503:17: ( '\\\\\"' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:503:19: '\\\\\"'
-			{
-			DebugLocation(503, 19);
-			Match("\\\""); if (state.failed) return;
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("EDQUOTE", 56);
-			LeaveRule("EDQUOTE", 56);
-			LeaveRule_EDQUOTE();
-		}
-	}
-	// $ANTLR end "EDQUOTE"
-
-	partial void EnterRule_ESQUOTE();
-	partial void LeaveRule_ESQUOTE();
-
-	// $ANTLR start "ESQUOTE"
-	[GrammarRule("ESQUOTE")]
-	private void mESQUOTE()
-	{
-		EnterRule_ESQUOTE();
-		EnterRule("ESQUOTE", 57);
-		TraceIn("ESQUOTE", 57);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:504:17: ( '\\\\\\'' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:504:19: '\\\\\\''
-			{
-			DebugLocation(504, 19);
-			Match("\\'"); if (state.failed) return;
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("ESQUOTE", 57);
-			LeaveRule("ESQUOTE", 57);
-			LeaveRule_ESQUOTE();
-		}
-	}
-	// $ANTLR end "ESQUOTE"
-
-	partial void EnterRule_DQUOTED_STRING();
-	partial void LeaveRule_DQUOTED_STRING();
-
-	// $ANTLR start "DQUOTED_STRING"
-	[GrammarRule("DQUOTED_STRING")]
-	private void mDQUOTED_STRING()
-	{
-		EnterRule_DQUOTED_STRING();
-		EnterRule("DQUOTED_STRING", 58);
-		TraceIn("DQUOTED_STRING", 58);
-		try
-		{
-			int _type = DQUOTED_STRING;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:15: ( '\"' ( ' ' | '!' | '#' .. '[' | ']' .. '~' | UNICODE | EDQUOTE | EBACKSLASH )* '\"' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:17: '\"' ( ' ' | '!' | '#' .. '[' | ']' .. '~' | UNICODE | EDQUOTE | EBACKSLASH )* '\"'
-			{
-			DebugLocation(505, 17);
-			Match('\"'); if (state.failed) return;
-			DebugLocation(505, 21);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:21: ( ' ' | '!' | '#' .. '[' | ']' .. '~' | UNICODE | EDQUOTE | EBACKSLASH )*
-			try { DebugEnterSubRule(11);
-			while (true)
-			{
-				int alt11=8;
-				try { DebugEnterDecision(11, false);
-				int LA11_1 = input.LA(1);
-
-				if ((LA11_1==' '))
-				{
-					alt11 = 1;
-				}
-				else if ((LA11_1=='!'))
-				{
-					alt11 = 2;
-				}
-				else if (((LA11_1>='#' && LA11_1<='[')))
-				{
-					alt11 = 3;
-				}
-				else if (((LA11_1>=']' && LA11_1<='~')))
-				{
-					alt11 = 4;
-				}
-				else if (((LA11_1>='\u0080' && LA11_1<='\uFFFF')))
-				{
-					alt11 = 5;
-				}
-				else if ((LA11_1=='\\'))
-				{
-					int LA11_2 = input.LA(2);
-
-					if ((LA11_2=='\"'))
-					{
-						alt11 = 6;
-					}
-					else if ((LA11_2=='\\'))
-					{
-						alt11 = 7;
-					}
-
-
-				}
-
-
-				} finally { DebugExitDecision(11); }
-				switch ( alt11 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:22: ' '
-					{
-					DebugLocation(505, 22);
-					Match(' '); if (state.failed) return;
-
-					}
-					break;
-				case 2:
-					DebugEnterAlt(2);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:28: '!'
-					{
-					DebugLocation(505, 28);
-					Match('!'); if (state.failed) return;
-
-					}
-					break;
-				case 3:
-					DebugEnterAlt(3);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:34: '#' .. '['
-					{
-					DebugLocation(505, 37);
-					MatchRange('#','['); if (state.failed) return;
-
-					}
-					break;
-				case 4:
-					DebugEnterAlt(4);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:45: ']' .. '~'
-					{
-					DebugLocation(505, 48);
-					MatchRange(']','~'); if (state.failed) return;
-
-					}
-					break;
-				case 5:
-					DebugEnterAlt(5);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:56: UNICODE
-					{
-					DebugLocation(505, 56);
-					mUNICODE(); if (state.failed) return;
-
-					}
-					break;
-				case 6:
-					DebugEnterAlt(6);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:66: EDQUOTE
-					{
-					DebugLocation(505, 66);
-					mEDQUOTE(); if (state.failed) return;
-
-					}
-					break;
-				case 7:
-					DebugEnterAlt(7);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:76: EBACKSLASH
-					{
-					DebugLocation(505, 76);
-					mEBACKSLASH(); if (state.failed) return;
-
-					}
-					break;
-
-				default:
-					goto loop11;
-				}
-			}
-
-			loop11:
-				;
-
-			} finally { DebugExitSubRule(11); }
-
-			DebugLocation(505, 90);
-			Match('\"'); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("DQUOTED_STRING", 58);
-			LeaveRule("DQUOTED_STRING", 58);
-			LeaveRule_DQUOTED_STRING();
-		}
-	}
-	// $ANTLR end "DQUOTED_STRING"
-
-	partial void EnterRule_SQUOTED_STRING();
-	partial void LeaveRule_SQUOTED_STRING();
-
-	// $ANTLR start "SQUOTED_STRING"
-	[GrammarRule("SQUOTED_STRING")]
-	private void mSQUOTED_STRING()
-	{
-		EnterRule_SQUOTED_STRING();
-		EnterRule("SQUOTED_STRING", 59);
-		TraceIn("SQUOTED_STRING", 59);
-		try
-		{
-			int _type = SQUOTED_STRING;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:15: ( '\\'' ( ' ' .. '&' | '(' .. '[' | ']' .. '~' | UNICODE | ESQUOTE | EBACKSLASH )* '\\'' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:17: '\\'' ( ' ' .. '&' | '(' .. '[' | ']' .. '~' | UNICODE | ESQUOTE | EBACKSLASH )* '\\''
-			{
-			DebugLocation(506, 17);
-			Match('\''); if (state.failed) return;
-			DebugLocation(506, 22);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:22: ( ' ' .. '&' | '(' .. '[' | ']' .. '~' | UNICODE | ESQUOTE | EBACKSLASH )*
-			try { DebugEnterSubRule(12);
-			while (true)
-			{
-				int alt12=7;
-				try { DebugEnterDecision(12, false);
-				int LA12_1 = input.LA(1);
-
-				if (((LA12_1>=' ' && LA12_1<='&')))
-				{
-					alt12 = 1;
-				}
-				else if (((LA12_1>='(' && LA12_1<='[')))
-				{
-					alt12 = 2;
-				}
-				else if (((LA12_1>=']' && LA12_1<='~')))
-				{
-					alt12 = 3;
-				}
-				else if (((LA12_1>='\u0080' && LA12_1<='\uFFFF')))
-				{
-					alt12 = 4;
-				}
-				else if ((LA12_1=='\\'))
-				{
-					int LA12_2 = input.LA(2);
-
-					if ((LA12_2=='\''))
-					{
-						alt12 = 5;
-					}
-					else if ((LA12_2=='\\'))
-					{
-						alt12 = 6;
-					}
-
-
-				}
-
-
-				} finally { DebugExitDecision(12); }
-				switch ( alt12 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:23: ' ' .. '&'
-					{
-					DebugLocation(506, 26);
-					MatchRange(' ','&'); if (state.failed) return;
-
-					}
-					break;
-				case 2:
-					DebugEnterAlt(2);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:34: '(' .. '['
-					{
-					DebugLocation(506, 37);
-					MatchRange('(','['); if (state.failed) return;
-
-					}
-					break;
-				case 3:
-					DebugEnterAlt(3);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:45: ']' .. '~'
-					{
-					DebugLocation(506, 48);
-					MatchRange(']','~'); if (state.failed) return;
-
-					}
-					break;
-				case 4:
-					DebugEnterAlt(4);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:56: UNICODE
-					{
-					DebugLocation(506, 56);
-					mUNICODE(); if (state.failed) return;
-
-					}
-					break;
-				case 5:
-					DebugEnterAlt(5);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:66: ESQUOTE
-					{
-					DebugLocation(506, 66);
-					mESQUOTE(); if (state.failed) return;
-
-					}
-					break;
-				case 6:
-					DebugEnterAlt(6);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:76: EBACKSLASH
-					{
-					DebugLocation(506, 76);
-					mEBACKSLASH(); if (state.failed) return;
-
-					}
-					break;
-
-				default:
-					goto loop12;
-				}
-			}
-
-			loop12:
-				;
-
-			} finally { DebugExitSubRule(12); }
-
-			DebugLocation(506, 89);
-			Match('\''); if (state.failed) return;
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("SQUOTED_STRING", 59);
-			LeaveRule("SQUOTED_STRING", 59);
-			LeaveRule_SQUOTED_STRING();
-		}
-	}
-	// $ANTLR end "SQUOTED_STRING"
-
-	partial void EnterRule_HEXDIGIT();
-	partial void LeaveRule_HEXDIGIT();
-
-	// $ANTLR start "HEXDIGIT"
-	[GrammarRule("HEXDIGIT")]
-	private void mHEXDIGIT()
-	{
-		EnterRule_HEXDIGIT();
-		EnterRule("HEXDIGIT", 60);
-		TraceIn("HEXDIGIT", 60);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:509:18: ( DIGIT | 'a' .. 'f' | 'A' .. 'F' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(509, 18);
-			if ((input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f'))
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("HEXDIGIT", 60);
-			LeaveRule("HEXDIGIT", 60);
-			LeaveRule_HEXDIGIT();
-		}
-	}
-	// $ANTLR end "HEXDIGIT"
-
-	partial void EnterRule_HEXCOLOR();
-	partial void LeaveRule_HEXCOLOR();
-
-	// $ANTLR start "HEXCOLOR"
-	[GrammarRule("HEXCOLOR")]
-	private void mHEXCOLOR()
-	{
-		EnterRule_HEXCOLOR();
-		EnterRule("HEXCOLOR", 61);
-		TraceIn("HEXCOLOR", 61);
-		try
-		{
-			int _type = HEXCOLOR;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:9: ( '#' ( ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT ) | ( HEXDIGIT HEXDIGIT HEXDIGIT ) ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:11: '#' ( ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT ) | ( HEXDIGIT HEXDIGIT HEXDIGIT ) )
-			{
-			DebugLocation(510, 11);
-			Match('#'); if (state.failed) return;
-			DebugLocation(510, 15);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:15: ( ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT ) | ( HEXDIGIT HEXDIGIT HEXDIGIT ) )
-			int alt13=2;
-			try { DebugEnterSubRule(13);
-			try { DebugEnterDecision(13, false);
-			int LA13_1 = input.LA(1);
-
-			if (((LA13_1>='0' && LA13_1<='9')||(LA13_1>='A' && LA13_1<='F')||(LA13_1>='a' && LA13_1<='f')))
-			{
-				int LA13_2 = input.LA(2);
-
-				if (((LA13_2>='0' && LA13_2<='9')||(LA13_2>='A' && LA13_2<='F')||(LA13_2>='a' && LA13_2<='f')))
-				{
-					int LA13_3 = input.LA(3);
-
-					if (((LA13_3>='0' && LA13_3<='9')||(LA13_3>='A' && LA13_3<='F')||(LA13_3>='a' && LA13_3<='f')))
-					{
-						int LA13_4 = input.LA(4);
-
-						if (((LA13_4>='0' && LA13_4<='9')||(LA13_4>='A' && LA13_4<='F')||(LA13_4>='a' && LA13_4<='f')))
-						{
-							alt13 = 1;
-						}
-						else
-						{
-							alt13 = 2;
-						}
-					}
-					else
-					{
-						if (state.backtracking>0) {state.failed=true; return;}
-						NoViableAltException nvae = new NoViableAltException("", 13, 2, input, 3);
-						DebugRecognitionException(nvae);
-						throw nvae;
-					}
-				}
-				else
-				{
-					if (state.backtracking>0) {state.failed=true; return;}
-					NoViableAltException nvae = new NoViableAltException("", 13, 1, input, 2);
-					DebugRecognitionException(nvae);
-					throw nvae;
-				}
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				NoViableAltException nvae = new NoViableAltException("", 13, 0, input, 1);
-				DebugRecognitionException(nvae);
-				throw nvae;
-			}
-			} finally { DebugExitDecision(13); }
-			switch (alt13)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:16: ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT )
-				{
-				DebugLocation(510, 16);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:16: ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT )
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:17: HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT
-				{
-				DebugLocation(510, 17);
-				mHEXDIGIT(); if (state.failed) return;
-				DebugLocation(510, 26);
-				mHEXDIGIT(); if (state.failed) return;
-				DebugLocation(510, 35);
-				mHEXDIGIT(); if (state.failed) return;
-				DebugLocation(510, 44);
-				mHEXDIGIT(); if (state.failed) return;
-				DebugLocation(510, 53);
-				mHEXDIGIT(); if (state.failed) return;
-				DebugLocation(510, 62);
-				mHEXDIGIT(); if (state.failed) return;
-
-				}
-
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:74: ( HEXDIGIT HEXDIGIT HEXDIGIT )
-				{
-				DebugLocation(510, 74);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:74: ( HEXDIGIT HEXDIGIT HEXDIGIT )
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:75: HEXDIGIT HEXDIGIT HEXDIGIT
-				{
-				DebugLocation(510, 75);
-				mHEXDIGIT(); if (state.failed) return;
-				DebugLocation(510, 84);
-				mHEXDIGIT(); if (state.failed) return;
-				DebugLocation(510, 93);
-				mHEXDIGIT(); if (state.failed) return;
-
-				}
-
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(13); }
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("HEXCOLOR", 61);
-			LeaveRule("HEXCOLOR", 61);
-			LeaveRule_HEXCOLOR();
-		}
-	}
-	// $ANTLR end "HEXCOLOR"
-
-	partial void EnterRule_PERCENTAGE();
-	partial void LeaveRule_PERCENTAGE();
-
-	// $ANTLR start "PERCENTAGE"
-	[GrammarRule("PERCENTAGE")]
-	private void mPERCENTAGE()
-	{
-		EnterRule_PERCENTAGE();
-		EnterRule("PERCENTAGE", 62);
-		TraceIn("PERCENTAGE", 62);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:516:20: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:516:21: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("PERCENTAGE", 62);
-			LeaveRule("PERCENTAGE", 62);
-			LeaveRule_PERCENTAGE();
-		}
-	}
-	// $ANTLR end "PERCENTAGE"
-
-	partial void EnterRule_PIXELS();
-	partial void LeaveRule_PIXELS();
-
-	// $ANTLR start "PIXELS"
-	[GrammarRule("PIXELS")]
-	private void mPIXELS()
-	{
-		EnterRule_PIXELS();
-		EnterRule("PIXELS", 63);
-		TraceIn("PIXELS", 63);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:517:16: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:517:17: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("PIXELS", 63);
-			LeaveRule("PIXELS", 63);
-			LeaveRule_PIXELS();
-		}
-	}
-	// $ANTLR end "PIXELS"
-
-	partial void EnterRule_POINTS();
-	partial void LeaveRule_POINTS();
-
-	// $ANTLR start "POINTS"
-	[GrammarRule("POINTS")]
-	private void mPOINTS()
-	{
-		EnterRule_POINTS();
-		EnterRule("POINTS", 64);
-		TraceIn("POINTS", 64);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:518:16: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:518:17: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("POINTS", 64);
-			LeaveRule("POINTS", 64);
-			LeaveRule_POINTS();
-		}
-	}
-	// $ANTLR end "POINTS"
-
-	partial void EnterRule_POSITIVE_FLOAT();
-	partial void LeaveRule_POSITIVE_FLOAT();
-
-	// $ANTLR start "POSITIVE_FLOAT"
-	[GrammarRule("POSITIVE_FLOAT")]
-	private void mPOSITIVE_FLOAT()
-	{
-		EnterRule_POSITIVE_FLOAT();
-		EnterRule("POSITIVE_FLOAT", 65);
-		TraceIn("POSITIVE_FLOAT", 65);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:519:24: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:519:25: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("POSITIVE_FLOAT", 65);
-			LeaveRule("POSITIVE_FLOAT", 65);
-			LeaveRule_POSITIVE_FLOAT();
-		}
-	}
-	// $ANTLR end "POSITIVE_FLOAT"
-
-	partial void EnterRule_POSITIVE_INT();
-	partial void LeaveRule_POSITIVE_INT();
-
-	// $ANTLR start "POSITIVE_INT"
-	[GrammarRule("POSITIVE_INT")]
-	private void mPOSITIVE_INT()
-	{
-		EnterRule_POSITIVE_INT();
-		EnterRule("POSITIVE_INT", 66);
-		TraceIn("POSITIVE_INT", 66);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:520:22: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:520:23: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("POSITIVE_INT", 66);
-			LeaveRule("POSITIVE_INT", 66);
-			LeaveRule_POSITIVE_INT();
-		}
-	}
-	// $ANTLR end "POSITIVE_INT"
-
-	partial void EnterRule_NEGATIVE_FLOAT();
-	partial void LeaveRule_NEGATIVE_FLOAT();
-
-	// $ANTLR start "NEGATIVE_FLOAT"
-	[GrammarRule("NEGATIVE_FLOAT")]
-	private void mNEGATIVE_FLOAT()
-	{
-		EnterRule_NEGATIVE_FLOAT();
-		EnterRule("NEGATIVE_FLOAT", 67);
-		TraceIn("NEGATIVE_FLOAT", 67);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:521:24: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:521:25: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("NEGATIVE_FLOAT", 67);
-			LeaveRule("NEGATIVE_FLOAT", 67);
-			LeaveRule_NEGATIVE_FLOAT();
-		}
-	}
-	// $ANTLR end "NEGATIVE_FLOAT"
-
-	partial void EnterRule_NEGATIVE_INT();
-	partial void LeaveRule_NEGATIVE_INT();
-
-	// $ANTLR start "NEGATIVE_INT"
-	[GrammarRule("NEGATIVE_INT")]
-	private void mNEGATIVE_INT()
-	{
-		EnterRule_NEGATIVE_INT();
-		EnterRule("NEGATIVE_INT", 68);
-		TraceIn("NEGATIVE_INT", 68);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:522:22: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:522:23: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("NEGATIVE_INT", 68);
-			LeaveRule("NEGATIVE_INT", 68);
-			LeaveRule_NEGATIVE_INT();
-		}
-	}
-	// $ANTLR end "NEGATIVE_INT"
-
-	partial void EnterRule_INCREMENT();
-	partial void LeaveRule_INCREMENT();
-
-	// $ANTLR start "INCREMENT"
-	[GrammarRule("INCREMENT")]
-	private void mINCREMENT()
-	{
-		EnterRule_INCREMENT();
-		EnterRule("INCREMENT", 69);
-		TraceIn("INCREMENT", 69);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:523:19: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:523:20: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("INCREMENT", 69);
-			LeaveRule("INCREMENT", 69);
-			LeaveRule_INCREMENT();
-		}
-	}
-	// $ANTLR end "INCREMENT"
-
-	partial void EnterRule_P();
-	partial void LeaveRule_P();
-
-	// $ANTLR start "P"
-	[GrammarRule("P")]
-	private void mP()
-	{
-		EnterRule_P();
-		EnterRule("P", 70);
-		TraceIn("P", 70);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:524:11: ( ( 'p' | 'P' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(524, 11);
-			if (input.LA(1)=='P'||input.LA(1)=='p')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("P", 70);
-			LeaveRule("P", 70);
-			LeaveRule_P();
-		}
-	}
-	// $ANTLR end "P"
-
-	partial void EnterRule_T();
-	partial void LeaveRule_T();
-
-	// $ANTLR start "T"
-	[GrammarRule("T")]
-	private void mT()
-	{
-		EnterRule_T();
-		EnterRule("T", 71);
-		TraceIn("T", 71);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:525:11: ( ( 't' | 'T' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(525, 11);
-			if (input.LA(1)=='T'||input.LA(1)=='t')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("T", 71);
-			LeaveRule("T", 71);
-			LeaveRule_T();
-		}
-	}
-	// $ANTLR end "T"
-
-	partial void EnterRule_X();
-	partial void LeaveRule_X();
-
-	// $ANTLR start "X"
-	[GrammarRule("X")]
-	private void mX()
-	{
-		EnterRule_X();
-		EnterRule("X", 72);
-		TraceIn("X", 72);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:526:11: ( ( 'x' | 'X' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(526, 11);
-			if (input.LA(1)=='X'||input.LA(1)=='x')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("X", 72);
-			LeaveRule("X", 72);
-			LeaveRule_X();
-		}
-	}
-	// $ANTLR end "X"
-
-	partial void EnterRule_NUMBER();
-	partial void LeaveRule_NUMBER();
-
-	// $ANTLR start "NUMBER"
-	[GrammarRule("NUMBER")]
-	private void mNUMBER()
-	{
-		EnterRule_NUMBER();
-		EnterRule("NUMBER", 73);
-		TraceIn("NUMBER", 73);
-		try
-		{
-			int _type = NUMBER;
-			int _channel = DefaultTokenChannel;
-			int s = 0;
-			int d = 0;
-
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:2: ( ( ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )? )=> (s= '-' )? ( DIGIT )* (d= '.' ( DIGIT )+ )? ( ( P ( T | X ) )=> P ( T | X ) | ( '%' )=> '%' |) | ( '+' )=> '+' ( DIGIT )+ )
-			int alt21=2;
-			try { DebugEnterDecision(21, false);
-			int LA21_1 = input.LA(1);
-
-			if ((LA21_1=='-') && (EvaluatePredicate(synpred2_MapCss_fragment)))
-			{
-				alt21 = 1;
-			}
-			else if (((LA21_1>='0' && LA21_1<='9')) && (EvaluatePredicate(synpred2_MapCss_fragment)))
-			{
-				alt21 = 1;
-			}
-			else if ((LA21_1=='.') && (EvaluatePredicate(synpred2_MapCss_fragment)))
-			{
-				alt21 = 1;
-			}
-			else if ((LA21_1=='P'||LA21_1=='p') && (EvaluatePredicate(synpred2_MapCss_fragment)))
-			{
-				alt21 = 1;
-			}
-			else if ((LA21_1=='%') && (EvaluatePredicate(synpred2_MapCss_fragment)))
-			{
-				alt21 = 1;
-			}
-			else if ((LA21_1=='+') && (EvaluatePredicate(synpred5_MapCss_fragment)))
-			{
-				alt21 = 2;
-			}
-			else
-			{
-				alt21 = 1;
-			}
-			} finally { DebugExitDecision(21); }
-			switch (alt21)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:4: ( ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )? )=> (s= '-' )? ( DIGIT )* (d= '.' ( DIGIT )+ )? ( ( P ( T | X ) )=> P ( T | X ) | ( '%' )=> '%' |)
-				{
-				DebugLocation(530, 36);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:36: (s= '-' )?
-				int alt14=2;
-				try { DebugEnterSubRule(14);
-				try { DebugEnterDecision(14, false);
-				int LA14_1 = input.LA(1);
-
-				if ((LA14_1=='-'))
-				{
-					alt14 = 1;
-				}
-				} finally { DebugExitDecision(14); }
-				switch (alt14)
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:36: s= '-'
-					{
-					DebugLocation(530, 36);
-
-					s = input.LA(1);
-
-					Match('-'); if (state.failed) return;
-
-					}
-					break;
-
-				}
-				} finally { DebugExitSubRule(14); }
-
-				DebugLocation(530, 42);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:42: ( DIGIT )*
-				try { DebugEnterSubRule(15);
-				while (true)
-				{
-					int alt15=2;
-					try { DebugEnterDecision(15, false);
-					int LA15_1 = input.LA(1);
-
-					if (((LA15_1>='0' && LA15_1<='9')))
-					{
-						alt15 = 1;
-					}
-
-
-					} finally { DebugExitDecision(15); }
-					switch ( alt15 )
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(530, 42);
-						input.Consume();
-						state.failed=false;
-
-						}
-						break;
-
-					default:
-						goto loop15;
-					}
-				}
-
-				loop15:
-					;
-
-				} finally { DebugExitSubRule(15); }
-
-				DebugLocation(530, 49);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:49: (d= '.' ( DIGIT )+ )?
-				int alt17=2;
-				try { DebugEnterSubRule(17);
-				try { DebugEnterDecision(17, false);
-				int LA17_1 = input.LA(1);
-
-				if ((LA17_1=='.'))
-				{
-					alt17 = 1;
-				}
-				} finally { DebugExitDecision(17); }
-				switch (alt17)
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:50: d= '.' ( DIGIT )+
-					{
-					DebugLocation(530, 51);
-
-					d = input.LA(1);
-
-					Match('.'); if (state.failed) return;
-					DebugLocation(530, 56);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:56: ( DIGIT )+
-					int cnt16=0;
-					try { DebugEnterSubRule(16);
-					while (true)
-					{
-						int alt16=2;
-						try { DebugEnterDecision(16, false);
-						int LA16_1 = input.LA(1);
-
-						if (((LA16_1>='0' && LA16_1<='9')))
-						{
-							alt16 = 1;
-						}
-
-
-						} finally { DebugExitDecision(16); }
-						switch (alt16)
-						{
-						case 1:
-							DebugEnterAlt(1);
-							// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-							{
-							DebugLocation(530, 56);
-							input.Consume();
-							state.failed=false;
-
-							}
-							break;
-
-						default:
-							if (cnt16 >= 1)
-								goto loop16;
-
-							if (state.backtracking>0) {state.failed=true; return;}
-							EarlyExitException eee16 = new EarlyExitException( 16, input );
-							DebugRecognitionException(eee16);
-							throw eee16;
-						}
-						cnt16++;
-					}
-					loop16:
-						;
-
-					} finally { DebugExitSubRule(16); }
-
-
-					}
-					break;
-
-				}
-				} finally { DebugExitSubRule(17); }
-
-				DebugLocation(531, 6);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:531:6: ( ( P ( T | X ) )=> P ( T | X ) | ( '%' )=> '%' |)
-				int alt19=3;
-				try { DebugEnterSubRule(19);
-				try { DebugEnterDecision(19, false);
-				int LA19_1 = input.LA(1);
-
-				if ((LA19_1=='P'||LA19_1=='p') && (EvaluatePredicate(synpred3_MapCss_fragment)))
-				{
-					alt19 = 1;
-				}
-				else if ((LA19_1=='%') && (EvaluatePredicate(synpred4_MapCss_fragment)))
-				{
-					alt19 = 2;
-				}
-				else
-				{
-					alt19 = 3;
-				}
-				} finally { DebugExitDecision(19); }
-				switch (alt19)
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:532:6: ( P ( T | X ) )=> P ( T | X )
-					{
-					DebugLocation(533, 6);
-					mP(); if (state.failed) return;
-					DebugLocation(534, 6);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:534:6: ( T | X )
-					int alt18=2;
-					try { DebugEnterSubRule(18);
-					try { DebugEnterDecision(18, false);
-					int LA18_1 = input.LA(1);
-
-					if ((LA18_1=='T'||LA18_1=='t'))
-					{
-						alt18 = 1;
-					}
-					else if ((LA18_1=='X'||LA18_1=='x'))
-					{
-						alt18 = 2;
-					}
-					else
-					{
-						if (state.backtracking>0) {state.failed=true; return;}
-						NoViableAltException nvae = new NoViableAltException("", 18, 0, input, 1);
-						DebugRecognitionException(nvae);
-						throw nvae;
-					}
-					} finally { DebugExitDecision(18); }
-					switch (alt18)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:535:8: T
-						{
-						DebugLocation(535, 8);
-						mT(); if (state.failed) return;
-						DebugLocation(535, 23);
-						if (state.backtracking == 0)
-						{
-							_type = POINTS;
-						}
-
-						}
-						break;
-					case 2:
-						DebugEnterAlt(2);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:536:11: X
-						{
-						DebugLocation(536, 11);
-						mX(); if (state.failed) return;
-						DebugLocation(536, 26);
-						if (state.backtracking == 0)
-						{
-							_type = PIXELS;
-						}
-
-						}
-						break;
-
-					}
-					} finally { DebugExitSubRule(18); }
-
-
-					}
-					break;
-				case 2:
-					DebugEnterAlt(2);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:538:10: ( '%' )=> '%'
-					{
-					DebugLocation(538, 19);
-					Match('%'); if (state.failed) return;
-					DebugLocation(538, 32);
-					if (state.backtracking == 0)
-					{
-						_type = PERCENTAGE;
-					}
-
-					}
-					break;
-				case 3:
-					DebugEnterAlt(3);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:540:10: 
-					{
-					DebugLocation(540, 10);
-					if (state.backtracking == 0)
-					{
-                            // SUPPRESS WARNING
-							          /* if (s == null) {
+                }
+            }
+            finally
+            {
+                TraceOut("SEMICOLON", 55);
+                LeaveRule("SEMICOLON", 55);
+                LeaveRule_SEMICOLON();
+            }
+        }
+        // $ANTLR end "SEMICOLON"
+
+        partial void EnterRule_EDQUOTE();
+        partial void LeaveRule_EDQUOTE();
+
+        // $ANTLR start "EDQUOTE"
+        [GrammarRule("EDQUOTE")]
+        private void mEDQUOTE()
+        {
+            EnterRule_EDQUOTE();
+            EnterRule("EDQUOTE", 56);
+            TraceIn("EDQUOTE", 56);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:503:17: ( '\\\\\"' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:503:19: '\\\\\"'
+                {
+                    DebugLocation(503, 19);
+                    Match("\\\""); if (state.failed) return;
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("EDQUOTE", 56);
+                LeaveRule("EDQUOTE", 56);
+                LeaveRule_EDQUOTE();
+            }
+        }
+        // $ANTLR end "EDQUOTE"
+
+        partial void EnterRule_ESQUOTE();
+        partial void LeaveRule_ESQUOTE();
+
+        // $ANTLR start "ESQUOTE"
+        [GrammarRule("ESQUOTE")]
+        private void mESQUOTE()
+        {
+            EnterRule_ESQUOTE();
+            EnterRule("ESQUOTE", 57);
+            TraceIn("ESQUOTE", 57);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:504:17: ( '\\\\\\'' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:504:19: '\\\\\\''
+                {
+                    DebugLocation(504, 19);
+                    Match("\\'"); if (state.failed) return;
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("ESQUOTE", 57);
+                LeaveRule("ESQUOTE", 57);
+                LeaveRule_ESQUOTE();
+            }
+        }
+        // $ANTLR end "ESQUOTE"
+
+        partial void EnterRule_DQUOTED_STRING();
+        partial void LeaveRule_DQUOTED_STRING();
+
+        // $ANTLR start "DQUOTED_STRING"
+        [GrammarRule("DQUOTED_STRING")]
+        private void mDQUOTED_STRING()
+        {
+            EnterRule_DQUOTED_STRING();
+            EnterRule("DQUOTED_STRING", 58);
+            TraceIn("DQUOTED_STRING", 58);
+            try
+            {
+                int _type = DQUOTED_STRING;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:15: ( '\"' ( ' ' | '!' | '#' .. '[' | ']' .. '~' | UNICODE | EDQUOTE | EBACKSLASH )* '\"' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:17: '\"' ( ' ' | '!' | '#' .. '[' | ']' .. '~' | UNICODE | EDQUOTE | EBACKSLASH )* '\"'
+                {
+                    DebugLocation(505, 17);
+                    Match('\"'); if (state.failed) return;
+                    DebugLocation(505, 21);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:21: ( ' ' | '!' | '#' .. '[' | ']' .. '~' | UNICODE | EDQUOTE | EBACKSLASH )*
+                    try { DebugEnterSubRule(11);
+                        while (true)
+                        {
+                            int alt11=8;
+                            try { DebugEnterDecision(11, false);
+                                int LA11_1 = input.LA(1);
+
+                                if ((LA11_1==' '))
+                                {
+                                    alt11 = 1;
+                                }
+                                else if ((LA11_1=='!'))
+                                {
+                                    alt11 = 2;
+                                }
+                                else if (((LA11_1>='#' && LA11_1<='[')))
+                                {
+                                    alt11 = 3;
+                                }
+                                else if (((LA11_1>=']' && LA11_1<='~')))
+                                {
+                                    alt11 = 4;
+                                }
+                                else if (((LA11_1>='\u0080' && LA11_1<='\uFFFF')))
+                                {
+                                    alt11 = 5;
+                                }
+                                else if ((LA11_1=='\\'))
+                                {
+                                    int LA11_2 = input.LA(2);
+
+                                    if ((LA11_2=='\"'))
+                                    {
+                                        alt11 = 6;
+                                    }
+                                    else if ((LA11_2=='\\'))
+                                    {
+                                        alt11 = 7;
+                                    }
+
+
+                                }
+
+
+                            } finally { DebugExitDecision(11); }
+                            switch ( alt11 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:22: ' '
+                                {
+                                    DebugLocation(505, 22);
+                                    Match(' '); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 2:
+                                    DebugEnterAlt(2);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:28: '!'
+                                {
+                                    DebugLocation(505, 28);
+                                    Match('!'); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 3:
+                                    DebugEnterAlt(3);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:34: '#' .. '['
+                                {
+                                    DebugLocation(505, 37);
+                                    MatchRange('#','['); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 4:
+                                    DebugEnterAlt(4);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:45: ']' .. '~'
+                                {
+                                    DebugLocation(505, 48);
+                                    MatchRange(']','~'); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 5:
+                                    DebugEnterAlt(5);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:56: UNICODE
+                                {
+                                    DebugLocation(505, 56);
+                                    mUNICODE(); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 6:
+                                    DebugEnterAlt(6);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:66: EDQUOTE
+                                {
+                                    DebugLocation(505, 66);
+                                    mEDQUOTE(); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 7:
+                                    DebugEnterAlt(7);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:505:76: EBACKSLASH
+                                {
+                                    DebugLocation(505, 76);
+                                    mEBACKSLASH(); if (state.failed) return;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop11;
+                            }
+                        }
+
+                        loop11:
+                        ;
+
+                    } finally { DebugExitSubRule(11); }
+
+                    DebugLocation(505, 90);
+                    Match('\"'); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("DQUOTED_STRING", 58);
+                LeaveRule("DQUOTED_STRING", 58);
+                LeaveRule_DQUOTED_STRING();
+            }
+        }
+        // $ANTLR end "DQUOTED_STRING"
+
+        partial void EnterRule_SQUOTED_STRING();
+        partial void LeaveRule_SQUOTED_STRING();
+
+        // $ANTLR start "SQUOTED_STRING"
+        [GrammarRule("SQUOTED_STRING")]
+        private void mSQUOTED_STRING()
+        {
+            EnterRule_SQUOTED_STRING();
+            EnterRule("SQUOTED_STRING", 59);
+            TraceIn("SQUOTED_STRING", 59);
+            try
+            {
+                int _type = SQUOTED_STRING;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:15: ( '\\'' ( ' ' .. '&' | '(' .. '[' | ']' .. '~' | UNICODE | ESQUOTE | EBACKSLASH )* '\\'' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:17: '\\'' ( ' ' .. '&' | '(' .. '[' | ']' .. '~' | UNICODE | ESQUOTE | EBACKSLASH )* '\\''
+                {
+                    DebugLocation(506, 17);
+                    Match('\''); if (state.failed) return;
+                    DebugLocation(506, 22);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:22: ( ' ' .. '&' | '(' .. '[' | ']' .. '~' | UNICODE | ESQUOTE | EBACKSLASH )*
+                    try { DebugEnterSubRule(12);
+                        while (true)
+                        {
+                            int alt12=7;
+                            try { DebugEnterDecision(12, false);
+                                int LA12_1 = input.LA(1);
+
+                                if (((LA12_1>=' ' && LA12_1<='&')))
+                                {
+                                    alt12 = 1;
+                                }
+                                else if (((LA12_1>='(' && LA12_1<='[')))
+                                {
+                                    alt12 = 2;
+                                }
+                                else if (((LA12_1>=']' && LA12_1<='~')))
+                                {
+                                    alt12 = 3;
+                                }
+                                else if (((LA12_1>='\u0080' && LA12_1<='\uFFFF')))
+                                {
+                                    alt12 = 4;
+                                }
+                                else if ((LA12_1=='\\'))
+                                {
+                                    int LA12_2 = input.LA(2);
+
+                                    if ((LA12_2=='\''))
+                                    {
+                                        alt12 = 5;
+                                    }
+                                    else if ((LA12_2=='\\'))
+                                    {
+                                        alt12 = 6;
+                                    }
+
+
+                                }
+
+
+                            } finally { DebugExitDecision(12); }
+                            switch ( alt12 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:23: ' ' .. '&'
+                                {
+                                    DebugLocation(506, 26);
+                                    MatchRange(' ','&'); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 2:
+                                    DebugEnterAlt(2);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:34: '(' .. '['
+                                {
+                                    DebugLocation(506, 37);
+                                    MatchRange('(','['); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 3:
+                                    DebugEnterAlt(3);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:45: ']' .. '~'
+                                {
+                                    DebugLocation(506, 48);
+                                    MatchRange(']','~'); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 4:
+                                    DebugEnterAlt(4);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:56: UNICODE
+                                {
+                                    DebugLocation(506, 56);
+                                    mUNICODE(); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 5:
+                                    DebugEnterAlt(5);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:66: ESQUOTE
+                                {
+                                    DebugLocation(506, 66);
+                                    mESQUOTE(); if (state.failed) return;
+
+                                }
+                                    break;
+                                case 6:
+                                    DebugEnterAlt(6);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:506:76: EBACKSLASH
+                                {
+                                    DebugLocation(506, 76);
+                                    mEBACKSLASH(); if (state.failed) return;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop12;
+                            }
+                        }
+
+                        loop12:
+                        ;
+
+                    } finally { DebugExitSubRule(12); }
+
+                    DebugLocation(506, 89);
+                    Match('\''); if (state.failed) return;
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("SQUOTED_STRING", 59);
+                LeaveRule("SQUOTED_STRING", 59);
+                LeaveRule_SQUOTED_STRING();
+            }
+        }
+        // $ANTLR end "SQUOTED_STRING"
+
+        partial void EnterRule_HEXDIGIT();
+        partial void LeaveRule_HEXDIGIT();
+
+        // $ANTLR start "HEXDIGIT"
+        [GrammarRule("HEXDIGIT")]
+        private void mHEXDIGIT()
+        {
+            EnterRule_HEXDIGIT();
+            EnterRule("HEXDIGIT", 60);
+            TraceIn("HEXDIGIT", 60);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:509:18: ( DIGIT | 'a' .. 'f' | 'A' .. 'F' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(509, 18);
+                    if ((input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f'))
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("HEXDIGIT", 60);
+                LeaveRule("HEXDIGIT", 60);
+                LeaveRule_HEXDIGIT();
+            }
+        }
+        // $ANTLR end "HEXDIGIT"
+
+        partial void EnterRule_HEXCOLOR();
+        partial void LeaveRule_HEXCOLOR();
+
+        // $ANTLR start "HEXCOLOR"
+        [GrammarRule("HEXCOLOR")]
+        private void mHEXCOLOR()
+        {
+            EnterRule_HEXCOLOR();
+            EnterRule("HEXCOLOR", 61);
+            TraceIn("HEXCOLOR", 61);
+            try
+            {
+                int _type = HEXCOLOR;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:9: ( '#' ( ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT ) | ( HEXDIGIT HEXDIGIT HEXDIGIT ) ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:11: '#' ( ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT ) | ( HEXDIGIT HEXDIGIT HEXDIGIT ) )
+                {
+                    DebugLocation(510, 11);
+                    Match('#'); if (state.failed) return;
+                    DebugLocation(510, 15);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:15: ( ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT ) | ( HEXDIGIT HEXDIGIT HEXDIGIT ) )
+                    int alt13=2;
+                    try { DebugEnterSubRule(13);
+                        try { DebugEnterDecision(13, false);
+                            int LA13_1 = input.LA(1);
+
+                            if (((LA13_1>='0' && LA13_1<='9')||(LA13_1>='A' && LA13_1<='F')||(LA13_1>='a' && LA13_1<='f')))
+                            {
+                                int LA13_2 = input.LA(2);
+
+                                if (((LA13_2>='0' && LA13_2<='9')||(LA13_2>='A' && LA13_2<='F')||(LA13_2>='a' && LA13_2<='f')))
+                                {
+                                    int LA13_3 = input.LA(3);
+
+                                    if (((LA13_3>='0' && LA13_3<='9')||(LA13_3>='A' && LA13_3<='F')||(LA13_3>='a' && LA13_3<='f')))
+                                    {
+                                        int LA13_4 = input.LA(4);
+
+                                        if (((LA13_4>='0' && LA13_4<='9')||(LA13_4>='A' && LA13_4<='F')||(LA13_4>='a' && LA13_4<='f')))
+                                        {
+                                            alt13 = 1;
+                                        }
+                                        else
+                                        {
+                                            alt13 = 2;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (state.backtracking>0) {state.failed=true; return;}
+                                        NoViableAltException nvae = new NoViableAltException("", 13, 2, input, 3);
+                                        DebugRecognitionException(nvae);
+                                        throw nvae;
+                                    }
+                                }
+                                else
+                                {
+                                    if (state.backtracking>0) {state.failed=true; return;}
+                                    NoViableAltException nvae = new NoViableAltException("", 13, 1, input, 2);
+                                    DebugRecognitionException(nvae);
+                                    throw nvae;
+                                }
+                            }
+                            else
+                            {
+                                if (state.backtracking>0) {state.failed=true; return;}
+                                NoViableAltException nvae = new NoViableAltException("", 13, 0, input, 1);
+                                DebugRecognitionException(nvae);
+                                throw nvae;
+                            }
+                        } finally { DebugExitDecision(13); }
+                        switch (alt13)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:16: ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT )
+                            {
+                                DebugLocation(510, 16);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:16: ( HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT )
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:17: HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT
+                                {
+                                    DebugLocation(510, 17);
+                                    mHEXDIGIT(); if (state.failed) return;
+                                    DebugLocation(510, 26);
+                                    mHEXDIGIT(); if (state.failed) return;
+                                    DebugLocation(510, 35);
+                                    mHEXDIGIT(); if (state.failed) return;
+                                    DebugLocation(510, 44);
+                                    mHEXDIGIT(); if (state.failed) return;
+                                    DebugLocation(510, 53);
+                                    mHEXDIGIT(); if (state.failed) return;
+                                    DebugLocation(510, 62);
+                                    mHEXDIGIT(); if (state.failed) return;
+
+                                }
+
+
+                            }
+                                break;
+                            case 2:
+                                DebugEnterAlt(2);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:74: ( HEXDIGIT HEXDIGIT HEXDIGIT )
+                            {
+                                DebugLocation(510, 74);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:74: ( HEXDIGIT HEXDIGIT HEXDIGIT )
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:510:75: HEXDIGIT HEXDIGIT HEXDIGIT
+                                {
+                                    DebugLocation(510, 75);
+                                    mHEXDIGIT(); if (state.failed) return;
+                                    DebugLocation(510, 84);
+                                    mHEXDIGIT(); if (state.failed) return;
+                                    DebugLocation(510, 93);
+                                    mHEXDIGIT(); if (state.failed) return;
+
+                                }
+
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(13); }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("HEXCOLOR", 61);
+                LeaveRule("HEXCOLOR", 61);
+                LeaveRule_HEXCOLOR();
+            }
+        }
+        // $ANTLR end "HEXCOLOR"
+
+        partial void EnterRule_PERCENTAGE();
+        partial void LeaveRule_PERCENTAGE();
+
+        // $ANTLR start "PERCENTAGE"
+        [GrammarRule("PERCENTAGE")]
+        private void mPERCENTAGE()
+        {
+            EnterRule_PERCENTAGE();
+            EnterRule("PERCENTAGE", 62);
+            TraceIn("PERCENTAGE", 62);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:516:20: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:516:21: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("PERCENTAGE", 62);
+                LeaveRule("PERCENTAGE", 62);
+                LeaveRule_PERCENTAGE();
+            }
+        }
+        // $ANTLR end "PERCENTAGE"
+
+        partial void EnterRule_PIXELS();
+        partial void LeaveRule_PIXELS();
+
+        // $ANTLR start "PIXELS"
+        [GrammarRule("PIXELS")]
+        private void mPIXELS()
+        {
+            EnterRule_PIXELS();
+            EnterRule("PIXELS", 63);
+            TraceIn("PIXELS", 63);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:517:16: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:517:17: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("PIXELS", 63);
+                LeaveRule("PIXELS", 63);
+                LeaveRule_PIXELS();
+            }
+        }
+        // $ANTLR end "PIXELS"
+
+        partial void EnterRule_POINTS();
+        partial void LeaveRule_POINTS();
+
+        // $ANTLR start "POINTS"
+        [GrammarRule("POINTS")]
+        private void mPOINTS()
+        {
+            EnterRule_POINTS();
+            EnterRule("POINTS", 64);
+            TraceIn("POINTS", 64);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:518:16: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:518:17: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("POINTS", 64);
+                LeaveRule("POINTS", 64);
+                LeaveRule_POINTS();
+            }
+        }
+        // $ANTLR end "POINTS"
+
+        partial void EnterRule_POSITIVE_FLOAT();
+        partial void LeaveRule_POSITIVE_FLOAT();
+
+        // $ANTLR start "POSITIVE_FLOAT"
+        [GrammarRule("POSITIVE_FLOAT")]
+        private void mPOSITIVE_FLOAT()
+        {
+            EnterRule_POSITIVE_FLOAT();
+            EnterRule("POSITIVE_FLOAT", 65);
+            TraceIn("POSITIVE_FLOAT", 65);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:519:24: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:519:25: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("POSITIVE_FLOAT", 65);
+                LeaveRule("POSITIVE_FLOAT", 65);
+                LeaveRule_POSITIVE_FLOAT();
+            }
+        }
+        // $ANTLR end "POSITIVE_FLOAT"
+
+        partial void EnterRule_POSITIVE_INT();
+        partial void LeaveRule_POSITIVE_INT();
+
+        // $ANTLR start "POSITIVE_INT"
+        [GrammarRule("POSITIVE_INT")]
+        private void mPOSITIVE_INT()
+        {
+            EnterRule_POSITIVE_INT();
+            EnterRule("POSITIVE_INT", 66);
+            TraceIn("POSITIVE_INT", 66);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:520:22: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:520:23: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("POSITIVE_INT", 66);
+                LeaveRule("POSITIVE_INT", 66);
+                LeaveRule_POSITIVE_INT();
+            }
+        }
+        // $ANTLR end "POSITIVE_INT"
+
+        partial void EnterRule_NEGATIVE_FLOAT();
+        partial void LeaveRule_NEGATIVE_FLOAT();
+
+        // $ANTLR start "NEGATIVE_FLOAT"
+        [GrammarRule("NEGATIVE_FLOAT")]
+        private void mNEGATIVE_FLOAT()
+        {
+            EnterRule_NEGATIVE_FLOAT();
+            EnterRule("NEGATIVE_FLOAT", 67);
+            TraceIn("NEGATIVE_FLOAT", 67);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:521:24: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:521:25: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("NEGATIVE_FLOAT", 67);
+                LeaveRule("NEGATIVE_FLOAT", 67);
+                LeaveRule_NEGATIVE_FLOAT();
+            }
+        }
+        // $ANTLR end "NEGATIVE_FLOAT"
+
+        partial void EnterRule_NEGATIVE_INT();
+        partial void LeaveRule_NEGATIVE_INT();
+
+        // $ANTLR start "NEGATIVE_INT"
+        [GrammarRule("NEGATIVE_INT")]
+        private void mNEGATIVE_INT()
+        {
+            EnterRule_NEGATIVE_INT();
+            EnterRule("NEGATIVE_INT", 68);
+            TraceIn("NEGATIVE_INT", 68);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:522:22: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:522:23: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("NEGATIVE_INT", 68);
+                LeaveRule("NEGATIVE_INT", 68);
+                LeaveRule_NEGATIVE_INT();
+            }
+        }
+        // $ANTLR end "NEGATIVE_INT"
+
+        partial void EnterRule_INCREMENT();
+        partial void LeaveRule_INCREMENT();
+
+        // $ANTLR start "INCREMENT"
+        [GrammarRule("INCREMENT")]
+        private void mINCREMENT()
+        {
+            EnterRule_INCREMENT();
+            EnterRule("INCREMENT", 69);
+            TraceIn("INCREMENT", 69);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:523:19: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:523:20: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("INCREMENT", 69);
+                LeaveRule("INCREMENT", 69);
+                LeaveRule_INCREMENT();
+            }
+        }
+        // $ANTLR end "INCREMENT"
+
+        partial void EnterRule_P();
+        partial void LeaveRule_P();
+
+        // $ANTLR start "P"
+        [GrammarRule("P")]
+        private void mP()
+        {
+            EnterRule_P();
+            EnterRule("P", 70);
+            TraceIn("P", 70);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:524:11: ( ( 'p' | 'P' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(524, 11);
+                    if (input.LA(1)=='P'||input.LA(1)=='p')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("P", 70);
+                LeaveRule("P", 70);
+                LeaveRule_P();
+            }
+        }
+        // $ANTLR end "P"
+
+        partial void EnterRule_T();
+        partial void LeaveRule_T();
+
+        // $ANTLR start "T"
+        [GrammarRule("T")]
+        private void mT()
+        {
+            EnterRule_T();
+            EnterRule("T", 71);
+            TraceIn("T", 71);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:525:11: ( ( 't' | 'T' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(525, 11);
+                    if (input.LA(1)=='T'||input.LA(1)=='t')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("T", 71);
+                LeaveRule("T", 71);
+                LeaveRule_T();
+            }
+        }
+        // $ANTLR end "T"
+
+        partial void EnterRule_X();
+        partial void LeaveRule_X();
+
+        // $ANTLR start "X"
+        [GrammarRule("X")]
+        private void mX()
+        {
+            EnterRule_X();
+            EnterRule("X", 72);
+            TraceIn("X", 72);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:526:11: ( ( 'x' | 'X' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(526, 11);
+                    if (input.LA(1)=='X'||input.LA(1)=='x')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("X", 72);
+                LeaveRule("X", 72);
+                LeaveRule_X();
+            }
+        }
+        // $ANTLR end "X"
+
+        partial void EnterRule_NUMBER();
+        partial void LeaveRule_NUMBER();
+
+        // $ANTLR start "NUMBER"
+        [GrammarRule("NUMBER")]
+        private void mNUMBER()
+        {
+            EnterRule_NUMBER();
+            EnterRule("NUMBER", 73);
+            TraceIn("NUMBER", 73);
+            try
+            {
+                int _type = NUMBER;
+                int _channel = DefaultTokenChannel;
+                int s = 0;
+                int d = 0;
+
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:2: ( ( ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )? )=> (s= '-' )? ( DIGIT )* (d= '.' ( DIGIT )+ )? ( ( P ( T | X ) )=> P ( T | X ) | ( '%' )=> '%' |) | ( '+' )=> '+' ( DIGIT )+ )
+                int alt21=2;
+                try { DebugEnterDecision(21, false);
+                    int LA21_1 = input.LA(1);
+
+                    if ((LA21_1=='-') && (EvaluatePredicate(synpred2_MapCss_fragment)))
+                    {
+                        alt21 = 1;
+                    }
+                    else if (((LA21_1>='0' && LA21_1<='9')) && (EvaluatePredicate(synpred2_MapCss_fragment)))
+                    {
+                        alt21 = 1;
+                    }
+                    else if ((LA21_1=='.') && (EvaluatePredicate(synpred2_MapCss_fragment)))
+                    {
+                        alt21 = 1;
+                    }
+                    else if ((LA21_1=='P'||LA21_1=='p') && (EvaluatePredicate(synpred2_MapCss_fragment)))
+                    {
+                        alt21 = 1;
+                    }
+                    else if ((LA21_1=='%') && (EvaluatePredicate(synpred2_MapCss_fragment)))
+                    {
+                        alt21 = 1;
+                    }
+                    else if ((LA21_1=='+') && (EvaluatePredicate(synpred5_MapCss_fragment)))
+                    {
+                        alt21 = 2;
+                    }
+                    else
+                    {
+                        alt21 = 1;
+                    }
+                } finally { DebugExitDecision(21); }
+                switch (alt21)
+                {
+                    case 1:
+                        DebugEnterAlt(1);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:4: ( ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )? )=> (s= '-' )? ( DIGIT )* (d= '.' ( DIGIT )+ )? ( ( P ( T | X ) )=> P ( T | X ) | ( '%' )=> '%' |)
+                    {
+                        DebugLocation(530, 36);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:36: (s= '-' )?
+                        int alt14=2;
+                        try { DebugEnterSubRule(14);
+                            try { DebugEnterDecision(14, false);
+                                int LA14_1 = input.LA(1);
+
+                                if ((LA14_1=='-'))
+                                {
+                                    alt14 = 1;
+                                }
+                            } finally { DebugExitDecision(14); }
+                            switch (alt14)
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:36: s= '-'
+                                {
+                                    DebugLocation(530, 36);
+
+                                    s = input.LA(1);
+
+                                    Match('-'); if (state.failed) return;
+
+                                }
+                                    break;
+
+                            }
+                        } finally { DebugExitSubRule(14); }
+
+                        DebugLocation(530, 42);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:42: ( DIGIT )*
+                        try { DebugEnterSubRule(15);
+                            while (true)
+                            {
+                                int alt15=2;
+                                try { DebugEnterDecision(15, false);
+                                    int LA15_1 = input.LA(1);
+
+                                    if (((LA15_1>='0' && LA15_1<='9')))
+                                    {
+                                        alt15 = 1;
+                                    }
+
+
+                                } finally { DebugExitDecision(15); }
+                                switch ( alt15 )
+                                {
+                                    case 1:
+                                        DebugEnterAlt(1);
+                                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                    {
+                                        DebugLocation(530, 42);
+                                        input.Consume();
+                                        state.failed=false;
+
+                                    }
+                                        break;
+
+                                    default:
+                                        goto loop15;
+                                }
+                            }
+
+                            loop15:
+                            ;
+
+                        } finally { DebugExitSubRule(15); }
+
+                        DebugLocation(530, 49);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:49: (d= '.' ( DIGIT )+ )?
+                        int alt17=2;
+                        try { DebugEnterSubRule(17);
+                            try { DebugEnterDecision(17, false);
+                                int LA17_1 = input.LA(1);
+
+                                if ((LA17_1=='.'))
+                                {
+                                    alt17 = 1;
+                                }
+                            } finally { DebugExitDecision(17); }
+                            switch (alt17)
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:50: d= '.' ( DIGIT )+
+                                {
+                                    DebugLocation(530, 51);
+
+                                    d = input.LA(1);
+
+                                    Match('.'); if (state.failed) return;
+                                    DebugLocation(530, 56);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:56: ( DIGIT )+
+                                    int cnt16=0;
+                                    try { DebugEnterSubRule(16);
+                                        while (true)
+                                        {
+                                            int alt16=2;
+                                            try { DebugEnterDecision(16, false);
+                                                int LA16_1 = input.LA(1);
+
+                                                if (((LA16_1>='0' && LA16_1<='9')))
+                                                {
+                                                    alt16 = 1;
+                                                }
+
+
+                                            } finally { DebugExitDecision(16); }
+                                            switch (alt16)
+                                            {
+                                                case 1:
+                                                    DebugEnterAlt(1);
+                                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                                {
+                                                    DebugLocation(530, 56);
+                                                    input.Consume();
+                                                    state.failed=false;
+
+                                                }
+                                                    break;
+
+                                                default:
+                                                    if (cnt16 >= 1)
+                                                        goto loop16;
+
+                                                    if (state.backtracking>0) {state.failed=true; return;}
+                                                    EarlyExitException eee16 = new EarlyExitException( 16, input );
+                                                    DebugRecognitionException(eee16);
+                                                    throw eee16;
+                                            }
+                                            cnt16++;
+                                        }
+                                        loop16:
+                                        ;
+
+                                    } finally { DebugExitSubRule(16); }
+
+
+                                }
+                                    break;
+
+                            }
+                        } finally { DebugExitSubRule(17); }
+
+                        DebugLocation(531, 6);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:531:6: ( ( P ( T | X ) )=> P ( T | X ) | ( '%' )=> '%' |)
+                        int alt19=3;
+                        try { DebugEnterSubRule(19);
+                            try { DebugEnterDecision(19, false);
+                                int LA19_1 = input.LA(1);
+
+                                if ((LA19_1=='P'||LA19_1=='p') && (EvaluatePredicate(synpred3_MapCss_fragment)))
+                                {
+                                    alt19 = 1;
+                                }
+                                else if ((LA19_1=='%') && (EvaluatePredicate(synpred4_MapCss_fragment)))
+                                {
+                                    alt19 = 2;
+                                }
+                                else
+                                {
+                                    alt19 = 3;
+                                }
+                            } finally { DebugExitDecision(19); }
+                            switch (alt19)
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:532:6: ( P ( T | X ) )=> P ( T | X )
+                                {
+                                    DebugLocation(533, 6);
+                                    mP(); if (state.failed) return;
+                                    DebugLocation(534, 6);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:534:6: ( T | X )
+                                    int alt18=2;
+                                    try { DebugEnterSubRule(18);
+                                        try { DebugEnterDecision(18, false);
+                                            int LA18_1 = input.LA(1);
+
+                                            if ((LA18_1=='T'||LA18_1=='t'))
+                                            {
+                                                alt18 = 1;
+                                            }
+                                            else if ((LA18_1=='X'||LA18_1=='x'))
+                                            {
+                                                alt18 = 2;
+                                            }
+                                            else
+                                            {
+                                                if (state.backtracking>0) {state.failed=true; return;}
+                                                NoViableAltException nvae = new NoViableAltException("", 18, 0, input, 1);
+                                                DebugRecognitionException(nvae);
+                                                throw nvae;
+                                            }
+                                        } finally { DebugExitDecision(18); }
+                                        switch (alt18)
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:535:8: T
+                                            {
+                                                DebugLocation(535, 8);
+                                                mT(); if (state.failed) return;
+                                                DebugLocation(535, 23);
+                                                if (state.backtracking == 0)
+                                                {
+                                                    _type = POINTS;
+                                                }
+
+                                            }
+                                                break;
+                                            case 2:
+                                                DebugEnterAlt(2);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:536:11: X
+                                            {
+                                                DebugLocation(536, 11);
+                                                mX(); if (state.failed) return;
+                                                DebugLocation(536, 26);
+                                                if (state.backtracking == 0)
+                                                {
+                                                    _type = PIXELS;
+                                                }
+
+                                            }
+                                                break;
+
+                                        }
+                                    } finally { DebugExitSubRule(18); }
+
+
+                                }
+                                    break;
+                                case 2:
+                                    DebugEnterAlt(2);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:538:10: ( '%' )=> '%'
+                                {
+                                    DebugLocation(538, 19);
+                                    Match('%'); if (state.failed) return;
+                                    DebugLocation(538, 32);
+                                    if (state.backtracking == 0)
+                                    {
+                                        _type = PERCENTAGE;
+                                    }
+
+                                }
+                                    break;
+                                case 3:
+                                    DebugEnterAlt(3);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:540:10: 
+                                {
+                                    DebugLocation(540, 10);
+                                    if (state.backtracking == 0)
+                                    {
+                                        // SUPPRESS WARNING
+                                        /* if (s == null) {
 							              _type = (d == null ? POSITIVE_INT : POSITIVE_FLOAT);
 							           } else {
 							              _type = (d == null ? NEGATIVE_INT : NEGATIVE_FLOAT);
 							           }*/
-					    _type = NEGATIVE_FLOAT;
-					}
-
-					}
-					break;
-
-				}
-				} finally { DebugExitSubRule(19); }
-
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:4: ( '+' )=> '+' ( DIGIT )+
-				{
-				DebugLocation(548, 13);
-				Match('+'); if (state.failed) return;
-				DebugLocation(548, 17);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:17: ( DIGIT )+
-				int cnt20=0;
-				try { DebugEnterSubRule(20);
-				while (true)
-				{
-					int alt20=2;
-					try { DebugEnterDecision(20, false);
-					int LA20_1 = input.LA(1);
-
-					if (((LA20_1>='0' && LA20_1<='9')))
-					{
-						alt20 = 1;
-					}
-
-
-					} finally { DebugExitDecision(20); }
-					switch (alt20)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(548, 17);
-						input.Consume();
-						state.failed=false;
-
-						}
-						break;
-
-					default:
-						if (cnt20 >= 1)
-							goto loop20;
-
-						if (state.backtracking>0) {state.failed=true; return;}
-						EarlyExitException eee20 = new EarlyExitException( 20, input );
-						DebugRecognitionException(eee20);
-						throw eee20;
-					}
-					cnt20++;
-				}
-				loop20:
-					;
-
-				} finally { DebugExitSubRule(20); }
-
-				DebugLocation(548, 32);
-				if (state.backtracking == 0)
-				{
-					_type = INCREMENT;
-				}
-
-				}
-				break;
-
-			}
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("NUMBER", 73);
-			LeaveRule("NUMBER", 73);
-			LeaveRule_NUMBER();
-		}
-	}
-	// $ANTLR end "NUMBER"
-
-	partial void EnterRule_RANGE();
-	partial void LeaveRule_RANGE();
-
-	// $ANTLR start "RANGE"
-	[GrammarRule("RANGE")]
-	private void mRANGE()
-	{
-		EnterRule_RANGE();
-		EnterRule("RANGE", 74);
-		TraceIn("RANGE", 74);
-		try
-		{
-			int _type = RANGE;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:555:2: ( '|z' ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:555:4: '|z' ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ )
-			{
-			DebugLocation(555, 4);
-			Match("|z"); if (state.failed) return;
-
-			DebugLocation(555, 9);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:555:9: ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ )
-			int alt27=4;
-			try { DebugEnterSubRule(27);
-			try { DebugEnterDecision(27, false);
-			try
-			{
-				alt27 = dfa27.Predict(input);
-			}
-			catch (NoViableAltException nvae)
-			{
-				DebugRecognitionException(nvae);
-				throw;
-			}
-			} finally { DebugExitDecision(27); }
-			switch (alt27)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:556:5: '-' ( DIGIT )+
-				{
-				DebugLocation(556, 5);
-				Match('-'); if (state.failed) return;
-				DebugLocation(556, 9);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:556:9: ( DIGIT )+
-				int cnt22=0;
-				try { DebugEnterSubRule(22);
-				while (true)
-				{
-					int alt22=2;
-					try { DebugEnterDecision(22, false);
-					int LA22_1 = input.LA(1);
-
-					if (((LA22_1>='0' && LA22_1<='9')))
-					{
-						alt22 = 1;
-					}
-
-
-					} finally { DebugExitDecision(22); }
-					switch (alt22)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(556, 9);
-						input.Consume();
-						state.failed=false;
-
-						}
-						break;
-
-					default:
-						if (cnt22 >= 1)
-							goto loop22;
-
-						if (state.backtracking>0) {state.failed=true; return;}
-						EarlyExitException eee22 = new EarlyExitException( 22, input );
-						DebugRecognitionException(eee22);
-						throw eee22;
-					}
-					cnt22++;
-				}
-				loop22:
-					;
-
-				} finally { DebugExitSubRule(22); }
-
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:557:5: ( DIGIT )+
-				{
-				DebugLocation(557, 5);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:557:5: ( DIGIT )+
-				int cnt23=0;
-				try { DebugEnterSubRule(23);
-				while (true)
-				{
-					int alt23=2;
-					try { DebugEnterDecision(23, false);
-					int LA23_1 = input.LA(1);
-
-					if (((LA23_1>='0' && LA23_1<='9')))
-					{
-						alt23 = 1;
-					}
-
-
-					} finally { DebugExitDecision(23); }
-					switch (alt23)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(557, 5);
-						input.Consume();
-						state.failed=false;
-
-						}
-						break;
-
-					default:
-						if (cnt23 >= 1)
-							goto loop23;
-
-						if (state.backtracking>0) {state.failed=true; return;}
-						EarlyExitException eee23 = new EarlyExitException( 23, input );
-						DebugRecognitionException(eee23);
-						throw eee23;
-					}
-					cnt23++;
-				}
-				loop23:
-					;
-
-				} finally { DebugExitSubRule(23); }
-
-
-				}
-				break;
-			case 3:
-				DebugEnterAlt(3);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:558:5: ( DIGIT )+ '-'
-				{
-				DebugLocation(558, 5);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:558:5: ( DIGIT )+
-				int cnt24=0;
-				try { DebugEnterSubRule(24);
-				while (true)
-				{
-					int alt24=2;
-					try { DebugEnterDecision(24, false);
-					int LA24_1 = input.LA(1);
-
-					if (((LA24_1>='0' && LA24_1<='9')))
-					{
-						alt24 = 1;
-					}
-
-
-					} finally { DebugExitDecision(24); }
-					switch (alt24)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(558, 5);
-						input.Consume();
-						state.failed=false;
-
-						}
-						break;
-
-					default:
-						if (cnt24 >= 1)
-							goto loop24;
-
-						if (state.backtracking>0) {state.failed=true; return;}
-						EarlyExitException eee24 = new EarlyExitException( 24, input );
-						DebugRecognitionException(eee24);
-						throw eee24;
-					}
-					cnt24++;
-				}
-				loop24:
-					;
-
-				} finally { DebugExitSubRule(24); }
-
-				DebugLocation(558, 12);
-				Match('-'); if (state.failed) return;
-
-				}
-				break;
-			case 4:
-				DebugEnterAlt(4);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:559:5: ( DIGIT )+ '-' ( DIGIT )+
-				{
-				DebugLocation(559, 5);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:559:5: ( DIGIT )+
-				int cnt25=0;
-				try { DebugEnterSubRule(25);
-				while (true)
-				{
-					int alt25=2;
-					try { DebugEnterDecision(25, false);
-					int LA25_1 = input.LA(1);
-
-					if (((LA25_1>='0' && LA25_1<='9')))
-					{
-						alt25 = 1;
-					}
-
-
-					} finally { DebugExitDecision(25); }
-					switch (alt25)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(559, 5);
-						input.Consume();
-						state.failed=false;
-
-						}
-						break;
-
-					default:
-						if (cnt25 >= 1)
-							goto loop25;
-
-						if (state.backtracking>0) {state.failed=true; return;}
-						EarlyExitException eee25 = new EarlyExitException( 25, input );
-						DebugRecognitionException(eee25);
-						throw eee25;
-					}
-					cnt25++;
-				}
-				loop25:
-					;
-
-				} finally { DebugExitSubRule(25); }
-
-				DebugLocation(559, 12);
-				Match('-'); if (state.failed) return;
-				DebugLocation(559, 16);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:559:16: ( DIGIT )+
-				int cnt26=0;
-				try { DebugEnterSubRule(26);
-				while (true)
-				{
-					int alt26=2;
-					try { DebugEnterDecision(26, false);
-					int LA26_1 = input.LA(1);
-
-					if (((LA26_1>='0' && LA26_1<='9')))
-					{
-						alt26 = 1;
-					}
-
-
-					} finally { DebugExitDecision(26); }
-					switch (alt26)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(559, 16);
-						input.Consume();
-						state.failed=false;
-
-						}
-						break;
-
-					default:
-						if (cnt26 >= 1)
-							goto loop26;
-
-						if (state.backtracking>0) {state.failed=true; return;}
-						EarlyExitException eee26 = new EarlyExitException( 26, input );
-						DebugRecognitionException(eee26);
-						throw eee26;
-					}
-					cnt26++;
-				}
-				loop26:
-					;
-
-				} finally { DebugExitSubRule(26); }
-
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(27); }
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("RANGE", 74);
-			LeaveRule("RANGE", 74);
-			LeaveRule_RANGE();
-		}
-	}
-	// $ANTLR end "RANGE"
-
-	partial void EnterRule_REGEX_ESCAPE();
-	partial void LeaveRule_REGEX_ESCAPE();
-
-	// $ANTLR start "REGEX_ESCAPE"
-	[GrammarRule("REGEX_ESCAPE")]
-	private void mREGEX_ESCAPE()
-	{
-		EnterRule_REGEX_ESCAPE();
-		EnterRule("REGEX_ESCAPE", 75);
-		TraceIn("REGEX_ESCAPE", 75);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:22: ( '\\\\\\\\' | '\\\\/' | '\\\\(' | '\\\\)' | '\\\\|' | '\\\\$' | '\\\\*' | '\\\\.' | '\\\\^' | '\\\\?' | '\\\\+' | '\\\\-' | '\\\\n' | '\\\\r' | '\\\\t' | '\\\\s' | '\\\\S' | '\\\\d' | '\\\\D' | '\\\\w' | '\\\\W' )
-			int alt28=21;
-			try { DebugEnterDecision(28, false);
-			int LA28_1 = input.LA(1);
-
-			if ((LA28_1=='\\'))
-			{
-				switch (input.LA(2))
-				{
-				case '\\':
-					{
-					alt28 = 1;
-					}
-					break;
-				case '/':
-					{
-					alt28 = 2;
-					}
-					break;
-				case '(':
-					{
-					alt28 = 3;
-					}
-					break;
-				case ')':
-					{
-					alt28 = 4;
-					}
-					break;
-				case '|':
-					{
-					alt28 = 5;
-					}
-					break;
-				case '$':
-					{
-					alt28 = 6;
-					}
-					break;
-				case '*':
-					{
-					alt28 = 7;
-					}
-					break;
-				case '.':
-					{
-					alt28 = 8;
-					}
-					break;
-				case '^':
-					{
-					alt28 = 9;
-					}
-					break;
-				case '?':
-					{
-					alt28 = 10;
-					}
-					break;
-				case '+':
-					{
-					alt28 = 11;
-					}
-					break;
-				case '-':
-					{
-					alt28 = 12;
-					}
-					break;
-				case 'n':
-					{
-					alt28 = 13;
-					}
-					break;
-				case 'r':
-					{
-					alt28 = 14;
-					}
-					break;
-				case 't':
-					{
-					alt28 = 15;
-					}
-					break;
-				case 's':
-					{
-					alt28 = 16;
-					}
-					break;
-				case 'S':
-					{
-					alt28 = 17;
-					}
-					break;
-				case 'd':
-					{
-					alt28 = 18;
-					}
-					break;
-				case 'D':
-					{
-					alt28 = 19;
-					}
-					break;
-				case 'w':
-					{
-					alt28 = 20;
-					}
-					break;
-				case 'W':
-					{
-					alt28 = 21;
-					}
-					break;
-				default:
-					{
-						if (state.backtracking>0) {state.failed=true; return;}
-						NoViableAltException nvae = new NoViableAltException("", 28, 1, input, 2);
-						DebugRecognitionException(nvae);
-						throw nvae;
-					}
-				}
-
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				NoViableAltException nvae = new NoViableAltException("", 28, 0, input, 1);
-				DebugRecognitionException(nvae);
-				throw nvae;
-			}
-			} finally { DebugExitDecision(28); }
-			switch (alt28)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:26: '\\\\\\\\'
-				{
-				DebugLocation(566, 26);
-				Match("\\\\"); if (state.failed) return;
-
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:35: '\\\\/'
-				{
-				DebugLocation(566, 35);
-				Match("\\/"); if (state.failed) return;
-
-
-				}
-				break;
-			case 3:
-				DebugEnterAlt(3);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:43: '\\\\('
-				{
-				DebugLocation(566, 43);
-				Match("\\("); if (state.failed) return;
-
-
-				}
-				break;
-			case 4:
-				DebugEnterAlt(4);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:51: '\\\\)'
-				{
-				DebugLocation(566, 51);
-				Match("\\)"); if (state.failed) return;
-
-
-				}
-				break;
-			case 5:
-				DebugEnterAlt(5);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:26: '\\\\|'
-				{
-				DebugLocation(567, 26);
-				Match("\\|"); if (state.failed) return;
-
-
-				}
-				break;
-			case 6:
-				DebugEnterAlt(6);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:34: '\\\\$'
-				{
-				DebugLocation(567, 34);
-				Match("\\$"); if (state.failed) return;
-
-
-				}
-				break;
-			case 7:
-				DebugEnterAlt(7);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:42: '\\\\*'
-				{
-				DebugLocation(567, 42);
-				Match("\\*"); if (state.failed) return;
-
-
-				}
-				break;
-			case 8:
-				DebugEnterAlt(8);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:50: '\\\\.'
-				{
-				DebugLocation(567, 50);
-				Match("\\."); if (state.failed) return;
-
-
-				}
-				break;
-			case 9:
-				DebugEnterAlt(9);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:58: '\\\\^'
-				{
-				DebugLocation(567, 58);
-				Match("\\^"); if (state.failed) return;
-
-
-				}
-				break;
-			case 10:
-				DebugEnterAlt(10);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:66: '\\\\?'
-				{
-				DebugLocation(567, 66);
-				Match("\\?"); if (state.failed) return;
-
-
-				}
-				break;
-			case 11:
-				DebugEnterAlt(11);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:74: '\\\\+'
-				{
-				DebugLocation(567, 74);
-				Match("\\+"); if (state.failed) return;
-
-
-				}
-				break;
-			case 12:
-				DebugEnterAlt(12);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:82: '\\\\-'
-				{
-				DebugLocation(567, 82);
-				Match("\\-"); if (state.failed) return;
-
-
-				}
-				break;
-			case 13:
-				DebugEnterAlt(13);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:568:26: '\\\\n'
-				{
-				DebugLocation(568, 26);
-				Match("\\n"); if (state.failed) return;
-
-
-				}
-				break;
-			case 14:
-				DebugEnterAlt(14);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:568:34: '\\\\r'
-				{
-				DebugLocation(568, 34);
-				Match("\\r"); if (state.failed) return;
-
-
-				}
-				break;
-			case 15:
-				DebugEnterAlt(15);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:568:42: '\\\\t'
-				{
-				DebugLocation(568, 42);
-				Match("\\t"); if (state.failed) return;
-
-
-				}
-				break;
-			case 16:
-				DebugEnterAlt(16);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:569:26: '\\\\s'
-				{
-				DebugLocation(569, 26);
-				Match("\\s"); if (state.failed) return;
-
-
-				}
-				break;
-			case 17:
-				DebugEnterAlt(17);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:569:34: '\\\\S'
-				{
-				DebugLocation(569, 34);
-				Match("\\S"); if (state.failed) return;
-
-
-				}
-				break;
-			case 18:
-				DebugEnterAlt(18);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:570:26: '\\\\d'
-				{
-				DebugLocation(570, 26);
-				Match("\\d"); if (state.failed) return;
-
-
-				}
-				break;
-			case 19:
-				DebugEnterAlt(19);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:570:34: '\\\\D'
-				{
-				DebugLocation(570, 34);
-				Match("\\D"); if (state.failed) return;
-
-
-				}
-				break;
-			case 20:
-				DebugEnterAlt(20);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:571:26: '\\\\w'
-				{
-				DebugLocation(571, 26);
-				Match("\\w"); if (state.failed) return;
-
-
-				}
-				break;
-			case 21:
-				DebugEnterAlt(21);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:571:34: '\\\\W'
-				{
-				DebugLocation(571, 34);
-				Match("\\W"); if (state.failed) return;
-
-
-				}
-				break;
-
-			}
-		}
-		finally
-		{
-			TraceOut("REGEX_ESCAPE", 75);
-			LeaveRule("REGEX_ESCAPE", 75);
-			LeaveRule_REGEX_ESCAPE();
-		}
-	}
-	// $ANTLR end "REGEX_ESCAPE"
-
-	partial void EnterRule_REGEX_START();
-	partial void LeaveRule_REGEX_START();
-
-	// $ANTLR start "REGEX_START"
-	[GrammarRule("REGEX_START")]
-	private void mREGEX_START()
-	{
-		EnterRule_REGEX_START();
-		EnterRule("REGEX_START", 76);
-		TraceIn("REGEX_START", 76);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:21: ( ' ' .. ')' | '+' .. '.' | '0' .. '[' | ']' .. '~' | UNICODE | REGEX_ESCAPE )
-			int alt29=6;
-			try { DebugEnterDecision(29, false);
-			int LA29_1 = input.LA(1);
-
-			if (((LA29_1>=' ' && LA29_1<=')')))
-			{
-				alt29 = 1;
-			}
-			else if (((LA29_1>='+' && LA29_1<='.')))
-			{
-				alt29 = 2;
-			}
-			else if (((LA29_1>='0' && LA29_1<='[')))
-			{
-				alt29 = 3;
-			}
-			else if (((LA29_1>=']' && LA29_1<='~')))
-			{
-				alt29 = 4;
-			}
-			else if (((LA29_1>='\u0080' && LA29_1<='\uFFFF')))
-			{
-				alt29 = 5;
-			}
-			else if ((LA29_1=='\\'))
-			{
-				alt29 = 6;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				NoViableAltException nvae = new NoViableAltException("", 29, 0, input, 1);
-				DebugRecognitionException(nvae);
-				throw nvae;
-			}
-			} finally { DebugExitDecision(29); }
-			switch (alt29)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:24: ' ' .. ')'
-				{
-				DebugLocation(572, 27);
-				MatchRange(' ',')'); if (state.failed) return;
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:35: '+' .. '.'
-				{
-				DebugLocation(572, 38);
-				MatchRange('+','.'); if (state.failed) return;
-
-				}
-				break;
-			case 3:
-				DebugEnterAlt(3);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:45: '0' .. '['
-				{
-				DebugLocation(572, 48);
-				MatchRange('0','['); if (state.failed) return;
-
-				}
-				break;
-			case 4:
-				DebugEnterAlt(4);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:56: ']' .. '~'
-				{
-				DebugLocation(572, 59);
-				MatchRange(']','~'); if (state.failed) return;
-
-				}
-				break;
-			case 5:
-				DebugEnterAlt(5);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:67: UNICODE
-				{
-				DebugLocation(572, 67);
-				mUNICODE(); if (state.failed) return;
-
-				}
-				break;
-			case 6:
-				DebugEnterAlt(6);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:77: REGEX_ESCAPE
-				{
-				DebugLocation(572, 77);
-				mREGEX_ESCAPE(); if (state.failed) return;
-
-				}
-				break;
-
-			}
-		}
-		finally
-		{
-			TraceOut("REGEX_START", 76);
-			LeaveRule("REGEX_START", 76);
-			LeaveRule_REGEX_START();
-		}
-	}
-	// $ANTLR end "REGEX_START"
-
-	partial void EnterRule_REGEX_CHAR();
-	partial void LeaveRule_REGEX_CHAR();
-
-	// $ANTLR start "REGEX_CHAR"
-	[GrammarRule("REGEX_CHAR")]
-	private void mREGEX_CHAR()
-	{
-		EnterRule_REGEX_CHAR();
-		EnterRule("REGEX_CHAR", 77);
-		TraceIn("REGEX_CHAR", 77);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:20: ( ' ' .. '.' | '0' .. '[' | ']' .. '~' | UNICODE | REGEX_ESCAPE )
-			int alt30=5;
-			try { DebugEnterDecision(30, false);
-			int LA30_1 = input.LA(1);
-
-			if (((LA30_1>=' ' && LA30_1<='.')))
-			{
-				alt30 = 1;
-			}
-			else if (((LA30_1>='0' && LA30_1<='[')))
-			{
-				alt30 = 2;
-			}
-			else if (((LA30_1>=']' && LA30_1<='~')))
-			{
-				alt30 = 3;
-			}
-			else if (((LA30_1>='\u0080' && LA30_1<='\uFFFF')))
-			{
-				alt30 = 4;
-			}
-			else if ((LA30_1=='\\'))
-			{
-				alt30 = 5;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				NoViableAltException nvae = new NoViableAltException("", 30, 0, input, 1);
-				DebugRecognitionException(nvae);
-				throw nvae;
-			}
-			} finally { DebugExitDecision(30); }
-			switch (alt30)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:23: ' ' .. '.'
-				{
-				DebugLocation(573, 26);
-				MatchRange(' ','.'); if (state.failed) return;
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:33: '0' .. '['
-				{
-				DebugLocation(573, 36);
-				MatchRange('0','['); if (state.failed) return;
-
-				}
-				break;
-			case 3:
-				DebugEnterAlt(3);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:44: ']' .. '~'
-				{
-				DebugLocation(573, 47);
-				MatchRange(']','~'); if (state.failed) return;
-
-				}
-				break;
-			case 4:
-				DebugEnterAlt(4);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:55: UNICODE
-				{
-				DebugLocation(573, 55);
-				mUNICODE(); if (state.failed) return;
-
-				}
-				break;
-			case 5:
-				DebugEnterAlt(5);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:65: REGEX_ESCAPE
-				{
-				DebugLocation(573, 65);
-				mREGEX_ESCAPE(); if (state.failed) return;
-
-				}
-				break;
-
-			}
-		}
-		finally
-		{
-			TraceOut("REGEX_CHAR", 77);
-			LeaveRule("REGEX_CHAR", 77);
-			LeaveRule_REGEX_CHAR();
-		}
-	}
-	// $ANTLR end "REGEX_CHAR"
-
-	partial void EnterRule_DIV();
-	partial void LeaveRule_DIV();
-
-	// $ANTLR start "DIV"
-	[GrammarRule("DIV")]
-	private void mDIV()
-	{
-		EnterRule_DIV();
-		EnterRule("DIV", 78);
-		TraceIn("DIV", 78);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:580:13: ()
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:580:14: 
-			{
-			}
-
-		}
-		finally
-		{
-			TraceOut("DIV", 78);
-			LeaveRule("DIV", 78);
-			LeaveRule_DIV();
-		}
-	}
-	// $ANTLR end "DIV"
-
-	partial void EnterRule_REGEXP();
-	partial void LeaveRule_REGEXP();
-
-	// $ANTLR start "REGEXP"
-	[GrammarRule("REGEXP")]
-	private void mREGEXP()
-	{
-		EnterRule_REGEXP();
-		EnterRule("REGEXP", 79);
-		TraceIn("REGEXP", 79);
-		try
-		{
-			int _type = REGEXP;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:581:7: ( '/' ( ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/' | ( . )=>) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:581:10: '/' ( ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/' | ( . )=>)
-			{
-			DebugLocation(581, 10);
-			Match('/'); if (state.failed) return;
-			DebugLocation(581, 15);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:581:15: ( ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/' | ( . )=>)
-			int alt32=2;
-			try { DebugEnterSubRule(32);
-			try { DebugEnterDecision(32, false);
-			int LA32_1 = input.LA(1);
-
-			if (((LA32_1>=' ' && LA32_1<=')')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
-			{
-				alt32 = 1;
-			}
-			else if (((LA32_1>='+' && LA32_1<='.')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
-			{
-				alt32 = 1;
-			}
-			else if (((LA32_1>='0' && LA32_1<='[')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
-			{
-				alt32 = 1;
-			}
-			else if (((LA32_1>=']' && LA32_1<='~')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
-			{
-				alt32 = 1;
-			}
-			else if (((LA32_1>='\u0080' && LA32_1<='\uFFFF')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
-			{
-				alt32 = 1;
-			}
-			else if ((LA32_1=='\\') && (EvaluatePredicate(synpred6_MapCss_fragment)))
-			{
-				alt32 = 1;
-			}
-			else
-			{
-				alt32 = 2;
-			}
-			} finally { DebugExitDecision(32); }
-			switch (alt32)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:15: ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/'
-				{
-				DebugLocation(583, 24);
-				mREGEX_START(); if (state.failed) return;
-				DebugLocation(583, 36);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:583:36: ( REGEX_CHAR )*
-				try { DebugEnterSubRule(31);
-				while (true)
-				{
-					int alt31=2;
-					try { DebugEnterDecision(31, false);
-					int LA31_1 = input.LA(1);
-
-					if (((LA31_1>=' ' && LA31_1<='.')||(LA31_1>='0' && LA31_1<='~')||(LA31_1>='\u0080' && LA31_1<='\uFFFF')))
-					{
-						alt31 = 1;
-					}
-
-
-					} finally { DebugExitDecision(31); }
-					switch ( alt31 )
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:583:36: REGEX_CHAR
-						{
-						DebugLocation(583, 36);
-						mREGEX_CHAR(); if (state.failed) return;
-
-						}
-						break;
-
-					default:
-						goto loop31;
-					}
-				}
-
-				loop31:
-					;
-
-				} finally { DebugExitSubRule(31); }
-
-				DebugLocation(583, 48);
-				Match('/'); if (state.failed) return;
-				DebugLocation(583, 54);
-				if (state.backtracking == 0)
-				{
-					_type=REGEXP;
-				}
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:584:15: ( . )=>
-				{
-				DebugLocation(584, 54);
-				if (state.backtracking == 0)
-				{
-					_type=DIV;
-				}
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(32); }
-
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("REGEXP", 79);
-			LeaveRule("REGEXP", 79);
-			LeaveRule_REGEXP();
-		}
-	}
-	// $ANTLR end "REGEXP"
-
-	partial void EnterRule_WS();
-	partial void LeaveRule_WS();
-
-	// $ANTLR start "WS"
-	[GrammarRule("WS")]
-	private void mWS()
-	{
-		EnterRule_WS();
-		EnterRule("WS", 80);
-		TraceIn("WS", 80);
-		try
-		{
-			int _type = WS;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:590:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:590:10: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )
-			{
-			DebugLocation(590, 10);
-			if ((input.LA(1)>='\t' && input.LA(1)<='\n')||(input.LA(1)>='\f' && input.LA(1)<='\r')||input.LA(1)==' ')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-			DebugLocation(590, 44);
-			if (state.backtracking == 0)
-			{
-				_channel=Hidden;
-			}
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("WS", 80);
-			LeaveRule("WS", 80);
-			LeaveRule_WS();
-		}
-	}
-	// $ANTLR end "WS"
-
-	partial void EnterRule_SL_COMMENT();
-	partial void LeaveRule_SL_COMMENT();
-
-	// $ANTLR start "SL_COMMENT"
-	[GrammarRule("SL_COMMENT")]
-	private void mSL_COMMENT()
-	{
-		EnterRule_SL_COMMENT();
-		EnterRule("SL_COMMENT", 81);
-		TraceIn("SL_COMMENT", 81);
-		try
-		{
-			int _type = SL_COMMENT;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:11: ( '//' ( options {greedy=false; } : . )* ( '\\r' )? '\\n' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:15: '//' ( options {greedy=false; } : . )* ( '\\r' )? '\\n'
-			{
-			DebugLocation(591, 15);
-			Match("//"); if (state.failed) return;
-
-			DebugLocation(591, 20);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:20: ( options {greedy=false; } : . )*
-			try { DebugEnterSubRule(33);
-			while (true)
-			{
-				int alt33=2;
-				try { DebugEnterDecision(33, false);
-				int LA33_1 = input.LA(1);
-
-				if ((LA33_1=='\r'))
-				{
-					alt33 = 2;
-				}
-				else if ((LA33_1=='\n'))
-				{
-					alt33 = 2;
-				}
-				else if (((LA33_1>='\u0000' && LA33_1<='\t')||(LA33_1>='\u000B' && LA33_1<='\f')||(LA33_1>='\u000E' && LA33_1<='\uFFFF')))
-				{
-					alt33 = 1;
-				}
-
-
-				} finally { DebugExitDecision(33); }
-				switch ( alt33 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:46: .
-					{
-					DebugLocation(591, 46);
-					MatchAny(); if (state.failed) return;
-
-					}
-					break;
-
-				default:
-					goto loop33;
-				}
-			}
-
-			loop33:
-				;
-
-			} finally { DebugExitSubRule(33); }
-
-			DebugLocation(591, 50);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:50: ( '\\r' )?
-			int alt34=2;
-			try { DebugEnterSubRule(34);
-			try { DebugEnterDecision(34, false);
-			int LA34_1 = input.LA(1);
-
-			if ((LA34_1=='\r'))
-			{
-				alt34 = 1;
-			}
-			} finally { DebugExitDecision(34); }
-			switch (alt34)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:50: '\\r'
-				{
-				DebugLocation(591, 50);
-				Match('\r'); if (state.failed) return;
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(34); }
-
-			DebugLocation(591, 56);
-			Match('\n'); if (state.failed) return;
-			DebugLocation(591, 61);
-			if (state.backtracking == 0)
-			{
-				_channel=Hidden;
-			}
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("SL_COMMENT", 81);
-			LeaveRule("SL_COMMENT", 81);
-			LeaveRule_SL_COMMENT();
-		}
-	}
-	// $ANTLR end "SL_COMMENT"
-
-	partial void EnterRule_ML_COMMENT();
-	partial void LeaveRule_ML_COMMENT();
-
-	// $ANTLR start "ML_COMMENT"
-	[GrammarRule("ML_COMMENT")]
-	private void mML_COMMENT()
-	{
-		EnterRule_ML_COMMENT();
-		EnterRule("ML_COMMENT", 82);
-		TraceIn("ML_COMMENT", 82);
-		try
-		{
-			int _type = ML_COMMENT;
-			int _channel = DefaultTokenChannel;
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:15: '/*' ( options {greedy=false; } : . )* '*/'
-			{
-			DebugLocation(592, 15);
-			Match("/*"); if (state.failed) return;
-
-			DebugLocation(592, 21);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:21: ( options {greedy=false; } : . )*
-			try { DebugEnterSubRule(35);
-			while (true)
-			{
-				int alt35=2;
-				try { DebugEnterDecision(35, false);
-				int LA35_1 = input.LA(1);
-
-				if ((LA35_1=='*'))
-				{
-					int LA35_2 = input.LA(2);
-
-					if ((LA35_2=='/'))
-					{
-						alt35 = 2;
-					}
-					else if (((LA35_2>='\u0000' && LA35_2<='.')||(LA35_2>='0' && LA35_2<='\uFFFF')))
-					{
-						alt35 = 1;
-					}
-
-
-				}
-				else if (((LA35_1>='\u0000' && LA35_1<=')')||(LA35_1>='+' && LA35_1<='\uFFFF')))
-				{
-					alt35 = 1;
-				}
-
-
-				} finally { DebugExitDecision(35); }
-				switch ( alt35 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:48: .
-					{
-					DebugLocation(592, 48);
-					MatchAny(); if (state.failed) return;
-
-					}
-					break;
-
-				default:
-					goto loop35;
-				}
-			}
-
-			loop35:
-				;
-
-			} finally { DebugExitSubRule(35); }
-
-			DebugLocation(592, 52);
-			Match("*/"); if (state.failed) return;
-
-			DebugLocation(592, 57);
-			if (state.backtracking == 0)
-			{
-				_channel=Hidden;
-			}
-
-			}
-
-			state.type = _type;
-			state.channel = _channel;
-		}
-		finally
-		{
-			TraceOut("ML_COMMENT", 82);
-			LeaveRule("ML_COMMENT", 82);
-			LeaveRule_ML_COMMENT();
-		}
-	}
-	// $ANTLR end "ML_COMMENT"
-
-	public override void mTokens()
-	{
-		// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:8: ( OP_AND | OP_CONTAINS | OP_ENDS_WITH | OP_EQ | OP_GE | OP_GT | OP_LE | OP_LT | OP_MATCH | OP_MOD | OP_MUL | OP_NEQ | OP_OR | OP_PLUS | OP_STARTS_WITH | OP_SUBSTRING | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | RGB | RGBA | ROLE | INDEX | EVAL | LIST | IMPORT | URL | IDENTS | LBRACKET | RBRACKET | LBRACE | RBRACE | COLON | SEMICOLON | DQUOTED_STRING | SQUOTED_STRING | HEXCOLOR | NUMBER | RANGE | REGEXP | WS | SL_COMMENT | ML_COMMENT )
-		int alt36=51;
-		try { DebugEnterDecision(36, false);
-		try
-		{
-			alt36 = dfa36.Predict(input);
-		}
-		catch (NoViableAltException nvae)
-		{
-			DebugRecognitionException(nvae);
-			throw;
-		}
-		} finally { DebugExitDecision(36); }
-		switch (alt36)
-		{
-		case 1:
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:10: OP_AND
-			{
-			DebugLocation(1, 10);
-			mOP_AND(); if (state.failed) return;
-
-			}
-			break;
-		case 2:
-			DebugEnterAlt(2);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:17: OP_CONTAINS
-			{
-			DebugLocation(1, 17);
-			mOP_CONTAINS(); if (state.failed) return;
-
-			}
-			break;
-		case 3:
-			DebugEnterAlt(3);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:29: OP_ENDS_WITH
-			{
-			DebugLocation(1, 29);
-			mOP_ENDS_WITH(); if (state.failed) return;
-
-			}
-			break;
-		case 4:
-			DebugEnterAlt(4);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:42: OP_EQ
-			{
-			DebugLocation(1, 42);
-			mOP_EQ(); if (state.failed) return;
-
-			}
-			break;
-		case 5:
-			DebugEnterAlt(5);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:48: OP_GE
-			{
-			DebugLocation(1, 48);
-			mOP_GE(); if (state.failed) return;
-
-			}
-			break;
-		case 6:
-			DebugEnterAlt(6);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:54: OP_GT
-			{
-			DebugLocation(1, 54);
-			mOP_GT(); if (state.failed) return;
-
-			}
-			break;
-		case 7:
-			DebugEnterAlt(7);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:60: OP_LE
-			{
-			DebugLocation(1, 60);
-			mOP_LE(); if (state.failed) return;
-
-			}
-			break;
-		case 8:
-			DebugEnterAlt(8);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:66: OP_LT
-			{
-			DebugLocation(1, 66);
-			mOP_LT(); if (state.failed) return;
-
-			}
-			break;
-		case 9:
-			DebugEnterAlt(9);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:72: OP_MATCH
-			{
-			DebugLocation(1, 72);
-			mOP_MATCH(); if (state.failed) return;
-
-			}
-			break;
-		case 10:
-			DebugEnterAlt(10);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:81: OP_MOD
-			{
-			DebugLocation(1, 81);
-			mOP_MOD(); if (state.failed) return;
-
-			}
-			break;
-		case 11:
-			DebugEnterAlt(11);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:88: OP_MUL
-			{
-			DebugLocation(1, 88);
-			mOP_MUL(); if (state.failed) return;
-
-			}
-			break;
-		case 12:
-			DebugEnterAlt(12);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:95: OP_NEQ
-			{
-			DebugLocation(1, 95);
-			mOP_NEQ(); if (state.failed) return;
-
-			}
-			break;
-		case 13:
-			DebugEnterAlt(13);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:102: OP_OR
-			{
-			DebugLocation(1, 102);
-			mOP_OR(); if (state.failed) return;
-
-			}
-			break;
-		case 14:
-			DebugEnterAlt(14);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:108: OP_PLUS
-			{
-			DebugLocation(1, 108);
-			mOP_PLUS(); if (state.failed) return;
-
-			}
-			break;
-		case 15:
-			DebugEnterAlt(15);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:116: OP_STARTS_WITH
-			{
-			DebugLocation(1, 116);
-			mOP_STARTS_WITH(); if (state.failed) return;
-
-			}
-			break;
-		case 16:
-			DebugEnterAlt(16);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:131: OP_SUBSTRING
-			{
-			DebugLocation(1, 131);
-			mOP_SUBSTRING(); if (state.failed) return;
-
-			}
-			break;
-		case 17:
-			DebugEnterAlt(17);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:144: T__114
-			{
-			DebugLocation(1, 144);
-			mT__114(); if (state.failed) return;
-
-			}
-			break;
-		case 18:
-			DebugEnterAlt(18);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:151: T__115
-			{
-			DebugLocation(1, 151);
-			mT__115(); if (state.failed) return;
-
-			}
-			break;
-		case 19:
-			DebugEnterAlt(19);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:158: T__116
-			{
-			DebugLocation(1, 158);
-			mT__116(); if (state.failed) return;
-
-			}
-			break;
-		case 20:
-			DebugEnterAlt(20);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:165: T__117
-			{
-			DebugLocation(1, 165);
-			mT__117(); if (state.failed) return;
-
-			}
-			break;
-		case 21:
-			DebugEnterAlt(21);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:172: T__118
-			{
-			DebugLocation(1, 172);
-			mT__118(); if (state.failed) return;
-
-			}
-			break;
-		case 22:
-			DebugEnterAlt(22);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:179: T__119
-			{
-			DebugLocation(1, 179);
-			mT__119(); if (state.failed) return;
-
-			}
-			break;
-		case 23:
-			DebugEnterAlt(23);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:186: T__120
-			{
-			DebugLocation(1, 186);
-			mT__120(); if (state.failed) return;
-
-			}
-			break;
-		case 24:
-			DebugEnterAlt(24);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:193: T__121
-			{
-			DebugLocation(1, 193);
-			mT__121(); if (state.failed) return;
-
-			}
-			break;
-		case 25:
-			DebugEnterAlt(25);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:200: T__122
-			{
-			DebugLocation(1, 200);
-			mT__122(); if (state.failed) return;
-
-			}
-			break;
-		case 26:
-			DebugEnterAlt(26);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:207: T__123
-			{
-			DebugLocation(1, 207);
-			mT__123(); if (state.failed) return;
-
-			}
-			break;
-		case 27:
-			DebugEnterAlt(27);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:214: T__124
-			{
-			DebugLocation(1, 214);
-			mT__124(); if (state.failed) return;
-
-			}
-			break;
-		case 28:
-			DebugEnterAlt(28);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:221: RGB
-			{
-			DebugLocation(1, 221);
-			mRGB(); if (state.failed) return;
-
-			}
-			break;
-		case 29:
-			DebugEnterAlt(29);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:225: RGBA
-			{
-			DebugLocation(1, 225);
-			mRGBA(); if (state.failed) return;
-
-			}
-			break;
-		case 30:
-			DebugEnterAlt(30);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:230: ROLE
-			{
-			DebugLocation(1, 230);
-			mROLE(); if (state.failed) return;
-
-			}
-			break;
-		case 31:
-			DebugEnterAlt(31);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:235: INDEX
-			{
-			DebugLocation(1, 235);
-			mINDEX(); if (state.failed) return;
-
-			}
-			break;
-		case 32:
-			DebugEnterAlt(32);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:241: EVAL
-			{
-			DebugLocation(1, 241);
-			mEVAL(); if (state.failed) return;
-
-			}
-			break;
-		case 33:
-			DebugEnterAlt(33);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:246: LIST
-			{
-			DebugLocation(1, 246);
-			mLIST(); if (state.failed) return;
-
-			}
-			break;
-		case 34:
-			DebugEnterAlt(34);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:251: IMPORT
-			{
-			DebugLocation(1, 251);
-			mIMPORT(); if (state.failed) return;
-
-			}
-			break;
-		case 35:
-			DebugEnterAlt(35);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:258: URL
-			{
-			DebugLocation(1, 258);
-			mURL(); if (state.failed) return;
-
-			}
-			break;
-		case 36:
-			DebugEnterAlt(36);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:262: IDENTS
-			{
-			DebugLocation(1, 262);
-			mIDENTS(); if (state.failed) return;
-
-			}
-			break;
-		case 37:
-			DebugEnterAlt(37);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:269: LBRACKET
-			{
-			DebugLocation(1, 269);
-			mLBRACKET(); if (state.failed) return;
-
-			}
-			break;
-		case 38:
-			DebugEnterAlt(38);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:278: RBRACKET
-			{
-			DebugLocation(1, 278);
-			mRBRACKET(); if (state.failed) return;
-
-			}
-			break;
-		case 39:
-			DebugEnterAlt(39);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:287: LBRACE
-			{
-			DebugLocation(1, 287);
-			mLBRACE(); if (state.failed) return;
-
-			}
-			break;
-		case 40:
-			DebugEnterAlt(40);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:294: RBRACE
-			{
-			DebugLocation(1, 294);
-			mRBRACE(); if (state.failed) return;
-
-			}
-			break;
-		case 41:
-			DebugEnterAlt(41);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:301: COLON
-			{
-			DebugLocation(1, 301);
-			mCOLON(); if (state.failed) return;
-
-			}
-			break;
-		case 42:
-			DebugEnterAlt(42);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:307: SEMICOLON
-			{
-			DebugLocation(1, 307);
-			mSEMICOLON(); if (state.failed) return;
-
-			}
-			break;
-		case 43:
-			DebugEnterAlt(43);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:317: DQUOTED_STRING
-			{
-			DebugLocation(1, 317);
-			mDQUOTED_STRING(); if (state.failed) return;
-
-			}
-			break;
-		case 44:
-			DebugEnterAlt(44);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:332: SQUOTED_STRING
-			{
-			DebugLocation(1, 332);
-			mSQUOTED_STRING(); if (state.failed) return;
-
-			}
-			break;
-		case 45:
-			DebugEnterAlt(45);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:347: HEXCOLOR
-			{
-			DebugLocation(1, 347);
-			mHEXCOLOR(); if (state.failed) return;
-
-			}
-			break;
-		case 46:
-			DebugEnterAlt(46);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:356: NUMBER
-			{
-			DebugLocation(1, 356);
-			mNUMBER(); if (state.failed) return;
-
-			}
-			break;
-		case 47:
-			DebugEnterAlt(47);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:363: RANGE
-			{
-			DebugLocation(1, 363);
-			mRANGE(); if (state.failed) return;
-
-			}
-			break;
-		case 48:
-			DebugEnterAlt(48);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:369: REGEXP
-			{
-			DebugLocation(1, 369);
-			mREGEXP(); if (state.failed) return;
-
-			}
-			break;
-		case 49:
-			DebugEnterAlt(49);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:376: WS
-			{
-			DebugLocation(1, 376);
-			mWS(); if (state.failed) return;
-
-			}
-			break;
-		case 50:
-			DebugEnterAlt(50);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:379: SL_COMMENT
-			{
-			DebugLocation(1, 379);
-			mSL_COMMENT(); if (state.failed) return;
-
-			}
-			break;
-		case 51:
-			DebugEnterAlt(51);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:390: ML_COMMENT
-			{
-			DebugLocation(1, 390);
-			mML_COMMENT(); if (state.failed) return;
-
-			}
-			break;
-
-		}
-
-	}
-
-	partial void EnterRule_synpred1_MapCss_fragment();
-	partial void LeaveRule_synpred1_MapCss_fragment();
-
-	// $ANTLR start synpred1_MapCss
-	private void synpred1_MapCss_fragment()
-	{
-		EnterRule_synpred1_MapCss_fragment();
-		EnterRule("synpred1_MapCss_fragment", 84);
-		TraceIn("synpred1_MapCss_fragment", 84);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:12: ( TAGSEPARATOR )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-			{
-			DebugLocation(453, 12);
-			if (input.LA(1)=='.'||input.LA(1)==':')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("synpred1_MapCss_fragment", 84);
-			LeaveRule("synpred1_MapCss_fragment", 84);
-			LeaveRule_synpred1_MapCss_fragment();
-		}
-	}
-	// $ANTLR end synpred1_MapCss
-
-	partial void EnterRule_synpred2_MapCss_fragment();
-	partial void LeaveRule_synpred2_MapCss_fragment();
-
-	// $ANTLR start synpred2_MapCss
-	private void synpred2_MapCss_fragment()
-	{
-		EnterRule_synpred2_MapCss_fragment();
-		EnterRule("synpred2_MapCss_fragment", 85);
-		TraceIn("synpred2_MapCss_fragment", 85);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:4: ( ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )? )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:5: ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )?
-			{
-			DebugLocation(530, 5);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:5: ( '-' )?
-			int alt37=2;
-			try { DebugEnterSubRule(37);
-			try { DebugEnterDecision(37, false);
-			int LA37_1 = input.LA(1);
-
-			if ((LA37_1=='-'))
-			{
-				alt37 = 1;
-			}
-			} finally { DebugExitDecision(37); }
-			switch (alt37)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:5: '-'
-				{
-				DebugLocation(530, 5);
-				Match('-'); if (state.failed) return;
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(37); }
-
-			DebugLocation(530, 10);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:10: ( DIGIT )*
-			try { DebugEnterSubRule(38);
-			while (true)
-			{
-				int alt38=2;
-				try { DebugEnterDecision(38, false);
-				int LA38_1 = input.LA(1);
-
-				if (((LA38_1>='0' && LA38_1<='9')))
-				{
-					alt38 = 1;
-				}
-
-
-				} finally { DebugExitDecision(38); }
-				switch ( alt38 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-					{
-					DebugLocation(530, 10);
-					if ((input.LA(1)>='0' && input.LA(1)<='9'))
-					{
-						input.Consume();
-					state.failed=false;
-					}
-					else
-					{
-						if (state.backtracking>0) {state.failed=true; return;}
-						MismatchedSetException mse = new MismatchedSetException(null,input);
-						DebugRecognitionException(mse);
-						Recover(mse);
-						throw mse;
-					}
-
-
-					}
-					break;
-
-				default:
-					goto loop38;
-				}
-			}
-
-			loop38:
-				;
-
-			} finally { DebugExitSubRule(38); }
-
-			DebugLocation(530, 17);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:17: ( '.' ( DIGIT )+ )?
-			int alt40=2;
-			try { DebugEnterSubRule(40);
-			try { DebugEnterDecision(40, false);
-			int LA40_1 = input.LA(1);
-
-			if ((LA40_1=='.'))
-			{
-				alt40 = 1;
-			}
-			} finally { DebugExitDecision(40); }
-			switch (alt40)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:18: '.' ( DIGIT )+
-				{
-				DebugLocation(530, 18);
-				Match('.'); if (state.failed) return;
-				DebugLocation(530, 22);
-				// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:22: ( DIGIT )+
-				int cnt39=0;
-				try { DebugEnterSubRule(39);
-				while (true)
-				{
-					int alt39=2;
-					try { DebugEnterDecision(39, false);
-					int LA39_1 = input.LA(1);
-
-					if (((LA39_1>='0' && LA39_1<='9')))
-					{
-						alt39 = 1;
-					}
-
-
-					} finally { DebugExitDecision(39); }
-					switch (alt39)
-					{
-					case 1:
-						DebugEnterAlt(1);
-						// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
-						{
-						DebugLocation(530, 22);
-						if ((input.LA(1)>='0' && input.LA(1)<='9'))
-						{
-							input.Consume();
-						state.failed=false;
-						}
-						else
-						{
-							if (state.backtracking>0) {state.failed=true; return;}
-							MismatchedSetException mse = new MismatchedSetException(null,input);
-							DebugRecognitionException(mse);
-							Recover(mse);
-							throw mse;
-						}
-
-
-						}
-						break;
-
-					default:
-						if (cnt39 >= 1)
-							goto loop39;
-
-						if (state.backtracking>0) {state.failed=true; return;}
-						EarlyExitException eee39 = new EarlyExitException( 39, input );
-						DebugRecognitionException(eee39);
-						throw eee39;
-					}
-					cnt39++;
-				}
-				loop39:
-					;
-
-				} finally { DebugExitSubRule(39); }
-
-
-				}
-				break;
-
-			}
-			} finally { DebugExitSubRule(40); }
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("synpred2_MapCss_fragment", 85);
-			LeaveRule("synpred2_MapCss_fragment", 85);
-			LeaveRule_synpred2_MapCss_fragment();
-		}
-	}
-	// $ANTLR end synpred2_MapCss
-
-	partial void EnterRule_synpred3_MapCss_fragment();
-	partial void LeaveRule_synpred3_MapCss_fragment();
-
-	// $ANTLR start synpred3_MapCss
-	private void synpred3_MapCss_fragment()
-	{
-		EnterRule_synpred3_MapCss_fragment();
-		EnterRule("synpred3_MapCss_fragment", 86);
-		TraceIn("synpred3_MapCss_fragment", 86);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:532:6: ( P ( T | X ) )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:532:7: P ( T | X )
-			{
-			DebugLocation(532, 7);
-			mP(); if (state.failed) return;
-			DebugLocation(532, 9);
-			if (input.LA(1)=='T'||input.LA(1)=='X'||input.LA(1)=='t'||input.LA(1)=='x')
-			{
-				input.Consume();
-			state.failed=false;
-			}
-			else
-			{
-				if (state.backtracking>0) {state.failed=true; return;}
-				MismatchedSetException mse = new MismatchedSetException(null,input);
-				DebugRecognitionException(mse);
-				Recover(mse);
-				throw mse;
-			}
-
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("synpred3_MapCss_fragment", 86);
-			LeaveRule("synpred3_MapCss_fragment", 86);
-			LeaveRule_synpred3_MapCss_fragment();
-		}
-	}
-	// $ANTLR end synpred3_MapCss
-
-	partial void EnterRule_synpred4_MapCss_fragment();
-	partial void LeaveRule_synpred4_MapCss_fragment();
-
-	// $ANTLR start synpred4_MapCss
-	private void synpred4_MapCss_fragment()
-	{
-		EnterRule_synpred4_MapCss_fragment();
-		EnterRule("synpred4_MapCss_fragment", 87);
-		TraceIn("synpred4_MapCss_fragment", 87);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:538:10: ( '%' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:538:11: '%'
-			{
-			DebugLocation(538, 11);
-			Match('%'); if (state.failed) return;
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("synpred4_MapCss_fragment", 87);
-			LeaveRule("synpred4_MapCss_fragment", 87);
-			LeaveRule_synpred4_MapCss_fragment();
-		}
-	}
-	// $ANTLR end synpred4_MapCss
-
-	partial void EnterRule_synpred5_MapCss_fragment();
-	partial void LeaveRule_synpred5_MapCss_fragment();
-
-	// $ANTLR start synpred5_MapCss
-	private void synpred5_MapCss_fragment()
-	{
-		EnterRule_synpred5_MapCss_fragment();
-		EnterRule("synpred5_MapCss_fragment", 88);
-		TraceIn("synpred5_MapCss_fragment", 88);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:4: ( '+' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:5: '+'
-			{
-			DebugLocation(548, 5);
-			Match('+'); if (state.failed) return;
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("synpred5_MapCss_fragment", 88);
-			LeaveRule("synpred5_MapCss_fragment", 88);
-			LeaveRule_synpred5_MapCss_fragment();
-		}
-	}
-	// $ANTLR end synpred5_MapCss
-
-	partial void EnterRule_synpred6_MapCss_fragment();
-	partial void LeaveRule_synpred6_MapCss_fragment();
-
-	// $ANTLR start synpred6_MapCss
-	private void synpred6_MapCss_fragment()
-	{
-		EnterRule_synpred6_MapCss_fragment();
-		EnterRule("synpred6_MapCss_fragment", 89);
-		TraceIn("synpred6_MapCss_fragment", 89);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:15: ( REGEX_START ( REGEX_CHAR )* '/' )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:16: REGEX_START ( REGEX_CHAR )* '/'
-			{
-			DebugLocation(582, 16);
-			mREGEX_START(); if (state.failed) return;
-			DebugLocation(582, 28);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:28: ( REGEX_CHAR )*
-			try { DebugEnterSubRule(41);
-			while (true)
-			{
-				int alt41=2;
-				try { DebugEnterDecision(41, false);
-				int LA41_1 = input.LA(1);
-
-				if (((LA41_1>=' ' && LA41_1<='.')||(LA41_1>='0' && LA41_1<='~')||(LA41_1>='\u0080' && LA41_1<='\uFFFF')))
-				{
-					alt41 = 1;
-				}
-
-
-				} finally { DebugExitDecision(41); }
-				switch ( alt41 )
-				{
-				case 1:
-					DebugEnterAlt(1);
-					// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:28: REGEX_CHAR
-					{
-					DebugLocation(582, 28);
-					mREGEX_CHAR(); if (state.failed) return;
-
-					}
-					break;
-
-				default:
-					goto loop41;
-				}
-			}
-
-			loop41:
-				;
-
-			} finally { DebugExitSubRule(41); }
-
-			DebugLocation(582, 40);
-			Match('/'); if (state.failed) return;
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("synpred6_MapCss_fragment", 89);
-			LeaveRule("synpred6_MapCss_fragment", 89);
-			LeaveRule_synpred6_MapCss_fragment();
-		}
-	}
-	// $ANTLR end synpred6_MapCss
-
-	partial void EnterRule_synpred7_MapCss_fragment();
-	partial void LeaveRule_synpred7_MapCss_fragment();
-
-	// $ANTLR start synpred7_MapCss
-	private void synpred7_MapCss_fragment()
-	{
-		EnterRule_synpred7_MapCss_fragment();
-		EnterRule("synpred7_MapCss_fragment", 90);
-		TraceIn("synpred7_MapCss_fragment", 90);
-		try
-		{
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:584:15: ( . )
-			DebugEnterAlt(1);
-			// c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:584:16: .
-			{
-			DebugLocation(584, 16);
-			MatchAny(); if (state.failed) return;
-
-			}
-
-		}
-		finally
-		{
-			TraceOut("synpred7_MapCss_fragment", 90);
-			LeaveRule("synpred7_MapCss_fragment", 90);
-			LeaveRule_synpred7_MapCss_fragment();
-		}
-	}
-	// $ANTLR end synpred7_MapCss
-
-	#region Synpreds
-	private bool EvaluatePredicate(System.Action fragment)
-	{
-		bool success = false;
-		state.backtracking++;
-		try { DebugBeginBacktrack(state.backtracking);
-		int start = input.Mark();
-		try
-		{
-			fragment();
-		}
-		catch ( RecognitionException re )
-		{
-			System.Console.Error.WriteLine("impossible: "+re);
-		}
-		success = !state.failed;
-		input.Rewind(start);
-		} finally { DebugEndBacktrack(state.backtracking, success); }
-		state.backtracking--;
-		state.failed=false;
-		return success;
-	}
-	#endregion Synpreds
-
-
-	#region DFA
-	DFA27 dfa27;
-	DFA36 dfa36;
-
-	protected override void InitDFAs()
-	{
-		base.InitDFAs();
-		dfa27 = new DFA27(this);
-		dfa36 = new DFA36(this);
-	}
-
-	private class DFA27 : DFA
-	{
-		private const string DFA27_eotS =
-			"\x2\xFFFF\x1\x3\x1\xFFFF\x1\x5\x2\xFFFF";
-		private const string DFA27_eofS =
-			"\x7\xFFFF";
-		private const string DFA27_minS =
-			"\x1\x2D\x1\xFFFF\x1\x2D\x1\xFFFF\x1\x30\x2\xFFFF";
-		private const string DFA27_maxS =
-			"\x1\x39\x1\xFFFF\x1\x39\x1\xFFFF\x1\x39\x2\xFFFF";
-		private const string DFA27_acceptS =
-			"\x1\xFFFF\x1\x1\x1\xFFFF\x1\x2\x1\xFFFF\x1\x3\x1\x4";
-		private const string DFA27_specialS =
-			"\x7\xFFFF}>";
-		private static readonly string[] DFA27_transitionS =
-			{
-				"\x1\x1\x2\xFFFF\xA\x2",
-				"",
-				"\x1\x4\x2\xFFFF\xA\x2",
-				"",
-				"\xA\x6",
-				"",
-				""
-			};
-
-		private static readonly short[] DFA27_eot = DFA.UnpackEncodedString(DFA27_eotS);
-		private static readonly short[] DFA27_eof = DFA.UnpackEncodedString(DFA27_eofS);
-		private static readonly char[] DFA27_min = DFA.UnpackEncodedStringToUnsignedChars(DFA27_minS);
-		private static readonly char[] DFA27_max = DFA.UnpackEncodedStringToUnsignedChars(DFA27_maxS);
-		private static readonly short[] DFA27_accept = DFA.UnpackEncodedString(DFA27_acceptS);
-		private static readonly short[] DFA27_special = DFA.UnpackEncodedString(DFA27_specialS);
-		private static readonly short[][] DFA27_transition;
-
-		static DFA27()
-		{
-			int numStates = DFA27_transitionS.Length;
-			DFA27_transition = new short[numStates][];
-			for ( int i=0; i < numStates; i++ )
-			{
-				DFA27_transition[i] = DFA.UnpackEncodedString(DFA27_transitionS[i]);
-			}
-		}
-
-		public DFA27( BaseRecognizer recognizer )
-		{
-			this.recognizer = recognizer;
-			this.decisionNumber = 27;
-			this.eot = DFA27_eot;
-			this.eof = DFA27_eof;
-			this.min = DFA27_min;
-			this.max = DFA27_max;
-			this.accept = DFA27_accept;
-			this.special = DFA27_special;
-			this.transition = DFA27_transition;
-		}
-
-		public override string Description { get { return "555:9: ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ )"; } }
-
-		public override void Error(NoViableAltException nvae)
-		{
-			DebugRecognitionException(nvae);
-		}
-	}
-
-	private class DFA36 : DFA
-	{
-		private const string DFA36_eotS =
-			"\x1\x23\x3\xFFFF\x1\x28\x1\x2A\x1\x2C\x1\xFFFF\x1\x2F\x1\x33\x1\xFFFF"+
-			"\x1\x36\x4\xFFFF\x1\x37\x1\x38\x1\x3B\x1\xFFFF\x4\x24\x1\xFFFF\x2\x24"+
-			"\xA\xFFFF\x1\x46\x16\xFFFF\x6\x24\x5\xFFFF\x1\x4E\x5\x24\x1\x54\x1\xFFFF"+
-			"\x1\x55\x1\x24\x1\x57\x1\x58\x3\xFFFF\x1\x59\x3\xFFFF";
-		private const string DFA36_eofS =
-			"\x5A\xFFFF";
-		private const string DFA36_minS =
-			"\x1\x9\x3\xFFFF\x1\x7E\x2\x3D\x1\xFFFF\x1\x3D\x1\x2E\x1\x7A\x1\x30\x4"+
-			"\xFFFF\x1\x25\x1\x30\x1\x21\x1\xFFFF\x1\x47\x1\x4E\x1\x56\x1\x49\x1\xFFFF"+
-			"\x1\x52\x1\x54\xA\xFFFF\x1\x2A\x16\xFFFF\x1\x42\x1\x4C\x1\x44\x1\x41"+
-			"\x1\x53\x1\x4C\x5\xFFFF\x1\x2D\x2\x45\x1\x4C\x1\x54\x1\x9\x1\x2D\x1\xFFFF"+
-			"\x1\x2D\x1\x58\x2\x2D\x3\xFFFF\x1\x2D\x3\xFFFF";
-		private const string DFA36_maxS =
-			"\x1\x7E\x3\xFFFF\x1\x7E\x2\x3D\x1\xFFFF\x2\x3D\x1\x7C\x1\x39\x4\xFFFF"+
-			"\x1\x7A\x1\x39\x1\x3A\x1\xFFFF\x1\x6F\x1\x6E\x1\x76\x1\x69\x1\xFFFF\x1"+
-			"\x72\x1\x78\xA\xFFFF\x1\x2F\x16\xFFFF\x1\x62\x1\x6C\x1\x64\x1\x61\x1"+
-			"\x73\x1\x6C\x5\xFFFF\x1\x7A\x2\x65\x1\x6C\x1\x74\x1\x28\x1\x7A\x1\xFFFF"+
-			"\x1\x7A\x1\x78\x2\x7A\x3\xFFFF\x1\x7A\x3\xFFFF";
-		private const string DFA36_acceptS =
-			"\x1\xFFFF\x1\x1\x1\x2\x1\x3\x3\xFFFF\x1\xA\x4\xFFFF\x1\xF\x1\x14\x1\x15"+
-			"\x1\x16\x3\xFFFF\x1\x1B\x4\xFFFF\x1\x22\x2\xFFFF\x1\x25\x1\x26\x1\x27"+
-			"\x1\x28\x1\x2A\x1\x2B\x1\x2C\x1\x2D\x1\x2E\x1\x24\x1\xFFFF\x1\x31\x1"+
-			"\x9\x1\x4\x1\x5\x1\x6\x1\x7\x1\x8\x1\xA\x1\x10\x1\xB\x1\xC\x1\x12\x1"+
-			"\x13\x1\x11\x1\xD\x1\x2F\x1\xE\x1\x17\x1\x18\x1\x19\x1\x1A\x1\x29\x6"+
-			"\xFFFF\x2\x24\x1\x32\x1\x33\x1\x30\x7\xFFFF\x1\x1C\x4\xFFFF\x1\x23\x1"+
-			"\x1D\x1\x1E\x1\xFFFF\x1\x20\x1\x21\x1\x1F";
-		private const string DFA36_specialS =
-			"\x5A\xFFFF}>";
-		private static readonly string[] DFA36_transitionS =
-			{
-				"\x2\x26\x1\xFFFF\x2\x26\x12\xFFFF\x1\x26\x1\x9\x1\x20\x1\x22\x1\x3\x1"+
-				"\x7\x1\x1\x1\x21\x1\xD\x1\xE\x1\x8\x1\xB\x1\xF\x1\x10\x1\x11\x1\x25"+
-				"\xA\xFFFF\x1\x12\x1\x1F\x1\x6\x1\x4\x1\x5\x1\x13\x1\x18\x4\x24\x1\x16"+
-				"\x3\x24\x1\x15\x2\x24\x1\x17\x3\x24\x1\x1A\x1\x24\x1\x14\x2\x24\x1\x19"+
-				"\x5\x24\x1\x1B\x1\xFFFF\x1\x1C\x1\xC\x1\x24\x1\xFFFF\x4\x24\x1\x16\x3"+
-				"\x24\x1\x15\x2\x24\x1\x17\x3\x24\x1\x1A\x1\x24\x1\x14\x2\x24\x1\x19"+
-				"\x5\x24\x1\x1D\x1\xA\x1\x1E\x1\x2",
-				"",
-				"",
-				"",
-				"\x1\x27",
-				"\x1\x29",
-				"\x1\x2B",
-				"",
-				"\x1\x2E",
-				"\x1\x31\xB\xFFFF\x1\x32\x2\xFFFF\x1\x30",
-				"\x1\x35\x1\xFFFF\x1\x34",
-				"\xA\x23",
-				"",
-				"",
-				"",
-				"",
-				"\x1\x23\x8\xFFFF\x1\x23\x1\xFFFF\xA\x23\x7\xFFFF\xF\x24\x1\x1A\xA\x24"+
-				"\x4\xFFFF\x1\x24\x1\xFFFF\xF\x24\x1\x1A\xA\x24",
-				"\xA\x23",
-				"\x1\x39\x18\xFFFF\x1\x3A",
-				"",
-				"\x1\x3C\x7\xFFFF\x1\x3D\x17\xFFFF\x1\x3C\x7\xFFFF\x1\x3D",
-				"\x1\x3E\x1F\xFFFF\x1\x3E",
-				"\x1\x3F\x1F\xFFFF\x1\x3F",
-				"\x1\x40\x1F\xFFFF\x1\x40",
-				"",
-				"\x1\x41\x1F\xFFFF\x1\x41",
-				"\x1\x42\x3\xFFFF\x1\x43\x1B\xFFFF\x1\x42\x3\xFFFF\x1\x43",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"\x1\x45\x4\xFFFF\x1\x44",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"\x1\x47\x1F\xFFFF\x1\x47",
-				"\x1\x48\x1F\xFFFF\x1\x48",
-				"\x1\x49\x1F\xFFFF\x1\x49",
-				"\x1\x4A\x1F\xFFFF\x1\x4A",
-				"\x1\x4B\x1F\xFFFF\x1\x4B",
-				"\x1\x4C\x1F\xFFFF\x1\x4C",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1\x4D\x19\x24\x4\xFFFF\x1\x24\x1\xFFFF"+
-				"\x1\x4D\x19\x24",
-				"\x1\x4F\x1F\xFFFF\x1\x4F",
-				"\x1\x50\x1F\xFFFF\x1\x50",
-				"\x1\x51\x1F\xFFFF\x1\x51",
-				"\x1\x52\x1F\xFFFF\x1\x52",
-				"\x1\x53\x2\xFFFF\x1\x53\x13\xFFFF\x1\x53\x7\xFFFF\x1\x53",
-				"\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
-				"\x24",
-				"",
-				"\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
-				"\x24",
-				"\x1\x56\x1F\xFFFF\x1\x56",
-				"\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
-				"\x24",
-				"\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
-				"\x24",
-				"",
-				"",
-				"",
-				"\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
-				"\x24",
-				"",
-				"",
-				""
-			};
-
-		private static readonly short[] DFA36_eot = DFA.UnpackEncodedString(DFA36_eotS);
-		private static readonly short[] DFA36_eof = DFA.UnpackEncodedString(DFA36_eofS);
-		private static readonly char[] DFA36_min = DFA.UnpackEncodedStringToUnsignedChars(DFA36_minS);
-		private static readonly char[] DFA36_max = DFA.UnpackEncodedStringToUnsignedChars(DFA36_maxS);
-		private static readonly short[] DFA36_accept = DFA.UnpackEncodedString(DFA36_acceptS);
-		private static readonly short[] DFA36_special = DFA.UnpackEncodedString(DFA36_specialS);
-		private static readonly short[][] DFA36_transition;
-
-		static DFA36()
-		{
-			int numStates = DFA36_transitionS.Length;
-			DFA36_transition = new short[numStates][];
-			for ( int i=0; i < numStates; i++ )
-			{
-				DFA36_transition[i] = DFA.UnpackEncodedString(DFA36_transitionS[i]);
-			}
-		}
-
-		public DFA36( BaseRecognizer recognizer )
-		{
-			this.recognizer = recognizer;
-			this.decisionNumber = 36;
-			this.eot = DFA36_eot;
-			this.eof = DFA36_eof;
-			this.min = DFA36_min;
-			this.max = DFA36_max;
-			this.accept = DFA36_accept;
-			this.special = DFA36_special;
-			this.transition = DFA36_transition;
-		}
-
-		public override string Description { get { return "1:1: Tokens : ( OP_AND | OP_CONTAINS | OP_ENDS_WITH | OP_EQ | OP_GE | OP_GT | OP_LE | OP_LT | OP_MATCH | OP_MOD | OP_MUL | OP_NEQ | OP_OR | OP_PLUS | OP_STARTS_WITH | OP_SUBSTRING | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | RGB | RGBA | ROLE | INDEX | EVAL | LIST | IMPORT | URL | IDENTS | LBRACKET | RBRACKET | LBRACE | RBRACE | COLON | SEMICOLON | DQUOTED_STRING | SQUOTED_STRING | HEXCOLOR | NUMBER | RANGE | REGEXP | WS | SL_COMMENT | ML_COMMENT );"; } }
-
-		public override void Error(NoViableAltException nvae)
-		{
-			DebugRecognitionException(nvae);
-		}
-	}
-
-
-	#endregion
-
+                                        _type = NEGATIVE_FLOAT;
+                                    }
+
+                                }
+                                    break;
+
+                            }
+                        } finally { DebugExitSubRule(19); }
+
+
+                    }
+                        break;
+                    case 2:
+                        DebugEnterAlt(2);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:4: ( '+' )=> '+' ( DIGIT )+
+                    {
+                        DebugLocation(548, 13);
+                        Match('+'); if (state.failed) return;
+                        DebugLocation(548, 17);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:17: ( DIGIT )+
+                        int cnt20=0;
+                        try { DebugEnterSubRule(20);
+                            while (true)
+                            {
+                                int alt20=2;
+                                try { DebugEnterDecision(20, false);
+                                    int LA20_1 = input.LA(1);
+
+                                    if (((LA20_1>='0' && LA20_1<='9')))
+                                    {
+                                        alt20 = 1;
+                                    }
+
+
+                                } finally { DebugExitDecision(20); }
+                                switch (alt20)
+                                {
+                                    case 1:
+                                        DebugEnterAlt(1);
+                                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                    {
+                                        DebugLocation(548, 17);
+                                        input.Consume();
+                                        state.failed=false;
+
+                                    }
+                                        break;
+
+                                    default:
+                                        if (cnt20 >= 1)
+                                            goto loop20;
+
+                                        if (state.backtracking>0) {state.failed=true; return;}
+                                        EarlyExitException eee20 = new EarlyExitException( 20, input );
+                                        DebugRecognitionException(eee20);
+                                        throw eee20;
+                                }
+                                cnt20++;
+                            }
+                            loop20:
+                            ;
+
+                        } finally { DebugExitSubRule(20); }
+
+                        DebugLocation(548, 32);
+                        if (state.backtracking == 0)
+                        {
+                            _type = INCREMENT;
+                        }
+
+                    }
+                        break;
+
+                }
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("NUMBER", 73);
+                LeaveRule("NUMBER", 73);
+                LeaveRule_NUMBER();
+            }
+        }
+        // $ANTLR end "NUMBER"
+
+        partial void EnterRule_RANGE();
+        partial void LeaveRule_RANGE();
+
+        // $ANTLR start "RANGE"
+        [GrammarRule("RANGE")]
+        private void mRANGE()
+        {
+            EnterRule_RANGE();
+            EnterRule("RANGE", 74);
+            TraceIn("RANGE", 74);
+            try
+            {
+                int _type = RANGE;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:555:2: ( '|z' ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:555:4: '|z' ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ )
+                {
+                    DebugLocation(555, 4);
+                    Match("|z"); if (state.failed) return;
+
+                    DebugLocation(555, 9);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:555:9: ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ )
+                    int alt27=4;
+                    try { DebugEnterSubRule(27);
+                        try { DebugEnterDecision(27, false);
+                            try
+                            {
+                                alt27 = dfa27.Predict(input);
+                            }
+                            catch (NoViableAltException nvae)
+                            {
+                                DebugRecognitionException(nvae);
+                                throw;
+                            }
+                        } finally { DebugExitDecision(27); }
+                        switch (alt27)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:556:5: '-' ( DIGIT )+
+                            {
+                                DebugLocation(556, 5);
+                                Match('-'); if (state.failed) return;
+                                DebugLocation(556, 9);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:556:9: ( DIGIT )+
+                                int cnt22=0;
+                                try { DebugEnterSubRule(22);
+                                    while (true)
+                                    {
+                                        int alt22=2;
+                                        try { DebugEnterDecision(22, false);
+                                            int LA22_1 = input.LA(1);
+
+                                            if (((LA22_1>='0' && LA22_1<='9')))
+                                            {
+                                                alt22 = 1;
+                                            }
+
+
+                                        } finally { DebugExitDecision(22); }
+                                        switch (alt22)
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                            {
+                                                DebugLocation(556, 9);
+                                                input.Consume();
+                                                state.failed=false;
+
+                                            }
+                                                break;
+
+                                            default:
+                                                if (cnt22 >= 1)
+                                                    goto loop22;
+
+                                                if (state.backtracking>0) {state.failed=true; return;}
+                                                EarlyExitException eee22 = new EarlyExitException( 22, input );
+                                                DebugRecognitionException(eee22);
+                                                throw eee22;
+                                        }
+                                        cnt22++;
+                                    }
+                                    loop22:
+                                    ;
+
+                                } finally { DebugExitSubRule(22); }
+
+
+                            }
+                                break;
+                            case 2:
+                                DebugEnterAlt(2);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:557:5: ( DIGIT )+
+                            {
+                                DebugLocation(557, 5);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:557:5: ( DIGIT )+
+                                int cnt23=0;
+                                try { DebugEnterSubRule(23);
+                                    while (true)
+                                    {
+                                        int alt23=2;
+                                        try { DebugEnterDecision(23, false);
+                                            int LA23_1 = input.LA(1);
+
+                                            if (((LA23_1>='0' && LA23_1<='9')))
+                                            {
+                                                alt23 = 1;
+                                            }
+
+
+                                        } finally { DebugExitDecision(23); }
+                                        switch (alt23)
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                            {
+                                                DebugLocation(557, 5);
+                                                input.Consume();
+                                                state.failed=false;
+
+                                            }
+                                                break;
+
+                                            default:
+                                                if (cnt23 >= 1)
+                                                    goto loop23;
+
+                                                if (state.backtracking>0) {state.failed=true; return;}
+                                                EarlyExitException eee23 = new EarlyExitException( 23, input );
+                                                DebugRecognitionException(eee23);
+                                                throw eee23;
+                                        }
+                                        cnt23++;
+                                    }
+                                    loop23:
+                                    ;
+
+                                } finally { DebugExitSubRule(23); }
+
+
+                            }
+                                break;
+                            case 3:
+                                DebugEnterAlt(3);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:558:5: ( DIGIT )+ '-'
+                            {
+                                DebugLocation(558, 5);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:558:5: ( DIGIT )+
+                                int cnt24=0;
+                                try { DebugEnterSubRule(24);
+                                    while (true)
+                                    {
+                                        int alt24=2;
+                                        try { DebugEnterDecision(24, false);
+                                            int LA24_1 = input.LA(1);
+
+                                            if (((LA24_1>='0' && LA24_1<='9')))
+                                            {
+                                                alt24 = 1;
+                                            }
+
+
+                                        } finally { DebugExitDecision(24); }
+                                        switch (alt24)
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                            {
+                                                DebugLocation(558, 5);
+                                                input.Consume();
+                                                state.failed=false;
+
+                                            }
+                                                break;
+
+                                            default:
+                                                if (cnt24 >= 1)
+                                                    goto loop24;
+
+                                                if (state.backtracking>0) {state.failed=true; return;}
+                                                EarlyExitException eee24 = new EarlyExitException( 24, input );
+                                                DebugRecognitionException(eee24);
+                                                throw eee24;
+                                        }
+                                        cnt24++;
+                                    }
+                                    loop24:
+                                    ;
+
+                                } finally { DebugExitSubRule(24); }
+
+                                DebugLocation(558, 12);
+                                Match('-'); if (state.failed) return;
+
+                            }
+                                break;
+                            case 4:
+                                DebugEnterAlt(4);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:559:5: ( DIGIT )+ '-' ( DIGIT )+
+                            {
+                                DebugLocation(559, 5);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:559:5: ( DIGIT )+
+                                int cnt25=0;
+                                try { DebugEnterSubRule(25);
+                                    while (true)
+                                    {
+                                        int alt25=2;
+                                        try { DebugEnterDecision(25, false);
+                                            int LA25_1 = input.LA(1);
+
+                                            if (((LA25_1>='0' && LA25_1<='9')))
+                                            {
+                                                alt25 = 1;
+                                            }
+
+
+                                        } finally { DebugExitDecision(25); }
+                                        switch (alt25)
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                            {
+                                                DebugLocation(559, 5);
+                                                input.Consume();
+                                                state.failed=false;
+
+                                            }
+                                                break;
+
+                                            default:
+                                                if (cnt25 >= 1)
+                                                    goto loop25;
+
+                                                if (state.backtracking>0) {state.failed=true; return;}
+                                                EarlyExitException eee25 = new EarlyExitException( 25, input );
+                                                DebugRecognitionException(eee25);
+                                                throw eee25;
+                                        }
+                                        cnt25++;
+                                    }
+                                    loop25:
+                                    ;
+
+                                } finally { DebugExitSubRule(25); }
+
+                                DebugLocation(559, 12);
+                                Match('-'); if (state.failed) return;
+                                DebugLocation(559, 16);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:559:16: ( DIGIT )+
+                                int cnt26=0;
+                                try { DebugEnterSubRule(26);
+                                    while (true)
+                                    {
+                                        int alt26=2;
+                                        try { DebugEnterDecision(26, false);
+                                            int LA26_1 = input.LA(1);
+
+                                            if (((LA26_1>='0' && LA26_1<='9')))
+                                            {
+                                                alt26 = 1;
+                                            }
+
+
+                                        } finally { DebugExitDecision(26); }
+                                        switch (alt26)
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                            {
+                                                DebugLocation(559, 16);
+                                                input.Consume();
+                                                state.failed=false;
+
+                                            }
+                                                break;
+
+                                            default:
+                                                if (cnt26 >= 1)
+                                                    goto loop26;
+
+                                                if (state.backtracking>0) {state.failed=true; return;}
+                                                EarlyExitException eee26 = new EarlyExitException( 26, input );
+                                                DebugRecognitionException(eee26);
+                                                throw eee26;
+                                        }
+                                        cnt26++;
+                                    }
+                                    loop26:
+                                    ;
+
+                                } finally { DebugExitSubRule(26); }
+
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(27); }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("RANGE", 74);
+                LeaveRule("RANGE", 74);
+                LeaveRule_RANGE();
+            }
+        }
+        // $ANTLR end "RANGE"
+
+        partial void EnterRule_REGEX_ESCAPE();
+        partial void LeaveRule_REGEX_ESCAPE();
+
+        // $ANTLR start "REGEX_ESCAPE"
+        [GrammarRule("REGEX_ESCAPE")]
+        private void mREGEX_ESCAPE()
+        {
+            EnterRule_REGEX_ESCAPE();
+            EnterRule("REGEX_ESCAPE", 75);
+            TraceIn("REGEX_ESCAPE", 75);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:22: ( '\\\\\\\\' | '\\\\/' | '\\\\(' | '\\\\)' | '\\\\|' | '\\\\$' | '\\\\*' | '\\\\.' | '\\\\^' | '\\\\?' | '\\\\+' | '\\\\-' | '\\\\n' | '\\\\r' | '\\\\t' | '\\\\s' | '\\\\S' | '\\\\d' | '\\\\D' | '\\\\w' | '\\\\W' )
+                int alt28=21;
+                try { DebugEnterDecision(28, false);
+                    int LA28_1 = input.LA(1);
+
+                    if ((LA28_1=='\\'))
+                    {
+                        switch (input.LA(2))
+                        {
+                            case '\\':
+                            {
+                                alt28 = 1;
+                            }
+                                break;
+                            case '/':
+                            {
+                                alt28 = 2;
+                            }
+                                break;
+                            case '(':
+                            {
+                                alt28 = 3;
+                            }
+                                break;
+                            case ')':
+                            {
+                                alt28 = 4;
+                            }
+                                break;
+                            case '|':
+                            {
+                                alt28 = 5;
+                            }
+                                break;
+                            case '$':
+                            {
+                                alt28 = 6;
+                            }
+                                break;
+                            case '*':
+                            {
+                                alt28 = 7;
+                            }
+                                break;
+                            case '.':
+                            {
+                                alt28 = 8;
+                            }
+                                break;
+                            case '^':
+                            {
+                                alt28 = 9;
+                            }
+                                break;
+                            case '?':
+                            {
+                                alt28 = 10;
+                            }
+                                break;
+                            case '+':
+                            {
+                                alt28 = 11;
+                            }
+                                break;
+                            case '-':
+                            {
+                                alt28 = 12;
+                            }
+                                break;
+                            case 'n':
+                            {
+                                alt28 = 13;
+                            }
+                                break;
+                            case 'r':
+                            {
+                                alt28 = 14;
+                            }
+                                break;
+                            case 't':
+                            {
+                                alt28 = 15;
+                            }
+                                break;
+                            case 's':
+                            {
+                                alt28 = 16;
+                            }
+                                break;
+                            case 'S':
+                            {
+                                alt28 = 17;
+                            }
+                                break;
+                            case 'd':
+                            {
+                                alt28 = 18;
+                            }
+                                break;
+                            case 'D':
+                            {
+                                alt28 = 19;
+                            }
+                                break;
+                            case 'w':
+                            {
+                                alt28 = 20;
+                            }
+                                break;
+                            case 'W':
+                            {
+                                alt28 = 21;
+                            }
+                                break;
+                            default:
+                            {
+                                if (state.backtracking>0) {state.failed=true; return;}
+                                NoViableAltException nvae = new NoViableAltException("", 28, 1, input, 2);
+                                DebugRecognitionException(nvae);
+                                throw nvae;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        NoViableAltException nvae = new NoViableAltException("", 28, 0, input, 1);
+                        DebugRecognitionException(nvae);
+                        throw nvae;
+                    }
+                } finally { DebugExitDecision(28); }
+                switch (alt28)
+                {
+                    case 1:
+                        DebugEnterAlt(1);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:26: '\\\\\\\\'
+                    {
+                        DebugLocation(566, 26);
+                        Match("\\\\"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 2:
+                        DebugEnterAlt(2);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:35: '\\\\/'
+                    {
+                        DebugLocation(566, 35);
+                        Match("\\/"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 3:
+                        DebugEnterAlt(3);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:43: '\\\\('
+                    {
+                        DebugLocation(566, 43);
+                        Match("\\("); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 4:
+                        DebugEnterAlt(4);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:566:51: '\\\\)'
+                    {
+                        DebugLocation(566, 51);
+                        Match("\\)"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 5:
+                        DebugEnterAlt(5);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:26: '\\\\|'
+                    {
+                        DebugLocation(567, 26);
+                        Match("\\|"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 6:
+                        DebugEnterAlt(6);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:34: '\\\\$'
+                    {
+                        DebugLocation(567, 34);
+                        Match("\\$"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 7:
+                        DebugEnterAlt(7);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:42: '\\\\*'
+                    {
+                        DebugLocation(567, 42);
+                        Match("\\*"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 8:
+                        DebugEnterAlt(8);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:50: '\\\\.'
+                    {
+                        DebugLocation(567, 50);
+                        Match("\\."); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 9:
+                        DebugEnterAlt(9);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:58: '\\\\^'
+                    {
+                        DebugLocation(567, 58);
+                        Match("\\^"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 10:
+                        DebugEnterAlt(10);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:66: '\\\\?'
+                    {
+                        DebugLocation(567, 66);
+                        Match("\\?"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 11:
+                        DebugEnterAlt(11);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:74: '\\\\+'
+                    {
+                        DebugLocation(567, 74);
+                        Match("\\+"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 12:
+                        DebugEnterAlt(12);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:567:82: '\\\\-'
+                    {
+                        DebugLocation(567, 82);
+                        Match("\\-"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 13:
+                        DebugEnterAlt(13);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:568:26: '\\\\n'
+                    {
+                        DebugLocation(568, 26);
+                        Match("\\n"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 14:
+                        DebugEnterAlt(14);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:568:34: '\\\\r'
+                    {
+                        DebugLocation(568, 34);
+                        Match("\\r"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 15:
+                        DebugEnterAlt(15);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:568:42: '\\\\t'
+                    {
+                        DebugLocation(568, 42);
+                        Match("\\t"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 16:
+                        DebugEnterAlt(16);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:569:26: '\\\\s'
+                    {
+                        DebugLocation(569, 26);
+                        Match("\\s"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 17:
+                        DebugEnterAlt(17);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:569:34: '\\\\S'
+                    {
+                        DebugLocation(569, 34);
+                        Match("\\S"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 18:
+                        DebugEnterAlt(18);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:570:26: '\\\\d'
+                    {
+                        DebugLocation(570, 26);
+                        Match("\\d"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 19:
+                        DebugEnterAlt(19);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:570:34: '\\\\D'
+                    {
+                        DebugLocation(570, 34);
+                        Match("\\D"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 20:
+                        DebugEnterAlt(20);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:571:26: '\\\\w'
+                    {
+                        DebugLocation(571, 26);
+                        Match("\\w"); if (state.failed) return;
+
+
+                    }
+                        break;
+                    case 21:
+                        DebugEnterAlt(21);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:571:34: '\\\\W'
+                    {
+                        DebugLocation(571, 34);
+                        Match("\\W"); if (state.failed) return;
+
+
+                    }
+                        break;
+
+                }
+            }
+            finally
+            {
+                TraceOut("REGEX_ESCAPE", 75);
+                LeaveRule("REGEX_ESCAPE", 75);
+                LeaveRule_REGEX_ESCAPE();
+            }
+        }
+        // $ANTLR end "REGEX_ESCAPE"
+
+        partial void EnterRule_REGEX_START();
+        partial void LeaveRule_REGEX_START();
+
+        // $ANTLR start "REGEX_START"
+        [GrammarRule("REGEX_START")]
+        private void mREGEX_START()
+        {
+            EnterRule_REGEX_START();
+            EnterRule("REGEX_START", 76);
+            TraceIn("REGEX_START", 76);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:21: ( ' ' .. ')' | '+' .. '.' | '0' .. '[' | ']' .. '~' | UNICODE | REGEX_ESCAPE )
+                int alt29=6;
+                try { DebugEnterDecision(29, false);
+                    int LA29_1 = input.LA(1);
+
+                    if (((LA29_1>=' ' && LA29_1<=')')))
+                    {
+                        alt29 = 1;
+                    }
+                    else if (((LA29_1>='+' && LA29_1<='.')))
+                    {
+                        alt29 = 2;
+                    }
+                    else if (((LA29_1>='0' && LA29_1<='[')))
+                    {
+                        alt29 = 3;
+                    }
+                    else if (((LA29_1>=']' && LA29_1<='~')))
+                    {
+                        alt29 = 4;
+                    }
+                    else if (((LA29_1>='\u0080' && LA29_1<='\uFFFF')))
+                    {
+                        alt29 = 5;
+                    }
+                    else if ((LA29_1=='\\'))
+                    {
+                        alt29 = 6;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        NoViableAltException nvae = new NoViableAltException("", 29, 0, input, 1);
+                        DebugRecognitionException(nvae);
+                        throw nvae;
+                    }
+                } finally { DebugExitDecision(29); }
+                switch (alt29)
+                {
+                    case 1:
+                        DebugEnterAlt(1);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:24: ' ' .. ')'
+                    {
+                        DebugLocation(572, 27);
+                        MatchRange(' ',')'); if (state.failed) return;
+
+                    }
+                        break;
+                    case 2:
+                        DebugEnterAlt(2);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:35: '+' .. '.'
+                    {
+                        DebugLocation(572, 38);
+                        MatchRange('+','.'); if (state.failed) return;
+
+                    }
+                        break;
+                    case 3:
+                        DebugEnterAlt(3);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:45: '0' .. '['
+                    {
+                        DebugLocation(572, 48);
+                        MatchRange('0','['); if (state.failed) return;
+
+                    }
+                        break;
+                    case 4:
+                        DebugEnterAlt(4);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:56: ']' .. '~'
+                    {
+                        DebugLocation(572, 59);
+                        MatchRange(']','~'); if (state.failed) return;
+
+                    }
+                        break;
+                    case 5:
+                        DebugEnterAlt(5);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:67: UNICODE
+                    {
+                        DebugLocation(572, 67);
+                        mUNICODE(); if (state.failed) return;
+
+                    }
+                        break;
+                    case 6:
+                        DebugEnterAlt(6);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:572:77: REGEX_ESCAPE
+                    {
+                        DebugLocation(572, 77);
+                        mREGEX_ESCAPE(); if (state.failed) return;
+
+                    }
+                        break;
+
+                }
+            }
+            finally
+            {
+                TraceOut("REGEX_START", 76);
+                LeaveRule("REGEX_START", 76);
+                LeaveRule_REGEX_START();
+            }
+        }
+        // $ANTLR end "REGEX_START"
+
+        partial void EnterRule_REGEX_CHAR();
+        partial void LeaveRule_REGEX_CHAR();
+
+        // $ANTLR start "REGEX_CHAR"
+        [GrammarRule("REGEX_CHAR")]
+        private void mREGEX_CHAR()
+        {
+            EnterRule_REGEX_CHAR();
+            EnterRule("REGEX_CHAR", 77);
+            TraceIn("REGEX_CHAR", 77);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:20: ( ' ' .. '.' | '0' .. '[' | ']' .. '~' | UNICODE | REGEX_ESCAPE )
+                int alt30=5;
+                try { DebugEnterDecision(30, false);
+                    int LA30_1 = input.LA(1);
+
+                    if (((LA30_1>=' ' && LA30_1<='.')))
+                    {
+                        alt30 = 1;
+                    }
+                    else if (((LA30_1>='0' && LA30_1<='[')))
+                    {
+                        alt30 = 2;
+                    }
+                    else if (((LA30_1>=']' && LA30_1<='~')))
+                    {
+                        alt30 = 3;
+                    }
+                    else if (((LA30_1>='\u0080' && LA30_1<='\uFFFF')))
+                    {
+                        alt30 = 4;
+                    }
+                    else if ((LA30_1=='\\'))
+                    {
+                        alt30 = 5;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        NoViableAltException nvae = new NoViableAltException("", 30, 0, input, 1);
+                        DebugRecognitionException(nvae);
+                        throw nvae;
+                    }
+                } finally { DebugExitDecision(30); }
+                switch (alt30)
+                {
+                    case 1:
+                        DebugEnterAlt(1);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:23: ' ' .. '.'
+                    {
+                        DebugLocation(573, 26);
+                        MatchRange(' ','.'); if (state.failed) return;
+
+                    }
+                        break;
+                    case 2:
+                        DebugEnterAlt(2);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:33: '0' .. '['
+                    {
+                        DebugLocation(573, 36);
+                        MatchRange('0','['); if (state.failed) return;
+
+                    }
+                        break;
+                    case 3:
+                        DebugEnterAlt(3);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:44: ']' .. '~'
+                    {
+                        DebugLocation(573, 47);
+                        MatchRange(']','~'); if (state.failed) return;
+
+                    }
+                        break;
+                    case 4:
+                        DebugEnterAlt(4);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:55: UNICODE
+                    {
+                        DebugLocation(573, 55);
+                        mUNICODE(); if (state.failed) return;
+
+                    }
+                        break;
+                    case 5:
+                        DebugEnterAlt(5);
+                        // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:573:65: REGEX_ESCAPE
+                    {
+                        DebugLocation(573, 65);
+                        mREGEX_ESCAPE(); if (state.failed) return;
+
+                    }
+                        break;
+
+                }
+            }
+            finally
+            {
+                TraceOut("REGEX_CHAR", 77);
+                LeaveRule("REGEX_CHAR", 77);
+                LeaveRule_REGEX_CHAR();
+            }
+        }
+        // $ANTLR end "REGEX_CHAR"
+
+        partial void EnterRule_DIV();
+        partial void LeaveRule_DIV();
+
+        // $ANTLR start "DIV"
+        [GrammarRule("DIV")]
+        private void mDIV()
+        {
+            EnterRule_DIV();
+            EnterRule("DIV", 78);
+            TraceIn("DIV", 78);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:580:13: ()
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:580:14: 
+                {
+                }
+
+            }
+            finally
+            {
+                TraceOut("DIV", 78);
+                LeaveRule("DIV", 78);
+                LeaveRule_DIV();
+            }
+        }
+        // $ANTLR end "DIV"
+
+        partial void EnterRule_REGEXP();
+        partial void LeaveRule_REGEXP();
+
+        // $ANTLR start "REGEXP"
+        [GrammarRule("REGEXP")]
+        private void mREGEXP()
+        {
+            EnterRule_REGEXP();
+            EnterRule("REGEXP", 79);
+            TraceIn("REGEXP", 79);
+            try
+            {
+                int _type = REGEXP;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:581:7: ( '/' ( ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/' | ( . )=>) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:581:10: '/' ( ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/' | ( . )=>)
+                {
+                    DebugLocation(581, 10);
+                    Match('/'); if (state.failed) return;
+                    DebugLocation(581, 15);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:581:15: ( ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/' | ( . )=>)
+                    int alt32=2;
+                    try { DebugEnterSubRule(32);
+                        try { DebugEnterDecision(32, false);
+                            int LA32_1 = input.LA(1);
+
+                            if (((LA32_1>=' ' && LA32_1<=')')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
+                            {
+                                alt32 = 1;
+                            }
+                            else if (((LA32_1>='+' && LA32_1<='.')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
+                            {
+                                alt32 = 1;
+                            }
+                            else if (((LA32_1>='0' && LA32_1<='[')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
+                            {
+                                alt32 = 1;
+                            }
+                            else if (((LA32_1>=']' && LA32_1<='~')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
+                            {
+                                alt32 = 1;
+                            }
+                            else if (((LA32_1>='\u0080' && LA32_1<='\uFFFF')) && (EvaluatePredicate(synpred6_MapCss_fragment)))
+                            {
+                                alt32 = 1;
+                            }
+                            else if ((LA32_1=='\\') && (EvaluatePredicate(synpred6_MapCss_fragment)))
+                            {
+                                alt32 = 1;
+                            }
+                            else
+                            {
+                                alt32 = 2;
+                            }
+                        } finally { DebugExitDecision(32); }
+                        switch (alt32)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:15: ( REGEX_START ( REGEX_CHAR )* '/' )=> REGEX_START ( REGEX_CHAR )* '/'
+                            {
+                                DebugLocation(583, 24);
+                                mREGEX_START(); if (state.failed) return;
+                                DebugLocation(583, 36);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:583:36: ( REGEX_CHAR )*
+                                try { DebugEnterSubRule(31);
+                                    while (true)
+                                    {
+                                        int alt31=2;
+                                        try { DebugEnterDecision(31, false);
+                                            int LA31_1 = input.LA(1);
+
+                                            if (((LA31_1>=' ' && LA31_1<='.')||(LA31_1>='0' && LA31_1<='~')||(LA31_1>='\u0080' && LA31_1<='\uFFFF')))
+                                            {
+                                                alt31 = 1;
+                                            }
+
+
+                                        } finally { DebugExitDecision(31); }
+                                        switch ( alt31 )
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:583:36: REGEX_CHAR
+                                            {
+                                                DebugLocation(583, 36);
+                                                mREGEX_CHAR(); if (state.failed) return;
+
+                                            }
+                                                break;
+
+                                            default:
+                                                goto loop31;
+                                        }
+                                    }
+
+                                    loop31:
+                                    ;
+
+                                } finally { DebugExitSubRule(31); }
+
+                                DebugLocation(583, 48);
+                                Match('/'); if (state.failed) return;
+                                DebugLocation(583, 54);
+                                if (state.backtracking == 0)
+                                {
+                                    _type=REGEXP;
+                                }
+
+                            }
+                                break;
+                            case 2:
+                                DebugEnterAlt(2);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:584:15: ( . )=>
+                            {
+                                DebugLocation(584, 54);
+                                if (state.backtracking == 0)
+                                {
+                                    _type=DIV;
+                                }
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(32); }
+
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("REGEXP", 79);
+                LeaveRule("REGEXP", 79);
+                LeaveRule_REGEXP();
+            }
+        }
+        // $ANTLR end "REGEXP"
+
+        partial void EnterRule_WS();
+        partial void LeaveRule_WS();
+
+        // $ANTLR start "WS"
+        [GrammarRule("WS")]
+        private void mWS()
+        {
+            EnterRule_WS();
+            EnterRule("WS", 80);
+            TraceIn("WS", 80);
+            try
+            {
+                int _type = WS;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:590:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:590:10: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )
+                {
+                    DebugLocation(590, 10);
+                    if ((input.LA(1)>='\t' && input.LA(1)<='\n')||(input.LA(1)>='\f' && input.LA(1)<='\r')||input.LA(1)==' ')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+                    DebugLocation(590, 44);
+                    if (state.backtracking == 0)
+                    {
+                        _channel=Hidden;
+                    }
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("WS", 80);
+                LeaveRule("WS", 80);
+                LeaveRule_WS();
+            }
+        }
+        // $ANTLR end "WS"
+
+        partial void EnterRule_SL_COMMENT();
+        partial void LeaveRule_SL_COMMENT();
+
+        // $ANTLR start "SL_COMMENT"
+        [GrammarRule("SL_COMMENT")]
+        private void mSL_COMMENT()
+        {
+            EnterRule_SL_COMMENT();
+            EnterRule("SL_COMMENT", 81);
+            TraceIn("SL_COMMENT", 81);
+            try
+            {
+                int _type = SL_COMMENT;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:11: ( '//' ( options {greedy=false; } : . )* ( '\\r' )? '\\n' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:15: '//' ( options {greedy=false; } : . )* ( '\\r' )? '\\n'
+                {
+                    DebugLocation(591, 15);
+                    Match("//"); if (state.failed) return;
+
+                    DebugLocation(591, 20);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:20: ( options {greedy=false; } : . )*
+                    try { DebugEnterSubRule(33);
+                        while (true)
+                        {
+                            int alt33=2;
+                            try { DebugEnterDecision(33, false);
+                                int LA33_1 = input.LA(1);
+
+                                if ((LA33_1=='\r'))
+                                {
+                                    alt33 = 2;
+                                }
+                                else if ((LA33_1=='\n'))
+                                {
+                                    alt33 = 2;
+                                }
+                                else if (((LA33_1>='\u0000' && LA33_1<='\t')||(LA33_1>='\u000B' && LA33_1<='\f')||(LA33_1>='\u000E' && LA33_1<='\uFFFF')))
+                                {
+                                    alt33 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(33); }
+                            switch ( alt33 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:46: .
+                                {
+                                    DebugLocation(591, 46);
+                                    MatchAny(); if (state.failed) return;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop33;
+                            }
+                        }
+
+                        loop33:
+                        ;
+
+                    } finally { DebugExitSubRule(33); }
+
+                    DebugLocation(591, 50);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:50: ( '\\r' )?
+                    int alt34=2;
+                    try { DebugEnterSubRule(34);
+                        try { DebugEnterDecision(34, false);
+                            int LA34_1 = input.LA(1);
+
+                            if ((LA34_1=='\r'))
+                            {
+                                alt34 = 1;
+                            }
+                        } finally { DebugExitDecision(34); }
+                        switch (alt34)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:591:50: '\\r'
+                            {
+                                DebugLocation(591, 50);
+                                Match('\r'); if (state.failed) return;
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(34); }
+
+                    DebugLocation(591, 56);
+                    Match('\n'); if (state.failed) return;
+                    DebugLocation(591, 61);
+                    if (state.backtracking == 0)
+                    {
+                        _channel=Hidden;
+                    }
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("SL_COMMENT", 81);
+                LeaveRule("SL_COMMENT", 81);
+                LeaveRule_SL_COMMENT();
+            }
+        }
+        // $ANTLR end "SL_COMMENT"
+
+        partial void EnterRule_ML_COMMENT();
+        partial void LeaveRule_ML_COMMENT();
+
+        // $ANTLR start "ML_COMMENT"
+        [GrammarRule("ML_COMMENT")]
+        private void mML_COMMENT()
+        {
+            EnterRule_ML_COMMENT();
+            EnterRule("ML_COMMENT", 82);
+            TraceIn("ML_COMMENT", 82);
+            try
+            {
+                int _type = ML_COMMENT;
+                int _channel = DefaultTokenChannel;
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:11: ( '/*' ( options {greedy=false; } : . )* '*/' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:15: '/*' ( options {greedy=false; } : . )* '*/'
+                {
+                    DebugLocation(592, 15);
+                    Match("/*"); if (state.failed) return;
+
+                    DebugLocation(592, 21);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:21: ( options {greedy=false; } : . )*
+                    try { DebugEnterSubRule(35);
+                        while (true)
+                        {
+                            int alt35=2;
+                            try { DebugEnterDecision(35, false);
+                                int LA35_1 = input.LA(1);
+
+                                if ((LA35_1=='*'))
+                                {
+                                    int LA35_2 = input.LA(2);
+
+                                    if ((LA35_2=='/'))
+                                    {
+                                        alt35 = 2;
+                                    }
+                                    else if (((LA35_2>='\u0000' && LA35_2<='.')||(LA35_2>='0' && LA35_2<='\uFFFF')))
+                                    {
+                                        alt35 = 1;
+                                    }
+
+
+                                }
+                                else if (((LA35_1>='\u0000' && LA35_1<=')')||(LA35_1>='+' && LA35_1<='\uFFFF')))
+                                {
+                                    alt35 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(35); }
+                            switch ( alt35 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:592:48: .
+                                {
+                                    DebugLocation(592, 48);
+                                    MatchAny(); if (state.failed) return;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop35;
+                            }
+                        }
+
+                        loop35:
+                        ;
+
+                    } finally { DebugExitSubRule(35); }
+
+                    DebugLocation(592, 52);
+                    Match("*/"); if (state.failed) return;
+
+                    DebugLocation(592, 57);
+                    if (state.backtracking == 0)
+                    {
+                        _channel=Hidden;
+                    }
+
+                }
+
+                state.type = _type;
+                state.channel = _channel;
+            }
+            finally
+            {
+                TraceOut("ML_COMMENT", 82);
+                LeaveRule("ML_COMMENT", 82);
+                LeaveRule_ML_COMMENT();
+            }
+        }
+        // $ANTLR end "ML_COMMENT"
+
+        public override void mTokens()
+        {
+            // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:8: ( OP_AND | OP_CONTAINS | OP_ENDS_WITH | OP_EQ | OP_GE | OP_GT | OP_LE | OP_LT | OP_MATCH | OP_MOD | OP_MUL | OP_NEQ | OP_OR | OP_PLUS | OP_STARTS_WITH | OP_SUBSTRING | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | RGB | RGBA | ROLE | INDEX | EVAL | LIST | IMPORT | URL | IDENTS | LBRACKET | RBRACKET | LBRACE | RBRACE | COLON | SEMICOLON | DQUOTED_STRING | SQUOTED_STRING | HEXCOLOR | NUMBER | RANGE | REGEXP | WS | SL_COMMENT | ML_COMMENT )
+            int alt36=51;
+            try { DebugEnterDecision(36, false);
+                try
+                {
+                    alt36 = dfa36.Predict(input);
+                }
+                catch (NoViableAltException nvae)
+                {
+                    DebugRecognitionException(nvae);
+                    throw;
+                }
+            } finally { DebugExitDecision(36); }
+            switch (alt36)
+            {
+                case 1:
+                    DebugEnterAlt(1);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:10: OP_AND
+                {
+                    DebugLocation(1, 10);
+                    mOP_AND(); if (state.failed) return;
+
+                }
+                    break;
+                case 2:
+                    DebugEnterAlt(2);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:17: OP_CONTAINS
+                {
+                    DebugLocation(1, 17);
+                    mOP_CONTAINS(); if (state.failed) return;
+
+                }
+                    break;
+                case 3:
+                    DebugEnterAlt(3);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:29: OP_ENDS_WITH
+                {
+                    DebugLocation(1, 29);
+                    mOP_ENDS_WITH(); if (state.failed) return;
+
+                }
+                    break;
+                case 4:
+                    DebugEnterAlt(4);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:42: OP_EQ
+                {
+                    DebugLocation(1, 42);
+                    mOP_EQ(); if (state.failed) return;
+
+                }
+                    break;
+                case 5:
+                    DebugEnterAlt(5);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:48: OP_GE
+                {
+                    DebugLocation(1, 48);
+                    mOP_GE(); if (state.failed) return;
+
+                }
+                    break;
+                case 6:
+                    DebugEnterAlt(6);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:54: OP_GT
+                {
+                    DebugLocation(1, 54);
+                    mOP_GT(); if (state.failed) return;
+
+                }
+                    break;
+                case 7:
+                    DebugEnterAlt(7);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:60: OP_LE
+                {
+                    DebugLocation(1, 60);
+                    mOP_LE(); if (state.failed) return;
+
+                }
+                    break;
+                case 8:
+                    DebugEnterAlt(8);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:66: OP_LT
+                {
+                    DebugLocation(1, 66);
+                    mOP_LT(); if (state.failed) return;
+
+                }
+                    break;
+                case 9:
+                    DebugEnterAlt(9);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:72: OP_MATCH
+                {
+                    DebugLocation(1, 72);
+                    mOP_MATCH(); if (state.failed) return;
+
+                }
+                    break;
+                case 10:
+                    DebugEnterAlt(10);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:81: OP_MOD
+                {
+                    DebugLocation(1, 81);
+                    mOP_MOD(); if (state.failed) return;
+
+                }
+                    break;
+                case 11:
+                    DebugEnterAlt(11);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:88: OP_MUL
+                {
+                    DebugLocation(1, 88);
+                    mOP_MUL(); if (state.failed) return;
+
+                }
+                    break;
+                case 12:
+                    DebugEnterAlt(12);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:95: OP_NEQ
+                {
+                    DebugLocation(1, 95);
+                    mOP_NEQ(); if (state.failed) return;
+
+                }
+                    break;
+                case 13:
+                    DebugEnterAlt(13);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:102: OP_OR
+                {
+                    DebugLocation(1, 102);
+                    mOP_OR(); if (state.failed) return;
+
+                }
+                    break;
+                case 14:
+                    DebugEnterAlt(14);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:108: OP_PLUS
+                {
+                    DebugLocation(1, 108);
+                    mOP_PLUS(); if (state.failed) return;
+
+                }
+                    break;
+                case 15:
+                    DebugEnterAlt(15);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:116: OP_STARTS_WITH
+                {
+                    DebugLocation(1, 116);
+                    mOP_STARTS_WITH(); if (state.failed) return;
+
+                }
+                    break;
+                case 16:
+                    DebugEnterAlt(16);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:131: OP_SUBSTRING
+                {
+                    DebugLocation(1, 131);
+                    mOP_SUBSTRING(); if (state.failed) return;
+
+                }
+                    break;
+                case 17:
+                    DebugEnterAlt(17);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:144: T__114
+                {
+                    DebugLocation(1, 144);
+                    mT__114(); if (state.failed) return;
+
+                }
+                    break;
+                case 18:
+                    DebugEnterAlt(18);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:151: T__115
+                {
+                    DebugLocation(1, 151);
+                    mT__115(); if (state.failed) return;
+
+                }
+                    break;
+                case 19:
+                    DebugEnterAlt(19);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:158: T__116
+                {
+                    DebugLocation(1, 158);
+                    mT__116(); if (state.failed) return;
+
+                }
+                    break;
+                case 20:
+                    DebugEnterAlt(20);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:165: T__117
+                {
+                    DebugLocation(1, 165);
+                    mT__117(); if (state.failed) return;
+
+                }
+                    break;
+                case 21:
+                    DebugEnterAlt(21);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:172: T__118
+                {
+                    DebugLocation(1, 172);
+                    mT__118(); if (state.failed) return;
+
+                }
+                    break;
+                case 22:
+                    DebugEnterAlt(22);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:179: T__119
+                {
+                    DebugLocation(1, 179);
+                    mT__119(); if (state.failed) return;
+
+                }
+                    break;
+                case 23:
+                    DebugEnterAlt(23);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:186: T__120
+                {
+                    DebugLocation(1, 186);
+                    mT__120(); if (state.failed) return;
+
+                }
+                    break;
+                case 24:
+                    DebugEnterAlt(24);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:193: T__121
+                {
+                    DebugLocation(1, 193);
+                    mT__121(); if (state.failed) return;
+
+                }
+                    break;
+                case 25:
+                    DebugEnterAlt(25);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:200: T__122
+                {
+                    DebugLocation(1, 200);
+                    mT__122(); if (state.failed) return;
+
+                }
+                    break;
+                case 26:
+                    DebugEnterAlt(26);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:207: T__123
+                {
+                    DebugLocation(1, 207);
+                    mT__123(); if (state.failed) return;
+
+                }
+                    break;
+                case 27:
+                    DebugEnterAlt(27);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:214: T__124
+                {
+                    DebugLocation(1, 214);
+                    mT__124(); if (state.failed) return;
+
+                }
+                    break;
+                case 28:
+                    DebugEnterAlt(28);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:221: RGB
+                {
+                    DebugLocation(1, 221);
+                    mRGB(); if (state.failed) return;
+
+                }
+                    break;
+                case 29:
+                    DebugEnterAlt(29);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:225: RGBA
+                {
+                    DebugLocation(1, 225);
+                    mRGBA(); if (state.failed) return;
+
+                }
+                    break;
+                case 30:
+                    DebugEnterAlt(30);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:230: ROLE
+                {
+                    DebugLocation(1, 230);
+                    mROLE(); if (state.failed) return;
+
+                }
+                    break;
+                case 31:
+                    DebugEnterAlt(31);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:235: INDEX
+                {
+                    DebugLocation(1, 235);
+                    mINDEX(); if (state.failed) return;
+
+                }
+                    break;
+                case 32:
+                    DebugEnterAlt(32);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:241: EVAL
+                {
+                    DebugLocation(1, 241);
+                    mEVAL(); if (state.failed) return;
+
+                }
+                    break;
+                case 33:
+                    DebugEnterAlt(33);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:246: LIST
+                {
+                    DebugLocation(1, 246);
+                    mLIST(); if (state.failed) return;
+
+                }
+                    break;
+                case 34:
+                    DebugEnterAlt(34);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:251: IMPORT
+                {
+                    DebugLocation(1, 251);
+                    mIMPORT(); if (state.failed) return;
+
+                }
+                    break;
+                case 35:
+                    DebugEnterAlt(35);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:258: URL
+                {
+                    DebugLocation(1, 258);
+                    mURL(); if (state.failed) return;
+
+                }
+                    break;
+                case 36:
+                    DebugEnterAlt(36);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:262: IDENTS
+                {
+                    DebugLocation(1, 262);
+                    mIDENTS(); if (state.failed) return;
+
+                }
+                    break;
+                case 37:
+                    DebugEnterAlt(37);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:269: LBRACKET
+                {
+                    DebugLocation(1, 269);
+                    mLBRACKET(); if (state.failed) return;
+
+                }
+                    break;
+                case 38:
+                    DebugEnterAlt(38);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:278: RBRACKET
+                {
+                    DebugLocation(1, 278);
+                    mRBRACKET(); if (state.failed) return;
+
+                }
+                    break;
+                case 39:
+                    DebugEnterAlt(39);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:287: LBRACE
+                {
+                    DebugLocation(1, 287);
+                    mLBRACE(); if (state.failed) return;
+
+                }
+                    break;
+                case 40:
+                    DebugEnterAlt(40);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:294: RBRACE
+                {
+                    DebugLocation(1, 294);
+                    mRBRACE(); if (state.failed) return;
+
+                }
+                    break;
+                case 41:
+                    DebugEnterAlt(41);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:301: COLON
+                {
+                    DebugLocation(1, 301);
+                    mCOLON(); if (state.failed) return;
+
+                }
+                    break;
+                case 42:
+                    DebugEnterAlt(42);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:307: SEMICOLON
+                {
+                    DebugLocation(1, 307);
+                    mSEMICOLON(); if (state.failed) return;
+
+                }
+                    break;
+                case 43:
+                    DebugEnterAlt(43);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:317: DQUOTED_STRING
+                {
+                    DebugLocation(1, 317);
+                    mDQUOTED_STRING(); if (state.failed) return;
+
+                }
+                    break;
+                case 44:
+                    DebugEnterAlt(44);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:332: SQUOTED_STRING
+                {
+                    DebugLocation(1, 332);
+                    mSQUOTED_STRING(); if (state.failed) return;
+
+                }
+                    break;
+                case 45:
+                    DebugEnterAlt(45);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:347: HEXCOLOR
+                {
+                    DebugLocation(1, 347);
+                    mHEXCOLOR(); if (state.failed) return;
+
+                }
+                    break;
+                case 46:
+                    DebugEnterAlt(46);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:356: NUMBER
+                {
+                    DebugLocation(1, 356);
+                    mNUMBER(); if (state.failed) return;
+
+                }
+                    break;
+                case 47:
+                    DebugEnterAlt(47);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:363: RANGE
+                {
+                    DebugLocation(1, 363);
+                    mRANGE(); if (state.failed) return;
+
+                }
+                    break;
+                case 48:
+                    DebugEnterAlt(48);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:369: REGEXP
+                {
+                    DebugLocation(1, 369);
+                    mREGEXP(); if (state.failed) return;
+
+                }
+                    break;
+                case 49:
+                    DebugEnterAlt(49);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:376: WS
+                {
+                    DebugLocation(1, 376);
+                    mWS(); if (state.failed) return;
+
+                }
+                    break;
+                case 50:
+                    DebugEnterAlt(50);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:379: SL_COMMENT
+                {
+                    DebugLocation(1, 379);
+                    mSL_COMMENT(); if (state.failed) return;
+
+                }
+                    break;
+                case 51:
+                    DebugEnterAlt(51);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:1:390: ML_COMMENT
+                {
+                    DebugLocation(1, 390);
+                    mML_COMMENT(); if (state.failed) return;
+
+                }
+                    break;
+
+            }
+
+        }
+
+        partial void EnterRule_synpred1_MapCss_fragment();
+        partial void LeaveRule_synpred1_MapCss_fragment();
+
+        // $ANTLR start synpred1_MapCss
+        private void synpred1_MapCss_fragment()
+        {
+            EnterRule_synpred1_MapCss_fragment();
+            EnterRule("synpred1_MapCss_fragment", 84);
+            TraceIn("synpred1_MapCss_fragment", 84);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:453:12: ( TAGSEPARATOR )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                {
+                    DebugLocation(453, 12);
+                    if (input.LA(1)=='.'||input.LA(1)==':')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("synpred1_MapCss_fragment", 84);
+                LeaveRule("synpred1_MapCss_fragment", 84);
+                LeaveRule_synpred1_MapCss_fragment();
+            }
+        }
+        // $ANTLR end synpred1_MapCss
+
+        partial void EnterRule_synpred2_MapCss_fragment();
+        partial void LeaveRule_synpred2_MapCss_fragment();
+
+        // $ANTLR start synpred2_MapCss
+        private void synpred2_MapCss_fragment()
+        {
+            EnterRule_synpred2_MapCss_fragment();
+            EnterRule("synpred2_MapCss_fragment", 85);
+            TraceIn("synpred2_MapCss_fragment", 85);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:4: ( ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )? )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:5: ( '-' )? ( DIGIT )* ( '.' ( DIGIT )+ )?
+                {
+                    DebugLocation(530, 5);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:5: ( '-' )?
+                    int alt37=2;
+                    try { DebugEnterSubRule(37);
+                        try { DebugEnterDecision(37, false);
+                            int LA37_1 = input.LA(1);
+
+                            if ((LA37_1=='-'))
+                            {
+                                alt37 = 1;
+                            }
+                        } finally { DebugExitDecision(37); }
+                        switch (alt37)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:5: '-'
+                            {
+                                DebugLocation(530, 5);
+                                Match('-'); if (state.failed) return;
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(37); }
+
+                    DebugLocation(530, 10);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:10: ( DIGIT )*
+                    try { DebugEnterSubRule(38);
+                        while (true)
+                        {
+                            int alt38=2;
+                            try { DebugEnterDecision(38, false);
+                                int LA38_1 = input.LA(1);
+
+                                if (((LA38_1>='0' && LA38_1<='9')))
+                                {
+                                    alt38 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(38); }
+                            switch ( alt38 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                {
+                                    DebugLocation(530, 10);
+                                    if ((input.LA(1)>='0' && input.LA(1)<='9'))
+                                    {
+                                        input.Consume();
+                                        state.failed=false;
+                                    }
+                                    else
+                                    {
+                                        if (state.backtracking>0) {state.failed=true; return;}
+                                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                                        DebugRecognitionException(mse);
+                                        Recover(mse);
+                                        throw mse;
+                                    }
+
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop38;
+                            }
+                        }
+
+                        loop38:
+                        ;
+
+                    } finally { DebugExitSubRule(38); }
+
+                    DebugLocation(530, 17);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:17: ( '.' ( DIGIT )+ )?
+                    int alt40=2;
+                    try { DebugEnterSubRule(40);
+                        try { DebugEnterDecision(40, false);
+                            int LA40_1 = input.LA(1);
+
+                            if ((LA40_1=='.'))
+                            {
+                                alt40 = 1;
+                            }
+                        } finally { DebugExitDecision(40); }
+                        switch (alt40)
+                        {
+                            case 1:
+                                DebugEnterAlt(1);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:18: '.' ( DIGIT )+
+                            {
+                                DebugLocation(530, 18);
+                                Match('.'); if (state.failed) return;
+                                DebugLocation(530, 22);
+                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:530:22: ( DIGIT )+
+                                int cnt39=0;
+                                try { DebugEnterSubRule(39);
+                                    while (true)
+                                    {
+                                        int alt39=2;
+                                        try { DebugEnterDecision(39, false);
+                                            int LA39_1 = input.LA(1);
+
+                                            if (((LA39_1>='0' && LA39_1<='9')))
+                                            {
+                                                alt39 = 1;
+                                            }
+
+
+                                        } finally { DebugExitDecision(39); }
+                                        switch (alt39)
+                                        {
+                                            case 1:
+                                                DebugEnterAlt(1);
+                                                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:
+                                            {
+                                                DebugLocation(530, 22);
+                                                if ((input.LA(1)>='0' && input.LA(1)<='9'))
+                                                {
+                                                    input.Consume();
+                                                    state.failed=false;
+                                                }
+                                                else
+                                                {
+                                                    if (state.backtracking>0) {state.failed=true; return;}
+                                                    MismatchedSetException mse = new MismatchedSetException(null,input);
+                                                    DebugRecognitionException(mse);
+                                                    Recover(mse);
+                                                    throw mse;
+                                                }
+
+
+                                            }
+                                                break;
+
+                                            default:
+                                                if (cnt39 >= 1)
+                                                    goto loop39;
+
+                                                if (state.backtracking>0) {state.failed=true; return;}
+                                                EarlyExitException eee39 = new EarlyExitException( 39, input );
+                                                DebugRecognitionException(eee39);
+                                                throw eee39;
+                                        }
+                                        cnt39++;
+                                    }
+                                    loop39:
+                                    ;
+
+                                } finally { DebugExitSubRule(39); }
+
+
+                            }
+                                break;
+
+                        }
+                    } finally { DebugExitSubRule(40); }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("synpred2_MapCss_fragment", 85);
+                LeaveRule("synpred2_MapCss_fragment", 85);
+                LeaveRule_synpred2_MapCss_fragment();
+            }
+        }
+        // $ANTLR end synpred2_MapCss
+
+        partial void EnterRule_synpred3_MapCss_fragment();
+        partial void LeaveRule_synpred3_MapCss_fragment();
+
+        // $ANTLR start synpred3_MapCss
+        private void synpred3_MapCss_fragment()
+        {
+            EnterRule_synpred3_MapCss_fragment();
+            EnterRule("synpred3_MapCss_fragment", 86);
+            TraceIn("synpred3_MapCss_fragment", 86);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:532:6: ( P ( T | X ) )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:532:7: P ( T | X )
+                {
+                    DebugLocation(532, 7);
+                    mP(); if (state.failed) return;
+                    DebugLocation(532, 9);
+                    if (input.LA(1)=='T'||input.LA(1)=='X'||input.LA(1)=='t'||input.LA(1)=='x')
+                    {
+                        input.Consume();
+                        state.failed=false;
+                    }
+                    else
+                    {
+                        if (state.backtracking>0) {state.failed=true; return;}
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        DebugRecognitionException(mse);
+                        Recover(mse);
+                        throw mse;
+                    }
+
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("synpred3_MapCss_fragment", 86);
+                LeaveRule("synpred3_MapCss_fragment", 86);
+                LeaveRule_synpred3_MapCss_fragment();
+            }
+        }
+        // $ANTLR end synpred3_MapCss
+
+        partial void EnterRule_synpred4_MapCss_fragment();
+        partial void LeaveRule_synpred4_MapCss_fragment();
+
+        // $ANTLR start synpred4_MapCss
+        private void synpred4_MapCss_fragment()
+        {
+            EnterRule_synpred4_MapCss_fragment();
+            EnterRule("synpred4_MapCss_fragment", 87);
+            TraceIn("synpred4_MapCss_fragment", 87);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:538:10: ( '%' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:538:11: '%'
+                {
+                    DebugLocation(538, 11);
+                    Match('%'); if (state.failed) return;
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("synpred4_MapCss_fragment", 87);
+                LeaveRule("synpred4_MapCss_fragment", 87);
+                LeaveRule_synpred4_MapCss_fragment();
+            }
+        }
+        // $ANTLR end synpred4_MapCss
+
+        partial void EnterRule_synpred5_MapCss_fragment();
+        partial void LeaveRule_synpred5_MapCss_fragment();
+
+        // $ANTLR start synpred5_MapCss
+        private void synpred5_MapCss_fragment()
+        {
+            EnterRule_synpred5_MapCss_fragment();
+            EnterRule("synpred5_MapCss_fragment", 88);
+            TraceIn("synpred5_MapCss_fragment", 88);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:4: ( '+' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:548:5: '+'
+                {
+                    DebugLocation(548, 5);
+                    Match('+'); if (state.failed) return;
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("synpred5_MapCss_fragment", 88);
+                LeaveRule("synpred5_MapCss_fragment", 88);
+                LeaveRule_synpred5_MapCss_fragment();
+            }
+        }
+        // $ANTLR end synpred5_MapCss
+
+        partial void EnterRule_synpred6_MapCss_fragment();
+        partial void LeaveRule_synpred6_MapCss_fragment();
+
+        // $ANTLR start synpred6_MapCss
+        private void synpred6_MapCss_fragment()
+        {
+            EnterRule_synpred6_MapCss_fragment();
+            EnterRule("synpred6_MapCss_fragment", 89);
+            TraceIn("synpred6_MapCss_fragment", 89);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:15: ( REGEX_START ( REGEX_CHAR )* '/' )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:16: REGEX_START ( REGEX_CHAR )* '/'
+                {
+                    DebugLocation(582, 16);
+                    mREGEX_START(); if (state.failed) return;
+                    DebugLocation(582, 28);
+                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:28: ( REGEX_CHAR )*
+                    try { DebugEnterSubRule(41);
+                        while (true)
+                        {
+                            int alt41=2;
+                            try { DebugEnterDecision(41, false);
+                                int LA41_1 = input.LA(1);
+
+                                if (((LA41_1>=' ' && LA41_1<='.')||(LA41_1>='0' && LA41_1<='~')||(LA41_1>='\u0080' && LA41_1<='\uFFFF')))
+                                {
+                                    alt41 = 1;
+                                }
+
+
+                            } finally { DebugExitDecision(41); }
+                            switch ( alt41 )
+                            {
+                                case 1:
+                                    DebugEnterAlt(1);
+                                    // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:582:28: REGEX_CHAR
+                                {
+                                    DebugLocation(582, 28);
+                                    mREGEX_CHAR(); if (state.failed) return;
+
+                                }
+                                    break;
+
+                                default:
+                                    goto loop41;
+                            }
+                        }
+
+                        loop41:
+                        ;
+
+                    } finally { DebugExitSubRule(41); }
+
+                    DebugLocation(582, 40);
+                    Match('/'); if (state.failed) return;
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("synpred6_MapCss_fragment", 89);
+                LeaveRule("synpred6_MapCss_fragment", 89);
+                LeaveRule_synpred6_MapCss_fragment();
+            }
+        }
+        // $ANTLR end synpred6_MapCss
+
+        partial void EnterRule_synpred7_MapCss_fragment();
+        partial void LeaveRule_synpred7_MapCss_fragment();
+
+        // $ANTLR start synpred7_MapCss
+        private void synpred7_MapCss_fragment()
+        {
+            EnterRule_synpred7_MapCss_fragment();
+            EnterRule("synpred7_MapCss_fragment", 90);
+            TraceIn("synpred7_MapCss_fragment", 90);
+            try
+            {
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:584:15: ( . )
+                DebugEnterAlt(1);
+                // c:\\Users\\Ilya.Builuk\\Documents\\Source\\MapCssEngine\\MapCssEngine\\Parser\\MapCss.g:584:16: .
+                {
+                    DebugLocation(584, 16);
+                    MatchAny(); if (state.failed) return;
+
+                }
+
+            }
+            finally
+            {
+                TraceOut("synpred7_MapCss_fragment", 90);
+                LeaveRule("synpred7_MapCss_fragment", 90);
+                LeaveRule_synpred7_MapCss_fragment();
+            }
+        }
+        // $ANTLR end synpred7_MapCss
+
+        #region Synpreds
+        private bool EvaluatePredicate(System.Action fragment)
+        {
+            bool success = false;
+            state.backtracking++;
+            try { DebugBeginBacktrack(state.backtracking);
+                int start = input.Mark();
+                try
+                {
+                    fragment();
+                }
+                catch ( RecognitionException re )
+                {
+                    System.Console.Error.WriteLine("impossible: "+re);
+                }
+                success = !state.failed;
+                input.Rewind(start);
+            } finally { DebugEndBacktrack(state.backtracking, success); }
+            state.backtracking--;
+            state.failed=false;
+            return success;
+        }
+        #endregion Synpreds
+
+
+        #region DFA
+        DFA27 dfa27;
+        DFA36 dfa36;
+
+        protected override void InitDFAs()
+        {
+            base.InitDFAs();
+            dfa27 = new DFA27(this);
+            dfa36 = new DFA36(this);
+        }
+
+        private class DFA27 : DFA
+        {
+            private const string DFA27_eotS =
+                "\x2\xFFFF\x1\x3\x1\xFFFF\x1\x5\x2\xFFFF";
+            private const string DFA27_eofS =
+                "\x7\xFFFF";
+            private const string DFA27_minS =
+                "\x1\x2D\x1\xFFFF\x1\x2D\x1\xFFFF\x1\x30\x2\xFFFF";
+            private const string DFA27_maxS =
+                "\x1\x39\x1\xFFFF\x1\x39\x1\xFFFF\x1\x39\x2\xFFFF";
+            private const string DFA27_acceptS =
+                "\x1\xFFFF\x1\x1\x1\xFFFF\x1\x2\x1\xFFFF\x1\x3\x1\x4";
+            private const string DFA27_specialS =
+                "\x7\xFFFF}>";
+            private static readonly string[] DFA27_transitionS =
+            {
+                "\x1\x1\x2\xFFFF\xA\x2",
+                "",
+                "\x1\x4\x2\xFFFF\xA\x2",
+                "",
+                "\xA\x6",
+                "",
+                ""
+            };
+
+            private static readonly short[] DFA27_eot = DFA.UnpackEncodedString(DFA27_eotS);
+            private static readonly short[] DFA27_eof = DFA.UnpackEncodedString(DFA27_eofS);
+            private static readonly char[] DFA27_min = DFA.UnpackEncodedStringToUnsignedChars(DFA27_minS);
+            private static readonly char[] DFA27_max = DFA.UnpackEncodedStringToUnsignedChars(DFA27_maxS);
+            private static readonly short[] DFA27_accept = DFA.UnpackEncodedString(DFA27_acceptS);
+            private static readonly short[] DFA27_special = DFA.UnpackEncodedString(DFA27_specialS);
+            private static readonly short[][] DFA27_transition;
+
+            static DFA27()
+            {
+                int numStates = DFA27_transitionS.Length;
+                DFA27_transition = new short[numStates][];
+                for ( int i=0; i < numStates; i++ )
+                {
+                    DFA27_transition[i] = DFA.UnpackEncodedString(DFA27_transitionS[i]);
+                }
+            }
+
+            public DFA27( BaseRecognizer recognizer )
+            {
+                this.recognizer = recognizer;
+                this.decisionNumber = 27;
+                this.eot = DFA27_eot;
+                this.eof = DFA27_eof;
+                this.min = DFA27_min;
+                this.max = DFA27_max;
+                this.accept = DFA27_accept;
+                this.special = DFA27_special;
+                this.transition = DFA27_transition;
+            }
+
+            public override string Description { get { return "555:9: ( '-' ( DIGIT )+ | ( DIGIT )+ | ( DIGIT )+ '-' | ( DIGIT )+ '-' ( DIGIT )+ )"; } }
+
+            public override void Error(NoViableAltException nvae)
+            {
+                DebugRecognitionException(nvae);
+            }
+        }
+
+        private class DFA36 : DFA
+        {
+            private const string DFA36_eotS =
+                "\x1\x23\x3\xFFFF\x1\x28\x1\x2A\x1\x2C\x1\xFFFF\x1\x2F\x1\x33\x1\xFFFF"+
+                "\x1\x36\x4\xFFFF\x1\x37\x1\x38\x1\x3B\x1\xFFFF\x4\x24\x1\xFFFF\x2\x24"+
+                "\xA\xFFFF\x1\x46\x16\xFFFF\x6\x24\x5\xFFFF\x1\x4E\x5\x24\x1\x54\x1\xFFFF"+
+                "\x1\x55\x1\x24\x1\x57\x1\x58\x3\xFFFF\x1\x59\x3\xFFFF";
+            private const string DFA36_eofS =
+                "\x5A\xFFFF";
+            private const string DFA36_minS =
+                "\x1\x9\x3\xFFFF\x1\x7E\x2\x3D\x1\xFFFF\x1\x3D\x1\x2E\x1\x7A\x1\x30\x4"+
+                "\xFFFF\x1\x25\x1\x30\x1\x21\x1\xFFFF\x1\x47\x1\x4E\x1\x56\x1\x49\x1\xFFFF"+
+                "\x1\x52\x1\x54\xA\xFFFF\x1\x2A\x16\xFFFF\x1\x42\x1\x4C\x1\x44\x1\x41"+
+                "\x1\x53\x1\x4C\x5\xFFFF\x1\x2D\x2\x45\x1\x4C\x1\x54\x1\x9\x1\x2D\x1\xFFFF"+
+                "\x1\x2D\x1\x58\x2\x2D\x3\xFFFF\x1\x2D\x3\xFFFF";
+            private const string DFA36_maxS =
+                "\x1\x7E\x3\xFFFF\x1\x7E\x2\x3D\x1\xFFFF\x2\x3D\x1\x7C\x1\x39\x4\xFFFF"+
+                "\x1\x7A\x1\x39\x1\x3A\x1\xFFFF\x1\x6F\x1\x6E\x1\x76\x1\x69\x1\xFFFF\x1"+
+                "\x72\x1\x78\xA\xFFFF\x1\x2F\x16\xFFFF\x1\x62\x1\x6C\x1\x64\x1\x61\x1"+
+                "\x73\x1\x6C\x5\xFFFF\x1\x7A\x2\x65\x1\x6C\x1\x74\x1\x28\x1\x7A\x1\xFFFF"+
+                "\x1\x7A\x1\x78\x2\x7A\x3\xFFFF\x1\x7A\x3\xFFFF";
+            private const string DFA36_acceptS =
+                "\x1\xFFFF\x1\x1\x1\x2\x1\x3\x3\xFFFF\x1\xA\x4\xFFFF\x1\xF\x1\x14\x1\x15"+
+                "\x1\x16\x3\xFFFF\x1\x1B\x4\xFFFF\x1\x22\x2\xFFFF\x1\x25\x1\x26\x1\x27"+
+                "\x1\x28\x1\x2A\x1\x2B\x1\x2C\x1\x2D\x1\x2E\x1\x24\x1\xFFFF\x1\x31\x1"+
+                "\x9\x1\x4\x1\x5\x1\x6\x1\x7\x1\x8\x1\xA\x1\x10\x1\xB\x1\xC\x1\x12\x1"+
+                "\x13\x1\x11\x1\xD\x1\x2F\x1\xE\x1\x17\x1\x18\x1\x19\x1\x1A\x1\x29\x6"+
+                "\xFFFF\x2\x24\x1\x32\x1\x33\x1\x30\x7\xFFFF\x1\x1C\x4\xFFFF\x1\x23\x1"+
+                "\x1D\x1\x1E\x1\xFFFF\x1\x20\x1\x21\x1\x1F";
+            private const string DFA36_specialS =
+                "\x5A\xFFFF}>";
+            private static readonly string[] DFA36_transitionS =
+            {
+                "\x2\x26\x1\xFFFF\x2\x26\x12\xFFFF\x1\x26\x1\x9\x1\x20\x1\x22\x1\x3\x1"+
+                "\x7\x1\x1\x1\x21\x1\xD\x1\xE\x1\x8\x1\xB\x1\xF\x1\x10\x1\x11\x1\x25"+
+                "\xA\xFFFF\x1\x12\x1\x1F\x1\x6\x1\x4\x1\x5\x1\x13\x1\x18\x4\x24\x1\x16"+
+                "\x3\x24\x1\x15\x2\x24\x1\x17\x3\x24\x1\x1A\x1\x24\x1\x14\x2\x24\x1\x19"+
+                "\x5\x24\x1\x1B\x1\xFFFF\x1\x1C\x1\xC\x1\x24\x1\xFFFF\x4\x24\x1\x16\x3"+
+                "\x24\x1\x15\x2\x24\x1\x17\x3\x24\x1\x1A\x1\x24\x1\x14\x2\x24\x1\x19"+
+                "\x5\x24\x1\x1D\x1\xA\x1\x1E\x1\x2",
+                "",
+                "",
+                "",
+                "\x1\x27",
+                "\x1\x29",
+                "\x1\x2B",
+                "",
+                "\x1\x2E",
+                "\x1\x31\xB\xFFFF\x1\x32\x2\xFFFF\x1\x30",
+                "\x1\x35\x1\xFFFF\x1\x34",
+                "\xA\x23",
+                "",
+                "",
+                "",
+                "",
+                "\x1\x23\x8\xFFFF\x1\x23\x1\xFFFF\xA\x23\x7\xFFFF\xF\x24\x1\x1A\xA\x24"+
+                "\x4\xFFFF\x1\x24\x1\xFFFF\xF\x24\x1\x1A\xA\x24",
+                "\xA\x23",
+                "\x1\x39\x18\xFFFF\x1\x3A",
+                "",
+                "\x1\x3C\x7\xFFFF\x1\x3D\x17\xFFFF\x1\x3C\x7\xFFFF\x1\x3D",
+                "\x1\x3E\x1F\xFFFF\x1\x3E",
+                "\x1\x3F\x1F\xFFFF\x1\x3F",
+                "\x1\x40\x1F\xFFFF\x1\x40",
+                "",
+                "\x1\x41\x1F\xFFFF\x1\x41",
+                "\x1\x42\x3\xFFFF\x1\x43\x1B\xFFFF\x1\x42\x3\xFFFF\x1\x43",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "\x1\x45\x4\xFFFF\x1\x44",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "\x1\x47\x1F\xFFFF\x1\x47",
+                "\x1\x48\x1F\xFFFF\x1\x48",
+                "\x1\x49\x1F\xFFFF\x1\x49",
+                "\x1\x4A\x1F\xFFFF\x1\x4A",
+                "\x1\x4B\x1F\xFFFF\x1\x4B",
+                "\x1\x4C\x1F\xFFFF\x1\x4C",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1\x4D\x19\x24\x4\xFFFF\x1\x24\x1\xFFFF"+
+                "\x1\x4D\x19\x24",
+                "\x1\x4F\x1F\xFFFF\x1\x4F",
+                "\x1\x50\x1F\xFFFF\x1\x50",
+                "\x1\x51\x1F\xFFFF\x1\x51",
+                "\x1\x52\x1F\xFFFF\x1\x52",
+                "\x1\x53\x2\xFFFF\x1\x53\x13\xFFFF\x1\x53\x7\xFFFF\x1\x53",
+                "\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
+                "\x24",
+                "",
+                "\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
+                "\x24",
+                "\x1\x56\x1F\xFFFF\x1\x56",
+                "\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
+                "\x24",
+                "\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
+                "\x24",
+                "",
+                "",
+                "",
+                "\x2\x24\x1\xFFFF\xB\x24\x6\xFFFF\x1A\x24\x4\xFFFF\x1\x24\x1\xFFFF\x1A"+
+                "\x24",
+                "",
+                "",
+                ""
+            };
+
+            private static readonly short[] DFA36_eot = DFA.UnpackEncodedString(DFA36_eotS);
+            private static readonly short[] DFA36_eof = DFA.UnpackEncodedString(DFA36_eofS);
+            private static readonly char[] DFA36_min = DFA.UnpackEncodedStringToUnsignedChars(DFA36_minS);
+            private static readonly char[] DFA36_max = DFA.UnpackEncodedStringToUnsignedChars(DFA36_maxS);
+            private static readonly short[] DFA36_accept = DFA.UnpackEncodedString(DFA36_acceptS);
+            private static readonly short[] DFA36_special = DFA.UnpackEncodedString(DFA36_specialS);
+            private static readonly short[][] DFA36_transition;
+
+            static DFA36()
+            {
+                int numStates = DFA36_transitionS.Length;
+                DFA36_transition = new short[numStates][];
+                for ( int i=0; i < numStates; i++ )
+                {
+                    DFA36_transition[i] = DFA.UnpackEncodedString(DFA36_transitionS[i]);
+                }
+            }
+
+            public DFA36( BaseRecognizer recognizer )
+            {
+                this.recognizer = recognizer;
+                this.decisionNumber = 36;
+                this.eot = DFA36_eot;
+                this.eof = DFA36_eof;
+                this.min = DFA36_min;
+                this.max = DFA36_max;
+                this.accept = DFA36_accept;
+                this.special = DFA36_special;
+                this.transition = DFA36_transition;
+            }
+
+            public override string Description { get { return "1:1: Tokens : ( OP_AND | OP_CONTAINS | OP_ENDS_WITH | OP_EQ | OP_GE | OP_GT | OP_LE | OP_LT | OP_MATCH | OP_MOD | OP_MUL | OP_NEQ | OP_OR | OP_PLUS | OP_STARTS_WITH | OP_SUBSTRING | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | RGB | RGBA | ROLE | INDEX | EVAL | LIST | IMPORT | URL | IDENTS | LBRACKET | RBRACKET | LBRACE | RBRACE | COLON | SEMICOLON | DQUOTED_STRING | SQUOTED_STRING | HEXCOLOR | NUMBER | RANGE | REGEXP | WS | SL_COMMENT | ML_COMMENT );"; } }
+
+            public override void Error(NoViableAltException nvae)
+            {
+                DebugRecognitionException(nvae);
+            }
+        }
+
+
+        #endregion
+
+    }
 }

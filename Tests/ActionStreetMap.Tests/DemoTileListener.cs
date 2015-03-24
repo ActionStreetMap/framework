@@ -2,14 +2,14 @@
 using System.Diagnostics;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Polygons;
+using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Terrain;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Tests.Expiremental;
-using Path = System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>;
-using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Polygons.IntPoint>>;
+using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
+using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Tests
 {
