@@ -32,14 +32,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Voronoi
             this.mesh = mesh;
             if (generate)
             {
-                Generate(mesh);
+                Generate();
             }
         }
 
         /// <summary> Generate the Voronoi diagram from given triangle mesh.. </summary>
-        /// <param name="mesh"></param>
-        /// <param name="bounded"></param>
-        protected void Generate(Mesh mesh)
+        protected void Generate()
         {
             mesh.Renumber();
 

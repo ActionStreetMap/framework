@@ -19,7 +19,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref=""/> class. </summary>
+        /// <summary> Initializes a new instance of the <see cref="DcelMesh"/> class. </summary>
         /// <param name="initialize"> If false, lists will not be initialized. </param>
         protected DcelMesh(bool initialize)
         {

@@ -141,12 +141,14 @@ namespace ActionStreetMap.Maps.Data.Elevation
                    height3*(1 - dy)*dx;
         }
 
+        /// <inheritdoc />
         public float GetElevation(MapPoint point)
         {
             var geoCoordinate = GeoProjection.ToGeoCoordinate(_relativeNullPoint, point);
             return GetElevation(geoCoordinate);
         }
 
+        /// <inheritdoc />
         public void SetNullPoint(GeoCoordinate coordinate)
         {
             _relativeNullPoint = coordinate;

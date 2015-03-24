@@ -100,11 +100,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             int iccsze = 0;
             int level_num = 0;
 
-            /// Index vector for a level structure. The level structure is stored in the currently
-            /// unused spaces in the permutation vector PERM.
+            // Index vector for a level structure. The level structure is stored in the currently
+            // unused spaces in the permutation vector PERM.
             int[] level_row = new int[node_num + 1];
 
-            /// Marks variables that have been numbered. 
+            // Marks variables that have been numbered. 
             int[] mask = new int[node_num];
 
             for (i = 0; i < node_num; i++)
@@ -152,10 +152,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// their mask values set to zero.
         /// </param>
         /// <param name="perm"> Output, int PERM(NODE_NUM), the RCM ordering. </param>
+        /// <param name="offset"></param>
         /// <param name="iccsze">
         /// Output, int ICCSZE, the size of the connected component that has been numbered.
         /// </param>
-        /// <param name="node_num"> the number of nodes. </param>
         /// <remarks>
         /// The connected component is specified by a node ROOT and a mask. The numbering starts at
         /// the root node.
@@ -180,8 +180,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             int lbegin, lnbr, lperm, lvlend;
             int nbr, node;
 
-            /// Workspace, int DEG[NODE_NUM], a temporary vector used to hold the degree of the
-            /// nodes in the section graph specified by mask and root.
+            // Workspace, int DEG[NODE_NUM], a temporary vector used to hold the degree of the
+            // nodes in the section graph specified by mask and root.
             int[] deg = new int[node_num];
 
             // Find the degrees of the nodes in the component specified by MASK and ROOT. 
@@ -284,7 +284,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// Output, int LEVEL(NODE_NUM), the level structure array pair containing the level
         /// structure found.
         /// </param>
-        /// <param name="node_num"> the number of nodes. </param>
+        /// <param name="offset"></param>
         /// <remarks>
         /// The diameter of a graph is the maximum distance (number of edges) between any two nodes
         /// of the graph.
@@ -413,7 +413,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// </param>
         /// <param name="level_row"> Output, int LEVEL_ROW[NODE_NUM+1], the rooted level structure. </param>
         /// <param name="level"> Output, int LEVEL[NODE_NUM], the rooted level structure. </param>
-        /// <param name="node_num"> the number of nodes. </param>
+        /// <param name="offset"></param>
         /// <remarks>
         /// Only nodes for which MASK is nonzero will be considered.
         /// 
@@ -507,7 +507,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// Output, int LS[NODE_NUM], stores in entries 1 through ICCSIZE the nodes in the connected
         /// component, starting with ROOT, and proceeding by levels.
         /// </param>
-        /// <param name="node_num"> the number of nodes. </param>
+        /// <param name="offset"></param>
         /// <remarks>
         /// The connected component is specified by MASK and ROOT. Nodes for which MASK is zero are ignored.
         /// 
@@ -604,6 +604,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         }
 
         /// <summary> Reverses the elements of an integer vector. </summary>
+        /// <param name="offset"></param>
         /// <param name="size"> number of entries in the array. </param>
         /// <param name="a"> the array to be reversed. </param>
         /// <example>

@@ -11,7 +11,6 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
         {
             var vertList = new List<Vector3>();
             var middlePointIndexCache = new Dictionary<long, int>();
-            int index = 0;
 
             var radius = context.Radius;
             var recursionLevel = context.RecursionLevel;

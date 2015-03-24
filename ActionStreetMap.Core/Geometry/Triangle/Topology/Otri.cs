@@ -43,30 +43,30 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
 
         private static readonly int[] minus1Mod3 = { 2, 0, 1 };
 
-        // The following primitives are all described by Guibas and Stolfi. However, Guibas and
-        // Stolfi use an edge-based data structure, whereas I use a triangle-based data structure.
-        // 
-        // lnext: finds the next edge (counterclockwise) of a triangle.
-        // 
-        // onext: spins counterclockwise around a vertex; that is, it finds the next edge with the
-        // same origin in the counterclockwise direction. This edge is part of a different triangle.
-        // 
-        // oprev: spins clockwise around a vertex; that is, it finds the next edge with the same
-        // origin in the clockwise direction. This edge is part of a different triangle.
-        // 
-        // dnext: spins counterclockwise around a vertex; that is, it finds the next edge with the
-        // same destination in the counterclockwise direction. This edge is part of a different triangle.
-        // 
-        // dprev: spins clockwise around a vertex; that is, it finds the next edge with the same
-        // destination in the clockwise direction. This edge is part of a different triangle.
-        // 
-        // rnext: moves one edge counterclockwise about the adjacent triangle. (It's best understood
-        // by reading Guibas and Stolfi. It involves changing triangles twice.)
-        // 
-        // rprev: moves one edge clockwise about the adjacent triangle. (It's best understood by
-        // reading Guibas and Stolfi. It involves changing triangles twice.)
+         //The following primitives are all described by Guibas and Stolfi. However, Guibas and
+         //Stolfi use an edge-based data structure, whereas I use a triangle-based data structure.
+         
+         //lnext: finds the next edge (counterclockwise) of a triangle.
+         
+         //onext: spins counterclockwise around a vertex; that is, it finds the next edge with the
+         //same origin in the counterclockwise direction. This edge is part of a different triangle.
+         
+         //oprev: spins clockwise around a vertex; that is, it finds the next edge with the same
+         //origin in the clockwise direction. This edge is part of a different triangle.
+         
+         //dnext: spins counterclockwise around a vertex; that is, it finds the next edge with the
+         //same destination in the counterclockwise direction. This edge is part of a different triangle.
+         
+         //dprev: spins clockwise around a vertex; that is, it finds the next edge with the same
+         //destination in the clockwise direction. This edge is part of a different triangle.
+         
+         //rnext: moves one edge counterclockwise about the adjacent triangle. (It's best understood
+         //by reading Guibas and Stolfi. It involves changing triangles twice.)
+         
+         //rprev: moves one edge clockwise about the adjacent triangle. (It's best understood by
+         //reading Guibas and Stolfi. It involves changing triangles twice.)
 
-        /// <summary> Find the abutting triangle; same edge. [sym(abc) -> ba*] </summary> Note that
+        /// <summary> Find the abutting triangle; same edge. [sym(abc) -> ba*] </summary> <remarks> Note that
         /// the edge direction is necessarily reversed, because the handle specified by an oriented
         /// triangle is directed counterclockwise around the triangle. </remarks>
         public void Sym(ref Otri ot)

@@ -117,8 +117,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         }
 
         /// <summary> Expand rectangle to include given rectangle. </summary>
-        /// <param name="x"> X coordinate. </param>
-        /// <param name="y"> Y coordinate. </param>
+        /// <param name="other"></param>
         public void Expand(Rectangle other)
         {
             xmin = Math.Min(xmin, other.xmin);

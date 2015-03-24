@@ -160,6 +160,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// Update statistics about the quality of the mesh.
         /// </summary>
         /// <param name="mesh"></param>
+        /// <param name="sampleDegrees"></param>
         public void Update(Mesh mesh, int sampleDegrees)
         {
             Point[] p = new Point[3];

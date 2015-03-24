@@ -29,7 +29,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public override MeshData Build(Building building)
         {
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
-            var context = new Context(building, gradient, ObjectPool);
+            var context = new Context(gradient, ObjectPool);
             var roofOffset = building.Elevation + building.Height + building.MinHeight;
             var roofHeight = roofOffset + building.RoofHeight;
 
@@ -210,15 +210,13 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
         private sealed class Context
         {
-            public readonly Building Building;
             public MeshData Data;
             public GradientWrapper Gradient;
             
             public int TrisIndex;
 
-            public Context(Building building, GradientWrapper gradient, IObjectPool objectPool)
+            public Context(GradientWrapper gradient, IObjectPool objectPool)
             {
-                Building = building;
                 Data = new MeshData();
                 Gradient = gradient;
 

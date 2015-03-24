@@ -257,6 +257,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         #region Heap sort
 
         /// <summary> Reorders an array of integers into a descending heap. </summary>
+        /// <param name="offset"></param>
         /// <param name="size"> the size of the input array. </param>
         /// <param name="a"> an unsorted array. </param>
         /// <remarks>
@@ -328,6 +329,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         }
 
         /// <summary> ascending sorts an array of integers using heap sort. </summary>
+        /// <param name="offset"></param>
         /// <param name="size"> Number of entries in the array. </param>
         /// <param name="a"> Array to be sorted; </param>
         private void HeapSort(int[] a, int offset, int size)
