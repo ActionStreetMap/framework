@@ -39,7 +39,7 @@ namespace ActionStreetMap.Explorer.Scene
 
             var meshData = ObjectPool.CreateMeshData();
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
-            meshData.MaterialKey = rule.GetMaterial();
+            meshData.MaterialKey = rule.GetMaterialKey();
 
             IcoSphereGenerator.Generate(meshData, new Vector3(center.X, elevation + minHeight, center.Y), radius, 2, gradient);
 

@@ -1,11 +1,12 @@
-﻿using ActionStreetMap.Core;
+﻿using System.Collections.Generic;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
@@ -26,6 +27,7 @@ namespace ActionStreetMap.Explorer.Scene
             }
 
             var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(way));
+            var materialKey = rule.GetMaterialKey();
 
             var points = ObjectPool.NewList<MapPoint>();
             PointUtils.FillHeight(ElevationProvider, tile.RelativeNullPoint, way.Points, points);
@@ -36,15 +38,16 @@ namespace ActionStreetMap.Explorer.Scene
             var dimenLineBuilder = new DimenLineBuilder(2, ElevationProvider, ObjectPool);
             dimenLineBuilder.Height = rule.GetHeight();
             dimenLineBuilder.Build(tile.Rectangle, lines,
-                (p, t, u) =>
+                (vertices, triangles, u) =>
                 {
-                    var vertices = p.ToArray();
-                    var triangles = t.ToArray();
-                    var uvs = u.ToArray();
-                    Scheduler.MainThread.Schedule(() =>
+                    BuildObject(tile.GameObject, new MeshData()
                     {
-                        BuildObject(gameObjectWrapper, rule, vertices, triangles, uvs);
-                        dimenLineBuilder.Dispose();
+                        GameObject = gameObjectWrapper,
+                        MaterialKey = materialKey,
+                        Vertices = vertices,
+                        Triangles = triangles,
+                        // TODO process colors
+                        Colors = new List<Color>(vertices.Count)
                     });
                 });
 
@@ -52,26 +55,6 @@ namespace ActionStreetMap.Explorer.Scene
             ObjectPool.StoreList(points);
 
             return gameObjectWrapper;
-        }
-
-        /// <summary> Process unity specific data. </summary>
-        protected virtual void BuildObject(IGameObject gameObjectWrapper, Rule rule,
-            Vector3[] vertices, int[] triangles, Vector2[] uvs)
-        {
-            var gameObject = gameObjectWrapper.AddComponent(new GameObject());
-
-            Mesh mesh = new Mesh();
-            mesh.vertices = vertices;
-            mesh.triangles = triangles;
-            mesh.uv = uvs;
-            mesh.RecalculateNormals();
-
-            var meshFilter = gameObject.AddComponent<MeshFilter>();
-            meshFilter.mesh = mesh;
-
-            var renderer = gameObject.AddComponent<MeshRenderer>();
-            renderer.material = rule.GetMaterial(ResourceProvider);
-            renderer.material.mainTexture = rule.GetTexture(ResourceProvider);
         }
     }
 }

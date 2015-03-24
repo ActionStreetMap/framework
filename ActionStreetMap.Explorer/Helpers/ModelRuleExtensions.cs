@@ -19,7 +19,7 @@ namespace ActionStreetMap.Explorer.Helpers
             return resourceProvider.GetMaterial(@"Materials/" + materialPath);
         }
 
-        public static string GetMaterial(this Rule rule)
+        public static string GetMaterialKey(this Rule rule)
         {
             return rule.Evaluate<string>("material");
         }

@@ -97,7 +97,10 @@ namespace ActionStreetMap.Explorer.Tiling
                 if (modelBuilder != null)
                 {
                     var gameObject = func(rule, modelBuilder);
-                    Scheduler.MainThread.Schedule(() => AttachExtras(gameObject, tile, rule, model));
+                    var behaviour = rule.GetModelBehaviour(_behaviours);
+                    // behavior should be attached on main thread
+                    if (gameObject != null && behaviour != null)
+                        Scheduler.MainThread.Schedule(() => AttachBehavior(gameObject, model, behaviour));
                 }
             }
         }
@@ -129,15 +132,10 @@ namespace ActionStreetMap.Explorer.Tiling
             return true;
         }
 
-        private void AttachExtras(IGameObject gameObject, Tile tile, Rule rule, Model model)
+        private void AttachBehavior(IGameObject gameObject, Model model, IModelBehaviour behaviour)
         {
-            if (gameObject != null)
-            {
-                gameObject.Parent = tile.GameObject;
-                var behaviour = rule.GetModelBehaviour(_behaviours);
-                if (behaviour != null)
-                    behaviour.Apply(gameObject, model);
-            }
+            if (behaviour != null)
+                behaviour.Apply(gameObject, model);
         }
 
         #endregion
