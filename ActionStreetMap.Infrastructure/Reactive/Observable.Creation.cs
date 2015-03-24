@@ -16,7 +16,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             return new AnonymousObservable<T>(subscribe);
         }
 
-        class AnonymousObservable<T> : IObservable<T>
+        internal class AnonymousObservable<T> : IObservable<T>
         {
             readonly Func<IObserver<T>, IDisposable> subscribe;
 

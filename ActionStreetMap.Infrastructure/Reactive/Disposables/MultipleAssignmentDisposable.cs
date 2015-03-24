@@ -28,7 +28,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 lock (gate)
                 {
                     return (current == True)
-                        ? Reactive.Disposable.Empty
+                        ? ActionStreetMap.Infrastructure.Reactive.Disposable.Empty
                         : current;
                 }
             }

@@ -86,6 +86,24 @@ namespace ActionStreetMap.Infrastructure.Reactive
                     asyncConversions = value;
                 }
             }
+
+            public static void SetDefaultForUnity()
+            {
+                ConstantTimeOperations = Scheduler.Immediate;
+                TailRecursion = Scheduler.Immediate;
+                Iteration = Scheduler.CurrentThread;
+                TimeBasedOperations = Scheduler.MainThread;
+                AsyncConversions = Scheduler.ThreadPool;
+            }
+
+            public static void SetDotNetCompatible()
+            {
+                ConstantTimeOperations = Scheduler.Immediate;
+                TailRecursion = Scheduler.Immediate;
+                Iteration = Scheduler.CurrentThread;
+                TimeBasedOperations = Scheduler.ThreadPool;
+                AsyncConversions = Scheduler.ThreadPool;
+            }
         }
 
         // utils

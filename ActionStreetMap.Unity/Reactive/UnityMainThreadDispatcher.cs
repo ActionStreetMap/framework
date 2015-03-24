@@ -13,7 +13,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         public enum CullingMode
         {
             /// <summary>
-            /// Won't remove any MainThreadDispatchers.
+            /// Won't remove any UnityMainThreadDispatchers.
             /// </summary>
             Disabled,
 
@@ -23,7 +23,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             Self,
 
             /// <summary>
-            /// Search for excess MainThreadDispatchers and removes them all on Awake().
+            /// Search for excess UnityMainThreadDispatchers and removes them all on Awake().
             /// </summary>
             All
         }
@@ -234,7 +234,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 // call from other thread
                 if (!ScenePlaybackDetector.IsPlaying) { EditorThreadDispatcher.Instance.PseudoStartCoroutine(routine); return; }
 #endif
-
+                
                 Instance.queueWorker.Enqueue(() => Instance.StartCoroutine_Auto(routine));
             }
         }

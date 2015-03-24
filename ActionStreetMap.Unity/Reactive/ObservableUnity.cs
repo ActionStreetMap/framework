@@ -6,6 +6,30 @@ using UnityEngine;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
+    public enum FrameCountType
+    {
+        Update,
+        FixedUpdate,
+        EndOfFrame,
+    }
+
+    public static class FrameCountTypeExtensions
+    {
+        public static YieldInstruction GetYieldInstruction(this FrameCountType frameCountType)
+        {
+            switch (frameCountType)
+            {
+                case FrameCountType.FixedUpdate:
+                    return new WaitForFixedUpdate();
+                case FrameCountType.EndOfFrame:
+                    return new WaitForEndOfFrame();
+                case FrameCountType.Update:
+                default:
+                    return null;
+            }
+        }
+    }
+
     public static class ObservableUnity
     {
         readonly static HashSet<Type> YieldInstructionTypes = new HashSet<Type>
@@ -194,9 +218,17 @@ namespace ActionStreetMap.Infrastructure.Reactive
             return source.SelectMany(FromCoroutine(() => coroutine, publishEveryYield));
         }
 
-        public static IObservable<Unit> SelectMany<T>(this IObservable<T> source, Func<T, IEnumerator> selector, bool publishEveryYield = false)
+        public static IObservable<Unit> SelectMany<T>(this IObservable<T> source, Func<IEnumerator> selector, bool publishEveryYield = false)
         {
-            return source.SelectMany(x => FromCoroutine(() => selector(x), publishEveryYield));
+            return source.SelectMany(FromCoroutine(() => selector(), publishEveryYield));
+        }
+
+        /// <summary>
+        /// Note: publishEveryYield is always false. If you want to set true, use Observable.FromCoroutine(() => selector(x), true). This is workaround of Unity compiler's bug.
+        /// </summary>
+        public static IObservable<Unit> SelectMany<T>(this IObservable<T> source, Func<T, IEnumerator> selector)
+        {
+            return source.SelectMany(x => FromCoroutine(() => selector(x), false));
         }
 
         public static IObservable<Unit> ToObservable(this IEnumerator coroutine, bool publishEveryYield = false)
@@ -228,12 +260,13 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
         static IEnumerator EveryFixedUpdateCore(IObserver<long> observer, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested) yield break;
             var count = 0L;
-            while (!cancellationToken.IsCancellationRequested)
+            do
             {
                 yield return new UnityEngine.WaitForFixedUpdate();
                 observer.OnNext(count++);
-            }
+            } while (!cancellationToken.IsCancellationRequested);
         }
 
         public static IObservable<long> EveryEndOfFrame()
@@ -243,15 +276,104 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
         static IEnumerator EveryEndOfFrameCore(IObserver<long> observer, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested) yield break;
             var count = 0L;
-            while (!cancellationToken.IsCancellationRequested)
+            do
             {
-                yield return new UnityEngine.WaitForEndOfFrame();
+                yield return new UnityEngine.WaitForFixedUpdate();
                 observer.OnNext(count++);
+            } while (!cancellationToken.IsCancellationRequested);
+        }
+
+        #region Observable.Time Frame Extensions
+
+        // Interval, Timer, Delay, Sample, Throttle, Timeout
+
+        public static IObservable<Unit> NextFrame(FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return FromCoroutine<Unit>((observer, cancellation) => NextFrameCore(observer, frameCountType, cancellation));
+        }
+
+        static IEnumerator NextFrameCore(IObserver<Unit> observer, FrameCountType frameCountType, CancellationToken cancellation)
+        {
+            yield return frameCountType.GetYieldInstruction();
+
+            if (!cancellation.IsCancellationRequested)
+            {
+                observer.OnNext(Unit.Default);
+                observer.OnCompleted();
             }
         }
 
-        public static IObservable<T> DelayFrame<T>(this IObservable<T> source, int frameCount)
+        public static IObservable<long> IntervalFrame(int intervalFrameCount, FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return TimerFrame(intervalFrameCount, intervalFrameCount, frameCountType);
+        }
+
+        public static IObservable<long> TimerFrame(int dueTimeFrameCount, FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return FromCoroutine<long>((observer, cancellation) => TimerFrameCore(observer, dueTimeFrameCount, frameCountType, cancellation));
+        }
+
+        public static IObservable<long> TimerFrame(int dueTimeFrameCount, int periodFrameCount, FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return FromCoroutine<long>((observer, cancellation) => TimerFrameCore(observer, dueTimeFrameCount, periodFrameCount, frameCountType, cancellation));
+        }
+
+        static IEnumerator TimerFrameCore(IObserver<long> observer, int dueTimeFrameCount, FrameCountType frameCountType, CancellationToken cancel)
+        {
+            // normalize
+            if (dueTimeFrameCount <= 0) dueTimeFrameCount = 0;
+
+            var currentFrame = 0;
+
+            // initial phase
+            while (!cancel.IsCancellationRequested)
+            {
+                if (currentFrame++ == dueTimeFrameCount)
+                {
+                    observer.OnNext(0);
+                    observer.OnCompleted();
+                    break;
+                }
+                yield return frameCountType.GetYieldInstruction();
+            }
+        }
+
+        static IEnumerator TimerFrameCore(IObserver<long> observer, int dueTimeFrameCount, int periodFrameCount, FrameCountType frameCountType, CancellationToken cancel)
+        {
+            // normalize
+            if (dueTimeFrameCount <= 0) dueTimeFrameCount = 0;
+            if (periodFrameCount <= 0) periodFrameCount = 1;
+
+            var sendCount = 0L;
+            var currentFrame = 0;
+
+            // initial phase
+            while (!cancel.IsCancellationRequested)
+            {
+                if (currentFrame++ == dueTimeFrameCount)
+                {
+                    observer.OnNext(sendCount++);
+                    currentFrame = -1;
+                    break;
+                }
+                yield return frameCountType.GetYieldInstruction();
+            }
+
+            // period phase
+            while (!cancel.IsCancellationRequested)
+            {
+                if (++currentFrame == periodFrameCount)
+                {
+                    observer.OnNext(sendCount++);
+                    currentFrame = 0;
+                }
+                yield return frameCountType.GetYieldInstruction();
+            }
+        }
+
+        public static IObservable<T> DelayFrame<T>(this IObservable<T> source, int frameCount, FrameCountType frameCountType = FrameCountType.Update)
         {
             if (frameCount < 0) throw new ArgumentOutOfRangeException("frameCount");
 
@@ -268,24 +390,185 @@ namespace ActionStreetMap.Infrastructure.Reactive
                         return;
                     }
 
-                    UnityMainThreadDispatcher.StartCoroutine(DelayFrameCore(() => x.Accept(observer), frameCount, cancel));
+                    UnityMainThreadDispatcher.StartCoroutine(DelayFrameCore(() => x.Accept(observer), frameCount, frameCountType, cancel));
                 });
 
                 return cancel;
             });
         }
 
-        static IEnumerator DelayFrameCore(Action onNext, int frameCount, ICancelable cancel)
+        static IEnumerator DelayFrameCore(Action onNext, int frameCount, FrameCountType frameCountType, ICancelable cancel)
         {
             while (!cancel.IsDisposed && frameCount-- != 0)
             {
-                yield return null;
+                yield return frameCountType.GetYieldInstruction();
             }
             if (!cancel.IsDisposed)
             {
                 onNext();
             }
         }
+
+        public static IObservable<T> SampleFrame<T>(this IObservable<T> source, int frameCount, FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return Observable.Create<T>(observer =>
+            {
+                var latestValue = default(T);
+                var isUpdated = false;
+                var isCompleted = false;
+                var gate = new object();
+
+                var scheduling = IntervalFrame(frameCount, frameCountType)
+                    .Subscribe(_ =>
+                    {
+                        lock (gate)
+                        {
+                            if (isUpdated)
+                            {
+                                var value = latestValue;
+                                isUpdated = false;
+                                observer.OnNext(value);
+                            }
+                            if (isCompleted)
+                            {
+                                observer.OnCompleted();
+                            }
+                        }
+                    });
+
+                var sourceSubscription = new SingleAssignmentDisposable();
+                sourceSubscription.Disposable = source.Subscribe(x =>
+                {
+                    lock (gate)
+                    {
+                        latestValue = x;
+                        isUpdated = true;
+                    }
+                }, e =>
+                {
+                    lock (gate)
+                    {
+                        observer.OnError(e);
+                        scheduling.Dispose();
+                    }
+                }
+                , () =>
+                {
+                    lock (gate)
+                    {
+                        isCompleted = true;
+                        sourceSubscription.Dispose();
+                        scheduling.Dispose();
+                    }
+                });
+
+                return new CompositeDisposable { scheduling, sourceSubscription };
+            });
+        }
+
+        public static IObservable<TSource> ThrottleFrame<TSource>(this IObservable<TSource> source, int frameCount, FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return new Observable.AnonymousObservable<TSource>(observer =>
+            {
+                var gate = new object();
+                var value = default(TSource);
+                var hasValue = false;
+                var cancelable = new SerialDisposable();
+                var id = 0UL;
+
+                var subscription = source.Subscribe(x =>
+                    {
+                        ulong currentid;
+                        lock (gate)
+                        {
+                            hasValue = true;
+                            value = x;
+                            id = unchecked(id + 1);
+                            currentid = id;
+                        }
+                        var d = new SingleAssignmentDisposable();
+                        cancelable.Disposable = d;
+                        d.Disposable = IntervalFrame(frameCount, frameCountType)
+                            .Subscribe(_ =>
+                            {
+                                lock (gate)
+                                {
+                                    if (hasValue && id == currentid)
+                                        observer.OnNext(value);
+                                    hasValue = false;
+                                }
+                            });
+                    },
+                    exception =>
+                    {
+                        cancelable.Dispose();
+
+                        lock (gate)
+                        {
+                            observer.OnError(exception);
+                            hasValue = false;
+                            id = unchecked(id + 1);
+                        }
+                    },
+                    () =>
+                    {
+                        cancelable.Dispose();
+
+                        lock (gate)
+                        {
+                            if (hasValue)
+                                observer.OnNext(value);
+                            observer.OnCompleted();
+                            hasValue = false;
+                            id = unchecked(id + 1);
+                        }
+                    });
+
+                return new CompositeDisposable(subscription, cancelable);
+            });
+        }
+
+        public static IObservable<T> TimeoutFrame<T>(this IObservable<T> source, int frameCount, FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return Observable.Create<T>(observer =>
+            {
+                Func<IDisposable> runTimer = () => TimerFrame(frameCount, frameCountType)
+                    .Subscribe(_ =>
+                    {
+                        observer.OnError(new TimeoutException());
+                    });
+
+                var timerDisposable = new SerialDisposable();
+                timerDisposable.Disposable = runTimer();
+
+                var sourceSubscription = new SingleAssignmentDisposable();
+                sourceSubscription.Disposable = source.Subscribe(x =>
+                {
+                    timerDisposable.Disposable = Disposable.Empty; // Cancel Old Timer
+                    observer.OnNext(x);
+                    timerDisposable.Disposable = runTimer();
+                }, observer.OnError, observer.OnCompleted);
+
+                return new CompositeDisposable { timerDisposable, sourceSubscription };
+            });
+        }
+
+        public static IObservable<T> DelayFrameSubscription<T>(this IObservable<T> source, int frameCount, FrameCountType frameCountType = FrameCountType.Update)
+        {
+            return Observable.Create<T>(observer =>
+            {
+                var d = new MultipleAssignmentDisposable();
+                d.Disposable = TimerFrame(frameCount, frameCountType)
+                    .Subscribe(_ =>
+                    {
+                        d.Disposable = source.Subscribe(observer);
+                    });
+
+                return d;
+            });
+        }
+
+        #endregion
 
         /// <summary>Convert to awaitable IEnumerator. It's run on MainThread.</summary>
         public static IEnumerator ToAwaitableEnumerator<T>(this IObservable<T> source, CancellationToken cancel = default(CancellationToken))
@@ -352,6 +635,16 @@ namespace ActionStreetMap.Infrastructure.Reactive
         {
             return UnityMainThreadDispatcher.StartCoroutine(source.ToAwaitableEnumerator(onResult, onError, cancel));
         }
+
+        /*public static IObservable<T> ObserveOnMainThread<T>(this IObservable<T> source)
+        {
+            return source.ObserveOn(Scheduler.MainThread);
+        }
+
+        public static IObservable<T> SubscribeOnMainThread<T>(this IObservable<T> source)
+        {
+            return source.SubscribeOn(Scheduler.MainThread);
+        }*/
 
         public static IObservable<bool> EveryApplicationPause()
         {

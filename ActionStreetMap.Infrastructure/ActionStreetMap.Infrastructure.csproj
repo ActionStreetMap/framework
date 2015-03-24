@@ -84,6 +84,7 @@
     <Compile Include="Primitives\DoubleKeyDictionary.cs" />
     <Compile Include="Primitives\SafeDictionary.cs" />
     <Compile Include="Primitives\SafeHashSet.cs" />
+    <Compile Include="IO\Compression\CompressionUtils.cs" />
     <Compile Include="Reactive\Bridge\AotSafeExtensions.cs" />
     <Compile Include="Reactive\Bridge\CancellationToken.cs" />
     <Compile Include="Reactive\Bridge\MainThreadScheduler.cs" />
@@ -141,7 +142,6 @@
     <Compile Include="Reactive\System\Unit.cs" />
     <Compile Include="Reactive\TimeInterval.cs" />
     <Compile Include="Reactive\Timestamped.cs" />
-    <Compile Include="IO\Compression\CompressionUtils.cs" />
     <Compile Include="Utilities\Guard.cs" />
     <Compile Include="Primitives\MutableTuple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

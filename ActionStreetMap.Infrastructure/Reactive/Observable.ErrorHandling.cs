@@ -247,7 +247,6 @@ namespace ActionStreetMap.Infrastructure.Reactive
             var result = Observable.Defer(() =>
             {
                 var dueTime = (delay.Ticks < 0) ? TimeSpan.Zero : delay;
-                var empty = Observable.Empty<TSource>();
                 var count = 0;
 
                 IObservable<TSource> self = null;
@@ -258,7 +257,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
                     return (++count < retryCount)
                         ? (dueTime == TimeSpan.Zero)
                             ? self.SubscribeOn(Scheduler.CurrentThread)
-                            : empty.Delay(dueTime, delayScheduler).Concat(self).SubscribeOn(Scheduler.CurrentThread)
+                            : self.DelaySubscription(dueTime, delayScheduler).SubscribeOn(Scheduler.CurrentThread)
                         : Observable.Throw<TSource>(ex);
                 });
                 return self;

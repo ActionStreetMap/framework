@@ -1,7 +1,7 @@
-﻿// memo, remove LINQ(for avoid AOT)
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; // memo, remove LINQ(for avoid AOT)
+using System.Text;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
@@ -652,11 +652,12 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         /// <summary>
-        /// Specialized for single async operations like Task.WhenAll, Zip.Take(1)
+        /// <para>Specialized for single async operations like Task.WhenAll, Zip.Take(1).</para>
+        /// <para>If sequence is empty, return T[0] array.</para>
         /// </summary>
         public static IObservable<T[]> WhenAll<T>(params IObservable<T>[] sources)
         {
-            if (sources.Length == 0) return Observable.Empty<T[]>();
+            if (sources.Length == 0) return Observable.Return(new T[0]);
 
             return Observable.Create<T[]>(observer =>
             {
@@ -703,7 +704,8 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         /// <summary>
-        /// Specialized for single async operations like Task.WhenAll, Zip.Take(1)
+        /// <para>Specialized for single async operations like Task.WhenAll, Zip.Take(1).</para>
+        /// <para>If sequence is empty, return T[0] array.</para>
         /// </summary>
         public static IObservable<T[]> WhenAll<T>(this IEnumerable<IObservable<T>> sources)
         {
@@ -726,6 +728,13 @@ namespace ActionStreetMap.Infrastructure.Reactive
                 var length = _sources.Count;
                 var completedCount = 0;
                 var values = new T[length];
+
+                if (length == 0)
+                {
+                    observer.OnNext(values);
+                    observer.OnCompleted();
+                    return Disposable.Empty;
+                }
 
                 var subscriptions = new IDisposable[length];
                 for (int index = 0; index < length; index++)
@@ -767,7 +776,31 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
         public static IObservable<T> StartWith<T>(this IObservable<T> source, T value)
         {
-            return StartWith(source, Scheduler.DefaultSchedulers.ConstantTimeOperations, value);
+            // optimized path
+            return Observable.Create<T>(observer =>
+            {
+                observer.OnNext(value);
+                return source.Subscribe(observer);
+            });
+        }
+
+        public static IObservable<T> StartWith<T>(this IObservable<T> source, Func<T> valueFactory)
+        {
+            return Observable.Create<T>(observer =>
+            {
+                T value;
+                try
+                {
+                    value = valueFactory();
+                }
+                catch (Exception ex)
+                {
+                    observer.OnError(ex);
+                    return Disposable.Empty;
+                }
+                observer.OnNext(value);
+                return source.Subscribe(observer);
+            });
         }
 
         public static IObservable<T> StartWith<T>(this IObservable<T> source, params T[] values)
