@@ -193,7 +193,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Geometry\Triangle\README.txt" />
+    <Content Include="Geometry\README.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MapCss\Parser\Mapcss.bnf" />
