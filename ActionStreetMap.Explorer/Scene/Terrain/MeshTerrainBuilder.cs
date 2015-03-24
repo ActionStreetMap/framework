@@ -5,7 +5,7 @@ using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Topology;
 using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Core.Scene.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry.Utils;

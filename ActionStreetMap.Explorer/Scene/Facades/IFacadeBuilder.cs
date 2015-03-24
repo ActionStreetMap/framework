@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Core.Scene.Buildings;
+﻿using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
 
 namespace ActionStreetMap.Explorer.Scene.Facades

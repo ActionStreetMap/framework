@@ -9,7 +9,7 @@ using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipp
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
 
-namespace ActionStreetMap.Core.Terrain
+namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCellBuilder
     {

@@ -10,9 +10,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
     {
         #region Line elements in tile
 
-        /// <summary>
-        ///     Returns line elements which only consist of points in tile.
-        /// </summary>
+        /// <summary> Returns line elements which only consist of points in tile. </summary>
         public static void GetLineElementsInTile(MapPoint leftBottomCorner, MapPoint rightUpperCorner,
             List<LineElement> elements, List<LineElement> resultElements, IObjectPool objectPool)
         {
@@ -24,7 +22,6 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             MapPoint? lastOutOfTilePoint = null;
             int startPointIndex = 0;
             for (int z = 0; z < elements.Count; z++)  
-            //foreach (var lineElement in elements)
             {
                 var lineElement = elements[z];
                 var el = lineElement;

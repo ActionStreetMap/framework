@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ActionStreetMap.Core.Scene.Details
+namespace ActionStreetMap.Core.Scene
 {
     /// <summary> Represents surface. </summary>
     public class Surface

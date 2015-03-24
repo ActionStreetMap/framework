@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core.Scene.Details;
-using ActionStreetMap.Core.Scene.Roads;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Tiling.Models

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Roofs;

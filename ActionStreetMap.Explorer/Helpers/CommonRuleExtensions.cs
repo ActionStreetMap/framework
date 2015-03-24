@@ -1,5 +1,5 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Core.Scene.Roads;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene;
 
@@ -44,17 +44,17 @@ namespace ActionStreetMap.Explorer.Helpers
         }
 
         /// <summary> Gets road type. </summary>
-        public static RoadType GetRoadType(this Rule rule)
+        public static RoadElement.RoadType GetRoadType(this Rule rule)
         {
             var typeStr = rule.Evaluate<string>("type");
             switch (typeStr)
             {
                 case "pedestrian":
-                    return RoadType.Pedestrian;
+                    return RoadElement.RoadType.Pedestrian;
                 case "bike":
-                    return RoadType.Bike;
+                    return RoadElement.RoadType.Bike;
                 default:
-                    return RoadType.Car;
+                    return RoadElement.RoadType.Car;
             }
         }
     }

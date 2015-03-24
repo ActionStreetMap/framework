@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Unity;
 
-namespace ActionStreetMap.Core.Scene.Buildings
+namespace ActionStreetMap.Core.Scene
 {
     /// <summary>
     ///     Represents building. See available OSM properties: http://wiki.openstreetmap.org/wiki/Buildings

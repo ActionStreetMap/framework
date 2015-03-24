@@ -1,5 +1,5 @@
 ﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.Scene.Buildings;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;

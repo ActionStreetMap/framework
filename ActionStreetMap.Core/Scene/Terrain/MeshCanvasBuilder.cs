@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-using ActionStreetMap.Core.Scene.Roads;
 using ActionStreetMap.Core.Tiling.Models;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
-namespace ActionStreetMap.Core.Terrain
+namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCanvasBuilder
     {
@@ -190,9 +189,9 @@ namespace ActionStreetMap.Core.Terrain
 
         private void BuildRoads()
         {
-            var carRoadPaths = GetOffsetSolution(BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadType.Car)));
+            var carRoadPaths = GetOffsetSolution(BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadElement.RoadType.Car)));
             var walkRoadsPaths =
-                GetOffsetSolution(BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadType.Pedestrian)));
+                GetOffsetSolution(BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadElement.RoadType.Pedestrian)));
 
             _clipper.AddPaths(carRoadPaths, PolyType.ptClip, true);
             _clipper.AddPaths(walkRoadsPaths, PolyType.ptSubject, true);

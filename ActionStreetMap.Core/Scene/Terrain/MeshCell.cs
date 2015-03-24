@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ActionStreetMap.Core.Terrain
+namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCell
     {

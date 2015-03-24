@@ -2,7 +2,7 @@
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
-namespace ActionStreetMap.Core.Terrain
+namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCanvas
     {

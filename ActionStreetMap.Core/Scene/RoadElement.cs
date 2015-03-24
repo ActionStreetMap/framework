@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
-namespace ActionStreetMap.Core.Scene.Roads
+namespace ActionStreetMap.Core.Scene
 {
     /// <summary> Represents certain part of road. </summary>
     public class RoadElement
@@ -24,16 +24,21 @@ namespace ActionStreetMap.Core.Scene.Roads
         /// <summary> Gets or sets middle points of road. </summary>
         public List<MapPoint> Points { get; set; }
 
-        /// <summary> Gets junction at start. </summary>
-        public RoadJunction Start { get; set; }
-
-        /// <summary> Gets junction at end. </summary>
-        public RoadJunction End { get; set; }
-
         /// <inheritdoc />
         public override string ToString()
         {
             return string.Format("{0}:[{1}..{2}]", Id, Points.First(), Points.Last());
+        }
+
+        /// <summary> Represents general road type. </summary>
+        public enum RoadType : byte
+        {
+            /// <summary> Road for cars. </summary>
+            Car,
+            /// <summary> Road for bikes. </summary>
+            Bike,
+            /// <summary> Road for pedestrians. </summary>
+            Pedestrian
         }
     }
 }

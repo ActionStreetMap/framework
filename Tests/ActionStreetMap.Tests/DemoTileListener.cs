@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Clipping;
-using ActionStreetMap.Core.Terrain;
+using ActionStreetMap.Core.Scene.Terrain;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Reactive;

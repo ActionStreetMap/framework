@@ -1,4 +1,4 @@
-﻿namespace ActionStreetMap.Core.Scene.Details
+﻿namespace ActionStreetMap.Core.Scene
 {
     /// <summary> Represents a tree. </summary>
     public class Tree
