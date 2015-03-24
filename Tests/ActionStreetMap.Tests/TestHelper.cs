@@ -27,14 +27,13 @@ namespace ActionStreetMap.Tests
 
 
         public const string TestNmeaFilePath = @"..\..\..\..\Tests\TestAssets\Nmea\berlin_seestr_speed_increasing.nme";
-        public const string TestIndexSettingsPath = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\themes\default\index.json";
-        public const string TestGradientPath = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\themes\default\gradients.default.json";
+        public const string TestIndexSettingsPath = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\index.json";
 
         public const string MapDataPath = @"Maps\osm";
 
         public const string TestThemeFile = @"..\..\..\..\Tests\TestAssets\Themes\theme.json";
         public const string TestBaseMapcssFile = @"..\..\..\..\Tests\TestAssets\Mapcss\base.mapcss";
-        public const string DefaultMapcssFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\themes\default\default.mapcss";
+        public const string DefaultMapcssFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\default.mapcss";
 
         public const string BerlinXmlData = @"..\..\..\..\Tests\TestAssets\Osm\berlin_xml_api.osm";
 

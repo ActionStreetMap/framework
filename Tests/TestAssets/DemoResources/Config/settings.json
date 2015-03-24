@@ -13,7 +13,7 @@
 			"remote.schema": "Config/srtm.schema.txt"
 		}
 	},
-	"mapcss":"Config/themes/default/default.mapcss",
+	"mapcss":"Config/default.mapcss",
 	"geocoding":"http://nominatim.openstreetmap.org/search",
 	"tile": {
 		"size":300,
