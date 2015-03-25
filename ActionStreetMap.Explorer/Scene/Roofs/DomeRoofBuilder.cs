@@ -39,7 +39,13 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
             var meshData = ObjectPool.CreateMeshData();
-            IcoSphereGenerator.Generate(meshData, new Vector3(center.X, center.Elevation, center.Y), radius, 2, gradient);
+
+            new IcoSphereGenerator(meshData)
+                .SetCenter(new Vector3(center.X, center.Elevation, center.Y))
+                .SetRadius(radius)
+                .SetRecursionLevel(2)
+                .SetGradient(gradient)
+                .Build();
 
             meshData.MaterialKey = building.RoofMaterial;
 

@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Explorer.Utils;
-using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry.Generators
@@ -9,10 +7,35 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
     ///     Builds icosphere.
     ///     See http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
     /// </summary>
-    internal class IcoSphereGenerator
+    internal class IcoSphereGenerator: AbstractGenerator
     {
-        public static void Generate(MeshData meshData, Vector3 center, float radius, float recursionLevel, 
-            GradientWrapper gradient, float vertNoiseFreq = 0.2f, float colorNoiseFreq = 0.2f)
+        private Vector3 _center;
+        private float _radius;
+        private float _recursionLevel;
+
+        public IcoSphereGenerator(MeshData meshData) : base(meshData)
+        {
+        }
+
+        public IcoSphereGenerator SetCenter(Vector3 center)
+        {
+            _center = center;
+            return this;
+        }
+
+        public IcoSphereGenerator SetRadius(float radius)
+        {
+            _radius = radius;
+            return this;
+        }
+
+        public IcoSphereGenerator SetRecursionLevel(int recursionLevel)
+        {
+            _recursionLevel = recursionLevel;
+            return this;
+        }
+
+        public override void Build()
         {
             var vertList = new List<Vector3>();
             var middlePointIndexCache = new Dictionary<long, int>();
@@ -20,20 +43,20 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
             // create 12 vertices of a icosahedron
             float t = (1f + Mathf.Sqrt(5f)) / 2f;
 
-            vertList.Add(new Vector3(-1f, t, 0f).normalized * radius);
-            vertList.Add(new Vector3(1f, t, 0f).normalized * radius);
-            vertList.Add(new Vector3(-1f, -t, 0f).normalized * radius);
-            vertList.Add(new Vector3(1f, -t, 0f).normalized * radius);
+            vertList.Add(new Vector3(-1f, t, 0f).normalized * _radius);
+            vertList.Add(new Vector3(1f, t, 0f).normalized * _radius);
+            vertList.Add(new Vector3(-1f, -t, 0f).normalized * _radius);
+            vertList.Add(new Vector3(1f, -t, 0f).normalized * _radius);
 
-            vertList.Add(new Vector3(0f, -1f, t).normalized * radius);
-            vertList.Add(new Vector3(0f, 1f, t).normalized * radius);
-            vertList.Add(new Vector3(0f, -1f, -t).normalized * radius);
-            vertList.Add(new Vector3(0f, 1f, -t).normalized * radius);
+            vertList.Add(new Vector3(0f, -1f, t).normalized * _radius);
+            vertList.Add(new Vector3(0f, 1f, t).normalized * _radius);
+            vertList.Add(new Vector3(0f, -1f, -t).normalized * _radius);
+            vertList.Add(new Vector3(0f, 1f, -t).normalized * _radius);
 
-            vertList.Add(new Vector3(t, 0f, -1f).normalized * radius);
-            vertList.Add(new Vector3(t, 0f, 1f).normalized * radius);
-            vertList.Add(new Vector3(-t, 0f, -1f).normalized * radius);
-            vertList.Add(new Vector3(-t, 0f, 1f).normalized * radius);
+            vertList.Add(new Vector3(t, 0f, -1f).normalized * _radius);
+            vertList.Add(new Vector3(t, 0f, 1f).normalized * _radius);
+            vertList.Add(new Vector3(-t, 0f, -1f).normalized * _radius);
+            vertList.Add(new Vector3(-t, 0f, 1f).normalized * _radius);
 
             // create 20 triangles of the icosahedron
             var faces = new List<TriangleIndices>();
@@ -67,15 +90,15 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
             faces.Add(new TriangleIndices(9, 8, 1));
 
             // refine triangles
-            for (int i = 0; i < recursionLevel; i++)
+            for (int i = 0; i < _recursionLevel; i++)
             {
                var faces2 = new List<TriangleIndices>();
                 foreach (var tri in faces)
                 {
                     // replace triangle by 4 triangles
-                    int a = GetMiddlePoint(tri.V1, tri.V2, ref vertList, ref middlePointIndexCache, radius);
-                    int b = GetMiddlePoint(tri.V2, tri.V3, ref vertList, ref middlePointIndexCache, radius);
-                    int c = GetMiddlePoint(tri.V3, tri.V1, ref vertList, ref middlePointIndexCache, radius);
+                    int a = GetMiddlePoint(tri.V1, tri.V2, ref vertList, ref middlePointIndexCache, _radius);
+                    int b = GetMiddlePoint(tri.V2, tri.V3, ref vertList, ref middlePointIndexCache, _radius);
+                    int c = GetMiddlePoint(tri.V3, tri.V1, ref vertList, ref middlePointIndexCache, _radius);
 
                     faces2.Add(new TriangleIndices(tri.V1, a, c));
                     faces2.Add(new TriangleIndices(tri.V2, b, a));
@@ -85,44 +108,22 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
                 faces = faces2;
             }
 
-            GenerateMeshData(meshData, center, gradient, vertNoiseFreq, colorNoiseFreq, faces, vertList);
+            GenerateMeshData(faces, vertList);
         }
 
         /// <summary> Generates mesh data in flat shading style. </summary>
-        private static void GenerateMeshData(MeshData meshData, Vector3 center, GradientWrapper gradient, 
-            float vertNoiseFreq, float colorNoiseFreq, List<TriangleIndices> faces, List<Vector3> vertList)
+        private void GenerateMeshData(List<TriangleIndices> faces, List<Vector3> vertList)
         {
-            var vertices = meshData.Vertices;
-            var triangles = meshData.Triangles;
-            var colors = meshData.Colors;
-
             for (int i = 0; i < faces.Count; i++)
             {
                 var face = faces[i];
 
-                var v0 = vertList[face.V1];
+                var v0 = vertList[face.V1] + _center;
+                var v1 = vertList[face.V2] + _center;
+                var v2 = vertList[face.V3] + _center;
 
-                var noise = vertNoiseFreq != 0 ? (Noise.Perlin2D(v0, vertNoiseFreq) + 1f) / 2f : 0;
-                vertices.Add(new Vector3(v0.x + noise, v0.y + noise, v0.z + noise) + center);
-
-                var v1 = vertList[face.V2];
-                noise = vertNoiseFreq != 0 ? (Noise.Perlin2D(v1, vertNoiseFreq) + 1f) / 2f : 0;
-                vertices.Add(new Vector3(v1.x + noise, v1.y + noise, v1.z + noise) + center);
-
-                var v2 = vertList[face.V3];
-                noise = vertNoiseFreq != 0 ? (Noise.Perlin2D(v2, vertNoiseFreq) + 1f) / 2f : 0;
-                vertices.Add(new Vector3(v2.x + noise, v2.y + noise, v2.z + noise) + center);
-
-                var tris = vertices.Count - 3;
-
-                triangles.Add(tris);
-                triangles.Add(tris + 2);
-                triangles.Add(tris + 1);
-
-                var color = GradientUtils.GetColor(gradient, v1, colorNoiseFreq);
-                colors.Add(color);
-                colors.Add(color);
-                colors.Add(color);
+                AddTriangle(v0, v1, v2);
+          
             }
         }
 
