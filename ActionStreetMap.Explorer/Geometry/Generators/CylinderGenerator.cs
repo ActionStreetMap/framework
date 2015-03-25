@@ -56,31 +56,36 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
 
             for (int j = 0; j < _radialSegments; j++)
             {
-                float firstAngle = j * angleStep;
-                float secondAngle = (j == _radialSegments - 1 ? 0 : j + 1) * angleStep;
+                float firstAngle = j*angleStep;
+                float secondAngle = (j == _radialSegments - 1 ? 0 : j + 1)*angleStep;
 
-                var first = new Vector2(_radius * Mathf.Cos(firstAngle), _radius * Mathf.Sin(firstAngle));
-                var second = new Vector2(_radius * Mathf.Cos(secondAngle), _radius * Mathf.Sin(secondAngle));
+                var first = new Vector2(
+                    _radius*Mathf.Cos(firstAngle) + _center.x,
+                    _radius*Mathf.Sin(firstAngle) + _center.z);
+
+                var second = new Vector2(
+                    _radius*Mathf.Cos(secondAngle) + _center.x,
+                    _radius*Mathf.Sin(secondAngle) + _center.z);
 
                 // bottom cap
                 AddTriangle(_center,
-                            new Vector3(second.x, 0, second.y),
-                            new Vector3(first.x, 0, first.y));
+                    new Vector3(second.x, _center.y, second.y),
+                    new Vector3(first.x, _center.y, first.y));
 
                 // top cap
                 AddTriangle(new Vector3(_center.x, _center.y + _height, _center.z),
-                            new Vector3(first.x, _height, first.y),
-                            new Vector3(second.x, _height, second.y));
+                    new Vector3(first.x, _center.y + _height, first.y),
+                    new Vector3(second.x, _center.y + _height, second.y));
 
                 for (int i = 0; i < heightSegments; i++)
                 {
-                    var bottomHeight = i * heightStep + _center.y;
-                    var topHeight = (i + 1) * heightStep + _center.y;
+                    var bottomHeight = i*heightStep + _center.y;
+                    var topHeight = (i + 1)*heightStep + _center.y;
 
-                    var v0 = new Vector3(first.x + _center.x, bottomHeight, first.y + _center.y);
-                    var v1 = new Vector3(second.x + _center.x, bottomHeight, second.y + _center.y);
-                    var v2 = new Vector3(second.x + _center.x, topHeight, second.y + _center.y);
-                    var v3 = new Vector3(first.x + _center.x, topHeight, first.y + _center.y);
+                    var v0 = new Vector3(first.x, bottomHeight, first.y);
+                    var v1 = new Vector3(second.x, bottomHeight, second.y);
+                    var v2 = new Vector3(second.x, topHeight, second.y);
+                    var v3 = new Vector3(first.x, topHeight, first.y);
 
                     AddTriangle(v0, v1, v2);
                     AddTriangle(v3, v0, v2);

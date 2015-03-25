@@ -13,14 +13,15 @@ area[natural],
 area[historic=memorial],
 area[landuse]											{ builder: splat; fill-color: gradient(#10ff00, #0ff000 50%, #098a00); }
 
-/* buildings */
+/* buildings. */
 area[man_made=tower],
 area[building:levels],
 area[building:shape],
 area[building:part],
-area[building]											{ builder: building; behaviour: solid; height:12; min_height: 0; 
+area[building]											{ builder: building;  height:12; min_height: 0; 
 														  facade-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:flat; facade-material:Materials/Buildings/Building;
-														  roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
+														  roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building;
+														  fill-color:gradient(#22b5b5, #0f4f4f 50%, #000000); material:Materials/Buildings/Building; }
 
 area[amenity=shelter][shelter_type=public_transport]		{ builder: building; behaviour: solid; height:3; min_height: 0;
 															facade-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:flat; facade-material:Materials/Buildings/Building;
