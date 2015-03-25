@@ -1,12 +1,10 @@
-﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.MapCss.Domain;
+﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
-using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
@@ -24,25 +22,25 @@ namespace ActionStreetMap.Explorer.Scene
 
             if (tile.Registry.Contains(area.Id))
                 return null;
+            tile.Registry.RegisterGlobal(area.Id);
 
             var circle = CircleUtils.GetCircle(tile.RelativeNullPoint, area.Points);
             var radius = circle.Item1 / 2;
             var center = circle.Item2;
-            var minHeight = rule.GetMinHeight();
-
             var elevation = ElevationProvider.GetElevation(center);
 
-            tile.Registry.RegisterGlobal(area.Id);
-
+            var minHeight = rule.GetMinHeight();
             var color = rule.GetFillColor();
             var gradient = ResourceProvider.GetGradient(color);
+
+            int recursionLevel = rule.EvaluateDefault("recursion_level", 2);
 
             var meshData = ObjectPool.CreateMeshData();
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
             meshData.MaterialKey = rule.GetMaterialKey();
 
-            IcoSphereGenerator.Generate(meshData, new Vector3(center.X, elevation + minHeight, center.Y), 
-                radius, 2, gradient);
+            IcoSphereGenerator.Generate(meshData, new Vector3(center.X, elevation + minHeight, center.Y),
+                radius, recursionLevel, gradient);
 
             BuildObject(tile.GameObject, meshData);
 
