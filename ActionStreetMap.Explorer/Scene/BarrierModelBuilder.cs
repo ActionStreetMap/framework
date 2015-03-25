@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
@@ -7,11 +6,10 @@ using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
 {
-    /// <summary>  Provides logic to build various barriers. </summary>
+    /// <summary> Provides logic to build various barriers. </summary>
     public class BarrierModelBuilder: ModelBuilder
     {
         /// <inheritdoc />
@@ -28,17 +26,22 @@ namespace ActionStreetMap.Explorer.Scene
 
             var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(way));
             var materialKey = rule.GetMaterialKey();
+            var gradientKey = rule.GetFillColor();
+            var height = rule.GetHeight();
+            var width = rule.GetWidth();
 
             var points = ObjectPool.NewList<MapPoint>();
             PointUtils.FillHeight(ElevationProvider, tile.RelativeNullPoint, way.Points, points);
 
             var lines = ObjectPool.NewList<LineElement>(1);
-            lines.Add(new LineElement(points, rule.GetWidth()));
+            lines.Add(new LineElement(points, width));
 
-            var dimenLineBuilder = new DimenLineBuilder(2, ElevationProvider, ObjectPool);
-            dimenLineBuilder.Height = rule.GetHeight();
-            dimenLineBuilder.Build(tile.Rectangle, lines,
-                (vertices, triangles, u) =>
+            new DimenLineBuilder(ElevationProvider, ObjectPool)
+                .SetHeight(height)
+                .SetColorNoiseFreq(0.2f)
+                .SetGradient(ResourceProvider.GetGradient(gradientKey))
+                .SetMaxDistance(4f)
+                .Build(tile.Rectangle, lines, (vertices, triangles, colors) =>
                 {
                     BuildObject(tile.GameObject, new MeshData()
                     {
@@ -46,8 +49,7 @@ namespace ActionStreetMap.Explorer.Scene
                         MaterialKey = materialKey,
                         Vertices = vertices,
                         Triangles = triangles,
-                        // TODO process colors
-                        Colors = new List<Color>(vertices.Count)
+                        Colors = colors
                     });
                 });
 

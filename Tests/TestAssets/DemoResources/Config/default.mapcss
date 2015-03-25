@@ -274,7 +274,7 @@ way[highway=service]									{ fill-color: gradient(#0fffff, #0fffff 50%, #09999
 
 way[highway=footway] 									{ width:2; type:pedestrian; }
 
-way[barrier]											{ builder: barrier; material: Materials/Buildings/Building; height:2; width:0.2;  }
+way[barrier]											{ builder: barrier; fill-color: gradient(#0aaaaa, #044444 50%, #000000); material: Materials/Buildings/Building; height:2; width:0.2;  }
 
 
 /************************************************** NODES ********************************************/

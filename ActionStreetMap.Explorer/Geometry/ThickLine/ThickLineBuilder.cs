@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     /// <summary> Builds thick 2D line in 3D space. Not thread safe. </summary>
-    public class ThickLineBuilder: IDisposable
+    public class ThickLineBuilder
     {
-        private const float MaxPointDistance = 8f;
+        private float _maxPointDistance = 8f;
+        private float _colorNoiseFreq = 0.2f;
+
+        /// <summary> Gradient wrapper. </summary>
+        protected GradientWrapper Gradient;
 
         /// <summary> Points. </summary>
         protected List<Vector3> Points;
@@ -20,16 +26,11 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         /// <summary> Triangles. </summary>
         protected List<int> Triangles;
 
-        /// <summary> Uv map. </summary>
-        protected List<Vector2> Uv;
+        /// <summary> Color map. </summary>
+        protected List<Color> Colors;
 
         /// <summary> Current Triangle index. </summary>
         protected int TrisIndex = 0;
-
-        /// <summary> 
-        ///     UV ratio. TODO ratio depends on texture 
-        /// </summary>
-        protected float Ratio = 20;
 
         private MutableTuple<Vector3, Vector3> _startPoints;
 
@@ -50,15 +51,33 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             // TODO determine best initial size
             Points = _objectPool.NewList<Vector3>(1024);
             Triangles = _objectPool.NewList<int>(2048);
-            Uv = _objectPool.NewList<Vector2>(1024);
+            Colors = _objectPool.NewList<Color>(1024);
+        }
+
+        /// <summary> Sets gradient. </summary>
+        public ThickLineBuilder SetGradient(GradientWrapper gradient)
+        {
+            Gradient = gradient;
+            return this;
+        }
+
+        /// <summary> Sets max distance between segments. </summary>
+        public ThickLineBuilder SetMaxDistance(float maxDistance)
+        {
+            _maxPointDistance = maxDistance;
+            return this;
+        }
+
+        /// <summary> Sets color noise freq. </summary>
+        public ThickLineBuilder SetColorNoiseFreq(float colorNoiseFreq)
+        {
+            _colorNoiseFreq = colorNoiseFreq;
+            return this;
         }
 
         /// <summary> Builds line. </summary>
-        /// <param name="rectangle">Rectangle.</param>
-        /// <param name="elements">Line elements.</param>
-        /// <param name="builder">Builds unity objects.</param>
         public virtual void Build(MapRectangle rectangle, List<LineElement> elements,
-            Action<List<Vector3>, List<int>, List<Vector2>> builder)
+            Action<List<Vector3>, List<int>, List<Color>> builder)
         {
             var lineElements = _objectPool.NewList<LineElement>(8);
             ThickLineUtils.GetLineElementsInTile(rectangle.BottomLeft,
@@ -76,14 +95,13 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
                 ProcessLine(lineElements);
             }
 
-            builder(Points, Triangles, Uv);
+            builder(Points, Triangles, Colors);
             _objectPool.StoreList(lineElements);
         }
 
         #region Segment processing
 
         /// <summary> Process line segment. </summary>
-        /// <param name="lineElements">Line elements.</param>
         protected void ProcessLine(List<LineElement> lineElements)
         {
             var lineSegments = GetThickSegments(_currentElement);
@@ -144,7 +162,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
                 MapPoint secondPoint = LineUtils.GetNextIntermediatePoint(
                     _elevationProvider,
                     _nextElement.Points[0],
-                    _nextElement.Points[1], MaxPointDistance);
+                    _nextElement.Points[1], _maxPointDistance);
 
                 var second = ThickLineHelper.GetThickSegment(_nextElement.Points[0], secondPoint, width);
 
@@ -219,9 +237,11 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             Triangles.Add(TrisIndex + (invert ? 1 : 2));
             Triangles.Add(TrisIndex + (invert ? 2 : 1));
 
-            Uv.Add(new Vector2(0f, 0f));
-            Uv.Add(new Vector2(1f, 0f));
-            Uv.Add(new Vector2(0f, 1f));
+            var color = GradientUtils.GetColor(Gradient, first, _colorNoiseFreq);
+
+            Colors.Add(color);
+            Colors.Add(color);
+            Colors.Add(color);
 
             TrisIndex += 3;
         }
@@ -247,13 +267,12 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             Triangles.Add(TrisIndex + 0);
             TrisIndex += 4;
 
-            var distance = Vector3.Distance(rightStart, rightEnd);
-            float tiles = distance/Ratio;
+            var color = GradientUtils.GetColor(Gradient, rightStart, 0.2f);
 
-            Uv.Add(new Vector2(1f, 0f));
-            Uv.Add(new Vector2(0f, 0f));
-            Uv.Add(new Vector2(0f, tiles));
-            Uv.Add(new Vector2(1, tiles));
+            Colors.Add(color);
+            Colors.Add(color);
+            Colors.Add(color);
+            Colors.Add(color);
         }
 
         #endregion
@@ -262,7 +281,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
 
         private List<ThickLineSegment> GetThickSegments(LineElement lineElement)
         {
-            var points = LineUtils.DividePolyline(_elevationProvider, lineElement.Points, MaxPointDistance);
+            var points = LineUtils.DividePolyline(_elevationProvider, lineElement.Points, _maxPointDistance);
             var lineSegments = new List<ThickLineSegment>(points.Count);
             for (int i = 1; i < points.Count; i++)
                 lineSegments.Add(ThickLineHelper.GetThickSegment(points[i - 1], points[i], lineElement.Width));
@@ -271,23 +290,5 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         }
 
         #endregion
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary> Dispose pattern implementation. </summary>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // Returns objects back to pool.
-                _objectPool.StoreList(Points);
-                _objectPool.StoreList(Triangles);
-                _objectPool.StoreList(Uv);
-            }
-        }
     }
 }
