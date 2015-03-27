@@ -65,8 +65,9 @@
     <Compile Include="Scene\Facades\EmptySideBuilder.cs" />
     <Compile Include="Scene\Facades\IFacadeBuilder.cs" />
     <Compile Include="Geometry\MeshData.cs" />
-    <Compile Include="Scene\Facades\FlatFacadeBuilder.cs" />
+    <Compile Include="Scene\Facades\EmptyFacadeBuilder.cs" />
     <Compile Include="Scene\Facades\SideBuilder.cs" />
+    <Compile Include="Scene\Facades\WindowFacadeBuilder.cs" />
     <Compile Include="Scene\Facades\WindowSideBuilder.cs" />
     <Compile Include="Scene\Roofs\DomeRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\FlatRoofBuilder.cs" />

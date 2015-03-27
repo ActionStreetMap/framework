@@ -52,7 +52,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             // NOTE no standard behaviours so far
 
             // facades
-            Container.Register(Component.For<IFacadeBuilder>().Use<FlatFacadeBuilder>().Named("flat").Singleton());
+            Container.Register(Component.For<IFacadeBuilder>().Use<EmptyFacadeBuilder>().Named("empty").Singleton());
+            Container.Register(Component.For<IFacadeBuilder>().Use<WindowFacadeBuilder>().Named("window").Singleton());
             
             // roofs
             Container.Register(Component.For<IRoofBuilder>().Use<GabledRoofBuilder>().Named("gabled").Singleton());

@@ -4,6 +4,7 @@ using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
+using Random = System.Random;
 
 namespace ActionStreetMap.Explorer.Scene.Facades
 {
@@ -13,18 +14,20 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private float _colorNoiseFreq = 0.2f;
         private float _firstFloorHeight = 4;
         private int _floorCount = 3;
-        private float _entranceWidth = 5f;
+        private float _floorHeight = 3f;
+        private float _entranceWidth = 0;
         private float _floorSpanDiff = 1f;
         private float _positionNoisePower = 1f;
 
-        protected bool OptimizeParams = false;
         protected float Elevation;
         protected readonly float Height;
+        protected readonly Random Random;
         protected readonly MeshData MeshData;
 
-        protected SideBuilder(MeshData meshData, float height)
+        protected SideBuilder(MeshData meshData, float height, Random random)
         {
             Height = height;
+            Random = random;
             MeshData = meshData;
         }
 
@@ -73,9 +76,17 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return this;
         }
 
-        public SideBuilder Optimize()
+        public SideBuilder SetFloorHeight(float floorHeight)
         {
-            OptimizeParams = true;
+            _floorHeight = floorHeight;
+            return this;
+        }
+
+        public SideBuilder CalculateFloors()
+        {
+            var floorHeights = Height - _firstFloorHeight;
+            _floorCount = (int)Math.Ceiling(floorHeights / _floorHeight);
+
             return this;
         }
 
@@ -85,14 +96,15 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         {
             var distance = start.DistanceTo(end);
 
-            if (OptimizeParams) Recalculate(distance);
-
             // TODO improve elevation processing
             var elevation = Elevation;
 
             var heightStep = (Height - _firstFloorHeight) / _floorCount;
 
             BuildGroundFloor(start, end, _firstFloorHeight);
+
+            if (_entranceWidth == 0)
+                _entranceWidth = GetEntranceWidth(distance);
 
             var count = GetEntranceCount(distance);
             var widthStep = distance / count;
@@ -156,10 +168,15 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return (float)Math.Ceiling(distance / _entranceWidth);
         }
 
-        protected virtual void Recalculate(float distance)
+        protected virtual float GetEntranceWidth(float distance)
         {
-            var floorHeight = Height - _firstFloorHeight;
-            _floorCount = (int) Math.Ceiling(floorHeight/3f);
+            if (distance > 50)
+                return Random.NextFloat(9, 11);
+            if (distance > 30)
+                return Random.NextFloat(8, 9);
+            if (distance > 20)
+                return Random.NextFloat(5, 8);
+            return Random.NextFloat(3, 5);
         }
 
         #endregion

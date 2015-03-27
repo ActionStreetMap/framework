@@ -12,8 +12,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private float _maxWidth = 4f;
         private float _entranceCount;
 
-        public EmptySideBuilder(MeshData meshData, float height)
-            : base(meshData, height)
+        public EmptySideBuilder(MeshData meshData, float height, System.Random random)
+            : base(meshData, height, random)
         {
         }
 
@@ -29,23 +29,10 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return this;
         }
 
-        public override void Build(MapPoint start, MapPoint end)
-        {
-            var distance = start.DistanceTo(end);
-            if (distance <= _maxWidth) _entranceCount = 1;
-            else _entranceCount = (float)Math.Ceiling(distance / _maxWidth);
-
-            base.Build(start, end);
-        }
 
         public override bool CanBuild(MapPoint start, MapPoint end)
         {
             return true;
-        }
-
-        protected override float GetEntranceCount(float distance)
-        {
-            return _entranceCount;
         }
 
         protected override void BuildGroundFloor(MapPoint start, MapPoint end, float floorHeight)

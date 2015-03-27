@@ -19,12 +19,11 @@ area[building:levels],
 area[building:shape],
 area[building:part],
 area[building]											{ builder: building;  height:12; min_height: 0; 
-														  facade-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:flat; facade-material:Materials/Buildings/Building;
-														  roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building;
-														  fill-color:gradient(#22b5b5, #0f4f4f 50%, #000000); material:Materials/Buildings/Building; }
+														  fill-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:empty; material:Materials/Buildings/Building;
+														  roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
 area[amenity=shelter][shelter_type=public_transport]		{ builder: building; behaviour: solid; height:3; min_height: 0;
-															facade-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:flat; facade-material:Materials/Buildings/Building;
+															fill-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:empty; material:Materials/Buildings/Building;
 															roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
 area[height]												{ height: eval(num(tag('height'))); }
@@ -34,8 +33,10 @@ area[building:height][roof:height]						{ height: eval(num(tag('building:height'
 area[building:min_height]								{ min_height: eval(num(tag('building:min_height'))); }
 area[min_height]											{ min_height: eval(num(tag('min_height'))); }
 
-area[building=residential], 	
 area[building:part],area[building=yes]					{ part: true; }	
+
+area[building=residential],
+area[building=residental]								{ part: true; facade-builder: window; }
 
 area[building:shape=sphere]								{ builder: sphere; }
 area[building:shape=cylinder]							{ builder: cylinder; }					
@@ -45,108 +46,108 @@ area[building=bridge]									{ height:0.1; }
 
 area[building:material=brick],
 area[building:facade:material=brick],
-area[building:cladding=brick]							{ facade-color:gradient(#0fff96, #0cc775 50%, #066139); }
+area[building:cladding=brick]							{ fill-color:gradient(#0fff96, #0cc775 50%, #066139); }
 area[building:roof:material=brick],
 area[roof:material=brick]								{ roof-color:gradient(#0fff96, #0cc775 50%, #066139); }
 
 area[building:material=bronze],
 area[building:facade:material=bronze],
-area[building:cladding=bronze]							{ facade-color:gradient(#0fffed, #0ffeec 50%, #09988d); }
+area[building:cladding=bronze]							{ fill-color:gradient(#0fffed, #0ffeec 50%, #09988d); }
 area[building:roof:material=bronze],
 area[roof:material=bronze]								{ roof-color:gradient(#0fffed, #0ffeec 50%, #09988d); }
 
 area[building:material=canvas],
 area[building:facade:material=canvas],
-area[building:cladding=canvas]							{ facade-color:gradient(#0fff8f, #0fff8f 50%, #099956); }
+area[building:cladding=canvas]							{ fill-color:gradient(#0fff8f, #0fff8f 50%, #099956); }
 area[building:roof:material=canvas],
 area[roof:material=canvas]								{ roof-color:gradient(#0fff8f, #0fff8f 50%, #099956); }
 
 area[building:material=concrete],
 area[building:facade:material=concrete],
-area[building:cladding=concrete]							{ facade-color:gradient(#15c0c0, #0a5a5a 50%, #000000);}
+area[building:cladding=concrete]							{ fill-color:gradient(#15c0c0, #0a5a5a 50%, #000000);}
 area[building:roof:material=concrete],
 area[roof:material=concrete]								{ roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); }
 
 area[building:material=copper],
 area[building:facade:material=copper],
-area[building:cladding=copper]							{ facade-color:gradient(#53746c, #0a0e0d 50%, #000000); }
+area[building:cladding=copper]							{ fill-color:gradient(#53746c, #0a0e0d 50%, #000000); }
 area[building:roof:material=copper],
 area[roof:material=copper]								{ roof-color:gradient(#53746c, #0a0e0d 50%, #000000); }
 
 area[building:material=glass],
 area[building:facade:material=glass],
-area[building:cladding=glass]							{ facade-color:gradient(#18f5f5, #0e8f8f 50%, #042929); }
+area[building:cladding=glass]							{ fill-color:gradient(#18f5f5, #0e8f8f 50%, #042929); }
 area[building:roof:material=glass],
 area[roof:material=glass]								{ roof-color:gradient(#18f5f5, #0e8f8f 50%, #042929); }
 
 area[building:material=gold],
 area[building:facade:material=gold],
-area[building:cladding=gold]								{ facade-color:gradient(#0fffc2, #0ffcc0 50%, #099672); }
+area[building:cladding=gold]								{ fill-color:gradient(#0fffc2, #0ffcc0 50%, #099672); }
 area[building:roof:material=gold],
 area[roof:material=gold]									{ roof-color:gradient(#0fffc2, #0ffcc0 50%, #099672); }
 
 area[building:material=plants],
 area[building:facade:material=plants],
-area[building:cladding=plants]							{ facade-color:gradient(#000ff9, #000993 50%, #00032d); }
+area[building:cladding=plants]							{ fill-color:gradient(#000ff9, #000993 50%, #00032d); }
 area[building:roof:material=plants],
 area[roof:material=plants]								{ roof-color:gradient(#000ff9, #000993 50%, #00032d); }
 
 area[building:material=metal],
 area[building:facade:material=metal],
-area[building:cladding=metal]							{ facade-color:gradient(#0fffff, #0aaaaa 50%, #044444); }
+area[building:cladding=metal]							{ fill-color:gradient(#0fffff, #0aaaaa 50%, #044444); }
 area[building:roof:material=metal],
 area[roof:material=metal]								{ roof-color:gradient(#0fffff, #0aaaaa 50%, #044444); }
 
 area[building:material=panel],
 area[building:facade:material=panel],
-area[building:cladding=panel]							{ facade-color:gradient(#0fff8f, #0fff8f 50%, #099956); }
+area[building:cladding=panel]							{ fill-color:gradient(#0fff8f, #0fff8f 50%, #099956); }
 area[building:roof:material=panel],
 area[roof:material=panel]								{ roof-color:gradient(#0fff8f, #0fff8f 50%, #099956); }
 
 area[building:material=plaster],
 area[building:facade:material=plaster],
-area[building:cladding=plaster]							{ facade-color:gradient(#0fffff, #099999 50%, #033333); }
+area[building:cladding=plaster]							{ fill-color:gradient(#0fffff, #099999 50%, #033333); }
 area[building:roof:material=plaster],
 area[roof:material=plaster]								{ roof-color:gradient(#0fffff, #099999 50%, #033333); }
 
 area[building:material=roof_tiles],
 area[building:facade:material=roof_tiles],
-area[building:cladding=roof_tiles]						{ facade-color:gradient(#753e2f, #0f0806 50%, #000000); }
+area[building:cladding=roof_tiles]						{ fill-color:gradient(#753e2f, #0f0806 50%, #000000); }
 area[building:roof:material=roof_tiles],
 area[roof:material=roof_tiles]							{ roof-color:gradient(#753e2f, #0f0806 50%, #000000); }
 
 area[building:material=silver],
 area[building:facade:material=silver],
-area[building:cladding=silver]							{ facade-color:gradient(#0fffff, #0ccccc 50%, #066666); }
+area[building:cladding=silver]							{ fill-color:gradient(#0fffff, #0ccccc 50%, #066666); }
 area[building:roof:material=silver],
 area[roof:material=silver]								{ roof-color:gradient(#0fffff, #0ccccc 50%, #066666); }
 
 area[building:material=slate],
 area[building:facade:material=slate],
-area[building:cladding=slate]							{ facade-color:gradient(#0ccccc, #066666 50%, #000000); }
+area[building:cladding=slate]							{ fill-color:gradient(#0ccccc, #066666 50%, #000000); }
 area[building:roof:material=slate],
 area[roof:material=slate]								{ roof-color:gradient(#0ccccc, #066666 50%, #000000); }
 
 area[building:material=stone],
 area[building:facade:material=stone],
-area[building:cladding=stone]							{ facade-color:gradient(#0ffcab, #099666 50%, #033021); }
+area[building:cladding=stone]							{ fill-color:gradient(#0ffcab, #099666 50%, #033021); }
 area[building:roof:material=stone],
 area[roof:material=stone]								{ roof-color:gradient(#0ffcab, #099666 50%, #033021); }
 
 area[building:material=tar_paper],
 area[building:facade:material=tar_paper],
-area[building:cladding=tar_paper]						{ facade-color:gradient(#099999, #033333 50%, #000000); }
+area[building:cladding=tar_paper]						{ fill-color:gradient(#099999, #033333 50%, #000000); }
 area[building:roof:material=tar_paper],
 area[roof:material=tar_paper]							{ roof-color:gradient(#099999, #033333 50%, #000000); }
 
 area[building:material=wood],
 area[building:facade:material=wood],
-area[building:cladding=wood]								{ facade-color:gradient(#0eff94, #0deb88 50%, #07854d); }
+area[building:cladding=wood]								{ fill-color:gradient(#0eff94, #0deb88 50%, #07854d); }
 area[building:roof:material=wood],
 area[roof:material=wood]									{ roof-color:gradient(#0eff94, #0deb88 50%, #07854d); }
 
-area[building:colour]									{ facade-color:eval(gradient(tag('building:colour'))); }
-area[building:color]										{ facade-color:eval(gradient(tag('building:color'))); }
+area[building:colour]									{ fill-color:eval(gradient(tag('building:colour'))); }
+area[building:color]										{ fill-color:eval(gradient(tag('building:color'))); }
 
 /* support only mansard/flat so far, so don't eval */
 area[roof:shape=flat]									{ roof-builder: flat; }
@@ -161,7 +162,7 @@ area[building:shape=pyramidal]							{ roof-builder: pyramidal; height:0; roof-h
 area[roof:height]										{ roof-height: eval(num(tag('roof:height')))}
 
 area[man_made=bridge]									{ builder: building; behaviour: solid; height:0.5; min_height: 0; 
-														  facade-color:gradient(#666666, #000000 50%, #000000); facade-builder:flat; facade-material:Materials/Buildings/Building;
+														  fill-color:gradient(#666666, #000000 50%, #000000); facade-builder:flat; material:Materials/Buildings/Building;
 														  roof-color:gradient(#666666, #000000 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
 area[landuse=residential]								{ fill-color: gradient(#0fffff, #0ddddd 50%, #077777); }

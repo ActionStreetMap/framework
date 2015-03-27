@@ -14,5 +14,10 @@ namespace ActionStreetMap.Explorer.Utils
         {
             return min + (rng.NextDouble() * (max - min));
         }
+
+        public static float NextFloat(this Random rng, float min, float max)
+        {
+            return (float) (min + (rng.NextDouble() * (max - min)));
+        }
     }
 }
