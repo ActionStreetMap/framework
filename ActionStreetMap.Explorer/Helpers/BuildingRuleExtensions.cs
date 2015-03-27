@@ -13,12 +13,12 @@ namespace ActionStreetMap.Explorer.Helpers
 
         public static string GetFacadeColor(this Rule rule)
         {
-            return rule.Evaluate<string>("facade-color");
+            return rule.Evaluate<string>("fill-color");
         }
 
         public static string GetFacadeMaterial(this Rule rule, string @default = null)
         {
-            return rule.EvaluateDefault<string>("facade-material", @default);
+            return rule.EvaluateDefault<string>("material", @default);
         }
 
         #endregion
