@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             if (building.RoofHeight > 0)
                 offset = building.RoofHeight - radius;
 
-            center.SetElevation(building.Elevation + building.Height + building.MinHeight + offset);
+            center.SetElevation(building.Elevation + building.MinHeight + building.Height + offset);
 
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 

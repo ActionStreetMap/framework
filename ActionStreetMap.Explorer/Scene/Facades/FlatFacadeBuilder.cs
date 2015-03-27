@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var simpleBuilder = new EmptySideBuilder(meshData, building.Height)
                 .SetFacadeGradient(gradient)
                 .SetFirstFloorHeight(4)
-                .SetElevation(building.Elevation)
+                .SetElevation(building.MinHeight + building.Elevation)
                 .Optimize();
 
             for (int i = 0; i < footprint.Count; i++)

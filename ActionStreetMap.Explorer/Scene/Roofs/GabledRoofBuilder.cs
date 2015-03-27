@@ -30,7 +30,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         {
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
             var context = new Context(gradient, ObjectPool);
-            var roofOffset = building.Elevation + building.Height + building.MinHeight;
+            var roofOffset = building.Elevation + building.MinHeight + building.Height;
             var roofHeight = roofOffset + building.RoofHeight;
 
             var polygon = new Polygon(building.Footprint, roofOffset);

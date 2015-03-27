@@ -8,7 +8,7 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
     {
         private float _height = 10f;
         private float _radius = 2f;
-        private float _maxSegmentHeight = 2f;
+        private float _maxSegmentHeight = 5f;
         private int _radialSegments = 5;
         private Vector3 _center;
 

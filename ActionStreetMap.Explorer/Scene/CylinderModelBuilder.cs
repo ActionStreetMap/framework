@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Scene
 
             var height = rule.GetHeight();
             var minHeight = rule.GetMinHeight();
-            var actualHeight = (height - minHeight)/2;
+            var actualHeight = (height - minHeight);
             var color = rule.GetFillColor();
             var gradient = ResourceProvider.GetGradient(color);
 
@@ -46,7 +46,7 @@ namespace ActionStreetMap.Explorer.Scene
             new CylinderGenerator(meshData)
                 .SetCenter(new Vector3(cylinderCenter.X, elevation + minHeight, cylinderCenter.Y))
                 .SetHeight(actualHeight)
-                .SetMaxSegmentHeight(2f)
+                .SetMaxSegmentHeight(5f)
                 .SetRadialSegments(7)
                 .SetRadius(diameter/2)
                 .SetGradient(gradient)
