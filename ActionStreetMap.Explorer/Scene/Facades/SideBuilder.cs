@@ -16,7 +16,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private int _floorCount = 3;
         private float _floorHeight = 3f;
         private float _entranceWidth = 0;
-        private float _floorSpanDiff = 1f;
+        private float _floorSpanDiff = 0.2f;
         private float _positionNoisePower = 1f;
 
         protected float Elevation;
@@ -24,7 +24,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         protected readonly Random Random;
         protected readonly MeshData MeshData;
 
-        protected SideBuilder(MeshData meshData, float height, Random random)
+        protected SideBuilder(MeshData meshData, float height, System.Random random)
         {
             Height = height;
             Random = random;

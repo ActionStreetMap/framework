@@ -11,6 +11,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
     {
         private GradientWrapper _facadeGradient;
         private float _groundFloorEntranceWidth = 12;
+        private float _windowOffset = 0.2f;
+        private float _windowWidthThreshold = 2f;
 
         public WindowSideBuilder(MeshData meshData, float height, System.Random random) :
             base(meshData, height, random)
@@ -29,13 +31,21 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return this;
         }
 
+        public WindowSideBuilder SetWindowOffset(float offset)
+        {
+            _windowOffset = offset;
+            return this;
+        }
+
+        public WindowSideBuilder SetWindowWidthThreshold(float threshold)
+        {
+            _windowWidthThreshold = threshold;
+            return this;
+        }
+
         protected override float GetEntranceWidth(float distance)
         {
-            if (distance > 30)
-                return Random.NextFloat(5, 7);
-            if (distance > 20)
-                return Random.NextFloat(4, 5);
-            if (distance > 10)
+            if (distance > 50)
                 return Random.NextFloat(3, 4);
             return Random.NextFloat(2, 3);
         }
@@ -76,10 +86,10 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var perp = Vector3.Cross(side2, side1).normalized;
             var offsetVector = perp * 0f;
 
-            var isWindowOffset = step % 2 == 1;
+            var isWindowOffset = step % 2 == 1 && Vector3.Distance(a, b) >= _windowWidthThreshold;
             if (isWindowOffset)
             {
-                offsetVector = perp * 2;
+                offsetVector = perp * _windowOffset;
                 AddPlane(Color.yellow, a, b, b + offsetVector, a + offsetVector);
                 AddPlane(Color.yellow, b, c, c + offsetVector, b + offsetVector);
                 AddPlane(Color.yellow, c, d, d + offsetVector, c + offsetVector);

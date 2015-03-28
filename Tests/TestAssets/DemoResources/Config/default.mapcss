@@ -33,8 +33,9 @@ area[building:height][roof:height]						{ height: eval(num(tag('building:height'
 area[building:min_height]								{ min_height: eval(num(tag('building:min_height'))); }
 area[min_height]											{ min_height: eval(num(tag('min_height'))); }
 
-area[building:part],area[building=yes]					{ part: true; }	
+area[building:part]										{ part: true; }	
 
+area[building=yes],
 area[building=residential],
 area[building=residental]								{ part: true; facade-builder: window; }
 
