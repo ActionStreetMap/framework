@@ -28,6 +28,9 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Gets or sets type of building. </summary>
         public string Type { get; set; }
 
+        /// <summary> Gets or sets part flag. </summary>
+        public bool IsPart { get; set; }
+
         #region Height specific
 
         /// <summary> Gets or sets height of building. </summary>

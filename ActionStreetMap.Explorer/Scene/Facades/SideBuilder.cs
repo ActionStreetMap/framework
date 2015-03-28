@@ -10,21 +10,21 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal abstract class SideBuilder
     {
-        private float _positionNoiseFreq = 0.05f;
+        private float _positionNoiseFreq = 0.15f;
         private float _colorNoiseFreq = 0.2f;
         private float _firstFloorHeight = 4;
         private int _floorCount = 3;
         private float _floorHeight = 3f;
         private float _entranceWidth = 0;
         private float _floorSpanDiff = 0.2f;
-        private float _positionNoisePower = 1f;
+        private float _windowWidthThreshold = 12f;
 
         protected float Elevation;
         protected readonly float Height;
         protected readonly Random Random;
         protected readonly MeshData MeshData;
 
-        protected SideBuilder(MeshData meshData, float height, System.Random random)
+        protected SideBuilder(MeshData meshData, float height, Random random)
         {
             Height = height;
             Random = random;
@@ -63,10 +63,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return this;
         }
 
-        public SideBuilder SetPositionNoise(float freq, float power)
+        public SideBuilder SetPositionNoise(float freq)
         {
             _positionNoiseFreq = freq;
-            _positionNoisePower = power;
             return this;
         }
 
@@ -79,6 +78,12 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         public SideBuilder SetFloorHeight(float floorHeight)
         {
             _floorHeight = floorHeight;
+            return this;
+        }
+
+        public SideBuilder SetWindowWidthThreshold(float threshold)
+        {
+            _windowWidthThreshold = threshold;
             return this;
         }
 
@@ -117,7 +122,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 var isLast = i == _floorCount - 1;
 
                 var floor = elevation + _firstFloorHeight + i * heightStep + (isWindowFloor ? -_floorSpanDiff : 0);
-                var ceiling = floor + heightStep + (isWindowFloor ? _floorSpanDiff : -_floorSpanDiff);
+                var ceiling = floor + heightStep + (isLast ? 0 : (isWindowFloor ? _floorSpanDiff : -_floorSpanDiff));
 
                 // latest floor without windows
                 if (isLast) ceiling += _floorSpanDiff;
@@ -139,7 +144,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                     var c = new Vector3(p2.X + ceilingNoise2, ceiling + ceilingNoise2, p2.Y + ceilingNoise2);
                     var d = new Vector3(p1.X + ceilingNoise1, ceiling + ceilingNoise1, p1.Y + ceilingNoise1);
 
-                    if (isWindowFloor)
+                    if (isWindowFloor && distance > _windowWidthThreshold)
                         BuildWindow(k, a, b, c, d);
                     else
                         BuildSpan(k, a, b, c, d);
@@ -185,7 +190,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         protected float GetPositionNoise(Vector3 point)
         {
-            return Noise.Perlin3D(point, _positionNoiseFreq) * _positionNoisePower;
+            return Noise.Perlin3D(point, _positionNoiseFreq);
         }
 
         protected Color GetColor(GradientWrapper gradient, Vector3 point)

@@ -12,7 +12,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private GradientWrapper _facadeGradient;
         private float _groundFloorEntranceWidth = 12;
         private float _windowOffset = 0.2f;
-        private float _windowWidthThreshold = 2f;
+        private float _windowWidthThreshold = 1.2f;
 
         public WindowSideBuilder(MeshData meshData, float height, System.Random random) :
             base(meshData, height, random)
@@ -46,8 +46,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         protected override float GetEntranceWidth(float distance)
         {
             if (distance > 50)
-                return Random.NextFloat(3, 4);
-            return Random.NextFloat(2, 3);
+                return Random.NextFloat(2.8f, 3.8f);
+            return Random.NextFloat(1.8f, 2.8f);
         }
 
         protected override void BuildGroundFloor(MapPoint start, MapPoint end, float floorHeight)
@@ -83,6 +83,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var side1 = b - a;
             var side2 = c - a;
 
+            var color = GetColor(_facadeGradient, a);
+
             var perp = Vector3.Cross(side2, side1).normalized;
             var offsetVector = perp * 0f;
 
@@ -90,19 +92,16 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             if (isWindowOffset)
             {
                 offsetVector = perp * _windowOffset;
-                AddPlane(Color.yellow, a, b, b + offsetVector, a + offsetVector);
-                AddPlane(Color.yellow, b, c, c + offsetVector, b + offsetVector);
-                AddPlane(Color.yellow, c, d, d + offsetVector, c + offsetVector);
-                AddPlane(Color.yellow, d, a, a + offsetVector, d + offsetVector);
+                AddPlane(color, a, b, b + offsetVector, a + offsetVector);
+                AddPlane(color, b, c, c + offsetVector, b + offsetVector);
+                AddPlane(color, c, d, d + offsetVector, c + offsetVector);
+                AddPlane(color, d, a, a + offsetVector, d + offsetVector);
             }
 
             if (isWindowOffset)
                 BuildGlass(a + offsetVector, b + offsetVector, c + offsetVector, d + offsetVector);
             else
-            {
-                var color = GetColor(_facadeGradient, a);
                 AddPlane(color, a + offsetVector, b + offsetVector, c + offsetVector, d + offsetVector);
-            }
         }
 
         protected override void BuildSpan(int step, Vector3 a, Vector3 b, Vector3 c, Vector3 d)

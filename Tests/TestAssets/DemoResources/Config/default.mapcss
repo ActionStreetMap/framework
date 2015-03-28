@@ -37,9 +37,8 @@ area[min_height]											{ min_height: eval(num(tag('min_height'))); }
 
 area[building:part]										{ part: true; }	
 
-area[building=yes],
 area[building=residential],
-area[building=residental]								{ part: true; facade-builder: window; }
+area[building=residental]								{ facade-builder: window; }
 
 area[building:shape=sphere]								{ builder: sphere; }
 area[building:shape=cylinder]							{ builder: cylinder; }					
@@ -165,7 +164,7 @@ area[building:shape=pyramidal]							{ roof-builder: pyramidal; height:0; roof-h
 area[roof:height]										{ roof-height: eval(num(tag('roof:height')))}
 
 area[man_made=bridge]									{ builder: building; behaviour: solid; height:0.5; min_height: 0; 
-														  fill-color:gradient(#666666, #000000 50%, #000000); facade-builder:flat; material:Materials/Buildings/Building;
+														  fill-color:gradient(#666666, #000000 50%, #000000); facade-builder:empty; material:Materials/Buildings/Building;
 														  roof-color:gradient(#666666, #000000 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
 area[landuse=residential]								{ fill-color: gradient(#0fffff, #0ddddd 50%, #077777); }

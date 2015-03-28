@@ -30,10 +30,14 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var meshData = _objectPool.CreateMeshData();
             meshData.MaterialKey = building.FacadeMaterial;
 
+            var firstFloorHeight = random.NextFloat(2.2f, 3.2f);
+            firstFloorHeight = building.Height > firstFloorHeight ? firstFloorHeight : building.Height;
+
             var simpleBuilder = new EmptySideBuilder(meshData, building.Height, random)
                 .SetFacadeGradient(gradient)
-                .SetFirstFloorHeight(4)
+                .SetFirstFloorHeight(firstFloorHeight)
                 .SetElevation(building.MinHeight + building.Elevation)
+                .SetPositionNoise(building.IsPart ? 0.01f : 0.15f)
                 .SetFloorHeight(random.NextFloat(2.9f, 4.2f))
                 .SetFloorSpan(random.NextFloat(0.7f, 1.2f))
                 .SetFloors(building.Levels)

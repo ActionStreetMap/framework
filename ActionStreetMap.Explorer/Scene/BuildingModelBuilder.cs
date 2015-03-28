@@ -78,9 +78,9 @@ namespace ActionStreetMap.Explorer.Scene
             // NOTE observed that min_height should be subracted from height for building:part
             // TODO this should be done in mapcss, but stylesheet doesn't support multiply eval operations
             // on the same tag
-
+            var isPart = rule.IsPart();
             var height = rule.GetHeight();
-            if (rule.IsPart())
+            if (isPart)
                 height -= minHeight;
 
             // TODO should we save this object in WorldManager?
@@ -89,6 +89,7 @@ namespace ActionStreetMap.Explorer.Scene
                 Id = model.Id,
                 Address = AddressExtractor.Extract(model.Tags),
                 GameObject = gameObjectWrapper,
+                IsPart = isPart,
                 Height = height,
                 Levels = rule.GetLevels(),
                 MinHeight = minHeight,
