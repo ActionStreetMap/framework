@@ -54,7 +54,7 @@ namespace ActionStreetMap.Explorer.Helpers
 
         public static int GetLevels(this Rule rule, int @default = 0)
         {
-            return rule.EvaluateDefault("levels", @default);
+            return (int) rule.EvaluateDefault("levels", (float) @default);
         }
 
         public static bool IsPart(this Rule rule)

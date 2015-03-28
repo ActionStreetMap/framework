@@ -36,6 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 .SetElevation(building.MinHeight + building.Elevation)
                 .SetFloorHeight(random.NextFloat(2.9f, 4.2f))
                 .SetFloorSpan(random.NextFloat(0.7f, 1.2f))
+                .SetFloors(building.Levels)
                 .CalculateFloors();
 
             for (int i = 0; i < footprint.Count; i++)

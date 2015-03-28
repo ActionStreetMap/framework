@@ -18,13 +18,15 @@ area[man_made=tower],
 area[building:levels],
 area[building:shape],
 area[building:part],
-area[building]											{ builder: building;  height:12; min_height: 0; 
-														  fill-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:empty; material:Materials/Buildings/Building;
-														  roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
+area[building]											{ builder: building;  height:12; min_height: 0; levels: 5;
+														  fill-color:gradient(#c0c0c0, #a9a9a9 50%, #808080); facade-builder:empty; material:Materials/Buildings/Building;
+														  roof-color:gradient(#808080, #606060 50%, #505050); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
 area[amenity=shelter][shelter_type=public_transport]		{ builder: building; behaviour: solid; height:3; min_height: 0;
-															fill-color:gradient(#22b5b5, #0f4f4f 50%, #000000); facade-builder:empty; material:Materials/Buildings/Building;
-															roof-color:gradient(#15c0c0, #0a5a5a 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
+															fill-color:gradient(#c0c0c0, #a9a9a9 50%, #808080); facade-builder:empty; material:Materials/Buildings/Building;
+															roof-color:gradient(#808080, #606060 50%, #505050); roof-builder:flat; roof-material:Materials/Buildings/Building; }
+
+area[building:levels]									{ height: eval(num(tag('building:levels')) * num(3.2)); levels: eval(num(tag('building:levels'))); }
 
 area[height]												{ height: eval(num(tag('height'))); }
 area[building:height]									{ height: eval(num(tag('building:height'))); }
