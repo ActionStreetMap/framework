@@ -104,15 +104,6 @@ namespace ActionStreetMap.Explorer.Scene
                 Footprint = points,
             };
 
-            lock (this)
-            {
-                Console.WriteLine("building {0}", building.Id);
-                foreach (var mapPoint in points)
-                {
-                    Console.WriteLine("new MapPoint({0}f, {1}f, {2}f),", mapPoint.X, mapPoint.Y, mapPoint.Elevation);
-                }
-            }
-
             tile.Registry.RegisterGlobal(building.Id);
 
             // facade
