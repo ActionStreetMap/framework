@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Tiling.Models
@@ -11,7 +13,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         private readonly IObjectPool _objectPool;
 
         public List<RoadElement> Roads { get; private set; }
-        public List<Surface> Areas { get; private set; }
+        public List<Tuple<Surface, Action<Mesh>>> Surfaces { get; private set; }
         public List<Surface> Water { get; private set; }
 
         /// <inheritdoc />
@@ -22,9 +24,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
-            Areas = objectPool.NewList<Surface>(128);
-            Roads = objectPool.NewList<RoadElement>(64);
-            Water = objectPool.NewList<Surface>(64);
+            Surfaces = objectPool.NewList<Tuple<Surface, Action<Mesh>>>(32);
+            Roads = objectPool.NewList<RoadElement>(32);
+            Water = objectPool.NewList<Surface>(32);
         }
 
         /// <inheritdoc />
@@ -43,13 +45,12 @@ namespace ActionStreetMap.Core.Tiling.Models
             }
         }
 
-        /// <summary> Adds area which should be drawn using different splat index. </summary>
-        /// <param name="surface">Area settings.</param>
-        public void AddArea(Surface surface)
+        /// <summary> Adds surface. </summary>
+        public void AddSurface(Surface surface, Action<Mesh> modifyMeshAction = null)
         {
-            lock (Areas)
+            lock (Surfaces)
             {
-                Areas.Add(surface);
+                Surfaces.Add(new Tuple<Surface, Action<Mesh>>(surface, modifyMeshAction));
             }
         }
 
@@ -76,8 +77,8 @@ namespace ActionStreetMap.Core.Tiling.Models
             if (disposing)
             {
                 // return lists to object pool
-                foreach (var area in Areas)
-                    _objectPool.StoreList(area.Points);
+                foreach (var tuple in Surfaces)
+                    _objectPool.StoreList(tuple.Item1.Points);
                 foreach (var water in Water)
                     _objectPool.StoreList(water.Points);
                 foreach (var road in Roads)

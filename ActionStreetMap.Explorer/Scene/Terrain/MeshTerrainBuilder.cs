@@ -142,7 +142,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var colors = context.Data.Colors.ToArray();
             _objectPool.RecycleMeshData(context.Data);
 
-            Scheduler.MainThread.Schedule(() => BuildGameObject(rule, cellGameObject, 
+            Scheduler.MainThread.Schedule(() => BuildObject(cellGameObject, rule,
                 vertices, triangles, colors));
         }
 
@@ -268,6 +268,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             const float colorNoiseFreq = 0.2f;
             const float eleNoiseFreq = 0.2f;
             var gradient = _resourceProvider.GetGradient(meshRegion.GradientKey);
+
+            if (meshRegion.ModifyMeshAction != null)
+                meshRegion.ModifyMeshAction(meshRegion.Mesh);
+
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(context, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
         }
@@ -379,10 +383,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildGameObject(Rule rule, IGameObject cellGameObject, 
+        private void BuildObject(IGameObject goWrapper, Rule rule,
             Vector3[] vertices, int[] triangles, Color[] colors)
         {
-            var gameObject = cellGameObject.GetComponent<GameObject>();
+            var gameObject = goWrapper.GetComponent<GameObject>();
 
             var meshData = new Mesh();
             meshData.vertices = vertices;

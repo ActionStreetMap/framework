@@ -1,16 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Utils;
+using UnityEngine;
+using Mesh = ActionStreetMap.Core.Geometry.Triangle.Mesh;
 
 namespace ActionStreetMap.Explorer.Scene
 {
-    /// <summary> Provides the way to process splat areas. </summary>
+    /// <summary> Provides the way to process surfaces. </summary>
     public class SplatModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
@@ -21,46 +25,49 @@ namespace ActionStreetMap.Explorer.Scene
         {
             var points = ObjectPool.NewList<MapPoint>();
             PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, points);
-            tile.Canvas.AddArea(new Surface()
+
+            var parent = tile.GameObject;
+            Action<Mesh> fillAction = null;
+            if (rule.IsForest())
+                fillAction = mesh => CreateForest(parent, rule, mesh);
+
+            tile.Canvas.AddSurface(new Surface()
             {
                 GradientKey = rule.GetFillColor(),
-                Points = points
-            });
-
-            if (rule.IsForest())
-                GenerateTrees(tile, points, (int) area.Id);
+                Points = points,
+            }, fillAction);
 
             return null;
         }
 
-        private void GenerateTrees(Tile tile, List<MapPoint> points, int seed)
+        private void CreateForest(IGameObject parent, Rule rule,  Mesh mesh)
         {
-            // triangulate polygon
-            var triangles = PolygonUtils.Triangulate(points, ObjectPool);
-            
-            var rnd = new Random(seed);
-            // this cycle generate points inside each triangle
-            // count of points is based on triangle area
-            for (int i = 0; i < triangles.Count;)
-            {
-                // get triangle vertices
-                var p1 = points[triangles[i++]];
-                var p2 = points[triangles[i++]];
-                var p3 = points[triangles[i++]];
+            var trunkGradientKey = rule.Evaluate<string>("trunk-color");
+            var foliageGradientKey = rule.Evaluate<string>("foliage-color");
 
-                var area = TriangleUtils.GetTriangleArea(p1, p2, p3);
-                var count = area / 200;
-                for (int j = 0; j < count; j++)
-                {
-                    var point = TriangleUtils.GetRandomPoint(p1, p2, p3, rnd.NextDouble(), rnd.NextDouble());
-                    // TODO use this different way
-                    /*tile.Canvas.AddTree(new Tree()
-                    {
-                        Type = 0, // TODO
-                        Point = point
-                    });*/
-                }
+            foreach (var triangle in mesh.Triangles)
+            {
+                // NOTE Add only fifths tree. Actually, this can be configurable
+                if (triangle.ID%5 != 0) continue;
+
+                var v0 = triangle.GetVertex(0);
+                var v1 = triangle.GetVertex(1);
+                var v2 = triangle.GetVertex(2);
+
+                var center = new MapPoint((float)(v0.x + v1.x + v2.x) / 3, (float)(v0.y + v1.y + v2.y) / 3);
+                var elevation = ElevationProvider.GetElevation(center);
+                var meshData = ObjectPool.CreateMeshData();
+                meshData.GameObject = GameObjectFactory.CreateNew("tree");
+                meshData.MaterialKey = rule.GetMaterialKey();
+                new TreeGenerator(meshData)
+                    .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
+                    .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
+                    .SetPosition(new Vector3(center.X, elevation, center.Y))
+                    .Build();
+
+                BuildObject(parent, meshData);
             }
         }
+
     }
 }

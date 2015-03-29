@@ -154,9 +154,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private void BuildSurfaces()
         {
             var regions = new List<MeshCanvas.Region>();
-            foreach (var group in _tile.Canvas.Areas.GroupBy(s => s.GradientKey))
+            foreach (var group in _tile.Canvas.Surfaces.GroupBy(s => s.Item1.GradientKey))
             {
-                var paths = group.Select(a => a.Points
+                var paths = group.Select(a => a.Item1.Points
                     .Select(p => new IntPoint(p.X*_scale, p.Y*_scale)).ToList())
                     .ToList();
                 _clipper.AddPaths(paths, PolyType.ptSubject, true);
@@ -174,9 +174,14 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 _clipper.Execute(ClipType.ctDifference, surfacesResult, PolyFillType.pftPositive,
                     PolyFillType.pftPositive);
                 _clipper.Clear();
+
+                // TODO this is workaround: we use action from first item of group
+                var modifyMeshAction = group.First().Item2;
+
                 regions.Add(new MeshCanvas.Region
                 {
                     GradientKey = group.Key,
+                    ModifyMeshAction = modifyMeshAction,
                     Shape = ClipByTile(surfacesResult)
                 });
             }

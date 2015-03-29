@@ -86,6 +86,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             {
                 Contours = contours,
                 GradientKey = region.GradientKey,
+                ModifyMeshAction = region.ModifyMeshAction,
                 Mesh = mesh
             };
         }

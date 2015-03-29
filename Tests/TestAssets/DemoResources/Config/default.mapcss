@@ -215,7 +215,8 @@ area[leisure=park],
 area[landuse=forest] 									{ builder: splat; fill-color: gradient(#09ff64, #08dc56 50%, #04762e); }
 
 area[natural=wood],	
-area[landuse=forest]										{ forest:true; }
+area[landuse=forest]										{ forest:true; fill-color: gradient(#064807, #032804 50%, #011001); foliage-color: gradient(#80c34c, #406126 50%, #101809); 		
+														  trunk-color: gradient(#f4a460, #614126 50%, #302013); material: Materials/Buildings/Building; }
 
 area[landuse=meadow],
 area[landuse=farmland],
