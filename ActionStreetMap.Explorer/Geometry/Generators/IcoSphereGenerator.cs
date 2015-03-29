@@ -107,7 +107,6 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
                 }
                 faces = faces2;
             }
-
             GenerateMeshData(faces, vertList);
         }
 
@@ -122,8 +121,7 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
                 var v1 = vertList[face.V2] + _center;
                 var v2 = vertList[face.V3] + _center;
 
-                AddTriangle(v0, v1, v2);
-          
+                AddTriangle(v0, v2, v1);
             }
         }
 

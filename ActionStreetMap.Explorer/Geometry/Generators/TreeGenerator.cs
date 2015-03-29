@@ -73,7 +73,7 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
                 .SetCenter(new Vector3(_position.x, _position.y + _trunkHeight + _foliageRadius * 0.9f, _position.z))
                 .SetRadius(_foliageRadius)
                 .SetRecursionLevel(1)
-                .SetVertexNoiseFreq(1.2f)
+                .SetVertexNoiseFreq(2f)
                 .SetGradient(_foliageGradient)
                 .Build();
         }
