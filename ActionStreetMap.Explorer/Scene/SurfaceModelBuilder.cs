@@ -4,7 +4,6 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
@@ -15,10 +14,10 @@ using Mesh = ActionStreetMap.Core.Geometry.Triangle.Mesh;
 namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Provides the way to process surfaces. </summary>
-    public class SplatModelBuilder : ModelBuilder
+    public class SurfaceModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
-        public override string Name { get { return "splat"; } }
+        public override string Name { get { return "surface"; } }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
@@ -40,13 +39,14 @@ namespace ActionStreetMap.Explorer.Scene
             return null;
         }
 
-        private void CreateForest(IGameObject parent, Rule rule,  Mesh mesh)
+        private void CreateForest(IGameObject parent, Rule rule, Mesh mesh)
         {
             var trunkGradientKey = rule.Evaluate<string>("trunk-color");
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
 
             foreach (var triangle in mesh.Triangles)
             {
+                // TODO reuse mesh and/or generator?
                 // NOTE Add only fifths tree. Actually, this can be configurable
                 if (triangle.ID%5 != 0) continue;
 
@@ -68,6 +68,5 @@ namespace ActionStreetMap.Explorer.Scene
                 BuildObject(parent, meshData);
             }
         }
-
     }
 }

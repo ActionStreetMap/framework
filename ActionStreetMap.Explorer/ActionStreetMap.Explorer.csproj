@@ -108,7 +108,7 @@
     <Compile Include="Scene\BuildingModelBuilder.cs" />
     <Compile Include="Scene\InfoModelBuilder.cs" />
     <Compile Include="Scene\RoadModelBuilder.cs" />
-    <Compile Include="Scene\SplatModelBuilder.cs" />
+    <Compile Include="Scene\SurfaceModelBuilder.cs" />
     <Compile Include="Scene\TreeModelBuilder.cs" />
     <Compile Include="Scene\ModelBuilder.cs" />
     <Compile Include="Scene\CylinderModelBuilder.cs" />

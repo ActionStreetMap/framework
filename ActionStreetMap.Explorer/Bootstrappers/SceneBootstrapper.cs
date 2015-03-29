@@ -46,7 +46,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IModelBuilder>().Use<InfoModelBuilder>().Named("info").Singleton());
             Container.Register(Component.For<IModelBuilder>().Use<TreeModelBuilder>().Named("tree").Singleton());
             Container.Register(Component.For<IModelBuilder>().Use<RoadModelBuilder>().Named("road").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<SplatModelBuilder>().Named("splat").Singleton());
+            Container.Register(Component.For<IModelBuilder>().Use<SurfaceModelBuilder>().Named("surface").Singleton());
            
             // register core behaviours
             // NOTE no standard behaviours so far
