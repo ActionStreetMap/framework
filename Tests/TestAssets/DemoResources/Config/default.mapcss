@@ -282,7 +282,7 @@ way[barrier]											{ builder: barrier; fill-color: gradient(#0aaaaa, #044444
 
 
 /************************************************** NODES ********************************************/
-node[natural=tree]										{ builder:tree; }
+node[natural=tree]										{ builder:tree; foliage-color: gradient(#80c34c, #406126 50%, #101809); trunk-color: gradient(#f4a460, #614126 50%, #302013); material: Materials/Buildings/Building; }
 
 /* Info */
 node[tourism=alpinehut]							                { rect:0_65_64_64; min_height:16; builder:info; width: 1104; height: 1169; collider: false; material:Infos/default_1; }

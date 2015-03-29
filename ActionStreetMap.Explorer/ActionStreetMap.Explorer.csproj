@@ -56,6 +56,7 @@
     <Compile Include="Geometry\Generators\AbstractGenerator.cs" />
     <Compile Include="Geometry\Generators\CylinderGenerator.cs" />
     <Compile Include="Geometry\Generators\IcoSphereGenerator.cs" />
+    <Compile Include="Geometry\Generators\TreeGenerator.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
     <Compile Include="Helpers\ModelRuleExtensions.cs" />

@@ -2,6 +2,10 @@
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
+using ActionStreetMap.Explorer.Geometry.Generators;
+using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Utils;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
 {
@@ -15,14 +19,23 @@ namespace ActionStreetMap.Explorer.Scene
         public override IGameObject BuildNode(Tile tile, Rule rule, Node node)
         {
             var mapPoint = GeoProjection.ToMapCoordinate(tile.RelativeNullPoint, node.Point);
-            // TODO add tree at given point
-            /*tile.Canvas.AddTree(new Tree()
-            {
-                Id = node.Id,
-                Point = mapPoint
-            });*/
+            var elevation = ElevationProvider.GetElevation(mapPoint);
 
-            return null;
+            var trunkGradientKey = rule.Evaluate<string>("trunk-color");
+            var foliageGradientKey = rule.Evaluate<string>("foliage-color");
+
+            var meshData = ObjectPool.CreateMeshData();
+            meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
+            meshData.MaterialKey = rule.GetMaterialKey();
+            new TreeGenerator(meshData)
+                .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
+                .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
+                .SetPosition(new Vector3(mapPoint.X, elevation, mapPoint.Y))
+                .Build();
+
+            BuildObject(tile.GameObject, meshData);
+
+            return meshData.GameObject;
         }
     }
 }
