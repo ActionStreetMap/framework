@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
@@ -135,6 +136,23 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 BuildSurface(context, surfaceRegion);
 
             Trace.Debug(LogTag, "Total triangles: {0}", context.Data.Triangles.Count);
+
+            StreamWriter sw = new StreamWriter(File.Create("vertices.txt"));
+            for (int i = 0; i < context.Data.Vertices.Count; i++)
+            {
+                var vertex = context.Data.Vertices[i];
+                sw.WriteLine("{0} {1} {2}", vertex.x, vertex.y, vertex.z);
+            }
+            sw.Close();
+
+            sw = new StreamWriter(File.Create("triangles.txt"));
+            for (int i = 0; i < context.Data.Triangles.Count; i++)
+            {
+                var triangle = context.Data.Triangles[i];
+                sw.WriteLine("{0}", triangle);
+            }
+            sw.Close();
+
 
             // copy on non-UI thread
             var vertices = context.Data.Vertices.ToArray();

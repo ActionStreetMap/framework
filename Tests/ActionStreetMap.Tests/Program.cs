@@ -9,7 +9,7 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
-
+using ActionStreetMap.Tests.Expiremental;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
@@ -17,7 +17,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.5239010, 13.3782635);//52.51372, 13.37734);
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.51416, 13.37157);//52.51372, 13.37734);
         public static readonly Container _container = new Container();
 
         private const string LogTag = "host";
@@ -34,11 +34,14 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            program.RunGame();
+            //program.RunGame();
            // program.DoContinuosMovements();
             //program.RunMocker();
             //program.Wait(); 
-            Console.ReadKey();
+
+            TriangleSorter.Sort();
+
+            //Console.ReadKey();
         }
 
         public void RunMocker()
