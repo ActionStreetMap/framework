@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
@@ -91,24 +92,10 @@ namespace ActionStreetMap.Explorer.Geometry
                         _xAxisStep,
                         _yAxisStep);
 
-                    if (HasCollision(center, radius, rectangle))
+                    if (GeometryUtils.HasCollision(center, radius, rectangle))
                         AddRange(i, j, result);
                 }
             return result;
-        }
-
-        private bool HasCollision(MapPoint circle, float radius, MapRectangle rectangle)
-        {
-            float closestX = Clamp(circle.X, rectangle.Left, rectangle.Right);
-            float closestY = Clamp(circle.Y, rectangle.Bottom, rectangle.Top);
-
-            // Calculate the distance between the circle's center and this closest point
-            float distanceX = circle.X - closestX;
-            float distanceY = circle.Y - closestY;
-
-            // If the distance is less than the circle's radius, an intersection occurs
-            float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
-            return distanceSquared < (radius * radius);
         }
 
         private void AddRange(int i, int j, List<int> result)
@@ -120,11 +107,6 @@ namespace ActionStreetMap.Explorer.Geometry
 
             var range = _ranges[index];
             result.AddRange(Enumerable.Range(range.Start, range.End - range.Start + 1));
-        }
-
-        private static float Clamp(float value, float min, float max)
-        {
-            return (value < min) ? min : (value > max) ? max : value;
         }
 
         #region Nested classes

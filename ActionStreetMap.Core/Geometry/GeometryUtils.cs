@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Core.Geometry
 {
@@ -158,6 +159,21 @@ namespace ActionStreetMap.Core.Geometry
 
         #endregion
 */
+
+        /// <summary> Checks collision between circle and rectangle. </summary>
+        public static bool HasCollision(MapPoint circle, float radius, MapRectangle rectangle)
+        {
+            float closestX = MathUtils.Clamp(circle.X, rectangle.Left, rectangle.Right);
+            float closestY = MathUtils.Clamp(circle.Y, rectangle.Bottom, rectangle.Top);
+
+            // Calculate the distance between the circle's center and this closest point
+            float distanceX = circle.X - closestX;
+            float distanceY = circle.Y - closestY;
+
+            // If the distance is less than the circle's radius, an intersection occurs
+            float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+            return distanceSquared < (radius * radius);
+        }
         
         #region Line specific functions
 
