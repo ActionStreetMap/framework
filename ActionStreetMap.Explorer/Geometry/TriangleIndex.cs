@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
@@ -66,6 +65,7 @@ namespace ActionStreetMap.Explorer.Geometry
             _ranges[rangeIndex].End = triangles.Count - 1;
         }
 
+        /// <summary> Gets specific index key for given point. </summary>
         public int GetIndexKey(MapPoint point)
         {
             var i = (int)Math.Floor((point.X - _x) / _xAxisStep);
@@ -74,6 +74,7 @@ namespace ActionStreetMap.Explorer.Geometry
             return _columnCount * j + i;
         }
 
+        /// <summary> Returns list of afected indecies from triangle collection. </summary>
         public List<int> GetAfectedIndecies(MapPoint center, float radius)
         {
             var result = new List<int>(32);
