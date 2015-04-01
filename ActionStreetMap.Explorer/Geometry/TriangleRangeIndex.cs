@@ -4,7 +4,7 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
-namespace ActionStreetMap.Tests.Expiremental
+namespace ActionStreetMap.Explorer.Geometry
 {
     internal class TriangleRangeIndex
     {
@@ -36,7 +36,27 @@ namespace ActionStreetMap.Tests.Expiremental
             _ranges = new Range[rowCount * columnCount];
         }
 
-        public int GetRangeIndex(MapPoint point)
+        public void BuiltIndex(List<Triangle> triangles)
+        {
+            triangles.Sort(Comparer);
+
+            var rangeIndex = -1;
+            for (int i = 0; i < triangles.Count; i++)
+            {
+                var triangle = triangles[i];
+                if (triangle.region != rangeIndex)
+                {
+                    if (i != 0)
+                        _ranges[rangeIndex].End = i - 1;
+
+                    rangeIndex = triangle.region;
+                    _ranges[rangeIndex].Start = i;
+                }
+            }
+            _ranges[rangeIndex].End = triangles.Count - 1;
+        }
+
+        public int GetIndexKey(MapPoint point)
         {
             var i = (int)Math.Floor((point.X - _x) / _xAxisStep);
             var j = (int)Math.Floor((point.Y - _y) / _yAxisStep);
@@ -64,26 +84,6 @@ namespace ActionStreetMap.Tests.Expiremental
                         AddRange(i, j, result);
                 }
             return result;
-        }
-
-        public void FillRanges(List<Triangle> triangles)
-        {
-            triangles.Sort(Comparer);
-
-            var rangeIndex = -1;
-            for (int i = 0; i < triangles.Count; i++)
-            {
-                var triangle = triangles[i];
-                if (triangle.region != rangeIndex)
-                {
-                    if (i != 0)
-                        _ranges[rangeIndex].End = i - 1;
-
-                    rangeIndex = triangle.region;
-                    _ranges[rangeIndex].Start = i;
-                }
-            }
-            _ranges[rangeIndex].End = triangles.Count - 1;
         }
 
         private bool HasCollision(MapPoint circle, float radius, MapRectangle rectangle)
