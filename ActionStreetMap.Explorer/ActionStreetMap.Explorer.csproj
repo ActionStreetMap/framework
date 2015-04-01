@@ -58,7 +58,7 @@
     <Compile Include="Geometry\Generators\IcoSphereGenerator.cs" />
     <Compile Include="Geometry\Generators\TreeGenerator.cs" />
     <Compile Include="Geometry\MeshTriangle.cs" />
-    <Compile Include="Geometry\TriangleRangeIndex.cs" />
+    <Compile Include="Geometry\TriangleIndex.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
     <Compile Include="Helpers\ModelRuleExtensions.cs" />

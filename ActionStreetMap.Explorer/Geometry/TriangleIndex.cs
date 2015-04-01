@@ -6,7 +6,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
-    internal class TriangleRangeIndex
+    internal class TriangleIndex
     {
         private static readonly TriangleComparer Comparer = new TriangleComparer();
 
@@ -21,7 +21,7 @@ namespace ActionStreetMap.Explorer.Geometry
 
         private readonly Range[] _ranges;
 
-        public TriangleRangeIndex(int columnCount, int rowCount, MapRectangle rectangle)
+        public TriangleIndex(int columnCount, int rowCount, MapRectangle rectangle)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;
