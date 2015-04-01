@@ -6,6 +6,11 @@ using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
+    /// <summary> 
+    ///     Maintains index of triangles in given bounding box. The bounding box is divided 
+    ///     to regions of certain size defined by column and row count. Triangle's 
+    ///     centroid is used to map triangle to the corresponding region.     
+    /// </summary>
     internal class TriangleIndex
     {
         private static readonly TriangleComparer Comparer = new TriangleComparer();
@@ -21,22 +26,27 @@ namespace ActionStreetMap.Explorer.Geometry
 
         private readonly Range[] _ranges;
 
-        public TriangleIndex(int columnCount, int rowCount, MapRectangle rectangle)
+        /// <summary> Creates instance of <see cref="TriangleIndex"/>. </summary>
+        /// <param name="columnCount">Column count of given bounding box.</param>
+        /// <param name="rowCount">Row count of given bounding box.</param>
+        /// <param name="boundingBox">Bounding box.</param>
+        public TriangleIndex(int columnCount, int rowCount, MapRectangle boundingBox)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;
-            _x = rectangle.BottomLeft.X;
-            _y = rectangle.BottomLeft.Y;
+            _x = boundingBox.BottomLeft.X;
+            _y = boundingBox.BottomLeft.Y;
 
-            _bottomLeft = rectangle.BottomLeft;
+            _bottomLeft = boundingBox.BottomLeft;
 
-            _xAxisStep = rectangle.Width/columnCount;
-            _yAxisStep = rectangle.Height/rowCount;
+            _xAxisStep = boundingBox.Width/columnCount;
+            _yAxisStep = boundingBox.Height/rowCount;
 
             _ranges = new Range[rowCount * columnCount];
         }
 
-        public void BuiltIndex(List<Triangle> triangles)
+        /// <summary> Builds index from given list of triangles. Also performs its sorting. </summary>
+        public void BuiltIndex(List<MeshTriangle> triangles)
         {
             triangles.Sort(Comparer);
 
@@ -44,12 +54,12 @@ namespace ActionStreetMap.Explorer.Geometry
             for (int i = 0; i < triangles.Count; i++)
             {
                 var triangle = triangles[i];
-                if (triangle.region != rangeIndex)
+                if (triangle.Region != rangeIndex)
                 {
                     if (i != 0)
                         _ranges[rangeIndex].End = i - 1;
 
-                    rangeIndex = triangle.region;
+                    rangeIndex = triangle.Region;
                     _ranges[rangeIndex].Start = i;
                 }
             }
@@ -124,9 +134,9 @@ namespace ActionStreetMap.Explorer.Geometry
             public int End;
         }
 
-        private class TriangleComparer : IComparer<Triangle>
+        private class TriangleComparer : IComparer<MeshTriangle>
         {
-            public int Compare(Triangle x, Triangle y)
+            public int Compare(MeshTriangle x, MeshTriangle y)
             {
                 return x.Region.CompareTo(y.Region);
             }
