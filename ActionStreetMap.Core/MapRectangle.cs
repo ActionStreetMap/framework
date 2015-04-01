@@ -21,6 +21,19 @@
             _ymax = y + height;
         }
 
+        /// <summary> Gets left. </summary>
+        public float Left { get { return _xmin; } }
+
+        /// <summary> Gets right. </summary>
+        public float Right { get { return _xmax; } }
+
+        /// <summary> Gets bottom. </summary>
+        public float Bottom { get { return _ymin; } }
+
+        /// <summary> Gets top. </summary>
+        public float Top { get { return _ymax; } }
+
+
         /// <summary> Gets left bottom point. </summary>
         public MapPoint BottomLeft { get { return new MapPoint(_xmin, _ymin); } }
 

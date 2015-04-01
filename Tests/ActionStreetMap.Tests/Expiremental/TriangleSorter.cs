@@ -20,20 +20,19 @@ namespace ActionStreetMap.Tests.Expiremental
          
             index.FillRanges(triangles);
 
-            var range = index.FindRange(new MapPoint(0, 0));
+            var indices = index.GetAfectedIndecies(new MapPoint(15, 0), 2);
 
-            var triRange = triangles.GetRange(range.Start, range.End - range.Start + 1);
-
-            PrintTriangles(triRange);
+            PrintTriangles(triangles, indices);
         }
 
-        private static void PrintTriangles(List<Triangle> triangles)
+        private static void PrintTriangles(List<Triangle> triangles, List<int> indices)
         {
-            for (int i = 0; i < triangles.Count; i++)
+            for (int i = 0; i < indices.Count; i++)
             {
-                var v0 = triangles[i].GetVertex(0);
-                var v1 = triangles[i].GetVertex(1);
-                var v2 = triangles[i].GetVertex(2);
+                var index = indices[i];
+                var v0 = triangles[index].GetVertex(0);
+                var v1 = triangles[index].GetVertex(1);
+                var v2 = triangles[index].GetVertex(2);
                 Console.WriteLine("[({0:.00}, {1:.00}),({2:.00}, {3:.00}),({4:.00}, {5:.00})]",
                     v0.x, v0.y, v1.x, v1.y, v2.x, v2.y);
             }
@@ -62,7 +61,7 @@ namespace ActionStreetMap.Tests.Expiremental
                         new Vertex(v1.x, v1.z), 
                         new Vertex(v2.x, v2.z), 
                     },
-                    region = rangeIndex.GetIndex(centroid),
+                    region = rangeIndex.GetRangeIndex(centroid),
                 });
             }
             return triangles;
@@ -96,78 +95,5 @@ namespace ActionStreetMap.Tests.Expiremental
         }
         
         #endregion
-
-        internal class TriangleRangeIndex
-        {
-            private static readonly TriangleComparer Comparer = new TriangleComparer();
-
-            private readonly int _columnCount;
-            private readonly float _xAxisStep;
-            private readonly float _yAxisStep;
-            private readonly float _x;
-            private readonly float _y;
-
-            private readonly Range[] _ranges;
-
-            public TriangleRangeIndex(int columnCount, int rowCount, MapRectangle rectangle)
-            {
-                _columnCount = columnCount;
-                _x = rectangle.BottomLeft.X;
-                _y = rectangle.BottomLeft.Y;
-
-                _xAxisStep = rectangle.Width/columnCount;
-                _yAxisStep = rectangle.Height/rowCount;
-
-                _ranges = new Range[rowCount * columnCount];
-            }
-
-            public int GetIndex(MapPoint point)
-            {
-                var i = (int) Math.Floor((point.X - _x) / _xAxisStep);
-                var j = (int) Math.Floor((point.Y - _y) / _yAxisStep);
-
-                return _columnCount * j + i;
-            }
-
-            public Range FindRange(MapPoint point)
-            {
-                var index = GetIndex(point);
-                return _ranges[index];
-            }
-
-            public void FillRanges(List<Triangle> triangles)
-            {
-                triangles.Sort(Comparer);
-
-                var rangeIndex = -1;
-                for (int i = 0; i < triangles.Count; i++)
-                {
-                    var triangle = triangles[i];
-                    if (triangle.region != rangeIndex)
-                    {
-                        if (i != 0)
-                            _ranges[rangeIndex].End = i - 1;
-
-                        rangeIndex = triangle.region;
-                        _ranges[rangeIndex].Start = i;
-                    }
-                }
-                _ranges[rangeIndex].End = triangles.Count - 1;
-            }
-
-            public struct Range
-            {
-                public int Start;
-                public int End;
-            }
-
-            private class TriangleComparer : IComparer<Triangle>
-            {
-                public int Compare(Triangle x, Triangle y)
-                {
-                    return x.Region.CompareTo(y.Region);
-                }
-            }
-        }
     }
 }

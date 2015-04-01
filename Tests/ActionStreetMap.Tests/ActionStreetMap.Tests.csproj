@@ -53,6 +53,7 @@
     <Compile Include="..\..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
+    <Compile Include="Expiremental\TriangleRangeIndex.cs" />
     <Compile Include="Expiremental\TriangleSorter.cs" />
     <Compile Include="Explorer\Utils\GradientTests.cs" />
     <Compile Include="Core\Scene\GeometryUtilsTests.cs" />
