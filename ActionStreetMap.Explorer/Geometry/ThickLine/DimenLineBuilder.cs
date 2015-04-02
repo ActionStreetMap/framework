@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
@@ -28,27 +29,30 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         }
 
         /// <inheritdoc />
-        public override void Build(MapRectangle rectangle, List<LineElement> elements, Action<List<Vector3>, List<int>, List<Color>> builder)
+        public override void Build(MapRectangle rectangle, List<LineElement> elements, Action<MeshData> builder)
         {
-            base.Build(rectangle, elements, (p, t, u) =>
+            base.Build(rectangle, elements, (data) =>
             {
                 ProcessLatestFace();
-                builder(Points, Triangles, Colors);
+                builder(data);
             });
         }
 
         private void ProcessLatestFace()
         {
-            if (Points.Count > 1)
-            {
-                // NOTE we have to add the latest face
-                // NOTE assume that top side is added the latest
-                var first = Points[Points.Count - 1];
-                var second = Points[Points.Count - 2];
-                base.AddTrapezoid(first, second,
-                    new Vector3(second.x, second.y - _height, second.z),
-                    new Vector3(first.x, first.y - _height, first.z));
-            }
+            if (!Data.Triangles.Any())
+                return;
+
+            // NOTE we have to add the latest face
+            // NOTE assume that top side is added the latest
+            var lastTriangle = Data.Triangles[Data.Triangles.Count - 1];
+            var first = lastTriangle.Vertex2;
+            var second = lastTriangle.Vertex0;
+            base.AddTrapezoid(
+                new Vector3(first.X, first.Elevation, first.Y),
+                new Vector3(second.X, second.Elevation, second.Y),
+                new Vector3(second.X, second.Elevation - _height, second.Y),
+                new Vector3(first.X, first.Elevation - _height, first.Y));
         }
 
         /// <inheritdoc />
@@ -61,7 +65,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             var newRightEnd = new Vector3(rightEnd.x, rightEnd.y + _height, rightEnd.z);
 
             // front face
-            if (Triangles.Count == 0)
+            if (Data.Triangles.Count == 0)
                 base.AddTrapezoid(leftStart, newLeftStart, newRightStart, rightStart);
 
             // right side

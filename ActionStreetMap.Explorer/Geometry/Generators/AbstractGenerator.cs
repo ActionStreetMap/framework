@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
@@ -7,21 +8,17 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
 {
     internal abstract class AbstractGenerator
     {
+        private readonly MeshData _meshData;
         private float _vertNoiseFreq = 0.1f;
         private float _colorNoiseFreq = 0.1f;
         private GradientWrapper _gradient;
 
-        private readonly List<Vector3> _vertices;
-        private readonly List<int> _triangles;
-        private readonly List<Color> _colors;
 
         public abstract void Build();
 
         protected AbstractGenerator(MeshData meshData)
         {
-            _vertices = meshData.Vertices;
-            _triangles = meshData.Triangles;
-            _colors = meshData.Colors;
+            _meshData = meshData;
         }
 
         public AbstractGenerator SetVertexNoiseFreq(float vertNoiseFreq)
@@ -44,26 +41,18 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
 
         protected void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
         {
-            var noise = _vertNoiseFreq != 0 ? (Noise.Perlin3D(v0, _vertNoiseFreq) + 1f) / 2f : 0;
-            _vertices.Add(new Vector3(v0.x + noise, v0.y + noise, v0.z + noise));
+            var useVertNoise = _vertNoiseFreq != 0;
 
-            noise = _vertNoiseFreq != 0 ? (Noise.Perlin3D(v1, _vertNoiseFreq) + 1f) / 2f : 0;
-            _vertices.Add(new Vector3(v1.x + noise, v1.y + noise, v1.z + noise));
+            var noise = useVertNoise ? (Noise.Perlin3D(v0, _vertNoiseFreq) + 1f) / 2f : 0;
+            var p0 = new MapPoint(v0.x + noise, v0.z + noise, v0.y + noise);
 
-            noise = _vertNoiseFreq != 0 ? (Noise.Perlin3D(v2, _vertNoiseFreq) + 1f) / 2f : 0;
-            _vertices.Add(new Vector3(v2.x + noise, v2.y + noise, v2.z + noise));
+            noise = useVertNoise ? (Noise.Perlin3D(v1, _vertNoiseFreq) + 1f) / 2f : 0;
+            var p1 = new MapPoint(v1.x + noise, v1.z + noise, v1.y + noise);
 
-            var tris = _vertices.Count - 3;
+            noise = useVertNoise ? (Noise.Perlin3D(v2, _vertNoiseFreq) + 1f) / 2f : 0;
+            var p2 = new MapPoint(v2.x + noise, v2.z + noise, v2.y + noise);
 
-            _triangles.Add(tris);
-            _triangles.Add(tris + 2);
-            _triangles.Add(tris + 1);
-
-            var color = GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq);
-
-            _colors.Add(color);
-            _colors.Add(color);
-            _colors.Add(color);
+            _meshData.AddTriangle(p0, p1, p2, GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq));
         }
     }
 }

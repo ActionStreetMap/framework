@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Unity.Wrappers;
@@ -45,6 +46,11 @@ namespace ActionStreetMap.Explorer.Utils
         {
             var value = (Noise.Perlin3D(point, freq) + 1f) / 2f;
             return gradientWrapper.Evaluate(value);
+        }
+
+        public static Color GetColor(GradientWrapper gradientWrapper, MapPoint point, float freq)
+        {
+            return GetColor(gradientWrapper, new Vector3(point.X, point.Elevation, point.Y), freq);
         }
     }
 }

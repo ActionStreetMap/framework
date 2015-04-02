@@ -96,9 +96,10 @@ namespace ActionStreetMap.Explorer.Scene
         /// <summary> Builds game object from meshData </summary>
         protected void BuildObject(IGameObject parent, MeshData meshData)
         {
-            var vertices = meshData.Vertices.ToArray();
-            var triangles = meshData.Triangles.ToArray();
-            var colors = meshData.Colors.ToArray();
+            Vector3[] vertices;
+            int[] triangles;
+            Color[] colors;
+            meshData.GenerateObjectData(out vertices, out triangles, out colors);
             ObjectPool.RecycleMeshData(meshData);
 
             Scheduler.MainThread.Schedule(() =>

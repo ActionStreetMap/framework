@@ -113,7 +113,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
-            var meshDataEx = _objectPool.CreateMeshDataEx();
+            var meshDataEx = _objectPool.CreateMeshData();
             meshDataEx.GameObject = cellGameObject;
 
            var rect = new MapRectangle((float)cellRect.Left, (float)cellRect.Bottom, 
@@ -137,35 +137,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             Trace.Debug(LogTag, "Total triangles: {0}", context.Data.Triangles.Count);
 
-            var trisCount = context.Data.Triangles.Count;
-            var vertextCount = trisCount * 3;
-            var vertices = new Vector3[vertextCount];
-            var triangles = new int[vertextCount];
-            var colors = new Color[vertextCount];
-            for (int i = 0; i < trisCount; i++)
-            {
-                var first = i * 3;
-                var second = first + 1;
-                var third = first + 2;
-                var triangle = context.Data.Triangles[i];
-                var v0 = triangle.Vertex0;
-                var v1 = triangle.Vertex1;
-                var v2 = triangle.Vertex2;
+            Vector3[] vertices;
+            int[] triangles;
+            Color[] colors;
+            context.Data.GenerateObjectData(out vertices, out triangles, out colors);
 
-                vertices[first] = new Vector3(v0.X, v0.Elevation, v0.Y);
-                vertices[second] = new Vector3(v1.X, v1.Elevation, v1.Y);
-                vertices[third] = new Vector3(v2.X, v2.Elevation, v2.Y);
-
-                colors[first] = triangle.Color0;
-                colors[second] = triangle.Color1;
-                colors[third] = triangle.Color2;
-
-                triangles[first] = third;
-                triangles[second] = second;
-                triangles[third] = first;
-            }
-
-            _objectPool.RecycleMeshDataEx(context.Data);
+            _objectPool.RecycleMeshData(context.Data);
 
             Scheduler.MainThread.Schedule(() => BuildObject(cellGameObject, rule,
                 vertices, triangles, colors));
@@ -370,26 +347,17 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         var firstColor = GradientUtils.GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
                         var secondColor = GradientUtils.GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
 
+                        context.Data.AddTriangle(
+                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            new MapPoint(p2.X, p2.Y, ele2 + errorTopFix),
+                            firstColor);
 
-                        context.Data.Triangles.Add(new MeshTriangle()
-                        {
-                            Vertex0 = new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
-                            Vertex1 = new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
-                            Vertex2 = new MapPoint(p2.X, p2.Y, ele2 + errorTopFix),
-                            Color0 = firstColor,
-                            Color1 = firstColor,
-                            Color2 = firstColor,
-                        });
-
-                        context.Data.Triangles.Add(new MeshTriangle()
-                        {
-                            Vertex0 = new MapPoint(p1.X, p1.Y, ele1 - deepLevel - errorBottomFix),
-                            Vertex1 = new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
-                            Vertex2 = new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
-                            Color0 = secondColor,
-                            Color1 = secondColor,
-                            Color2 = secondColor,
-                        });
+                        context.Data.AddTriangle(
+                            new MapPoint(p1.X, p1.Y, ele1 - deepLevel - errorBottomFix),
+                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            secondColor);
                     }
 
                     pointList.Clear();

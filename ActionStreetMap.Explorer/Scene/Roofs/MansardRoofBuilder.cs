@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
@@ -8,7 +7,6 @@ using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
-using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Roofs
 {
@@ -41,7 +39,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 building.RoofHeight = (float) random.NextDouble(0.5f, 3);
             }
 
-            var meshData = new MeshData();
+            var meshData = ObjectPool.CreateMeshData();
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
             SetMeshData(building, polygon, meshData, gradient, offset);
@@ -53,11 +51,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
 
-            var vertices = new List<Vector3>(polygon.Verticies.Length*2);
-            var colors = new List<Color>(polygon.Verticies.Length * 2);
-
-            // TODO something wrong with this collection
-            var topVertices = new List<Vector3>(polygon.Verticies.Length);
             var roofTop = roofOffset + building.RoofHeight;
 
             for (int i = 0; i < polygon.Segments.Length; i++)
@@ -73,60 +66,45 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var parallel2 = SegmentUtils.GetParallel(segment2, offset);
                 var parallel3 = SegmentUtils.GetParallel(segment3, offset);
 
-                Vector3 ip1 = SegmentUtils.IntersectionPoint(parallel1, parallel2);
-                Vector3 ip2 = SegmentUtils.IntersectionPoint(parallel2, parallel3);
+                var ip1 = SegmentUtils.IntersectionPoint(parallel1, parallel2);
+                var ip2 = SegmentUtils.IntersectionPoint(parallel2, parallel3);
 
                 // TODO check whether offset is correct for intersection
 
-                var v0 = new Vector3(segment1.End.x, roofOffset, segment1.End.z);
-                vertices.Add(v0);
-                colors.Add(GradientUtils.GetColor(gradient, v0, 0.2f));
+                var v0 = new MapPoint(segment1.End.x, segment1.End.z, roofOffset);
+                var v1 = new MapPoint(ip1.x, ip1.z, roofTop);
+                var v2 = new MapPoint(segment2.End.x, segment2.End.z, roofOffset);
+                var v3 = new MapPoint(ip2.x, ip2.z, roofTop);
 
-                var v1 = new Vector3(ip1.x, roofTop, ip1.z);
-                vertices.Add(v1);
-                colors.Add(GradientUtils.GetColor(gradient, v1, 0.2f));
-
-                var v2 = new Vector3(segment2.End.x, roofOffset, segment2.End.z);
-                vertices.Add(v2);
-                colors.Add(GradientUtils.GetColor(gradient, v2, 0.2f));
-
-                var v3 = new Vector3(ip2.x, roofTop, ip2.z);
-                vertices.Add(v3);
-                colors.Add(GradientUtils.GetColor(gradient, v3, 0.2f));
-
-                topVertices.Add(new Vector3(ip1.x, roofTop, ip1.z));
-
+                meshData.AddTriangle(v0, v2, v1, GradientUtils.GetColor(gradient, v0, 0.2f));
+                meshData.AddTriangle(v3, v1, v2, GradientUtils.GetColor(gradient, v3, 0.2f));
             }
-            vertices.AddRange(topVertices);
-            foreach (var topVertex in topVertices)
-                colors.Add(GradientUtils.GetColor(gradient, topVertex, 0.2f));
 
-            meshData.Vertices = vertices;
-            meshData.Triangles = GetTriangles(building.Footprint);
-            meshData.Colors = colors;
+            AttachTopPart(meshData, gradient, building.Footprint, roofTop);
+           
             meshData.MaterialKey = building.RoofMaterial;
         }
 
-        private List<int> GetTriangles(List<MapPoint> footprint)
+        private void AttachTopPart(MeshData meshData, GradientWrapper gradient, List<MapPoint> footprint, float roofTop)
         {
-            var triangles = new List<int>();
-            for (int i = 0; i < footprint.Count; i++)
-            {
-                var offset = i*4;
-                triangles.AddRange(new[]
-                {
-                    0 + offset, 2 + offset, 1 + offset,
-                    3 + offset, 1 + offset, 2 + offset
-                });
-            }
-
             var topPartIndecies = ObjectPool.NewList<int>();
             Triangulator.Triangulate(footprint, topPartIndecies);
 
-            var vertCount = footprint.Count*4;
-            triangles.AddRange(topPartIndecies.Select(i => i + vertCount));
+            for (int i = 0; i < topPartIndecies.Count; i+=3)
+            {
+                var p0 = footprint[topPartIndecies[i]];
+                var v0 = new MapPoint(p0.X, p0.Y, roofTop);
 
-            return triangles;
+                var p1 = footprint[topPartIndecies[i+1]];
+                var v1 = new MapPoint(p1.X, p1.Y, roofTop);
+
+                var p2 = footprint[topPartIndecies[i+2]];
+                var v2 = new MapPoint(p2.X, p2.Y, roofTop);
+
+                meshData.AddTriangle(v0, v1, v2, GradientUtils.GetColor(gradient, v0, 0.2f));
+            }
+
+            ObjectPool.StoreList(topPartIndecies);
         }
     }
 }

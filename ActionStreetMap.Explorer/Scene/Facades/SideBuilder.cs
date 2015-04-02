@@ -134,15 +134,15 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                     var p1 = start + direction * (widthStep * k);
                     var p2 = start + direction * (widthStep * (k + 1));
 
-                    var floorNoise1 = isFirst ? 0 : GetPositionNoise(new Vector3(p1.X, floor, p1.Y));
-                    var floorNoise2 = isFirst ? 0 : GetPositionNoise(new Vector3(p2.X, floor, p2.Y));
-                    var ceilingNoise1 = isLast ? 0 : GetPositionNoise(new Vector3(p1.X, ceiling, p1.Y));
-                    var ceilingNoise2 = isLast ? 0 : GetPositionNoise(new Vector3(p2.X, ceiling, p2.Y));
+                    var floorNoise1 = isFirst ? 0 : GetPositionNoise(new MapPoint(p1.X, p1.Y, floor));
+                    var floorNoise2 = isFirst ? 0 : GetPositionNoise(new MapPoint(p2.X, p2.Y, floor));
+                    var ceilingNoise1 = isLast ? 0 : GetPositionNoise(new MapPoint(p1.X, p1.Y, ceiling));
+                    var ceilingNoise2 = isLast ? 0 : GetPositionNoise(new MapPoint(p2.X, p2.Y, ceiling));
 
-                    var a = new Vector3(p1.X + floorNoise1, floor + floorNoise1, p1.Y + floorNoise1);
-                    var b = new Vector3(p2.X + floorNoise2, floor + floorNoise2, p2.Y + floorNoise2);
-                    var c = new Vector3(p2.X + ceilingNoise2, ceiling + ceilingNoise2, p2.Y + ceilingNoise2);
-                    var d = new Vector3(p1.X + ceilingNoise1, ceiling + ceilingNoise1, p1.Y + ceilingNoise1);
+                    var a = new MapPoint(p1.X + floorNoise1, p1.Y + floorNoise1, floor + floorNoise1);
+                    var b = new MapPoint(p2.X + floorNoise2, p2.Y + floorNoise2, floor + floorNoise2);
+                    var c = new MapPoint(p2.X + ceilingNoise2, p2.Y + ceilingNoise2, ceiling + ceilingNoise2);
+                    var d = new MapPoint(p1.X + ceilingNoise1, p1.Y + ceilingNoise1, ceiling + ceilingNoise1);
 
                     if (isWindowFloor && distance > _windowWidthThreshold)
                         BuildWindow(k, a, b, c, d);
@@ -155,9 +155,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         #region Abstract methods
 
         protected abstract void BuildGroundFloor(MapPoint start, MapPoint end, float floorHeight);
-        protected abstract void BuildWindow(int step, Vector3 a, Vector3 b, Vector3 c, Vector3 d);
-        protected abstract void BuildSpan(int step, Vector3 a, Vector3 b, Vector3 c, Vector3 d);
-        protected abstract void BuildGlass(Vector3 a, Vector3 b, Vector3 c, Vector3 d);
+        protected abstract void BuildWindow(int step, MapPoint a, MapPoint b, MapPoint c, MapPoint d);
+        protected abstract void BuildSpan(int step, MapPoint a, MapPoint b, MapPoint c, MapPoint d);
+        protected abstract void BuildGlass(MapPoint a, MapPoint b, MapPoint c, MapPoint d);
 
         #endregion
 
@@ -188,14 +188,14 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         #region Noise specific
 
-        protected float GetPositionNoise(Vector3 point)
+        protected float GetPositionNoise(MapPoint point)
         {
-            return Noise.Perlin3D(point, _positionNoiseFreq);
+            return Noise.Perlin3D(new Vector3(point.X, point.Elevation, point.Y), _positionNoiseFreq);
         }
 
-        protected Color GetColor(GradientWrapper gradient, Vector3 point)
+        protected Color GetColor(GradientWrapper gradient, MapPoint point)
         {
-            var value = (Noise.Perlin3D(point, _colorNoiseFreq) + 1f) / 2f;
+            var value = (Noise.Perlin3D(new Vector3(point.X, point.Elevation, point.Y), _colorNoiseFreq) + 1f) / 2f;
             return gradient.Evaluate(value);
         }
 
@@ -203,63 +203,17 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         #region Planes
 
-        /// <summary> Adds plane with non-shared vertices. </summary>
-        protected void AddPlane(Color color1, Color color2, Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+        /// <summary> Adds plane. </summary>
+        protected void AddPlane(Color color1, Color color2, MapPoint a, MapPoint b, MapPoint c, MapPoint d)
         {
-            var vertices = MeshData.Vertices;
-            var triangles = MeshData.Triangles;
-            var colors = MeshData.Colors;
-            var vIndex = vertices.Count;
-
-            vertices.Add(a);
-            vertices.Add(b);
-            vertices.Add(c);
-
-            vertices.Add(d);
-            vertices.Add(a);
-            vertices.Add(c);
-
-            triangles.Add(vIndex);
-            triangles.Add(vIndex + 1);
-            triangles.Add(vIndex + 2);
-
-            triangles.Add(vIndex + 3);
-            triangles.Add(vIndex + 4);
-            triangles.Add(vIndex + 5);
-
-            colors.Add(color1);
-            colors.Add(color1);
-            colors.Add(color1);
-            colors.Add(color2);
-            colors.Add(color2);
-            colors.Add(color2);
+            MeshData.AddTriangle(a, c, b, color1);
+            MeshData.AddTriangle(d, c, a, color2);
         }
 
-        /// <summary> Adds plane with shared vertices. </summary>
-        protected void AddPlane(Color color, Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+        /// <summary> Adds plane. </summary>
+        protected void AddPlane(Color color, MapPoint a, MapPoint b, MapPoint c, MapPoint d)
         {
-            var vertices = MeshData.Vertices;
-            var triangles = MeshData.Triangles;
-            var colors = MeshData.Colors;
-
-            var vIndex = vertices.Count;
-            vertices.Add(a);
-            vertices.Add(b);
-            vertices.Add(c);
-            vertices.Add(d);
-
-            triangles.Add(vIndex);
-            triangles.Add(vIndex + 1);
-            triangles.Add(vIndex + 2);
-
-            triangles.Add(vIndex + 3);
-            triangles.Add(vIndex + 0);
-            triangles.Add(vIndex + 2);
-
-            colors.Add(color);
-            colors.Add(color);
-            colors.Add(color);
-            colors.Add(color);
+            AddPlane(color, color, a, b, c, d);
         }
 
         #endregion

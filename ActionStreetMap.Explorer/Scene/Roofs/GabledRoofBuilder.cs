@@ -65,14 +65,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             // 6. process all segments and create vertices
             FillMeshData(polygon, firstIntersect, secondIntersect, context);
 
-            var result = new MeshData()
-            {
-                Vertices = context.Data.Vertices,
-                Triangles = context.Data.Triangles,
-                Colors = context.Data.Colors,
-                MaterialKey = building.RoofMaterial
-            };
-            return result;
+            context.Data.MaterialKey = building.RoofMaterial;
+            return context.Data;
         }
 
         private Segment GetLongestSegment(List<MapPoint> footprint, out float length)
@@ -157,42 +151,19 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
         private void AddTriangle(Vector3 first, Vector3 second, Vector3 third, Context context)
         {
-            var data = context.Data;
-            data.Vertices.Add(first);
-            data.Vertices.Add(second);
-            data.Vertices.Add(third);
+            var color = GradientUtils.GetColor(context.Gradient, first, 0.2f);
 
-            data.Triangles.Add(context.TrisIndex + 0);
-            data.Triangles.Add(context.TrisIndex + 1);
-            data.Triangles.Add(context.TrisIndex + 2);
-
-            data.Colors.Add(GradientUtils.GetColor(context.Gradient, first, 0.2f));
-            data.Colors.Add(GradientUtils.GetColor(context.Gradient, second, 0.2f));
-            data.Colors.Add(GradientUtils.GetColor(context.Gradient, third, 0.2f));
-
-            context.TrisIndex += 3;
+            context.Data.AddTriangle(
+                new MapPoint(first.x, first.y, first.z),
+                new MapPoint(second.x, second.y, second.z),
+                new MapPoint(third.x, third.y, third.z),
+                color);
         }
 
         private void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd, Context context)
         {
-            var data = context.Data;
-            data.Vertices.Add(rightStart);
-            data.Vertices.Add(leftStart);
-            data.Vertices.Add(leftEnd);
-            data.Vertices.Add(rightEnd);
-
-            data.Triangles.Add(context.TrisIndex + 0);
-            data.Triangles.Add(context.TrisIndex + 1);
-            data.Triangles.Add(context.TrisIndex + 2);
-            data.Triangles.Add(context.TrisIndex + 2);
-            data.Triangles.Add(context.TrisIndex + 3);
-            data.Triangles.Add(context.TrisIndex + 0);
-            context.TrisIndex += 4;
-
-            data.Colors.Add(GradientUtils.GetColor(context.Gradient, rightStart, 0.2f));
-            data.Colors.Add(GradientUtils.GetColor(context.Gradient, leftStart, 0.2f));
-            data.Colors.Add(GradientUtils.GetColor(context.Gradient, leftEnd, 0.2f));
-            data.Colors.Add(GradientUtils.GetColor(context.Gradient, rightEnd, 0.2f));
+            AddTriangle(rightStart, leftStart, leftEnd, context);
+            AddTriangle(leftEnd, rightEnd, rightStart, context);
         }
 
         /// <summary>
@@ -212,18 +183,12 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         {
             public MeshData Data;
             public GradientWrapper Gradient;
-            
-            public int TrisIndex;
 
             public Context(GradientWrapper gradient, IObjectPool objectPool)
             {
-                Data = new MeshData();
+                Data =  objectPool.CreateMeshData();
                 Gradient = gradient;
-
-                Data.Vertices = objectPool.NewList<Vector3>(64);
-                Data.Triangles = objectPool.NewList<int>(128);
-                Data.Colors = objectPool.NewList<Color>(64);
-            }
+           }
         }
 
         #endregion

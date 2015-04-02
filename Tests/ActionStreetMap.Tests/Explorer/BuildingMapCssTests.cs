@@ -31,7 +31,7 @@ namespace ActionStreetMap.Tests.Explorer
             var style = rule.GetFacadeBuilder();
 
             // ASSERT
-            Assert.AreEqual("flat", style);
+            Assert.AreEqual("window", style);
         }
     }
 }

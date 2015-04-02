@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Utils;
-using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Roofs
 {
@@ -21,33 +20,30 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public override MeshData Build(Building building)
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
+            var meshData = ObjectPool.CreateMeshData();
+            meshData.MaterialKey = building.RoofMaterial;
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
             var skeleton = StraightSkeleton.Calculate(building.Footprint);
             
             var skeletVertices = skeleton.Item1;
             skeletVertices.Reverse();
 
-            var vertices = new List<Vector3>(skeletVertices.Count);
-            var triangles = new List<int>(skeletVertices.Count);
-            var colors = new List<Color>(skeletVertices.Count);
+            for (int i = 0; i < skeletVertices.Count; i+=3)
+            {
+                var p0 = skeletVertices[i];
+                var v0 =  new MapPoint(p0.x, p0.y, skeleton.Item2.Any(t => p0 == t) ? building.RoofHeight + roofOffset : roofOffset);
 
-            var gradient = ResourceProvider.GetGradient(building.RoofColor);
-            for (int i = 0; i < skeletVertices.Count; i++)
-            {
-                var vertex = skeletVertices[i];
-                var y = skeleton.Item2.Any(t => vertex == t) ? building.RoofHeight + roofOffset : roofOffset;
-                vertices.Add(new Vector3(vertex.x, y, vertex.y));
-                triangles.Add(i);
-                colors.Add(GradientUtils.GetColor(gradient, vertex, 0.2f));
+                var p1 = skeletVertices[i + 1];
+                var v1 = new MapPoint(p1.x, p1.y, skeleton.Item2.Any(t => p1 == t) ? building.RoofHeight + roofOffset : roofOffset);
+
+                var p2 = skeletVertices[i + 2];
+                var v2 = new MapPoint(p2.x, p2.y, skeleton.Item2.Any(t => p2 == t) ? building.RoofHeight + roofOffset : roofOffset);
+
+                meshData.AddTriangle(v0, v1, v2, GradientUtils.GetColor(gradient, v0, 0.2f));
             }
-           
-            return new MeshData()
-            {
-                Vertices = vertices,
-                Triangles = triangles,
-                Colors = colors,
-                MaterialKey = building.RoofMaterial,
-            };
+
+            return meshData;
         }
     }
 }

@@ -9,6 +9,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
+
 namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     /// <summary> Builds thick 2D line in 3D space. Not thread safe. </summary>
@@ -20,17 +21,8 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         /// <summary> Gradient wrapper. </summary>
         protected GradientWrapper Gradient;
 
-        /// <summary> Points. </summary>
-        protected List<Vector3> Points;
-
-        /// <summary> Triangles. </summary>
-        protected List<int> Triangles;
-
-        /// <summary> Color map. </summary>
-        protected List<Color> Colors;
-
-        /// <summary> Current Triangle index. </summary>
-        protected int TrisIndex = 0;
+        /// <summary> Mesh data. </summary>
+        protected MeshData Data;
 
         private MutableTuple<Vector3, Vector3> _startPoints;
 
@@ -48,10 +40,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             _elevationProvider = elevationProvider;
             _objectPool = objectPool;
 
-            // TODO determine best initial size
-            Points = _objectPool.NewList<Vector3>(1024);
-            Triangles = _objectPool.NewList<int>(2048);
-            Colors = _objectPool.NewList<Color>(1024);
+            Data = objectPool.CreateMeshData();
         }
 
         /// <summary> Sets gradient. </summary>
@@ -76,8 +65,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         }
 
         /// <summary> Builds line. </summary>
-        public virtual void Build(MapRectangle rectangle, List<LineElement> elements,
-            Action<List<Vector3>, List<int>, List<Color>> builder)
+        public virtual void Build(MapRectangle rectangle, List<LineElement> elements, Action<MeshData> builder)
         {
             var lineElements = _objectPool.NewList<LineElement>(8);
             ThickLineUtils.GetLineElementsInTile(rectangle.BottomLeft,
@@ -95,7 +83,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
                 ProcessLine(lineElements);
             }
 
-            builder(Points, Triangles, Colors);
+            builder(Data);
             _objectPool.StoreList(lineElements);
         }
 
@@ -229,21 +217,12 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         /// <summary> Adds triangle. </summary>
         protected virtual void AddTriangle(Vector3 first, Vector3 second, Vector3 third, bool invert)
         {
-            Points.Add(first);
-            Points.Add(second);
-            Points.Add(third);
-
-            Triangles.Add(TrisIndex + 0);
-            Triangles.Add(TrisIndex + (invert ? 1 : 2));
-            Triangles.Add(TrisIndex + (invert ? 2 : 1));
-
             var color = GradientUtils.GetColor(Gradient, first, _colorNoiseFreq);
+            var v0 = new MapPoint(first.x, first.z, first.y);
+            var v1 = new MapPoint(second.x, second.z, second.y);
+            var v2 = new MapPoint(third.x, third.z, third.y);
 
-            Colors.Add(color);
-            Colors.Add(color);
-            Colors.Add(color);
-
-            TrisIndex += 3;
+            Data.AddTriangle(v0, invert ? v2 : v1, invert ? v1 : v2, color);
         }
 
         private void AddTrapezoid(Segment left, Segment right)
@@ -254,25 +233,15 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         /// <summary> Adds trapezoid. </summary>
         protected virtual void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd)
         {
-            Points.Add(rightStart);
-            Points.Add(leftStart);
-            Points.Add(leftEnd);
-            Points.Add(rightEnd);
-
-            Triangles.Add(TrisIndex + 0);
-            Triangles.Add(TrisIndex + 1);
-            Triangles.Add(TrisIndex + 2);
-            Triangles.Add(TrisIndex + 2);
-            Triangles.Add(TrisIndex + 3);
-            Triangles.Add(TrisIndex + 0);
-            TrisIndex += 4;
-
             var color = GradientUtils.GetColor(Gradient, rightStart, 0.2f);
 
-            Colors.Add(color);
-            Colors.Add(color);
-            Colors.Add(color);
-            Colors.Add(color);
+            var v0 = new MapPoint(rightStart.x, rightStart.z, rightStart.y);
+            var v1 = new MapPoint(leftStart.x, leftStart.z, leftStart.y);
+            var v2 = new MapPoint(leftEnd.x, leftEnd.z, leftEnd.y);
+            var v3 = new MapPoint(rightEnd.x, rightEnd.z, rightEnd.y);
+
+            Data.AddTriangle(v0, v2, v1, color);
+            Data.AddTriangle(v2, v0, v3, color);
         }
 
         #endregion

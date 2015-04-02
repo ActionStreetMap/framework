@@ -41,16 +41,11 @@ namespace ActionStreetMap.Explorer.Scene
                 .SetColorNoiseFreq(0.2f)
                 .SetGradient(ResourceProvider.GetGradient(gradientKey))
                 .SetMaxDistance(4f)
-                .Build(tile.Rectangle, lines, (vertices, triangles, colors) =>
+                .Build(tile.Rectangle, lines, (data) =>
                 {
-                    BuildObject(tile.GameObject, new MeshData()
-                    {
-                        GameObject = gameObjectWrapper,
-                        MaterialKey = materialKey,
-                        Vertices = vertices,
-                        Triangles = triangles,
-                        Colors = colors
-                    });
+                    data.GameObject = gameObjectWrapper;
+                    data.MaterialKey = materialKey;
+                    BuildObject(tile.GameObject, data);
                 });
 
             ObjectPool.StoreList(lines);

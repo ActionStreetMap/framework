@@ -6,7 +6,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     internal class MeshContext
     {
         public Rule Rule;
-        public MeshDataEx Data;
+        public MeshData Data;
         public TriangleIndex Index;
     }
 }

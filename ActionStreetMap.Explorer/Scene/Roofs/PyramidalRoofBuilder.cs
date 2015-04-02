@@ -29,7 +29,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public override MeshData Build(Building building)
         {
             var center = PolygonUtils.GetCentroid(building.Footprint);
-            var meshData = new MeshData();
+            var meshData = ObjectPool.CreateMeshData();
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
             SetMeshData(building, meshData, gradient, center);
@@ -44,40 +44,19 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var roofHeight = building.RoofHeight;
 
             var length = footprint.Count;
-            var verticies = new List<Vector3>(length*3);
-            var colors = new List<Color>(length*3);
             for (int i = 0; i < length; i++)
             {
                 var nextIndex = i == (length - 1) ? 0 : i + 1;
 
-                var v0 = new Vector3(footprint[i].X, roofOffset, footprint[i].Y);
-                verticies.Add(v0);
-                colors.Add(GradientUtils.GetColor(gradient, v0, 0.2f));
+                var v0 = new MapPoint(footprint[i].X, roofOffset, footprint[i].Y);
+                var v1 = new MapPoint(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y);
+                var v2 = new MapPoint(center.X, roofOffset + roofHeight, center.Y);
 
-                var v1 = new Vector3(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y);
-                verticies.Add(v1);
-                colors.Add(GradientUtils.GetColor(gradient, v1, 0.2f));
+                var color = GradientUtils.GetColor(gradient, v0, 0.2f);
 
-                var v2 = new Vector3(center.X, roofOffset + roofHeight, center.Y);
-                verticies.Add(v2);
-                colors.Add(GradientUtils.GetColor(gradient, v2, 0.2f));
+                meshData.AddTriangle(v0, v1, v2, color);
             }
-
-            meshData.Vertices = verticies;
-            meshData.Triangles = GetTriangles(building.Footprint);
-            meshData.Colors = colors;
             meshData.MaterialKey = building.RoofMaterial;
-        }
-
-        private List<int> GetTriangles(List<MapPoint> footprint)
-        {
-            var length = footprint.Count * 3;
-            var triangles = new List<int>(length);
-
-            for (int i = 0; i < length; i++)
-                triangles.Add(i);
-
-            return triangles;
         }
     }
 }
