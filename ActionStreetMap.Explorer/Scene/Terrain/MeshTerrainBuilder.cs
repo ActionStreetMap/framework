@@ -9,6 +9,7 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
@@ -96,7 +97,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     tasks.Add(Observable.Start(() =>
                     {
                         var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                        BuildCell(rule, terrainObject, rectangle, cell, name);
+                        BuildCell(rule, terrainObject, cell, rectangle, name);
                     }));
                 }
 
@@ -108,22 +109,21 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             return terrainObject;
         }
 
-        private void BuildCell(Rule rule, IGameObject terrainObject, Rectangle cellRect, MeshCell cell, string name)
+        private void BuildCell(Rule rule, IGameObject terrainObject, MeshCell cell, Rectangle cellRect, string name)
         {
-            var rect = new MapRectangle((float)cellRect.Left, (float)cellRect.Bottom, 
-                (float)cellRect.Width, (float)cellRect.Height);
-
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
-            // TODO detect optimal values
-            var meshData = _objectPool.CreateMeshData(1024, 4096, 1024);
-            meshData.GameObject = cellGameObject;
+            var meshDataEx = _objectPool.CreateMeshDataEx();
+            meshDataEx.GameObject = cellGameObject;
+
+           var rect = new MapRectangle((float)cellRect.Left, (float)cellRect.Bottom, 
+                (float)cellRect.Width, (float)cellRect.Height);
 
             var context = new MeshContext
             {
                 Rule = rule,
-                Data = meshData,
-                Rectangle = rect,
+                Data = meshDataEx,
+                Index = new TriangleIndex(8,8,rect)
             };
 
             // build canvas
@@ -137,28 +137,35 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             Trace.Debug(LogTag, "Total triangles: {0}", context.Data.Triangles.Count);
 
-            StreamWriter sw = new StreamWriter(File.Create("vertices.txt"));
-            for (int i = 0; i < context.Data.Vertices.Count; i++)
+            var trisCount = context.Data.Triangles.Count;
+            var vertextCount = trisCount * 3;
+            var vertices = new Vector3[vertextCount];
+            var triangles = new int[vertextCount];
+            var colors = new Color[vertextCount];
+            for (int i = 0; i < trisCount; i++)
             {
-                var vertex = context.Data.Vertices[i];
-                sw.WriteLine("{0} {1} {2}", vertex.x, vertex.y, vertex.z);
-            }
-            sw.Close();
-
-            sw = new StreamWriter(File.Create("triangles.txt"));
-            for (int i = 0; i < context.Data.Triangles.Count; i++)
-            {
+                var first = i * 3;
+                var second = first + 1;
+                var third = first + 2;
                 var triangle = context.Data.Triangles[i];
-                sw.WriteLine("{0}", triangle);
+                var v0 = triangle.Vertex0;
+                var v1 = triangle.Vertex1;
+                var v2 = triangle.Vertex2;
+
+                vertices[first] = new Vector3(v0.X, v0.Elevation, v0.Y);
+                vertices[second] = new Vector3(v1.X, v1.Elevation, v1.Y);
+                vertices[third] = new Vector3(v2.X, v2.Elevation, v2.Y);
+
+                colors[first] = triangle.Color0;
+                colors[second] = triangle.Color1;
+                colors[third] = triangle.Color2;
+
+                triangles[first] = third;
+                triangles[second] = second;
+                triangles[third] = first;
             }
-            sw.Close();
 
-
-            // copy on non-UI thread
-            var vertices = context.Data.Vertices.ToArray();
-            var triangles = context.Data.Triangles.ToArray();
-            var colors = context.Data.Colors.ToArray();
-            _objectPool.RecycleMeshData(context.Data);
+            _objectPool.RecycleMeshDataEx(context.Data);
 
             Scheduler.MainThread.Schedule(() => BuildObject(cellGameObject, rule,
                 vertices, triangles, colors));
@@ -178,7 +185,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var waterTriangles = new List<int>();
             var waterColors = new List<Color>();
 
-            var vertices = context.Data.Vertices;
+            var meshTriangles = context.Data.Triangles;
 
             var bottomGradient = context.Rule.GetBackgroundLayerGradient(_resourceProvider);
             var waterSurfaceGradient = context.Rule.GetWaterLayerGradient(_resourceProvider);
@@ -188,14 +195,16 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 // bottom
                 AddTriangle(context, triangle, bottomGradient, eleNoiseFreq, colorNoiseFreq, -WaterBottomLevelOffset);
 
-                var p0 = vertices[vertices.Count - 3];
-                var p1 = vertices[vertices.Count - 2];
-                var p2 = vertices[vertices.Count - 1];
+                var meshTriangle = meshTriangles[meshTriangles.Count - 1];
+
+                var p0 = meshTriangle.Vertex0;
+                var p1 = meshTriangle.Vertex1;
+                var p2 = meshTriangle.Vertex2;
 
                 // reuse just added vertices
-                waterVertices.Add(new Vector3(p0.x, p0.y + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p0.z));
-                waterVertices.Add(new Vector3(p1.x, p1.y + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p1.z));
-                waterVertices.Add(new Vector3(p2.x, p2.y + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p2.z));
+                waterVertices.Add(new Vector3(p0.X, p0.Elevation + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p0.Y));
+                waterVertices.Add(new Vector3(p1.X, p1.Elevation + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p1.Y));
+                waterVertices.Add(new Vector3(p2.X, p2.Elevation + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p2.Y));
 
                 var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[count], colorNoiseFreq);
                 waterColors.Add(color);
@@ -298,44 +307,57 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Layer builder helper methods
 
+        protected void AddTriangle(MeshContext context, MapPoint p0, MapPoint p1, MapPoint p2,
+            GradientWrapper gradient, bool useEleNoise0, bool useEleNoise1, bool useEleNoise2, 
+            float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
+        {
+            var meshTriangle = new MeshTriangle();
+            var ele0 = _elevationProvider.GetElevation(p0);
+            if (useEleNoise0)
+                ele0 += Noise.Perlin3D(new Vector3(p0.X, 0, p0.Y), eleNoiseFreq);
+            meshTriangle.Vertex0 = new MapPoint(p0.X, p0.Y, ele0 + yOffset);
+
+            var ele1 = _elevationProvider.GetElevation(p1);
+            if (useEleNoise1)
+                ele1 += Noise.Perlin3D(new Vector3(p1.X, 0, p1.Y), eleNoiseFreq);
+            meshTriangle.Vertex1 = new MapPoint(p1.X, p1.Y, ele1 + yOffset);
+
+            var ele2 = _elevationProvider.GetElevation(p2);
+            if (useEleNoise2)
+                ele2 += Noise.Perlin3D(new Vector3(p2.X, 0, p2.Y), eleNoiseFreq);
+            meshTriangle.Vertex2 = new MapPoint(p2.X, p2.Y, ele2 + yOffset);
+
+            var triangleColor = GradientUtils.GetColor(gradient, new Vector3(p0.X, ele0, p0.Y), colorNoiseFreq);
+
+            meshTriangle.Color0 = triangleColor;
+            meshTriangle.Color1 = triangleColor;
+            meshTriangle.Color2 = triangleColor;
+
+            var centroid = new MapPoint((p0.X + p1.X + p2.X) / 3, (p0.Y + p1.Y + p2.Y) / 3);
+            meshTriangle.Region = context.Index.GetIndexKey(centroid);
+
+            context.Data.Triangles.Add(meshTriangle);
+        }
+
         protected void AddTriangle(MeshContext context, Triangle triangle, GradientWrapper gradient,
             float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
         {
-            var vertices = context.Data.Vertices;
-            var triangles = context.Data.Triangles;
-            var colors = context.Data.Colors;
-
+            var useEleNoise = eleNoiseFreq != 0f;
             var v0 = triangle.GetVertex(0);
             var p0 = new MapPoint((float)v0.X, (float)v0.Y);
-            var ele0 = _elevationProvider.GetElevation(p0);
-            if (v0.Type == VertexType.FreeVertex && eleNoiseFreq != 0f)
-                ele0 += Noise.Perlin3D(new Vector3(p0.X, 0, p0.Y), eleNoiseFreq);
-            vertices.Add(new Vector3(p0.X, ele0 + yOffset, p0.Y));
+            var useEleNoise0 = v0.Type == VertexType.FreeVertex && useEleNoise;
 
             var v1 = triangle.GetVertex(1);
             var p1 = new MapPoint((float)v1.X, (float)v1.Y);
-            var ele1 = _elevationProvider.GetElevation(p1);
-            if (v1.Type == VertexType.FreeVertex && eleNoiseFreq != 0f)
-                ele1 += Noise.Perlin3D(new Vector3(p1.X, 0, p1.Y), eleNoiseFreq);
-            vertices.Add(new Vector3(p1.X, ele1 + yOffset, p1.Y));
+            var useEleNoise1 = v1.Type == VertexType.FreeVertex && useEleNoise;
 
             var v2 = triangle.GetVertex(2);
             var p2 = new MapPoint((float)v2.X, (float)v2.Y);
-            var ele2 = _elevationProvider.GetElevation(p2);
-            if (v2.Type == VertexType.FreeVertex && eleNoiseFreq != 0f)
-                ele2 += Noise.Perlin3D(new Vector3(p2.X, 0, p2.Y), eleNoiseFreq);
-            vertices.Add(new Vector3(p2.X, ele2 + yOffset, p2.Y));
+            var useEleNoise2 = v2.Type == VertexType.FreeVertex && useEleNoise;
 
-            var index = vertices.Count;
-            triangles.Add(--index);
-            triangles.Add(--index);
-            triangles.Add(--index);
-
-            var triangleColor = GradientUtils.GetColor(gradient, new Vector3((float)v0.X, ele0, (float)v0.Y), colorNoiseFreq);
-
-            colors.Add(triangleColor);
-            colors.Add(triangleColor);
-            colors.Add(triangleColor);
+            AddTriangle(context, p0, p1, p2, gradient, 
+                useEleNoise0, useEleNoise1, useEleNoise2, 
+                eleNoiseFreq, colorNoiseFreq, yOffset);
         }
 
         protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient, float deepLevel)
@@ -345,9 +367,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             const float errorTopFix = 0.02f;
             const float errorBottomFix = 0.1f;
 
-            var vertices = context.Data.Vertices;
-            var triangles = context.Data.Triangles;
-            var colors = context.Data.Colors;
             var pointList = _objectPool.NewList<MapPoint>(64);
             foreach (var contour in region.Contours)
             {
@@ -368,29 +387,18 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         // vertices
                         var ele1 = _elevationProvider.GetElevation(p1);
                         var ele2 = _elevationProvider.GetElevation(p2);
-                        vertices.Add(new Vector3(p1.X, ele1 + errorTopFix, p1.Y));
-                        vertices.Add(new Vector3(p2.X, ele2 + errorTopFix, p2.Y));
-                        vertices.Add(new Vector3(p2.X, ele2 - deepLevel - errorBottomFix, p2.Y));
-                        vertices.Add(new Vector3(p1.X, ele1 - deepLevel - errorBottomFix, p1.Y));
 
-                        // colors
-                        var firstColor = GradientUtils.GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
-                        var secondColor = GradientUtils.GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
+                        AddTriangle(context, 
+                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            new MapPoint(p2.X, p2.Y, ele2 + errorTopFix), 
+                            gradient, false, false, false, 0, colorNoiseFreq);
 
-                        colors.Add(firstColor);
-                        colors.Add(secondColor);
-                        colors.Add(secondColor);
-                        colors.Add(firstColor);
-
-                        // triangles
-                        var vIndex = vertices.Count - 4;
-                        triangles.Add(vIndex);
-                        triangles.Add(vIndex + 2);
-                        triangles.Add(vIndex + 1);
-
-                        triangles.Add(vIndex + 3);
-                        triangles.Add(vIndex + 2);
-                        triangles.Add(vIndex + 0);
+                        AddTriangle(context,
+                            new MapPoint(p1.X, p1.Y, ele1 - deepLevel - errorBottomFix),
+                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            gradient, false, false, false, 0, colorNoiseFreq);
                     }
 
                     pointList.Clear();
