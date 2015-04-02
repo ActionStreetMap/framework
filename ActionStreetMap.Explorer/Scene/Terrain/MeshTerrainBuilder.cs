@@ -307,57 +307,36 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Layer builder helper methods
 
-        protected void AddTriangle(MeshContext context, MapPoint p0, MapPoint p1, MapPoint p2,
-            GradientWrapper gradient, bool useEleNoise0, bool useEleNoise1, bool useEleNoise2, 
+        protected void AddTriangle(MeshContext context, Triangle triangle, GradientWrapper gradient,
             float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
         {
             var meshTriangle = new MeshTriangle();
-            var ele0 = _elevationProvider.GetElevation(p0);
-            if (useEleNoise0)
-                ele0 += Noise.Perlin3D(new Vector3(p0.X, 0, p0.Y), eleNoiseFreq);
-            meshTriangle.Vertex0 = new MapPoint(p0.X, p0.Y, ele0 + yOffset);
+            var useEleNoise = eleNoiseFreq != 0f;
 
-            var ele1 = _elevationProvider.GetElevation(p1);
-            if (useEleNoise1)
-                ele1 += Noise.Perlin3D(new Vector3(p1.X, 0, p1.Y), eleNoiseFreq);
-            meshTriangle.Vertex1 = new MapPoint(p1.X, p1.Y, ele1 + yOffset);
+            meshTriangle.Vertex0 = GetVertex(triangle.GetVertex(0), eleNoiseFreq, useEleNoise, yOffset);
+            meshTriangle.Vertex1 = GetVertex(triangle.GetVertex(1), eleNoiseFreq, useEleNoise, yOffset);
+            meshTriangle.Vertex2 = GetVertex(triangle.GetVertex(2), eleNoiseFreq, useEleNoise, yOffset);
 
-            var ele2 = _elevationProvider.GetElevation(p2);
-            if (useEleNoise2)
-                ele2 += Noise.Perlin3D(new Vector3(p2.X, 0, p2.Y), eleNoiseFreq);
-            meshTriangle.Vertex2 = new MapPoint(p2.X, p2.Y, ele2 + yOffset);
-
-            var triangleColor = GradientUtils.GetColor(gradient, new Vector3(p0.X, ele0, p0.Y), colorNoiseFreq);
+            var v0 = meshTriangle.Vertex0;
+            var triangleColor = GradientUtils.GetColor(gradient, new Vector3(v0.X, 0, v0.Y), colorNoiseFreq);
 
             meshTriangle.Color0 = triangleColor;
             meshTriangle.Color1 = triangleColor;
             meshTriangle.Color2 = triangleColor;
 
-            var centroid = new MapPoint((p0.X + p1.X + p2.X) / 3, (p0.Y + p1.Y + p2.Y) / 3);
-            meshTriangle.Region = context.Index.GetIndexKey(centroid);
+            context.Index.AddToIndex(meshTriangle);
 
             context.Data.Triangles.Add(meshTriangle);
         }
 
-        protected void AddTriangle(MeshContext context, Triangle triangle, GradientWrapper gradient,
-            float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
+        private MapPoint GetVertex(Vertex v2, float eleNoiseFreq, bool useEleNoise, float yOffset)
         {
-            var useEleNoise = eleNoiseFreq != 0f;
-            var v0 = triangle.GetVertex(0);
-            var p0 = new MapPoint((float)v0.X, (float)v0.Y);
-            var useEleNoise0 = v0.Type == VertexType.FreeVertex && useEleNoise;
-
-            var v1 = triangle.GetVertex(1);
-            var p1 = new MapPoint((float)v1.X, (float)v1.Y);
-            var useEleNoise1 = v1.Type == VertexType.FreeVertex && useEleNoise;
-
-            var v2 = triangle.GetVertex(2);
             var p2 = new MapPoint((float)v2.X, (float)v2.Y);
             var useEleNoise2 = v2.Type == VertexType.FreeVertex && useEleNoise;
-
-            AddTriangle(context, p0, p1, p2, gradient, 
-                useEleNoise0, useEleNoise1, useEleNoise2, 
-                eleNoiseFreq, colorNoiseFreq, yOffset);
+            var ele2 = _elevationProvider.GetElevation(p2);
+            if (useEleNoise2)
+                ele2 += Noise.Perlin3D(new Vector3(p2.X, 0, p2.Y), eleNoiseFreq);
+            return new MapPoint(p2.X, p2.Y, ele2 + yOffset);
         }
 
         protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient, float deepLevel)
@@ -388,17 +367,29 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         var ele1 = _elevationProvider.GetElevation(p1);
                         var ele2 = _elevationProvider.GetElevation(p2);
 
-                        AddTriangle(context, 
-                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
-                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
-                            new MapPoint(p2.X, p2.Y, ele2 + errorTopFix), 
-                            gradient, false, false, false, 0, colorNoiseFreq);
+                        var firstColor = GradientUtils.GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
+                        var secondColor = GradientUtils.GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
 
-                        AddTriangle(context,
-                            new MapPoint(p1.X, p1.Y, ele1 - deepLevel - errorBottomFix),
-                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
-                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
-                            gradient, false, false, false, 0, colorNoiseFreq);
+
+                        context.Data.Triangles.Add(new MeshTriangle()
+                        {
+                            Vertex0 = new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            Vertex1 = new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            Vertex2 = new MapPoint(p2.X, p2.Y, ele2 + errorTopFix),
+                            Color0 = firstColor,
+                            Color1 = firstColor,
+                            Color2 = firstColor,
+                        });
+
+                        context.Data.Triangles.Add(new MeshTriangle()
+                        {
+                            Vertex0 = new MapPoint(p1.X, p1.Y, ele1 - deepLevel - errorBottomFix),
+                            Vertex1 = new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            Vertex2 = new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            Color0 = secondColor,
+                            Color1 = secondColor,
+                            Color2 = secondColor,
+                        });
                     }
 
                     pointList.Clear();

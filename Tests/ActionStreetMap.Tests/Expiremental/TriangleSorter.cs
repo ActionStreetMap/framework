@@ -50,17 +50,16 @@ namespace ActionStreetMap.Tests.Expiremental
             {
                 var v0 = vertices[indices[i++]];
                 var v1 = vertices[indices[i++]];
-                var v2 = vertices[indices[i++]];
+                var v2 = vertices[indices[i++]];              
 
-                var centroid = new MapPoint((v0.x + v1.x + v2.x)/3f, (v0.z + v1.z + v2.z)/3f);
-
-                triangles.Add(new MeshTriangle()
+                var meshTriangle = new MeshTriangle()
                 {
                     Vertex0 = new MapPoint(v0.x, v0.z),
                     Vertex1 = new MapPoint(v1.x, v1.z),
-                    Vertex2 = new MapPoint(v2.x, v2.z), 
-                    Region = rangeIndex.GetIndexKey(centroid),
-                });
+                    Vertex2 = new MapPoint(v2.x, v2.z),
+                };
+
+                rangeIndex.AddToIndex(meshTriangle);
             }
             return triangles;
         }

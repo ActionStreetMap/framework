@@ -66,13 +66,17 @@ namespace ActionStreetMap.Explorer.Geometry
             _ranges[rangeIndex].End = triangles.Count - 1;
         }
 
-        /// <summary> Gets specific index key for given point. </summary>
-        public int GetIndexKey(MapPoint point)
+        /// <summary> Adds triagnle data to index. </summary>
+        public void AddToIndex(MeshTriangle triangle)
         {
-            var i = (int)Math.Floor((point.X - _x) / _xAxisStep);
-            var j = (int)Math.Floor((point.Y - _y) / _yAxisStep);
+            var p0 = triangle.Vertex0;
+            var p1 = triangle.Vertex1;
+            var p2 = triangle.Vertex2;
+            var centroid = new MapPoint((p0.X + p1.X + p2.X) / 3, (p0.Y + p1.Y + p2.Y) / 3);
+            var i = (int)Math.Floor((centroid.X - _x) / _xAxisStep);
+            var j = (int)Math.Floor((centroid.Y - _y) / _yAxisStep);
 
-            return _columnCount * j + i;
+            triangle.Region = _columnCount * j + i;
         }
 
         /// <summary> Returns list of afected indecies from triangle collection. </summary>
