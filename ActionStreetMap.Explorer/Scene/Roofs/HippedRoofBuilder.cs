@@ -40,7 +40,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var p2 = skeletVertices[i + 2];
                 var v2 = new MapPoint(p2.x, p2.y, skeleton.Item2.Any(t => p2 == t) ? building.RoofHeight + roofOffset : roofOffset);
 
-                meshData.AddTriangle(v0, v1, v2, GradientUtils.GetColor(gradient, v0, 0.2f));
+                meshData.AddTriangle(v0, v2, v1, GradientUtils.GetColor(gradient, v0, 0.2f));
             }
 
             return meshData;

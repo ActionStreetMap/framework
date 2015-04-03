@@ -131,7 +131,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 if (i == firstIntersect.Item1 || i == secondIntersect.Item1)
                 {
                     startRidgePoint = i == firstIntersect.Item1 ? firstIntersect.Item2 : secondIntersect.Item2;
-                    AddTriangle(segment.Start, segment.End, startRidgePoint, context);
+                    AddTriangle(segment.Start, startRidgePoint, segment.End, context);
                     i = nextIndex;
                     continue;
                 }
@@ -154,16 +154,16 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var color = GradientUtils.GetColor(context.Gradient, first, 0.2f);
 
             context.Data.AddTriangle(
-                new MapPoint(first.x, first.y, first.z),
-                new MapPoint(second.x, second.y, second.z),
-                new MapPoint(third.x, third.y, third.z),
+                new MapPoint(first.x, first.z, first.y),
+                new MapPoint(second.x, second.z, second.y),
+                new MapPoint(third.x, third.z, third.y),
                 color);
         }
 
         private void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd, Context context)
         {
-            AddTriangle(rightStart, leftStart, leftEnd, context);
-            AddTriangle(leftEnd, rightEnd, rightStart, context);
+            AddTriangle(rightStart, leftEnd, leftStart, context);
+            AddTriangle(leftEnd, rightStart, rightEnd, context);
         }
 
         /// <summary>

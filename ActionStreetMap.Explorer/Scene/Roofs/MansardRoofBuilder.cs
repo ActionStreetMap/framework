@@ -50,8 +50,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             float offset)
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
-
             var roofTop = roofOffset + building.RoofHeight;
+
+            var topFootprint = ObjectPool.NewList<MapPoint>(building.Footprint.Count);
 
             for (int i = 0; i < polygon.Segments.Length; i++)
             {
@@ -76,12 +77,14 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var v2 = new MapPoint(segment2.End.x, segment2.End.z, roofOffset);
                 var v3 = new MapPoint(ip2.x, ip2.z, roofTop);
 
-                meshData.AddTriangle(v0, v2, v1, GradientUtils.GetColor(gradient, v0, 0.2f));
-                meshData.AddTriangle(v3, v1, v2, GradientUtils.GetColor(gradient, v3, 0.2f));
+                meshData.AddTriangle(v0, v1, v2, GradientUtils.GetColor(gradient, v0, 0.2f));
+                meshData.AddTriangle(v3, v2, v1, GradientUtils.GetColor(gradient, v3, 0.2f));
+
+                topFootprint.Add(v1);
             }
 
-            AttachTopPart(meshData, gradient, building.Footprint, roofTop);
-           
+            AttachTopPart(meshData, gradient, topFootprint, roofTop);
+            ObjectPool.StoreList(topFootprint);
             meshData.MaterialKey = building.RoofMaterial;
         }
 
@@ -101,7 +104,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var p2 = footprint[topPartIndecies[i+2]];
                 var v2 = new MapPoint(p2.X, p2.Y, roofTop);
 
-                meshData.AddTriangle(v0, v1, v2, GradientUtils.GetColor(gradient, v0, 0.2f));
+                meshData.AddTriangle(v0, v2, v1, GradientUtils.GetColor(gradient, v0, 0.2f));
             }
 
             ObjectPool.StoreList(topPartIndecies);

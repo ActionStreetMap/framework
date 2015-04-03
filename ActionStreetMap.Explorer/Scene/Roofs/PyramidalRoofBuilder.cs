@@ -48,9 +48,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             {
                 var nextIndex = i == (length - 1) ? 0 : i + 1;
 
-                var v0 = new MapPoint(footprint[i].X, roofOffset, footprint[i].Y);
-                var v1 = new MapPoint(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y);
-                var v2 = new MapPoint(center.X, roofOffset + roofHeight, center.Y);
+                var v0 = new MapPoint(footprint[i].X, footprint[i].Y, roofOffset);
+                var v1 = new MapPoint(center.X, center.Y, roofOffset + roofHeight);
+                var v2 = new MapPoint(footprint[nextIndex].X, footprint[nextIndex].Y, roofOffset);
 
                 var color = GradientUtils.GetColor(gradient, v0, 0.2f);
 

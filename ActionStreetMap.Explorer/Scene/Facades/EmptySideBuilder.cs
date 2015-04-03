@@ -29,7 +29,6 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return this;
         }
 
-
         public override bool CanBuild(MapPoint start, MapPoint end)
         {
             return true;

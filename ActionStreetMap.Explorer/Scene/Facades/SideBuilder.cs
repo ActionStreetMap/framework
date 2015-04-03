@@ -125,7 +125,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 var ceiling = floor + heightStep + (isLast ? 0 : (isWindowFloor ? _floorSpanDiff : -_floorSpanDiff));
 
                 // latest floor without windows
-                if (isLast) ceiling += _floorSpanDiff;
+                if (isLast && _floorCount > 1) ceiling += _floorSpanDiff;
                 var direction = (end - start).Normalize();
 
                 // building entrance iterator
