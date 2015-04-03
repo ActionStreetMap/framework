@@ -81,7 +81,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     contours.AddRange(contour);
                 }
             }
-            var mesh = contours.Any() ? GetMesh(polygon) : null;
+            var mesh = polygon.Points.Any() ? GetMesh(polygon) : null;
             return new MeshRegion
             {
                 Contours = contours,
