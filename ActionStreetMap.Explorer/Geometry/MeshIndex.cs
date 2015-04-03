@@ -11,7 +11,7 @@ namespace ActionStreetMap.Explorer.Geometry
     ///     to regions of certain size defined by column and row count. Triangle's 
     ///     centroid is used to map triangle to the corresponding region.     
     /// </summary>
-    internal class TriangleIndex
+    internal class MeshIndex
     {
         private static readonly TriangleComparer Comparer = new TriangleComparer();
 
@@ -26,11 +26,11 @@ namespace ActionStreetMap.Explorer.Geometry
 
         private readonly Range[] _ranges;
 
-        /// <summary> Creates instance of <see cref="TriangleIndex"/>. </summary>
+        /// <summary> Creates instance of <see cref="MeshIndex"/>. </summary>
         /// <param name="columnCount">Column count of given bounding box.</param>
         /// <param name="rowCount">Row count of given bounding box.</param>
         /// <param name="boundingBox">Bounding box.</param>
-        public TriangleIndex(int columnCount, int rowCount, MapRectangle boundingBox)
+        public MeshIndex(int columnCount, int rowCount, MapRectangle boundingBox)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;

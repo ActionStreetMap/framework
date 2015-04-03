@@ -3,11 +3,12 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Geometry;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Terrain
+namespace ActionStreetMap.Explorer.Scene
 {
-    public class MeshCellBehaviour: MonoBehaviour
+    public class MeshBehaviour: MonoBehaviour
     {
-        internal TriangleIndex Index { get; set; }
+        internal MeshIndex Index { get; set; }
+       
         public List<int> GetAffectedIndices(MapPoint center, float radius)
         {
             return Index.GetAfectedIndecies(center, radius);

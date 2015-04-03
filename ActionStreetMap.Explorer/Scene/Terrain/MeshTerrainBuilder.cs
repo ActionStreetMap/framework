@@ -119,7 +119,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var rect = new MapRectangle((float) cellRect.Left, (float) cellRect.Bottom,
                 (float) cellRect.Width, (float) cellRect.Height);
 
-            var index = new TriangleIndex(16, 16, rect);
+            var index = new MeshIndex(16, 16, rect);
             var context = new MeshContext
             {
                 Rule = rule,
@@ -377,7 +377,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildObject(IGameObject goWrapper, Rule rule, TriangleIndex index,
+        private void BuildObject(IGameObject goWrapper, Rule rule, MeshIndex index,
             Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = goWrapper.GetComponent<GameObject>();
@@ -392,7 +392,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
             gameObject.AddComponent<MeshCollider>();
 
-            gameObject.AddComponent<MeshCellBehaviour>().Index = index;
+            gameObject.AddComponent<MeshBehaviour>().Index = index;
         }
 
         public void Configure(IConfigSection configSection)
