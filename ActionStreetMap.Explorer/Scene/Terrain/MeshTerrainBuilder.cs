@@ -113,17 +113,18 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
-            var meshDataEx = _objectPool.CreateMeshData();
-            meshDataEx.GameObject = cellGameObject;
+            var meshData = _objectPool.CreateMeshData();
+            meshData.GameObject = cellGameObject;
 
-           var rect = new MapRectangle((float)cellRect.Left, (float)cellRect.Bottom, 
-                (float)cellRect.Width, (float)cellRect.Height);
+            var rect = new MapRectangle((float) cellRect.Left, (float) cellRect.Bottom,
+                (float) cellRect.Width, (float) cellRect.Height);
 
+            var index = new TriangleIndex(8, 8, rect);
             var context = new MeshContext
             {
                 Rule = rule,
-                Data = meshDataEx,
-                Index = new TriangleIndex(8,8,rect)
+                Data = meshData,
+                Index = index
             };
 
             // build canvas
@@ -135,17 +136,19 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             foreach (var surfaceRegion in cell.Surfaces)
                 BuildSurface(context, surfaceRegion);
 
-            Trace.Debug(LogTag, "Total triangles: {0}", context.Data.Triangles.Count);
+            Trace.Debug(LogTag, "Total triangles: {0}", meshData.Triangles.Count);
+
+            index.BuiltIndex(meshData.Triangles);
 
             Vector3[] vertices;
             int[] triangles;
             Color[] colors;
-            context.Data.GenerateObjectData(out vertices, out triangles, out colors);
+            meshData.GenerateObjectData(out vertices, out triangles, out colors);
 
-            _objectPool.RecycleMeshData(context.Data);
+            _objectPool.RecycleMeshData(meshData);
 
             Scheduler.MainThread.Schedule(() => BuildObject(cellGameObject, rule,
-                vertices, triangles, colors));
+                index, vertices, triangles, colors));
         }
 
         #region Water layer
@@ -323,6 +326,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             const float errorTopFix = 0.02f;
             const float errorBottomFix = 0.1f;
 
+            var triangles = context.Data.Triangles;
+
             var pointList = _objectPool.NewList<MapPoint>(64);
             foreach (var contour in region.Contours)
             {
@@ -358,6 +363,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                             new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
                             new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
                             secondColor);
+
+                        // TODO refactor this
+                        context.Index.AddToIndex(triangles[triangles.Count - 2]);
+                        context.Index.AddToIndex(triangles[triangles.Count - 1]);
                     }
 
                     pointList.Clear();
@@ -368,7 +377,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildObject(IGameObject goWrapper, Rule rule,
+        private void BuildObject(IGameObject goWrapper, Rule rule, TriangleIndex index,
             Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = goWrapper.GetComponent<GameObject>();
@@ -382,6 +391,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial("material_background", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
             gameObject.AddComponent<MeshCollider>();
+
+            gameObject.AddComponent<MeshCellBehaviour>().Index = index;
         }
 
         public void Configure(IConfigSection configSection)
