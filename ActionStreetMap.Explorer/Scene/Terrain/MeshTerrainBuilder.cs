@@ -119,7 +119,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var rect = new MapRectangle((float) cellRect.Left, (float) cellRect.Bottom,
                 (float) cellRect.Width, (float) cellRect.Height);
 
-            var index = new TriangleIndex(8, 8, rect);
+            var index = new TriangleIndex(16, 16, rect);
             var context = new MeshContext
             {
                 Rule = rule,

@@ -106,6 +106,7 @@ namespace ActionStreetMap.Explorer.Geometry
         {
             var index = _columnCount*j + i;
             if (index >= _ranges.Length || 
+                index < 0 ||
                 i >= _columnCount || 
                 j >= _rowCount) return;
 
