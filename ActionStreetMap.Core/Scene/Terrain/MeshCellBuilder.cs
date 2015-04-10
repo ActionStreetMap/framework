@@ -65,22 +65,12 @@ namespace ActionStreetMap.Core.Scene.Terrain
             {
                 var area = Clipper.Area(path);
                 // skip small polygons to prevent triangulation issues
-                if(Math.Abs(area / DoubleScale) < 1) 
+                if (Math.Abs(area/DoubleScale) < 1)
                     continue;
                 var vertices = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
+
                 // sign of area defines polygon orientation
-                if (area > 0)
-                {
-                    polygon.AddContour(vertices);
-                    //contours.AddRange(GetContour(rectangle, path));
-                }
-                else
-                {
-                    polygon.AddContour(vertices, 0, true);
-                    //var contour = GetContour(rectangle, path);
-                    //contour.ForEach(c => c.Reverse());
-                    //contours.AddRange(contour);
-                }
+                polygon.AddContour(vertices, 0, area < 0);
             }
             var mesh = polygon.Points.Any() ? GetMesh(polygon, conformingDelaunay) : null;
             return new MeshRegion
@@ -122,41 +112,5 @@ namespace ActionStreetMap.Core.Scene.Terrain
             clipper.Execute(ClipType.ctIntersection, solution);
             return solution;
         }
-
-        /*private VertexPaths GetContour(Rectangle rect, Path path)
-        {
-            ClipperOffset offset = new ClipperOffset();
-            offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
-            var offsetPath = new Paths();
-            offset.Execute(ref offsetPath, 10);
-
-            var intRect = new Path
-            {
-                new IntPoint(rect.Left*Scale, rect.Bottom*Scale),
-                new IntPoint(rect.Right*Scale, rect.Bottom*Scale),
-                new IntPoint(rect.Right*Scale, rect.Top*Scale),
-                new IntPoint(rect.Left*Scale, rect.Top*Scale)
-            };
-
-            offset.Clear();
-            offset.AddPath(intRect, JoinType.jtMiter, EndType.etClosedLine);
-            var offsetRect = new Paths();
-            offset.Execute(ref offsetRect, 10);
-
-            var clipper = new Clipper();
-            clipper.AddPaths(offsetPath, PolyType.ptSubject, true);
-            clipper.AddPaths(offsetRect, PolyType.ptClip, true);
-            var diffSolution = new Paths();
-            clipper.Execute(ClipType.ctDifference, diffSolution, PolyFillType.pftPositive, PolyFillType.pftEvenOdd);
-
-            clipper.Clear();
-            clipper.AddPaths(diffSolution, PolyType.ptSubject, true);
-            clipper.AddPath(intRect, PolyType.ptClip, true);
-
-            var solution = new Paths();
-            clipper.Execute(ClipType.ctIntersection, solution);
-
-            return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
-        }*/
     }
 }
