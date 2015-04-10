@@ -196,7 +196,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 waterTriangles.Add(count + 1);
                 count += 3;
             }
-            BuildOffsetShape(context, meshRegion, context.Rule.GetBackgroundLayerGradient(_resourceProvider), WaterBottomLevelOffset);
+            //BuildOffsetShape(context, meshRegion, context.Rule.GetBackgroundLayerGradient(_resourceProvider), WaterBottomLevelOffset);
             var vs = waterVertices.ToArray();
             var ts = waterTriangles.ToArray();
             var cs = waterColors.ToArray();
@@ -247,8 +247,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var gradient = context.Rule.GetCarLayerGradient(_resourceProvider);
 
             foreach (var triangle in meshRegion.Mesh.Triangles)
-                AddTriangle(context, triangle, gradient, eleNoiseFreq, colorNoiseFreq, -RoadDeepLevel);
-            BuildOffsetShape(context, meshRegion, gradient, RoadDeepLevel);
+                AddTriangle(context, triangle, gradient, eleNoiseFreq, colorNoiseFreq, 0/*-RoadDeepLevel*/);
+            //BuildOffsetShape(context, meshRegion, gradient, RoadDeepLevel);
         }
 
         #endregion
@@ -319,7 +319,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             return new MapPoint(p2.X, p2.Y, ele2 + yOffset);
         }
 
-        protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient, float deepLevel)
+        /*protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient, float deepLevel)
         {
             const float colorNoiseFreq = 0.2f;
             const float divideStep = 1f;
@@ -373,7 +373,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 }
             }
             _objectPool.StoreList(pointList);
-        }
+        }*/
 
         #endregion
 

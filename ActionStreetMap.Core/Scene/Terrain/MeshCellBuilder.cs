@@ -15,7 +15,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
     {
         internal const float Scale = 1000f;
         internal const float DoubleScale = Scale*Scale;
-        private float _maximumArea = 8;
+        private float _maximumArea = 4;
 
         private readonly object _objLock = new object();
 
@@ -24,11 +24,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
         public MeshCell Build(Rectangle rectangle, MeshCanvas content)
         {
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(rectangle, content.Water);
-            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads);
-            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads);
-            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces);
-            var background = CreateMeshRegions(rectangle, content.Background);
+            var water = CreateMeshRegions(rectangle, content.Water, false);
+            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, false);
+            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, true);
+            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, false);
+            var background = CreateMeshRegions(rectangle, content.Background, false);
 
             return new MeshCell
             {
@@ -47,15 +47,16 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         #endregion
 
-        private List<MeshRegion> CreateMeshRegions(Rectangle rectangle, List<MeshCanvas.Region> regionDatas)
+        private List<MeshRegion> CreateMeshRegions(Rectangle rectangle, List<MeshCanvas.Region> regionDatas,
+            bool conformingDelaunay)
         {
             var meshRegions = new List<MeshRegion>();
             foreach (var regionData in regionDatas)
-                meshRegions.Add(CreateMeshRegions(rectangle, regionData));
+                meshRegions.Add(CreateMeshRegions(rectangle, regionData, conformingDelaunay));
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(Rectangle rectangle, MeshCanvas.Region region)
+        private MeshRegion CreateMeshRegions(Rectangle rectangle, MeshCanvas.Region region, bool conformingDelaunay)
         {
             var polygon = new Polygon();
             var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
@@ -71,17 +72,17 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 if (area > 0)
                 {
                     polygon.AddContour(vertices);
-                    contours.AddRange(GetContour(rectangle, path));
+                    //contours.AddRange(GetContour(rectangle, path));
                 }
                 else
                 {
                     polygon.AddContour(vertices, 0, true);
-                    var contour = GetContour(rectangle, path);
-                    contour.ForEach(c => c.Reverse());
-                    contours.AddRange(contour);
+                    //var contour = GetContour(rectangle, path);
+                    //contour.ForEach(c => c.Reverse());
+                    //contours.AddRange(contour);
                 }
             }
-            var mesh = polygon.Points.Any() ? GetMesh(polygon) : null;
+            var mesh = polygon.Points.Any() ? GetMesh(polygon, conformingDelaunay) : null;
             return new MeshRegion
             {
                 Contours = contours,
@@ -91,12 +92,18 @@ namespace ActionStreetMap.Core.Scene.Terrain
             };
         }
 
-        private Mesh GetMesh(Polygon polygon)
+        private Mesh GetMesh(Polygon polygon, bool conformingDelaunay)
         {
             lock (_objLock)
             {
-                return polygon.Triangulate(new ConstraintOptions {UseRegions = true},
-                    new QualityOptions {MaximumArea = _maximumArea});
+                return polygon.Triangulate(new ConstraintOptions
+                {
+                    ConformingDelaunay = conformingDelaunay
+                },
+                new QualityOptions
+                {
+                    MaximumArea = _maximumArea
+                });
             }
         }
 
@@ -116,7 +123,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return solution;
         }
 
-        private VertexPaths GetContour(Rectangle rect, Path path)
+        /*private VertexPaths GetContour(Rectangle rect, Path path)
         {
             ClipperOffset offset = new ClipperOffset();
             offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
@@ -150,6 +157,6 @@ namespace ActionStreetMap.Core.Scene.Terrain
             clipper.Execute(ClipType.ctIntersection, solution);
 
             return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
-        }
+        }*/
     }
 }
