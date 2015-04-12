@@ -7,6 +7,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     {
         public Rule Rule;
         public MeshData Data;
-        public MeshIndex Index;
+        public IMeshIndex Index;
     }
 }

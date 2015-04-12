@@ -57,9 +57,11 @@
     <Compile Include="Geometry\Generators\CylinderGenerator.cs" />
     <Compile Include="Geometry\Generators\IcoSphereGenerator.cs" />
     <Compile Include="Geometry\Generators\TreeGenerator.cs" />
+    <Compile Include="Geometry\IMeshIndex.cs" />
     <Compile Include="Geometry\MeshData.cs" />
     <Compile Include="Geometry\MeshTriangle.cs" />
-    <Compile Include="Geometry\MeshIndex.cs" />
+    <Compile Include="Scene\MeshIndexBehaviour.cs" />
+    <Compile Include="Scene\Terrain\MeshTerrainIndex.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />
     <Compile Include="Helpers\ModelRuleExtensions.cs" />
@@ -98,7 +100,6 @@
     <Compile Include="Geometry\ThickLine\ThickLineSegment.cs" />
     <Compile Include="Geometry\ThickLine\ThickLineUtils.cs" />
     <Compile Include="Geometry\Utils\TriangleUtils.cs" />
-    <Compile Include="Scene\MeshBehaviour.cs" />
     <Compile Include="Scene\Terrain\MeshTerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />
     <Compile Include="Utils\GradientUtils.cs" />

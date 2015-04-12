@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Explorer.Geometry;
 
-namespace ActionStreetMap.Explorer.Geometry
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
     /// <summary> 
     ///     Maintains index of triangles in given bounding box. The bounding box is divided 
     ///     to regions of certain size defined by column and row count. Triangle's 
     ///     centroid is used to map triangle to the corresponding region.     
     /// </summary>
-    internal class MeshIndex
+    internal class MeshTerrainIndex: IMeshIndex
     {
         private static readonly TriangleComparer Comparer = new TriangleComparer();
 
@@ -26,11 +27,11 @@ namespace ActionStreetMap.Explorer.Geometry
 
         private readonly Range[] _ranges;
 
-        /// <summary> Creates instance of <see cref="MeshIndex"/>. </summary>
+        /// <summary> Creates instance of <see cref="MeshTerrainIndex"/>. </summary>
         /// <param name="columnCount">Column count of given bounding box.</param>
         /// <param name="rowCount">Row count of given bounding box.</param>
         /// <param name="boundingBox">Bounding box.</param>
-        public MeshIndex(int columnCount, int rowCount, MapRectangle boundingBox)
+        public MeshTerrainIndex(int columnCount, int rowCount, MapRectangle boundingBox)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;
@@ -46,8 +47,9 @@ namespace ActionStreetMap.Explorer.Geometry
         }
 
         /// <summary> Builds index from given list of triangles. Also performs its sorting. </summary>
-        public void BuiltIndex(List<MeshTriangle> triangles)
+        public void Build(MeshData meshData)
         {
+            var triangles = meshData.Triangles;
             triangles.Sort(Comparer);
 
             var rangeIndex = -1;
@@ -67,7 +69,7 @@ namespace ActionStreetMap.Explorer.Geometry
         }
 
         /// <summary> Adds triagnle data to index. </summary>
-        public void AddToIndex(MeshTriangle triangle)
+        public void AddTriangle(MeshTriangle triangle)
         {
             var p0 = triangle.Vertex0;
             var p1 = triangle.Vertex1;
@@ -80,7 +82,7 @@ namespace ActionStreetMap.Explorer.Geometry
         }
 
         /// <summary> Returns list of afected indecies from triangle collection. </summary>
-        public List<int> GetAfectedIndecies(MapPoint center, float radius)
+        public List<int> GetAfectedIndices(MapPoint center, float radius)
         {
             var result = new List<int>(32);
 

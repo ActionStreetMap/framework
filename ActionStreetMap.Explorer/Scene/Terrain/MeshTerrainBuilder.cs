@@ -118,7 +118,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var rect = new MapRectangle((float) cellRect.Left, (float) cellRect.Bottom,
                 (float) cellRect.Width, (float) cellRect.Height);
 
-            var index = new MeshIndex(16, 16, rect);
+            var index = new MeshTerrainIndex(16, 16, rect);
             var context = new MeshContext
             {
                 Rule = rule,
@@ -137,7 +137,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             Trace.Debug(LogTag, "Total triangles: {0}", meshData.Triangles.Count);
 
-            index.BuiltIndex(meshData.Triangles);
+            index.Build(meshData);
 
             Vector3[] vertices;
             int[] triangles;
@@ -249,8 +249,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                             secondColor);
 
                         // TODO refactor this
-                        context.Index.AddToIndex(triangles[triangles.Count - 2]);
-                        context.Index.AddToIndex(triangles[triangles.Count - 1]);
+                        context.Index.AddTriangle(triangles[triangles.Count - 2]);
+                        context.Index.AddTriangle(triangles[triangles.Count - 1]);
                     }
 
                     pointList.Clear();
@@ -360,7 +360,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             meshTriangle.Color1 = triangleColor;
             meshTriangle.Color2 = triangleColor;
 
-            context.Index.AddToIndex(meshTriangle);
+            context.Index.AddTriangle(meshTriangle);
 
             context.Data.Triangles.Add(meshTriangle);
         }
@@ -377,7 +377,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildObject(IGameObject goWrapper, Rule rule, MeshIndex index,
+        private void BuildObject(IGameObject goWrapper, Rule rule, MeshTerrainIndex index,
             Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = goWrapper.GetComponent<GameObject>();
@@ -392,7 +392,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshFilter>().mesh = meshData;
             gameObject.AddComponent<MeshCollider>();
 
-            gameObject.AddComponent<MeshBehaviour>().Index = index;
+            gameObject.AddComponent<MeshIndexBehaviour>().Index = index;
         }
 
         public void Configure(IConfigSection configSection)
