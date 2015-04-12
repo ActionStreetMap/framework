@@ -7,7 +7,6 @@ using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
-using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
@@ -60,7 +59,6 @@ namespace ActionStreetMap.Core.Scene.Terrain
         {
             var polygon = new Polygon();
             var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
-            var contours = new VertexPaths(4);
             foreach (var path in simplifiedPath)
             {
                 var area = Clipper.Area(path);
@@ -75,7 +73,6 @@ namespace ActionStreetMap.Core.Scene.Terrain
             var mesh = polygon.Points.Any() ? GetMesh(polygon, conformingDelaunay) : null;
             return new MeshRegion
             {
-                Contours = contours,
                 GradientKey = region.GradientKey,
                 ModifyMeshAction = region.ModifyMeshAction,
                 Mesh = mesh
