@@ -10,6 +10,7 @@ using ActionStreetMap.Core.Scene.Terrain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
@@ -194,12 +195,70 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 waterTriangles.Add(count + 1);
                 count += 3;
             }
-
+            BuildOffsetShape(context, meshRegion, context.Rule.GetBackgroundLayerGradient(_resourceProvider), WaterBottomLevelOffset);
             var vs = waterVertices.ToArray();
             var ts = waterTriangles.ToArray();
             var cs = waterColors.ToArray();
             Scheduler.MainThread.Schedule(() => BuildWaterObject(context, vs, ts, cs));
         }
+
+        protected void BuildOffsetShape(MeshContext context, MeshRegion region, GradientWrapper gradient,
+            float deepLevel)
+        {
+            const float colorNoiseFreq = 0.2f;
+            const float divideStep = 1f;
+            const float errorTopFix = 0.02f;
+            const float errorBottomFix = 0.1f;
+
+            var triangles = context.Data.Triangles;
+
+            var pointList = _objectPool.NewList<MapPoint>(64);
+            foreach (var contour in region.Contours)
+            {
+                var length = contour.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var v2DIndex = i == (length - 1) ? 0 : i + 1;
+                    var start = new MapPoint((float) contour[i].X, (float) contour[i].Y);
+                    var end = new MapPoint((float) contour[v2DIndex].X, (float) contour[v2DIndex].Y);
+
+                    LineUtils.DivideLine(_elevationProvider, start, end, pointList, divideStep);
+
+                    for (int k = 1; k < pointList.Count; k++)
+                    {
+                        var p1 = pointList[k - 1];
+                        var p2 = pointList[k];
+
+                        // vertices
+                        var ele1 = _elevationProvider.GetElevation(p1);
+                        var ele2 = _elevationProvider.GetElevation(p2);
+
+                        var firstColor = GradientUtils.GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
+                        var secondColor = GradientUtils.GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
+
+                        context.Data.AddTriangle(
+                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            new MapPoint(p2.X, p2.Y, ele2 + errorTopFix),
+                            firstColor);
+
+                        context.Data.AddTriangle(
+                            new MapPoint(p1.X, p1.Y, ele1 - deepLevel - errorBottomFix),
+                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
+                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            secondColor);
+
+                        // TODO refactor this
+                        context.Index.AddToIndex(triangles[triangles.Count - 2]);
+                        context.Index.AddToIndex(triangles[triangles.Count - 1]);
+                    }
+
+                    pointList.Clear();
+                }
+            }
+            _objectPool.StoreList(pointList);
+        }
+
 
         private void BuildWaterObject(MeshContext context, Vector3[] vertices, int[] triangles, Color[] colors)
         {

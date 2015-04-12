@@ -7,6 +7,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
+using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
@@ -23,7 +24,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         public MeshCell Build(Rectangle rectangle, MeshCanvas content)
         {
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(rectangle, content.Water, false);
+            var water = CreateMeshRegions(rectangle, content.Water, false, true);
             var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, false);
             var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, true);
             var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, false);
@@ -55,10 +56,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(Rectangle rectangle, MeshCanvas.Region region, bool conformingDelaunay)
+        private MeshRegion CreateMeshRegions(Rectangle rectangle, MeshCanvas.Region region, bool conformingDelaunay, bool useContours = false)
         {
             var polygon = new Polygon();
             var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
+            var contours = useContours ? new VertexPaths(): null;
             foreach (var path in simplifiedPath)
             {
                 var area = Clipper.Area(path);
@@ -67,17 +69,64 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     continue;
                 var vertices = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
 
+                var isHole = area < 0;
                 // sign of area defines polygon orientation
-                polygon.AddContour(vertices, 0, area < 0);
+                polygon.AddContour(vertices, 0, isHole);
+
+                // NOTE I don't like how this is implemented so far
+                if (useContours)
+                {
+                    var contour = GetContour(rectangle, path);
+                    if (isHole) contour.ForEach(c => c.Reverse());
+                    contours.AddRange(contour);
+                }
             }
             var mesh = polygon.Points.Any() ? GetMesh(polygon, conformingDelaunay) : null;
             return new MeshRegion
             {
                 GradientKey = region.GradientKey,
                 ModifyMeshAction = region.ModifyMeshAction,
-                Mesh = mesh
+                Mesh = mesh,
+                Contours = contours
             };
         }
+
+        private VertexPaths GetContour(Rectangle rect, Path path)
+        {
+            ClipperOffset offset = new ClipperOffset();
+            offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
+            var offsetPath = new Paths();
+            offset.Execute(ref offsetPath, 10);
+
+            var intRect = new Path
+            {
+                new IntPoint(rect.Left*Scale, rect.Bottom*Scale),
+                new IntPoint(rect.Right*Scale, rect.Bottom*Scale),
+                new IntPoint(rect.Right*Scale, rect.Top*Scale),
+                new IntPoint(rect.Left*Scale, rect.Top*Scale)
+            };
+
+            offset.Clear();
+            offset.AddPath(intRect, JoinType.jtMiter, EndType.etClosedLine);
+            var offsetRect = new Paths();
+            offset.Execute(ref offsetRect, 10);
+
+            var clipper = new Clipper();
+            clipper.AddPaths(offsetPath, PolyType.ptSubject, true);
+            clipper.AddPaths(offsetRect, PolyType.ptClip, true);
+            var diffSolution = new Paths();
+            clipper.Execute(ClipType.ctDifference, diffSolution, PolyFillType.pftPositive, PolyFillType.pftEvenOdd);
+
+            clipper.Clear();
+            clipper.AddPaths(diffSolution, PolyType.ptSubject, true);
+            clipper.AddPath(intRect, PolyType.ptClip, true);
+
+            var solution = new Paths();
+            clipper.Execute(ClipType.ctIntersection, solution);
+
+            return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
+        }
+
 
         private Mesh GetMesh(Polygon polygon, bool conformingDelaunay)
         {

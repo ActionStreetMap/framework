@@ -10,5 +10,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
         public Action<Mesh> ModifyMeshAction;
 
         public Mesh Mesh;
+
+        // TODO should be refactored: this looks like workaround
+        public VertexPaths Contours;
     }
 }
