@@ -118,7 +118,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             var meshData = _objectPool.CreateMeshData();
             meshData.GameObject = cellGameObject;
-            meshData.Index = new MeshTerrainIndex(16, 16, rect);
+            meshData.Index = new TerrainMeshIndex(16, 16, rect);
 
             // build canvas
             BuildBackground(rule, meshData, cell.Background);
