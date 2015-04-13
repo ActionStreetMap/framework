@@ -6,7 +6,8 @@ namespace ActionStreetMap.Explorer.Geometry
     public interface IMeshIndex
     {
         void AddTriangle(MeshTriangle triangle);
-        void Build(MeshData meshData);
+        void Build();
+
         List<int> GetAfectedIndices(MapPoint center, float radius);
     }
 }

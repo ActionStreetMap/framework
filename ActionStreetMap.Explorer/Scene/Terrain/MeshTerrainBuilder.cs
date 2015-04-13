@@ -118,7 +118,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             var meshData = _objectPool.CreateMeshData();
             meshData.GameObject = cellGameObject;
-            meshData.Index = new TerrainMeshIndex(16, 16, rect);
+            meshData.Index = new TerrainMeshIndex(16, 16, rect, meshData.Triangles);
 
             // build canvas
             BuildBackground(rule, meshData, cell.Background);
@@ -131,7 +131,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             Trace.Debug(LogTag, "Total triangles: {0}", meshData.Triangles.Count);
 
-            meshData.Index.Build(meshData);
+            meshData.Index.Build();
 
             Vector3[] vertices;
             int[] triangles;

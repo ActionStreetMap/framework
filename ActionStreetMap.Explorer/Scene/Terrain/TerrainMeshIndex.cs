@@ -18,6 +18,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private readonly int _columnCount;
         private readonly int _rowCount;
+        private readonly List<MeshTriangle> _triangles;
         private readonly float _xAxisStep;
         private readonly float _yAxisStep;
         private readonly float _x;
@@ -31,10 +32,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <param name="columnCount">Column count of given bounding box.</param>
         /// <param name="rowCount">Row count of given bounding box.</param>
         /// <param name="boundingBox">Bounding box.</param>
-        public TerrainMeshIndex(int columnCount, int rowCount, MapRectangle boundingBox)
+        /// <param name="triangles">Triangles</param>
+        public TerrainMeshIndex(int columnCount, int rowCount, MapRectangle boundingBox, List<MeshTriangle> triangles)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;
+            _triangles = triangles;
             _x = boundingBox.BottomLeft.X;
             _y = boundingBox.BottomLeft.Y;
 
@@ -47,15 +50,14 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <summary> Builds index from given list of triangles. Also performs its sorting. </summary>
-        public void Build(MeshData meshData)
+        public void Build()
         {
-            var triangles = meshData.Triangles;
-            triangles.Sort(Comparer);
+            _triangles.Sort(Comparer);
 
             var rangeIndex = -1;
-            for (int i = 0; i < triangles.Count; i++)
+            for (int i = 0; i < _triangles.Count; i++)
             {
-                var triangle = triangles[i];
+                var triangle = _triangles[i];
                 if (triangle.Region != rangeIndex)
                 {
                     if (i != 0)
@@ -65,7 +67,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     _ranges[rangeIndex].Start = i;
                 }
             }
-            _ranges[rangeIndex].End = triangles.Count - 1;
+            _ranges[rangeIndex].End = _triangles.Count - 1;
         }
 
         /// <summary> Adds triagnle data to index. </summary>
