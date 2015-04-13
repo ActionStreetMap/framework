@@ -12,7 +12,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Defines model builder logic. </summary>
     public interface IModelBuilder

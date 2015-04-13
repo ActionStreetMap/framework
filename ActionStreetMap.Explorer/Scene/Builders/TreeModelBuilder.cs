@@ -7,7 +7,7 @@ using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides the way to process trees. </summary>
     public class TreeModelBuilder : ModelBuilder

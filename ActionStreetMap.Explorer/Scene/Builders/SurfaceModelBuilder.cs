@@ -11,7 +11,7 @@ using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 using Mesh = ActionStreetMap.Core.Geometry.Triangle.Mesh;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides the way to process surfaces. </summary>
     public class SurfaceModelBuilder : ModelBuilder

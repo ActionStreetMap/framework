@@ -10,7 +10,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
 using Rect = ActionStreetMap.Explorer.Geometry.Primitives.Rect;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides logic to build info models. </summary>
     public class InfoModelBuilder: ModelBuilder

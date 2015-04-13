@@ -7,13 +7,16 @@ using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
-    /// <summary> Provides logic to build spheres. </summary>
-    public class SphereModelBuilder : ModelBuilder
+    /// <summary> Provides logic to build cylinders. </summary>
+    public class CylinderModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
-        public override string Name { get { return "sphere"; } }
+        public override string Name
+        {
+            get { return "cylinder"; }
+        }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
@@ -22,27 +25,30 @@ namespace ActionStreetMap.Explorer.Scene
 
             if (tile.Registry.Contains(area.Id))
                 return null;
-            tile.Registry.RegisterGlobal(area.Id);
 
             var circle = CircleUtils.GetCircle(tile.RelativeNullPoint, area.Points);
-            var radius = circle.Item1 / 2;
-            var center = circle.Item2;
-            var elevation = ElevationProvider.GetElevation(center);
+            var diameter = circle.Item1;
+            var cylinderCenter = circle.Item2;
 
+            var elevation = ElevationProvider.GetElevation(cylinderCenter);
+
+            var height = rule.GetHeight();
             var minHeight = rule.GetMinHeight();
+            var actualHeight = (height - minHeight);
             var color = rule.GetFillColor();
             var gradient = ResourceProvider.GetGradient(color);
 
-            int recursionLevel = rule.EvaluateDefault("recursion_level", 2);
+            tile.Registry.RegisterGlobal(area.Id);
 
             var meshData = ObjectPool.CreateMeshData();
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
             meshData.MaterialKey = rule.GetMaterialKey();
-
-            new IcoSphereGenerator(meshData)
-                .SetCenter(new Vector3(center.X, elevation + minHeight, center.Y))
-                .SetRadius(radius)
-                .SetRecursionLevel(recursionLevel)
+            new CylinderGenerator(meshData)
+                .SetCenter(new Vector3(cylinderCenter.X, elevation + minHeight, cylinderCenter.Y))
+                .SetHeight(actualHeight)
+                .SetMaxSegmentHeight(5f)
+                .SetRadialSegments(7)
+                .SetRadius(diameter/2)
                 .SetGradient(gradient)
                 .Build();
 

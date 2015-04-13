@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene;
+using ActionStreetMap.Explorer.Scene.Builders;
 
 namespace ActionStreetMap.Explorer.Helpers
 {

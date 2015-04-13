@@ -5,7 +5,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry.Utils;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary>  Provides logic to build water. </summary>
     public class WaterModelBuilder : ModelBuilder

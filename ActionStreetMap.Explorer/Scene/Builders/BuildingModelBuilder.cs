@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
@@ -13,7 +12,7 @@ using ActionStreetMap.Explorer.Scene.Roofs;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Maps.Helpers;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides logic to build buildings. </summary>
     public class BuildingModelBuilder : ModelBuilder

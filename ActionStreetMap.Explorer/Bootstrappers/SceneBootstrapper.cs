@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene;
+using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;

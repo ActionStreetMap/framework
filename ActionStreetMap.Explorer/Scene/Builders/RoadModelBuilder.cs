@@ -8,7 +8,7 @@ using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Maps.Helpers;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides the way to process roads. </summary>
     public class RoadModelBuilder: ModelBuilder

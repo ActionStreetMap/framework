@@ -8,6 +8,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene;
+using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
