@@ -127,7 +127,6 @@
     <Compile Include="Interactions\CompositeModelBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\UnityConsoleTrace.cs" />
-    <Compile Include="Scene\Terrain\MeshContext.cs" />
     <Compile Include="Tiling\TileActivator.cs" />
     <Compile Include="Tiling\TileModelLoader.cs" />
     <Compile Include="Utils\Noise.cs" />

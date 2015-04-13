@@ -16,9 +16,11 @@ namespace ActionStreetMap.Explorer.Geometry
         /// <summary> Built game object. </summary>
         public IGameObject GameObject;
 
+        public IMeshIndex Index;
+
         public void AddTriangle(MapPoint v0, MapPoint v1, MapPoint v2, Color color)
         {
-            Triangles.Add(new MeshTriangle()
+            var triangle = new MeshTriangle()
             {
                 Vertex0 = v0,
                 Vertex1 = v1,
@@ -26,7 +28,11 @@ namespace ActionStreetMap.Explorer.Geometry
                 Color0 = color,
                 Color1 = color,
                 Color2 = color,
-            });
+            };
+            Triangles.Add(triangle);
+
+            if(Index != null)
+                Index.AddTriangle(triangle);
         }
 
         public void GenerateObjectData(out Vector3[] vertices, out int[] triangles, out Color[] colors)
