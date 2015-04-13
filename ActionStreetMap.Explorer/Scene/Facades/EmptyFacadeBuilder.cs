@@ -28,7 +28,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var footprint = building.Footprint;
             var gradient = _resourceProvider.GetGradient(building.FacadeColor);
             var meshData = _objectPool.CreateMeshData();
+            var index = new FacadeMeshIndex(building.Footprint.Count, meshData.Triangles);
             meshData.MaterialKey = building.FacadeMaterial;
+            meshData.Index = index;
 
             var firstFloorHeight = random.NextFloat(2.2f, 3.2f);
             firstFloorHeight = building.Height > firstFloorHeight ? firstFloorHeight : building.Height;
@@ -48,8 +50,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 var nextIndex = i == (footprint.Count - 1) ? 0 : i + 1;
                 var start = footprint[i];
                 var end = footprint[nextIndex];
+                index.SetSide(start, end);
                 simpleBuilder.Build(start, end);
             }
+
+            index.Build();
 
             return meshData;
         }
