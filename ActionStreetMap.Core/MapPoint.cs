@@ -41,7 +41,7 @@ namespace ActionStreetMap.Core
             Y = y;
         }
 
-        /// <summary> Calculate distance between two points in 2D spaceю </summary>
+        /// <summary> Calculate distance between two points in 2D space. </summary>
         /// <param name="point">Point.</param>
         /// <returns>Distance in 2D space.</returns>
         public float DistanceTo(MapPoint point)
@@ -49,7 +49,7 @@ namespace ActionStreetMap.Core
             return (float) Math.Sqrt(Math.Pow(point.X - X, 2) + Math.Pow(point.Y - Y, 2));
         }
 
-        /// <summary> Calculate distance between two points in 2D spaceю </summary>
+        /// <summary> Calculate distance between two points in 2D space. </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <returns>Distance in 2D space.</returns>
@@ -67,13 +67,13 @@ namespace ActionStreetMap.Core
         /// <summary> Defines + operation. </summary>
         public static MapPoint operator +(MapPoint left, MapPoint right)
         {
-            return new MapPoint(left.X + right.X, left.Y + right.Y);
+            return new MapPoint(left.X + right.X, left.Y + right.Y, left.Elevation + right.Elevation);
         }
 
         /// <summary> Defines - operation. </summary>
         public static MapPoint operator -(MapPoint left, MapPoint right)
         {
-            return new MapPoint(left.X - right.X, left.Y - right.Y);
+            return new MapPoint(left.X - right.X, left.Y - right.Y, left.Elevation - right.Elevation);
         }
 
         /// <summary> Defines == operation. </summary>
@@ -91,20 +91,15 @@ namespace ActionStreetMap.Core
         /// <summary> Defines * operation. </summary>
         public static MapPoint operator *(MapPoint a, float d)
         {
-            return new MapPoint(a.X * d, a.Y * d);
+            return new MapPoint(a.X * d, a.Y * d, a.Elevation * d);
         }
 
         /// <summary> Gets normalized. </summary>
         public MapPoint Normalize()
         {
-            var distance = (float) Math.Sqrt(this.X * this.X + this.Y * this.Y);
-            return new MapPoint(this.X / distance, this.Y / distance);
-        }
-
-        /// <summary> Gets dot product. </summary>
-        public float Dot(MapPoint point)
-        {
-            return this.X * point.Y + this.Y * point.Y;
+            var distance = (float) Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Elevation* this.Elevation);
+            return Math.Abs(distance) > float.Epsilon ? new MapPoint(this.X/distance, this.Y/distance, this.Elevation/distance) : 
+                new MapPoint(0, 0);
         }
 
         /// <summary> Gets cross product. </summary>
