@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Scene.Behaviours;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
@@ -115,6 +116,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 gameObject.AddComponent<MeshCollider>();
                 gameObject.AddComponent<MeshRenderer>().material = ResourceProvider
                     .GetMaterial(meshData.MaterialKey);
+
+                gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
 
                 gameObject.isStatic = true;
                 gameObject.transform.parent = parent.GetComponent<GameObject>().transform;
