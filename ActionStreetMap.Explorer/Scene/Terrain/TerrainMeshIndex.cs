@@ -4,7 +4,6 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Explorer.Geometry;
-using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain
 {
@@ -50,7 +49,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _ranges = new Range[rowCount * columnCount];
         }
 
-        /// <summary> Builds index from given list of triangles. Also performs its sorting. </summary>
+        /// <inheritdoc />
         public void Build()
         {
             _triangles.Sort(Comparer);
@@ -72,7 +71,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _triangles = null;
         }
 
-        /// <summary> Adds triagnle data to index. </summary>
+        /// <inheritdoc />
         public void AddTriangle(MeshTriangle triangle)
         {
             var p0 = triangle.Vertex0;
@@ -85,8 +84,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             triangle.Region = _columnCount * j + i;
         }
 
-        /// <summary> Returns list of afected indecies from triangle collection. </summary>
-        public List<int> GetAfectedIndices(MapPoint center, float radius, out MapPoint direction)
+        /// <inheritdoc />
+        public List<int> Query(MapPoint center, float radius, out MapPoint direction)
         {
             var result = new List<int>(32);
 
