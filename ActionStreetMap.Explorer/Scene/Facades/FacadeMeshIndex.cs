@@ -7,7 +7,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal class FacadeMeshIndex: IMeshIndex
     {
-        private readonly List<MeshTriangle> _triangles;
+        private List<MeshTriangle> _triangles;
         private int _region = -1;
         private readonly Range[] _ranges;
 
@@ -26,6 +26,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         public void Build()
         {
+            // NOTE don't keep reference
+            _triangles = null;
         }
 
         public List<int> GetAfectedIndices(MapPoint center, float radius)

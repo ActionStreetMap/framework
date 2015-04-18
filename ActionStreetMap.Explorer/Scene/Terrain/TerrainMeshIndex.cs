@@ -18,11 +18,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private readonly int _columnCount;
         private readonly int _rowCount;
-        private readonly List<MeshTriangle> _triangles;
         private readonly float _xAxisStep;
         private readonly float _yAxisStep;
         private readonly float _x;
         private readonly float _y;
+        private List<MeshTriangle> _triangles;
 
         private readonly MapPoint _bottomLeft;
 
@@ -68,6 +68,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 }
             }
             _ranges[rangeIndex].End = _triangles.Count - 1;
+            _triangles = null;
         }
 
         /// <summary> Adds triagnle data to index. </summary>
