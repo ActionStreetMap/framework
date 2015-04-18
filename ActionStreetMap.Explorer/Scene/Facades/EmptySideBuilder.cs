@@ -34,28 +34,31 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return true;
         }
 
-        protected override void BuildGroundFloor(MapPoint start, MapPoint end, float floorHeight)
+        protected override void BuildGroundFloor(MapPoint s, MapPoint e, float floorHeight)
         {
+            var start = new Vector2(s.X, s.Y);
+            var end = new Vector2(e.X, e.Y);
+
             var floor = Elevation;
             var ceiling = floor + floorHeight;
 
-            var distance = start.DistanceTo(end);
+            var distance = Vector2.Distance(start, end);
             var count = (float)Math.Ceiling(distance / _maxWidth);
             var widthStep = distance / count;
 
-            var direction = (end - start).Normalize();
+            var direction = (end - start).normalized;
             for (int k = 0; k < count; k++)
             {
                 var p1 = start + direction * (widthStep * k);
                 var p2 = start + direction * (widthStep * (k + 1));
 
-                var floorNoise1 = GetPositionNoise(new MapPoint(p1.X, p1.Y, floor));
-                var floorNoise2 = GetPositionNoise(new MapPoint(p2.X, p2.Y, floor));
+                var floorNoise1 = GetPositionNoise(new MapPoint(p1.x, p1.y, floor));
+                var floorNoise2 = GetPositionNoise(new MapPoint(p2.x, p2.y, floor));
 
-                var a = new MapPoint(p1.X + floorNoise1, p1.Y + floorNoise1, floor + floorNoise1);
-                var b = new MapPoint(p2.X + floorNoise2, p2.Y + floorNoise2, floor + floorNoise2);
-                var c = new MapPoint(p2.X, p2.Y, ceiling);
-                var d = new MapPoint(p1.X, p1.Y, ceiling);
+                var a = new MapPoint(p1.x + floorNoise1, p1.y + floorNoise1, floor + floorNoise1);
+                var b = new MapPoint(p2.x + floorNoise2, p2.y + floorNoise2, floor + floorNoise2);
+                var c = new MapPoint(p2.x, p2.y, ceiling);
+                var d = new MapPoint(p1.x, p1.y, ceiling);
 
                 AddPlane(Color.grey, Color.grey, a, b, c, d);
             }

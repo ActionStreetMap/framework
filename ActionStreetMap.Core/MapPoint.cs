@@ -102,15 +102,6 @@ namespace ActionStreetMap.Core
                 new MapPoint(0, 0);
         }
 
-        /// <summary> Gets cross product. </summary>
-        public static MapPoint Cross(MapPoint lhs, MapPoint rhs)
-        {
-            return new MapPoint(
-                (float)((double)lhs.Elevation * (double)rhs.Y - (double)lhs.Y * (double)rhs.Elevation),
-                (float)((double)lhs.X * (double)rhs.Elevation - (double)lhs.Elevation * (double)rhs.X),
-                (float)((double)lhs.Y * (double)rhs.X - (double)lhs.X * (double)rhs.Y));
-        }
-
         /// <inheritdoc />
         public override int GetHashCode()
         {

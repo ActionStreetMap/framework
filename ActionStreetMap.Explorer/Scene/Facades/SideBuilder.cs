@@ -97,16 +97,18 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         #endregion
 
-        public virtual void Build(MapPoint start, MapPoint end)
+        public virtual void Build(MapPoint s, MapPoint e)
         {
-            var distance = start.DistanceTo(end);
+            var start = new Vector2(s.X, s.Y);
+            var end = new Vector2(e.X, e.Y);
+            var distance = Vector2.Distance(start, end);
 
             // TODO improve elevation processing
             var elevation = Elevation;
 
             var heightStep = (Height - _firstFloorHeight) / _floorCount;
 
-            BuildGroundFloor(start, end, _firstFloorHeight);
+            BuildGroundFloor(s, e, _firstFloorHeight);
 
             if (_entranceWidth == 0)
                 _entranceWidth = GetEntranceWidth(distance);
@@ -126,7 +128,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
                 // latest floor without windows
                 if (isLast && isWindowFloor) ceiling += _floorSpanDiff;
-                var direction = (end - start).Normalize();
+                var direction = (end - start).normalized;
 
                 // building entrance iterator
                 for (int k = 0; k < count; k++)
@@ -134,15 +136,15 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                     var p1 = start + direction * (widthStep * k);
                     var p2 = start + direction * (widthStep * (k + 1));
 
-                    var floorNoise1 = isFirst ? 0 : GetPositionNoise(new MapPoint(p1.X, p1.Y, floor));
-                    var floorNoise2 = isFirst ? 0 : GetPositionNoise(new MapPoint(p2.X, p2.Y, floor));
-                    var ceilingNoise1 = isLast ? 0 : GetPositionNoise(new MapPoint(p1.X, p1.Y, ceiling));
-                    var ceilingNoise2 = isLast ? 0 : GetPositionNoise(new MapPoint(p2.X, p2.Y, ceiling));
+                    var floorNoise1 = isFirst ? 0 : GetPositionNoise(new MapPoint(p1.x, p1.y, floor));
+                    var floorNoise2 = isFirst ? 0 : GetPositionNoise(new MapPoint(p2.x, p2.y, floor));
+                    var ceilingNoise1 = isLast ? 0 : GetPositionNoise(new MapPoint(p1.x, p1.y, ceiling));
+                    var ceilingNoise2 = isLast ? 0 : GetPositionNoise(new MapPoint(p2.x, p2.y, ceiling));
 
-                    var a = new MapPoint(p1.X + floorNoise1, p1.Y + floorNoise1, floor + floorNoise1);
-                    var b = new MapPoint(p2.X + floorNoise2, p2.Y + floorNoise2, floor + floorNoise2);
-                    var c = new MapPoint(p2.X + ceilingNoise2, p2.Y + ceilingNoise2, ceiling + ceilingNoise2);
-                    var d = new MapPoint(p1.X + ceilingNoise1, p1.Y + ceilingNoise1, ceiling + ceilingNoise1);
+                    var a = new MapPoint(p1.x + floorNoise1, p1.y + floorNoise1, floor + floorNoise1);
+                    var b = new MapPoint(p2.x + floorNoise2, p2.y + floorNoise2, floor + floorNoise2);
+                    var c = new MapPoint(p2.x + ceilingNoise2, p2.y + ceilingNoise2, ceiling + ceilingNoise2);
+                    var d = new MapPoint(p1.x + ceilingNoise1, p1.y + ceilingNoise1, ceiling + ceilingNoise1);
 
                     if (isWindowFloor && distance > _windowWidthThreshold)
                         BuildWindow(k, a, b, c, d);
