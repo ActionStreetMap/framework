@@ -7,6 +7,26 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
     /// <summary> Provids some helper methods for points. </summary>
     public static class PointUtils
     {
+        #region Vector operations
+
+        /// <summary> Compute the dot product AB . AC. </summary>
+        public static float DotProduct(MapPoint pointA, MapPoint pointB, MapPoint pointC)
+        {
+            var AB = new MapPoint(pointB.X - pointA.X, pointB.Y - pointA.Y);
+            var BC = new MapPoint(pointC.X - pointB.X, pointC.Y - pointB.Y);
+            return AB.X * BC.X + AB.Y * BC.Y;
+        }
+
+        /// <summary> Compute the cross product AB x AC. </summary>
+        public static float CrossProduct(MapPoint pointA, MapPoint pointB, MapPoint pointC)
+        {
+            var AB = new MapPoint(pointB.X - pointA.X, pointB.Y - pointA.Y);
+            var AC = new MapPoint(pointC.X - pointA.X, pointC.Y - pointA.Y);
+            return AB.X * AC.Y - AB.Y * AC.X;
+        }
+
+        #endregion
+
         #region Points for polygons
 
         /// <summary> Converts geo coordinates to map coordinates without elevation data. </summary>

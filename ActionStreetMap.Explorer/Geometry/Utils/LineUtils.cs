@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core;
 
 namespace ActionStreetMap.Explorer.Geometry.Utils
@@ -93,6 +94,28 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
 
             return point2; // NOTE should we return point2?
         }
+
+        #endregion
+
+        #region Distance
+
+        /// <summary> Compute the distance from AB to C if isSegment is true, AB is a segment, not a line. </summary>
+        public static float LineToPointDistance2D(MapPoint pointA, MapPoint pointB, MapPoint pointC,
+            bool isSegment)
+        {
+            float dist = PointUtils.CrossProduct(pointA, pointB, pointC) / pointA.DistanceTo(pointB);
+            if (isSegment)
+            {
+                float dot1 = PointUtils.DotProduct(pointA, pointB, pointC);
+                if (dot1 > 0)
+                    return pointB.DistanceTo(pointC);
+
+                float dot2 = PointUtils.DotProduct(pointB, pointA, pointC);
+                if (dot2 > 0)
+                    return pointA.DistanceTo(pointC);
+            }
+            return Math.Abs(dist);
+        } 
 
         #endregion
     }

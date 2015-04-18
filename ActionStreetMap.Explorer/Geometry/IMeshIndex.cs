@@ -8,6 +8,6 @@ namespace ActionStreetMap.Explorer.Geometry
         void AddTriangle(MeshTriangle triangle);
         void Build();
 
-        List<int> GetAfectedIndices(MapPoint center, float radius);
+        List<int> GetAfectedIndices(MapPoint center, float radius, out MapPoint direction);
     }
 }

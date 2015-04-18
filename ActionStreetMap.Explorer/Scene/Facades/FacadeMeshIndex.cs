@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Utils;
 
 namespace ActionStreetMap.Explorer.Scene.Facades
 {
-    internal class FacadeMeshIndex: IMeshIndex
+    public class FacadeMeshIndex: IMeshIndex
     {
         private List<MeshTriangle> _triangles;
         private int _region = -1;
@@ -30,9 +32,29 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             _triangles = null;
         }
 
-        public List<int> GetAfectedIndices(MapPoint center, float radius)
+        public List<int> GetAfectedIndices(MapPoint center, float radius, out MapPoint direction)
         {
-            throw new NotImplementedException();
+            var index = 0;
+            var minDistance = float.MaxValue;
+            // find side with min distance to center point
+            for (int i = 0; i < _ranges.Length; i++)
+            {
+                var r = _ranges[i];
+                var distance = LineUtils.LineToPointDistance2D(r.SideStart, r.SideEnd, center, true);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    index = i;
+                }
+            }
+            var range = _ranges[index];
+
+            // get normal to side
+            var sideDirection = (range.SideEnd - range.SideStart).Normalize();
+            direction = new MapPoint(sideDirection.Y, -sideDirection.X);
+
+            return Enumerable.Range(range.VertexStart, range.VertexEnd - range.VertexStart + 1).ToList();
         }
 
         #endregion

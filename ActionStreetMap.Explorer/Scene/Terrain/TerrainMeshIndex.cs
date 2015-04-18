@@ -4,6 +4,7 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Explorer.Geometry;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain
 {
@@ -85,7 +86,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <summary> Returns list of afected indecies from triangle collection. </summary>
-        public List<int> GetAfectedIndices(MapPoint center, float radius)
+        public List<int> GetAfectedIndices(MapPoint center, float radius, out MapPoint direction)
         {
             var result = new List<int>(32);
 
@@ -104,6 +105,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     if (GeometryUtils.HasCollision(center, radius, rectangle))
                         AddRange(i, j, result);
                 }
+
+            // NOTE always point up/down for terrain, 
+            direction = new MapPoint(0, 0);
             return result;
         }
 
