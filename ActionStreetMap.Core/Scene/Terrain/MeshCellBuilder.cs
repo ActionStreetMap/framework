@@ -21,7 +21,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         #region Public methods
 
-        public MeshCell Build(Rectangle rectangle, MeshCanvas content)
+        public MeshCell Build(MapRectangle rectangle, MeshCanvas content)
         {
             // NOTE the order of operation is important
             var water = CreateMeshRegions(rectangle, content.Water, false, true);
@@ -47,7 +47,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         #endregion
 
-        private List<MeshRegion> CreateMeshRegions(Rectangle rectangle, List<MeshCanvas.Region> regionDatas,
+        private List<MeshRegion> CreateMeshRegions(MapRectangle rectangle, List<MeshCanvas.Region> regionDatas,
             bool conformingDelaunay)
         {
             var meshRegions = new List<MeshRegion>();
@@ -56,7 +56,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(Rectangle rectangle, MeshCanvas.Region region, bool conformingDelaunay, bool useContours = false)
+        private MeshRegion CreateMeshRegions(MapRectangle rectangle, MeshCanvas.Region region, bool conformingDelaunay, bool useContours = false)
         {
             var polygon = new Polygon();
             var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
@@ -91,7 +91,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             };
         }
 
-        private VertexPaths GetContour(Rectangle rect, Path path)
+        private VertexPaths GetContour(MapRectangle rect, Path path)
         {
             ClipperOffset offset = new ClipperOffset();
             offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
@@ -143,7 +143,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             }
         }
 
-        private Paths ClipByRectangle(Rectangle rect, Paths subjects)
+        private Paths ClipByRectangle(MapRectangle rect, Paths subjects)
         {
             Clipper clipper = new Clipper();
             clipper.AddPath(new Path

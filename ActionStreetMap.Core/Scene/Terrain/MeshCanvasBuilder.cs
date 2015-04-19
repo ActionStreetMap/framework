@@ -15,7 +15,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private readonly ClipperOffset _offset = new ClipperOffset();
 
         private Tile _tile;
-        private Rectangle _tileRect;
+        private MapRectangle _tileRect;
         private float _scale;
 
         private MeshCanvas.Region _background;
@@ -34,7 +34,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         {
             _tile = tile;
             var bottomLeft = tile.Rectangle.BottomLeft;
-            _tileRect = new Rectangle(
+            _tileRect = new MapRectangle(
                 bottomLeft.X,
                 bottomLeft.Y,
                 tile.Width,
@@ -77,13 +77,13 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return ClipByRectangle(_tileRect, subjects);
         }
 
-        private Paths ClipByRectangle(Rectangle rect, Paths subjects)
+        private Paths ClipByRectangle(MapRectangle rect, Paths subjects)
         {
             _clipper.AddPaths(subjects, PolyType.ptSubject, true);
             return ClipByRectangle(rect);
         }
 
-        private Paths ClipByRectangle(Rectangle rect)
+        private Paths ClipByRectangle(MapRectangle rect)
         {
             _clipper.AddPath(new Path
             {

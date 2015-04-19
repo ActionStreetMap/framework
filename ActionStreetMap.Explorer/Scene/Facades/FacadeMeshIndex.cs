@@ -24,6 +24,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         #region IMeshIndex members
 
         /// <inheritdoc />
+        public MapRectangle BoundingBox { get; internal set; }
+
+        /// <inheritdoc />
         public void AddTriangle(MeshTriangle triangle)
         {
             triangle.Region = _region;

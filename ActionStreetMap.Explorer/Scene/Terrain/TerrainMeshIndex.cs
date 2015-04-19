@@ -72,6 +72,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <inheritdoc />
+        public MapRectangle BoundingBox { get; internal set; }
+
+        /// <inheritdoc />
         public void AddTriangle(MeshTriangle triangle)
         {
             var p0 = triangle.Vertex0;

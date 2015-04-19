@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry.Triangle;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCanvas
     {
-        public Rectangle Rect;
+        public MapRectangle Rect;
 
         public Region Background;
         public Region Water;

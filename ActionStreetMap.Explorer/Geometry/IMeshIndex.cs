@@ -6,6 +6,9 @@ namespace ActionStreetMap.Explorer.Geometry
     /// <summary> Represents index of mesh's triangles. </summary>
     public interface IMeshIndex
     {
+        /// <summary> Gets bounding box occupied by mesh. </summary>
+        MapRectangle BoundingBox { get; }
+
         /// <summary> Adds triangle to index. </summary>
         void AddTriangle(MeshTriangle triangle);
 

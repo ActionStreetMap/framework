@@ -88,7 +88,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 for (int i = 0; i < cellColumnCount; i++)
                 {
                     var tileBottomLeft = tile.Rectangle.BottomLeft;
-                    var rectangle = new Rectangle(
+                    var rectangle = new MapRectangle(
                         tileBottomLeft.X + i*cellWidth,
                         tileBottomLeft.Y + j*cellHeight,
                         cellWidth,
@@ -109,7 +109,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             return terrainObject;
         }
 
-        private void BuildCell(Rule rule, IGameObject terrainObject, MeshCell cell, Rectangle cellRect, string name)
+        private void BuildCell(Rule rule, IGameObject terrainObject, MeshCell cell, MapRectangle cellRect, string name)
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
@@ -117,8 +117,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 (float)cellRect.Width, (float)cellRect.Height);
 
             var meshData = _objectPool.CreateMeshData();
+            var index = new TerrainMeshIndex(16, 16, rect, meshData.Triangles);
+            
             meshData.GameObject = cellGameObject;
-            meshData.Index = new TerrainMeshIndex(16, 16, rect, meshData.Triangles);
+            meshData.Index = index;
+            index.BoundingBox = cellRect;
 
             // build canvas
             BuildBackground(rule, meshData, cell.Background);
