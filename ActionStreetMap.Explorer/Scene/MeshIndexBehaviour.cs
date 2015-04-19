@@ -1,7 +1,7 @@
 ﻿using ActionStreetMap.Explorer.Geometry;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene.Behaviours
+namespace ActionStreetMap.Explorer.Scene
 {
     public class MeshIndexBehaviour: MonoBehaviour
     {
