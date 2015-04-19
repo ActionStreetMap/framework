@@ -60,7 +60,7 @@
     <Compile Include="Geometry\IMeshIndex.cs" />
     <Compile Include="Geometry\MeshData.cs" />
     <Compile Include="Geometry\MeshTriangle.cs" />
-    <Compile Include="Scene\MeshIndexBehaviour.cs" />
+    <Compile Include="Interactions\MeshIndexBehaviour.cs" />
     <Compile Include="Scene\Facades\FacadeMeshIndex.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshIndex.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
