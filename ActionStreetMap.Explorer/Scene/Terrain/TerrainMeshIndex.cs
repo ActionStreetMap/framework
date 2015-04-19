@@ -93,7 +93,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, Vector2> modifyAction)
         {
-            var result = new List<int>(32);
+            var result = new List<int>(4);
 
             var x = (int)Math.Floor((center.X - _left) / _xAxisStep);
             var y = (int)Math.Floor((center.Y - _bottom) / _yAxisStep);
@@ -107,7 +107,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         _xAxisStep,
                         _yAxisStep);
 
-                    if (GeometryUtils.HasCollision(center, radius, rectangle))
+                    // NOTE enlarge search radius to prevent some issues with adjusted triangles
+                    if (GeometryUtils.HasCollision(center, radius + 10, rectangle))
                         AddRange(i, j, result);
                 }
             ModifyVertices(result, vertices, new Vector3(center.X, center.Elevation, center.Y), 
