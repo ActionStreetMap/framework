@@ -52,9 +52,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             // get normal to side
             var sideDirection = (range.SideEnd - range.SideStart).Normalize();
             var direction = new Vector2(sideDirection.Y, -sideDirection.X);
-            // get ranges and modify vertices
-            var ranges = Enumerable.Range(range.VertexStart, range.VertexEnd - range.VertexStart + 1).ToList();
-            ModifyVertices(ranges, vertices, new Vector3(center.X, center.Elevation, center.Y), radius,
+
+            ModifyVertices(range, vertices, new Vector3(center.X, center.Elevation, center.Y), radius,
                 direction, modifyAction);
             // reset statistics
             _modifiedCount = 0;
@@ -83,7 +82,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         }
 
         /// <summary> Sets side of facade. </summary>
-        internal void SetSide(MapPoint start, MapPoint end)
+        internal void SetSide(MapPoint start, MapPoint end, float elevation)
         {
             if (_region >= 0)
                 _ranges[_region].VertexEnd = _triangles.Count - 1;
@@ -92,26 +91,38 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             {
                 VertexStart = _triangles.Count,
                 SideStart = start,
-                SideEnd = end
+                SideEnd = end,
+                Elevation = elevation
             };
             _ranges[++_region] = range;
         }
 
         #region Modification
 
-        private void ModifyVertices(List<int> indecies, Vector3[] vertices, Vector3 epicenter, float radius,
+        private void ModifyVertices(Range range, Vector3[] vertices, Vector3 epicenter, float radius,
             Vector2 direction, Action<int, Vector2> modifyAction)
         {
+            var start = range.VertexStart;
+            var end = range.VertexEnd;
+            var top = range.Elevation;
+
+            var last = range.SideEnd;
+            var begin = range.SideStart;
+            // NOTE actually, this value depends on noise values
+            const float tolerance = 0.5f;
             // modify vertices
-            for (int j = 0; j < indecies.Count; j++)
+            for (int i = start; i <= end; i++)
             {
-                int outerIndex = indecies[j] * 3;
+                int outerIndex = i * 3;
                 for (var k = 0; k < 3; k++)
                 {
                     var index = outerIndex + k;
-                    var vertex = vertices[index];
-                    var distance = Vector3.Distance(vertex, epicenter);
-                    if (distance < radius)
+                    var v = vertices[index];
+                    var distance = Vector3.Distance(v, epicenter);
+                    if (distance < radius && 
+                        Math.Abs(v.y - top) > tolerance &&
+                        Math.Abs(v.x - begin.X) > tolerance && Math.Abs(v.z - begin.Y) > tolerance &&
+                        Math.Abs(v.x - last.X) > tolerance && Math.Abs(v.z - last.Y) > tolerance)
                     {
                         modifyAction(index, direction);
                         _modifiedCount++;
@@ -132,6 +143,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             public MapPoint SideStart;
             public MapPoint SideEnd;
+
+            public float Elevation;
         }
 
         #endregion

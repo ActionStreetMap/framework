@@ -34,11 +34,12 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             var firstFloorHeight = random.NextFloat(2.2f, 3.2f);
             firstFloorHeight = building.Height > firstFloorHeight ? firstFloorHeight : building.Height;
+            var elevation = building.MinHeight + building.Elevation;
 
             var simpleBuilder = new EmptySideBuilder(meshData, building.Height, random)
                 .SetFacadeGradient(gradient)
                 .SetFirstFloorHeight(firstFloorHeight)
-                .SetElevation(building.MinHeight + building.Elevation)
+                .SetElevation(elevation)
                 .SetPositionNoise(building.IsPart ? 0.01f : 0.15f)
                 .SetFloorHeight(random.NextFloat(2.9f, 4.2f))
                 .SetFloorSpan(random.NextFloat(0.7f, 1.2f))
@@ -50,7 +51,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 var nextIndex = i == (footprint.Count - 1) ? 0 : i + 1;
                 var start = footprint[i];
                 var end = footprint[nextIndex];
-                index.SetSide(start, end);
+                index.SetSide(start, end, elevation + building.Height);
                 simpleBuilder.Build(start, end);
             }
 
