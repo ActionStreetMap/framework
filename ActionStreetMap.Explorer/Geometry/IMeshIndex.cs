@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using ActionStreetMap.Core;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
     /// <summary> Represents index of mesh's triangles. </summary>
     public interface IMeshIndex
     {
-        /// <summary> Gets bounding box occupied by mesh. </summary>
-        MapRectangle BoundingBox { get; }
-
         /// <summary> Adds triangle to index. </summary>
         void AddTriangle(MeshTriangle triangle);
 
@@ -17,9 +15,9 @@ namespace ActionStreetMap.Explorer.Geometry
 
         /// <summary> Performs query which represented by circle with given center and radius. </summary>
         /// <param name="center">Center of affected area. </param>
-        /// <param name="radius">Radius of area.</param>
-        /// <param name="direction">Direction of force. </param>
-        /// <returns> List of affected triangles. </returns>
-        List<int> Query(MapPoint center, float radius, out MapPoint direction);
+        /// <param name="radius">Radius of area. </param>
+        /// <param name="vertices">Mesh vertices. </param>
+        /// <param name="modifyAction">Modify action: first parameter is vertex index, second - direction of force. </param>
+        void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, Vector2> modifyAction);
     }
 }

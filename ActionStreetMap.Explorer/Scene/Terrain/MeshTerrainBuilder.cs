@@ -116,12 +116,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var rect = new MapRectangle((float)cellRect.Left, (float)cellRect.Bottom,
                 (float)cellRect.Width, (float)cellRect.Height);
 
-            var meshData = _objectPool.CreateMeshData();
-            var index = new TerrainMeshIndex(16, 16, rect, meshData.Triangles);
-            
+            var meshData = _objectPool.CreateMeshData();           
             meshData.GameObject = cellGameObject;
-            meshData.Index = index;
-            index.BoundingBox = cellRect;
+            meshData.Index = new TerrainMeshIndex(16, 16, rect, meshData.Triangles);
 
             // build canvas
             BuildBackground(rule, meshData, cell.Background);
