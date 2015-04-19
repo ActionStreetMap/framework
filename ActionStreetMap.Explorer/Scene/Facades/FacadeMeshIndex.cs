@@ -45,7 +45,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         }
 
         /// <inheritdoc />
-        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, Vector2> modifyAction)
+        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector2> modifyAction)
         {
             var range = GetRange(center);
 
@@ -100,7 +100,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         #region Modification
 
         private void ModifyVertices(Range range, Vector3[] vertices, Vector3 epicenter, float radius,
-            Vector2 direction, Action<int, Vector2> modifyAction)
+            Vector2 direction, Action<int, float, Vector2> modifyAction)
         {
             var start = range.VertexStart;
             var end = range.VertexEnd;
@@ -124,7 +124,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                         Math.Abs(v.x - begin.X) > tolerance && Math.Abs(v.z - begin.Y) > tolerance &&
                         Math.Abs(v.x - last.X) > tolerance && Math.Abs(v.z - last.Y) > tolerance)
                     {
-                        modifyAction(index, direction);
+                        modifyAction(index, distance, direction);
                         _modifiedCount++;
                     }
                 }

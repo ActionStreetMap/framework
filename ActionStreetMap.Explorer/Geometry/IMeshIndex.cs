@@ -17,7 +17,10 @@ namespace ActionStreetMap.Explorer.Geometry
         /// <param name="center">Center of affected area. </param>
         /// <param name="radius">Radius of area. </param>
         /// <param name="vertices">Mesh vertices. </param>
-        /// <param name="modifyAction">Modify action: first parameter is vertex index, second - direction of force. </param>
-        void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, Vector2> modifyAction);
+        /// <param name="modifyAction">
+        ///     Modify action: first parameter is vertex index, second - distance to center, third -
+        ///     direction of force.
+        /// </param>
+        void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector2> modifyAction);
     }
 }

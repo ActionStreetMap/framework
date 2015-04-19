@@ -91,7 +91,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <inheritdoc />
-        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, Vector2> modifyAction)
+        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector2> modifyAction)
         {
             var result = new List<int>(4);
 
@@ -133,7 +133,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         #region Modification
 
         private void ModifyVertices(List<int> indecies, Vector3[] vertices, Vector3 epicenter, float radius,
-            Action<int, Vector2> modifyAction)
+            Action<int, float, Vector2> modifyAction)
         {
             // modify vertices
             for (int j = 0; j < indecies.Count; j++)
@@ -145,7 +145,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     var vertex = vertices[index];
                     var distance = Vector3.Distance(vertex, epicenter);
                     if (distance < radius && IsNotBorderVertex(vertex))
-                        modifyAction(index, new Vector2());
+                        modifyAction(index, distance, new Vector2());
                 }
             }
 
