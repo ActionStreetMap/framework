@@ -20,6 +20,8 @@ namespace ActionStreetMap.Maps.Data.Import
 {
     internal abstract class IndexBuilder : IDisposable
     {
+        protected const string LogTag = "index.exec";
+
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
         private readonly SortedList<long, uint> _wayOffsets = new SortedList<long, uint>(10240);

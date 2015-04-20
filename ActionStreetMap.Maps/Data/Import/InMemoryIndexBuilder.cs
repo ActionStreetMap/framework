@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Data.Storage;
@@ -25,6 +26,9 @@ namespace ActionStreetMap.Maps.Data.Import
 
         public override void Build()
         {
+            var sw = new Stopwatch();
+            sw.Start();
+
             var reader = GetReader(_extension);
 
             var kvUsageMemoryStream = new MemoryStream();
@@ -47,6 +51,9 @@ namespace ActionStreetMap.Maps.Data.Import
             });
             Clear();
             Complete();
+
+            sw.Stop();
+            Trace.Debug(LogTag, Strings.IndexBuildInMs, sw.ElapsedMilliseconds);
         }
 
         protected override void Dispose(bool disposing)

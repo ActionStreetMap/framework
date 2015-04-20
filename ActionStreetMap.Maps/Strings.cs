@@ -8,5 +8,6 @@
         public static string CannotFindSrtmData = "SRTM data cell not found: {0}";
 
         public static string LoadElevationFrom = "Load elevation from {0}..";
+        public static string IndexBuildInMs = "Index is build in {0}ms";
     }
 }

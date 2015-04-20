@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using ActionStreetMap.Core;
@@ -28,6 +29,9 @@ namespace ActionStreetMap.Maps.Data.Import
 
         public override void Build()
         {
+            var sw = new Stopwatch();
+            sw.Start();
+
             var sourceStream = _fileSystemService.ReadStream(_filePath);
             var format = _filePath.Split('.').Last();
             var reader = GetReader(format);
@@ -63,6 +67,9 @@ namespace ActionStreetMap.Maps.Data.Import
             KeyValueIndex.Save(index, _fileSystemService.WriteStream(String.Format(Consts.KeyValueIndexPathFormat, _outputDirectory)));
             SpatialIndex.Save(Tree, _fileSystemService.WriteStream(String.Format(Consts.SpatialIndexPathFormat, _outputDirectory)));
             Store.Dispose();
+            
+            sw.Stop();
+            Trace.Debug(LogTag, Strings.IndexBuildInMs, sw.ElapsedMilliseconds);
         }
 
         public override void ProcessBoundingBox(BoundingBox bbox)
