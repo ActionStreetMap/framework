@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
@@ -11,28 +12,27 @@ using UnityEngine;
 namespace ActionStreetMap.Unity.IO
 {
     /// <summary> Provides a way to interact with regular file system. </summary>
-    public class FileSystemService: IFileSystemService
+    public class FileSystemService : IFileSystemService
     {
         private const string LogTag = "file";
 
-        private readonly IPathResolver _pathResolver;
-        private readonly ITrace _trace;
+        protected readonly IPathResolver PathResolver;
+        protected readonly ITrace Trace;
 
         /// <summary> Creates <see cref="FileSystemService"/>. </summary>
         /// <param name="pathResolver">Path resolver.</param>
         /// <param name="trace">Trace.</param>
         public FileSystemService(IPathResolver pathResolver, ITrace trace)
         {
-            _pathResolver = pathResolver;
-            _trace = trace;
-            _trace = trace;
+            PathResolver = pathResolver;
+            Trace = trace;
         }
 
         /// <inheritdoc />
         public Stream ReadStream(string path)
         {
-            var resolvedPath = _pathResolver.Resolve(path);
-            _trace.Debug(LogTag, "read stream from {0}", resolvedPath);
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "read stream from {0}", resolvedPath);
 #if UNITY_WEBPLAYER
             return new MemoryStream(GetBytesSync(resolvedPath));
 #else
@@ -42,8 +42,8 @@ namespace ActionStreetMap.Unity.IO
 
         public Stream WriteStream(string path)
         {
-            var resolvedPath = _pathResolver.Resolve(path);
-            _trace.Debug(LogTag, "write stream from {0}", resolvedPath);
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "write stream from {0}", resolvedPath);
 #if UNITY_WEBPLAYER
             return new MemoryStream();
 #else
@@ -54,8 +54,8 @@ namespace ActionStreetMap.Unity.IO
         /// <inheritdoc />
         public string ReadText(string path)
         {
-            var resolvedPath = _pathResolver.Resolve(path);
-            _trace.Debug(LogTag, "read text from {0}", resolvedPath);
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "read text from {0}", resolvedPath);
 #if UNITY_WEBPLAYER
             return GetTextSync(resolvedPath);
 #else
@@ -67,8 +67,8 @@ namespace ActionStreetMap.Unity.IO
         /// <inheritdoc />
         public byte[] ReadBytes(string path)
         {
-            var resolvedPath = _pathResolver.Resolve(path);
-            _trace.Debug(LogTag, "read bytes from {0}", resolvedPath);
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "read bytes from {0}", resolvedPath);
 #if UNITY_WEBPLAYER
             return GetBytesSync(resolvedPath);
 #else
@@ -79,8 +79,8 @@ namespace ActionStreetMap.Unity.IO
         /// <inheritdoc />
         public bool Exists(string path)
         {
-            var resolvedPath = _pathResolver.Resolve(path);
-            _trace.Debug(LogTag, "checking {0}", resolvedPath);
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "checking {0}", resolvedPath);
 #if UNITY_WEBPLAYER
             return Observable.Start(() => Resources.Load<TextAsset>(resolvedPath) != null, Scheduler.MainThread).Wait();
 #else
@@ -89,28 +89,29 @@ namespace ActionStreetMap.Unity.IO
         }
 
         /// <inheritdoc />
-        public string[] GetFiles(string path, string searchPattern)
+        public virtual string[] GetFiles(string path, string searchPattern)
         {
-            var resolvedPath = _pathResolver.Resolve(path);
-            _trace.Debug(LogTag, "getting files from {0}", resolvedPath);
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "getting files from {0}", resolvedPath);
 #if UNITY_WEBPLAYER
-            return new string[0];
+            throw new NotImplementedException();
 #else
             return Directory.GetFiles(resolvedPath, searchPattern);
 #endif
         }
 
         /// <inheritdoc />
-        public string[] GetDirectories(string path, string searchPattern)
+        public virtual string[] GetDirectories(string path, string searchPattern)
         {
-            var resolvedPath = _pathResolver.Resolve(path);
-            _trace.Debug(LogTag, "getting directories from {0}", resolvedPath);
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "getting directories from {0}", resolvedPath);
 #if UNITY_WEBPLAYER
-             return new string[0];
+             throw new NotImplementedException();
 #else
             return Directory.GetDirectories(resolvedPath, searchPattern);
 #endif
         }
+
 #if UNITY_WEBPLAYER
         private string GetTextSync(string resolvedPath)
         {
