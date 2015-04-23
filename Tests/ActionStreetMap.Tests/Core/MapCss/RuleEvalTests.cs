@@ -10,6 +10,7 @@ using ActionStreetMap.Explorer.Helpers;
 using NUnit.Framework;
 using UnityEngine;
 using ActionStreetMap.Explorer.Infrastructure;
+using Canvas = ActionStreetMap.Core.Tiling.Models.Canvas;
 
 namespace ActionStreetMap.Tests.Core.MapCss
 {

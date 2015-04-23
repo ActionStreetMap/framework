@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;UNITY_EDITOR;UNITY_4_5</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNITY_EDITOR;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -80,10 +80,7 @@
     <Compile Include="Reactive\Triggers\ObservableUpdateTrigger.cs" />
     <Compile Include="Reactive\Triggers\ObservableVisibleTrigger.cs" />
     <Compile Include="Reactive\TypedMonoBehaviour.cs" />
-    <Compile Include="Reactive\UI\ObservableEventTrigger.cs" />
     <Compile Include="Reactive\UnityEventExtensions.cs" />
-    <Compile Include="Reactive\UnityGraphicExtensions.cs" />
-    <Compile Include="Reactive\UnityUIComponentExtensions.cs" />
     <Compile Include="Reactive\UnityWinRTBridge\Thread.cs" />
     <Compile Include="Reactive\UnityWinRTBridge\ThreadPoolScheduler_UnityWinRT.cs" />
     <Compile Include="Utils\ProxyGen.cs" />
