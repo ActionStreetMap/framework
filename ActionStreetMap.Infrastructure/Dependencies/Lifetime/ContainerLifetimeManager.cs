@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Reflection;
 using ActionStreetMap.Infrastructure.Config;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
 {
-    /// <summary> Wraps already created instance using WeakReference object. </summary>
-    internal class ExternalLifetimeManager : ILifetimeManager
+    /// <summary> Keeps instance as long as container exists. </summary>
+    internal class ContainerLifetimeManager : ILifetimeManager
     {
-        private readonly WeakReference _reference;
+        private object _instance;
 
-        public ExternalLifetimeManager(object instance)
+        public ContainerLifetimeManager(object instance)
         {
-            _reference = new WeakReference(instance);
+            _instance = instance;
             TargetType = instance.GetType();
         }
 
@@ -30,15 +31,12 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
         public object[] CstorArgs { get; set; }
 
         /// <inheritdoc />
-        public System.Reflection.ConstructorInfo Constructor { get; set; }
+        public ConstructorInfo Constructor { get; set; }
 
-        /// <summary> Returns instance if it exists. </summary>
+        /// <summary> Returns instance. </summary>
         public object GetInstance()
         {
-            if (_reference.IsAlive)
-                return _reference.Target;
-            throw new InvalidOperationException(
-                String.Format("Registeted object is dead! Type: {0}, interface: {1}", TargetType, InterfaceType));
+            return _instance;
         }
 
         public object GetInstance(string name)
@@ -46,8 +44,17 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
             return GetInstance();
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
+            Dispose(true);
+        }
+
+        /// <inheritdoc />
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                _instance = null;
         }
     }
 }

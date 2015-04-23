@@ -53,6 +53,7 @@
     <Compile Include="Config\IConfigSection.cs" />
     <Compile Include="Config\IConfigurable.cs" />
     <Compile Include="Dependencies\DependencyException.cs" />
+    <Compile Include="Dependencies\Lifetime\ContainerLifetimeManager.cs" />
     <Compile Include="IO\Compression\InflateZipStream.cs" />
     <Compile Include="IO\IFileSystemService.cs" />
     <Compile Include="IO\IPathResolver.cs" />

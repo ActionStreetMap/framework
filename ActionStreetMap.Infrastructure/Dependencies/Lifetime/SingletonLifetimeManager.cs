@@ -4,21 +4,24 @@ using ActionStreetMap.Infrastructure.Dependencies.Interception;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
 {
-    /// <summary>
-    ///     Creates singleton instance for wrapped type.
-    /// </summary>
+    /// <summary> Creates singleton instance for wrapped type. </summary>
     internal class SingletonLifetimeManager : ILifetimeManager
     {
         /// <inheritdoc />
         public Type InterfaceType { get; set; }
+
         /// <inheritdoc />
         public Type TargetType { get; set; }
+
         /// <inheritdoc />
         public bool NeedResolveCstorArgs { get; set; }
+
         /// <inheritdoc />
         public IConfigSection ConfigSection { get; set; }
+
         /// <inheritdoc />
         public object[] CstorArgs { get; set; }
+
         /// <inheritdoc />
         public System.Reflection.ConstructorInfo Constructor { get; set; }
 
@@ -43,10 +46,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
 
                 var configurable = _instance as IConfigurable;
                 if (configurable != null && ConfigSection != null)
-                {
                     configurable.Configure(ConfigSection);
-                }
-
                 target = _proxy ?? _instance;
             }
 
@@ -64,8 +64,9 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
         {
             if (disposing)
             {
-                if (_instance is IDisposable)
-                    (_instance as IDisposable).Dispose();
+                var instance = _instance as IDisposable;
+                if (instance != null) 
+                    instance.Dispose();
                 _instance = null;
             }
         }

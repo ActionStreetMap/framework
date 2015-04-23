@@ -274,7 +274,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies
         {
             //TODO: check whether the type is already registred
             lock (_syncLock)
-                _typeMapping.Add(name, t, new ExternalLifetimeManager(instance));
+                _typeMapping.Add(name, t, new ContainerLifetimeManager(instance));
             return this;
         }
 

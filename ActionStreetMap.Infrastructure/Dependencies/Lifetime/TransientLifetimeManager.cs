@@ -5,16 +5,25 @@ using ActionStreetMap.Infrastructure.Dependencies.Interception;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
 {
-    /// <summary>
-    ///     Every time build a new instance
-    /// </summary>
+    /// <summary> Every time build a new instance. </summary>
     internal class TransientLifetimeManager : ILifetimeManager
     {
+        /// <inheritdoc />
         public Type InterfaceType { get; set; }
+
+        /// <inheritdoc />
         public Type TargetType { get; set; }
+
+        /// <inheritdoc />
         public bool NeedResolveCstorArgs { get; set; }
+
+        /// <inheritdoc />
         public IConfigSection ConfigSection { get; set; }
+
+        /// <inheritdoc />
         public object[] CstorArgs { get; set; }
+
+        /// <inheritdoc />
         public ConstructorInfo Constructor { get; set; }
 
         private ConstructorInfo _constructor;
@@ -27,9 +36,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
             }
         }
 
-        /// <summary>
-        ///     Returns new instance of the target type
-        /// </summary>
+        /// <summary> Returns new instance of the target type. </summary>
         public object GetInstance()
         {
             var instance = ConstructorInstance.Invoke(CstorArgs);
@@ -38,16 +45,11 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
             var target = proxy ?? instance;
             var configurable = target as IConfigurable;
             if (configurable != null && ConfigSection != null)
-            {
                 configurable.Configure(ConfigSection);
-            }
-
             return target;
         }
 
-        /// <summary>
-        ///     Returns new instance of the target type. The name parameters isn't used
-        /// </summary>
+        /// <summary> Returns new instance of the target type. The name parameters isn't used. </summary>
         public object GetInstance(string name)
         {
             return GetInstance();
