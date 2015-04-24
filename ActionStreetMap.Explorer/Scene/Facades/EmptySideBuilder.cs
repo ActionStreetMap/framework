@@ -10,7 +10,6 @@ namespace ActionStreetMap.Explorer.Scene.Facades
     {
         private GradientWrapper _facadeGradient;
         private float _maxWidth = 4f;
-        private float _entranceCount;
 
         public EmptySideBuilder(MeshData meshData, float height, System.Random random)
             : base(meshData, height, random)

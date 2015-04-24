@@ -37,11 +37,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return this;
         }
 
-        public WindowSideBuilder SetWindowWidthThreshold(float threshold)
-        {
-            _windowWidthThreshold = threshold;
-            return this;
-        }
+        //public WindowSideBuilder SetWindowWidthThreshold(float threshold)
+        //{
+        //    _windowWidthThreshold = threshold;
+        //    return this;
+        //}
 
         protected override float GetEntranceWidth(float distance)
         {
