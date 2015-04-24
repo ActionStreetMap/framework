@@ -13,6 +13,7 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
     /// </summary>
     internal class StringEvalTreeWalker: ITreeWalker
     {
+        private readonly object _lockObj = new object();
         private readonly CommonTree _tree;
         private OperationStack _opStack;
 
@@ -26,12 +27,14 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
         /// <inheritdoc />
         public T Walk<T>(Model model)
         {
-            _opStack = new OperationStack(model);
-            var operation = _tree.Children[0] as CommonTree;
-            
-            VisitOperation(operation);
-
-            return (T) _opStack.Pop();
+            // NOTE have to lock as this method is called from different threads
+            lock (_lockObj)
+            {
+                _opStack = new OperationStack(model);
+                var operation = _tree.Children[0] as CommonTree;
+                VisitOperation(operation);
+                return (T) _opStack.Pop();
+            }
         }
 
         private void VisitOperation(CommonTree tree)

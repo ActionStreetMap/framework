@@ -43,7 +43,6 @@
     <Compile Include="..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
-    <Compile Include="Environment.cs" />
     <Compile Include="IO\FileSystemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reactive\AsyncOperationExtensions.cs" />

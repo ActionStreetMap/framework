@@ -26,10 +26,10 @@ namespace ActionStreetMap.Core.MapCss
     {
         private readonly IFileSystemService _fileSystemService;
         private const string PathKey = "mapcss";
-        private const string ExprTreeKey = "exprTreeAllowed";
+        private const string SandboxKey = "sandbox";
 
         private string _path;
-        private bool _isExprTreeAllowed;
+        private bool _isSandbox;
         
         private Stylesheet _stylesheet;
 
@@ -67,7 +67,7 @@ namespace ActionStreetMap.Core.MapCss
         private Stylesheet Create()
         {
             using (Stream inputStream = _fileSystemService.ReadStream(_path))
-                return Create(inputStream, _isExprTreeAllowed);
+                return Create(inputStream, !_isSandbox);
         }
 
         private static Stylesheet Create(Stream stream, bool isExprTreeAllowed)
@@ -88,7 +88,7 @@ namespace ActionStreetMap.Core.MapCss
         public void Configure(IConfigSection configSection)
         {
             _path = configSection.GetString(PathKey, null);
-            _isExprTreeAllowed = configSection.GetBool(ExprTreeKey, true);
+            _isSandbox = configSection.GetBool(SandboxKey, false);
             _stylesheet = null;
         }
     }

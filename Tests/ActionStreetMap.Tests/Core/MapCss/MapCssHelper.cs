@@ -29,7 +29,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
         {
             var provider = new StylesheetProvider(file, TestHelper.GetFileSystemService());
             var config = new Mock<IConfigSection>();
-            config.Setup(c => c.GetBool(It.IsAny<string>(), true)).Returns(canUseExprTree);
+            config.Setup(c => c.GetBool(It.IsAny<string>(), false)).Returns(!canUseExprTree);
             config.Setup(c => c.GetString(It.IsAny<string>(), null)).Returns(file);
             provider.Configure(config.Object);
             return provider.Get();
