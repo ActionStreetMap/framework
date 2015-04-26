@@ -9,7 +9,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary> Location command. </summary>
-    public class LocateCommand : ICommand
+    internal class LocateCommand : ICommand
     {
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
         private readonly IPositionObserver<MapPoint> _mapPositionObserver;

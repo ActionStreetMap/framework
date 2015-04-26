@@ -93,13 +93,13 @@ namespace ActionStreetMap.Maps.Data.Storage
         {
             var offset = _index.GetOffset(query);
             if (offset == 0) yield break;
-
+            bool isEmptyQueryValue = String.IsNullOrEmpty(query.Value);
             do
             {
                 var entry = ReadEntry(offset);
                 var subStringLength = Math.Min(entry.Value.Length, _prefixLength);
-                if (entry.Key == query.Key ||
-                    entry.Value.Substring(0, subStringLength) == query.Value.Substring(0, subStringLength))
+                if (entry.Key == query.Key && (isEmptyQueryValue ||
+                    entry.Value.Substring(0, subStringLength) == query.Value.Substring(0, subStringLength)))
                     yield return entry;
                 offset = entry.Next;
 

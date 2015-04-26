@@ -262,7 +262,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
         }
 
         ThreadSafeQueueWorker queueWorker = new ThreadSafeQueueWorker();
-        Action<Exception> unhandledExceptionCallback = ex => Debug.LogException(ex); // default
+        Action<Exception> unhandledExceptionCallback = Stubs.Throw;
 
         static UnityMainThreadDispatcher instance;
         static bool initialized;

@@ -17,10 +17,14 @@ namespace ActionStreetMap.Explorer
     {
         private const string LogTag = "runner";
         private readonly IContainer _container;
+        private IMessageBus _messageBus;
         private IPositionObserver<MapPoint> _mapPositionObserver;
         private IPositionObserver<GeoCoordinate> _geoPositionObserver;
 
         private bool _isActive;
+
+        /// <summary> Launched once game is launched. </summary>
+        public event EventHandler GameStarted;
 
         /// <summary> 
         ///     Creates instance of <see cref="GameRunner"/>. <see cref="ITrace"/>, <see cref="IPathResolver"/> and
@@ -37,7 +41,7 @@ namespace ActionStreetMap.Explorer
                 // NOTE these classes should be provided by client application.
                 trace = _container.Resolve<ITrace>();
                 var pathResolver = _container.Resolve<IPathResolver>();
-                var messageBus = _container.Resolve<IMessageBus>();
+                _messageBus = _container.Resolve<IMessageBus>();
                 // read config
                 var fileSystemService = new FileSystemService(pathResolver, trace);
                 container.RegisterInstance(typeof (IFileSystemService), fileSystemService);
@@ -90,6 +94,8 @@ namespace ActionStreetMap.Explorer
 
             // notify about geo coordinate change
             _geoPositionObserver.OnNext(coordinate);
+
+            GameStarted(this, new EventArgs());
         }
 
         #region IObserver<MapPoint> implementation

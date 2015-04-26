@@ -10,7 +10,6 @@ using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Facades;
 using ActionStreetMap.Explorer.Scene.Roofs;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Maps.Helpers;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -86,7 +85,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var building = new Building
             {
                 Id = model.Id,
-                Address = AddressExtractor.Extract(model.Tags),
                 GameObject = gameObjectWrapper,
                 IsPart = isPart,
                 Height = height,

@@ -177,7 +177,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
     internal static class Stubs
     {
         public static readonly Action Nop = () => { };
-        public static readonly Action<Exception> Throw = ex => { throw ex; };
+        public static Action<Exception> Throw = ex => { throw ex; };
 
         // Stubs<T>.Ignore can't avoid iOS AOT problem.
         public static void Ignore<T>(T t)

@@ -52,7 +52,7 @@
     <Compile Include="Commands\CommandController.cs" />
     <Compile Include="Commands\GeocodeCommand.cs" />
     <Compile Include="Commands\LocateCommand.cs" />
-    <Compile Include="Commands\TagCommand.cs" />
+    <Compile Include="Commands\SearchCommand.cs" />
     <Compile Include="Geometry\Generators\AbstractGenerator.cs" />
     <Compile Include="Geometry\Generators\CylinderGenerator.cs" />
     <Compile Include="Geometry\Generators\IcoSphereGenerator.cs" />
@@ -60,6 +60,7 @@
     <Compile Include="Geometry\IMeshIndex.cs" />
     <Compile Include="Geometry\MeshData.cs" />
     <Compile Include="Geometry\MeshTriangle.cs" />
+    <Compile Include="Interactions\AddressLocatorBehavior.cs" />
     <Compile Include="Interactions\MeshIndexBehaviour.cs" />
     <Compile Include="Scene\Facades\FacadeMeshIndex.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshIndex.cs" />

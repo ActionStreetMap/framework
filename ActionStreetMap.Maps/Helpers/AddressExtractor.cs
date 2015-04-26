@@ -5,9 +5,7 @@ using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Maps.Helpers
 {
-    /// <summary>
-    ///     Extracts Address from OSM tag collection.
-    /// </summary>
+    /// <summary> Extracts Address from OSM tag collection. </summary>
     public class AddressExtractor
     {
         #region Sorted lists of possible tags for Address's fields
@@ -31,9 +29,7 @@ namespace ActionStreetMap.Maps.Helpers
 
         #endregion
 
-        /// <summary>
-        ///     Extracts address from tags.
-        /// </summary>
+        /// <summary> Extracts address from tags. </summary>
         /// <param name="tags">Tags collection.</param>
         /// <returns>Address.</returns>
         public static Address Extract(TagCollection tags)

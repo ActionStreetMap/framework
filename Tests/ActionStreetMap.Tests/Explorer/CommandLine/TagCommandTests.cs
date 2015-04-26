@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Commands;
@@ -13,21 +14,26 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
     [TestFixture]
     public class TagCommandTests
     {
-        private TagCommand _command;
+        private Mock<ISearchEngine> _searchMock;
+        private SearchCommand _command;
+
         [SetUp]
         public void SetUp()
         {
-            var search = new Mock<ISearchEngine>();
-            search.Setup(s => s.SearchByTag("amenity", "bar")).Returns(new List<Element>()
+            _searchMock = new Mock<ISearchEngine>();
+
+            _searchMock.Setup(s => s.SearchByTag("amenity", "bar")).Returns(Observable.Create<Element>(o =>
             {
-                new Node() {Id = 1, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}.ToTags(), Coordinate = new GeoCoordinate(52.001, 13)},
-                new Way() {Id = 2, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}.ToTags(), Coordinates = new List<GeoCoordinate>() {new GeoCoordinate(52.0008, 13)}},
-                new Relation() {Id = 3, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}.ToTags(), Members = new List<RelationMember>() { new RelationMember() { Member = new Node() { Coordinate = new GeoCoordinate(52.002, 13)}}}},
-            });
+                o.OnNext(new Node() {Id = 1, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}.ToTags(), Coordinate = new GeoCoordinate(52.001, 13)});
+                o.OnNext(new Way() { Id = 2, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}.ToTags(), Coordinates = new List<GeoCoordinate> { new GeoCoordinate(52.0008, 13)}});
+                o.OnNext(new Relation() { Id = 3, Tags = new Dictionary<string, string>() { { "amenity", "bar" } }.ToTags(), Members = new List<RelationMember>() { new RelationMember() { Member = new Node() { Coordinate = new GeoCoordinate(52.002, 13) } } }});
+                o.OnCompleted();
+                return Disposable.Empty;
+            }));
 
             var geoPositionListener = new Mock<IPositionObserver<GeoCoordinate>>();
             geoPositionListener.Setup(p => p.Current).Returns(new GeoCoordinate(52, 13));
-            _command = new TagCommand(geoPositionListener.As<ITilePositionObserver>().Object, search.Object);
+            _command = new SearchCommand(geoPositionListener.As<ITilePositionObserver>().Object, _searchMock.Object);
         }
 
         [Test]

@@ -6,7 +6,6 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Maps.Helpers;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -27,7 +26,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             tile.Canvas.AddRoad(new RoadElement
             {
                 Id = way.Id,
-                Address = AddressExtractor.Extract(way.Tags),
                 Width = (int) Math.Round(rule.GetWidth() / 2),
                 Type = rule.GetRoadType(),
                 Points = points

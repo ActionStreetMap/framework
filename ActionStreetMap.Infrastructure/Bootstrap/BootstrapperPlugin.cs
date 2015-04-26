@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 
 namespace ActionStreetMap.Infrastructure.Bootstrap
@@ -18,6 +19,10 @@ namespace ActionStreetMap.Infrastructure.Bootstrap
         /// <summary> Gets or sets file system service. </summary>
         [Dependency]
         public IFileSystemService FileSystemService { get; set; }
+
+        /// <summary> Gets or sets trace. </summary>
+        [Dependency]
+        public ITrace Trace { get; set; }
 
         /// <inheritdoc />
         public abstract string Name { get; }

@@ -20,12 +20,19 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IGameObjectFactory>().Use<GameObjectFactory>().Singleton());
             Container.Register(Component.For<IObjectPool>().Use<ObjectPool>().Singleton());
 
-            // commands
+            // Commands
             Container.Register(Component.For<CommandController>().Use<CommandController>().Singleton());
             Container.Register(Component.For<ICommand>().Use<SysCommand>().Singleton().Named("sys"));
-            Container.Register(Component.For<ICommand>().Use<TagCommand>().Singleton().Named("tag"));
+            Container.Register(Component.For<ICommand>().Use<SearchCommand>().Singleton().Named("search"));
             Container.Register(Component.For<ICommand>().Use<LocateCommand>().Singleton().Named("locate"));
             Container.Register(Component.For<ICommand>().Use<GeocodeCommand>().Singleton().Named("geocode"));
+
+            // Override throw instruction (default in UnityMainThreadDispathcer should call this method as well)
+            ActionStreetMap.Infrastructure.Reactive.Stubs.Throw = exception =>
+            {
+                Trace.Error("FATAL", exception, "Unhandled exception is thrown!");
+                throw exception;
+            };
 
             return true;
         }

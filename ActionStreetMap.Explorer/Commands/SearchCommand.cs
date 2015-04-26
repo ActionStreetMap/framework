@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
@@ -11,23 +12,26 @@ using ActionStreetMap.Maps.Entities;
 
 namespace ActionStreetMap.Explorer.Commands
 {
-    /// <summary> Tags search command. </summary>
-    public class TagCommand : ICommand
+    /// <summary> Search  command. </summary>
+    internal class SearchCommand : ICommand
     {
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
         private readonly ISearchEngine _searchEngine;
 
         /// <inheritdoc />
-        public string Name { get { return "tag"; } }
+        public string Name { get { return "search"; } }
 
         /// <inheritdoc />
-        public string Description { get { return Strings.TagCommand; } }
+        public string Description { get { return Strings.SearchCommand; } }
 
-        /// <summary> Creates instance of <see cref="TagCommand" />. </summary>
+        /// <summary> Returns geocoordinate which is used for search. </summary>
+        internal GeoCoordinate SearchCenter { get { return _geoPositionObserver.Current; } }
+
+        /// <summary> Creates instance of <see cref="SearchCommand" />. </summary>
         /// <param name="positionObserver">Position listener.</param>
         /// <param name="searchEngine">Search engine instance.</param>
         [Dependency]
-        public TagCommand(ITilePositionObserver positionObserver, ISearchEngine searchEngine)
+        public SearchCommand(ITilePositionObserver positionObserver, ISearchEngine searchEngine)
         {
             _geoPositionObserver = positionObserver;
             _searchEngine = searchEngine;
@@ -44,19 +48,22 @@ namespace ActionStreetMap.Explorer.Commands
                     PrintHelp(response);
                 else
                 {
-                    var query = commandLine["q"].Split("=".ToCharArray());
-                    var key = query[0];
-                    var value = query[1];
+                    var query = commandLine["q"];
                     var type = commandLine["f"];
                     var radius = commandLine["r"] == null ? 0 : float.Parse(commandLine["r"]);
-                    foreach (var element in _searchEngine.SearchByTag(key, value))
+                    IObservable<Element> results;
+                    if (query.Contains("="))
                     {
-                        if (!IsElementMatch(type, element))
-                            continue;
-
-                        if (radius <= 0 || IsInCircle(radius, element))
-                            response.AppendLine(element.ToString());
+                        var tagQuery = query.Split("=".ToCharArray());
+                        var key = tagQuery[0];
+                        var value = tagQuery[1];
+                        results = GetElementsByTag(key, value, radius, type);
                     }
+                    else
+                        results = GetElementsByText(query, radius, type);
+
+                    foreach (var element in results.ToArray().Wait())
+                        response.AppendLine(element.ToString());
                 }
 
                 o.OnNext(response.ToString());
@@ -65,9 +72,32 @@ namespace ActionStreetMap.Explorer.Commands
             });
         }
 
+        #region Actual search methods
+
+        /// <summary> Gets elements for specific tag. </summary>
+        internal IObservable<Element> GetElementsByTag(string key, string value, float radius, string type = null)
+        {
+            return _searchEngine
+                .SearchByTag(key, value)
+                .Where(e => IsElementMatch(type, e) && (radius <= 0 || IsInCircle(radius, e)));
+        }
+
+        /// <summary> Gets elements for specific tag. </summary>
+        internal IObservable<Element> GetElementsByText(string text, float radius, string type = null)
+        {
+            var currentPosition = _geoPositionObserver.Current;
+            var side = radius*2;
+            var boundingBox = BoundingBox.CreateBoundingBox(currentPosition, side, side);
+            return _searchEngine
+                .SearchByText(text, boundingBox)
+                .Where(e => IsElementMatch(type, e));
+        }
+
+        #endregion
+
         private bool IsElementMatch(string type, Element element)
         {
-            return type == null ||
+            return String.IsNullOrEmpty(type) ||
                    (element is Node && type == "n" || type == "node") ||
                    (element is Way && type == "w" || type == "way") ||
                    (element is Relation && type == "r" || type == "relation");
@@ -115,8 +145,10 @@ namespace ActionStreetMap.Explorer.Commands
 
         private void PrintHelp(StringBuilder response)
         {
-            response.AppendLine("Usage: tag [/h|/H]");
-            response.AppendLine("       tag /q:key=value [/f:element_type] [/r:radius_in_meters");
+            response.AppendLine("Usage: search [/h|/H]");
+            response.AppendLine("       search /q:tag_key=tag_value [/f:element_type] [/r:radius_in_meters");
+            response.AppendLine("       search /q:any_text [/f:element_type] /r:radius_in_meters");
+                                         
         }
     }
 }

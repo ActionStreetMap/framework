@@ -11,9 +11,6 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Gets or sets Id. </summary>
         public long Id { get; set; }
 
-        /// <summary> Gets or sets address. </summary>
-        public Address Address { get; set; }
-
         /// <summary> Gets or sets game object wrapper which holds game engine specific classes. </summary>
         public IGameObject GameObject { get; set; }
 

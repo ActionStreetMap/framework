@@ -8,7 +8,7 @@ using ActionStreetMap.Maps.GeoCoding;
 namespace ActionStreetMap.Explorer.Commands
 {
     /// <summary> Represents reverse geocoding command. </summary>
-    public class GeocodeCommand : ICommand
+    internal class GeocodeCommand : ICommand
     {
         private readonly IGeocoder _geoCoder;
 
@@ -16,7 +16,7 @@ namespace ActionStreetMap.Explorer.Commands
         public string Name { get { return "geocode"; } }
 
         /// <inheritdoc />
-        public string Description { get { return "Performs reverse geocoding."; } }
+        public string Description { get { return Strings.GeocodeCommand; } }
 
         /// <summary> Creates instance of <see cref="GeocodeCommand"/>. </summary>
         /// <param name="geoCoder">Geocoder.</param>

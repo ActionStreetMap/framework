@@ -19,10 +19,13 @@
 
         public static string InvalidGradientString = "Invalid gradient string: {0}";
 
+        public static string CommandIsNotRegistered = "Command is not registered: {0}";
+
         #region Commands
 
-        public static string TagCommand = "Tag search";
-        public static string LocateCommand = "Shows position of given object";
+        public static string SearchCommand = "Searches for OSM objects.";
+        public static string LocateCommand = "Shows position of given object.";
+        public static string GeocodeCommand = "Performs reverse geocoding.";
 
         #endregion
     }

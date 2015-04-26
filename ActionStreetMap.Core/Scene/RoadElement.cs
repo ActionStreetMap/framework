@@ -9,9 +9,6 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Gets or sets original road element id. </summary>
         public long Id { get; set; }
 
-        /// <summary> Gets or sets associated address. </summary>
-        public Address Address { get; set; }
-
         /// <summary> Gets or sets lane count. </summary>
         public int Lanes { get; set; }
 

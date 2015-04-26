@@ -28,8 +28,9 @@ namespace ActionStreetMap.Tests.Maps.Index
             _container.Resolve<IElementSourceProvider>().Dispose();
         }
 
-        [Test]
-        public void CanSearchTags()
+        [TestCase("amenity", "bar")]
+        [TestCase("addr:street", null)]
+        public void CanSearchTags(string key, string value)
         {
             // ARRANGE
             var componentRoot = TestHelper.GetGameRunner(_container);
@@ -42,11 +43,14 @@ namespace ActionStreetMap.Tests.Maps.Index
             var searchEngine = _container.Resolve<ISearchEngine>();
 
             // ACT
-            var elements = searchEngine.SearchByTag("amenity", "bar").ToArray();
+            var bars = (!String.IsNullOrEmpty(value)
+                ? searchEngine.SearchByTag(key, value)
+                : searchEngine.SearchByText(key, BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100)))
+                .ToArray().Wait();
         
             // ASSERT
-            Assert.IsNotNull(elements);
-            Assert.Greater(elements.Count(), 0);
+            Assert.IsNotNull(bars);
+            Assert.Greater(bars.Count(), 0);
         }
     }
 }
