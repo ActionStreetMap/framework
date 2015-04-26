@@ -22,7 +22,7 @@ area[building]											{ builder: building;  height:12; min_height: 0; levels:
 														  fill-color:gradient(#c0c0c0, #a9a9a9 50%, #808080); facade-builder:empty; material:Materials/Buildings/Building;
 														  roof-color:gradient(#808080, #606060 50%, #505050); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
-area[amenity=shelter][shelter_type=public_transport]		{ builder: building; behaviour: solid; height:3; min_height: 0;
+area[amenity=shelter][shelter_type=public_transport]		{ builder: building; height:3; min_height: 0;
 															fill-color:gradient(#c0c0c0, #a9a9a9 50%, #808080); facade-builder:empty; material:Materials/Buildings/Building;
 															roof-color:gradient(#808080, #606060 50%, #505050); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 
@@ -163,7 +163,7 @@ area[building:shape=pyramidal]							{ roof-builder: pyramidal; height:0; roof-h
 
 area[roof:height]										{ roof-height: eval(num(tag('roof:height')))}
 
-area[man_made=bridge]									{ builder: building; behaviour: solid; height:0.5; min_height: 0; 
+area[man_made=bridge]									{ builder: building; height:0.5; min_height: 0; 
 														  fill-color:gradient(#666666, #000000 50%, #000000); facade-builder:empty; material:Materials/Buildings/Building;
 														  roof-color:gradient(#666666, #000000 50%, #000000); roof-builder:flat; roof-material:Materials/Buildings/Building; }
 

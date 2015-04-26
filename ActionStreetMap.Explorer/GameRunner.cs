@@ -23,9 +23,6 @@ namespace ActionStreetMap.Explorer
 
         private bool _isActive;
 
-        /// <summary> Launched once game is launched. </summary>
-        public event EventHandler GameStarted;
-
         /// <summary> 
         ///     Creates instance of <see cref="GameRunner"/>. <see cref="ITrace"/>, <see cref="IPathResolver"/> and
         ///     <see cref="IMessageBus"/> services should be already registered inside container.
@@ -95,7 +92,7 @@ namespace ActionStreetMap.Explorer
             // notify about geo coordinate change
             _geoPositionObserver.OnNext(coordinate);
 
-            GameStarted(this, new EventArgs());
+            _messageBus.Send(new GameStarted());
         }
 
         #region IObserver<MapPoint> implementation
@@ -122,4 +119,6 @@ namespace ActionStreetMap.Explorer
 
         #endregion
     }
+
+    public class GameStarted { }
 }

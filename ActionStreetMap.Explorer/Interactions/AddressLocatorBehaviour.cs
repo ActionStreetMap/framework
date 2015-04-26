@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Interactions
 {
-    public class AddressLocatorBehavior: MonoBehaviour
+    public class AddressLocatorBehaviour: MonoBehaviour
     {
         private const string CommandName = "search";
         private readonly Subject<Address> _subject = new Subject<Address>();
@@ -23,7 +23,7 @@ namespace ActionStreetMap.Explorer.Interactions
 
         private SearchCommand _searchCommand;
 
-        public AddressLocatorBehavior SetCommandController(CommandController controller)
+        public AddressLocatorBehaviour SetCommandController(CommandController controller)
         {
             _searchCommand = controller[CommandName] as SearchCommand;
             return this;

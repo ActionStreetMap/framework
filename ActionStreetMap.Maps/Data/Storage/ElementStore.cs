@@ -48,16 +48,20 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         public Element Get(uint offset)
         {
-            if (_reader == null)
-                _reader = new BinaryReader(_stream);
+            // NOTE ElementStore is not thread-safe 
+            lock (this)
+            {
+                if (_reader == null)
+                    _reader = new BinaryReader(_stream);
 
-            // TODO read and restore previous position to support write/read sessions
-            // NOTE see relation processing inside index builder
-            var previousPosition = _stream.Position;
-            _stream.Seek(offset, SeekOrigin.Begin);
-            var element =  ReadElement(_reader);
-            _stream.Seek(previousPosition, SeekOrigin.Begin);
-            return element;
+                // TODO read and restore previous position to support write/read sessions
+                // NOTE see relation processing inside index builder
+                var previousPosition = _stream.Position;
+                _stream.Seek(offset, SeekOrigin.Begin);
+                var element = ReadElement(_reader);
+                _stream.Seek(previousPosition, SeekOrigin.Begin);
+                return element;
+            }
         }
 
         #endregion

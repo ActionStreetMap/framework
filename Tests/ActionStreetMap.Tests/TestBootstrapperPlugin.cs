@@ -2,15 +2,11 @@
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Bootstrap;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 
-namespace ActionStreetMap.Tests.Explorer.Tiles
+namespace ActionStreetMap.Tests
 {
-    /// <summary>
-    ///     This plugin overrides registration of non-testable classes
-    /// </summary>
+    /// <summary> This plugin overrides registration of non-testable classes. </summary>
     public class TestBootstrapperPlugin: BootstrapperPlugin
     {
         private readonly TestModelBehaviour _solidModelBehaviour = new TestModelBehaviour("solid");
@@ -28,9 +24,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             return true;
         }
 
-        /// <summary>
-        ///     Dummy model behavior
-        /// </summary>
+        /// <summary> Dummy model behavior. </summary>
         private class TestModelBehaviour : IModelBehaviour
         {
             public string Name { get; private set; }

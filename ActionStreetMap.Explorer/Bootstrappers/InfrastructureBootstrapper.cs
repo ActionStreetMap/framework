@@ -1,6 +1,8 @@
-﻿using ActionStreetMap.Core.Unity;
+﻿using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Commands;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Interactions;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -26,6 +28,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<ICommand>().Use<SearchCommand>().Singleton().Named("search"));
             Container.Register(Component.For<ICommand>().Use<LocateCommand>().Singleton().Named("locate"));
             Container.Register(Component.For<ICommand>().Use<GeocodeCommand>().Singleton().Named("geocode"));
+
+            Container.Register(Component.For<IModelBehaviour>().Use<DummyBehaviour>().Singleton().Named("dummy"));
 
             // Override throw instruction (default in UnityMainThreadDispathcer should call this method as well)
             ActionStreetMap.Infrastructure.Reactive.Stubs.Throw = exception =>
