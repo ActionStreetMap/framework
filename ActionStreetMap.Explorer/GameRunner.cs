@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Bootstrappers;
@@ -12,7 +13,7 @@ using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Explorer
 {
-    /// <summary> Represents application component root. </summary>
+    /// <summary> Represents application component root. Not thread safe. </summary>
     public sealed class GameRunner : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
         private const string LogTag = "runner";
@@ -21,7 +22,7 @@ namespace ActionStreetMap.Explorer
         private IPositionObserver<MapPoint> _mapPositionObserver;
         private IPositionObserver<GeoCoordinate> _geoPositionObserver;
 
-        private bool _isActive;
+        private bool _isInitialized;
 
         /// <summary> 
         ///     Creates instance of <see cref="GameRunner"/>. <see cref="ITrace"/>, <see cref="IPathResolver"/> and
@@ -66,8 +67,8 @@ namespace ActionStreetMap.Explorer
         /// <returns> Current GameRunner.</returns>
         public GameRunner RegisterPlugin<T>(string name, params object[] args) where T: IBootstrapperPlugin
         {
-            if (_isActive) 
-                throw new InvalidOperationException(Strings.CannotRegisterPluginForActiveGame);
+            if (_isInitialized) 
+                throw new InvalidOperationException(Strings.CannotRegisterPluginForCompletedBootstrapping);
             _container.Register(Component.For<IBootstrapperPlugin>().Use(typeof(T), args).Named(name).Singleton());
             return this;
         }
@@ -76,14 +77,6 @@ namespace ActionStreetMap.Explorer
         /// <param name="coordinate">GeoCoordinate for (0,0) map point. </param>
         public void RunGame(GeoCoordinate coordinate)
         {
-            if(_isActive)
-                throw new InvalidOperationException(Strings.CannotRunGameTwice);
-
-            _isActive = true;
-
-            // run bootstrappers
-            _container.Resolve<IBootstrapperService>().Run();
-
             // resolve actual position observers
             var tilePositionObserver = _container.Resolve<ITilePositionObserver>();
             _mapPositionObserver = tilePositionObserver;
@@ -92,7 +85,21 @@ namespace ActionStreetMap.Explorer
             // notify about geo coordinate change
             _geoPositionObserver.OnNext(coordinate);
 
-            _messageBus.Send(new GameStarted());
+            _messageBus.Send(new GameStartedMessage());
+        }
+
+        /// <summary> Runs bootstrapping process. </summary>
+        public GameRunner Bootstrap()
+        {
+            if (_isInitialized) 
+                return this;
+
+            _isInitialized = true;
+
+            // run bootstrappers
+            _container.Resolve<IBootstrapperService>().Run();
+
+            return this;
         }
 
         #region IObserver<MapPoint> implementation
@@ -118,7 +125,8 @@ namespace ActionStreetMap.Explorer
         void IObserver<GeoCoordinate>.OnCompleted() { _geoPositionObserver.OnCompleted(); }
 
         #endregion
-    }
 
-    public class GameStarted { }
+        /// <summary> This message is sent once RunGame is completed.  </summary>
+        public class GameStartedMessage { }
+    }
 }
