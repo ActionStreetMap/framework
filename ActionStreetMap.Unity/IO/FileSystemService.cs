@@ -112,6 +112,17 @@ namespace ActionStreetMap.Unity.IO
 #endif
         }
 
+        public void CreateDirectory(string path)
+        {
+#if UNITY_WEBPLAYER
+             throw new NotImplementedException();
+#else
+            var resolvedPath = PathResolver.Resolve(path);
+            Trace.Debug(LogTag, "create directory: {0}", resolvedPath);
+            Directory.CreateDirectory(resolvedPath);
+#endif
+        }
+
 #if UNITY_WEBPLAYER
         private string GetTextSync(string resolvedPath)
         {

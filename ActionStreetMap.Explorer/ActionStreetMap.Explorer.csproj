@@ -60,6 +60,7 @@
     <Compile Include="Geometry\IMeshIndex.cs" />
     <Compile Include="Geometry\MeshData.cs" />
     <Compile Include="Geometry\MeshTriangle.cs" />
+    <Compile Include="Infrastructure\MapIndexUtility.cs" />
     <Compile Include="Interactions\AddressLocatorBehaviour.cs" />
     <Compile Include="Interactions\DummyBehaviour.cs" />
     <Compile Include="Interactions\MeshIndexBehaviour.cs" />

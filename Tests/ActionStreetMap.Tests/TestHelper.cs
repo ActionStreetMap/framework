@@ -48,7 +48,9 @@ namespace ActionStreetMap.Tests
             container.Register(Component.For<ITrace>().Use<ConsoleTrace>().Singleton());
             container.Register(Component.For<IPathResolver>().Use<TestPathResolver>().Singleton());
             container.Register(Component.For<IMessageBus>().Use<MessageBus>().Singleton());
-            return new GameRunner(container, ConfigAppRootFile).RegisterPlugin<TestBootstrapperPlugin>("test");
+            return new GameRunner(container, ConfigAppRootFile)
+                .RegisterPlugin<TestBootstrapperPlugin>("test")
+                .Bootstrap();
         }
 
         public static IFileSystemService GetFileSystemService()

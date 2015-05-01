@@ -17,7 +17,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.53120, 13.38650);
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.53152, 13.38708);
         public static readonly Container _container = new Container();
 
         private const string LogTag = "host";
@@ -34,7 +34,7 @@ namespace ActionStreetMap.Tests
         private static void Main(string[] args)
         {
             var program = new Program();
-            program.RunGame();
+             program.RunGame();
             // program.DoContinuosMovements();
             //program.RunMocker();
             //program.Wait(); 
@@ -112,17 +112,10 @@ namespace ActionStreetMap.Tests
 
         private void BuildIndex(string filePath, string outputDirectory)
         {
-            var trace = new ConsoleTrace();
-            var fileSystemService = new FileSystemService(new TestPathResolver(), trace);
-            var jsonContent = fileSystemService.ReadText("Config/index.json");
-            var node = JSON.Parse(jsonContent);
-
-            var settings = new IndexSettings();
-            settings.ReadFromJson(node);
-
-            var builder = new PersistentIndexBuilder(filePath, outputDirectory,
-                fileSystemService, settings, new ObjectPool(), trace);
-            builder.Build();
+            // populate container with services.
+            TestHelper.GetGameRunner(_container);
+            _container.Resolve<MapIndexUtility>()
+                .BuildIndex(filePath, outputDirectory);
         }
 
         #endregion
