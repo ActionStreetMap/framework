@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
@@ -41,7 +42,7 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
 
         protected void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
         {
-            var useVertNoise = _vertNoiseFreq != 0;
+            var useVertNoise = Math.Abs(_vertNoiseFreq) > 0.0001;
 
             var noise = useVertNoise ? (Noise.Perlin3D(v0, _vertNoiseFreq) + 1f) / 2f : 0;
             var p0 = new MapPoint(v0.x + noise, v0.z + noise, v0.y + noise);

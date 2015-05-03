@@ -334,24 +334,24 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         protected void AddTriangle(Rule rule, MeshData meshData, Triangle triangle, GradientWrapper gradient,
             float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
         {
-            var useEleNoise = eleNoiseFreq != 0f;
+            var useEleNoise = Math.Abs(eleNoiseFreq) > 0.0001;
 
             var v0 = GetVertex(triangle.GetVertex(0), eleNoiseFreq, useEleNoise, yOffset);
             var v1 = GetVertex(triangle.GetVertex(1), eleNoiseFreq, useEleNoise, yOffset);
             var v2 = GetVertex(triangle.GetVertex(2), eleNoiseFreq, useEleNoise, yOffset);
 
-            var triangleColor = GradientUtils.GetColor(gradient, new Vector3(v0.X, 0, v0.Y), colorNoiseFreq);
+            var triangleColor = GradientUtils.GetColor(gradient, new Vector3(v0.X, v0.Elevation, v0.Y), colorNoiseFreq);
 
             meshData.AddTriangle(v0, v1, v2, triangleColor);
         }
 
-        private MapPoint GetVertex(Vertex v2, float eleNoiseFreq, bool useEleNoise, float yOffset)
+        private MapPoint GetVertex(Vertex v, float eleNoiseFreq, bool useEleNoise, float yOffset)
         {
-            var p2 = new MapPoint((float)v2.X, (float)v2.Y);
-            var useEleNoise2 = v2.Type == VertexType.FreeVertex && useEleNoise;
+            var p2 = new MapPoint((float)v.X, (float)v.Y);
+            var useEleNoise2 = v.Type == VertexType.FreeVertex && useEleNoise;
             var ele2 = _elevationProvider.GetElevation(p2);
             if (useEleNoise2)
-                ele2 += Noise.Perlin3D(new Vector3(p2.X, 0, p2.Y), eleNoiseFreq);
+                ele2 += Noise.Perlin3D(new Vector3(p2.X, ele2, p2.Y), eleNoiseFreq);
             return new MapPoint(p2.X, p2.Y, ele2 + yOffset);
         }
 

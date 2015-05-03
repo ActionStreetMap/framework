@@ -103,7 +103,7 @@ namespace ActionStreetMap.Explorer.Helpers
             return rule.EvaluateDefault<float>("color_noise_freq", @default);
         }
 
-        public static float GetEleNoiseFreq(this Rule rule, float @default = 0.2f)
+        public static float GetEleNoiseFreq(this Rule rule, float @default = 0.1f)
         {
             return rule.EvaluateDefault<float>("ele_noise_freq", @default);
         }
