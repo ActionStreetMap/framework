@@ -35,9 +35,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     {
         private const string LogTag = "mesh.terrain";
 
-        private const float WaterBottomLevelOffset = 5f;
-        private const float WaterSurfaceLevelOffset = 2.5f;
-
         private readonly IElevationProvider _elevationProvider;
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
@@ -150,8 +147,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             if (meshRegion.Mesh == null) return;
 
-            const float colorNoiseFreq = 0.2f;
-            const float eleNoiseFreq = 0.2f;
+            float colorNoiseFreq = rule.GetWaterLayerColorNoiseFreq();
+            float eleNoiseFreq = rule.GetWaterLayerEleNoiseFreq();
 
             // TODO allocate from pool with some size
             var waterVertices = new List<Vector3>();
@@ -162,11 +159,14 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             var bottomGradient = rule.GetBackgroundLayerGradient(_resourceProvider);
             var waterSurfaceGradient = rule.GetWaterLayerGradient(_resourceProvider);
+            var waterBottomLevelOffset = rule.GetWaterLayerBottomLevel();
+            var waterSurfaceLevelOffset = rule.GetWaterLayerSurfaceLevel();
+
             int count = 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
             {
                 // bottom
-                AddTriangle(rule, meshData, triangle, bottomGradient, eleNoiseFreq, colorNoiseFreq, -WaterBottomLevelOffset);
+                AddTriangle(rule, meshData, triangle, bottomGradient, eleNoiseFreq, colorNoiseFreq, -waterBottomLevelOffset);
 
                 var meshTriangle = meshTriangles[meshTriangles.Count - 1];
 
@@ -175,9 +175,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var p2 = meshTriangle.Vertex2;
 
                 // reuse just added vertices
-                waterVertices.Add(new Vector3(p0.X, p0.Elevation + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p0.Y));
-                waterVertices.Add(new Vector3(p1.X, p1.Elevation + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p1.Y));
-                waterVertices.Add(new Vector3(p2.X, p2.Elevation + WaterBottomLevelOffset - WaterSurfaceLevelOffset, p2.Y));
+                waterVertices.Add(new Vector3(p0.X, p0.Elevation + waterBottomLevelOffset - waterSurfaceLevelOffset, p0.Y));
+                waterVertices.Add(new Vector3(p1.X, p1.Elevation + waterBottomLevelOffset - waterSurfaceLevelOffset, p1.Y));
+                waterVertices.Add(new Vector3(p2.X, p2.Elevation + waterBottomLevelOffset - waterSurfaceLevelOffset, p2.Y));
 
                 var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[count], colorNoiseFreq);
                 waterColors.Add(color);
@@ -189,7 +189,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 waterTriangles.Add(count + 1);
                 count += 3;
             }
-            BuildOffsetShape(rule, meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider), WaterBottomLevelOffset);
+            BuildOffsetShape(rule, meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
+                colorNoiseFreq, waterBottomLevelOffset);
             var vs = waterVertices.ToArray();
             var ts = waterTriangles.ToArray();
             var cs = waterColors.ToArray();
@@ -197,9 +198,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         protected void BuildOffsetShape(Rule rule, MeshData meshData, MeshRegion region, GradientWrapper gradient,
-            float deepLevel)
+            float colorNoiseFreq, float deepLevel)
         {
-            const float colorNoiseFreq = 0.2f;
             const float divideStep = 1f;
             const float errorTopFix = 0.02f;
             const float errorBottomFix = 0.1f;
@@ -239,10 +239,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                             new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
                             new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
                             secondColor);
-
-                        // TODO refactor this
-                        //context.Index.AddTriangle(triangles[triangles.Count - 2]);
-                        //context.Index.AddTriangle(triangles[triangles.Count - 1]);
                     }
 
                     pointList.Clear();
@@ -277,8 +273,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetBackgroundLayerGradient(_resourceProvider);
 
-            const float eleNoiseFreq = 0.2f;
-            const float colorNoiseFreq = 0.2f;
+            float eleNoiseFreq = rule.GetBackgroundLayerEleNoiseFreq();
+            float colorNoiseFreq = rule.GetBackgroundLayerColorNoiseFreq();
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
         }
@@ -289,8 +285,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         protected void BuildCarRoads(Rule rule, MeshData meshData, MeshRegion meshRegion)
         {
-            const float eleNoiseFreq = 0f;
-            const float colorNoiseFreq = 0.2f;
+            float eleNoiseFreq = rule.GetCarLayerEleNoiseFreq();
+            float colorNoiseFreq = rule.GetCarLayerColorNoiseFreq();
 
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetCarLayerGradient(_resourceProvider);
@@ -307,8 +303,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetPedestrianLayerGradient(_resourceProvider);
-            const float eleNoiseFreq = 0f;
-            const float colorNoiseFreq = 1f;
+            float eleNoiseFreq = rule.GetPedestrianLayerEleNoiseFreq();
+            float colorNoiseFreq = rule.GetPedestrianLayerColorNoiseFreq();
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
         }
@@ -320,8 +316,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         protected void BuildSurface(Rule rule, MeshData meshData, MeshRegion meshRegion)
         {
             if (meshRegion.Mesh == null) return;
-            const float colorNoiseFreq = 0.2f;
-            const float eleNoiseFreq = 0.2f;
+            float colorNoiseFreq = rule.GetColorNoiseFreq();
+            float eleNoiseFreq = rule.GetEleNoiseFreq();
             var gradient = _resourceProvider.GetGradient(meshRegion.GradientKey);
 
             if (meshRegion.ModifyMeshAction != null)

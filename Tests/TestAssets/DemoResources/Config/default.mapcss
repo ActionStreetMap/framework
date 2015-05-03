@@ -2,10 +2,23 @@ canvas {
 	material_background: Terrain/TerrainColored;
 	material_water: Water/TerrainWater;
 	
-	gradient_background:            						gradient(#f5f5f5, #dcdcdc 5%, #cococo 10%, #a9a9a9 70%, #808080);
-	gradient_water:             							gradient(#87cefa, #1e90ff);
-	gradient_cars:											gradient(#4d4d4d, #404040);
-	gradient_pedestrian:									gradient(#636363, #4d4d4d);
+    background_color_noise_freq:                            0.1;
+    background_ele_noise_freq:                              0.2;
+    background_gradient:                                    gradient(#f5f5f5, #dcdcdc 5%, #cococo 10%, #a9a9a9 70%, #808080);
+    
+    water_color_noise_freq:                                 0.1;
+    water_ele_noise_freq:                                   0.2;
+    water_gradient:                                         gradient(#87cefa, #1e90ff);
+    water_surface_level:                                    2.5;
+    water_bottom_level:                                     5;  
+    
+    car_color_noise_freq:                                   0.1;
+    car_ele_noise_freq:                                     0.2;
+    car_gradient:                                           gradient(#4d4d4d, #404040);
+    
+    pedestrian_color_noise_freq:                            0.1;
+    pedestrian_ele_noise_freq:                              0.2;
+    pedestrian_gradient:                                    gradient(#636363, #4d4d4d);
 }
 /* flat areas, general rules */
 area[amenity],
