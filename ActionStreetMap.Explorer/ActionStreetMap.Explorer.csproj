@@ -82,7 +82,7 @@
     <Compile Include="Scene\Roofs\FlatRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\GabledRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\HippedRoofBuilder.cs" />
-    <Compile Include="Scene\Roofs\IRoofBuilder.cs" />
+    <Compile Include="Scene\Roofs\RoofBuilder.cs" />
     <Compile Include="Scene\Roofs\MansardRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\PyramidalRoofBuilder.cs" />
     <Compile Include="Geometry\Utils\CircleUtils.cs" />
