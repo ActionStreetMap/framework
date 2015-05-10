@@ -41,7 +41,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 .SetFirstFloorHeight(firstFloorHeight)
                 .SetFloorSpan(random.NextFloat(1.5f, 2f))
                 .SetElevation(elevation)
-                .SetPositionNoise(building.IsPart ? 0.01f : 0.05f)
+                .SetPositionNoise(building.IsPart ? 0f : 0.1f)
                 .SetFloorHeight(random.NextFloat(1.8f, 2.2f))
                 .SetFloorSpan(random.NextFloat(0.1f, 0.3f))
                 .SetFloors(building.Levels)

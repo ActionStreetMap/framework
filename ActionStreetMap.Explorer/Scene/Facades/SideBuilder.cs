@@ -10,8 +10,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal abstract class SideBuilder
     {
-        private float _positionNoiseFreq = 0.05f;
-        private float _colorNoiseFreq = 0.2f;
+        private float _positionNoiseFreq = 0f;
+        private float _colorNoiseFreq = 0.1f;
         private float _firstFloorHeight = 4;
         private int _floorCount = 3;
         private float _floorHeight = 3f;
@@ -192,6 +192,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         protected float GetPositionNoise(MapPoint point)
         {
+            if (Math.Abs(_positionNoiseFreq) < 0.0001f)
+                return 0;
+
             return Noise.Perlin3D(new Vector3(point.X, point.Elevation, point.Y), _positionNoiseFreq);
         }
 
