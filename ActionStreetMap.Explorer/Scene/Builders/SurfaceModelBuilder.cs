@@ -43,12 +43,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         {
             var trunkGradientKey = rule.Evaluate<string>("trunk-color");
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
+            int treeFreq = (int) (1 / rule.EvaluateDefault<float>("tree-freq", 0.1f));
 
             foreach (var triangle in mesh.Triangles)
             {
                 // TODO reuse mesh and/or generator?
-                // NOTE Add only fifths tree. Actually, this can be configurable
-                if (triangle.ID%5 != 0) continue;
+                if (triangle.ID % treeFreq != 0) continue;
 
                 var v0 = triangle.GetVertex(0);
                 var v1 = triangle.GetVertex(1);
