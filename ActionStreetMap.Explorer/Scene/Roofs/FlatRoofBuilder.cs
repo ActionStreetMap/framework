@@ -22,27 +22,19 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         {
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
             var footprint = building.Footprint;
-            var roofOffset = building.Elevation + building.MinHeight + building.Height;
-
-            var triangles = ObjectPool.NewList<int>();
-            Triangulator.Triangulate(building.Footprint, triangles);
+            var roofBottomOffset = building.Elevation + building.MinHeight;
+            var roofTopOffset = roofBottomOffset + building.Height;
 
             var meshData = ObjectPool.CreateMeshData();
             meshData.MaterialKey = building.RoofMaterial;
 
-            for (int i = 0; i < triangles.Count; i += 3)
-            {
-                var p0 = footprint[triangles[i]];
-                var v0 = new MapPoint(p0.X, p0.Y, roofOffset);
+            var triangles = ObjectPool.NewList<int>();
+            Triangulator.Triangulate(footprint, triangles);
 
-                var p1 = footprint[triangles[i + 2]];
-                var v1 = new MapPoint(p1.X, p1.Y, roofOffset);
-
-                var p2 = footprint[triangles[i + 1]];
-                var v2 = new MapPoint(p2.X, p2.Y, roofOffset);
-
-                meshData.AddTriangle(v0, v1, v2, GradientUtils.GetColor(gradient, v0, 0.2f));
-            }
+            // top
+            BuildFootprint(meshData, gradient, footprint, triangles, roofTopOffset);
+            // bottom
+            BuildFootprint(meshData, gradient, footprint, triangles, roofBottomOffset, true);
 
             return meshData;
         }

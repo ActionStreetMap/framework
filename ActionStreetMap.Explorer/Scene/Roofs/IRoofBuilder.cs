@@ -1,9 +1,14 @@
-﻿using ActionStreetMap.Core.Scene;
+﻿using System.Collections.Generic;
+using ActionStreetMap.Core;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Unity.Wrappers;
 
 namespace ActionStreetMap.Explorer.Scene.Roofs
 {
@@ -43,5 +48,35 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
+
+        /// <summary> Builds flat roof from footprint. </summary>
+        protected void BuildFootprint(MeshData meshData, GradientWrapper gradient, List<MapPoint> footprint,
+            float roofOffset, bool reversed = false)
+        {
+            var triangles = ObjectPool.NewList<int>();
+            Triangulator.Triangulate(footprint, triangles);
+            BuildFootprint(meshData, gradient, footprint, triangles, roofOffset, reversed);
+        }
+
+        /// <summary> Builds flat roof from footprint using provided triangles. </summary>
+        protected void BuildFootprint(MeshData meshData, GradientWrapper gradient, List<MapPoint> footprint,
+           List<int> triangles, float roofOffset, bool reversed = false)
+        {
+            if(reversed) triangles.Reverse();
+
+            for (int i = 0; i < triangles.Count; i += 3)
+            {
+                var p0 = footprint[triangles[i]];
+                var v0 = new MapPoint(p0.X, p0.Y, roofOffset);
+
+                var p1 = footprint[triangles[i + 2]];
+                var v1 = new MapPoint(p1.X, p1.Y, roofOffset);
+
+                var p2 = footprint[triangles[i + 1]];
+                var v2 = new MapPoint(p2.X, p2.Y, roofOffset);
+
+                meshData.AddTriangle(v0, v1, v2, GradientUtils.GetColor(gradient, v0, 0.2f));
+            }
+        }
     }
 }

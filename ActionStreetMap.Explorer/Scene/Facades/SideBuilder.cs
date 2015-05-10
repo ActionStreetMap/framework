@@ -10,7 +10,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal abstract class SideBuilder
     {
-        private float _positionNoiseFreq = 0.15f;
+        private float _positionNoiseFreq = 0.05f;
         private float _colorNoiseFreq = 0.2f;
         private float _firstFloorHeight = 4;
         private int _floorCount = 3;
@@ -110,7 +110,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             BuildGroundFloor(s, e, _firstFloorHeight);
 
-            if (_entranceWidth == 0)
+            if (Math.Abs(_entranceWidth) < 0.001f)
                 _entranceWidth = GetEntranceWidth(distance);
 
             var count = GetEntranceCount(distance);
