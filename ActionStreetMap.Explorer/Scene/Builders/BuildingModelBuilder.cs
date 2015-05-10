@@ -73,13 +73,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var gameObjectWrapper = GameObjectFactory
                 .CreateNew(GetName(model), tile.GameObject);
 
-            // NOTE observed that min_height should be subracted from height for building:part
-            // TODO this should be done in mapcss, but stylesheet doesn't support multiply eval operations
-            // on the same tag
             var isPart = rule.IsPart();
             var height = rule.GetHeight();
-            if (isPart)
-                height -= minHeight;
+
+            // NOTE: this is not clear
+            //if (isPart)
+            height -= minHeight;
 
             // TODO should we save this object in WorldManager?
             var building = new Building
@@ -98,7 +97,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 RoofColor = rule.GetRoofColor(),
                 RoofMaterial = rule.GetRoofMaterial(),
                 RoofHeight = rule.GetRoofHeight(),
-                Elevation = elevation, // we set equal elevation for every point
+                Elevation = elevation,
                 Footprint = points,
             };
 

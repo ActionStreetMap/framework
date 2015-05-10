@@ -10,7 +10,7 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
     internal abstract class AbstractGenerator
     {
         private readonly MeshData _meshData;
-        private float _vertNoiseFreq = 0.1f;
+        private float _vertNoiseFreq = 0.05f;
         private float _colorNoiseFreq = 0.1f;
         private GradientWrapper _gradient;
 
