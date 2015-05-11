@@ -1,6 +1,6 @@
 ﻿namespace ActionStreetMap.Maps.Data
 {
-    internal static class Consts
+    internal static class MapConsts
     {
         public const uint ScaleFactor = 10000000;
 

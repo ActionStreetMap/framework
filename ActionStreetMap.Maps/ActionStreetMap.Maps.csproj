@@ -82,7 +82,7 @@
     <Compile Include="Data\Spatial\Envelops.cs" />
     <Compile Include="Data\Spatial\RTree.cs" />
     <Compile Include="Data\Spatial\SpatialIndex.cs" />
-    <Compile Include="Data\Consts.cs" />
+    <Compile Include="Data\MapConsts.cs" />
     <Compile Include="Data\Storage\KeyValueUsage.cs" />
     <Compile Include="MapTileLoader.cs" />
     <Compile Include="Strings.cs" />

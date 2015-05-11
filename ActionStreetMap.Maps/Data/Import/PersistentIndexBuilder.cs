@@ -39,11 +39,11 @@ namespace ActionStreetMap.Maps.Data.Import
             var kvUsageMemoryStream = new MemoryStream();
             var kvUsage = new KeyValueUsage(kvUsageMemoryStream);
 
-            var keyValueStoreFile = _fileSystemService.WriteStream(String.Format(Consts.KeyValueStorePathFormat, _outputDirectory));
+            var keyValueStoreFile = _fileSystemService.WriteStream(String.Format(MapConsts.KeyValueStorePathFormat, _outputDirectory));
             var index = new KeyValueIndex(Settings.Search.KvIndexCapacity, Settings.Search.PrefixLength);
             var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStoreFile);
 
-            var storeFile = _fileSystemService.WriteStream(String.Format(Consts.ElementStorePathFormat, _outputDirectory));
+            var storeFile = _fileSystemService.WriteStream(String.Format(MapConsts.ElementStorePathFormat, _outputDirectory));
             Store = new ElementStore(keyValueStore, storeFile, ObjectPool);
             Tree = new RTree<uint>(65);
 
@@ -58,14 +58,14 @@ namespace ActionStreetMap.Maps.Data.Import
             Clear();
             Complete();
 
-            using (var kvFileStream = _fileSystemService.WriteStream(String.Format(Consts.KeyValueUsagePathFormat, _outputDirectory)))
+            using (var kvFileStream = _fileSystemService.WriteStream(String.Format(MapConsts.KeyValueUsagePathFormat, _outputDirectory)))
             {
                 var buffer = kvUsageMemoryStream.GetBuffer();
                 kvFileStream.Write(buffer, 0, (int) kvUsageMemoryStream.Length);
             }
 
-            KeyValueIndex.Save(index, _fileSystemService.WriteStream(String.Format(Consts.KeyValueIndexPathFormat, _outputDirectory)));
-            SpatialIndex.Save(Tree, _fileSystemService.WriteStream(String.Format(Consts.SpatialIndexPathFormat, _outputDirectory)));
+            KeyValueIndex.Save(index, _fileSystemService.WriteStream(String.Format(MapConsts.KeyValueIndexPathFormat, _outputDirectory)));
+            SpatialIndex.Save(Tree, _fileSystemService.WriteStream(String.Format(MapConsts.SpatialIndexPathFormat, _outputDirectory)));
             Store.Dispose();
             
             sw.Stop();
@@ -74,7 +74,7 @@ namespace ActionStreetMap.Maps.Data.Import
 
         public override void ProcessBoundingBox(BoundingBox bbox)
         {
-            using (var writer = new StreamWriter(_fileSystemService.WriteStream(String.Format(Consts.HeaderPathFormat, _outputDirectory))))
+            using (var writer = new StreamWriter(_fileSystemService.WriteStream(String.Format(MapConsts.HeaderPathFormat, _outputDirectory))))
             {
                 writer.Write("{0} {1}", bbox.MinPoint, bbox.MaxPoint);
             }

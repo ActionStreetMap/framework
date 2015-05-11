@@ -28,7 +28,6 @@ namespace ActionStreetMap.Core.Tiling
         private float _offset;
         private float _moveSensitivity;
         private float _thresholdDistance;
-        private int _heightmapsize;
         private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
 
         private GeoCoordinate _currentPosition;
@@ -74,7 +73,8 @@ namespace ActionStreetMap.Core.Tiling
         {
             var tileCenter = new MapPoint(i*_tileSize, j*_tileSize);
 
-            var tile = new Tile(RelativeNullPoint, tileCenter, new Canvas(_objectPool), _tileSize, _tileSize);
+            var tile = new Tile(RelativeNullPoint, tileCenter, new Canvas(_objectPool),
+                CoreConsts.MaxZoomLevel, _tileSize, _tileSize);
 
             if (_allTiles.ContainsKey(i, j))
                 return;
@@ -162,8 +162,6 @@ namespace ActionStreetMap.Core.Tiling
                     int i = Convert.ToInt32(value.X / _tileSize);
                     int j = Convert.ToInt32(value.Y / _tileSize);
 
-                    // TODO support setting of neighbors for Unity Terrain
-
                     bool hasTile = _allTiles.ContainsKey(i, j);
                     if (!hasTile)
                         Create(i, j);
@@ -212,7 +210,6 @@ namespace ActionStreetMap.Core.Tiling
             _tileSize = configSection.GetFloat("size", 500);
             _offset = configSection.GetFloat("offset", 50);
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
-            _heightmapsize = configSection.GetInt("heightmap", 1025);
 
             _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
         }

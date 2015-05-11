@@ -31,8 +31,8 @@ namespace ActionStreetMap.Maps.Data.Spatial
         {
             get
             {
-                return new GeoCoordinate(((double)MinPointLatitude) / Consts.ScaleFactor,
-                    ((double)MinPointLongitude) / Consts.ScaleFactor);
+                return new GeoCoordinate(((double)MinPointLatitude) / MapConsts.ScaleFactor,
+                    ((double)MinPointLongitude) / MapConsts.ScaleFactor);
             }
         }
 
@@ -40,8 +40,8 @@ namespace ActionStreetMap.Maps.Data.Spatial
         {
             get
             {
-                return new GeoCoordinate(((double)MaxPointLatitude) / Consts.ScaleFactor,
-                    ((double)MaxPointLongitude) / Consts.ScaleFactor);
+                return new GeoCoordinate(((double)MaxPointLatitude) / MapConsts.ScaleFactor,
+                    ((double)MaxPointLongitude) / MapConsts.ScaleFactor);
             }
         }
 
@@ -58,11 +58,11 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         public Envelop(GeoCoordinate minPoint, GeoCoordinate maxPoint)
         {
-            MinPointLatitude = (int)(minPoint.Latitude * Consts.ScaleFactor);
-            MinPointLongitude = (int)(minPoint.Longitude * Consts.ScaleFactor);
+            MinPointLatitude = (int)(minPoint.Latitude * MapConsts.ScaleFactor);
+            MinPointLongitude = (int)(minPoint.Longitude * MapConsts.ScaleFactor);
 
-            MaxPointLatitude = (int)(maxPoint.Latitude * Consts.ScaleFactor);
-            MaxPointLongitude = (int)(maxPoint.Longitude * Consts.ScaleFactor);
+            MaxPointLatitude = (int)(maxPoint.Latitude * MapConsts.ScaleFactor);
+            MaxPointLongitude = (int)(maxPoint.Longitude * MapConsts.ScaleFactor);
         }
 
         public long Area { get { return ((long)(MaxPointLongitude - MinPointLongitude)) * (MaxPointLatitude - MinPointLatitude); } }
@@ -79,7 +79,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         public void Extend(GeoCoordinate coordinate)
         {
-            Extend((int) (coordinate.Latitude * Consts.ScaleFactor), (int)(coordinate.Longitude * Consts.ScaleFactor));
+            Extend((int) (coordinate.Latitude * MapConsts.ScaleFactor), (int)(coordinate.Longitude * MapConsts.ScaleFactor));
         }
 
         public void Extend(int scaledLatitude, int scaleddLongitude)
@@ -121,8 +121,8 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         public PointEnvelop(GeoCoordinate point)
         {
-            _pointLatitude = (int)(point.Latitude * Consts.ScaleFactor);
-            _pointLongitude = (int)(point.Longitude * Consts.ScaleFactor);
+            _pointLatitude = (int)(point.Latitude * MapConsts.ScaleFactor);
+            _pointLongitude = (int)(point.Longitude * MapConsts.ScaleFactor);
         }
 
         public int MinPointLatitude { get { return _pointLatitude; } }

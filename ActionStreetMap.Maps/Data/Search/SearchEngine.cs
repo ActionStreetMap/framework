@@ -19,7 +19,8 @@ namespace ActionStreetMap.Maps.Data.Search
         /// <summary> Searches all elements with given text in tagss in current active element source. </summary>
         /// <param name="text">text to search.</param>
         /// <param name="bbox">Bounding box.</param>
-        IObservable<Element> SearchByText(string text, BoundingBox bbox);
+        /// <param name="zoomLevel">Zoom level.</param>
+        IObservable<Element> SearchByText(string text, BoundingBox bbox, int zoomLevel);
     }
 
     /// <summary>
@@ -57,11 +58,11 @@ namespace ActionStreetMap.Maps.Data.Search
         }
 
         /// <inheritdoc />
-        public IObservable<Element> SearchByText(string text, BoundingBox bbox)
+        public IObservable<Element> SearchByText(string text, BoundingBox bbox, int zoomLevel)
         {
             var elementSource = GetElementSource();
             return elementSource
-                .Get(bbox)
+                .Get(bbox, zoomLevel)
                 .Where(e => e.Tags.Any(t => t.Key.Contains(text) || t.Value.Contains(text)));
         }
 

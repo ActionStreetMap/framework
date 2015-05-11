@@ -56,7 +56,8 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             elevationProvider.Setup(e => e.HasElevation(It.IsAny<BoundingBox>())).Returns(true);
             var loader = new MapTileLoader(elementSourceProvider, elevationProvider.Object, sceneVisitor, new ObjectPool());
 
-            var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), new Canvas(new ObjectPool()), 1000, 1000);
+            var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), new Canvas(new ObjectPool()),
+                CoreConsts.MaxZoomLevel, 1000, 1000);
             loader.Load(tile).Wait();
 
             // ACT & ARRANGE

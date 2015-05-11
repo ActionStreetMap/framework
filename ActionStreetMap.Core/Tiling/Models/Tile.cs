@@ -12,6 +12,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Stores tile center coordinate in Unity metrics. </summary>
         public MapPoint MapCenter { get; private set; }
 
+        /// <summary> Zoom level of given tile. </summary>
+        public int ZoomLevel { get; private set; }
+
         /// <summary> Gets width in meters. </summary>
         public float Width { get; private set; }
 
@@ -40,14 +43,16 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="mapCenter">Center of map.</param>
         /// <param name="canvas">Map canvas.</param>
+        /// <param name="zoomLevel">Zoom level.</param>
         /// <param name="width">Tile width in meters.</param>
         /// <param name="height">Tile height in meters.</param>
         public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, Canvas canvas, 
-            float width, float height)
+            int zoomLevel, float width, float height)
         {
             RelativeNullPoint = relativeNullPoint;
             MapCenter = mapCenter;
             Canvas = canvas;
+            ZoomLevel = zoomLevel;
 
             Width = width;
             Height = height;

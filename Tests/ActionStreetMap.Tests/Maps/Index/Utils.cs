@@ -53,20 +53,20 @@ namespace ActionStreetMap.Tests.Maps.Index
             var kvIndexMemoryStream = new MemoryStream();
             KeyValueIndex.Save(index, kvIndexMemoryStream);
             kvIndexMemoryStream = new MemoryStream(kvIndexMemoryStream.GetBuffer());
-            fileSystemService.Setup(fs => fs.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)))
+            fileSystemService.Setup(fs => fs.ReadStream(string.Format(MapConsts.KeyValueIndexPathFormat, directory)))
                 .Returns(kvIndexMemoryStream);
 
-            fileSystemService.Setup(fs => fs.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)))
+            fileSystemService.Setup(fs => fs.ReadStream(string.Format(MapConsts.KeyValueStorePathFormat, directory)))
                 .Returns(keyValueStream);
 
-            fileSystemService.Setup(fs => fs.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)))
+            fileSystemService.Setup(fs => fs.ReadStream(string.Format(MapConsts.ElementStorePathFormat, directory)))
                 .Returns(elementStoreStream);
 
             var treeStream = new MemoryStream();
             SpatialIndex.Save(tree, treeStream);
             treeStream = new MemoryStream(treeStream.GetBuffer());
 
-            fileSystemService.Setup(fs => fs.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)))
+            fileSystemService.Setup(fs => fs.ReadStream(string.Format(MapConsts.SpatialIndexPathFormat, directory)))
                 .Returns(treeStream);
 
             return fileSystemService;

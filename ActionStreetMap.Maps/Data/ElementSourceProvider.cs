@@ -124,7 +124,7 @@ namespace ActionStreetMap.Maps.Data
 
         private void SearchAndReadMapIndexHeaders(string folder)
         {
-            _fileSystemService.GetFiles(folder, Consts.HeaderFileName).ToList()
+            _fileSystemService.GetFiles(folder, MapConsts.HeaderFileName).ToList()
                 .ForEach(ReadMapIndexHeader);
 
             _fileSystemService.GetDirectories(folder, "*").ToList()

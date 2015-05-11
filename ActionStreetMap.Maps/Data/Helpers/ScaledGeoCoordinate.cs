@@ -15,14 +15,14 @@ namespace ActionStreetMap.Maps.Data.Helpers
 
         public ScaledGeoCoordinate(GeoCoordinate coordinate)
         {
-            Latitude = (int)(coordinate.Latitude * Consts.ScaleFactor);
-            Longitude = (int)(coordinate.Longitude * Consts.ScaleFactor);
+            Latitude = (int)(coordinate.Latitude * MapConsts.ScaleFactor);
+            Longitude = (int)(coordinate.Longitude * MapConsts.ScaleFactor);
         }
 
         public GeoCoordinate Unscale()
         {
-            double latitude = ((double)Latitude) / Consts.ScaleFactor;
-            double longitude = ((double)Longitude) / Consts.ScaleFactor;
+            double latitude = ((double)Latitude) / MapConsts.ScaleFactor;
+            double longitude = ((double)Longitude) / MapConsts.ScaleFactor;
             return new GeoCoordinate(latitude, longitude);
         }
     }

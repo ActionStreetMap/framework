@@ -29,9 +29,9 @@ namespace ActionStreetMap.Tests.Maps.Index
             pathResolver.Setup(p => p.Resolve(It.IsAny<string>())).Returns<string>(s => s);
             var stream = new MemoryStream(Encoding.UTF8.GetBytes("52.0,13.0 52.4,13.4"));
 
-            fileSystemService.Setup(fs => fs.GetFiles(It.IsAny<string>(), Consts.HeaderFileName))
-                .Returns(new[] { directory + @"\" + Consts.HeaderFileName });
-            fileSystemService.Setup(fs => fs.ReadStream(directory + @"\" + Consts.HeaderFileName))
+            fileSystemService.Setup(fs => fs.GetFiles(It.IsAny<string>(), MapConsts.HeaderFileName))
+                .Returns(new[] { directory + @"\" + MapConsts.HeaderFileName });
+            fileSystemService.Setup(fs => fs.ReadStream(directory + @"\" + MapConsts.HeaderFileName))
                 .Returns(stream);
 
             var provider = new ElementSourceProvider(pathResolver.Object, fileSystemService.Object, new ObjectPool());

@@ -83,13 +83,14 @@ namespace ActionStreetMap.Explorer.Commands
         }
 
         /// <summary> Gets elements for specific tag. </summary>
-        internal IObservable<Element> GetElementsByText(string text, float radius, string type = null)
+        internal IObservable<Element> GetElementsByText(string text, float radius, 
+            string type = null, int zoomLevel = CoreConsts.MaxZoomLevel)
         {
             var currentPosition = _geoPositionObserver.Current;
             var side = radius*2;
             var boundingBox = BoundingBox.CreateBoundingBox(currentPosition, side, side);
             return _searchEngine
-                .SearchByText(text, boundingBox)
+                .SearchByText(text, boundingBox, zoomLevel)
                 .Where(e => IsElementMatch(type, e));
         }
 

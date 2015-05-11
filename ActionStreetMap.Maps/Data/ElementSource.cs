@@ -12,8 +12,8 @@ namespace ActionStreetMap.Maps.Data
     /// <summary> Represents an abstract source of Element objects. </summary>
     public interface IElementSource : IDisposable
     {
-        /// <summary> Returns elements which are located in the corresponding bbox. </summary>
-        IObservable<Element> Get(BoundingBox bbox);
+        /// <summary> Returns elements which are located in the corresponding bbox for given zoom level. </summary>
+        IObservable<Element> Get(BoundingBox bbox, int zoomLevel);
     }
 
     /// <summary> ASM's spatial index based element store implementation. </summary>
@@ -35,11 +35,11 @@ namespace ActionStreetMap.Maps.Data
         internal ElementSource(string directory, IFileSystemService fileService, IObjectPool objectPool)
         {
             // load map data from streams
-            KvUsage = new KeyValueUsage(fileService.ReadStream(string.Format(Consts.KeyValueUsagePathFormat, directory)));
-            KvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(Consts.KeyValueIndexPathFormat, directory)));
-            KvStore = new KeyValueStore(KvIndex, KvUsage, fileService.ReadStream(string.Format(Consts.KeyValueStorePathFormat, directory)));
-            ElementStore = new ElementStore(KvStore, fileService.ReadStream(string.Format(Consts.ElementStorePathFormat, directory)), objectPool);
-            SpatialIndexTree = SpatialIndex.Load(fileService.ReadStream(string.Format(Consts.SpatialIndexPathFormat, directory)));
+            KvUsage = new KeyValueUsage(fileService.ReadStream(string.Format(MapConsts.KeyValueUsagePathFormat, directory)));
+            KvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(MapConsts.KeyValueIndexPathFormat, directory)));
+            KvStore = new KeyValueStore(KvIndex, KvUsage, fileService.ReadStream(string.Format(MapConsts.KeyValueStorePathFormat, directory)));
+            ElementStore = new ElementStore(KvStore, fileService.ReadStream(string.Format(MapConsts.ElementStorePathFormat, directory)), objectPool);
+            SpatialIndexTree = SpatialIndex.Load(fileService.ReadStream(string.Format(MapConsts.SpatialIndexPathFormat, directory)));
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace ActionStreetMap.Maps.Data
         }
 
         /// <inheritdoc />
-        public IObservable<Element> Get(BoundingBox bbox)
+        public IObservable<Element> Get(BoundingBox bbox, int zoomLevel)
         {
             return SpatialIndexTree.Search(bbox)
                 .ObserveOn(Scheduler.CurrentThread)

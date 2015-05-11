@@ -36,8 +36,11 @@ namespace ActionStreetMap.Maps
         /// <inheritdoc />
         public IObservable<Unit> Load(Tile tile)
         {
+            var boundingBox = tile.BoundingBox;
+            var zoomLevel = tile.ZoomLevel;
+            
             var filterElementVisitor = new FilterElementVisitor(
-                tile.BoundingBox,
+                boundingBox,
                 new NodeVisitor(tile, _modelLoader, _objectPool),
                 new WayVisitor(tile, _modelLoader, _objectPool),
                 new RelationVisitor(tile, _modelLoader, _objectPool));
@@ -52,8 +55,8 @@ namespace ActionStreetMap.Maps
             tile.Accept(tile, _modelLoader);
 
             var result = new Subject<Unit>();
-            _elementSourceProvider.Get(tile.BoundingBox).Subscribe(elementSource => 
-                elementSource.Get(tile.BoundingBox)
+            _elementSourceProvider.Get(tile.BoundingBox).Subscribe(elementSource =>
+                elementSource.Get(boundingBox, zoomLevel)
                 .ObserveOn(Scheduler.ThreadPool)
                 .Do(element => element.Accept(filterElementVisitor),
                     () =>
