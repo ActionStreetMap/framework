@@ -6,21 +6,27 @@ using ActionStreetMap.Maps.Helpers;
 
 namespace ActionStreetMap.Maps.Data.Spatial
 {
-    /// <summary>
-    ///     Represents readonly spatial index.
-    /// </summary>
+    /// <summary> Represents readonly spatial index. </summary>
     internal class SpatialIndex : ISpatialIndex<uint>
     {
         private const uint Marker = uint.MaxValue;
 
         private readonly SpatialIndexNode _root;
 
+        /// <summary> Creates <see cref="SpatialIndex"/>. </summary>
         public SpatialIndex(SpatialIndexNode root)
 	    {
 	        _root = root;
 	    }
 
+        /// <inheritdoc />
         public IObservable<uint> Search(BoundingBox query)
+        {
+            return Search(query, CoreConsts.MaxZoomLevel);
+        }
+
+        /// <inheritdoc />
+        public IObservable<uint> Search(BoundingBox query, int zoomLevel)
         {
             return Search(new Envelop(query.MinPoint, query.MaxPoint));
         }
