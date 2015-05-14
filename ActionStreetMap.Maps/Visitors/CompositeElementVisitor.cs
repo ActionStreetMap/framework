@@ -1,21 +1,17 @@
-﻿using System;
-using ActionStreetMap.Core;
-using ActionStreetMap.Maps.Entities;
+﻿using ActionStreetMap.Maps.Entities;
 
 namespace ActionStreetMap.Maps.Visitors
 {
-    /// <summary> Filters elements. </summary>
-    internal class FilterElementVisitor : IElementVisitor
+    /// <summary> Delegates element processing to the corresponding visitor. </summary>
+    internal class CompositeElementVisitor : IElementVisitor
     {
-        private readonly BoundingBox _boundingBox;
         private readonly IElementVisitor _nodeVisitor;
         private readonly IElementVisitor _wayVisitor;
         private readonly IElementVisitor _relationVisitor;
 
-        public FilterElementVisitor(BoundingBox boundingBox, IElementVisitor nodeVisitor, 
+        public CompositeElementVisitor(IElementVisitor nodeVisitor, 
             IElementVisitor wayVisitor, IElementVisitor relationVisitor)
         {
-            _boundingBox = boundingBox;
             _nodeVisitor = nodeVisitor;
             _wayVisitor = wayVisitor;
             _relationVisitor = relationVisitor;

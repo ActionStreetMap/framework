@@ -90,7 +90,7 @@
     <Compile Include="Visitors\NodeVisitor.cs" />
     <Compile Include="Visitors\RelationVisitor.cs" />
     <Compile Include="Visitors\WayVisitor.cs" />
-    <Compile Include="Visitors\FilterElementVisitor.cs" />
+    <Compile Include="Visitors\CompositeElementVisitor.cs" />
     <Compile Include="Visitors\IElementVisitor.cs" />
     <Compile Include="Formats\Pbf\fileformat.generated.cs" />
     <Compile Include="Formats\Pbf\osmformat.generated.cs" />

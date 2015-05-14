@@ -39,8 +39,7 @@ namespace ActionStreetMap.Maps
             var boundingBox = tile.BoundingBox;
             var zoomLevel = tile.ZoomLevel;
             
-            var filterElementVisitor = new FilterElementVisitor(
-                boundingBox,
+            var filterElementVisitor = new CompositeElementVisitor(
                 new NodeVisitor(tile, _modelLoader, _objectPool),
                 new WayVisitor(tile, _modelLoader, _objectPool),
                 new RelationVisitor(tile, _modelLoader, _objectPool));
