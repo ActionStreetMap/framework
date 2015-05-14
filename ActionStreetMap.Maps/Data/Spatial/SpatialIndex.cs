@@ -2,6 +2,7 @@
 using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Maps.Helpers;
 
 namespace ActionStreetMap.Maps.Data.Spatial
@@ -28,11 +29,12 @@ namespace ActionStreetMap.Maps.Data.Spatial
         /// <inheritdoc />
         public IObservable<uint> Search(BoundingBox query, int zoomLevel)
         {
-            return Search(new Envelop(query.MinPoint, query.MaxPoint));
+            return Search(new Envelop(query.MinPoint, query.MaxPoint), zoomLevel);
         }
 
-        private IObservable<uint> Search(IEnvelop envelope)
+        private IObservable<uint> Search(IEnvelop envelope, int zoomLevel)
         {
+            var minMargin = ZoomHelper.GetMinMargin(zoomLevel);
             return Observable.Create<uint>(observer =>
             {
                 var node = _root;
@@ -50,12 +52,13 @@ namespace ActionStreetMap.Maps.Data.Spatial
                     {
                         foreach (var child in node.Children)
                         {
-                            if (envelope.Intersects(child.Envelope))
+                            var childEnvelope = child.Envelope;
+                            if (envelope.Intersects(childEnvelope))
                             {
-                                if (node.IsLeaf)
+                                if (node.IsLeaf && childEnvelope.Margin >= minMargin)
                                     observer.OnNext(child.Data);
-                                else if (envelope.Contains(child.Envelope))
-                                    Collect(child, observer);
+                                else if (envelope.Contains(childEnvelope))
+                                    Collect(child, minMargin, observer);
                                 else
                                     nodesToSearch.Push(child);
                             }
@@ -68,7 +71,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
             });
         }
 
-        private static void Collect(SpatialIndexNode node, IObserver<uint> observer)
+        private static void Collect(SpatialIndexNode node, long minMargin, IObserver<uint> observer)
         {
             var nodesToSearch = new Stack<SpatialIndexNode>();
             while (node.Envelope != null)
@@ -77,7 +80,8 @@ namespace ActionStreetMap.Maps.Data.Spatial
                 {
                     if (node.IsLeaf)
                         foreach(var child in node.Children)
-                            observer.OnNext(child.Data);
+                            if (child.Envelope.Margin >= minMargin)
+                                observer.OnNext(child.Data);
                     else
                         foreach (var n in node.Children)
                             nodesToSearch.Push(n);

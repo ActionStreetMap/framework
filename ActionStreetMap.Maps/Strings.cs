@@ -9,5 +9,7 @@
 
         public static string LoadElevationFrom = "Load elevation from {0}..";
         public static string IndexBuildInMs = "Index is build in {0}ms";
+
+        public static string InvalidZoomLevel = "Invalid zoom level.";
     }
 }
