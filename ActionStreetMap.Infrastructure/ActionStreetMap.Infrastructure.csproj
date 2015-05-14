@@ -83,6 +83,7 @@
     <Compile Include="Diagnostic\ITrace.cs" />
     <Compile Include="Formats\Json\SimpleJSON.cs" />
     <Compile Include="Primitives\DoubleKeyDictionary.cs" />
+    <Compile Include="Primitives\Range.cs" />
     <Compile Include="Primitives\SafeDictionary.cs" />
     <Compile Include="Primitives\SafeHashSet.cs" />
     <Compile Include="IO\Compression\CompressionUtils.cs" />

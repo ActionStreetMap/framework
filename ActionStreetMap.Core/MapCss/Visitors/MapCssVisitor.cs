@@ -27,7 +27,7 @@ namespace ActionStreetMap.Core.MapCss.Visitors
             var stylesheet = new Stylesheet();
             foreach (CommonTree child in tree.Children)
             {
-                if (child.Text == "RULE")
+                if (child.Text == MapCssStrings.Rule)
                 {
                     var style = VisitStyle(child);
                     stylesheet.AddStyle(style);
@@ -47,13 +47,13 @@ namespace ActionStreetMap.Core.MapCss.Visitors
                 if (tree == null)
                     throw new MapCssFormatException(Strings.StyleVisitNullTree);
 
-                if (tree.Text == "SIMPLE_SELECTOR")
+                if (tree.Text == MapCssStrings.SimpleSelector)
                 {
                     var selectorType = (tree.Children[0] as CommonTree).Text;
 
                     // NOTE canvas is special case: it doesn't have selectors
                     // but we want to use it later to be consistent
-                    if (selectorType != "canvas")
+                    if (selectorType != MapCssStrings.CanvasSelector)
                     {
                         int selectorIdx = 1;
                         var selectors = new List<Selector>();
@@ -80,11 +80,12 @@ namespace ActionStreetMap.Core.MapCss.Visitors
                     if (tree.Text == "{")
                     {
                         int declarationSelectorIdx = 0;
-                        while (tree.ChildCount > declarationSelectorIdx && tree.Children[declarationSelectorIdx].Text == "DECLARATION")
+                        while (tree.ChildCount > declarationSelectorIdx &&
+                            tree.Children[declarationSelectorIdx].Text == MapCssStrings.Declaration)
                         {
                             var declarationTree = tree.Children[declarationSelectorIdx] as CommonTree;
                             var declaration = VisitDeclaration(declarationTree);
-                            if (declaration.Value == "VALUE_LIST")
+                            if (declaration.Value == MapCssStrings.ValueListDeclaration)
                             {
                                 ListDeclaration listDeclaration;
                                 if (style.Declarations.ContainsKey(declaration.Qualifier))

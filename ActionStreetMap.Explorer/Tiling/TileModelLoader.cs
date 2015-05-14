@@ -91,8 +91,8 @@ namespace ActionStreetMap.Explorer.Tiling
 
         private void LoadModel(Tile tile, Model model, Func<Rule, IModelBuilder, IGameObject> func)
         {
-            var rule = _stylesheet.GetModelRule(model);
-            if (ShouldUseBuilder(tile, rule, model))
+            var rule = _stylesheet.GetModelRule(model, tile.ZoomLevel);
+            if (rule.IsApplicable && ShouldUseBuilder(tile, rule, model))
             {
                 var modelBuilder = rule.GetModelBuilder(_builders);
                 if (modelBuilder != null)
@@ -119,9 +119,6 @@ namespace ActionStreetMap.Explorer.Tiling
 
         private bool ShouldUseBuilder(Tile tile, Rule rule, Model model)
         {
-            if (!rule.IsApplicable)
-                return false;
-
             if (rule.IsSkipped())
             {
 #if DEBUG

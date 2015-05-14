@@ -12,7 +12,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         private readonly List<Style> _wayStyles = new List<Style>(16);
         private readonly List<Style> _nodeStyles = new List<Style>(64);
 
-        private readonly List<Style>  _combinedStyles = new List<Style>(16);
+        private readonly List<Style> _combinedStyles = new List<Style>(16);
 
         private int _count;
         public int Count { get { return _count; } }
@@ -37,28 +37,28 @@ namespace ActionStreetMap.Core.MapCss.Domain
             _count++;
         }
 
-        public Rule GetMergedRule(Model model)
+        public Rule GetMergedRule(Model model, int zoomLevel)
         {
             var styles = GetModelStyles(model);
             var rule = new Rule(model);
             for (int i = 0; i < styles.Count; i++)
-                MergeDeclarations(styles[i], rule, model);
+                MergeDeclarations(styles[i], rule, model, zoomLevel);
 
             for (int i = 0; i < _combinedStyles.Count; i++)
-                MergeDeclarations(_combinedStyles[i], rule, model);
+                MergeDeclarations(_combinedStyles[i], rule, model, zoomLevel);
 
             return rule;
         }
 
-        public Rule GetCollectedRule(Model model)
+        public Rule GetCollectedRule(Model model, int zoomLevel)
         {
             var styles = GetModelStyles(model);
             var rule = new Rule(model);
             for (int i = 0; i < styles.Count; i++)
-                CollectDeclarations(styles[i], rule, model);
+                CollectDeclarations(styles[i], rule, model, zoomLevel);
 
             for (int i = 0; i < _combinedStyles.Count; i++)
-                CollectDeclarations(_combinedStyles[i], rule, model);
+                CollectDeclarations(_combinedStyles[i], rule, model, zoomLevel);
 
             return rule;
         }
@@ -79,9 +79,9 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
         #region Declaration processing
 
-        private void MergeDeclarations(Style style, Rule rule, Model model)
+        private void MergeDeclarations(Style style, Rule rule, Model model, int zoomLevel)
         {
-            if (!style.IsApplicable(model))
+            if (!style.IsApplicable(model, zoomLevel))
                 return;
 
             // NOTE This can be nicely done by LINQ intesection extension method
@@ -96,9 +96,9 @@ namespace ActionStreetMap.Core.MapCss.Domain
             }
         }
 
-        private void CollectDeclarations(Style style, Rule rule, Model model)
+        private void CollectDeclarations(Style style, Rule rule, Model model, int zoomLevel)
         {
-            if (!style.IsApplicable(model))
+            if (!style.IsApplicable(model, zoomLevel))
                 return;
 
             foreach (var keyValue in style.Declarations)

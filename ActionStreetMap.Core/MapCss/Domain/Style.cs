@@ -24,8 +24,9 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
         /// <summary> Checks whether model is defined in style. </summary>
         /// <param name="model">Model.</param>
+        /// <param name="zoomLevel">Current zoom level.</param>
         /// <returns>True if model is applicable.</returns>
-        public bool IsApplicable(Model model)
+        public bool IsApplicable(Model model, int zoomLevel)
         {
             // NOTE don't use LINQ here as it's performance critical code
             // we want to decrease heap allocations
@@ -34,7 +35,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
                 // Selectors.All(s => s.IsApplicable(model));
                 for (int i = 0; i < Selectors.Count; i++)
                 {
-                    if (!Selectors[i].IsApplicable(model))
+                    if (!Selectors[i].IsApplicable(model, zoomLevel))
                         return false;
                 }
                 return true;
@@ -44,9 +45,9 @@ namespace ActionStreetMap.Core.MapCss.Domain
             for (int i = 0; i < Selectors.Count; i++)
             {
                 var selector = Selectors[i];
-                if (selector.IsClosed && !selector.IsApplicable(model))
+                if (selector.IsClosed && !selector.IsApplicable(model, zoomLevel))
                     return false;
-                if (selector.IsApplicable(model))
+                if (selector.IsApplicable(model, zoomLevel))
                     return true;
             }
 

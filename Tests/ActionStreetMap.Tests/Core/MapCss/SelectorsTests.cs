@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
@@ -134,6 +135,24 @@ namespace ActionStreetMap.Tests.Core.MapCss
             // ACT & ASSERT
             Assert.IsTrue(stylesheet.GetModelRule(closedWay).IsApplicable);
             Assert.IsFalse(stylesheet.GetModelRule(openWay).IsApplicable);
+        }
+
+        [TestCase("z12", 12, 12, 12, true)]
+        [TestCase("z12", 12, 12, 11, false)]
+        [TestCase("z1-12", 1, 12, 5, true)]
+        public void CanUseZoomLevel(string zoomStr, int start, int end, int currentZoomLevel, bool expectedResult)
+        {
+            // ARRANGE
+            var stylesheet = MapCssHelper.GetStylesheetFromContent(
+                String.Format("area|{0}[level>0] {{ z-index: 0.1}}\n", zoomStr));
+
+            var area = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "1" } }.ToTags());
+
+            // ACT
+            var rule = stylesheet.GetModelRule(area, currentZoomLevel);
+
+            // ASSERT
+            Assert.IsTrue(rule.IsApplicable == expectedResult);
         }
     }
 }

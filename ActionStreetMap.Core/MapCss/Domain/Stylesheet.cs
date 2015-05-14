@@ -19,10 +19,11 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
         /// <summary> Gets rule for model. </summary>
         /// <param name="model">Model.</param>
+        /// <param name="zoomLevel">Current zoom level.</param>
         /// <returns>Rule.</returns>
-        public Rule GetModelRule(Model model)
+        public Rule GetModelRule(Model model, int zoomLevel = CoreConsts.MaxZoomLevel)
         {
-            return _styles.GetMergedRule(model);
+            return _styles.GetMergedRule(model, zoomLevel);
         }
 
         /// <summary> Gets Rule for canvas. </summary>
@@ -30,7 +31,8 @@ namespace ActionStreetMap.Core.MapCss.Domain
         /// <returns>Rule.</returns>
         public Rule GetCanvasRule(Canvas canvas)
         {
-            return _styles.GetCollectedRule(canvas);
+            // NOTE zoom level should be ignored for canvas
+            return _styles.GetCollectedRule(canvas, -1);
         }
     }
 }

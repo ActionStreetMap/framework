@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utils;
+using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.MapCss.Domain
 {
@@ -12,6 +11,9 @@ namespace ActionStreetMap.Core.MapCss.Domain
     {
         /// <summary> True if it's used for closed polygon. Applicable only for way. </summary>
         public bool IsClosed { get; set; }
+
+        /// <summary> Zoom level. </summary>
+        public Range<int> Zoom { get; set; }
 
         /// <summary> Gets or sets tag. </summary>
         public string Tag { get; set; }
@@ -24,28 +26,33 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
         /// <summary> Checks whether model can be used with this selector. </summary>
         /// <param name="model">Model.</param>
+        /// <param name="zoomLevel">Current zoom level.</param>
         /// <returns> True if model can be used with this selector.</returns>
-        public abstract bool IsApplicable(Model model);
+        public abstract bool IsApplicable(Model model, int zoomLevel);
 
         /// <summary> Checks model. </summary>
         /// <typeparam name="T">Type of model.</typeparam>
         /// <param name="model">Model.</param>
+        /// <param name="zoomLevel">Current zoom level.</param>
         /// <returns>True if model can be used.</returns>
-        protected bool CheckModel<T>(Model model) where T: Model
+        protected bool CheckModel<T>(Model model, int zoomLevel) where T : Model
         {
             if (!(model is T))
                 return false;
 
-            return MatchTags(model);
+            return MatchTags(model, zoomLevel);
         }
 
         /// <summary> Matches tags of given model. </summary>
         /// <param name="model">Model.</param>
+        /// <param name="zoomLevel">Current zoom level.</param>
         /// <returns>True if model is matched.</returns>
-        protected bool MatchTags(Model model)
+        protected bool MatchTags(Model model, int zoomLevel)
         {
             switch (Operation)
             {
+                case MapCssStrings.OperationZoom:
+                    return Zoom.Contains(zoomLevel);
                 case MapCssStrings.OperationExist:
                     return model.Tags.ContainsKey(Tag);
                 case MapCssStrings.OperationNotExist:
@@ -59,7 +66,8 @@ namespace ActionStreetMap.Core.MapCss.Domain
                 case MapCssStrings.OperationGreater:
                     return model.Tags.IsGreater(Tag, Value);
                 default:
-                    throw new MapCssFormatException(String.Format("Unsupported selector operation: {0}", Operation));
+                    throw new MapCssFormatException(
+                        String.Format(Strings.MapCssUnsupportedSelectorOperation, Operation));
             }
         }
     }
@@ -70,19 +78,19 @@ namespace ActionStreetMap.Core.MapCss.Domain
     internal class NodeSelector : Selector
     {
         /// <inheritdoc />
-        public override bool IsApplicable(Model model)
+        public override bool IsApplicable(Model model, int zoomLevel)
         {
-            return CheckModel<Node>(model);
+            return CheckModel<Node>(model, zoomLevel);
         }
     }
 
-    /// <summary>  Selector for Area. </summary>
+    /// <summary> Selector for Area. </summary>
     internal class AreaSelector : Selector
     {
         /// <inheritdoc />
-        public override bool IsApplicable(Model model)
+        public override bool IsApplicable(Model model, int zoomLevel)
         {
-            return CheckModel<Area>(model);
+            return CheckModel<Area>(model, zoomLevel);
         }
     }
 
@@ -90,9 +98,9 @@ namespace ActionStreetMap.Core.MapCss.Domain
     internal class WaySelector : Selector
     {
         /// <inheritdoc />
-        public override bool IsApplicable(Model model)
+        public override bool IsApplicable(Model model, int zoomLevel)
         {
-            return IsClosed ? model.IsClosed: CheckModel<Way>(model);
+            return IsClosed ? model.IsClosed : CheckModel<Way>(model, zoomLevel);
         }
     }
 
@@ -100,7 +108,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
     internal class CanvasSelector : Selector
     {
         /// <inheritdoc />
-        public override bool IsApplicable(Model model)
+        public override bool IsApplicable(Model model, int zoomLevel)
         {
             return model is Canvas;
         }
@@ -119,11 +127,11 @@ namespace ActionStreetMap.Core.MapCss.Domain
         }
 
         /// <inheritdoc />
-        public override bool IsApplicable(Model model)
+        public override bool IsApplicable(Model model, int zoomLevel)
         {
             // just the same as _selectors.All(s => s.IsApplicable(model));
             foreach (var selector in _selectors)
-                if (!selector.IsApplicable(model))
+                if (!selector.IsApplicable(model, zoomLevel))
                     return false;
 
             return true;
