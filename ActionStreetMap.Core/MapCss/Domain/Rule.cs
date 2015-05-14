@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.MapCss.Domain
 {
-    /// <summary>  Represents MapCSS rule for certain model. </summary>
+    /// <summary> Represents MapCSS rule for certain model. </summary>
     public class Rule
     {
         private readonly Model _model;
@@ -43,7 +43,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
             return (T) Convert.ChangeType(declaration.Value, typeof (T));
         }
 
-        /// <summary> Evaluates  value for gived qualifier. </summary>
+        /// <summary> Evaluates value for gived qualifier. </summary>
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
         /// <returns>Evaluated value</returns>

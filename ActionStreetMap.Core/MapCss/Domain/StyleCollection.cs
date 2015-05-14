@@ -23,11 +23,11 @@ namespace ActionStreetMap.Core.MapCss.Domain
             // lookup performance. However, there are two limitations:
             // 1. style order is resorted by type
             // 2. Combined styles (logical AND variations) in new collection now and will be processed last
-            if (style.Selectors.All(s => s is NodeSelector))
+            if (IsZoomTypeStyle<NodeSelector>(style))
                 _nodeStyles.Add(style);
-            else if (style.Selectors.All(s => s is AreaSelector))
+            else if (IsZoomTypeStyle<AreaSelector>(style))
                 _areaStyles.Add(style);
-            else if (style.Selectors.All(s => s is WaySelector))
+            else if (IsZoomTypeStyle<WaySelector>(style))
                 _wayStyles.Add(style);
             else if (style.Selectors.All(s => s is CanvasSelector))
                 _canvasStyles.Add(style);
@@ -35,6 +35,18 @@ namespace ActionStreetMap.Core.MapCss.Domain
                 _combinedStyles.Add(style);
 
             _count++;
+        }
+
+        private bool IsZoomTypeStyle<T>(Style style)
+        {
+            var andSelector = style.Selectors[0] as AndSelector;
+            if (andSelector == null)
+                return style.Selectors.All(s => s is T);
+
+            if (andSelector.Selectors[0].Operation != MapCssStrings.OperationZoom)
+                return false;
+
+            return andSelector.Selectors.Skip(1).All(s => s is T);
         }
 
         public Rule GetMergedRule(Model model, int zoomLevel)

@@ -355,11 +355,12 @@ namespace ActionStreetMap.Tests.Core.MapCss
         {
             // ARRANGE
             var stylesheet = MapCssHelper
-                .GetStylesheetFromContent(String.Format("node[*] {{ facade: eval(gradient(tag('colour')));}}\n"));
+                .GetStylesheetFromContent(String.Format("node[test] {{ facade: eval(gradient(tag('colour')));}}\n"));
 
             // ACT
             var node = MapCssHelper.GetNode(new Dictionary<string, string>()
                 {
+                    {"test", "yes"},
                     {"colour", "#0fff8f"},
                 }.ToTags());
 
@@ -376,10 +377,10 @@ namespace ActionStreetMap.Tests.Core.MapCss
             // ARRANGE
             const string gradientString = "gradient(#f4f4f4, yellow 10%, green 20%)";
             var stylesheet = MapCssHelper
-                .GetStylesheetFromContent(String.Format("node[*] {{ facade: {0};}}\n", gradientString));
+                .GetStylesheetFromContent(String.Format("node[test] {{ facade: {0};}}\n", gradientString));
 
             // ACT
-            var node = MapCssHelper.GetNode(new Dictionary<string, string>().ToTags());
+            var node = MapCssHelper.GetNode(new Dictionary<string, string>() { { "test", "yes" }, }.ToTags());
 
             // ASSERT
             var rule = stylesheet.GetModelRule(node);
