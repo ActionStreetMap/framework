@@ -4,9 +4,7 @@ using ActionStreetMap.Maps.Entities;
 
 namespace ActionStreetMap.Maps.Visitors
 {
-    /// <summary>
-    ///     Filters elements.
-    /// </summary>
+    /// <summary> Filters elements. </summary>
     internal class FilterElementVisitor : IElementVisitor
     {
         private readonly BoundingBox _boundingBox;
@@ -32,8 +30,7 @@ namespace ActionStreetMap.Maps.Visitors
 
         public void VisitWay(Way way)
         {
-            if (IsWayInside(way)) 
-                _wayVisitor.VisitWay(way);
+            _wayVisitor.VisitWay(way);
         }
 
         public void VisitRelation(Relation relation)
@@ -42,50 +39,5 @@ namespace ActionStreetMap.Maps.Visitors
         }
 
         #endregion
-
-        private bool IsWayInside(Way way)
-        {
-            for (int i = 0; i < way.Coordinates.Count - 1; i++)
-            {
-                if (IsLineIntersectsBoundingBox(way.Coordinates[i], way.Coordinates[i + 1]))
-                    return true;
-            }
-
-            return false;
-        }
-
-        private bool IsLineIntersectsBoundingBox(GeoCoordinate first, GeoCoordinate second)
-        {
-            var x1 = first.Longitude;
-            var y1 = first.Latitude;
-            var x2 = second.Longitude;
-            var y2 = second.Latitude;
-
-            var minX = _boundingBox.MinPoint.Longitude;
-            var minY = _boundingBox.MinPoint.Latitude;
-            var maxX = _boundingBox.MaxPoint.Longitude;
-            var maxY = _boundingBox.MaxPoint.Latitude;
-
-            // Completely outside.
-            if ((x1 <= minX && x2 <= minX) || (y1 <= minY && y2 <= minY) || 
-                (x1 >= maxX && x2 >= maxX) || (y1 >= maxY && y2 >= maxY))
-                return false;
-
-            var m = (y2 - y1) / (x2 - x1);
-
-            var y = m * (minX - x1) + y1;
-            if (y > minY && y < maxY) return true;
-
-            y = m * (maxX - x1) + y1;
-            if (y > minY && y < maxY) return true;
-
-            var x = (minY - y1) / m + x1;
-            if (x > minX && x < maxX) return true;
-
-            x = (maxY - y1) / m + x1;
-            if (x > minX && x < maxX) return true;
-
-            return false;
-        }
     }
 }
