@@ -7,8 +7,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
     /// <summary>  Represents MapCSS rule for certain model. </summary>
     public class Rule
     {
-        private Model _model;
-        internal Model Model { set { _model = value; } }
+        private readonly Model _model;
 
         /// <summary> List of declarations. </summary>
         public Dictionary<string, Declaration> Declarations { get; set; }
