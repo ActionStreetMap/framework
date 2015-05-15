@@ -125,13 +125,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             meshData.Index = new TerrainMeshIndex(16, 16, rect, meshData.Triangles);
 
             // build canvas
-            BuildBackground(rule, meshData, cell.Background);
+            BuildBackground(rule, meshData, cell.Background, renderMode);
             // build extra layers
             BuildWater(rule, meshData, cell.Water, renderMode);
-            BuildCarRoads(rule, meshData, cell.CarRoads);
-            BuildPedestrianLayers(rule, meshData, cell.WalkRoads);
+            BuildCarRoads(rule, meshData, cell.CarRoads, renderMode);
+            BuildPedestrianLayers(rule, meshData, cell.WalkRoads, renderMode);
             foreach (var surfaceRegion in cell.Surfaces)
-                BuildSurface(rule, meshData, surfaceRegion);
+                BuildSurface(rule, meshData, surfaceRegion, renderMode);
 
             Trace.Debug(LogTag, "Total triangles: {0}", meshData.Triangles.Count);
 
@@ -154,7 +154,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             if (meshRegion.Mesh == null) return;
 
-            float colorNoiseFreq = rule.GetWaterLayerColorNoiseFreq();
+            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetWaterLayerColorNoiseFreq() : 0;
             float eleNoiseFreq = rule.GetWaterLayerEleNoiseFreq();
 
             // TODO allocate from pool with some size
@@ -294,13 +294,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Background layer
 
-        protected void BuildBackground(Rule rule, MeshData meshData, MeshRegion meshRegion)
+        protected void BuildBackground(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetBackgroundLayerGradient(_resourceProvider);
 
             float eleNoiseFreq = rule.GetBackgroundLayerEleNoiseFreq();
-            float colorNoiseFreq = rule.GetBackgroundLayerColorNoiseFreq();
+            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetBackgroundLayerColorNoiseFreq() : 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
         }
@@ -309,10 +309,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Car roads layer
 
-        protected void BuildCarRoads(Rule rule, MeshData meshData, MeshRegion meshRegion)
+        protected void BuildCarRoads(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             float eleNoiseFreq = rule.GetCarLayerEleNoiseFreq();
-            float colorNoiseFreq = rule.GetCarLayerColorNoiseFreq();
+            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetCarLayerColorNoiseFreq(): 0;
 
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetCarLayerGradient(_resourceProvider);
@@ -325,12 +325,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Pedestrian roads layer
 
-        protected void BuildPedestrianLayers(Rule rule, MeshData meshData, MeshRegion meshRegion)
+        protected void BuildPedestrianLayers(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetPedestrianLayerGradient(_resourceProvider);
             float eleNoiseFreq = rule.GetPedestrianLayerEleNoiseFreq();
-            float colorNoiseFreq = rule.GetPedestrianLayerColorNoiseFreq();
+            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetPedestrianLayerColorNoiseFreq() : 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
         }
@@ -339,10 +339,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Surface layer
 
-        protected void BuildSurface(Rule rule, MeshData meshData, MeshRegion meshRegion)
+        protected void BuildSurface(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
-            float colorNoiseFreq = rule.GetColorNoiseFreq();
+            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetColorNoiseFreq() : 0;
             float eleNoiseFreq = rule.GetEleNoiseFreq();
             var gradient = _resourceProvider.GetGradient(meshRegion.GradientKey);
 

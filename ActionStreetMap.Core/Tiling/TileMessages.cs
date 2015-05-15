@@ -46,9 +46,7 @@ namespace ActionStreetMap.Core.Tiling
         public TileLoadFinishMessage(Tile tile) { Tile = tile; }
     }
 
-    /// <summary>
-    ///     Defines "Tile destroy" message
-    /// </summary>
+    /// <summary> Defines "Tile destroy" message. </summary>
     public sealed class TileDestroyMessage
     {
         /// <summary> Gets tile. </summary>

@@ -206,11 +206,13 @@ namespace ActionStreetMap.Core.Tiling
                     int i = Convert.ToInt32(value.X / _tileSize);
                     int j = Convert.ToInt32(value.Y / _tileSize);
 
-                    bool hasTile = _allSceneTiles.ContainsKey(i, j);
+                    var tileCollection = _renderModeEx != OverviewMode ? _allSceneTiles : _allOverviewTiles;
+
+                    bool hasTile = tileCollection.ContainsKey(i, j);
                     if (!hasTile)
                         Create(i, j);
 
-                    var tile = _allSceneTiles[i, j];
+                    var tile = tileCollection[i, j];
                     if (hasTile) 
                         _messageBus.Send(new TileFoundMessage(tile, _currentMapPoint));
 
