@@ -17,8 +17,6 @@ namespace ActionStreetMap.Core.Scene.Terrain
         internal const float DoubleScale = Scale*Scale;
         private float _maximumArea = 4;
 
-        private readonly object _objLock = new object();
-
         #region Public methods
 
         public MeshCell Build(MapRectangle rectangle, MeshCanvas content)
@@ -132,14 +130,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         private Mesh GetMesh(Polygon polygon, RenderMode renderMode, bool conformingDelaunay)
         {
-            lock (_objLock)
-            {
-                return renderMode == RenderMode.Overview ?
-                    polygon.Triangulate() :
-                    polygon.Triangulate(
-                    new ConstraintOptions { ConformingDelaunay = conformingDelaunay },
-                    new QualityOptions { MaximumArea = _maximumArea });
-            }
+            return renderMode == RenderMode.Overview
+                ? (Mesh) polygon.Triangulate()
+                : (Mesh) polygon.Triangulate(
+                    new ConstraintOptions {ConformingDelaunay = conformingDelaunay},
+                    new QualityOptions {MaximumArea = _maximumArea});
         }
 
         private Paths ClipByRectangle(MapRectangle rect, Paths subjects)
