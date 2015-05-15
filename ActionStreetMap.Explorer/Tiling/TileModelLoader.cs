@@ -49,7 +49,8 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void PrepareTile(Tile tile)
         {
-            tile.GameObject = _gameObjectFactory.CreateNew("tile");
+            tile.GameObject = _gameObjectFactory.CreateNew(
+                String.Format("tile_{0}", tile.RenderMode.ToString().ToLower()));
             Scheduler.MainThread.Schedule(() => tile.GameObject.AddComponent(new GameObject()));
         }
 

@@ -33,24 +33,24 @@ namespace ActionStreetMap.Core.Tiling
         private GeoCoordinate _currentPosition;
         private MapPoint _currentMapPoint;
 
-        private readonly MutableTuple<int, int> _currentConcreteTileIndex = new MutableTuple<int, int>(0, 0);
+        private readonly MutableTuple<int, int> _currentSceneTileIndex = new MutableTuple<int, int>(0, 0);
 
         private readonly ITileLoader _tileLoader;
         private readonly IMessageBus _messageBus;
         private readonly ITileActivator _tileActivator;
         private readonly IObjectPool _objectPool;
 
-        private readonly DoubleKeyDictionary<int, int, Tile> _allConcreteTiles = 
-            new DoubleKeyDictionary<int, int, Tile>();
+        private readonly DoubleKeyDictionary<int, int, Tile> _allSceneTiles = new DoubleKeyDictionary<int, int, Tile>();
+        private readonly DoubleKeyDictionary<int, int, Tile> _allOverviewTiles = new DoubleKeyDictionary<int, int, Tile>();
 
         /// <summary> Gets relative null point. </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
-        /// <summary> Gets current tile. </summary>
-        public Tile Current { get { return _allConcreteTiles[_currentConcreteTileIndex.Item1, _currentConcreteTileIndex.Item2]; } }
+        /// <summary> Gets current scene tile. </summary>
+        public Tile Current { get { return _allSceneTiles[_currentSceneTileIndex.Item1, _currentSceneTileIndex.Item2]; } }
 
-        /// <summary> Gets all tile count. </summary>
-        public int Count { get { return _allConcreteTiles.Count(); } }
+        /// <summary> Gets all scene tile count. </summary>
+        public int Count { get { return _allSceneTiles.Count(); } }
 
         /// <summary> Creats <see cref="TileManager"/>. </summary>
         /// <param name="tileLoader">Tile loeader.</param>
@@ -71,22 +71,52 @@ namespace ActionStreetMap.Core.Tiling
 
         private void Create(int i, int j)
         {
-            var tileCenter = new MapPoint(i*_tileSize, j*_tileSize);
+            LoadTile(i, j, RenderMode.Scene);
 
-            var tile = new Tile(RelativeNullPoint, tileCenter, RenderMode.Scene, 
-                new Canvas(_objectPool), _tileSize, _tileSize);
-
-            if (_allConcreteTiles.ContainsKey(i, j))
-                return;
-            _allConcreteTiles.Add(i, j, tile);
-            _messageBus.Send(new TileLoadStartMessage(tileCenter));
-            _tileLoader.Load(tile).Subscribe(_ => {}, () => _messageBus.Send(new TileLoadFinishMessage(tile)));
+            for(int z = j-1; z<=j+1; z++)
+                for (int k = i-1; k <= i+1; k++)
+                {
+                    if (!_allOverviewTiles.ContainsKey(k ,z)) 
+                        LoadTile(k, z, RenderMode.Overview);
+               }
         }
 
-        private void Destroy(int i, int j)
+        private void LoadTile(int i, int j, RenderMode renderMode)
         {
-            var tile = _allConcreteTiles[i, j];
-            _allConcreteTiles.Remove(i, j);
+            if (_allSceneTiles.ContainsKey(i, j))
+                return;
+
+            var tileCenter = new MapPoint(i * _tileSize, j * _tileSize);
+            var tile = new Tile(RelativeNullPoint, tileCenter, renderMode, new Canvas(_objectPool), _tileSize, _tileSize);
+
+            (renderMode == RenderMode.Overview ? _allOverviewTiles : _allSceneTiles).Add(i, j, tile);
+
+            _messageBus.Send(new TileLoadStartMessage(tileCenter));
+            _tileLoader.Load(tile)
+                .Subscribe(_ => { }, () =>
+                {
+                    // should destroy overview tile if we're rendering scene tile on it
+                    if (renderMode == RenderMode.Scene && _allOverviewTiles.ContainsKey(i, j))
+                        Destroy(i, j, RenderMode.Overview);
+
+                    _messageBus.Send(new TileLoadFinishMessage(tile));
+                });
+        }
+
+        private void Destroy(int i, int j, RenderMode renderMode)
+        {
+            Tile tile;
+            if (renderMode == RenderMode.Scene)
+            {
+                tile = _allSceneTiles[i, j];
+                _allSceneTiles.Remove(i, j);
+            }
+            else
+            {
+                tile = _allOverviewTiles[i, j];
+                _allOverviewTiles.Remove(i, j);
+            }
+
             _tileActivator.Destroy(tile);
             _messageBus.Send(new TileDestroyMessage(tile));
         }
@@ -102,24 +132,30 @@ namespace ActionStreetMap.Core.Tiling
 
         private void PreloadNextTile(Tile tile, MapPoint position, int i, int j)
         {
-            // Let's cleanup old tile first to release memory.
-            foreach (var doubleKeyPairValue in _allConcreteTiles.ToList())
-            {
-                var candidateToDie = doubleKeyPairValue.Value;
-                if (candidateToDie.MapCenter.DistanceTo(position) >= _thresholdDistance)
-                    Destroy(doubleKeyPairValue.Key1, doubleKeyPairValue.Key2);
-            }
+            // Let's cleanup old tiles first to release memory.
+            DestroyRemoteTiles(position, RenderMode.Scene);
+            DestroyRemoteTiles(position, RenderMode.Overview);
 
             var index = GetNextTileIndex(tile, position, i, j);
-            if (_allConcreteTiles.ContainsKey(index.Item1, index.Item2))
+            if (_allSceneTiles.ContainsKey(index.Item1, index.Item2))
                 return;
 
             Create(index.Item1, index.Item2);
         }
 
-        /// <summary>
-        ///     Gets next tile index. Also calls deactivate for tile which is adjusted from opposite site
-        /// </summary>
+        private void DestroyRemoteTiles(MapPoint position, RenderMode renderMode)
+        {
+            var collection = renderMode == RenderMode.Scene ? _allSceneTiles : _allOverviewTiles;
+            var threshold = renderMode == RenderMode.Scene ? _thresholdDistance : _thresholdDistance*2;
+            foreach (var doubleKeyPairValue in collection.ToList())
+            {
+                var candidateToDie = doubleKeyPairValue.Value;
+                if (candidateToDie.MapCenter.DistanceTo(position) >= threshold)
+                    Destroy(doubleKeyPairValue.Key1, doubleKeyPairValue.Key2, renderMode);
+            }
+        }
+
+        /// <summary> Gets next tile index. </summary>
         private MutableTuple<int, int> GetNextTileIndex(Tile tile, MapPoint position, int i, int j)
         {
             var rectangle = tile.Rectangle;
@@ -162,19 +198,19 @@ namespace ActionStreetMap.Core.Tiling
                     int i = Convert.ToInt32(value.X / _tileSize);
                     int j = Convert.ToInt32(value.Y / _tileSize);
 
-                    bool hasTile = _allConcreteTiles.ContainsKey(i, j);
+                    bool hasTile = _allSceneTiles.ContainsKey(i, j);
                     if (!hasTile)
                         Create(i, j);
 
-                    var tile = _allConcreteTiles[i, j];
+                    var tile = _allSceneTiles[i, j];
                     if (hasTile) 
                         _messageBus.Send(new TileFoundMessage(tile, _currentMapPoint));
 
                     if (ShouldPreload(tile, value))
                         PreloadNextTile(tile, value, i, j);
 
-                    _currentConcreteTileIndex.Item1 = i;
-                    _currentConcreteTileIndex.Item2 = j;
+                    _currentSceneTileIndex.Item1 = i;
+                    _currentSceneTileIndex.Item2 = j;
                 }
             }
         }
