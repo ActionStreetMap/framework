@@ -38,7 +38,7 @@ namespace ActionStreetMap.Maps
         public IObservable<Unit> Load(Tile tile)
         {
             var boundingBox = tile.BoundingBox;
-            var zoomLevel = ZoomHelper.GetZoomLevel(tile.Mode);
+            var zoomLevel = ZoomHelper.GetZoomLevel(tile.RenderMode);
             
             var filterElementVisitor = new CompositeElementVisitor(
                 new NodeVisitor(tile, _modelLoader, _objectPool),

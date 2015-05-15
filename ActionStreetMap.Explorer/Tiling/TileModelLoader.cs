@@ -91,7 +91,7 @@ namespace ActionStreetMap.Explorer.Tiling
 
         private void LoadModel(Tile tile, Model model, Func<Rule, IModelBuilder, IGameObject> func)
         {
-            var zoomLevel = ZoomHelper.GetZoomLevel(tile.Mode);
+            var zoomLevel = ZoomHelper.GetZoomLevel(tile.RenderMode);
             var rule = _stylesheet.GetModelRule(model, zoomLevel);
             if (rule.IsApplicable && ShouldUseBuilder(tile, rule, model))
             {

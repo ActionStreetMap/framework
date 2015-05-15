@@ -7,8 +7,9 @@ namespace ActionStreetMap.Core.Tiling
     ///    Provides the way to register and unregister world specific objects (e.g. buildings, roads, etc.) 
     ///     in tile.
     /// </summary>
-    public class TileRegistry : IDisposable
+    internal class TileRegistry : IDisposable
     {
+        private readonly RenderMode _renderMode;
         // so far, we store only Ids
         private readonly SafeHashSet<long> _localIds;
 
@@ -18,8 +19,9 @@ namespace ActionStreetMap.Core.Tiling
         private static readonly SafeHashSet<long> GlobalIds = new SafeHashSet<long>();
 
         /// <summary> Creates ModelRegistry using global registered id hashset. </summary>
-        internal TileRegistry()
+        internal TileRegistry(RenderMode renderMode)
         {
+            _renderMode = renderMode;
             _localIds = new SafeHashSet<long>();
         }
 
@@ -28,7 +30,8 @@ namespace ActionStreetMap.Core.Tiling
         /// <summary> Registers model id. </summary>
         public void Register(long id)
         {
-            _localIds.TryAdd(id);
+            if (_renderMode == RenderMode.Scene)
+                _localIds.TryAdd(id);
         }
 
         /// <summary>
@@ -37,8 +40,11 @@ namespace ActionStreetMap.Core.Tiling
         /// <param name="id">Id.</param>
         public void RegisterGlobal(long id)
         {
-            _localIds.TryAdd(id);
-            GlobalIds.TryAdd(id);
+            if (_renderMode == RenderMode.Scene)
+            {
+                _localIds.TryAdd(id);
+                GlobalIds.TryAdd(id);
+            }
         }
 
         #endregion

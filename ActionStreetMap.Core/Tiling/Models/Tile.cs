@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public MapPoint MapCenter { get; private set; }
 
         /// <summary> Render mode. </summary>
-        public RenderMode Mode { get; private set; }
+        public RenderMode RenderMode { get; private set; }
 
         /// <summary> Gets width in meters. </summary>
         public float Width { get; private set; }
@@ -31,7 +31,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public IGameObject GameObject { get; set; }
 
         /// <summary> Gets ModelRegistry of given tile. </summary>
-        public TileRegistry Registry { get; private set; }
+        internal TileRegistry Registry { get; private set; }
 
         /// <summary> Gets map rectangle. </summary>
         public MapRectangle Rectangle { get; private set; }
@@ -42,16 +42,16 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Creates tile. </summary>
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="mapCenter">Center of map.</param>
-        /// <param name="mode">Render mode.</param>
+        /// <param name="renderMode">Render mode.</param>
         /// <param name="canvas">Map canvas.</param>
         /// <param name="width">Tile width in meters.</param>
         /// <param name="height">Tile height in meters.</param>
-        public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, RenderMode mode, 
+        public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, RenderMode renderMode, 
             Canvas canvas, float width, float height)
         {
             RelativeNullPoint = relativeNullPoint;
             MapCenter = mapCenter;
-            Mode = mode;
+            RenderMode = renderMode;
             Canvas = canvas;
 
             Width = width;
@@ -62,7 +62,7 @@ namespace ActionStreetMap.Core.Tiling.Models
 
             Rectangle = new MapRectangle(MapCenter.X - width / 2, MapCenter.Y - height / 2, width, height);
 
-            Registry = new TileRegistry();
+            Registry = new TileRegistry(renderMode);
         }
 
         /// <summary> Checks whether absolute position locates in tile with bound offset. </summary>
