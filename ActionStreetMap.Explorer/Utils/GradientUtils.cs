@@ -44,7 +44,7 @@ namespace ActionStreetMap.Explorer.Utils
 
         public static Color GetColor(GradientWrapper gradientWrapper, Vector3 point, float freq)
         {
-            var value = Math.Abs(freq) > 0.0001 ? (Noise.Perlin3D(point, freq) + 1f) / 2f : 0;
+            var value = Math.Abs(freq) > 0.0001 ? (Noise.Perlin3D(point, freq) + 1f) / 2f : 0.5f;
             return gradientWrapper.Evaluate(value);
         }
 
