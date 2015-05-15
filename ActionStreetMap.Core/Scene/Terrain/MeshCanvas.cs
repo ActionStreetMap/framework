@@ -7,6 +7,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCanvas
     {
+        public RenderMode RenderMode;
         public MapRectangle Rect;
 
         public Region Background;

@@ -23,12 +23,13 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         public MeshCell Build(MapRectangle rectangle, MeshCanvas content)
         {
+            var renderMode = content.RenderMode;
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(rectangle, content.Water, false, true);
-            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, false);
-            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, true);
-            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, false);
-            var background = CreateMeshRegions(rectangle, content.Background, false);
+            var water = CreateMeshRegions(rectangle, content.Water, renderMode, false, true);
+            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, renderMode, false);
+            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, renderMode, true);
+            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, renderMode, false);
+            var background = CreateMeshRegions(rectangle, content.Background, renderMode, false);
 
             return new MeshCell
             {
@@ -48,15 +49,16 @@ namespace ActionStreetMap.Core.Scene.Terrain
         #endregion
 
         private List<MeshRegion> CreateMeshRegions(MapRectangle rectangle, List<MeshCanvas.Region> regionDatas,
-            bool conformingDelaunay)
+            RenderMode renderMode, bool conformingDelaunay)
         {
             var meshRegions = new List<MeshRegion>();
             foreach (var regionData in regionDatas)
-                meshRegions.Add(CreateMeshRegions(rectangle, regionData, conformingDelaunay));
+                meshRegions.Add(CreateMeshRegions(rectangle, regionData, renderMode, conformingDelaunay));
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(MapRectangle rectangle, MeshCanvas.Region region, bool conformingDelaunay, bool useContours = false)
+        private MeshRegion CreateMeshRegions(MapRectangle rectangle, MeshCanvas.Region region, RenderMode renderMode,
+            bool conformingDelaunay, bool useContours = false)
         {
             var polygon = new Polygon();
             var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
@@ -81,7 +83,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     contours.AddRange(contour);
                 }
             }
-            var mesh = polygon.Points.Any() ? GetMesh(polygon, conformingDelaunay) : null;
+            var mesh = polygon.Points.Any() ? GetMesh(polygon, renderMode, conformingDelaunay) : null;
             return new MeshRegion
             {
                 GradientKey = region.GradientKey,
@@ -128,18 +130,15 @@ namespace ActionStreetMap.Core.Scene.Terrain
         }
 
 
-        private Mesh GetMesh(Polygon polygon, bool conformingDelaunay)
+        private Mesh GetMesh(Polygon polygon, RenderMode renderMode, bool conformingDelaunay)
         {
             lock (_objLock)
             {
-                return polygon.Triangulate(new ConstraintOptions
-                {
-                    ConformingDelaunay = conformingDelaunay
-                },
-                new QualityOptions
-                {
-                    MaximumArea = _maximumArea
-                });
+                return renderMode == RenderMode.Overview ?
+                    polygon.Triangulate() :
+                    polygon.Triangulate(
+                    new ConstraintOptions { ConformingDelaunay = conformingDelaunay },
+                    new QualityOptions { MaximumArea = _maximumArea });
             }
         }
 

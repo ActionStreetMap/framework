@@ -23,6 +23,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 using Mesh = UnityEngine.Mesh;
+using RenderMode = ActionStreetMap.Core.RenderMode;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain
 {
@@ -65,11 +66,16 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
+            var renderMode = tile.RenderMode;
             var terrainObject = _gameObjectFactory.CreateNew("terrain", tile.GameObject);
 
-            // detect grid parameters
-            var cellRowCount = (int) Math.Ceiling(tile.Height/_maxCellSize);
-            var cellColumnCount = (int) Math.Ceiling(tile.Width/_maxCellSize);
+            // NOTE detect grid parameters for scene mode. For overview use 1x1 grid
+            var cellRowCount = renderMode == RenderMode.Scene ?
+                (int) Math.Ceiling(tile.Height/_maxCellSize) : 1;
+
+            var cellColumnCount = renderMode == RenderMode.Scene ?
+                (int) Math.Ceiling(tile.Width/_maxCellSize) : 1;
+
             var cellHeight = tile.Height/cellRowCount;
             var cellWidth = tile.Width/cellColumnCount;
 
@@ -77,7 +83,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var meshCanvas = new MeshCanvasBuilder()
                 .SetTile(tile)
                 .SetScale(MeshCellBuilder.Scale)
-                .Build();
+                .Build(renderMode);
 
             Trace.Debug(LogTag, "Building mesh cells..");
             var tasks = new List<IObservable<Unit>>(cellRowCount*cellColumnCount);

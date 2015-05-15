@@ -42,7 +42,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return this;
         }
 
-        public MeshCanvas Build()
+        public MeshCanvas Build(RenderMode mode)
         {
             CheckState();
 
@@ -53,6 +53,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
             return new MeshCanvas
             {
+                RenderMode = mode,
                 Rect = _tileRect,
                 Background = _background,
                 Water = _water,
