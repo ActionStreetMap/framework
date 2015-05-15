@@ -10,6 +10,7 @@ using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 using Mesh = ActionStreetMap.Core.Geometry.Triangle.Mesh;
+using RenderMode = ActionStreetMap.Core.RenderMode;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -27,7 +28,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var parent = tile.GameObject;
             Action<Mesh> fillAction = null;
-            if (rule.IsForest())
+            if (rule.IsForest() && tile.RenderMode == RenderMode.Scene)
                 fillAction = mesh => CreateForest(parent, rule, mesh);
 
             tile.Canvas.AddSurface(new Surface()

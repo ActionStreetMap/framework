@@ -100,7 +100,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     tasks.Add(Observable.Start(() =>
                     {
                         var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                        BuildCell(rule, terrainObject, cell, rectangle, name);
+                        BuildCell(rule, terrainObject, cell, rectangle, renderMode, name);
                     }));
                 }
 
@@ -112,7 +112,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             return terrainObject;
         }
 
-        private void BuildCell(Rule rule, IGameObject terrainObject, MeshCell cell, MapRectangle cellRect, string name)
+        private void BuildCell(Rule rule, IGameObject terrainObject, MeshCell cell, MapRectangle cellRect, 
+            RenderMode renderMode, string name)
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
@@ -126,7 +127,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             // build canvas
             BuildBackground(rule, meshData, cell.Background);
             // build extra layers
-            BuildWater(rule, meshData, cell.Water);
+            BuildWater(rule, meshData, cell.Water, renderMode);
             BuildCarRoads(rule, meshData, cell.CarRoads);
             BuildPedestrianLayers(rule, meshData, cell.WalkRoads);
             foreach (var surfaceRegion in cell.Surfaces)
@@ -149,7 +150,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Water layer
 
-        protected void BuildWater(Rule rule, MeshData meshData, MeshRegion meshRegion)
+        protected void BuildWater(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
 
@@ -168,11 +169,22 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var waterBottomLevelOffset = rule.GetWaterLayerBottomLevel();
             var waterSurfaceLevelOffset = rule.GetWaterLayerSurfaceLevel();
 
+            var elevationOffset = waterBottomLevelOffset - waterSurfaceLevelOffset;
+            var surfaceOffset = renderMode == RenderMode.Scene ? -waterBottomLevelOffset : 0;
+
+            // NOTE: substitute gradient in overview mode
+            if (renderMode == RenderMode.Overview)
+                bottomGradient = waterSurfaceGradient;
+
             int count = 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
             {
-                // bottom
-                AddTriangle(rule, meshData, triangle, bottomGradient, eleNoiseFreq, colorNoiseFreq, -waterBottomLevelOffset);
+                // bottom surface
+                AddTriangle(rule, meshData, triangle, bottomGradient, eleNoiseFreq, colorNoiseFreq, surfaceOffset);
+
+                // NOTE: build offset shape only in case of Scene mode
+                if (renderMode == RenderMode.Overview)
+                    continue;
 
                 var meshTriangle = meshTriangles[meshTriangles.Count - 1];
 
@@ -181,9 +193,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var p2 = meshTriangle.Vertex2;
 
                 // reuse just added vertices
-                waterVertices.Add(new Vector3(p0.X, p0.Elevation + waterBottomLevelOffset - waterSurfaceLevelOffset, p0.Y));
-                waterVertices.Add(new Vector3(p1.X, p1.Elevation + waterBottomLevelOffset - waterSurfaceLevelOffset, p1.Y));
-                waterVertices.Add(new Vector3(p2.X, p2.Elevation + waterBottomLevelOffset - waterSurfaceLevelOffset, p2.Y));
+                waterVertices.Add(new Vector3(p0.X, p0.Elevation + elevationOffset,
+                    p0.Y));
+                waterVertices.Add(new Vector3(p1.X, p1.Elevation + elevationOffset,
+                    p1.Y));
+                waterVertices.Add(new Vector3(p2.X, p2.Elevation + elevationOffset,
+                    p2.Y));
 
                 var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[count], colorNoiseFreq);
                 waterColors.Add(color);
@@ -195,12 +210,17 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 waterTriangles.Add(count + 1);
                 count += 3;
             }
-            BuildOffsetShape(rule, meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
-                colorNoiseFreq, waterBottomLevelOffset);
-            var vs = waterVertices.ToArray();
-            var ts = waterTriangles.ToArray();
-            var cs = waterColors.ToArray();
-            Scheduler.MainThread.Schedule(() => BuildWaterObject(rule, meshData, vs, ts, cs));
+
+            // finalizing offset shape
+            if (renderMode == RenderMode.Scene)
+            {
+                BuildOffsetShape(rule, meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
+                    colorNoiseFreq, waterBottomLevelOffset);
+                var vs = waterVertices.ToArray();
+                var ts = waterTriangles.ToArray();
+                var cs = waterColors.ToArray();
+                Scheduler.MainThread.Schedule(() => BuildWaterObject(rule, meshData, vs, ts, cs));
+            }
         }
 
         protected void BuildOffsetShape(Rule rule, MeshData meshData, MeshRegion region, GradientWrapper gradient,
