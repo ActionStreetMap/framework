@@ -65,6 +65,7 @@
     <Compile Include="Interactions\DummyBehaviour.cs" />
     <Compile Include="Interactions\MeshIndexBehaviour.cs" />
     <Compile Include="Scene\Facades\FacadeMeshIndex.cs" />
+    <Compile Include="Scene\Terrain\DummyMeshIndex.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshIndex.cs" />
     <Compile Include="Helpers\BuildingRuleExtensions.cs" />
     <Compile Include="Helpers\DetailRuleExtensions.cs" />

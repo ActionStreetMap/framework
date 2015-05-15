@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
@@ -117,12 +116,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
-            var rect = new MapRectangle((float)cellRect.Left, (float)cellRect.Bottom,
-                (float)cellRect.Width, (float)cellRect.Height);
+            var rect = new MapRectangle(cellRect.Left, cellRect.Bottom, cellRect.Width, cellRect.Height);
 
             var meshData = _objectPool.CreateMeshData();           
             meshData.GameObject = cellGameObject;
-            meshData.Index = new TerrainMeshIndex(16, 16, rect, meshData.Triangles);
+            meshData.Index = renderMode == RenderMode.Scene ?
+                new TerrainMeshIndex(16, 16, rect, meshData.Triangles) :
+                (IMeshIndex) new DummyMeshIndex();
 
             // build canvas
             BuildBackground(rule, meshData, cell.Background, renderMode);
