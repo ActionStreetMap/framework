@@ -17,7 +17,9 @@
 	"geocoding":"http://nominatim.openstreetmap.org/search",
 	"sandbox":false,
 	"tile": {
-		"size":300,
+		"size":400,
 		"offset":50,
+        "render_mode": "mixed",
+        "overview_buffer":1,
 	}
 }

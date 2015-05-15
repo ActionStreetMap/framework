@@ -22,11 +22,17 @@ namespace ActionStreetMap.Core.Tiling
     /// <summary> This class listens to position changes and manages tile processing. </summary>
     public class TileManager : ITilePositionObserver, IConfigurable
     {
+        private const int MixedMode = 0;
+        private const int SceneMode = 1;
+        private const int OverviewMode = 2;
+
         private readonly object _lockObj = new object();
 
         private float _tileSize;
         private float _offset;
         private float _moveSensitivity;
+        private int _renderModeEx;
+        private int _overviewBuffer;
         private float _thresholdDistance;
         private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
 
@@ -71,14 +77,16 @@ namespace ActionStreetMap.Core.Tiling
 
         private void Create(int i, int j)
         {
-            LoadTile(i, j, RenderMode.Scene);
+            if (_renderModeEx != OverviewMode)
+                LoadTile(i, j, RenderMode.Scene);
 
-            for(int z = j-1; z<=j+1; z++)
-                for (int k = i-1; k <= i+1; k++)
-                {
-                    if (!_allOverviewTiles.ContainsKey(k ,z)) 
-                        LoadTile(k, z, RenderMode.Overview);
-               }
+            if (_renderModeEx != SceneMode)
+                for (int z = j - _overviewBuffer; z <= j + _overviewBuffer; z++)
+                    for (int k = i - _overviewBuffer; k <= i + _overviewBuffer; k++)
+                    {
+                        if (!_allOverviewTiles.ContainsKey(k ,z)) 
+                            LoadTile(k, z, RenderMode.Overview);
+                   }
         }
 
         private void LoadTile(int i, int j, RenderMode renderMode)
@@ -146,7 +154,7 @@ namespace ActionStreetMap.Core.Tiling
         private void DestroyRemoteTiles(MapPoint position, RenderMode renderMode)
         {
             var collection = renderMode == RenderMode.Scene ? _allSceneTiles : _allOverviewTiles;
-            var threshold = renderMode == RenderMode.Scene ? _thresholdDistance : _thresholdDistance*2;
+            var threshold = renderMode == RenderMode.Scene ? _thresholdDistance : _thresholdDistance* (_overviewBuffer + 1);
             foreach (var doubleKeyPairValue in collection.ToList())
             {
                 var candidateToDie = doubleKeyPairValue.Value;
@@ -246,6 +254,22 @@ namespace ActionStreetMap.Core.Tiling
             _tileSize = configSection.GetFloat("size", 500);
             _offset = configSection.GetFloat("offset", 50);
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
+
+            // NOTE don't want to extend RenderMode enum with Mixed field
+            var renderModeString = configSection.GetString("render_mode", "mixed").ToLower();
+            switch (renderModeString)
+            {
+                case "overview":
+                    _renderModeEx = OverviewMode;
+                    break;
+                case "scene":
+                    _renderModeEx = SceneMode;
+                    break;
+                default:
+                    _renderModeEx = MixedMode;
+                    break;
+            }
+            _overviewBuffer = configSection.GetInt("overview_buffer", 1);
 
             _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
         }
