@@ -26,11 +26,17 @@ using RenderMode = ActionStreetMap.Core.RenderMode;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain
 {
+    /// <summary> Defines terrain builder API. </summary>
     public interface ITerrainBuilder
     {
+        /// <summary> Builds terrain from tile. </summary>
+        /// <param name="tile">Tile.</param>
+        /// <param name="rule">Rule.</param>
+        /// <returns>Game object.</returns>
         IGameObject Build(Tile tile, Rule rule);
     }
 
+    /// <summary> Default implementation of <see cref="ITerrainBuilder"/>. </summary>
     internal class MeshTerrainBuilder : ITerrainBuilder, IConfigurable
     {
         private const string LogTag = "mesh.terrain";
@@ -46,6 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private float _maxCellSize = 100;
 
+        /// <summary> Creates instance of <see cref="MeshTerrainBuilder"/>. </summary>
         [Dependency]
         public MeshTerrainBuilder(IElevationProvider elevationProvider,
                                   IResourceProvider resourceProvider,
@@ -401,10 +408,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
         }
 
+        /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
-            _maxCellSize = configSection.GetFloat("cell.size", 100);
-            var maxArea = configSection.GetFloat("maxArea", 10);
+            _maxCellSize = configSection.GetFloat("cell_size", 100);
+            var maxArea = configSection.GetFloat("tri_area", 4);
 
             _meshCellBuilder.SetMaxArea(maxArea);
         }

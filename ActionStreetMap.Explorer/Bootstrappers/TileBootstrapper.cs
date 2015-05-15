@@ -1,6 +1,7 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -27,6 +28,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         public override bool Run()
         {
             var mapDataConfig = GlobalConfigSection.GetSection(MapDataKey);
+            var tileConfig = GlobalConfigSection.GetSection(TileKey);
 
             // responsible for choosing of OSM data provider
             Container.Register(Component
@@ -56,14 +58,21 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component
                 .For<ITilePositionObserver>()
                 .Use<TileManager>()
-                .Singleton()
-                .SetConfig(GlobalConfigSection.GetSection(TileKey)));
+                .SetConfig(tileConfig)
+                .Singleton());
 
             // provides text search feature.
             Container.Register(Component.For<ISearchEngine>().Use<SearchEngine>().Singleton());
             
             // provides geocoding features.
             Container.Register(Component.For<IGeocoder>().Use<NominatimGeocoder>().Singleton());
+
+            // terrain
+            Container.Register(Component
+                .For<ITerrainBuilder>()
+                .Use<MeshTerrainBuilder>()
+                .SetConfig(tileConfig)
+                .Singleton());
             
             return true;
         }

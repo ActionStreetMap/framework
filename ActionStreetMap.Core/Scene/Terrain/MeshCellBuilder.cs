@@ -23,7 +23,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         {
             var renderMode = content.RenderMode;
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(rectangle, content.Water, renderMode, false, true);
+            var water = CreateMeshRegions(rectangle, content.Water, renderMode, false, renderMode == RenderMode.Scene);
             var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, renderMode, false);
             var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, renderMode, true);
             var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, renderMode, false);

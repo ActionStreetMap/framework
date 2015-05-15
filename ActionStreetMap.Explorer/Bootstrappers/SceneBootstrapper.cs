@@ -1,14 +1,12 @@
 ﻿using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Infrastructure;
-using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Facades;
 using ActionStreetMap.Explorer.Scene.Roofs;
-using ActionStreetMap.Explorer.Scene.Terrain;
 
 namespace ActionStreetMap.Explorer.Bootstrappers
 {
@@ -63,10 +61,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IRoofBuilder>().Use<PyramidalRoofBuilder>().Named("pyramidal").Singleton());
             Container.Register(Component.For<IRoofBuilder>().Use<MansardRoofBuilder>().Named("mansard").Singleton());
             Container.Register(Component.For<IRoofBuilder>().Use<FlatRoofBuilder>().Named("flat").Singleton());
-
-            // terrain
-            Container.Register(Component.For<ITerrainBuilder>().Use<MeshTerrainBuilder>().Singleton());
-           
+         
             return true;
         }
     }

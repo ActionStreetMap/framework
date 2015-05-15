@@ -58,7 +58,7 @@ namespace ActionStreetMap.Core.Tiling
         /// <summary> Gets all scene tile count. </summary>
         public int Count { get { return _allSceneTiles.Count(); } }
 
-        /// <summary> Creats <see cref="TileManager"/>. </summary>
+        /// <summary> Creates <see cref="TileManager"/>. </summary>
         /// <param name="tileLoader">Tile loeader.</param>
         /// <param name="tileActivator">Tile activator.</param>
         /// <param name="messageBus">Message bus.</param>
@@ -84,7 +84,7 @@ namespace ActionStreetMap.Core.Tiling
                 for (int z = j - _overviewBuffer; z <= j + _overviewBuffer; z++)
                     for (int k = i - _overviewBuffer; k <= i + _overviewBuffer; k++)
                     {
-                        if (!_allOverviewTiles.ContainsKey(k ,z)) 
+                        if (!_allOverviewTiles.ContainsKey(k, z)) 
                             LoadTile(k, z, RenderMode.Overview);
                    }
         }
