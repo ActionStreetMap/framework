@@ -5,6 +5,7 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Maps.Data;
+using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Maps.Visitors;
 
 namespace ActionStreetMap.Maps
@@ -37,7 +38,7 @@ namespace ActionStreetMap.Maps
         public IObservable<Unit> Load(Tile tile)
         {
             var boundingBox = tile.BoundingBox;
-            var zoomLevel = tile.ZoomLevel;
+            var zoomLevel = ZoomHelper.GetZoomLevel(tile.Mode);
             
             var filterElementVisitor = new CompositeElementVisitor(
                 new NodeVisitor(tile, _modelLoader, _objectPool),

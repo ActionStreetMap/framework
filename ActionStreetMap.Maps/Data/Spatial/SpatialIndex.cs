@@ -23,7 +23,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
         /// <inheritdoc />
         public IObservable<uint> Search(BoundingBox query)
         {
-            return Search(query, CoreConsts.MaxZoomLevel);
+            return Search(query, MapConsts.MaxZoomLevel);
         }
 
         /// <inheritdoc />

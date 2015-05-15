@@ -7,12 +7,12 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Maps.Data.Helpers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Tiling
@@ -91,7 +91,8 @@ namespace ActionStreetMap.Explorer.Tiling
 
         private void LoadModel(Tile tile, Model model, Func<Rule, IModelBuilder, IGameObject> func)
         {
-            var rule = _stylesheet.GetModelRule(model, tile.ZoomLevel);
+            var zoomLevel = ZoomHelper.GetZoomLevel(tile.Mode);
+            var rule = _stylesheet.GetModelRule(model, zoomLevel);
             if (rule.IsApplicable && ShouldUseBuilder(tile, rule, model))
             {
                 var modelBuilder = rule.GetModelBuilder(_builders);

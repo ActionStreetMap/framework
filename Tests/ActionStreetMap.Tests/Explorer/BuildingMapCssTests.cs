@@ -3,6 +3,7 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Maps.Data;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer
@@ -27,7 +28,7 @@ namespace ActionStreetMap.Tests.Explorer
             };
 
             // ACT
-            var rule = stylesheet.GetModelRule(building);
+            var rule = stylesheet.GetModelRule(building, MapConsts.MaxZoomLevel);
             var style = rule.GetFacadeBuilder();
 
             // ASSERT

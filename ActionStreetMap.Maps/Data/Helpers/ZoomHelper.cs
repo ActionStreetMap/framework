@@ -20,11 +20,11 @@ namespace ActionStreetMap.Maps.Data.Helpers
         /// <summary> Gets minimal envelop's margin for given zoom level.</summary>
         public static long GetMinMargin(int zoomLevel)
         {
-            if (zoomLevel < CoreConsts.MinZoomLevel || zoomLevel > CoreConsts.MaxZoomLevel)
+            if (zoomLevel < MapConsts.MinZoomLevel || zoomLevel > MapConsts.MaxZoomLevel)
                 throw new ArgumentException(Strings.InvalidZoomLevel);
 
             // show everything on this zoom level
-            if (zoomLevel == CoreConsts.MaxZoomLevel) return 0;
+            if (zoomLevel == MapConsts.MaxZoomLevel) return 0;
 
             // some magic formula optimized for zoom level 15
             // TODO find better way to express zoom levels
@@ -45,6 +45,12 @@ namespace ActionStreetMap.Maps.Data.Helpers
             var point2 = GeoProjection.ToGeoCoordinate(geoCenter, end);
 
            return (long) (((point2.Longitude - point1.Longitude) + (point2.Latitude - point1.Latitude)) * MapConsts.ScaleFactor);
+        }
+
+        /// <summary> Gets zoom level by render mode.</summary>
+        public static int GetZoomLevel(RenderMode mode)
+        {
+            return mode == RenderMode.Overview ? MapConsts.OverviewZoomLevel : MapConsts.MaxZoomLevel;
         }
     }
 }

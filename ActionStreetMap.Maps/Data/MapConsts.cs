@@ -4,6 +4,19 @@
     {
         public const uint ScaleFactor = 10000000;
 
+        #region Zooming
+
+        /// <summary> Max supported zoom level. </summary>
+        public const int MaxZoomLevel = 19;
+
+        /// <summary> OVerview zoom level. </summary>
+        public const int OverviewZoomLevel = 15;
+
+        /// <summary> Min supported zoom level. </summary>
+        public const int MinZoomLevel = 0;
+
+        #endregion
+
         #region Path consts
 
         public const string HeaderFileName = @"header.txt";

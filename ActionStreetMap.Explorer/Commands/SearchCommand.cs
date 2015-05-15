@@ -7,6 +7,7 @@ using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Data.Search;
 using ActionStreetMap.Maps.Entities;
 
@@ -84,7 +85,7 @@ namespace ActionStreetMap.Explorer.Commands
 
         /// <summary> Gets elements for specific tag. </summary>
         internal IObservable<Element> GetElementsByText(string text, float radius, 
-            string type = null, int zoomLevel = CoreConsts.MaxZoomLevel)
+            string type = null, int zoomLevel = MapConsts.MaxZoomLevel)
         {
             var currentPosition = _geoPositionObserver.Current;
             var side = radius*2;

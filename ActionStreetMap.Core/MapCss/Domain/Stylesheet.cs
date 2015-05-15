@@ -21,7 +21,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         /// <param name="model">Model.</param>
         /// <param name="zoomLevel">Current zoom level.</param>
         /// <returns>Rule.</returns>
-        public Rule GetModelRule(Model model, int zoomLevel = CoreConsts.MaxZoomLevel)
+        public Rule GetModelRule(Model model, int zoomLevel)
         {
             return _styles.GetMergedRule(model, zoomLevel);
         }

@@ -33,24 +33,24 @@ namespace ActionStreetMap.Core.Tiling
         private GeoCoordinate _currentPosition;
         private MapPoint _currentMapPoint;
 
-        private readonly MutableTuple<int, int> _currentTileIndex = new MutableTuple<int, int>(0, 0);
+        private readonly MutableTuple<int, int> _currentConcreteTileIndex = new MutableTuple<int, int>(0, 0);
 
         private readonly ITileLoader _tileLoader;
         private readonly IMessageBus _messageBus;
         private readonly ITileActivator _tileActivator;
         private readonly IObjectPool _objectPool;
 
-        private readonly DoubleKeyDictionary<int, int, Tile> _allTiles = 
+        private readonly DoubleKeyDictionary<int, int, Tile> _allConcreteTiles = 
             new DoubleKeyDictionary<int, int, Tile>();
 
         /// <summary> Gets relative null point. </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
         /// <summary> Gets current tile. </summary>
-        public Tile Current { get { return _allTiles[_currentTileIndex.Item1, _currentTileIndex.Item2]; } }
+        public Tile Current { get { return _allConcreteTiles[_currentConcreteTileIndex.Item1, _currentConcreteTileIndex.Item2]; } }
 
         /// <summary> Gets all tile count. </summary>
-        public int Count { get { return _allTiles.Count(); } }
+        public int Count { get { return _allConcreteTiles.Count(); } }
 
         /// <summary> Creats <see cref="TileManager"/>. </summary>
         /// <param name="tileLoader">Tile loeader.</param>
@@ -73,20 +73,20 @@ namespace ActionStreetMap.Core.Tiling
         {
             var tileCenter = new MapPoint(i*_tileSize, j*_tileSize);
 
-            var tile = new Tile(RelativeNullPoint, tileCenter, new Canvas(_objectPool),
-                CoreConsts.MaxZoomLevel, _tileSize, _tileSize);
+            var tile = new Tile(RelativeNullPoint, tileCenter, RenderMode.Scene, 
+                new Canvas(_objectPool), _tileSize, _tileSize);
 
-            if (_allTiles.ContainsKey(i, j))
+            if (_allConcreteTiles.ContainsKey(i, j))
                 return;
-            _allTiles.Add(i, j, tile);
+            _allConcreteTiles.Add(i, j, tile);
             _messageBus.Send(new TileLoadStartMessage(tileCenter));
             _tileLoader.Load(tile).Subscribe(_ => {}, () => _messageBus.Send(new TileLoadFinishMessage(tile)));
         }
 
         private void Destroy(int i, int j)
         {
-            var tile = _allTiles[i, j];
-            _allTiles.Remove(i, j);
+            var tile = _allConcreteTiles[i, j];
+            _allConcreteTiles.Remove(i, j);
             _tileActivator.Destroy(tile);
             _messageBus.Send(new TileDestroyMessage(tile));
         }
@@ -103,7 +103,7 @@ namespace ActionStreetMap.Core.Tiling
         private void PreloadNextTile(Tile tile, MapPoint position, int i, int j)
         {
             // Let's cleanup old tile first to release memory.
-            foreach (var doubleKeyPairValue in _allTiles.ToList())
+            foreach (var doubleKeyPairValue in _allConcreteTiles.ToList())
             {
                 var candidateToDie = doubleKeyPairValue.Value;
                 if (candidateToDie.MapCenter.DistanceTo(position) >= _thresholdDistance)
@@ -111,7 +111,7 @@ namespace ActionStreetMap.Core.Tiling
             }
 
             var index = GetNextTileIndex(tile, position, i, j);
-            if (_allTiles.ContainsKey(index.Item1, index.Item2))
+            if (_allConcreteTiles.ContainsKey(index.Item1, index.Item2))
                 return;
 
             Create(index.Item1, index.Item2);
@@ -162,19 +162,19 @@ namespace ActionStreetMap.Core.Tiling
                     int i = Convert.ToInt32(value.X / _tileSize);
                     int j = Convert.ToInt32(value.Y / _tileSize);
 
-                    bool hasTile = _allTiles.ContainsKey(i, j);
+                    bool hasTile = _allConcreteTiles.ContainsKey(i, j);
                     if (!hasTile)
                         Create(i, j);
 
-                    var tile = _allTiles[i, j];
+                    var tile = _allConcreteTiles[i, j];
                     if (hasTile) 
                         _messageBus.Send(new TileFoundMessage(tile, _currentMapPoint));
 
                     if (ShouldPreload(tile, value))
                         PreloadNextTile(tile, value, i, j);
 
-                    _currentTileIndex.Item1 = i;
-                    _currentTileIndex.Item2 = j;
+                    _currentConcreteTileIndex.Item1 = i;
+                    _currentConcreteTileIndex.Item2 = j;
                 }
             }
         }

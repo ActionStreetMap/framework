@@ -10,6 +10,7 @@ using ActionStreetMap.Explorer.Helpers;
 using NUnit.Framework;
 using UnityEngine;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Maps.Data;
 using Canvas = ActionStreetMap.Core.Tiling.Models.Canvas;
 
 namespace ActionStreetMap.Tests.Core.MapCss
@@ -26,7 +27,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var canvas = new Canvas(new ObjectPool());
 
             // ACT
-            var rule = stylesheet.GetModelRule(canvas);
+            var rule = stylesheet.GetModelRule(canvas, MapConsts.MaxZoomLevel);
             var material = rule.Evaluate<string>("material");
 
             // ASSERT
@@ -60,7 +61,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
 
             // ACT
-            var rule = stylesheet.GetModelRule(area);
+            var rule = stylesheet.GetModelRule(area, MapConsts.MaxZoomLevel);
 
 
             // ASSERT
@@ -117,8 +118,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 var stylesheet = provider.Get();
 
                 // ACT
-                var rule1 = stylesheet.GetModelRule(area1);
-                var rule2 = stylesheet.GetModelRule(area2);
+                var rule1 = stylesheet.GetModelRule(area1, MapConsts.MaxZoomLevel);
+                var rule2 = stylesheet.GetModelRule(area2, MapConsts.MaxZoomLevel);
 
                 // ASSERT
                 Assert.AreEqual(237, rule1.GetHeight());
@@ -166,7 +167,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
 
             var stylesheet = MapCssHelper.GetStylesheetFromContent("area[building:height][roof:height] { height: eval(num(tag('building:height')) - num(tag('roof:height')));}\n", canUseExprTree);
-            var rule = stylesheet.GetModelRule(model);
+            var rule = stylesheet.GetModelRule(model, MapConsts.MaxZoomLevel);
 
             // ACT
             var evalResult = rule.GetHeight();
@@ -227,7 +228,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
 
             // ACT
-            var rule = stylesheet.GetModelRule(area);
+            var rule = stylesheet.GetModelRule(area, MapConsts.MaxZoomLevel);
 
             // ASSERT
             Assert.AreEqual(0, rule.GetLevels());
@@ -253,8 +254,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             }.ToTags());
 
             // ASSERT
-            Assert.IsTrue(stylesheet.GetModelRule(way1).IsApplicable);
-            Assert.IsFalse(stylesheet.GetModelRule(way2).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(way1, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(way2, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [TestCase(TestHelper.TestBaseMapcssFile, true)]
@@ -275,7 +276,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
 
             // ACT
-            var rule = stylesheet.GetModelRule(buildingWithColorCode);
+            var rule = stylesheet.GetModelRule(buildingWithColorCode, MapConsts.MaxZoomLevel);
 
             // ASSERT
             Assert.AreEqual(ColorUtils.FromName("red"),
@@ -300,7 +301,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
 
             // ACT
-            var rule = stylesheet.GetModelRule(buildingWithColorName);
+            var rule = stylesheet.GetModelRule(buildingWithColorName, MapConsts.MaxZoomLevel);
 
             // ASSERT
             Assert.AreEqual(ColorUtils.FromName("salmon"),
@@ -326,7 +327,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
 
             // ACT
-            var rule = stylesheet.GetModelRule(buildingWithColorCode);
+            var rule = stylesheet.GetModelRule(buildingWithColorCode, MapConsts.MaxZoomLevel);
 
             // ASSERT
             Assert.AreEqual(ColorUtils.FromUnknown("#cfc6b5"),
@@ -347,7 +348,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 }.ToTags());
 
             // ASSERT
-            Assert.IsTrue(stylesheet.GetModelRule(node).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(node, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [Test]
@@ -365,7 +366,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
                 }.ToTags());
 
             // ASSERT
-            var rule = stylesheet.GetModelRule(node);
+            var rule = stylesheet.GetModelRule(node, MapConsts.MaxZoomLevel);
             var facadeGradient = rule.Evaluate<string>("facade");
             Assert.IsNotEmpty(facadeGradient);
             Assert.AreEqual("gradient(#0fff8f, #0fff8f 50%, #099956)", facadeGradient);
@@ -383,7 +384,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var node = MapCssHelper.GetNode(new Dictionary<string, string>() { { "test", "yes" }, }.ToTags());
 
             // ASSERT
-            var rule = stylesheet.GetModelRule(node);
+            var rule = stylesheet.GetModelRule(node, MapConsts.MaxZoomLevel);
             var facadeGradient = rule.Evaluate<string>("facade");
             Assert.IsNotEmpty(facadeGradient);
             Assert.AreEqual(gradientString, facadeGradient);

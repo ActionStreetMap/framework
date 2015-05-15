@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Maps.Data;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.MapCss
@@ -22,8 +23,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "building", "residential" } }.ToTags());
 
             // ASSERT
-            Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
-            Assert.IsFalse(stylesheet.GetModelRule(area2).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(area1, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(area2, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [Test]
@@ -37,8 +38,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "building", "residential" } }.ToTags());
 
             // ASSERT
-            Assert.IsFalse(stylesheet.GetModelRule(area1).IsApplicable);
-            Assert.IsTrue(stylesheet.GetModelRule(area2).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(area1, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(area2, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [Test]
@@ -52,8 +53,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "grass" } }.ToTags());
 
             // ASSERT
-            Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
-            Assert.IsFalse(stylesheet.GetModelRule(area2).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(area1, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(area2, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [Test]
@@ -67,8 +68,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "landuse", "grass" } }.ToTags());
 
             // ASSERT
-            Assert.IsFalse(stylesheet.GetModelRule(area1).IsApplicable);
-            Assert.IsTrue(stylesheet.GetModelRule(area2).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(area1, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(area2, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [Test]
@@ -82,8 +83,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "1" } }.ToTags());
 
             // ASSERT
-            Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
-            Assert.IsFalse(stylesheet.GetModelRule(area2).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(area1, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(area2, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [Test]
@@ -97,8 +98,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             var area2 = MapCssHelper.GetArea(new Dictionary<string, string>() { { "level", "0" } }.ToTags());
 
             // ASSERT
-            Assert.IsTrue(stylesheet.GetModelRule(area1).IsApplicable);
-            Assert.IsFalse(stylesheet.GetModelRule(area2).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(area1, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(area2, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [Test]
@@ -133,8 +134,8 @@ namespace ActionStreetMap.Tests.Core.MapCss
             };
 
             // ACT & ASSERT
-            Assert.IsTrue(stylesheet.GetModelRule(closedWay).IsApplicable);
-            Assert.IsFalse(stylesheet.GetModelRule(openWay).IsApplicable);
+            Assert.IsTrue(stylesheet.GetModelRule(closedWay, MapConsts.MaxZoomLevel).IsApplicable);
+            Assert.IsFalse(stylesheet.GetModelRule(openWay, MapConsts.MaxZoomLevel).IsApplicable);
         }
 
         [TestCase("z12", 12, 12, 12, true)]

@@ -50,7 +50,6 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="AlgorithmException.cs" />
-    <Compile Include="CoreConsts.cs" />
     <Compile Include="Infrastructure\Color32.cs" />
     <Compile Include="Infrastructure\IGameObject.cs" />
     <Compile Include="Infrastructure\IGameObjectFactory.cs" />
@@ -128,6 +127,7 @@
     <Compile Include="Positioning\Nmea\NmeaUtils.cs" />
     <Compile Include="Positioning\Nmea\NmeaValueType.cs" />
     <Compile Include="Positioning\Nmea\RMC.cs" />
+    <Compile Include="RenderMode.cs" />
     <Compile Include="Scene\Surface.cs" />
     <Compile Include="Scene\Terrain\MeshCanvas.cs" />
     <Compile Include="Scene\Terrain\MeshCanvasBuilder.cs" />

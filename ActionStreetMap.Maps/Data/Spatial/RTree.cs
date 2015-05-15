@@ -38,7 +38,7 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         public IObservable<T> Search(BoundingBox query)
         {
-            return Search(query, CoreConsts.MaxZoomLevel);
+            return Search(query, MapConsts.MaxZoomLevel);
         }
 
         public IObservable<T> Search(BoundingBox query, int zoomLevel)

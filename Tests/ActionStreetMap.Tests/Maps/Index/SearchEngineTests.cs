@@ -45,7 +45,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             // ACT
             var bars = (!String.IsNullOrEmpty(value)
                 ? searchEngine.SearchByTag(key, value)
-                : searchEngine.SearchByText(key, BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100), CoreConsts.MaxZoomLevel))
+                : searchEngine.SearchByText(key, BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100), MapConsts.MaxZoomLevel))
                 .ToArray().Wait();
         
             // ASSERT
