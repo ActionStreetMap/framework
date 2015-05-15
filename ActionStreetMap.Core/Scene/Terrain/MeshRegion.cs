@@ -1,5 +1,5 @@
 ﻿using System;
-using ActionStreetMap.Core.Geometry.Triangle;
+using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
 
 namespace ActionStreetMap.Core.Scene.Terrain
@@ -7,9 +7,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
     internal class MeshRegion
     {
         public string GradientKey;
-        public Action<Mesh> ModifyMeshAction;
+        public Action<IMesh> ModifyMeshAction;
 
-        public Mesh Mesh;
+        public IMesh Mesh;
 
         // TODO should be refactored: this looks like workaround
         public VertexPaths Contours;

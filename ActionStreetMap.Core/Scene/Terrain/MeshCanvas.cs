@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core.Geometry.Triangle;
+using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Core.Scene.Terrain
@@ -19,7 +19,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         internal class Region
         {
             public string GradientKey;
-            public Action<Mesh> ModifyMeshAction;
+            public Action<IMesh> ModifyMeshAction;
 
             public Paths Shape;
         }
