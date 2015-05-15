@@ -1,52 +1,56 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="RobustPredicates.cs">
-//     Original Triangle code by Jonathan Richard Shewchuk,
-//     http: //www.cs.cmu.edu/~quake/triangle.html Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using System;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
-    /// <summary> Adaptive exact arithmetic geometric predicates. </summary>
+    using System;
+    using ActionStreetMap.Core.Geometry.Triangle.Topology;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+    using ActionStreetMap.Core.Geometry.Triangle.Tools;
+
+    /// <summary>
+    /// Adaptive exact arithmetic geometric predicates.
+    /// </summary>
     /// <remarks>
     /// The adaptive exact arithmetic geometric predicates implemented herein are described in
-    /// detail in the paper "Adaptive Precision Floating-Point Arithmetic and Fast Robust Geometric
-    /// Predicates." by Jonathan Richard Shewchuk, see
-    /// http: //www.cs.cmu.edu/~quake/robust.html
+    /// detail in the paper "Adaptive Precision Floating-Point Arithmetic and Fast Robust
+    /// Geometric Predicates." by Jonathan Richard Shewchuk, see
+    /// http://www.cs.cmu.edu/~quake/robust.html
     /// 
     /// The macros of the original C code were automatically expanded using the Visual Studio
     /// command prompt with the command "CL /P /C EXACT.C", see
-    /// http: //msdn.microsoft.com/en-us/library/8z9z0bx6.aspx
+    /// http://msdn.microsoft.com/en-us/library/8z9z0bx6.aspx
     /// </remarks>
-    internal class RobustPredicates
+    public static class RobustPredicates
     {
-        private Behavior behavior;
-        private double epsilon, splitter, resulterrbound;
-        private double ccwerrboundA, ccwerrboundB, ccwerrboundC;
-        private double iccerrboundA, iccerrboundB, iccerrboundC;
-        //private double o3derrboundA, o3derrboundB, o3derrboundC;
+        private static double epsilon, splitter, resulterrbound;
+        private static double ccwerrboundA, ccwerrboundB, ccwerrboundC;
+        private static double iccerrboundA, iccerrboundB, iccerrboundC;
+        //private static double o3derrboundA, o3derrboundB, o3derrboundC;
 
-        /// <summary> Initialize the variables used for exact arithmetic. </summary>
+        /// <summary>
+        /// Initialize the variables used for exact arithmetic.  
+        /// </summary>
         /// <remarks>
-        /// 'epsilon' is the largest power of two such that 1.0 + epsilon = 1.0 in floating-point
-        /// arithmetic. 'epsilon' bounds the relative roundoff error. It is used for floating-point
-        /// error analysis.
-        /// 
-        /// 'splitter' is used to split floating-point numbers into two half- length significands
-        /// for exact multiplication.
-        /// 
-        /// I imagine that a highly optimizing compiler might be too smart for its own good, and
-        /// somehow cause this routine to fail, if it pretends that floating-point arithmetic is too
-        /// much like double arithmetic.
-        /// 
+        /// 'epsilon' is the largest power of two such that 1.0 + epsilon = 1.0 in
+        /// floating-point arithmetic. 'epsilon' bounds the relative roundoff
+        /// error. It is used for floating-point error analysis.
+        ///
+        /// 'splitter' is used to split floating-point numbers into two half-
+        /// length significands for exact multiplication.
+        ///
+        /// I imagine that a highly optimizing compiler might be too smart for its
+        /// own good, and somehow cause this routine to fail, if it pretends that
+        /// floating-point arithmetic is too much like double arithmetic.
+        ///
         /// Don't change this routine unless you fully understand it.
         /// </remarks>
-        public void ExactInit(Behavior behavior)
+        public static void ExactInit()
         {
-            this.behavior = behavior;
             double half;
             double check, lastcheck;
             bool every_other;
@@ -56,10 +60,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             epsilon = 1.0;
             splitter = 1.0;
             check = 1.0;
-            // Repeatedly divide 'epsilon' by two until it is too small to add to one without
-            // causing roundoff. (Also check if the sum is equal to the previous sum, for machines
-            // that round up instead of using exact rounding. Not that these routines will work on
-            // such machines.)
+            // Repeatedly divide 'epsilon' by two until it is too small to add to
+            // one without causing roundoff.  (Also check if the sum is equal to
+            // the previous sum, for machines that round up instead of using exact
+            // rounding.  Not that these routines will work on such machines.)
             do
             {
                 lastcheck = check;
@@ -86,26 +90,28 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Check, if the three points appear in counterclockwise order. The result is also a rough
-        /// approximation of twice the signed area of the triangle defined by the three points.
+        /// Check, if the three points appear in counterclockwise order. The result is 
+        /// also a rough approximation of twice the signed area of the triangle defined 
+        /// by the three points.
         /// </summary>
-        /// <param name="pa"> Point a. </param>
-        /// <param name="pb"> Point b. </param>
-        /// <param name="pc"> Point c. </param>
-        /// <returns>
-        /// Return a positive value if the points pa, pb, and pc occur in counterclockwise order; a
-        /// negative value if they occur in clockwise order; and zero if they are collinear.
-        /// </returns>
-        public double CounterClockwise(Point pa, Point pb, Point pc)
+        /// <param name="pa">Point a.</param>
+        /// <param name="pb">Point b.</param>
+        /// <param name="pc">Point c.</param>
+        /// <returns>Return a positive value if the points pa, pb, and pc occur in 
+        /// counterclockwise order; a negative value if they occur in clockwise order; 
+        /// and zero if they are collinear.</returns>
+        public static double CounterClockwise(Point pa, Point pb, Point pc)
         {
             double detleft, detright, det;
             double detsum, errbound;
+
+            Statistic.CounterClockwiseCount++;
 
             detleft = (pa.x - pc.x) * (pb.y - pc.y);
             detright = (pa.y - pc.y) * (pb.x - pc.x);
             det = detleft - detright;
 
-            if (behavior.NoExact)
+            if (Behavior.NoExact)
             {
                 return det;
             }
@@ -142,28 +148,32 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             {
                 return det;
             }
+
+            Statistic.CounterClockwiseAdaptCount++;
             return CounterClockwiseAdapt(pa, pb, pc, detsum);
         }
 
         /// <summary>
-        /// Check if the point pd lies inside the circle passing through pa, pb, and pc. The points
-        /// pa, pb, and pc must be in counterclockwise order, or the sign of the result will be reversed.
+        /// Check if the point pd lies inside the circle passing through pa, pb, and pc. The 
+        /// points pa, pb, and pc must be in counterclockwise order, or the sign of the result 
+        /// will be reversed.
         /// </summary>
-        /// <param name="pa"> Point a. </param>
-        /// <param name="pb"> Point b. </param>
-        /// <param name="pc"> Point c. </param>
-        /// <param name="pd"> Point d. </param>
-        /// <returns>
-        /// Return a positive value if the point pd lies inside the circle passing through pa, pb,
-        /// and pc; a negative value if it lies outside; and zero if the four points are cocircular.
-        /// </returns>
-        public double InCircle(Point pa, Point pb, Point pc, Point pd)
+        /// <param name="pa">Point a.</param>
+        /// <param name="pb">Point b.</param>
+        /// <param name="pc">Point c.</param>
+        /// <param name="pd">Point d.</param>
+        /// <returns>Return a positive value if the point pd lies inside the circle passing through 
+        /// pa, pb, and pc; a negative value if it lies outside; and zero if the four points 
+        /// are cocircular.</returns>
+        public static double InCircle(Point pa, Point pb, Point pc, Point pd)
         {
             double adx, bdx, cdx, ady, bdy, cdy;
             double bdxcdy, cdxbdy, cdxady, adxcdy, adxbdy, bdxady;
             double alift, blift, clift;
             double det;
             double permanent, errbound;
+
+            Statistic.InCircleCount++;
 
             adx = pa.x - pd.x;
             bdx = pb.x - pd.x;
@@ -188,7 +198,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 + blift * (cdxady - adxcdy)
                 + clift * (adxbdy - bdxady);
 
-            if (behavior.NoExact)
+            if (Behavior.NoExact)
             {
                 return det;
             }
@@ -202,38 +212,41 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 return det;
             }
 
+            Statistic.InCircleAdaptCount++;
             return InCircleAdapt(pa, pb, pc, pd, permanent);
         }
 
         /// <summary>
-        /// Return a positive value if the point pd is incompatible with the circle or plane passing
-        /// through pa, pb, and pc (meaning that pd is inside the circle or below the plane); a
-        /// negative value if it is compatible; and zero if the four points are cocircular/coplanar.
-        /// The points pa, pb, and pc must be in counterclockwise order, or the sign of the result
-        /// will be reversed.
+        /// Return a positive value if the point pd is incompatible with the circle 
+        /// or plane passing through pa, pb, and pc (meaning that pd is inside the 
+        /// circle or below the plane); a negative value if it is compatible; and 
+        /// zero if the four points are cocircular/coplanar. The points pa, pb, and 
+        /// pc must be in counterclockwise order, or the sign of the result will be 
+        /// reversed.
         /// </summary>
-        /// <param name="pa"> Point a. </param>
-        /// <param name="pb"> Point b. </param>
-        /// <param name="pc"> Point c. </param>
-        /// <param name="pd"> Point d. </param>
-        /// <returns>
-        /// Return a positive value if the point pd lies inside the circle passing through pa, pb,
-        /// and pc; a negative value if it lies outside; and zero if the four points are cocircular.
-        /// </returns>
-        public double NonRegular(Point pa, Point pb, Point pc, Point pd)
+        /// <param name="pa">Point a.</param>
+        /// <param name="pb">Point b.</param>
+        /// <param name="pc">Point c.</param>
+        /// <param name="pd">Point d.</param>
+        /// <returns>Return a positive value if the point pd lies inside the circle passing through 
+        /// pa, pb, and pc; a negative value if it lies outside; and zero if the four points 
+        /// are cocircular.</returns>
+        public static double NonRegular(Point pa, Point pb, Point pc, Point pd)
         {
             return InCircle(pa, pb, pc, pd);
         }
 
-        /// <summary> Find the circumcenter of a triangle. </summary>
-        /// <param name="org"> Triangle point. </param>
-        /// <param name="dest"> Triangle point. </param>
-        /// <param name="apex"> Triangle point. </param>
-        /// <param name="xi"> Relative coordinate of new location. </param>
-        /// <param name="eta"> Relative coordinate of new location. </param>
-        /// <param name="offconstant"> Off-center constant. </param>
-        /// <returns> Coordinates of the circumcenter (or off-center) </returns>
-        public Point FindCircumcenter(Point org, Point dest, Point apex,
+        /// <summary>
+        /// Find the circumcenter of a triangle.
+        /// </summary>
+        /// <param name="org">Triangle point.</param>
+        /// <param name="dest">Triangle point.</param>
+        /// <param name="apex">Triangle point.</param>
+        /// <param name="xi">Relative coordinate of new location.</param>
+        /// <param name="eta">Relative coordinate of new location.</param>
+        /// <param name="offconstant">Off-center constant.</param>
+        /// <returns>Coordinates of the circumcenter (or off-center)</returns>
+        public static Point FindCircumcenter(Point org, Point dest, Point apex,
             ref double xi, ref double eta, double offconstant)
         {
             double xdo, ydo, xao, yao;
@@ -241,7 +254,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double denominator;
             double dx, dy, dxoff, dyoff;
 
-            // Compute the circumcenter of the triangle. 
+            Statistic.CircumcenterCount++;
+
+            // Compute the circumcenter of the triangle.
             xdo = dest.x - org.x;
             ydo = dest.y - org.y;
             xao = apex.x - org.x;
@@ -251,33 +266,37 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             dadist = (dest.x - apex.x) * (dest.x - apex.x) +
                      (dest.y - apex.y) * (dest.y - apex.y);
 
-            if (behavior.NoExact)
+            if (Behavior.NoExact)
             {
                 denominator = 0.5 / (xdo * yao - xao * ydo);
             }
             else
             {
-                // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
-                // result, avoiding any possibility of division by zero.
+                // Use the counterclockwise() routine to ensure a positive (and
+                // reasonably accurate) result, avoiding any possibility of
+                // division by zero.
                 denominator = 0.5 / CounterClockwise(dest, apex, org);
+                // Don't count the above as an orientation test.
+                Statistic.CounterClockwiseCount--;
             }
 
             dx = (yao * dodist - ydo * aodist) * denominator;
             dy = (xdo * aodist - xao * dodist) * denominator;
 
-            // Find the (squared) length of the triangle's shortest edge. This serves as a
-            // conservative estimate of the insertion radius of the circumcenter's parent. The
-            // estimate is used to ensure that the algorithm terminates even if very small angles
-            // appear in the input PSLG.
+            // Find the (squared) length of the triangle's shortest edge.  This
+            // serves as a conservative estimate of the insertion radius of the
+            // circumcenter's parent. The estimate is used to ensure that
+            // the algorithm terminates even if very small angles appear in
+            // the input PSLG.
             if ((dodist < aodist) && (dodist < dadist))
             {
                 if (offconstant > 0.0)
                 {
-                    // Find the position of the off-center, as described by Alper Ungor. 
+                    // Find the position of the off-center, as described by Alper Ungor.
                     dxoff = 0.5 * xdo - offconstant * ydo;
                     dyoff = 0.5 * ydo + offconstant * xdo;
-                    // If the off-center is closer to the origin than the circumcenter, use the
-                    // off-center instead.
+                    // If the off-center is closer to the origin than the
+                    // circumcenter, use the off-center instead.
                     if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy)
                     {
                         dx = dxoff;
@@ -291,8 +310,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 {
                     dxoff = 0.5 * xao + offconstant * yao;
                     dyoff = 0.5 * yao - offconstant * xao;
-                    // If the off-center is closer to the origin than the circumcenter, use the
-                    // off-center instead.
+                    // If the off-center is closer to the origin than the
+                    // circumcenter, use the off-center instead.
                     if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy)
                     {
                         dx = dxoff;
@@ -306,8 +325,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 {
                     dxoff = 0.5 * (apex.x - dest.x) - offconstant * (apex.y - dest.y);
                     dyoff = 0.5 * (apex.y - dest.y) + offconstant * (apex.x - dest.x);
-                    // If the off-center is closer to the destination than the circumcenter, use the
-                    // off-center instead.
+                    // If the off-center is closer to the destination than the
+                    // circumcenter, use the off-center instead.
                     if (dxoff * dxoff + dyoff * dyoff <
                         (dx - xdo) * (dx - xdo) + (dy - ydo) * (dy - ydo))
                     {
@@ -317,32 +336,36 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 }
             }
 
-            // To interpolate vertex attributes for the new vertex inserted at the circumcenter,
-            // define a coordinate system with a xi-axis, directed from the triangle's origin to its
-            // destination, and an eta-axis, directed from its origin to its apex. Calculate the xi
-            // and eta coordinates of the circumcenter.
+            // To interpolate vertex attributes for the new vertex inserted at
+            // the circumcenter, define a coordinate system with a xi-axis,
+            // directed from the triangle's origin to its destination, and
+            // an eta-axis, directed from its origin to its apex.
+            // Calculate the xi and eta coordinates of the circumcenter.
             xi = (yao * dx - xao * dy) * (2.0 * denominator);
             eta = (xdo * dy - ydo * dx) * (2.0 * denominator);
 
             return new Point(org.x + dx, org.y + dy);
         }
 
-        /// <summary> Find the circumcenter of a triangle. </summary>
-        /// <param name="org"> Triangle point. </param>
-        /// <param name="dest"> Triangle point. </param>
-        /// <param name="apex"> Triangle point. </param>
-        /// <param name="xi"> Relative coordinate of new location. </param>
-        /// <param name="eta"> Relative coordinate of new location. </param>
-        /// <returns> Coordinates of the circumcenter </returns>
+        /// <summary>
+        /// Find the circumcenter of a triangle.
+        /// </summary>
+        /// <param name="org">Triangle point.</param>
+        /// <param name="dest">Triangle point.</param>
+        /// <param name="apex">Triangle point.</param>
+        /// <param name="xi">Relative coordinate of new location.</param>
+        /// <param name="eta">Relative coordinate of new location.</param>
+        /// <returns>Coordinates of the circumcenter</returns>
         /// <remarks>
-        /// The result is returned both in terms of x-y coordinates and xi-eta (barycentric)
-        /// coordinates. The xi-eta coordinate system is defined in terms of the triangle: the
-        /// origin of the triangle is the origin of the coordinate system; the destination of the
-        /// triangle is one unit along the xi axis; and the apex of the triangle is one unit along
-        /// the eta axis. This procedure also returns the square of the length of the triangle's
+        /// The result is returned both in terms of x-y coordinates and xi-eta
+        /// (barycentric) coordinates. The xi-eta coordinate system is defined in
+        /// terms of the triangle: the origin of the triangle is the origin of the
+        /// coordinate system; the destination of the triangle is one unit along the
+        /// xi axis; and the apex of the triangle is one unit along the eta axis.
+        /// This procedure also returns the square of the length of the triangle's
         /// shortest edge.
         /// </remarks>
-        public Point FindCircumcenter(Point org, Point dest, Point apex,
+        public static Point FindCircumcenter(Point org, Point dest, Point apex,
             ref double xi, ref double eta)
         {
             double xdo, ydo, xao, yao;
@@ -350,7 +373,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double denominator;
             double dx, dy;
 
-            // Compute the circumcenter of the triangle. 
+            Statistic.CircumcenterCount++;
+
+            // Compute the circumcenter of the triangle.
             xdo = dest.x - org.x;
             ydo = dest.y - org.y;
             xao = apex.x - org.x;
@@ -358,24 +383,28 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             dodist = xdo * xdo + ydo * ydo;
             aodist = xao * xao + yao * yao;
 
-            if (behavior.NoExact)
+            if (Behavior.NoExact)
             {
                 denominator = 0.5 / (xdo * yao - xao * ydo);
             }
             else
             {
-                // Use the counterclockwise() routine to ensure a positive (and reasonably accurate)
-                // result, avoiding any possibility of division by zero.
+                // Use the counterclockwise() routine to ensure a positive (and
+                // reasonably accurate) result, avoiding any possibility of
+                // division by zero.
                 denominator = 0.5 / CounterClockwise(dest, apex, org);
+                // Don't count the above as an orientation test.
+                Statistic.CounterClockwiseCount--;
             }
 
             dx = (yao * dodist - ydo * aodist) * denominator;
             dy = (xdo * aodist - xao * dodist) * denominator;
 
-            // To interpolate vertex attributes for the new vertex inserted at the circumcenter,
-            // define a coordinate system with a xi-axis, directed from the triangle's origin to its
-            // destination, and an eta-axis, directed from its origin to its apex. Calculate the xi
-            // and eta coordinates of the circumcenter.
+            // To interpolate vertex attributes for the new vertex inserted at
+            // the circumcenter, define a coordinate system with a xi-axis,
+            // directed from the triangle's origin to its destination, and
+            // an eta-axis, directed from its origin to its apex.
+            // Calculate the xi and eta coordinates of the circumcenter.
             xi = (yao * dx - xao * dy) * (2.0 * denominator);
             eta = (xdo * dy - ydo * dx) * (2.0 * denominator);
 
@@ -384,7 +413,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         #region Exact arithmetics
 
-        /// <summary> Sum two expansions, eliminating zero components from the output expansion. </summary>
+        /// <summary>
+        /// Sum two expansions, eliminating zero components from the output expansion.  
+        /// </summary>
         /// <param name="elen"></param>
         /// <param name="e"></param>
         /// <param name="flen"></param>
@@ -392,13 +423,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// <param name="h"></param>
         /// <returns></returns>
         /// <remarks>
-        /// Sets h = e + f. See the Robust Predicates paper for details.
+        /// Sets h = e + f.  See the Robust Predicates paper for details.
         /// 
         /// If round-to-even is used (as with IEEE 754), maintains the strongly nonoverlapping
-        /// property. (That is, if e is strongly nonoverlapping, h will be also.) Does NOT maintain
-        /// the nonoverlapping or nonadjacent properties.
+        /// property.  (That is, if e is strongly nonoverlapping, h will be also.) Does NOT
+        /// maintain the nonoverlapping or nonadjacent properties. 
         /// </remarks>
-        private int FastExpansionSumZeroElim(int elen, double[] e, int flen, double[] f, double[] h)
+        static int FastExpansionSumZeroElim(int elen, double[] e, int flen, double[] f, double[] h)
         {
             double Q;
             double Qnew;
@@ -510,7 +541,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Multiply an expansion by a scalar, eliminating zero components from the output expansion.
+        /// Multiply an expansion by a scalar, eliminating zero components from the output expansion.  
         /// </summary>
         /// <param name="elen"></param>
         /// <param name="e"></param>
@@ -518,13 +549,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// <param name="h"></param>
         /// <returns></returns>
         /// <remarks>
-        /// Sets h = be. See my Robust Predicates paper for details.
+        /// Sets h = be.  See my Robust Predicates paper for details.
         /// 
-        /// Maintains the nonoverlapping property. If round-to-even is used (as with IEEE 754),
-        /// maintains the strongly nonoverlapping and nonadjacent properties as well. (That is, if e
-        /// has one of these properties, so will h.)
+        /// Maintains the nonoverlapping property.  If round-to-even is used (as with IEEE 754),
+        /// maintains the strongly nonoverlapping and nonadjacent properties as well. (That is,
+        /// if e has one of these properties, so will h.)
         /// </remarks>
-        private int ScaleExpansionZeroElim(int elen, double[] e, double b, double[] h)
+        static int ScaleExpansionZeroElim(int elen, double[] e, double b, double[] h)
         {
             double Q, sum;
             double hh;
@@ -568,11 +599,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return hindex;
         }
 
-        /// <summary> Produce a one-word estimate of an expansion's value. </summary>
+        /// <summary>
+        /// Produce a one-word estimate of an expansion's value. 
+        /// </summary>
         /// <param name="elen"></param>
         /// <param name="e"></param>
         /// <returns></returns>
-        private double Estimate(int elen, double[] e)
+        static double Estimate(int elen, double[] e)
         {
             double Q;
             int eindex;
@@ -586,10 +619,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Return a positive value if the points pa, pb, and pc occur in counterclockwise order; a
-        /// negative value if they occur in clockwise order; and zero if they are collinear. The
-        /// result is also a rough approximation of twice the signed area of the triangle defined by
-        /// the three points.
+        /// Return a positive value if the points pa, pb, and pc occur in counterclockwise
+        /// order; a negative value if they occur in clockwise order; and zero if they are
+        /// collinear. The result is also a rough approximation of twice the signed area of
+        /// the triangle defined by the three points. 
         /// </summary>
         /// <param name="pa"></param>
         /// <param name="pb"></param>
@@ -597,26 +630,26 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// <param name="detsum"></param>
         /// <returns></returns>
         /// <remarks>
-        /// Uses exact arithmetic if necessary to ensure a correct answer. The result returned is
-        /// the determinant of a matrix. This determinant is computed adaptively, in the sense that
-        /// exact arithmetic is used only to the degree it is needed to ensure that the returned
-        /// value has the correct sign. Hence, this function is usually quite fast, but will run
-        /// more slowly when the input points are collinear or nearly so.
+        /// Uses exact arithmetic if necessary to ensure a correct answer. The result returned
+        /// is the determinant of a matrix. This determinant is computed adaptively, in the
+        /// sense that exact arithmetic is used only to the degree it is needed to ensure that
+        /// the returned value has the correct sign.  Hence, this function is usually quite fast,
+        /// but will run more slowly when the input points are collinear or nearly so.
         /// </remarks>
-        private double CounterClockwiseAdapt(Point pa, Point pb, Point pc, double detsum)
+        static double CounterClockwiseAdapt(Point pa, Point pb, Point pc, double detsum)
         {
             double acx, acy, bcx, bcy;
             double acxtail, acytail, bcxtail, bcytail;
             double detleft, detright;
             double detlefttail, detrighttail;
             double det, errbound;
-            // Edited to work around index out of range exceptions (changed array length from 4 to
-            // 5) . See unsafe indexing in FastExpansionSumZeroElim.
+            // Edited to work around index out of range exceptions (changed array length from 4 to 5).
+            // See unsafe indexing in FastExpansionSumZeroElim.
             double[] B = new double[5], u = new double[5];
             double[] C1 = new double[8], C2 = new double[12], D = new double[16];
             double B3;
             int C1length, C2length, Dlength;
-
+            
             double u3;
             double s1, t1;
             double s0, t0;
@@ -690,10 +723,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Return a positive value if the point pd lies inside the circle passing through pa, pb,
-        /// and pc; a negative value if it lies outside; and zero if the four points are cocircular.
-        /// The points pa, pb, and pc must be in counterclockwise order, or the sign of the result
-        /// will be reversed.
+        /// Return a positive value if the point pd lies inside the circle passing through
+        /// pa, pb, and pc; a negative value if it lies outside; and zero if the four points
+        /// are cocircular. The points pa, pb, and pc must be in counterclockwise order, or 
+        /// the sign of the result will be reversed.
         /// </summary>
         /// <param name="pa"></param>
         /// <param name="pb"></param>
@@ -702,13 +735,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// <param name="permanent"></param>
         /// <returns></returns>
         /// <remarks>
-        /// Uses exact arithmetic if necessary to ensure a correct answer. The result returned is
-        /// the determinant of a matrix. This determinant is computed adaptively, in the sense that
-        /// exact arithmetic is used only to the degree it is needed to ensure that the returned
-        /// value has the correct sign. Hence, this function is usually quite fast, but will run
-        /// more slowly when the input points are cocircular or nearly so.
+        /// Uses exact arithmetic if necessary to ensure a correct answer. The result returned
+        /// is the determinant of a matrix. This determinant is computed adaptively, in the
+        /// sense that exact arithmetic is used only to the degree it is needed to ensure that
+        /// the returned value has the correct sign. Hence, this function is usually quite fast,
+        /// but will run more slowly when the input points are cocircular or nearly so.
         /// </remarks>
-        private double InCircleAdapt(Point pa, Point pb, Point pc, Point pd, double permanent)
+        static double InCircleAdapt(Point pa, Point pb, Point pc, Point pd, double permanent)
         {
             double adx, bdx, cdx, ady, bdy, cdy;
             double det, errbound;
@@ -736,8 +769,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double aa3, bb3, cc3;
             double ti1, tj1;
             double ti0, tj0;
-            // Edited to work around index out of range exceptions (changed array length from 4 to
-            // 5) . See unsafe indexing in FastExpansionSumZeroElim.
+            // Edited to work around index out of range exceptions (changed array length from 4 to 5).
+            // See unsafe indexing in FastExpansionSumZeroElim.
             double[] u = new double[5], v = new double[5];
             double u3, v3;
             double[] temp8 = new double[8], temp16a = new double[16], temp16b = new double[16], temp16c = new double[16];
@@ -1048,6 +1081,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                     finswap = finnow; finnow = finother; finother = finswap;
 
+
                     temp32alen = ScaleExpansionZeroElim(aytbctlen, aytbct, adytail, temp32a);
                     aytbcttlen = ScaleExpansionZeroElim(bcttlen, bctt, adytail, aytbctt);
                     temp16alen = ScaleExpansionZeroElim(aytbcttlen, aytbctt, 2.0 * ady, temp16a);
@@ -1212,6 +1246,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                     finswap = finnow; finnow = finother; finother = finswap;
 
+
                     temp32alen = ScaleExpansionZeroElim(cytabtlen, cytabt, cdytail, temp32a);
                     cytabttlen = ScaleExpansionZeroElim(abttlen, abtt, cdytail, cytabtt);
                     temp16alen = ScaleExpansionZeroElim(cytabttlen, cytabtt, 2.0 * cdy, temp16a);
@@ -1226,6 +1261,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return finnow[finlength - 1];
         }
 
-        #endregion Exact arithmetics
+        #endregion
     }
 }

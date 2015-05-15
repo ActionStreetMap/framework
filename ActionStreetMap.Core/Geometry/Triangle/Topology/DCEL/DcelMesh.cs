@@ -1,26 +1,32 @@
-﻿// ----------------------------------------------------------------------- 
-// <copyright file="DcelMesh.cs"> Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/ </copyright>
-// ----------------------------------------------------------------------- 
-
-using System.Collections.Generic;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+﻿// -----------------------------------------------------------------------
+// <copyright file="DcelMesh.cs">
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// </copyright>
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
 {
+    using System.Collections.Generic;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
     public class DcelMesh
     {
         protected List<Vertex> vertices;
         protected List<HalfEdge> edges;
         protected List<Face> faces;
 
-        /// <summary> Initializes a new instance of the <see cref="DcelMesh"/> class. </summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DcelMesh" /> class.
+        /// </summary>
         public DcelMesh()
             : this(true)
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="DcelMesh"/> class. </summary>
-        /// <param name="initialize"> If false, lists will not be initialized. </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="" /> class.
+        /// </summary>
+        /// <param name="initialize">If false, lists will not be initialized.</param>
         protected DcelMesh(bool initialize)
         {
             if (initialize)
@@ -31,39 +37,48 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
             }
         }
 
-        /// <summary> Gets the vertices of the Voronoi diagram. </summary>
+        /// <summary>
+        /// Gets the vertices of the Voronoi diagram.
+        /// </summary>
         public List<Vertex> Vertices
         {
             get { return vertices; }
         }
 
-        /// <summary> Gets the list of half-edges specify the Voronoi diagram topology. </summary>
+        /// <summary>
+        /// Gets the list of half-edges specify the Voronoi diagram topology.
+        /// </summary>
         public List<HalfEdge> HalfEdges
         {
             get { return edges; }
         }
 
-        /// <summary> Gets the faces of the Voronoi diagram. </summary>
+        /// <summary>
+        /// Gets the faces of the Voronoi diagram.
+        /// </summary>
         public List<Face> Faces
         {
             get { return faces; }
         }
 
-        /// <summary> Gets the collection of edges of the Voronoi diagram. </summary>
+        /// <summary>
+        /// Gets the collection of edges of the Voronoi diagram.
+        /// </summary>
         public IEnumerable<IEdge> Edges
         {
             get { return EnumerateEdges(); }
         }
 
-        /// <summary> Check if the DCEL is consistend. </summary>
-        /// <param name="closed">
-        /// If true, faces are assumed to be closed (i.e. all edges must have a valid next pointer).
-        /// </param>
-        /// <param name="depth"> Maximum edge count of faces (default = 0 means skip check). </param>
+        /// <summary>
+        /// Check if the DCEL is consistend.
+        /// </summary>
+        /// <param name="closed">If true, faces are assumed to be closed (i.e. all edges must have
+        /// a valid next pointer).</param>
+        /// <param name="depth">Maximum edge count of faces (default = 0 means skip check).</param>
         /// <returns></returns>
         public virtual bool IsConsistent(bool closed = true, int depth = 0)
         {
-            // Check vertices for null pointers. 
+            // Check vertices for null pointers.
             foreach (var vertex in vertices)
             {
                 if (vertex.id < 0)
@@ -82,7 +97,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
                 }
             }
 
-            // Check faces for null pointers. 
+            // Check faces for null pointers.
             foreach (var face in faces)
             {
                 if (face.ID < 0)
@@ -101,7 +116,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
                 }
             }
 
-            // Check half-edges for null pointers. 
+            // Check half-edges for null pointers.
             foreach (var edge in edges)
             {
                 if (edge.id < 0)
@@ -130,7 +145,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
                 }
             }
 
-            // Check half-edges (topology). 
+            // Check half-edges (topology).
             foreach (var edge in edges)
             {
                 if (edge.id < 0)
@@ -162,7 +177,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
 
             if (closed && depth > 0)
             {
-                // Check if faces are closed. 
+                // Check if faces are closed.
                 foreach (var face in faces)
                 {
                     if (face.id < 0)
@@ -201,10 +216,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
         /// </remarks>
         public void ResolveBoundaryEdges()
         {
-            // Maps vertices to leaving boundary edge. 
+            // Maps vertices to leaving boundary edge.
             var map = new Dictionary<int, HalfEdge>();
 
-            // TODO: parallel? 
+            // TODO: parallel?
             foreach (var edge in this.edges)
             {
                 if (edge.twin == null)
@@ -227,8 +242,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
             }
         }
 
-        /// <summary> Enumerates all edges of the DCEL. </summary>
-        /// <remarks> This method assumes that each half-edge has a twin (i.e. NOT null). </remarks>
+        /// <summary>
+        /// Enumerates all edges of the DCEL.
+        /// </summary>
+        /// <remarks>
+        /// This method assumes that each half-edge has a twin (i.e. NOT null).
+        /// </remarks>
         protected virtual IEnumerable<IEdge> EnumerateEdges()
         {
             var edges = new List<IEdge>(this.edges.Count / 2);
@@ -237,7 +256,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
             {
                 var twin = edge.twin;
 
-                // Report edge only once. 
+                // Report edge only once.
                 if (edge.id < twin.id)
                 {
                     edges.Add(new Edge(edge.origin.id, twin.origin.id));

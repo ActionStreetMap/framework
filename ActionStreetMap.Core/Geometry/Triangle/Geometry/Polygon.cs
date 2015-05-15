@@ -1,69 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
-    /// <summary> A polygon represented as a planar straight line graph. </summary>
+    using System;
+    using System.Collections.Generic;
+    using ActionStreetMap.Core.Geometry.Triangle.Topology;
+
+    /// <summary>
+    /// A polygon represented as a planar straight line graph.
+    /// </summary>
     public class Polygon : IPolygon
     {
-        private List<Vertex> points;
-        private List<Point> holes;
-        private List<RegionPointer> regions;
+        List<Vertex> points;
+        List<Point> holes;
+        List<RegionPointer> regions;
 
-        private List<IEdge> segments;
+        List<IEdge> segments;
 
-        /// <inherit/>
+        /// <inherit />
         public List<Vertex> Points
         {
             get { return points; }
         }
 
-        /// <inherit/>
+        /// <inherit />
         public List<Point> Holes
         {
             get { return holes; }
         }
 
-        /// <inherit/>
+        /// <inherit />
         public List<RegionPointer> Regions
         {
             get { return regions; }
         }
 
-        /// <inherit/>
+        /// <inherit />
         public List<IEdge> Segments
         {
             get { return segments; }
         }
 
-        /// <inherit/>
+        /// <inherit />
         public bool HasPointMarkers { get; set; }
 
-        /// <inherit/>
+        /// <inherit />
         public bool HasSegmentMarkers { get; set; }
 
-        /// <inherit/>
+        /// <inherit />
         public int Count
         {
             get { return points.Count; }
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Polygon"/> class. </summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Polygon" /> class.
+        /// </summary>
         public Polygon()
             : this(3, false)
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Polygon"/> class. </summary>
-        /// <param name="capacity"> The default capacity for the points list. </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Polygon" /> class.
+        /// </summary>
+        /// <param name="capacity">The default capacity for the points list.</param>
         public Polygon(int capacity)
             : this(3, false)
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Polygon"/> class. </summary>
-        /// <param name="capacity"> The default capacity for the points list. </param>
-        /// <param name="markers"> Use point and segment markers. </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Polygon" /> class.
+        /// </summary>
+        /// <param name="capacity">The default capacity for the points list.</param>
+        /// <param name="markers">Use point and segment markers.</param>
         public Polygon(int capacity, bool markers)
         {
             points = new List<Vertex>(capacity);
@@ -76,24 +86,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             HasSegmentMarkers = markers;
         }
 
-        /// <inherit/>
+        /// <inherit />
         public void AddContour(IEnumerable<Vertex> points, int marker = 0,
             bool hole = false, bool convex = false)
         {
-            // Copy input to list. 
+            // Copy input to list.
             var contour = new List<Vertex>(points);
 
             int offset = this.points.Count;
             int count = contour.Count;
 
-            // Check if first vertex equals last vertex. 
+            // Check if first vertex equals last vertex.
             if (contour[0] == contour[count - 1])
             {
                 count--;
                 contour.RemoveAt(count);
             }
 
-            // Add points to polygon. 
+            // Add points to polygon.
             this.points.AddRange(contour);
 
             var centroid = new Point(0.0, 0.0);
@@ -103,7 +113,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                 centroid.x += contour[i].x;
                 centroid.y += contour[i].y;
 
-                // Add segments to polygon. 
+                // Add segments to polygon.
                 this.segments.Add(new Edge(offset + i, offset + ((i + 1) % count), marker));
             }
 
@@ -111,7 +121,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             {
                 if (convex)
                 {
-                    // If the hole is convex, use its centroid. 
+                    // If the hole is convex, use its centroid.
                     centroid.x /= count;
                     centroid.y /= count;
 
@@ -124,36 +134,36 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             }
         }
 
-        /// <inherit/>
+        /// <inherit />
         public void AddContour(IEnumerable<Vertex> points, int marker, Point hole)
         {
-            // Copy input to list. 
+            // Copy input to list.
             var contour = new List<Vertex>(points);
 
             int offset = this.points.Count;
             int count = contour.Count;
 
-            // Check if first vertex equals last vertex. 
+            // Check if first vertex equals last vertex.
             if (contour[0] == contour[count - 1])
             {
                 count--;
                 contour.RemoveAt(count);
             }
 
-            // Add points to polygon. 
+            // Add points to polygon.
             this.points.AddRange(contour);
 
             for (int i = 0; i < count; i++)
             {
-                // Add segments to polygon. 
+                // Add segments to polygon.
                 this.segments.Add(new Edge(offset + i, offset + ((i + 1) % count), marker));
             }
 
-            // TODO: check if hole is actually inside contour? 
+            // TODO: check if hole is actually inside contour?
             this.holes.Add(hole);
         }
 
-        /// <inherit/>
+        /// <inherit />
         public Rectangle Bounds()
         {
             var bounds = new Rectangle();
@@ -162,23 +172,29 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             return bounds;
         }
 
-        /// <summary> Add a vertex to the polygon. </summary>
+        /// <summary>
+        /// Add a vertex to the polygon.
+        /// </summary>
         public void Add(Vertex vertex)
         {
             this.points.Add(vertex);
         }
 
-        /// <summary> Add a vertex to the polygon. </summary>
+        /// <summary>
+        /// Add a vertex to the polygon.
+        /// </summary>
         public void Add(Vertex vertex, double[] attributes)
         {
-            // TODO: check attibutes 
+            // TODO: check attibutes
 
             vertex.attributes = attributes;
 
             this.points.Add(vertex);
         }
 
-        /// <summary> Add a segment to the polygon. </summary>
+        /// <summary>
+        /// Add a segment to the polygon.
+        /// </summary>
         public void Add(Edge edge)
         {
             this.segments.Add(edge);
@@ -211,7 +227,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
                 for (int j = 1; j <= limit; j++)
                 {
-                    // Search to the right of the segment. 
+                    // Search to the right of the segment.
                     test.x = cx + dx / j;
                     test.y = cy + dy / j;
 
@@ -220,7 +236,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                         return test;
                     }
 
-                    // Search on the other side of the segment. 
+                    // Search on the other side of the segment.
                     test.x = cx - dx / j;
                     test.y = cy - dy / j;
 
@@ -237,12 +253,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary>
         /// Return true if the given point is inside the polygon, or false if it is not.
         /// </summary>
-        /// <param name="point"> The point to check. </param>
-        /// <param name="poly"> The polygon (list of contour points). </param>
+        /// <param name="point">The point to check.</param>
+        /// <param name="poly">The polygon (list of contour points).</param>
         /// <returns></returns>
         /// <remarks>
-        /// WARNING: If the point is exactly on the edge of the polygon, then the function may
-        /// return true or false.
+        /// WARNING: If the point is exactly on the edge of the polygon, then the function
+        /// may return true or false.
         /// 
         /// See http://alienryderflex.com/polygon/
         /// </remarks>

@@ -1,12 +1,16 @@
-﻿// ----------------------------------------------------------------------- 
-// <copyright file="Face.cs"> Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/ </copyright>
-// ----------------------------------------------------------------------- 
-
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+﻿// -----------------------------------------------------------------------
+// <copyright file="Face.cs">
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// </copyright>
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
 {
-    /// <summary> A face of DCEL mesh. </summary>
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
+    /// <summary>
+    /// A face of DCEL mesh.
+    /// </summary>
     public class Face
     {
         #region Static initialization of "Outer Space" face
@@ -19,7 +23,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
             Empty.id = -1;
         }
 
-        #endregion Static initialization of "Outer Space" face
+        #endregion
 
         internal int id;
         internal int mark;
@@ -29,14 +33,18 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
         internal HalfEdge edge;
         internal bool bounded;
 
-        /// <summary> Gets or sets the face id. </summary>
+        /// <summary>
+        /// Gets or sets the face id.
+        /// </summary>
         public int ID
         {
             get { return id; }
             set { id = value; }
         }
 
-        /// <summary> Gets or sets a half-edge connected to the face. </summary>
+        /// <summary>
+        /// Gets or sets a half-edge connected to the face.
+        /// </summary>
         public HalfEdge Edge
         {
             get { return edge; }
@@ -52,26 +60,35 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
             set { bounded = value; }
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Face"/> class. </summary>
-        /// <param name="generator"> The generator of this face (for Voronoi diagram) </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Face" /> class.
+        /// </summary>
+        /// <param name="generator">The generator of this face (for Voronoi diagram)</param>
         public Face(Point generator)
             : this(generator, null)
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Face"/> class. </summary>
-        /// <param name="generator"> The generator of this face (for Voronoi diagram) </param>
-        /// <param name="edge"> The half-edge connected to this face. </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Face" /> class.
+        /// </summary>
+        /// <param name="generator">The generator of this face (for Voronoi diagram)</param>
+        /// <param name="edge">The half-edge connected to this face.</param>
         public Face(Point generator, HalfEdge edge)
         {
             this.generator = generator;
             this.edge = edge;
             this.bounded = true;
+
+            if (generator != null)
+            {
+                this.id = generator.ID;
+            }
         }
 
         public override string ToString()
         {
-            return string.Format("F-ID {0}", generator == null ? id : generator.id);
+            return string.Format("F-ID {0}", id);
         }
     }
 }

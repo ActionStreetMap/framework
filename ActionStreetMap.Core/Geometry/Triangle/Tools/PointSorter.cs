@@ -1,21 +1,23 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="PointSorter.cs" company="">
-//     Original Triangle code by Jonathan Richard Shewchuk,
-//     http: //www.cs.cmu.edu/~quake/triangle.html Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using System;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 {
-    /// <summary> Sort an array of points using quicksort. </summary>
+    using System;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
+    /// <summary>
+    /// Sort an array of points using quicksort.
+    /// </summary>
     public class PointSorter
     {
-        private static Random rand = new Random(57113);
+        static Random rand = new Random(57113);
 
-        private Point[] points;
+        Point[] points;
 
         public void Sort(Point[] array)
         {
@@ -30,10 +32,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <remarks>
-        /// Uses quicksort. Randomized O(n log n) time. No, I did not make any of the usual
-        /// quicksort mistakes.
+        /// Uses quicksort. Randomized O(n log n) time. No, I did not make any of
+        /// the usual quicksort mistakes.
         /// </remarks>
-        private void VertexSort(int left, int right)
+        void VertexSort(int left, int right)
         {
             int oleft = left;
             int oright = right;
@@ -46,7 +48,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
             if (arraysize < 32)
             {
-                // Insertion sort 
+                // Insertion sort
                 for (int i = left + 1; i <= right; i++)
                 {
                     var a = array[i];
@@ -62,23 +64,23 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 return;
             }
 
-            // Choose a random pivot to split the array. 
+            // Choose a random pivot to split the array.
             pivot = rand.Next(left, right);
             pivotx = array[pivot].X;
             pivoty = array[pivot].Y;
-            // Split the array. 
+            // Split the array.
             left--;
             right++;
             while (left < right)
             {
-                // Search for a vertex whose x-coordinate is too large for the left. 
+                // Search for a vertex whose x-coordinate is too large for the left.
                 do
                 {
                     left++;
                 }
                 while ((left <= right) && ((array[left].X < pivotx) ||
                     ((array[left].X == pivotx) && (array[left].Y < pivoty))));
-                // Search for a vertex whose x-coordinate is too small for the right. 
+                // Search for a vertex whose x-coordinate is too small for the right.
                 do
                 {
                     right--;
@@ -88,7 +90,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
                 if (left < right)
                 {
-                    // Swap the left and right vertices. 
+                    // Swap the left and right vertices.
                     temp = array[left];
                     array[left] = array[right];
                     array[right] = temp;
@@ -96,12 +98,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             }
             if (left > oleft)
             {
-                // Recursively sort the left subset. 
+                // Recursively sort the left subset.
                 VertexSort(oleft, left);
             }
             if (oright > right + 1)
             {
-                // Recursively sort the right subset. 
+                // Recursively sort the right subset.
                 VertexSort(right + 1, oright);
             }
         }

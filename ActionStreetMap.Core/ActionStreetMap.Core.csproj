@@ -50,6 +50,8 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="AlgorithmException.cs" />
+    <Compile Include="Geometry\Triangle\Meshing\IMesh.cs" />
+    <Compile Include="Geometry\Triangle\Tools\ISmoother.cs" />
     <Compile Include="Infrastructure\Color32.cs" />
     <Compile Include="Infrastructure\IGameObject.cs" />
     <Compile Include="Infrastructure\IGameObjectFactory.cs" />

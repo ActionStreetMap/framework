@@ -1,94 +1,103 @@
-﻿using ActionStreetMap.Core.Geometry.Triangle.Meshing;
-
+﻿
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
+    using ActionStreetMap.Core.Geometry.Triangle.Meshing;
+
     public static class ExtensionMethods
     {
         #region IPolygon extensions
 
-        /// <summary> Triangulates a polygon. </summary>
-        public static Mesh Triangulate(this IPolygon polygon)
+        /// <summary>
+        /// Triangulates a polygon.
+        /// </summary>
+        public static IMesh Triangulate(this IPolygon polygon)
         {
             var mesher = new GenericMesher();
 
             return mesher.Triangulate(polygon, null, null);
         }
 
-        /// <summary> Triangulates a polygon, applying constraint options. </summary>
-        /// <param name="polygon"></param>
-        /// <param name="options"> Constraint options. </param>
-        public static Mesh Triangulate(this IPolygon polygon, ConstraintOptions options)
+        /// <summary>
+        /// Triangulates a polygon, applying constraint options.
+        /// </summary>
+        /// <param name="options">Constraint options.</param>
+        public static IMesh Triangulate(this IPolygon polygon, ConstraintOptions options)
         {
             var mesher = new GenericMesher();
 
             return mesher.Triangulate(polygon, options, null);
         }
 
-        /// <summary> Triangulates a polygon, applying quality options. </summary>
-        /// <param name="polygon"></param>
-        /// <param name="quality"> Quality options. </param>
-        public static Mesh Triangulate(this IPolygon polygon, QualityOptions quality)
+        /// <summary>
+        /// Triangulates a polygon, applying quality options.
+        /// </summary>
+        /// <param name="quality">Quality options.</param>
+        public static IMesh Triangulate(this IPolygon polygon, QualityOptions quality)
         {
             var mesher = new GenericMesher();
 
             return mesher.Triangulate(polygon, null, quality);
         }
 
-        /// <summary> Triangulates a polygon, applying quality and constraint options. </summary>
-        /// <param name="polygon"></param>
-        /// <param name="options"> Constraint options. </param>
-        /// <param name="quality"> Quality options. </param>
-        public static Mesh Triangulate(this IPolygon polygon, ConstraintOptions options, QualityOptions quality)
+        /// <summary>
+        /// Triangulates a polygon, applying quality and constraint options.
+        /// </summary>
+        /// <param name="options">Constraint options.</param>
+        /// <param name="quality">Quality options.</param>
+        public static IMesh Triangulate(this IPolygon polygon, ConstraintOptions options, QualityOptions quality)
         {
             var mesher = new GenericMesher();
 
-            var mesh = mesher.Triangulate(polygon.Points);
+            var mesh = (Mesh)mesher.Triangulate(polygon.Points);
 
             mesh.ApplyConstraints(polygon, options, quality);
 
             return mesh;
         }
 
-        /// <summary> Triangulates a polygon, applying quality and constraint options. </summary>
-        /// <param name="polygon"></param>
-        /// <param name="options"> Constraint options. </param>
-        /// <param name="quality"> Quality options. </param>
-        /// <param name="triangulator"> The triangulation algorithm. </param>
-        public static Mesh Triangulate(this IPolygon polygon, ConstraintOptions options, QualityOptions quality,
+        /// <summary>
+        /// Triangulates a polygon, applying quality and constraint options.
+        /// </summary>
+        /// <param name="options">Constraint options.</param>
+        /// <param name="quality">Quality options.</param>
+        /// <param name="triangulator">The triangulation algorithm.</param>
+        public static IMesh Triangulate(this IPolygon polygon, ConstraintOptions options, QualityOptions quality,
             ITriangulator triangulator)
         {
             var mesher = new GenericMesher(triangulator);
 
-            var mesh = mesher.Triangulate(polygon.Points);
+            var mesh = (Mesh)mesher.Triangulate(polygon.Points);
 
             mesh.ApplyConstraints(polygon, options, quality);
 
             return mesh;
         }
 
-        #endregion IPolygon extensions
+        #endregion
 
         #region Rectangle extensions
 
-        /// <summary> Find intersection of a rectangle with a segment. </summary>
-        /// <param name="rect"> The rectangle. </param>
-        /// <param name="p0"> Segment start point. </param>
-        /// <param name="p1"> Segment end point. </param>
-        /// <param name="c0"> Intersection associated to start point. </param>
-        /// <param name="c1"> Intersection associated to end point. </param>
-        /// <returns>
-        /// Returns true, if segment intersects or lies completely in rectangle, otherwise false.
-        /// </returns>
-        /// <remarks> Liang-Barsky function by Daniel White, http://www.skytopia.com/project/articles/compsci/clipping.html </remarks>
+        /// <summary>
+        /// Find intersection of a rectangle with a segment.
+        /// </summary>
+        /// <param name="rect">The rectangle.</param>
+        /// <param name="p0">Segment start point.</param>
+        /// <param name="p1">Segment end point.</param>
+        /// <param name="c0">Intersection associated to start point.</param>
+        /// <param name="c1">Intersection associated to end point.</param>
+        /// <returns>Returns true, if segment intersects or lies completely in rectangle, otherwise false.</returns>
+        /// <remarks>
+        /// Liang-Barsky function by Daniel White, http://www.skytopia.com/project/articles/compsci/clipping.html
+        /// </remarks>
         public static bool Intersect(this Rectangle rect, Point p0, Point p1, ref Point c0, ref Point c1)
         {
-            // Define the x/y clipping values for the border. 
+            // Define the x/y clipping values for the border.
             double xmin = rect.Left;
             double xmax = rect.Right;
             double ymin = rect.Bottom;
             double ymax = rect.Top;
 
-            // Define the start and end points of the line. 
+            // Define the start and end points of the line.
             double x0 = p0.X;
             double y0 = p0.Y;
             double x1 = p1.X;
@@ -104,7 +113,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
             for (int edge = 0; edge < 4; edge++)
             {
-                // Traverse through left, right, bottom, top edges. 
+                // Traverse through left, right, bottom, top edges.
                 if (edge == 0) { p = -dx; q = -(xmin - x0); }
                 if (edge == 1) { p = dx; q = (xmax - x0); }
                 if (edge == 2) { p = -dy; q = -(ymin - y0); }
@@ -131,6 +140,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             return true; // (clipped) line is drawn
         }
 
-        #endregion Rectangle extensions
+        #endregion
     }
 }

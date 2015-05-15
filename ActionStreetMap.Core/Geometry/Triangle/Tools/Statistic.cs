@@ -5,17 +5,58 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-using ActionStreetMap.Core.Geometry.Triangle.Topology;
-
 namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 {
+    using System;
+    using ActionStreetMap.Core.Geometry.Triangle.Topology;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
     /// <summary>
     /// Gather mesh statistics.
     /// </summary>
     public class Statistic
     {
+        #region Static members
+
+        /// <summary>
+        /// Number of incircle tests performed.
+        /// </summary>
+        public static long InCircleCount = 0;
+        public static long InCircleAdaptCount = 0;
+
+        /// <summary>
+        /// Number of counterclockwise tests performed.
+        /// </summary>
+        public static long CounterClockwiseCount = 0;
+        public static long CounterClockwiseAdaptCount = 0;
+
+        /// <summary>
+        /// Number of 3D orientation tests performed.
+        /// </summary>
+        public static long Orient3dCount = 0;
+
+        /// <summary>
+        /// Number of right-of-hyperbola tests performed.
+        /// </summary>
+        public static long HyperbolaCount = 0;
+
+        /// <summary>
+        /// // Number of circumcenter calculations performed.
+        /// </summary>
+        public static long CircumcenterCount = 0;
+
+        /// <summary>
+        /// Number of circle top calculations performed.
+        /// </summary>
+        public static long CircleTopCount = 0;
+
+        /// <summary>
+        /// Number of vertex relocations.
+        /// </summary>
+        public static long RelocationCount = 0;
+
+        #endregion
+
         #region Properties
 
         double minEdge = 0;
@@ -160,7 +201,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// Update statistics about the quality of the mesh.
         /// </summary>
         /// <param name="mesh"></param>
-        /// <param name="sampleDegrees"></param>
         public void Update(Mesh mesh, int sampleDegrees)
         {
             Point[] p = new Point[3];

@@ -1,24 +1,28 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="IntersectionHelper.cs" company="">
-//     Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 {
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
+    using Vertex = ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL.Vertex;
+
     public static class IntersectionHelper
     {
-        /// <summary> Compute intersection of two segments. </summary>
-        /// <param name="p0"> Segment 1 start point. </param>
-        /// <param name="p1"> Segment 1 end point. </param>
-        /// <param name="q0"> Segment 2 start point. </param>
-        /// <param name="q1"> Segment 2 end point. </param>
-        /// <param name="c0"> The intersection point. </param>
+        /// <summary>
+        /// Compute intersection of two segments.
+        /// </summary>
+        /// <param name="p0">Segment 1 start point.</param>
+        /// <param name="p1">Segment 1 end point.</param>
+        /// <param name="q0">Segment 2 start point.</param>
+        /// <param name="q1">Segment 2 end point.</param>
+        /// <param name="c0">The intersection point.</param>
         /// <remarks>
-        /// This is a special case of segment intersection. Since the calling algorithm assures that
-        /// a valid intersection exists, there's no need to check for any special cases.
+        /// This is a special case of segment intersection. Since the calling algorithm assures
+        /// that a valid intersection exists, there's no need to check for any special cases.
         /// </remarks>
         public static void IntersectSegments(Point p0, Point p1, Point q0, Point q1, ref Point c0)
         {
@@ -32,31 +36,33 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             double d = (ux * vy - uy * vx);
             double s = (vx * wy - vy * wx) / d;
 
-            // Intersection point 
+            // Intersection point
             c0.x = p0.X + s * ux;
             c0.y = p0.Y + s * uy;
         }
 
-        /// <summary> Intersect segment with a bounding box. </summary>
-        /// <param name="rect"> The clip rectangle. </param>
-        /// <param name="p0"> Segment endpoint. </param>
-        /// <param name="p1"> Segment endpoint. </param>
-        /// <param name="c0"> The new location of p0 (DCEL vertex). </param>
-        /// <param name="c1"> The new location of p1 (DCEL vertex). </param>
-        /// <returns> Returns true, if segment is clipped. </returns>
+        /// <summary>
+        /// Intersect segment with a bounding box.
+        /// </summary>
+        /// <param name="rect">The clip rectangle.</param>
+        /// <param name="p0">Segment endpoint.</param>
+        /// <param name="p1">Segment endpoint.</param>
+        /// <param name="c0">The new location of p0 (DCEL vertex).</param>
+        /// <param name="c1">The new location of p1 (DCEL vertex).</param>
+        /// <returns>Returns true, if segment is clipped.</returns>
         /// <remarks>
         /// Based on Liang-Barsky function by Daniel White:
-        /// http: //www.skytopia.com/project/articles/compsci/clipping.html
+        /// http://www.skytopia.com/project/articles/compsci/clipping.html
         /// </remarks>
         public static bool LiangBarsky(Rectangle rect, Point p0, Point p1, ref Point c0, ref Point c1)
         {
-            // Define the x/y clipping values for the border. 
+            // Define the x/y clipping values for the border.
             double xmin = rect.Left;
             double xmax = rect.Right;
             double ymin = rect.Bottom;
             double ymax = rect.Top;
 
-            // Define the start and end points of the line. 
+            // Define the start and end points of the line.
             double x0 = p0.X;
             double y0 = p0.Y;
             double x1 = p1.X;
@@ -72,7 +78,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
             for (int edge = 0; edge < 4; edge++)
             {
-                // Traverse through left, right, bottom, top edges. 
+                // Traverse through left, right, bottom, top edges.
                 if (edge == 0) { p = -dx; q = -(xmin - x0); }
                 if (edge == 1) { p = dx; q = (xmax - x0); }
                 if (edge == 2) { p = -dy; q = -(ymin - y0); }
@@ -99,12 +105,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             return true; // (clipped) line is drawn
         }
 
-        /// <summary> Intersect a ray with a bounding box. </summary>
-        /// <param name="rect"> The clip rectangle. </param>
-        /// <param name="p0"> The ray startpoint (inside the box). </param>
-        /// <param name="p1"> Any point in ray direction (NOT the direction vector). </param>
-        /// <param name="c1"> The intersection point (DCEL vertex). </param>
-        /// <returns> Returns false, if startpoint is outside the box. </returns>
+        /// <summary>
+        /// Intersect a ray with a bounding box.
+        /// </summary>
+        /// <param name="rect">The clip rectangle.</param>
+        /// <param name="p0">The ray startpoint (inside the box).</param>
+        /// <param name="p1">Any point in ray direction (NOT the direction vector).</param>
+        /// <param name="c1">The intersection point (DCEL vertex).</param>
+        /// <returns>Returns false, if startpoint is outside the box.</returns>
         public static bool BoxRayIntersection(Rectangle rect, Point p0, Point p1, ref Point c1)
         {
             double x = p0.X;
@@ -115,58 +123,58 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
             double t1, x1, y1, t2, x2, y2;
 
-            // Bounding box 
+            // Bounding box
             double xmin = rect.Left;
             double xmax = rect.Right;
             double ymin = rect.Bottom;
             double ymax = rect.Top;
 
-            // Check if point is inside the bounds 
+            // Check if point is inside the bounds
             if (x < xmin || x > xmax || y < ymin || y > ymax)
             {
                 return false;
             }
 
-            // Calculate the cut through the vertical boundaries 
+            // Calculate the cut through the vertical boundaries
             if (dx < 0)
             {
-                // Line going to the left: intersect with x = minX 
+                // Line going to the left: intersect with x = minX
                 t1 = (xmin - x) / dx;
                 x1 = xmin;
                 y1 = y + t1 * dy;
             }
             else if (dx > 0)
             {
-                // Line going to the right: intersect with x = maxX 
+                // Line going to the right: intersect with x = maxX
                 t1 = (xmax - x) / dx;
                 x1 = xmax;
                 y1 = y + t1 * dy;
             }
             else
             {
-                // Line going straight up or down: no intersection possible 
+                // Line going straight up or down: no intersection possible
                 t1 = double.MaxValue;
                 x1 = y1 = 0;
             }
 
-            // Calculate the cut through upper and lower boundaries 
+            // Calculate the cut through upper and lower boundaries
             if (dy < 0)
             {
-                // Line going downwards: intersect with y = minY 
+                // Line going downwards: intersect with y = minY
                 t2 = (ymin - y) / dy;
                 x2 = x + t2 * dx;
                 y2 = ymin;
             }
             else if (dy > 0)
             {
-                // Line going upwards: intersect with y = maxY 
+                // Line going upwards: intersect with y = maxY
                 t2 = (ymax - y) / dy;
                 x2 = x + t2 * dx;
                 y2 = ymax;
             }
             else
             {
-                // Horizontal line: no intersection possible 
+                // Horizontal line: no intersection possible
                 t2 = double.MaxValue;
                 x2 = y2 = 0;
             }

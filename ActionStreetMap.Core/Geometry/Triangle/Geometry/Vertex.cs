@@ -1,19 +1,21 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="Vertex.cs" company="">
-//     Original Triangle code by Jonathan Richard Shewchuk,
-//     http: //www.cs.cmu.edu/~quake/triangle.html Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using System;
-using ActionStreetMap.Core.Geometry.Triangle.Topology;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
-    /// <summary> The vertex data structure. </summary>
+    using System;
+    using ActionStreetMap.Core.Geometry.Triangle.Topology;
+
+    /// <summary>
+    /// The vertex data structure.
+    /// </summary>
     public class Vertex : Point
     {
-        // Hash for dictionary. Will be set by mesh instance. 
+        // Hash for dictionary. Will be set by mesh instance.
         internal int hash;
 
         internal double[] attributes;
@@ -21,34 +23,42 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         internal VertexType type;
         internal Otri tri;
 
-        /// <summary> Initializes a new instance of the <see cref="Vertex"/> class. </summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Vertex" /> class.
+        /// </summary>
         public Vertex()
             : this(0, 0, 0, 0)
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Vertex"/> class. </summary>
-        /// <param name="x"> The x coordinate of the vertex. </param>
-        /// <param name="y"> The y coordinate of the vertex. </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Vertex" /> class.
+        /// </summary>
+        /// <param name="x">The x coordinate of the vertex.</param>
+        /// <param name="y">The y coordinate of the vertex.</param>
         public Vertex(double x, double y)
             : this(x, y, 0, 0)
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Vertex"/> class. </summary>
-        /// <param name="x"> The x coordinate of the vertex. </param>
-        /// <param name="y"> The y coordinate of the vertex. </param>
-        /// <param name="mark"> The boundary mark. </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Vertex" /> class.
+        /// </summary>
+        /// <param name="x">The x coordinate of the vertex.</param>
+        /// <param name="y">The y coordinate of the vertex.</param>
+        /// <param name="mark">The boundary mark.</param>
         public Vertex(double x, double y, int mark)
             : this(x, y, mark, 0)
         {
         }
 
-        /// <summary> Initializes a new instance of the <see cref="Vertex"/> class. </summary>
-        /// <param name="x"> The x coordinate of the vertex. </param>
-        /// <param name="y"> The y coordinate of the vertex. </param>
-        /// <param name="mark"> The boundary mark. </param>
-        /// <param name="attribs"> The number of point attributes. </param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Vertex" /> class.
+        /// </summary>
+        /// <param name="x">The x coordinate of the vertex.</param>
+        /// <param name="y">The y coordinate of the vertex.</param>
+        /// <param name="mark">The boundary mark.</param>
+        /// <param name="attribs">The number of point attributes.</param>
         public Vertex(double x, double y, int mark, int attribs)
             : base(x, y, mark)
         {
@@ -62,21 +72,27 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
         #region Public properties
 
-        /// <summary> Gets the vertex attributes (may be null). </summary>
+        /// <summary>
+        /// Gets the vertex attributes (may be null).
+        /// </summary>
         public double[] Attributes
         {
             get { return this.attributes; }
         }
 
-        /// <summary> Gets the vertex type. </summary>
+        /// <summary>
+        /// Gets the vertex type.
+        /// </summary>
         public VertexType Type
         {
             get { return this.type; }
         }
 
-        /// <summary> Gets the specified coordinate of the vertex. </summary>
-        /// <param name="i"> Coordinate index. </param>
-        /// <returns> X coordinate, if index is 0, Y coordinate, if index is 1. </returns>
+        /// <summary>
+        /// Gets the specified coordinate of the vertex.
+        /// </summary>
+        /// <param name="i">Coordinate index.</param>
+        /// <returns>X coordinate, if index is 0, Y coordinate, if index is 1.</returns>
         public double this[int i]
         {
             get
@@ -95,7 +111,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             }
         }
 
-        #endregion Public properties
+        #endregion
 
         public override int GetHashCode()
         {

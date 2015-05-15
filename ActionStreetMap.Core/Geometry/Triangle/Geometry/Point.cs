@@ -1,14 +1,16 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="Point.cs" company="">
-//     Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using System;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
-    /// <summary> Represents a 2D point. </summary>
+    using System;
+
+    /// <summary>
+    /// Represents a 2D point.
+    /// </summary>
     public class Point : IComparable<Point>, IEquatable<Point>
     {
         internal int id;
@@ -35,50 +37,58 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
         #region Public properties
 
-        /// <summary> Gets or sets the vertex id. </summary>
+        /// <summary>
+        /// Gets or sets the vertex id.
+        /// </summary>
         public int ID
         {
             get { return this.id; }
             set { this.id = value; }
         }
 
-        /// <summary> Gets or sets the vertex x coordinate. </summary>
+        /// <summary>
+        /// Gets or sets the vertex x coordinate.
+        /// </summary>
         public double X
         {
             get { return this.x; }
             set { this.x = value; }
         }
 
-        /// <summary> Gets or sets the vertex y coordinate. </summary>
+        /// <summary>
+        /// Gets or sets the vertex y coordinate.
+        /// </summary>
         public double Y
         {
             get { return this.y; }
             set { this.y = value; }
         }
 
-        /// <summary> Gets or sets the vertex boundary mark. </summary>
+        /// <summary>
+        /// Gets or sets the vertex boundary mark.
+        /// </summary>
         public int Boundary
         {
             get { return this.mark; }
             set { this.mark = value; }
         }
 
-        #endregion Public properties
+        #endregion
 
         #region Operator overloading / overriding Equals
 
         // Compare "Guidelines for Overriding Equals() and Operator =="
-        // http: //msdn.microsoft.com/en-us/library/ms173147.aspx
+        // http://msdn.microsoft.com/en-us/library/ms173147.aspx
 
         public static bool operator ==(Point a, Point b)
         {
-            // If both are null, or both are same instance, return true. 
+            // If both are null, or both are same instance, return true.
             if (Object.ReferenceEquals(a, b))
             {
                 return true;
             }
 
-            // If one is null, but not both, return false. 
+            // If one is null, but not both, return false.
             if (((object)a == null) || ((object)b == null))
             {
                 return false;
@@ -94,7 +104,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
         public override bool Equals(object obj)
         {
-            // If parameter is null return false. 
+            // If parameter is null return false.
             if (obj == null)
             {
                 return false;
@@ -112,17 +122,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
         public bool Equals(Point p)
         {
-            // If vertex is null return false. 
+            // If vertex is null return false.
             if ((object)p == null)
             {
                 return false;
             }
 
-            // Return true if the fields match: 
+            // Return true if the fields match:
             return (x == p.x) && (y == p.y);
         }
 
-        #endregion Operator overloading / overriding Equals
+        #endregion
 
         public int CompareTo(Point other)
         {

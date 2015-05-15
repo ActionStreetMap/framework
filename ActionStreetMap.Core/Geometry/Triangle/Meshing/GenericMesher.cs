@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-using ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm;
-using ActionStreetMap.Core.Geometry.Triangle.Tools;
-
+﻿
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 {
-    /// <summary> Create meshes of point sets or polygons. </summary>
+    using System;
+    using System.Collections.Generic;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+    using ActionStreetMap.Core.Geometry.Triangle.IO;
+    using ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm;
+
+    /// <summary>
+    /// Create meshes of point sets or polygons.
+    /// </summary>
     public class GenericMesher : ITriangulator, IConstraintMesher, IQualityMesher
     {
-        private ITriangulator triangulator;
+        ITriangulator triangulator;
 
         public GenericMesher()
             : this(new Dwyer())
@@ -21,47 +24,49 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             this.triangulator = triangulator;
         }
 
-        /// <inherit/>
-        public Mesh Triangulate(ICollection<Vertex> points)
+        /// <inherit />
+        public IMesh Triangulate(ICollection<Vertex> points)
         {
             return triangulator.Triangulate(points);
         }
 
-        /// <inherit/>
-        public Mesh Triangulate(IPolygon polygon)
+        /// <inherit />
+        public IMesh Triangulate(IPolygon polygon)
         {
             return Triangulate(polygon, null, null);
         }
 
-        /// <inherit/>
-        public Mesh Triangulate(IPolygon polygon, ConstraintOptions options)
+        /// <inherit />
+        public IMesh Triangulate(IPolygon polygon, ConstraintOptions options)
         {
             return Triangulate(polygon, options, null);
         }
 
-        /// <inherit/>
-        public Mesh Triangulate(IPolygon polygon, QualityOptions quality)
+        /// <inherit />
+        public IMesh Triangulate(IPolygon polygon, QualityOptions quality)
         {
             return Triangulate(polygon, null, quality);
         }
 
-        /// <inherit/>
-        public Mesh Triangulate(IPolygon polygon, ConstraintOptions options, QualityOptions quality)
+        /// <inherit />
+        public IMesh Triangulate(IPolygon polygon, ConstraintOptions options, QualityOptions quality)
         {
-            var mesh = triangulator.Triangulate(polygon.Points);
+            var mesh = (Mesh)triangulator.Triangulate(polygon.Points);
 
             mesh.ApplyConstraints(polygon, options, quality);
 
             return mesh;
         }
 
-        /// <summary> Generates a structured mesh with bounds [0, 0, width, height]. </summary>
-        /// <param name="width"> Width of the mesh (must be &gt; 0). </param>
-        /// <param name="height"> Height of the mesh (must be &gt; 0). </param>
-        /// <param name="nx"> Number of segments in x direction. </param>
-        /// <param name="ny"> Number of segments in y direction. </param>
-        /// <returns> Mesh </returns>
-        public Mesh StructuredMesh(double width, double height, int nx, int ny)
+        /// <summary>
+        /// Generates a structured mesh with bounds [0, 0, width, height].
+        /// </summary>
+        /// <param name="width">Width of the mesh (must be > 0).</param>
+        /// <param name="height">Height of the mesh (must be > 0).</param>
+        /// <param name="nx">Number of segments in x direction.</param>
+        /// <param name="ny">Number of segments in y direction.</param>
+        /// <returns>Mesh</returns>
+        public IMesh StructuredMesh(double width, double height, int nx, int ny)
         {
             if (width <= 0.0)
             {
@@ -76,12 +81,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             return StructuredMesh(new Rectangle(0.0, 0.0, width, height), nx, ny);
         }
 
-        /// <summary> Generates a structured mesh. </summary>
-        /// <param name="bounds"> Bounds of the mesh. </param>
-        /// <param name="nx"> Number of segments in x direction. </param>
-        /// <param name="ny"> Number of segments in y direction. </param>
-        /// <returns> Mesh </returns>
-        public Mesh StructuredMesh(Rectangle bounds, int nx, int ny)
+        /// <summary>
+        /// Generates a structured mesh.
+        /// </summary>
+        /// <param name="bounds">Bounds of the mesh.</param>
+        /// <param name="nx">Number of segments in x direction.</param>
+        /// <param name="ny">Number of segments in y direction.</param>
+        /// <returns>Mesh</returns>
+        public IMesh StructuredMesh(Rectangle bounds, int nx, int ny)
         {
             var polygon = new Polygon((nx + 1) * (ny + 1));
 
@@ -95,7 +102,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             int i, j, k, l, n;
 
-            // Add vertices. 
+            // Add vertices.
             var points = polygon.Points;
 
             for (i = 0; i <= nx; i++)
@@ -112,36 +119,36 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             n = 0;
 
-            // Set vertex hash and id. 
+            // Set vertex hash and id.
             foreach (var v in points)
             {
                 v.hash = v.id = n++;
             }
 
-            // Add boundary segments. 
+            // Add boundary segments.
             var segments = polygon.Segments;
 
             segments.Capacity = 2 * (nx + ny);
 
             for (j = 0; j < ny; j++)
             {
-                // Left 
+                // Left
                 segments.Add(new Edge(j, j + 1));
 
-                // Right 
+                // Right
                 segments.Add(new Edge(nx * (ny + 1) + j, nx * (ny + 1) + (j + 1)));
             }
 
             for (i = 0; i < nx; i++)
             {
-                // Bottom 
+                // Bottom
                 segments.Add(new Edge(i * (ny + 1), (i + 1) * (ny + 1)));
 
-                // Top 
+                // Top
                 segments.Add(new Edge(i * (ny + 1) + nx, (i + 1) * (ny + 1) + nx));
             }
 
-            // Add triangles. 
+            // Add triangles.
             var triangles = new InputTriangle[2 * nx * ny];
 
             n = 0;
@@ -153,17 +160,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     k = j + (ny + 1) * i;
                     l = j + (ny + 1) * (i + 1);
 
-                    // Create 2 triangles in rectangle [k, l, l + 1, k + 1]. 
+                    // Create 2 triangles in rectangle [k, l, l + 1, k + 1].
 
                     if ((i + j) % 2 == 0)
                     {
-                        // Diagonal from bottom left to top right. 
+                        // Diagonal from bottom left to top right.
                         triangles[n++] = new InputTriangle(k, l, l + 1);
                         triangles[n++] = new InputTriangle(k, l + 1, k + 1);
                     }
                     else
                     {
-                        // Diagonal from top left to bottom right. 
+                        // Diagonal from top left to bottom right.
                         triangles[n++] = new InputTriangle(k, l, k + 1);
                         triangles[n++] = new InputTriangle(l, l + 1, k + 1);
                     }

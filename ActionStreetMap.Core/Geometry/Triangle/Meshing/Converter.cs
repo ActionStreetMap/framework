@@ -1,32 +1,40 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="Converter.cs" company="">
-//     Original Triangle code by Jonathan Richard Shewchuk,
-//     http: //www.cs.cmu.edu/~quake/triangle.html Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-using ActionStreetMap.Core.Geometry.Triangle.Topology;
-using ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL;
-using Vertex = ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 {
-    /// <summary> The Converter class provides methods for mesh reconstruction and conversion. </summary>
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+    using ActionStreetMap.Core.Geometry.Triangle.Topology;
+    using ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL;
+
+    using HVertex = ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL.Vertex;
+    using TVertex = ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex;
+
+    /// <summary>
+    /// The Converter class provides methods for mesh reconstruction and conversion.
+    /// </summary>
     public static class Converter
     {
         #region Triangle mesh conversion
 
-        /// <summary> Reconstruct a triangulation from its raw data representation. </summary>
+        /// <summary>
+        /// Reconstruct a triangulation from its raw data representation.
+        /// </summary>
         public static Mesh ToMesh(Polygon polygon, IList<ITriangle> triangles)
         {
             return ToMesh(polygon, triangles.ToArray());
         }
 
-        /// <summary> Reconstruct a triangulation from its raw data representation. </summary>
+        /// <summary>
+        /// Reconstruct a triangulation from its raw data representation.
+        /// </summary>
         public static Mesh ToMesh(Polygon polygon, ITriangle[] triangles)
         {
             Otri tri = default(Otri);
@@ -50,7 +58,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 mesh.holes.AddRange(polygon.Holes);
             }
 
-            // Create the triangles. 
+            // Create the triangles.
             for (i = 0; i < elements; i++)
             {
                 mesh.MakeTriangle(ref tri);
@@ -60,7 +68,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             {
                 mesh.insegments = segments;
 
-                // Create the subsegments. 
+                // Create the subsegments.
                 for (i = 0; i < segments; i++)
                 {
                     mesh.MakeSegment(ref subseg);
@@ -75,8 +83,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         }
 
         /// <summary>
-        /// Finds the adjacencies between triangles by forming a stack of triangles for each vertex.
-        /// Each triangle is on three different stacks simultaneously.
+        /// Finds the adjacencies between triangles by forming a stack of triangles for
+        /// each vertex. Each triangle is on three different stacks simultaneously.
         /// </summary>
         private static List<Otri>[] SetNeighbors(Mesh mesh, ITriangle[] triangles)
         {
@@ -85,27 +93,28 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             Otri checktri = default(Otri);
             Otri checkleft = default(Otri);
             Otri nexttri;
-            Vertex tdest, tapex;
-            Vertex checkdest, checkapex;
+            TVertex tdest, tapex;
+            TVertex checkdest, checkapex;
             int[] corner = new int[3];
             int aroundvertex;
             int i;
 
-            // Allocate a temporary array that maps each vertex to some adjacent triangle. 
+            // Allocate a temporary array that maps each vertex to some adjacent triangle.
             var vertexarray = new List<Otri>[mesh.vertices.Count];
 
-            // Each vertex is initially unrepresented. 
+            // Each vertex is initially unrepresented.
             for (i = 0; i < mesh.vertices.Count; i++)
             {
                 Otri tmp = default(Otri);
-                tmp.tri = Topology.Triangle.Empty;
+                tmp.tri = mesh.dummytri;
                 vertexarray[i] = new List<Otri>(3);
                 vertexarray[i].Add(tmp);
             }
 
             i = 0;
 
-            // Read the triangles from the .ele file, and link together those that share an edge. 
+            // Read the triangles from the .ele file, and link
+            // together those that share an edge.
             foreach (var item in mesh.triangles.Values)
             {
                 tri.tri = item;
@@ -114,7 +123,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 corner[1] = triangles[i].P1;
                 corner[2] = triangles[i].P2;
 
-                // Copy the triangle's three corners. 
+                // Copy the triangle's three corners.
                 for (int j = 0; j < 3; j++)
                 {
                     if ((corner[j] < 0) || (corner[j] >= mesh.invertices))
@@ -123,43 +132,43 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     }
                 }
 
-                // Read the triangle's attributes. 
+                // Read the triangle's attributes.
                 tri.tri.region = triangles[i].Region;
 
-                // TODO: VarArea 
+                // TODO: VarArea
                 if (mesh.behavior.VarArea)
                 {
                     tri.tri.area = triangles[i].Area;
                 }
 
-                // Set the triangle's vertices. 
+                // Set the triangle's vertices.
                 tri.orient = 0;
                 tri.SetOrg(mesh.vertices[corner[0]]);
                 tri.SetDest(mesh.vertices[corner[1]]);
                 tri.SetApex(mesh.vertices[corner[2]]);
 
-                // Try linking the triangle to others that share these vertices. 
+                // Try linking the triangle to others that share these vertices.
                 for (tri.orient = 0; tri.orient < 3; tri.orient++)
                 {
-                    // Take the number for the origin of triangleloop. 
+                    // Take the number for the origin of triangleloop.
                     aroundvertex = corner[tri.orient];
 
                     int index = vertexarray[aroundvertex].Count - 1;
 
-                    // Look for other triangles having this vertex. 
+                    // Look for other triangles having this vertex.
                     nexttri = vertexarray[aroundvertex][index];
 
-                    // Push the current triangle onto the stack. 
+                    // Push the current triangle onto the stack.
                     vertexarray[aroundvertex].Add(tri);
 
                     checktri = nexttri;
 
-                    if (checktri.tri.id != Topology.Triangle.EmptyID)
+                    if (checktri.tri.id != Mesh.DUMMY)
                     {
                         tdest = tri.Dest();
                         tapex = tri.Apex();
 
-                        // Look for other triangles that share an edge. 
+                        // Look for other triangles that share an edge.
                         do
                         {
                             checkdest = checktri.Dest();
@@ -167,22 +176,22 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
                             if (tapex == checkdest)
                             {
-                                // The two triangles share an edge; bond them together. 
+                                // The two triangles share an edge; bond them together.
                                 tri.Lprev(ref triangleleft);
                                 triangleleft.Bond(ref checktri);
                             }
                             if (tdest == checkapex)
                             {
-                                // The two triangles share an edge; bond them together. 
+                                // The two triangles share an edge; bond them together.
                                 checktri.Lprev(ref checkleft);
                                 tri.Bond(ref checkleft);
                             }
-                            // Find the next triangle in the stack. 
+                            // Find the next triangle in the stack.
                             index--;
                             nexttri = vertexarray[aroundvertex][index];
 
                             checktri = nexttri;
-                        } while (checktri.tri.id != Topology.Triangle.EmptyID);
+                        } while (checktri.tri.id != Mesh.DUMMY);
                     }
                 }
 
@@ -192,17 +201,19 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             return vertexarray;
         }
 
-        /// <summary> Finds the adjacencies between triangles and subsegments. </summary>
+        /// <summary>
+        /// Finds the adjacencies between triangles and subsegments.
+        /// </summary>
         private static void SetSegments(Mesh mesh, Polygon polygon, List<Otri>[] vertexarray)
         {
             Otri checktri = default(Otri);
             Otri nexttri; // Triangle
-            Vertex checkdest;
+            TVertex checkdest;
             Otri checkneighbor = default(Otri);
             Osub subseg = default(Osub);
             Otri prevlink; // Triangle
-            Vertex shorg;
-            Vertex segmentorg, segmentdest;
+            TVertex shorg;
+            TVertex segmentorg, segmentdest;
             int[] end = new int[2];
             bool notfound;
             //bool segmentmarkers = false;
@@ -212,10 +223,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             int hullsize = 0;
 
-            // Prepare to count the boundary edges. 
+            // Prepare to count the boundary edges.
             if (mesh.behavior.Poly)
             {
-                // Link the segments to their neighboring triangles. 
+                // Link the segments to their neighboring triangles.
                 boundmarker = 0;
                 i = 0;
                 foreach (var item in mesh.subsegs.Values)
@@ -234,7 +245,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         }
                     }
 
-                    // set the subsegment's vertices. 
+                    // set the subsegment's vertices.
                     subseg.orient = 0;
                     segmentorg = mesh.vertices[end[0]];
                     segmentdest = mesh.vertices[end[1]];
@@ -243,26 +254,27 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     subseg.SetSegOrg(segmentorg);
                     subseg.SetSegDest(segmentdest);
                     subseg.seg.boundary = boundmarker;
-                    // Try linking the subsegment to triangles that share these vertices. 
+                    // Try linking the subsegment to triangles that share these vertices.
                     for (subseg.orient = 0; subseg.orient < 2; subseg.orient++)
                     {
-                        // Take the number for the destination of subsegloop. 
+                        // Take the number for the destination of subsegloop.
                         aroundvertex = end[1 - subseg.orient];
                         int index = vertexarray[aroundvertex].Count - 1;
-                        // Look for triangles having this vertex. 
+                        // Look for triangles having this vertex.
                         prevlink = vertexarray[aroundvertex][index];
                         nexttri = vertexarray[aroundvertex][index];
 
                         checktri = nexttri;
                         shorg = subseg.Org();
                         notfound = true;
-                        // Look for triangles having this edge. Note that I'm only comparing each
-                        // triangle's destination with the subsegment; each triangle's apex is
-                        // handled through a different vertex. Because each triangle appears on
-                        // three vertices' lists, each occurrence of a triangle on a list can (and
-                        // does) represent an edge. In this way, most edges are represented twice,
-                        // and every triangle-subsegment bond is represented once.
-                        while (notfound && (checktri.tri.id != Topology.Triangle.EmptyID))
+                        // Look for triangles having this edge.  Note that I'm only
+                        // comparing each triangle's destination with the subsegment;
+                        // each triangle's apex is handled through a different vertex.
+                        // Because each triangle appears on three vertices' lists, each
+                        // occurrence of a triangle on a list can (and does) represent
+                        // an edge.  In this way, most edges are represented twice, and
+                        // every triangle-subsegment bond is represented once.
+                        while (notfound && (checktri.tri.id != Mesh.DUMMY))
                         {
                             checkdest = checktri.Dest();
 
@@ -271,22 +283,22 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                                 // We have a match. Remove this triangle from the list.
                                 //prevlink = vertexarray[aroundvertex][index];
                                 vertexarray[aroundvertex].Remove(prevlink);
-                                // Bond the subsegment to the triangle. 
+                                // Bond the subsegment to the triangle.
                                 checktri.SegBond(ref subseg);
-                                // Check if this is a boundary edge. 
+                                // Check if this is a boundary edge.
                                 checktri.Sym(ref checkneighbor);
-                                if (checkneighbor.tri.id == Topology.Triangle.EmptyID)
+                                if (checkneighbor.tri.id == Mesh.DUMMY)
                                 {
                                     // The next line doesn't insert a subsegment (because there's
-                                    // already one there), but it sets the boundary markers of the
-                                    // existing subsegment and its vertices.
+                                    // already one there), but it sets the boundary markers of
+                                    // the existing subsegment and its vertices.
                                     mesh.InsertSubseg(ref checktri, 1);
                                     hullsize++;
                                 }
                                 notfound = false;
                             }
                             index--;
-                            // Find the next triangle in the stack. 
+                            // Find the next triangle in the stack.
                             prevlink = vertexarray[aroundvertex][index];
                             nexttri = vertexarray[aroundvertex][index];
 
@@ -298,24 +310,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 }
             }
 
-            // Mark the remaining edges as not being attached to any subsegment. Also, count the
-            // (yet uncounted) boundary edges.
+            // Mark the remaining edges as not being attached to any subsegment.
+            // Also, count the (yet uncounted) boundary edges.
             for (i = 0; i < mesh.vertices.Count; i++)
             {
-                // Search the stack of triangles adjacent to a vertex. 
+                // Search the stack of triangles adjacent to a vertex.
                 int index = vertexarray[i].Count - 1;
                 nexttri = vertexarray[i][index];
                 checktri = nexttri;
 
-                while (checktri.tri.id != Topology.Triangle.EmptyID)
+                while (checktri.tri.id != Mesh.DUMMY)
                 {
-                    // Find the next triangle in the stack before this information gets overwritten. 
+                    // Find the next triangle in the stack before this
+                    // information gets overwritten.
                     index--;
                     nexttri = vertexarray[i][index];
-                    // No adjacent subsegment. (This overwrites the stack info.) 
-                    checktri.SegDissolve();
+                    // No adjacent subsegment.  (This overwrites the stack info.)
+                    checktri.SegDissolve(mesh.dummysub);
                     checktri.Sym(ref checkneighbor);
-                    if (checkneighbor.tri.id == Topology.Triangle.EmptyID)
+                    if (checkneighbor.tri.id == Mesh.DUMMY)
                     {
                         mesh.InsertSubseg(ref checktri, 1);
                         hullsize++;
@@ -329,7 +342,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             mesh.edges = (3 * mesh.triangles.Count + hullsize) / 2;
         }
 
-        #endregion Triangle mesh conversion
+        #endregion
 
         #region DCEL conversion
 
@@ -337,25 +350,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         {
             var dcel = new DcelMesh();
 
-            var vertices = new Topology.DCEL.Vertex[mesh.vertices.Count];
+            var vertices = new HVertex[mesh.vertices.Count];
             var faces = new Face[mesh.triangles.Count];
 
             dcel.HalfEdges.Capacity = 2 * mesh.edges;
 
             mesh.Renumber();
 
-            Topology.DCEL.Vertex vertex;
+            HVertex vertex;
 
             foreach (var v in mesh.vertices.Values)
             {
-                vertex = new Topology.DCEL.Vertex(v.x, v.y);
+                vertex = new HVertex(v.x, v.y);
                 vertex.id = v.id;
                 vertex.mark = v.mark;
 
                 vertices[v.id] = vertex;
             }
 
-            // Maps a triangle to its 3 edges (used to set next pointers). 
+            // Maps a triangle to its 3 edges (used to set next pointers).
             var map = new List<HalfEdge>[mesh.triangles.Count];
 
             Face face;
@@ -371,7 +384,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             }
 
             Otri tri = default(Otri), neighbor = default(Otri);
-            Vertex org, dest;
+            ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex org, dest;
 
             int id, nid, count = mesh.triangles.Count;
 
@@ -379,10 +392,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             var edges = dcel.HalfEdges;
 
-            // Count half-edges (edge ids). 
+            // Count half-edges (edge ids).
             int k = 0;
 
-            // Maps a vertex to its leaving boundary edge. 
+            // Maps a vertex to its leaving boundary edge.
             var boundary = new Dictionary<int, HalfEdge>();
 
             foreach (var t in mesh.triangles.Values)
@@ -402,11 +415,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     {
                         face = faces[id];
 
-                        // Get the endpoints of the current triangle edge. 
+                        // Get the endpoints of the current triangle edge.
                         org = tri.Org();
                         dest = tri.Dest();
 
-                        // Create half-edges. 
+                        // Create half-edges.
                         edge = new HalfEdge(vertices[org.id], face);
                         twin = new HalfEdge(vertices[dest.id], nid < 0 ? Face.Empty : faces[nid]);
 
@@ -421,11 +434,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                             boundary.Add(dest.id, twin);
                         }
 
-                        // Set leaving edges. 
+                        // Set leaving edges.
                         edge.origin.leaving = edge;
                         twin.origin.leaving = twin;
 
-                        // Set twin edges. 
+                        // Set twin edges.
                         edge.twin = twin;
                         twin.twin = edge;
 
@@ -438,7 +451,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 }
             }
 
-            // Set next pointers for each triangle face. 
+            // Set next pointers for each triangle face.
             foreach (var t in map)
             {
                 edge = t[0];
@@ -458,7 +471,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 }
             }
 
-            // Resolve boundary edges. 
+            // Resolve boundary edges.
             foreach (var e in boundary.Values)
             {
                 e.next = boundary[e.twin.origin.id];
@@ -470,6 +483,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             return dcel;
         }
 
-        #endregion DCEL conversion
+        #endregion
     }
 }

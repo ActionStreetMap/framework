@@ -1,35 +1,37 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="Behavior.cs">
-//     Original Triangle code by Jonathan Richard Shewchuk,
-//     http: //www.cs.cmu.edu/~quake/triangle.html Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using System;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
-    /// <summary> Controls the behavior of the meshing software. </summary>
-    internal class Behavior
+    using System;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
+    /// <summary>
+    /// Controls the behavior of the meshing software.
+    /// </summary>
+    class Behavior
     {
-        private bool poly = false;
-        private bool quality = false;
-        private bool varArea = false;
-        private bool convex = false;
-        private bool jettison = false;
-        private bool boundaryMarkers = true;
-        private bool noHoles = false;
-        private bool conformDel = false;
+        bool poly = false;
+        bool quality = false;
+        bool varArea = false;
+        bool convex = false;
+        bool jettison = false;
+        bool boundaryMarkers = true;
+        bool noHoles = false;
+        bool conformDel = false;
 
-        private Func<ITriangle, double, bool> usertest;
+        Func<ITriangle, double, bool> usertest;
 
-        private int noBisect = 0;
-        private int steiner = -1;
+        int noBisect = 0;
+        int steiner = -1;
 
-        private double minAngle = 0.0;
-        private double maxAngle = 0.0;
-        private double maxArea = -1.0;
+        double minAngle = 0.0;
+        double maxAngle = 0.0;
+        double maxArea = -1.0;
 
         internal bool fixedArea = false;
         internal bool useSegments = true;
@@ -38,7 +40,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         internal double maxGoodAngle = 0.0;
         internal double offconstant = 0.0;
 
-        /// <summary> Creates an instance of the Behavior class. </summary>
+        /// <summary>
+        /// Creates an instance of the Behavior class.
+        /// </summary>
         public Behavior(bool quality = false, double minAngle = 20.0)
         {
             if (quality)
@@ -50,7 +54,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             }
         }
 
-        /// <summary> Update quality options dependencies. </summary>
+        /// <summary>
+        /// Update quality options dependencies.
+        /// </summary>
         private void Update()
         {
             this.quality = true;
@@ -87,9 +93,20 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             this.goodAngle *= this.goodAngle;
         }
 
+        #region Static properties
+
+        /// <summary>
+        /// No exact arithmetic.
+        /// </summary>
+        public static bool NoExact { get; set; }
+
+        #endregion
+
         #region Public properties
 
-        /// <summary> Quality mesh generation. </summary>
+        /// <summary>
+        /// Quality mesh generation.
+        /// </summary>
         public bool Quality
         {
             get { return quality; }
@@ -103,21 +120,27 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             }
         }
 
-        /// <summary> Minimum angle constraint. </summary>
+        /// <summary>
+        /// Minimum angle constraint.
+        /// </summary>
         public double MinAngle
         {
             get { return minAngle; }
             set { minAngle = value; Update(); }
         }
 
-        /// <summary> Maximum angle constraint. </summary>
+        /// <summary>
+        /// Maximum angle constraint.
+        /// </summary>
         public double MaxAngle
         {
             get { return maxAngle; }
             set { maxAngle = value; Update(); }
         }
 
-        /// <summary> Maximum area constraint. </summary>
+        /// <summary>
+        /// Maximum area constraint.
+        /// </summary>
         public double MaxArea
         {
             get { return maxArea; }
@@ -128,45 +151,58 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             }
         }
 
-        /// <summary> Apply a maximum triangle area constraint. </summary>
+        /// <summary>
+        /// Apply a maximum triangle area constraint.
+        /// </summary>
         public bool VarArea
         {
             get { return varArea; }
             set { varArea = value; }
         }
 
-        /// <summary> Input is a Planar Straight Line Graph. </summary>
+        /// <summary>
+        /// Input is a Planar Straight Line Graph.
+        /// </summary>
         public bool Poly
         {
             get { return poly; }
             set { poly = value; }
         }
 
-        /// <summary> Apply a user-defined triangle constraint. </summary>
+        /// <summary>
+        /// Apply a user-defined triangle constraint.
+        /// </summary>
         public Func<ITriangle, double, bool> UserTest
         {
             get { return usertest; }
             set { usertest = value; }
         }
 
-        /// <summary> Enclose the convex hull with segments. </summary>
+        /// <summary>
+        /// Enclose the convex hull with segments.
+        /// </summary>
         public bool Convex
         {
             get { return convex; }
             set { convex = value; }
         }
 
-        /// <summary> Conforming Delaunay (all triangles are truly Delaunay). </summary>
+        /// <summary>
+        /// Conforming Delaunay (all triangles are truly Delaunay).
+        /// </summary>
         public bool ConformingDelaunay
         {
             get { return conformDel; }
             set { conformDel = value; }
         }
 
-        /// <summary> Suppresses boundary segment splitting. </summary>
+        /// <summary>
+        /// Suppresses boundary segment splitting.
+        /// </summary>
         /// <remarks>
-        /// 0 = split segments 1 = no new vertices on the boundary 2 = prevent all segment
-        /// splitting, including internal boundaries
+        /// 0 = split segments
+        /// 1 = no new vertices on the boundary
+        /// 2 = prevent all segment splitting, including internal boundaries
         /// </remarks>
         public int NoBisect
         {
@@ -181,37 +217,42 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             }
         }
 
-        /// <summary> Use maximum number of Steiner points. </summary>
+        /// <summary>
+        /// Use maximum number of Steiner points.
+        /// </summary>
         public int SteinerPoints
         {
             get { return steiner; }
             set { steiner = value; }
         }
 
-        /// <summary> Compute boundary information. </summary>
+        /// <summary>
+        /// Compute boundary information.
+        /// </summary>
         public bool UseBoundaryMarkers
         {
             get { return boundaryMarkers; }
             set { boundaryMarkers = value; }
         }
 
-        /// <summary> Ignores holes in polygons. </summary>
+        /// <summary>
+        /// Ignores holes in polygons.
+        /// </summary>
         public bool NoHoles
         {
             get { return noHoles; }
             set { noHoles = value; }
         }
 
-        /// <summary> Jettison unused vertices from output. </summary>
+        /// <summary>
+        /// Jettison unused vertices from output.
+        /// </summary>
         public bool Jettison
         {
             get { return jettison; }
             set { jettison = value; }
         }
 
-        /// <summary> No exact arithmetic. </summary>
-        public bool NoExact { get; set; }
-
-        #endregion Public properties
+        #endregion
     }
 }

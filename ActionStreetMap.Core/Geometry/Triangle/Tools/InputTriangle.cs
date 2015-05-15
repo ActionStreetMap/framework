@@ -1,14 +1,17 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="InputTriangle.cs" company="">
-//     Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
+// -----------------------------------------------------------------------
 
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-
-namespace ActionStreetMap.Core.Geometry.Triangle.Tools
+namespace ActionStreetMap.Core.Geometry.Triangle.IO
 {
-    /// <summary> Simple triangle class for input. </summary>
+    using ActionStreetMap.Core.Geometry.Triangle.Topology;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
+    /// <summary>
+    /// Simple triangle class for input.
+    /// </summary>
     public class InputTriangle : ITriangle
     {
         internal int[] vertices;
@@ -22,32 +25,42 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
         #region Public properties
 
-        /// <summary> Gets the triangle id. </summary>
+        /// <summary>
+        /// Gets the triangle id.
+        /// </summary>
         public int ID
         {
             get { return 0; }
             set { }
         }
 
-        /// <summary> Gets the first corners vertex id. </summary>
+        /// <summary>
+        /// Gets the first corners vertex id.
+        /// </summary>
         public int P0
         {
             get { return this.vertices[0]; }
         }
 
-        /// <summary> Gets the seconds corners vertex id. </summary>
+        /// <summary>
+        /// Gets the seconds corners vertex id.
+        /// </summary>
         public int P1
         {
             get { return this.vertices[1]; }
         }
 
-        /// <summary> Gets the third corners vertex id. </summary>
+        /// <summary>
+        /// Gets the third corners vertex id.
+        /// </summary>
         public int P2
         {
             get { return this.vertices[2]; }
         }
 
-        /// <summary> Gets the specified corners vertex. </summary>
+        /// <summary>
+        /// Gets the specified corners vertex.
+        /// </summary>
         public Vertex GetVertex(int index)
         {
             return null; // TODO: throw NotSupportedException?
@@ -83,20 +96,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             return null;
         }
 
-        /// <summary> Gets the triangle area constraint. </summary>
+        /// <summary>
+        /// Gets the triangle area constraint.
+        /// </summary>
         public double Area
         {
             get { return area; }
             set { area = value; }
         }
 
-        /// <summary> Region ID the triangle belongs to. </summary>
+        /// <summary>
+        /// Region ID the triangle belongs to.
+        /// </summary>
         public int Region
         {
             get { return region; }
             set { region = value; }
         }
 
-        #endregion Public properties
+        #endregion
     }
 }

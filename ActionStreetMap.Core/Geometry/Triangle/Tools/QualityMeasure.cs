@@ -1,51 +1,66 @@
-﻿// ----------------------------------------------------------------------- 
+﻿// -----------------------------------------------------------------------
 // <copyright file="QualityMeasure.cs" company="">
-//     Original Matlab code by John Burkardt, Florida State University Triangle.NET code by
-//     Christian Woltering, http://triangle.codeplex.com/
+// Original Matlab code by John Burkardt, Florida State University
+// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
-// ----------------------------------------------------------------------- 
-
-using System;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+// -----------------------------------------------------------------------
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 {
-    /// <summary> Provides mesh quality information. </summary>
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
+    /// <summary>
+    /// Provides mesh quality information.
+    /// </summary>
     /// <remarks>
     /// Given a triangle abc with points A (ax, ay), B (bx, by), C (cx, cy).
     /// 
-    /// The side lengths are given as a = sqrt((cx - bx)^2 + (cy - by)^2) -- side BC opposite of A b
-    /// = sqrt((cx - ax)^2 + (cy - ay)^2) -- side CA opposite of B c = sqrt((ax - bx)^2 + (ay -
-    /// by) ^2) -- side AB opposite of C
+    /// The side lengths are given as
+    ///   a = sqrt((cx - bx)^2 + (cy - by)^2) -- side BC opposite of A
+    ///   b = sqrt((cx - ax)^2 + (cy - ay)^2) -- side CA opposite of B
+    ///   c = sqrt((ax - bx)^2 + (ay - by)^2) -- side AB opposite of C
+    ///   
+    /// The angles are given as
+    ///   ang_a = acos((b^2 + c^2 - a^2)  / (2 * b * c)) -- angle at A
+    ///   ang_b = acos((c^2 + a^2 - b^2)  / (2 * c * a)) -- angle at B
+    ///   ang_c = acos((a^2 + b^2 - c^2)  / (2 * a * b)) -- angle at C
+    ///   
+    /// The semiperimeter is given as
+    ///   s = (a + b + c) / 2
+    ///   
+    /// The area is given as
+    ///   D = abs(ax * (by - cy) + bx * (cy - ay) + cx * (ay - by)) / 2
+    ///     = sqrt(s * (s - a) * (s - b) * (s - c))
+    ///      
+    /// The inradius is given as
+    ///   r = D / s
+    ///   
+    /// The circumradius is given as
+    ///   R = a * b * c / (4 * D)
     /// 
-    /// The angles are given as ang_a = acos((b^2 + c^2 - a^2) / (2 * b * c)) -- angle at A ang_b =
-    /// acos((c^2 + a^2 - b^2) / (2 * c * a)) -- angle at B ang_c = acos((a^2 + b^2 - c^2) / (2 * a
-    /// * b)) -- angle at C
+    /// The altitudes are given as
+    ///   alt_a = 2 * D / a -- altitude above side a
+    ///   alt_b = 2 * D / b -- altitude above side b
+    ///   alt_c = 2 * D / c -- altitude above side c
     /// 
-    /// The semiperimeter is given as s = (a + b + c) / 2
-    /// 
-    /// The area is given as D = abs(ax * (by - cy) + bx * (cy - ay) + cx * (ay - by)) / 2
-    /// = sqrt(s * (s - a) * (s - b) * (s - c))
-    /// 
-    /// The inradius is given as r = D / s
-    /// 
-    /// The circumradius is given as R = a * b * c / (4 * D)
-    /// 
-    /// The altitudes are given as alt_a = 2 * D / a -- altitude above side a alt_b = 2 * D / b --
-    /// altitude above side b alt_c = 2 * D / c -- altitude above side c
-    /// 
-    /// The aspect ratio may be given as the ratio of the longest to the shortest edge or, more
-    /// commonly as the ratio of the circumradius to twice the inradius ar = R / (2 * r)
-    /// = a * b * c / (8 * (s - a) * (s - b) * (s - c))
-    /// = a * b * c / ((b + c - a) * (c + a - b) * (a + b - c))
+    /// The aspect ratio may be given as the ratio of the longest to the
+    /// shortest edge or, more commonly as the ratio of the circumradius 
+    /// to twice the inradius
+    ///   ar = R / (2 * r)
+    ///      = a * b * c / (8 * (s - a) * (s - b) * (s - c))
+    ///      = a * b * c / ((b + c - a) * (c + a - b) * (a + b - c))
     /// </remarks>
     public class QualityMeasure
     {
-        private AreaMeasure areaMeasure;
-        private AlphaMeasure alphaMeasure;
-        private Q_Measure qMeasure;
+        AreaMeasure areaMeasure;
+        AlphaMeasure alphaMeasure;
+        Q_Measure qMeasure;
 
-        private Mesh mesh;
+        Mesh mesh;
 
         public QualityMeasure()
         {
@@ -56,79 +71,101 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
         #region Public properties
 
-        /// <summary> Minimum triangle area. </summary>
+        /// <summary>
+        /// Minimum triangle area.
+        /// </summary>
         public double AreaMinimum
         {
             get { return areaMeasure.area_min; }
         }
 
-        /// <summary> Maximum triangle area. </summary>
+        /// <summary>
+        /// Maximum triangle area.
+        /// </summary>
         public double AreaMaximum
         {
             get { return areaMeasure.area_max; }
         }
 
-        /// <summary> Ratio of maximum and minimum triangle area. </summary>
+        /// <summary>
+        /// Ratio of maximum and minimum triangle area.
+        /// </summary>
         public double AreaRatio
         {
             get { return areaMeasure.area_max / areaMeasure.area_min; }
         }
 
-        /// <summary> Smallest angle. </summary>
+        /// <summary>
+        /// Smallest angle.
+        /// </summary>
         public double AlphaMinimum
         {
             get { return alphaMeasure.alpha_min; }
         }
 
-        /// <summary> Maximum smallest angle. </summary>
+        /// <summary>
+        /// Maximum smallest angle.
+        /// </summary>
         public double AlphaMaximum
         {
             get { return alphaMeasure.alpha_max; }
         }
 
-        /// <summary> Average angle. </summary>
+        /// <summary>
+        /// Average angle.
+        /// </summary>
         public double AlphaAverage
         {
             get { return alphaMeasure.alpha_ave; }
         }
 
-        /// <summary> Average angle weighted by area. </summary>
+        /// <summary>
+        /// Average angle weighted by area.
+        /// </summary>
         public double AlphaArea
         {
             get { return alphaMeasure.alpha_area; }
         }
 
-        /// <summary> Smallest aspect ratio. </summary>
+        /// <summary>
+        /// Smallest aspect ratio.
+        /// </summary>
         public double Q_Minimum
         {
             get { return qMeasure.q_min; }
         }
 
-        /// <summary> Largest aspect ratio. </summary>
+        /// <summary>
+        /// Largest aspect ratio.
+        /// </summary>
         public double Q_Maximum
         {
             get { return qMeasure.q_max; }
         }
 
-        /// <summary> Average aspect ratio. </summary>
+        /// <summary>
+        /// Average aspect ratio.
+        /// </summary>
         public double Q_Average
         {
             get { return qMeasure.q_ave; }
         }
 
-        /// <summary> Average aspect ratio weighted by area. </summary>
+        /// <summary>
+        /// Average aspect ratio weighted by area.
+        /// </summary>
         public double Q_Area
         {
             get { return qMeasure.q_area; }
         }
 
-        #endregion Public properties
+        #endregion
 
         public void Update(Mesh mesh)
         {
             this.mesh = mesh;
 
-            // Reset all measures. 
+            // Reset all measures.
             areaMeasure.Reset();
             alphaMeasure.Reset();
             qMeasure.Reset();
@@ -168,41 +205,44 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 qMeasure.Measure(ab, bc, ca, area);
             }
 
-            // Normalize measures 
+            // Normalize measures
             alphaMeasure.Normalize(n, areaMeasure.area_total);
             qMeasure.Normalize(n, areaMeasure.area_total);
         }
 
-        /// <summary> Determines the bandwidth of the coefficient matrix. </summary>
-        /// <returns> Bandwidth of the coefficient matrix. </returns>
+        /// <summary>
+        /// Determines the bandwidth of the coefficient matrix.
+        /// </summary>
+        /// <returns>Bandwidth of the coefficient matrix.</returns>
         /// <remarks>
-        /// The quantity computed here is the "geometric" bandwidth determined by the finite element
-        /// mesh alone.
-        /// 
-        /// If a single finite element variable is associated with each node of the mesh, and if the
-        /// nodes and variables are numbered in the same way, then the geometric bandwidth is the
-        /// same as the bandwidth of a typical finite element matrix.
-        /// 
+        /// The quantity computed here is the "geometric" bandwidth determined
+        /// by the finite element mesh alone.
+        ///
+        /// If a single finite element variable is associated with each node
+        /// of the mesh, and if the nodes and variables are numbered in the
+        /// same way, then the geometric bandwidth is the same as the bandwidth
+        /// of a typical finite element matrix.
+        ///
         /// The bandwidth M is defined in terms of the lower and upper bandwidths:
-        /// 
-        /// M = ML + 1 + MU
-        /// 
-        /// where
-        /// 
-        /// ML = maximum distance from any diagonal entry to a nonzero entry in the same row, but
-        /// earlier column,
-        /// 
-        /// MU = maximum distance from any diagonal entry to a nonzero entry in the same row, but
-        /// later column.
-        /// 
-        /// Because the finite element node adjacency relationship is symmetric, we are guaranteed
-        /// that ML = MU.
+        ///
+        ///   M = ML + 1 + MU
+        ///
+        /// where 
+        ///
+        ///   ML = maximum distance from any diagonal entry to a nonzero
+        ///   entry in the same row, but earlier column,
+        ///
+        ///   MU = maximum distance from any diagonal entry to a nonzero
+        ///   entry in the same row, but later column.
+        ///
+        /// Because the finite element node adjacency relationship is symmetric,
+        /// we are guaranteed that ML = MU.
         /// </remarks>
         public int Bandwidth()
         {
             if (mesh == null) return 0;
 
-            // Lower and upper bandwidth of the matrix 
+            // Lower and upper bandwidth of the matrix
             int ml = 0, mu = 0;
 
             int gi, gj;
@@ -226,21 +266,20 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             return ml + 1 + mu;
         }
 
-        private class AreaMeasure
+        class AreaMeasure
         {
-            // Minimum area 
+            // Minimum area
             public double area_min = double.MaxValue;
-
-            // Maximum area 
+            // Maximum area
             public double area_max = -double.MaxValue;
-
-            // Total area of geometry 
+            // Total area of geometry
             public double area_total = 0;
-
-            // Nmber of triangles with zero area 
+            // Nmber of triangles with zero area
             public int area_zero = 0;
 
-            /// <summary> Reset all values. </summary>
+            /// <summary>
+            /// Reset all values.
+            /// </summary>
             public void Reset()
             {
                 area_min = double.MaxValue;
@@ -249,11 +288,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 area_zero = 0;
             }
 
-            /// <summary> Compute the area of given triangle. </summary>
-            /// <param name="a"> Triangle corner a. </param>
-            /// <param name="b"> Triangle corner b. </param>
-            /// <param name="c"> Triangle corner c. </param>
-            /// <returns> Triangle area. </returns>
+            /// <summary>
+            /// Compute the area of given triangle.
+            /// </summary>
+            /// <param name="a">Triangle corner a.</param>
+            /// <param name="b">Triangle corner b.</param>
+            /// <param name="c">Triangle corner c.</param>
+            /// <returns>Triangle area.</returns>
             public double Measure(Point a, Point b, Point c)
             {
                 double area = 0.5 * Math.Abs(a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y));
@@ -271,30 +312,32 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             }
         }
 
-        /// <summary> The alpha measure determines the triangulated pointset quality. </summary>
+        /// <summary>
+        /// The alpha measure determines the triangulated pointset quality.
+        /// </summary>
         /// <remarks>
-        /// The alpha measure evaluates the uniformity of the shapes of the triangles defined by a
-        /// triangulated pointset.
-        /// 
-        /// We compute the minimum angle among all the triangles in the triangulated dataset and
-        /// divide by the maximum possible value (which, in degrees, is 60). The best possible value
-        /// is 1, and the worst 0. A good triangulation should have an alpha score close to 1.
+        /// The alpha measure evaluates the uniformity of the shapes of the triangles
+        /// defined by a triangulated pointset.
+        ///
+        /// We compute the minimum angle among all the triangles in the triangulated
+        /// dataset and divide by the maximum possible value (which, in degrees,
+        /// is 60). The best possible value is 1, and the worst 0. A good
+        /// triangulation should have an alpha score close to 1.
         /// </remarks>
-        private class AlphaMeasure
+        class AlphaMeasure
         {
-            // Minimum value over all triangles 
+            // Minimum value over all triangles
             public double alpha_min;
-
-            // Maximum value over all triangles 
+            // Maximum value over all triangles
             public double alpha_max;
-
-            // Value averaged over all triangles 
+            // Value averaged over all triangles
             public double alpha_ave;
-
-            // Value averaged over all triangles and weighted by area 
+            // Value averaged over all triangles and weighted by area
             public double alpha_area;
 
-            /// <summary> Reset all values. </summary>
+            /// <summary>
+            /// Reset all values.
+            /// </summary>
             public void Reset()
             {
                 alpha_min = double.MaxValue;
@@ -303,7 +346,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 alpha_area = 0;
             }
 
-            private double acos(double c)
+            double acos(double c)
             {
                 if (c <= -1.0)
                 {
@@ -319,11 +362,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 }
             }
 
-            /// <summary> Compute q value of given triangle. </summary>
-            /// <param name="ab"> Side length ab. </param>
-            /// <param name="bc"> Side length bc. </param>
-            /// <param name="ca"> Side length ca. </param>
-            /// <param name="area"> Triangle area. </param>
+            /// <summary>
+            /// Compute q value of given triangle.
+            /// </summary>
+            /// <param name="ab">Side length ab.</param>
+            /// <param name="bc">Side length bc.</param>
+            /// <param name="ca">Side length ca.</param>
+            /// <param name="area">Triangle area.</param>
             /// <returns></returns>
             public double Measure(double ab, double bc, double ca, double area)
             {
@@ -337,7 +382,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 double b_angle;
                 double c_angle;
 
-                // Take care of a ridiculous special case. 
+                // Take care of a ridiculous special case.
                 if (ab == 0.0 && bc == 0.0 && ca == 0.0)
                 {
                     a_angle = 2.0 * Math.PI / 3.0;
@@ -378,7 +423,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 alpha = Math.Min(alpha, b_angle);
                 alpha = Math.Min(alpha, c_angle);
 
-                // Normalize angle from [0,pi/3] radians into qualities in [0,1]. 
+                // Normalize angle from [0,pi/3] radians into qualities in [0,1].
                 alpha = alpha * 3.0 / Math.PI;
 
                 alpha_ave += alpha;
@@ -390,7 +435,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 return alpha;
             }
 
-            /// <summary> Normalize values. </summary>
+            /// <summary>
+            /// Normalize values.
+            /// </summary>
             public void Normalize(int n, double area_total)
             {
                 if (n > 0)
@@ -413,32 +460,33 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
             }
         }
 
-        /// <summary> The Q measure determines the triangulated pointset quality. </summary>
+        /// <summary>
+        /// The Q measure determines the triangulated pointset quality.
+        /// </summary>
         /// <remarks>
-        /// The Q measure evaluates the uniformity of the shapes of the triangles defined by a
-        /// triangulated pointset. It uses the aspect ratio
-        /// 
-        /// 2 * (incircle radius) / (circumcircle radius)
-        /// 
-        /// In an ideally regular mesh, all triangles would have the same equilateral shape, for
-        /// which Q = 1. A good mesh would have
-        /// 0. 5 &lt; Q.
+        /// The Q measure evaluates the uniformity of the shapes of the triangles
+        /// defined by a triangulated pointset. It uses the aspect ratio
+        ///
+        ///    2 * (incircle radius) / (circumcircle radius)
+        ///
+        /// In an ideally regular mesh, all triangles would have the same
+        /// equilateral shape, for which Q = 1. A good mesh would have
+        /// 0.5 &lt; Q.
         /// </remarks>
-        private class Q_Measure
+        class Q_Measure
         {
-            // Minimum value over all triangles 
+            // Minimum value over all triangles
             public double q_min;
-
-            // Maximum value over all triangles 
+            // Maximum value over all triangles
             public double q_max;
-
-            // Average value 
+            // Average value
             public double q_ave;
-
-            // Average value weighted by the area of each triangle 
+            // Average value weighted by the area of each triangle
             public double q_area;
 
-            /// <summary> Reset all values. </summary>
+            /// <summary>
+            /// Reset all values.
+            /// </summary>
             public void Reset()
             {
                 q_min = double.MaxValue;
@@ -447,11 +495,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 q_area = 0;
             }
 
-            /// <summary> Compute q value of given triangle. </summary>
-            /// <param name="ab"> Side length ab. </param>
-            /// <param name="bc"> Side length bc. </param>
-            /// <param name="ca"> Side length ca. </param>
-            /// <param name="area"> Triangle area. </param>
+            /// <summary>
+            /// Compute q value of given triangle.
+            /// </summary>
+            /// <param name="ab">Side length ab.</param>
+            /// <param name="bc">Side length bc.</param>
+            /// <param name="ca">Side length ca.</param>
+            /// <param name="area">Triangle area.</param>
             /// <returns></returns>
             public double Measure(double ab, double bc, double ca, double area)
             {
@@ -466,7 +516,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
                 return q;
             }
 
-            /// <summary> Normalize values. </summary>
+            /// <summary>
+            /// Normalize values.
+            /// </summary>
             public void Normalize(int n, double area_total)
             {
                 if (n > 0)
