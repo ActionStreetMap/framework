@@ -32,6 +32,7 @@ namespace ActionStreetMap.Maps.Data
     internal sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
     {
         private const string LogTag = "mapdata.source";
+        private const string CacheFileNameExtension = ".cache";
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
         private readonly string[] _splitString= { " " };
 
@@ -39,6 +40,7 @@ namespace ActionStreetMap.Maps.Data
         private string _mapDataServerQuery;
         private string _mapDataFormat;
         private string _indexSettingsPath;
+        private string _cachePath;
 
         private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
@@ -77,8 +79,32 @@ namespace ActionStreetMap.Maps.Data
             // NOTE block thread here
             Trace.Info(LogTag, "getting element sources for {0}", query);
             var elementSourcePath = _tree.Search(query).Wait();
-            if (elementSourcePath == null && !String.IsNullOrEmpty(_mapDataServerUri))
+
+            // 1. online case: should make query to remove server as data is not present in tree..
+            if (elementSourcePath == null)
             {
+                var key = query.ToString().Replace(",", "_") + CacheFileNameExtension;
+                var path = Path.Combine(_cachePath, key);
+
+                // NOTE at first glance, it seems to be nice idea to cache built element sources
+                // but this approach has major drawback: we don't know proper cache size:
+                // for overview modes we will create a lot of tiles, but only few will be reused
+
+                // cache file is already there
+                if (_fileSystemService.Exists(path))
+                {
+                    Trace.Info(LogTag, Strings.ElementSourceCacheHit, path);
+                    return GetElementSource(path, _fileSystemService.ReadBytes(path));
+                }
+
+                // no cache and online source is not defined
+                if (String.IsNullOrEmpty(_mapDataServerUri))
+                {
+                    Trace.Warn(LogTag, Strings.NoOfflineNoOnlineElementSource);
+                    return Observable.Empty<IElementSource>();
+                }
+
+                // make online query
                 var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude, 
                     query.MaxPoint.Longitude, query.MaxPoint.Latitude);
                 var uri = String.Format("{0}{1}", _mapDataServerUri, Uri.EscapeDataString(queryString));
@@ -87,26 +113,50 @@ namespace ActionStreetMap.Maps.Data
                     .Take(1)
                     .SelectMany(bytes =>
                     {
-                        Trace.Info(LogTag, "build index from {0} bytes received", bytes.Length);
-                        if (_settings == null) ReadIndexSettings();
-                        var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), _settings, _objectPool, Trace);
-                        indexBuilder.Build();
-                        var elementStore = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex, 
-                            indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
-                        SetCurrentElementSource(query.ToString(), elementStore);
-                        return Observable.Return<IElementSource>(elementStore);
+                        Trace.Info(LogTag, "add to cache {0} and build index from {1} bytes received", 
+                            path, bytes.Length);
+                        // add to persistent cache
+                        using (var stream = _fileSystemService.WriteStream(path))
+                            stream.Write(bytes, 0, bytes.Length);
+                        // build element source from bytes
+                        return GetElementSource(path, bytes);
                     });
             }
 
-            if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
+             if (_elementSourceCache == null || elementSourcePath != _elementSourceCache.Item1)
             {
                 Trace.Info(LogTag, "load index data from {0}", elementSourcePath);
-                SetCurrentElementSource(elementSourcePath, new ElementSource(elementSourcePath, _fileSystemService, _objectPool));
+                var elementSource = elementSourcePath.EndsWith(CacheFileNameExtension)
+                    ? BuildElementSourceInMemory(_fileSystemService.ReadBytes(elementSourcePath))
+                    : new ElementSource(elementSourcePath, _fileSystemService, _objectPool);
+                SetCurrentElementSource(elementSourcePath, elementSource);
             }
 
             return Observable.Return(_elementSourceCache.Item2);
         }
 
+        /// <summary> Gets element source from byte array. </summary>
+        private IObservable<IElementSource> GetElementSource(string key, byte[] bytes)
+        {
+            // build element source
+            var elementSource = BuildElementSourceInMemory(bytes);
+            SetCurrentElementSource(key, elementSource);
+            return Observable.Return<IElementSource>(elementSource);
+        }
+
+        /// <summary> Builds element source from raw data on fly. </summary>
+        private IElementSource BuildElementSourceInMemory(byte[] bytes)
+        {
+            if (_settings == null) ReadIndexSettings();
+            var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), 
+                _settings, _objectPool, Trace);
+            indexBuilder.Build();
+            var elementSource = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex,
+                indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
+            return elementSource;
+        }
+
+        /// <summary> Sets current element source and disposes previous. </summary>
         private void SetCurrentElementSource(string elementSourcePath, IElementSource elementSource)
         {
             if (_elementSourceCache != null)
@@ -166,9 +216,12 @@ namespace ActionStreetMap.Maps.Data
             _indexSettingsPath = configSection.GetString(@"index.settings", null);
 
             _tree = new RTree<string>();
-            var rootFolder = configSection.GetString("local", null);
+            var rootFolder = configSection.GetString("local", "");
             if (!String.IsNullOrEmpty(rootFolder))
                 SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
+
+            _cachePath = Path.Combine(rootFolder, ".cache");
+            _fileSystemService.CreateDirectory(_cachePath);
         }
 
         /// <inheritdoc />
