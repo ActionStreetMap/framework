@@ -29,7 +29,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // left tile
-            var tile = CanLoadTile(observer, observer.Current,
+            var tile = CanLoadTile(observer, observer.CurrentTile,
                 new MapPoint(-(Half - Offset - 1), 0),
                 new MapPoint(-(Half - Offset), 0),
                 new MapPoint(-(Half * 2 - Offset - 1), 0), 0);
@@ -48,7 +48,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // right tile
-            var tile = CanLoadTile(observer, observer.Current,
+            var tile = CanLoadTile(observer, observer.CurrentTile,
                 new MapPoint(Half - Offset - 1, 0),
                 new MapPoint(Half - Offset, 0),
                 new MapPoint(Half * 2 - Offset - 1, 0), 0);
@@ -67,7 +67,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // top tile
-            var tile = CanLoadTile(observer, observer.Current,
+            var tile = CanLoadTile(observer, observer.CurrentTile,
                 new MapPoint(0, Half - Offset - 1),
                 new MapPoint(0, Half - Offset),
                 new MapPoint(0, Half * 2 - Offset - 1), 0);
@@ -86,7 +86,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             (observer as IPositionObserver<MapPoint>).OnNext(center);
 
             // bottom tile
-            var tile = CanLoadTile(observer, observer.Current,
+            var tile = CanLoadTile(observer, observer.CurrentTile,
                 new MapPoint(0, -(Half - Offset - 1)),
                 new MapPoint(0, -(Half - Offset)),
                 new MapPoint(0, -(Half * 2 - Offset - 1)), 0);
@@ -104,7 +104,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             // ACT & ASSERT
             (observer as IPositionObserver<MapPoint>).OnNext(center);
 
-            var tileCenter = observer.Current;
+            var tileCenter = observer.CurrentTile;
             // left tile
             CanLoadTile(observer, tileCenter,
                 new MapPoint(-(Half - Offset - 1), 0),
@@ -176,6 +176,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             configMock.Setup(c => c.GetFloat("offset", It.IsAny<float>())).Returns(Offset);
             configMock.Setup(c => c.GetFloat("sensitivity", It.IsAny<float>())).Returns(Sensitivity);
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
+            configMock.Setup(c => c.GetString("render_mode", It.IsAny<string>())).Returns("mixed");
 
             var observer = new TileManager(sceneBuilderMock.Object,
                 activatorMock.Object, new MessageBus(), new ObjectPool());
@@ -191,23 +192,23 @@ namespace ActionStreetMap.Tests.Core.Tiling
 
             // this shouldn't load new tile
             observer.OnNext(first);
-            Assert.AreSame(tileCenter, manager.Current);
+            Assert.AreSame(tileCenter, manager.CurrentTile);
 
             ++tileCount;
 
             // this force to load new tile but we still in first
             observer.OnNext(second);
-            
-            Assert.AreSame(tileCenter, manager.Current);
+
+            Assert.AreSame(tileCenter, manager.CurrentTile);
             Assert.AreEqual(++tileCount, manager.Count);
 
-            var previous = manager.Current;
+            var previous = manager.CurrentTile;
             // this shouldn't load new tile but we're in next now
             observer.OnNext(third);
-            Assert.AreNotSame(previous, manager.Current);
+            Assert.AreNotSame(previous, manager.CurrentTile);
             Assert.AreEqual(tileCount, manager.Count);
 
-            return manager.Current;
+            return manager.CurrentTile;
         }
     }
 }

@@ -17,6 +17,8 @@ namespace ActionStreetMap.Core.Tiling
     /// </summary>
     public interface ITilePositionObserver : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
+        /// <summary> Gets current scene tile. </summary>
+        Tile CurrentTile { get; }
     }
 
     /// <summary> This class listens to position changes and manages tile processing. </summary>
@@ -52,8 +54,8 @@ namespace ActionStreetMap.Core.Tiling
         /// <summary> Gets relative null point. </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
-        /// <summary> Gets current scene tile. </summary>
-        public Tile Current { get { return _allSceneTiles[_currentSceneTileIndex.Item1, _currentSceneTileIndex.Item2]; } }
+        /// <inheritdoc />
+        public Tile CurrentTile { get { return _allSceneTiles[_currentSceneTileIndex.Item1, _currentSceneTileIndex.Item2]; } }
 
         /// <summary> Gets all scene tile count. </summary>
         public int Count { get { return _allSceneTiles.Count(); } }

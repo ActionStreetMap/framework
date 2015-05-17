@@ -16,6 +16,7 @@ namespace ActionStreetMap.Explorer.Commands
     /// <summary> Search  command. </summary>
     internal class SearchCommand : ICommand
     {
+        private readonly ITilePositionObserver _tilePositionObserver;
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
         private readonly ISearchEngine _searchEngine;
 
@@ -34,6 +35,7 @@ namespace ActionStreetMap.Explorer.Commands
         [Dependency]
         public SearchCommand(ITilePositionObserver positionObserver, ISearchEngine searchEngine)
         {
+            _tilePositionObserver = positionObserver;
             _geoPositionObserver = positionObserver;
             _searchEngine = searchEngine;
         }
@@ -78,8 +80,9 @@ namespace ActionStreetMap.Explorer.Commands
         /// <summary> Gets elements for specific tag. </summary>
         internal IObservable<Element> GetElementsByTag(string key, string value, float radius, string type = null)
         {
+            var bbox = _tilePositionObserver.CurrentTile.BoundingBox;
             return _searchEngine
-                .SearchByTag(key, value)
+                .SearchByTag(key, value, bbox)
                 .Where(e => IsElementMatch(type, e) && (radius <= 0 || IsInCircle(radius, e)));
         }
 
@@ -87,12 +90,10 @@ namespace ActionStreetMap.Explorer.Commands
         internal IObservable<Element> GetElementsByText(string text, float radius, 
             string type = null, int zoomLevel = MapConsts.MaxZoomLevel)
         {
-            var currentPosition = _geoPositionObserver.Current;
-            var side = radius*2;
-            var boundingBox = BoundingBox.CreateBoundingBox(currentPosition, side, side);
+            var bbox = _tilePositionObserver.CurrentTile.BoundingBox;
             return _searchEngine
-                .SearchByText(text, boundingBox, zoomLevel)
-                .Where(e => IsElementMatch(type, e));
+                .SearchByText(text, bbox, zoomLevel)
+                .Where(e => IsElementMatch(type, e) && (radius <= 0 || IsInCircle(radius, e)));
         }
 
         #endregion

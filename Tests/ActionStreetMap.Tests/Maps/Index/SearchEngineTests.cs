@@ -41,11 +41,11 @@ namespace ActionStreetMap.Tests.Maps.Index
             messageBus.AsObservable<TileLoadFinishMessage>().Take(1).Wait();
 
             var searchEngine = _container.Resolve<ISearchEngine>();
-
+            var bbox = BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100);
             // ACT
             var bars = (!String.IsNullOrEmpty(value)
-                ? searchEngine.SearchByTag(key, value)
-                : searchEngine.SearchByText(key, BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100), MapConsts.MaxZoomLevel))
+                ? searchEngine.SearchByTag(key, value, bbox)
+                : searchEngine.SearchByText(key, bbox, MapConsts.MaxZoomLevel))
                 .ToArray().Wait();
         
             // ASSERT

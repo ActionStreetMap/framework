@@ -14,7 +14,8 @@ namespace ActionStreetMap.Maps.Data.Search
         /// <summary> Searches all elements with given key and similiar value in current active element source. </summary>
         /// <param name="key">Tag key.</param>
         /// <param name="value">Tag value.</param>
-        IObservable<Element> SearchByTag(string key, string value);
+        /// <param name="bbox">Bounding box.</param>
+        IObservable<Element> SearchByTag(string key, string value, BoundingBox bbox);
 
         /// <summary> Searches all elements with given text in tagss in current active element source. </summary>
         /// <param name="text">text to search.</param>
@@ -39,11 +40,11 @@ namespace ActionStreetMap.Maps.Data.Search
         }
 
         /// <inheritdoc />
-        public IObservable<Element> SearchByTag(string key, string value)
+        public IObservable<Element> SearchByTag(string key, string value, BoundingBox bbox)
         {
             return Observable.Create<Element>(o =>
             {
-                var elementSource = GetElementSource();
+                var elementSource = GetElementSource(bbox);
                 foreach (var pair in elementSource.KvStore.Search(new KeyValuePair<string, string>(key, value)))
                 {
                     var kvOffset = elementSource.KvIndex.GetOffset(pair);
@@ -60,15 +61,15 @@ namespace ActionStreetMap.Maps.Data.Search
         /// <inheritdoc />
         public IObservable<Element> SearchByText(string text, BoundingBox bbox, int zoomLevel)
         {
-            var elementSource = GetElementSource();
+            var elementSource = GetElementSource(bbox);
             return elementSource
                 .Get(bbox, zoomLevel)
                 .Where(e => e.Tags.Any(t => t.Key.Contains(text) || t.Value.Contains(text)));
         }
 
-        private ElementSource GetElementSource()
+        private ElementSource GetElementSource(BoundingBox bbox)
         {
-            var elementSource = _elementSourceProvider.Get().Wait() as ElementSource;
+            var elementSource = _elementSourceProvider.Get(bbox).Wait() as ElementSource;
             if (elementSource == null)
                 throw new NotSupportedException(Strings.SearchNotSupported);
             return elementSource;

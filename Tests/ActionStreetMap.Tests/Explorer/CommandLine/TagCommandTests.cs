@@ -2,12 +2,17 @@
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Commands;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data.Search;
 using ActionStreetMap.Maps.Entities;
 using Moq;
 using NUnit.Framework;
+using Node = ActionStreetMap.Maps.Entities.Node;
+using Relation = ActionStreetMap.Maps.Entities.Relation;
+using Way = ActionStreetMap.Maps.Entities.Way;
 
 namespace ActionStreetMap.Tests.Explorer.CommandLine
 {
@@ -21,19 +26,23 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
         public void SetUp()
         {
             _searchMock = new Mock<ISearchEngine>();
-
-            _searchMock.Setup(s => s.SearchByTag("amenity", "bar")).Returns(Observable.Create<Element>(o =>
+            var coordinate = new GeoCoordinate(52, 13);
+            var tile = new Tile(coordinate, new MapPoint(0, 0), RenderMode.Scene,
+                new Canvas(new ObjectPool()), 500, 500);
+            _searchMock.Setup(s => s.SearchByTag("amenity", "bar", tile.BoundingBox)).Returns(Observable.Create<Element>(o =>
             {
-                o.OnNext(new Node() {Id = 1, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}.ToTags(), Coordinate = new GeoCoordinate(52.001, 13)});
-                o.OnNext(new Way() { Id = 2, Tags = new Dictionary<string, string>() {{"amenity", "bar"}}.ToTags(), Coordinates = new List<GeoCoordinate> { new GeoCoordinate(52.0008, 13)}});
-                o.OnNext(new Relation() { Id = 3, Tags = new Dictionary<string, string>() { { "amenity", "bar" } }.ToTags(), Members = new List<RelationMember>() { new RelationMember() { Member = new Node() { Coordinate = new GeoCoordinate(52.002, 13) } } }});
+                o.OnNext(new Node() { Id = 1, Tags = new Dictionary<string, string>() { { "amenity", "bar" } }.ToTags(), Coordinate = new GeoCoordinate(52.001, 13) });
+                o.OnNext(new Way() { Id = 2, Tags = new Dictionary<string, string>() { { "amenity", "bar" } }.ToTags(), Coordinates = new List<GeoCoordinate> { new GeoCoordinate(52.0008, 13) } });
+                o.OnNext(new Relation() { Id = 3, Tags = new Dictionary<string, string>() { { "amenity", "bar" } }.ToTags(), Members = new List<RelationMember>() { new RelationMember() { Member = new Node() { Coordinate = new GeoCoordinate(52.002, 13) } } } });
+
                 o.OnCompleted();
                 return Disposable.Empty;
             }));
 
-            var geoPositionListener = new Mock<IPositionObserver<GeoCoordinate>>();
-            geoPositionListener.Setup(p => p.Current).Returns(new GeoCoordinate(52, 13));
-            _command = new SearchCommand(geoPositionListener.As<ITilePositionObserver>().Object, _searchMock.Object);
+            var positionObserver = new Mock<ITilePositionObserver>();
+            positionObserver.Setup(p => p.CurrentTile).Returns(tile);
+            positionObserver.As<IPositionObserver<GeoCoordinate>>().Setup(p => p.Current).Returns(coordinate);
+            _command = new SearchCommand(positionObserver.As<ITilePositionObserver>().Object, _searchMock.Object);
         }
 
         [Test]
