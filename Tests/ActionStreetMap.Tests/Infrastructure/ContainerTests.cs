@@ -104,7 +104,7 @@ namespace ActionStreetMap.Tests.Infrastructure
         {
             using (var container = new Container())
             {
-                var configSection = new JsonConfigSection(null);
+                var configSection = new JsonConfigSection("");
                 container.Register(Component.For<ConfigurableClass>()
                     .Use<ConfigurableClass>()
                     .SetConfig(configSection)

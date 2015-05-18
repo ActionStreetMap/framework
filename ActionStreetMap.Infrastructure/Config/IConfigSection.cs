@@ -15,9 +15,6 @@ namespace ActionStreetMap.Infrastructure.Config
         /// <returns>IConfigSection.</returns>
         IConfigSection GetSection(string xpath);
 
-        /// <summary> True if node is empty. </summary>
-        bool IsEmpty { get; }
-
         /// <summary> Returns string.</summary>
         /// <param name="xpath">xpath.</param>
         /// <param name="defaultValue"></param>

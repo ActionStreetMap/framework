@@ -10,14 +10,7 @@ namespace ActionStreetMap.Infrastructure.Config
     public class JsonConfigSection : IConfigSection
     {
         /// <summary> Gets root element of this section. </summary>
-        private ConfigElement _rootElement;
-
-        /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
-        /// <param name="element">Config element.</param>
-        private JsonConfigSection(ConfigElement element)
-        {
-            _rootElement = element;
-        }
+        private readonly JSONNode _rootNode;
 
         /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
         /// <param name="appConfigFileName">Config appConfig.</param>
@@ -26,59 +19,66 @@ namespace ActionStreetMap.Infrastructure.Config
         {
             var jsonStr = fileSystemService.ReadText(appConfigFileName);
             var json = JSON.Parse(jsonStr);
-            _rootElement = new ConfigElement(json);
+            _rootNode = json;
         }
 
         /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
         /// <param name="content">Json content</param>
         public JsonConfigSection(string content)
         {
-            _rootElement = new ConfigElement(JSON.Parse(content));
+            _rootNode = JSON.Parse(content);
+        }
+
+        /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
+        /// <param name="node">Json node.</param>
+        public JsonConfigSection(JSONNode node)
+        {
+            _rootNode = node;
         }
 
         /// <inheritdoc />
         public IEnumerable<IConfigSection> GetSections(string xpath)
         {
-            return _rootElement.GetElements(xpath).Select(e => (new JsonConfigSection(e)) as IConfigSection);
+            return GetElements(_rootNode, xpath).Select(e => (new JsonConfigSection(e)) as IConfigSection);
         }
 
         /// <inheritdoc />
         public IConfigSection GetSection(string xpath)
         {
-            return new JsonConfigSection(new ConfigElement(_rootElement.Node, xpath));
+            return new JsonConfigSection(GetNode(_rootNode, xpath));
         }
-
-        /// <inheritdoc />
-        public bool IsEmpty { get { return _rootElement.IsEmpty; } }
 
         /// <inheritdoc />
         public string GetString(string xpath, string defaultValue)
         {
-            return new ConfigElement(_rootElement.Node, xpath).GetString(defaultValue);
+            return _rootNode != null ? GetNode(_rootNode, xpath).Value : defaultValue;
         }
 
         /// <inheritdoc />
         public int GetInt(string xpath, int defaultValue)
         {
-            return new ConfigElement(_rootElement.Node, xpath).GetInt(defaultValue);
+            int value;
+            return int.TryParse(GetString(xpath, null), out value) ? value : defaultValue;
         }
 
         /// <inheritdoc />
         public float GetFloat(string xpath, float defaultValue)
         {
-            return new ConfigElement(_rootElement.Node, xpath).GetFloat(defaultValue);
+            float value;
+            return float.TryParse(GetString(xpath, null), out value) ? value : defaultValue;
         }
 
         /// <inheritdoc />
         public bool GetBool(string xpath, bool defaultValue)
         {
-            return new ConfigElement(_rootElement.Node, xpath).GetBool(defaultValue);
+            bool value;
+            return bool.TryParse(GetString(xpath, null), out value) ? value : defaultValue;
         }
 
         /// <inheritdoc />
         public Type GetType(string xpath)
         {
-            return (new ConfigElement(_rootElement.Node, xpath)).GetType();
+            return Type.GetType(GetString(xpath, null));
         }
 
         /// <inheritdoc />
@@ -93,119 +93,49 @@ namespace ActionStreetMap.Infrastructure.Config
             return (T) Activator.CreateInstance(GetType(xpath), args);
         }
 
-        private class ConfigElement
+        private static JSONNode GetNode(JSONNode node, string xpath)
         {
-            private readonly string _xpath;
-            private JSONNode _node;
-
-            /// <summary> Returns current JSON node. </summary>
-            public JSONNode Node { get { return _node; } }
-
-            /// <summary> True if element represents json node. </summary>
-            public bool IsNode { get { return _node != null; } }
-
-            /// <summary> Trues if is empty. </summary>
-            public bool IsEmpty { get { return !IsNode; } }
-
-            /// <summary> Creates ConfigElement. </summary>
-            /// <param name="node">Node.</param>
-            public ConfigElement(JSONNode node)
+            try
             {
-                _node = node;
-            }
-
-            /// <summary> Creates ConfigElement.</summary>
-            /// <param name="node">Node.</param>
-            /// <param name="xpath">XPath</param>
-            public ConfigElement(JSONNode node, string xpath)
-            {
-                _node = node;
-                _xpath = xpath;
-
-                Initialize();
-            }
-
-            private void Initialize()
-            {
-                try
-                {
-                    string[] paths = _xpath.Split('/');
-
-                    JSONNode current = _node;
-
-                    if (_xpath == "")
-                        return;
-
-                    for (int i = 0; i < paths.Length; i++)
-                    {
-                        current = current[(paths[i])];
-                        if (current == null)
-                            break;
-                    }
-
-                    _node = current;
-                }
-                catch (Exception ex)
-                {
-                    throw new ArgumentException(
-                        String.Format("Unable to process xml. xpath:{0}\n node:{1}", _xpath, _node), ex);
-                }
-            }
-
-            /// <summary> Returns the set of elements. </summary>
-            public IEnumerable<ConfigElement> GetElements(string xpath)
-            {
-                if (Node == null)
-                    return Enumerable.Empty<ConfigElement>();
-
                 string[] paths = xpath.Split('/');
-                int last = paths.Length - 1;
-                JSONNode current = Node;
-                for (int i = 0; i < last; i++)
+                JSONNode current = node;
+
+                if (xpath == "") return node;
+
+                for (int i = 0; i < paths.Length; i++)
                 {
-                    current = current[paths[i]];
-                    //xpath isn't valid
-                    if (current == null)
-                        return Enumerable.Empty<ConfigElement>();
+                    current = current[(paths[i])];
+                    if (current == null) break;
                 }
 
-                return
-                    from JSONNode node in current[paths[last]].AsArray
-                    select new ConfigElement(node);
+                return current;
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(
+                    String.Format("Unable to process xml. xpath:{0}\n node:{1}", xpath, node), ex);
+            }
+        }
+
+        private static IEnumerable<JSONNode> GetElements(JSONNode node, string xpath)
+        {
+            if (node == null)
+                return Enumerable.Empty<JSONNode>();
+
+            string[] paths = xpath.Split('/');
+            int last = paths.Length - 1;
+            JSONNode current = node;
+            for (int i = 0; i < last; i++)
+            {
+                current = current[paths[i]];
+                //xpath isn't valid
+                if (current == null)
+                    return Enumerable.Empty<JSONNode>();
             }
 
-            /// <summary> Returns string. </summary>
-            public string GetString(string defaultValue)
-            {
-                return IsNode ? _node.Value : defaultValue;
-            }
-
-            /// <summary> Returns int. </summary>
-            public int GetInt(int defaultValue)
-            {
-                int value;
-                return int.TryParse(GetString(null), out value) ? value : defaultValue;
-            }
-
-            /// <summary> Returns float. </summary>
-            public float GetFloat(float defaultValue)
-            {
-                float value;
-                return float.TryParse(GetString(null), out value) ? value : defaultValue;
-            }
-
-            /// <summary> Returns boolean. </summary>
-            public bool GetBool(bool defaultValue)
-            {
-                bool value;
-                return bool.TryParse(GetString(null), out value) ? value : defaultValue;
-            }
-
-            /// <summary> Returns type. </summary>
-            public new Type GetType()
-            {
-                return Type.GetType(GetString(null));
-            }
+            return 
+                from JSONNode n in current[paths[last]].AsArray
+                select n;
         }
     }
 }
