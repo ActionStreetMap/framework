@@ -6,14 +6,14 @@ using NUnit.Framework;
 namespace ActionStreetMap.Tests.Infrastructure
 {
     [TestFixture]
-    public class ConfigTests
+    public class JsonConfigTests
     {
         private IConfigSection _stubSection;
 
         [TestFixtureSetUp]
         public void Initialize()
         {
-            var config = new ConfigSection(TestHelper.ConfigTestRootFile, TestHelper.GetFileSystemService());
+            var config = new JsonConfigSection(TestHelper.ConfigTestRootFile, TestHelper.GetFileSystemService());
             _stubSection = config.GetSection("stubs");
         }
 
@@ -44,7 +44,7 @@ namespace ActionStreetMap.Tests.Infrastructure
         public void CanReadArray()
         {
             // ARRANGE
-            var config = new ConfigSection("{\"array\":[{\"k\":1},{\"k\":2},{\"k\":3}]}");
+            var config = new JsonConfigSection("{\"array\":[{\"k\":1},{\"k\":2},{\"k\":3}]}");
 
             // ACT
             var array = config.GetSections("array").ToList();
@@ -57,7 +57,7 @@ namespace ActionStreetMap.Tests.Infrastructure
         public void CanReadNode()
         {
             // ARRANGE
-            var config = new ConfigSection("{\"node\":{\"k\":1}}");
+            var config = new JsonConfigSection("{\"node\":{\"k\":1}}");
 
             // ACT
             var node = config.GetSection("node");
@@ -71,7 +71,7 @@ namespace ActionStreetMap.Tests.Infrastructure
         public void CanReadValueFromString()
         {
             // ARRANGE
-            var config = new ConfigSection("{\"k\":\"ggg\"}");
+            var config = new JsonConfigSection("{\"k\":\"ggg\"}");
 
             // ACT
             var value = config.GetString("k", null);

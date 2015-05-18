@@ -7,31 +7,31 @@ using ActionStreetMap.Infrastructure.IO;
 namespace ActionStreetMap.Infrastructure.Config
 {
     /// <summary> Represens a JSON config entry. </summary>
-    public class ConfigSection : IConfigSection
+    public class JsonConfigSection : IConfigSection
     {
         /// <summary> Gets root element of this section. </summary>
         public ConfigElement RootElement { get; private set; }
 
-        /// <summary> Creates ConfigSection. </summary>
+        /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
         /// <param name="element">Config element.</param>
-        public ConfigSection(ConfigElement element)
+        public JsonConfigSection(ConfigElement element)
         {
             RootElement = element;
         }
 
-        /// <summary> Creates ConfigSection. </summary>
+        /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
         /// <param name="appConfigFileName">Config appConfig.</param>
         /// <param name="fileSystemService">File system service</param>
-        public ConfigSection(string appConfigFileName, IFileSystemService fileSystemService)
+        public JsonConfigSection(string appConfigFileName, IFileSystemService fileSystemService)
         {
             var jsonStr = fileSystemService.ReadText(appConfigFileName);
             var json = JSON.Parse(jsonStr);
             RootElement = new ConfigElement(json);
         }
 
-        /// <summary> Creates ConfigSection. </summary>
+        /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
         /// <param name="content">Json content</param>
-        public ConfigSection(string content)
+        public JsonConfigSection(string content)
         {
             RootElement = new ConfigElement(JSON.Parse(content));
         }
@@ -39,13 +39,13 @@ namespace ActionStreetMap.Infrastructure.Config
         /// <inheritdoc />
         public IEnumerable<IConfigSection> GetSections(string xpath)
         {
-            return RootElement.GetElements(xpath).Select(e => (new ConfigSection(e)) as IConfigSection);
+            return RootElement.GetElements(xpath).Select(e => (new JsonConfigSection(e)) as IConfigSection);
         }
 
         /// <inheritdoc />
         public IConfigSection GetSection(string xpath)
         {
-            return new ConfigSection(new ConfigElement(RootElement.Node, xpath));
+            return new JsonConfigSection(new ConfigElement(RootElement.Node, xpath));
         }
 
         /// <inheritdoc />

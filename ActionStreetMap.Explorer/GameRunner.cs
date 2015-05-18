@@ -43,7 +43,7 @@ namespace ActionStreetMap.Explorer
                 // read config
                 var fileSystemService = new FileSystemService(pathResolver, trace);
                 container.RegisterInstance(typeof (IFileSystemService), fileSystemService);
-                container.RegisterInstance<IConfigSection>(new ConfigSection(rootConfigPath, fileSystemService));
+                container.RegisterInstance<IConfigSection>(new JsonConfigSection(rootConfigPath, fileSystemService));
             }
             catch (DependencyException depEx)
             {

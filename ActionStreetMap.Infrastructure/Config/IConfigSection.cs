@@ -10,7 +10,7 @@ namespace ActionStreetMap.Infrastructure.Config
         /// <param name="xpath">xpath</param>
         IEnumerable<IConfigSection> GetSections(string xpath);
 
-        /// <summary> Returns ConfigSection. </summary>
+        /// <summary> Returns JsonConfigSection. </summary>
         /// <param name="xpath">xpath</param>
         /// <returns>IConfigSection.</returns>
         IConfigSection GetSection(string xpath);

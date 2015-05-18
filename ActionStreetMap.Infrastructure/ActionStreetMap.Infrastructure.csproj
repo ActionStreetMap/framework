@@ -49,7 +49,7 @@
     <Compile Include="Bootstrap\IBootsrtrapperService.cs" />
     <Compile Include="Bootstrap\IBootstrapperPlugin.cs" />
     <Compile Include="Config\ConfigElement.cs" />
-    <Compile Include="Config\ConfigSection.cs" />
+    <Compile Include="Config\JsonConfigSection.cs" />
     <Compile Include="Config\IConfigSection.cs" />
     <Compile Include="Config\IConfigurable.cs" />
     <Compile Include="Dependencies\DependencyException.cs" />

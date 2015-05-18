@@ -99,7 +99,7 @@
     <Compile Include="Maps\MultipolygonProcessorTests.cs" />
     <Compile Include="Maps\TestModelLoader.cs" />
     <Compile Include="PerformanceLogger.cs" />
-    <Compile Include="Infrastructure\ConfigTests.cs" />
+    <Compile Include="Infrastructure\JsonConfigTests.cs" />
     <Compile Include="Infrastructure\ContainerTests.cs" />
     <Compile Include="Infrastructure\Stubs\ClassA.cs" />
     <Compile Include="Infrastructure\Stubs\CollectionDependencyClass.cs" />
