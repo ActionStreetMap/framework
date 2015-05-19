@@ -26,7 +26,11 @@ namespace ActionStreetMap.Infrastructure.Config
         /// <summary> Adds specific setting. </summary>
         public CodeConfigSection Add<T>(string path, T value)
         {
-            _keyValueMap.Add(GetKey(path), value);
+            var key = GetKey(path);
+            if (_keyValueMap.ContainsKey(key))
+                _keyValueMap[key] = value;
+            else
+                _keyValueMap.Add(key, value);
             return this;
         }
 

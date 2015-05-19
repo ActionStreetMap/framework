@@ -1,13 +1,10 @@
-﻿
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Explorer;
-using ActionStreetMap.Explorer.Bootstrappers;
-using ActionStreetMap.Infrastructure.Bootstrap;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
-using ActionStreetMap.Tests.Explorer.Tiles;
 using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Tests
@@ -24,7 +21,6 @@ namespace ActionStreetMap.Tests
 
         public const string ConfigTestRootFile = "test.json";
         public const string ConfigAppRootFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\settings.json";
-
 
         public const string TestNmeaFilePath = @"..\..\..\..\Tests\TestAssets\Nmea\berlin_seestr_speed_increasing.nme";
         public const string TestIndexSettingsPath = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\index.json";
@@ -44,13 +40,18 @@ namespace ActionStreetMap.Tests
 
         public static GameRunner GetGameRunner(IContainer container)
         {
-            // these items are used during boot process
             var jsonConfigSection = GetJsonConfig(ConfigAppRootFile);
+            return GetGameRunner(container, jsonConfigSection);
+        }
 
+        public static GameRunner GetGameRunner(IContainer container, IConfigSection config)
+        {
+            // this three service should be registered before game runner is started
             container.Register(Component.For<ITrace>().Use<ConsoleTrace>().Singleton());
             container.Register(Component.For<IPathResolver>().Use<TestPathResolver>().Singleton());
             container.Register(Component.For<IMessageBus>().Use<MessageBus>().Singleton());
-            return new GameRunner(container, jsonConfigSection)
+
+            return new GameRunner(container, config)
                 .RegisterPlugin<TestBootstrapperPlugin>("test")
                 .Bootstrap();
         }

@@ -56,7 +56,12 @@ namespace ActionStreetMap.Tests
         public void RunGame()
         {
             _logger.Start();
-            var componentRoot = TestHelper.GetGameRunner(_container);
+
+            var config = ConfigBuilder.GetDefault()
+                .SetRenderMode(ConfigBuilder.RenderMode.Overview, 1)
+                .Build();
+                
+            var componentRoot = TestHelper.GetGameRunner(_container, config);
 
             _messageBus = _container.Resolve<IMessageBus>();
             _trace = _container.Resolve<ITrace>();
