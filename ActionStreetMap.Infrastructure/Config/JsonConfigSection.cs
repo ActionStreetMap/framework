@@ -13,16 +13,6 @@ namespace ActionStreetMap.Infrastructure.Config
         private readonly JSONNode _rootNode;
 
         /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
-        /// <param name="appConfigFileName">Config appConfig.</param>
-        /// <param name="fileSystemService">File system service</param>
-        public JsonConfigSection(string appConfigFileName, IFileSystemService fileSystemService)
-        {
-            var jsonStr = fileSystemService.ReadText(appConfigFileName);
-            var json = JSON.Parse(jsonStr);
-            _rootNode = json;
-        }
-
-        /// <summary> Creates <see cref="JsonConfigSection"/>. </summary>
         /// <param name="content">Json content</param>
         public JsonConfigSection(string content)
         {

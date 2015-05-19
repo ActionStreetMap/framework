@@ -4,9 +4,7 @@ using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
 
 namespace ActionStreetMap.Infrastructure.Dependencies
 {
-    /// <summary>
-    ///     Defines dependency injection container behavior.
-    ///  </summary>
+    /// <summary> Defines dependency injection container behavior. </summary>
     public interface IContainer: IDisposable
     {
         #region Options
@@ -21,9 +19,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region Proxies
 
-        /// <summary>
-        ///     Adds global behavior.
-        /// </summary>
+        /// <summary> Adds global behavior. </summary>
         /// <param name="behavior">Behavior.</param>
         /// <returns>Container.</returns>
         IContainer AddGlobalBehavior(IBehavior behavior);
@@ -32,31 +28,23 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region Resolve single instance
 
-        /// <summary>
-        ///     Resolves object.
-        /// </summary>
+        /// <summary> Resolves object. </summary>
         /// <param name="type">Type.</param>
         /// <returns>Returns object.</returns>
         object Resolve(Type type);
 
-        /// <summary>
-        ///     Resolves object.
-        /// </summary>
+        /// <summary> Resolves object. </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         object Resolve(Type type, string name);
         
-        /// <summary>
-        ///     Resolves object.
-        /// </summary>
+        /// <summary> Resolves object. </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         T Resolve<T>();
 
-        /// <summary>
-        ///     Resolves object.
-        /// </summary>
+        /// <summary> Resolves object. </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -66,16 +54,12 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region Resolve several instances
 
-        /// <summary>
-        ///     Resolves enumerable of objects.
-        /// </summary>
+        /// <summary> Resolves enumerable of objects. </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         IEnumerable<T> ResolveAll<T>();
 
-        /// <summary>
-        ///     Resolves enumerable of objects.
-        /// </summary>
+        /// <summary> Resolves enumerable of objects. </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         IEnumerable<object> ResolveAll(Type type);
@@ -84,9 +68,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region Register component
 
-        /// <summary>
-        ///     Registers component.
-        /// </summary>
+        /// <summary> Registers component. </summary>
         /// <param name="component">Component.</param>
         /// <returns>Container.</returns>
         IContainer Register(Component component);
@@ -95,34 +77,26 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region Register instance
 
-        /// <summary>
-        ///     Registers object.
-        /// </summary>
+        /// <summary> Registers object. </summary>
         /// <typeparam name="T">Type.</typeparam>
         /// <param name="instance">Instance.</param>
         /// <returns>Container.</returns>
         IContainer RegisterInstance<T>(T instance);
 
-        /// <summary>
-        ///     Registers object.
-        /// </summary>
+        /// <summary> Registers object. </summary>
         /// <typeparam name="T">Type.</typeparam>
         /// <param name="instance">Instance.</param>
         /// <param name="name">Name.</param>
         /// <returns>Container.</returns>
         IContainer RegisterInstance<T>(T instance, string name);
 
-        /// <summary>
-        ///     Registers object.
-        /// </summary>
+        /// <summary> Registers object. </summary>
         /// <param name="t">Type.</param>
         /// <param name="instance">Instance.</param>
         /// <returns>Container.</returns>
         IContainer RegisterInstance(Type t, object instance);
         
-        /// <summary>
-        ///     Registers object.
-        /// </summary>
+        /// <summary> Registers object. </summary>
         /// <param name="t">Type.</param>
         /// <param name="instance">Instance.</param>
         /// <param name="name">Name.</param>

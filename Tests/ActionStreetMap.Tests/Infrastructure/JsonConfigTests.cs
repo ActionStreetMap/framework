@@ -13,7 +13,7 @@ namespace ActionStreetMap.Tests.Infrastructure
         [TestFixtureSetUp]
         public void Initialize()
         {
-            var config = new JsonConfigSection(TestHelper.ConfigTestRootFile, TestHelper.GetFileSystemService());
+            var config = TestHelper.GetJsonConfig(TestHelper.ConfigTestRootFile);
             _stubSection = config.GetSection("stubs");
         }
 

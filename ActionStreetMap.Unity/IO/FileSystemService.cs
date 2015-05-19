@@ -22,6 +22,7 @@ namespace ActionStreetMap.Unity.IO
         /// <summary> Creates <see cref="FileSystemService"/>. </summary>
         /// <param name="pathResolver">Path resolver.</param>
         /// <param name="trace">Trace.</param>
+        [Dependency]
         public FileSystemService(IPathResolver pathResolver, ITrace trace)
         {
             PathResolver = pathResolver;

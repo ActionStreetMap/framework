@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Bootstrappers;
@@ -18,43 +17,20 @@ namespace ActionStreetMap.Explorer
     {
         private const string LogTag = "runner";
         private readonly IContainer _container;
-        private IMessageBus _messageBus;
+
         private IPositionObserver<MapPoint> _mapPositionObserver;
         private IPositionObserver<GeoCoordinate> _geoPositionObserver;
 
         private bool _isInitialized;
 
-        /// <summary> 
-        ///     Creates instance of <see cref="GameRunner"/>. <see cref="ITrace"/>, <see cref="IPathResolver"/> and
-        ///     <see cref="IMessageBus"/> services should be already registered inside container.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="GameRunner"/>. </summary>
         /// <param name="container">DI container.</param>
-        /// <param name="rootConfigPath">Path of main configuration.</param>
-        public GameRunner(IContainer container, string rootConfigPath)
+        /// <param name="config">Configuration.</param>
+        public GameRunner(IContainer container, IConfigSection config)
         {
-            _container = container;         
-            ITrace trace = null;
-            try
-            {
-                // NOTE these classes should be provided by client application.
-                trace = _container.Resolve<ITrace>();
-                var pathResolver = _container.Resolve<IPathResolver>();
-                _messageBus = _container.Resolve<IMessageBus>();
-                // read config
-                var fileSystemService = new FileSystemService(pathResolver, trace);
-                container.RegisterInstance(typeof (IFileSystemService), fileSystemService);
-                container.RegisterInstance<IConfigSection>(new JsonConfigSection(rootConfigPath, fileSystemService));
-            }
-            catch (DependencyException depEx)
-            {
-                throw new ArgumentException(Strings.CannotRunGameWithoutPrerequesites, "container", depEx);
-            }
-            catch (Exception ex)
-            {
-                if (trace != null)
-                    trace.Error(LogTag, ex, Strings.CannotReadMainConfig, rootConfigPath);
-                throw;
-            }
+            _container = container;
+            _container.Register(Component.For<IFileSystemService>().Use<FileSystemService>().Singleton());
+            _container.RegisterInstance<IConfigSection>(config);
 
             // register bootstrappers
             _container.Register(Component.For<IBootstrapperService>().Use<BootstrapperService>());
@@ -77,6 +53,7 @@ namespace ActionStreetMap.Explorer
         /// <param name="coordinate">GeoCoordinate for (0,0) map point. </param>
         public void RunGame(GeoCoordinate coordinate)
         {
+            var messageBus = _container.Resolve<IMessageBus>();
             // resolve actual position observers
             var tilePositionObserver = _container.Resolve<ITilePositionObserver>();
             _mapPositionObserver = tilePositionObserver;
@@ -85,7 +62,7 @@ namespace ActionStreetMap.Explorer
             // notify about geo coordinate change
             _geoPositionObserver.OnNext(coordinate);
 
-            _messageBus.Send(new GameStartedMessage());
+            messageBus.Send(new GameStartedMessage());
         }
 
         /// <summary> Runs bootstrapping process. </summary>
@@ -98,7 +75,7 @@ namespace ActionStreetMap.Explorer
 
             // run bootstrappers
             _container.Resolve<IBootstrapperService>().Run();
-
+            
             return this;
         }
 

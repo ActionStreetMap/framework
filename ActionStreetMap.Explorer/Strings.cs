@@ -2,8 +2,6 @@
 {
     internal static class Strings
     {
-        public static string CannotRunGameWithoutPrerequesites = "Fatal: GameRunner cannot be instatiated because if missing service registrations inside container.";
-        public static string CannotReadMainConfig = "Fatal: cannot read configuration from {0}";
         public static string CannotRegisterPluginForCompletedBootstrapping = "Plugin cannot be installed if bootstrapping is completed.";
         public static string CannotGetBuildingStyle = "Can't get building style - unknown building type: {0}. " +
                                                       "Try to check your current mapcss and theme files";       

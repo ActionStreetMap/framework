@@ -45,12 +45,20 @@ namespace ActionStreetMap.Tests
         public static GameRunner GetGameRunner(IContainer container)
         {
             // these items are used during boot process
+            var jsonConfigSection = GetJsonConfig(ConfigAppRootFile);
+
             container.Register(Component.For<ITrace>().Use<ConsoleTrace>().Singleton());
             container.Register(Component.For<IPathResolver>().Use<TestPathResolver>().Singleton());
             container.Register(Component.For<IMessageBus>().Use<MessageBus>().Singleton());
-            return new GameRunner(container, ConfigAppRootFile)
+            return new GameRunner(container, jsonConfigSection)
                 .RegisterPlugin<TestBootstrapperPlugin>("test")
                 .Bootstrap();
+        }
+
+        public static JsonConfigSection GetJsonConfig(string configPath)
+        {
+            return new JsonConfigSection(new FileSystemService(new TestPathResolver(), new DefaultTrace())
+                .ReadText(configPath));
         }
 
         public static IFileSystemService GetFileSystemService()
