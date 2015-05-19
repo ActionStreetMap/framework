@@ -58,6 +58,7 @@
     <Compile Include="Core\Tiling\TagCollectionTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="Explorer\Geometry\LineUtilsTests.cs" />
+    <Compile Include="Infrastructure\CodeConfigTests.cs" />
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />
     <Compile Include="Expiremental\SvgBuilder.cs" />
     <Compile Include="TestExtensions.cs" />

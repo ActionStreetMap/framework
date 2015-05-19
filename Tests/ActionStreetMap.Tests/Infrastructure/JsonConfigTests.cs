@@ -54,7 +54,7 @@ namespace ActionStreetMap.Tests.Infrastructure
         }
 
         [Test]
-        public void CanReadNode()
+        public void CanReadSection()
         {
             // ARRANGE
             var config = new JsonConfigSection("{\"node\":{\"k\":1}}");
