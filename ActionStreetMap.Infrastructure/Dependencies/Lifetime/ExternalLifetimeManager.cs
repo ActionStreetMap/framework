@@ -38,7 +38,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
             if (_reference.IsAlive)
                 return _reference.Target;
             throw new InvalidOperationException(
-                String.Format("Registeted object is dead! Type: {0}, interface: {1}", TargetType, InterfaceType));
+                String.Format("Registered object is dead! Type: {0}, interface: {1}", TargetType, InterfaceType));
         }
 
         public object GetInstance(string name)

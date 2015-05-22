@@ -2,14 +2,10 @@
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors
 {
-    /// <summary>
-    ///     Executes method source method.
-    /// </summary>
+    /// <summary> Executes method source method. </summary>
     public class ExecuteBehavior : IBehavior
     {
-        /// <summary>
-        ///     Creates ExecuteBehavior.
-        /// </summary>
+        /// <summary> Creates ExecuteBehavior. </summary>
         public ExecuteBehavior()
         {
             Name = "execute";

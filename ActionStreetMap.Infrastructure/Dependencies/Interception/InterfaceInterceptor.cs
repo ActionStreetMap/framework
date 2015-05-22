@@ -4,9 +4,7 @@ using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Interception
 {
-    /// <summary>
-    ///     Represents interceptor which is able to intercept interface
-    /// </summary>
+    /// <summary> Represents interceptor which is able to intercept interface. </summary>
     internal class InterfaceInterceptor : IInterceptor
     {
         protected readonly Dictionary<Type, Component> ProxyComponentMapping = new Dictionary<Type, Component>();

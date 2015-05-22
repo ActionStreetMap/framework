@@ -5,9 +5,7 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors
 {
-    /// <summary>
-    ///     Defines behavior for profiling.
-    /// </summary>
+    /// <summary> Defines behavior for profiling. </summary>
     public class ProfileBehavior: IBehavior
     {
         private readonly ITrace _trace;
@@ -15,9 +13,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors
         /// <inheritdoc />
         public string Name { get; private set; }
 
-        /// <summary>
-        ///     Creates ProfileBehavior.
-        /// </summary>
+        /// <summary> Creates <see cref="ProfileBehavior"/>. </summary>
         /// <param name="trace">Output trace.</param>
         public ProfileBehavior(ITrace trace)
         {

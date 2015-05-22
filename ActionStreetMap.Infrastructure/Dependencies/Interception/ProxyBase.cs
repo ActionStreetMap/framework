@@ -5,9 +5,7 @@ using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Interception
 {
-    /// <summary>
-    ///     Provides base functionality to proxy object.
-    /// </summary>
+    /// <summary> Provides base functionality to proxy object. </summary>
     public class ProxyBase : IProxy
     {
         private readonly LinkedList<IBehavior> _behaviors = new LinkedList<IBehavior>();
@@ -15,9 +13,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception
         /// <inheritdoc />
         public object Instance { get; set; }
 
-        /// <summary>
-        ///     Adds behavior to behaviors' chain
-        /// </summary>
+        /// <summary> Adds behavior to behaviors' chain. </summary>
         /// <param name="behavior"></param>
         public void AddBehavior(IBehavior behavior)
         {
@@ -26,9 +22,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception
                 _behaviors.AddLast(behavior);
         }
 
-        /// <summary>
-        ///     Build IMethodInvocation object from executed method
-        /// </summary>
+        /// <summary> Build <see cref="MethodInvocation"/> object from executed method. </summary>
         /// <param name="methodBase"></param>
         /// <param name="args"></param>
         protected MethodInvocation BuildMethodInvocation(MethodBase methodBase, params object[] args)
@@ -40,9 +34,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception
             return methodInvocation;
         }
 
-        /// <summary>
-        ///     Run behaviors' chain
-        /// </summary>
+        /// <summary> Run behaviors' chain. </summary>
         /// <param name="methodInvocation"></param>
         /// <returns></returns>
         protected IMethodReturn RunBehaviors(MethodInvocation methodInvocation)
@@ -51,9 +43,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception
             return _behaviors.Aggregate(methodReturn, (ac, b) => b.Invoke(methodInvocation));
         }
 
-        /// <summary>
-        ///     Clears list of behaviors
-        /// </summary>
+        /// <summary> Clears list of behaviors. </summary>
         public void ClearBehaviors()
         {
             _behaviors.Clear();

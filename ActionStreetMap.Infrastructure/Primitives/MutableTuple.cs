@@ -2,24 +2,17 @@
 
 namespace ActionStreetMap.Infrastructure.Primitives
 {
-    /// <summary>
-    ///     MutableTuple implementation.
-    /// </summary>
+    /// <summary> MutableTuple implementation. </summary>
     public class MutableTuple<T1, T2> : IEquatable<MutableTuple<T1, T2>>
     {
-        /// <summary>
-        ///     Gets or sets first item.
-        /// </summary>
+        /// <summary> Gets or sets first item. </summary>
         public T1 Item1 { get; set; }
 
-        /// <summary>
-        ///     Gets or sets second item.
+        /// <summary> Gets or sets second item.
         /// </summary>
         public T2 Item2 { get; set; }
 
-        /// <summary>
-        ///     Creates MutableTuple.
-        /// </summary>
+        /// <summary> Creates <see cref="MutableTuple{T1,T2}"/>.</summary>
         /// <param name="item1">First item.</param>
         /// <param name="item2">Second item.</param>
         public MutableTuple(T1 item1, T2 item2)

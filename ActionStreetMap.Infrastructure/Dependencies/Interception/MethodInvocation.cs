@@ -4,14 +4,10 @@ using System.Reflection;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Interception
 {
-    /// <summary>
-    ///     Represents a call of method.
-    /// </summary>
+    /// <summary> Represents a call of method. </summary>
     public class MethodInvocation
     {
-        /// <summary>
-        ///     Creates MethodInvocation.
-        /// </summary>
+        /// <summary> Creates MethodInvocation. </summary>
         public MethodInvocation()
         {
             Parameters = new Dictionary<ParameterInfo, object>();
@@ -19,39 +15,25 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Interception
             GenericTypes = new List<Type>();
         }
 
-        /// <summary>
-        ///     Executed method
-        /// </summary>
+        /// <summary> Executed method. </summary>
         public MethodBase MethodBase { get; set; }
 
-        /// <summary>
-        ///     Input parameters
-        /// </summary>
+        /// <summary> Input parameters. </summary>
         public IDictionary<ParameterInfo, object> Parameters { get; private set; }
 
-        /// <summary>
-        ///     Invocation context which can be used for passing parameters through bahavior chain
-        /// </summary>
+        /// <summary> Invocation context which can be used for passing parameters through bahavior chain. </summary>
         public IDictionary<string, object> InvocationContext { get; private set; }
 
-        /// <summary>
-        ///     Target instance
-        /// </summary>
+        /// <summary> Target instance. </summary>
         public object Target { get; set; }
 
-        /// <summary>
-        ///     Should be set to true if method has been invoked
-        /// </summary>
+        /// <summary> Should be set to true if method has been invoked. </summary>
         public bool IsInvoked { get; set; }
 
-        /// <summary>
-        ///     Generic type list.
-        /// </summary>
+        /// <summary> Generic type list. </summary>
         public IList<Type> GenericTypes { get; set; }
 
-        /// <summary>
-        ///     Wrapped return value.
-        /// </summary>
+        /// <summary> Wrapped return value. </summary>
         public IMethodReturn Return { get; set; }
     }
 }

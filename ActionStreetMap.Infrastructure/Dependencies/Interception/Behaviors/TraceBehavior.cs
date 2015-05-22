@@ -5,16 +5,12 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 
 namespace ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors
 {
-    /// <summary>
-    ///     This behavior logs methods signature and result call to output.
-    /// </summary>
+    /// <summary> This behavior logs methods signature and result call to output. </summary>
     public class TraceBehavior: ExecuteBehavior
     {
         private readonly ITrace _trace;
 
-        /// <summary>
-        ///     Creates TraceBehavior
-        /// </summary>
+        /// <summary> Creates <see cref="TraceBehavior"/>. </summary>
         /// <param name="trace">Output trace.</param>
         public TraceBehavior(ITrace trace)
         {

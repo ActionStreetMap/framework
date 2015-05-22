@@ -10,9 +10,7 @@ namespace ActionStreetMap.Infrastructure.Utilities
         private readonly Stack<T[,]> _objectArray2Stack;
         private readonly Stack<T[,,]> _objectArray3Stack;
 
-        /// <summary>
-        ///     Creates ObjectListPool.
-        /// </summary>
+        /// <summary> Creates <see cref="ObjectArrayPool{T}"/>. </summary>
         /// <param name="initialBufferSize">Initial buffer size.</param>
         public ObjectArrayPool(int initialBufferSize)
         {
