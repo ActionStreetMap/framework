@@ -176,7 +176,8 @@ namespace ActionStreetMap.Tests.Core.Tiling
             configMock.Setup(c => c.GetFloat("offset", It.IsAny<float>())).Returns(Offset);
             configMock.Setup(c => c.GetFloat("sensitivity", It.IsAny<float>())).Returns(Sensitivity);
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
-            configMock.Setup(c => c.GetString("render_mode", It.IsAny<string>())).Returns("mixed");
+            configMock.Setup(c => c.GetString("render_mode", It.IsAny<string>())).Returns("scene");
+            configMock.Setup(c => c.GetInt("overview_buffer", It.IsAny<int>())).Returns(0);
 
             var observer = new TileManager(sceneBuilderMock.Object,
                 activatorMock.Object, new MessageBus(), new ObjectPool());

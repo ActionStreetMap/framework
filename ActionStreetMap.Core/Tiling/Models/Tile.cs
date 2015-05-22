@@ -9,7 +9,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Stores map center coordinate in lat/lon. </summary>
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
-        /// <summary> Stores tile center coordinate in Unity metrics. </summary>
+        /// <summary> Stores tile center coordinate in world coordinates. </summary>
         public MapPoint MapCenter { get; private set; }
 
         /// <summary> Render mode. </summary>

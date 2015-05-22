@@ -19,7 +19,7 @@
 	"tile": {
 		"size":400,
 		"offset":50,
-        "render_mode": "mixed",
+        "render_mode": "scene",
         "overview_buffer":1,
 	}
 }
