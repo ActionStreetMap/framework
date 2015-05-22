@@ -58,7 +58,7 @@ namespace ActionStreetMap.Tests
             _logger.Start();
 
             var config = ConfigBuilder.GetDefault()
-                .SetRenderMode(ConfigBuilder.RenderMode.Overview, 1)
+                .SetRenderMode(RenderMode.Scene, 1)
                 .Build();
                 
             var componentRoot = TestHelper.GetGameRunner(_container, config);

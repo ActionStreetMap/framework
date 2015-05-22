@@ -48,6 +48,10 @@ namespace ActionStreetMap.Infrastructure.Dependencies.Lifetime
                 if (configurable != null && ConfigSection != null)
                     configurable.Configure(ConfigSection);
                 target = _proxy ?? _instance;
+                // no need in this data anymore
+                ConfigSection = null;
+                CstorArgs = null;
+                Constructor = null;
             }
 
             return target;

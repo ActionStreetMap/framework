@@ -9,9 +9,7 @@ using ActionStreetMap.Infrastructure.Dependencies.Lifetime;
 
 namespace ActionStreetMap.Infrastructure.Dependencies
 {
-    /// <summary>
-    ///     Represents dependency injection container.
-    /// </summary>
+    /// <summary> Represents dependency injection container. </summary>
     public sealed class Container : IContainer
     {
         private readonly TypeMapping _typeMapping = new TypeMapping();
@@ -24,14 +22,10 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region IContainer implementation
 
-        /// <summary>
-        ///     Allow proxy behavior.
-        /// </summary>
+        /// <summary> Allow proxy behavior. </summary>
         public bool AllowProxy { get; set; }
 
-        /// <summary>
-        ///     Autogenerate proxies.
-        /// </summary>
+        /// <summary> Autogenerate proxies. </summary>
         public bool AutoGenerateProxy 
         { 
             get { return false; } 
@@ -134,9 +128,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof (IEnumerable<>);
         }
 
-        /// <summary>
-        /// Injects dependencies via property
-        /// </summary>
+        /// <summary> Injects dependencies via property. </summary>
         private object ResolveDependencies(object instance)
         {
             //if type's methods are intercepted, instance is proxy and doesn't have properties to do DI
@@ -212,9 +204,6 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region Register component
 
-        /// <summary>
-        ///     Registers Component.
-        /// </summary>
         /// <inheritdoc />
         public IContainer Register(Component component)
         {
@@ -234,9 +223,7 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #region Register type
 
-        /// <summary>
-        /// Registers type using name
-        /// </summary>
+        /// <summary> Registers type using name. </summary>
         private IContainer RegisterType(Type t, Type c, string name, ILifetimeManager lifetimeManager, object[] args)
         {
             lifetimeManager.CstorArgs = args;
