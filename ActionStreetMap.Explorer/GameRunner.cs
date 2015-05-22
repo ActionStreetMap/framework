@@ -5,7 +5,6 @@ using ActionStreetMap.Explorer.Bootstrappers;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Unity.IO;
@@ -15,7 +14,6 @@ namespace ActionStreetMap.Explorer
     /// <summary> Represents application component root. Not thread safe. </summary>
     public sealed class GameRunner : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
-        private const string LogTag = "runner";
         private readonly IContainer _container;
 
         private IPositionObserver<MapPoint> _mapPositionObserver;
@@ -49,7 +47,8 @@ namespace ActionStreetMap.Explorer
             return this;
         }
 
-        /// <summary> Runs game. Do not call this method on UI thread to prevent its blocking. </summary>
+        /// <summary> Runs game. </summary>
+        /// <remarks> Do not call this method on UI thread to prevent its blocking. </remarks>
         /// <param name="coordinate">GeoCoordinate for (0,0) map point. </param>
         public void RunGame(GeoCoordinate coordinate)
         {

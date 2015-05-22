@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Infrastructure.Config;
+﻿using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Config;
 
 namespace ActionStreetMap.Explorer.Infrastructure
 {
@@ -124,18 +125,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 .SetGeocodingServer("http://nominatim.openstreetmap.org/search")
                 .SetSandbox(false)
                 .SetTileSettings(400, 80)
-                .SetRenderMode(RenderMode.Mixed, 1);
-        }
-
-        #endregion
-
-        #region Nested classes
-
-        public enum RenderMode
-        {
-            Scene,
-            Overview,
-            Mixed
+                .SetRenderMode(RenderMode.Scene, 1);
         }
 
         #endregion

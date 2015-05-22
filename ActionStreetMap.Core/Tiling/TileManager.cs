@@ -17,23 +17,19 @@ namespace ActionStreetMap.Core.Tiling
     /// </summary>
     public interface ITilePositionObserver : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
-        /// <summary> Gets current scene tile. </summary>
+        /// <summary> Gets current tile. </summary>
         Tile CurrentTile { get; }
     }
 
     /// <summary> This class listens to position changes and manages tile processing. </summary>
     public class TileManager : ITilePositionObserver, IConfigurable
     {
-        private const int MixedMode = 0;
-        private const int SceneMode = 1;
-        private const int OverviewMode = 2;
-
         private readonly object _lockObj = new object();
 
         private float _tileSize;
         private float _offset;
         private float _moveSensitivity;
-        private int _renderModeEx;
+        private RenderMode _renderMode;
         private int _overviewBuffer;
         private float _thresholdDistance;
         private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
@@ -41,7 +37,7 @@ namespace ActionStreetMap.Core.Tiling
         private GeoCoordinate _currentPosition;
         private MapPoint _currentMapPoint;
 
-        private readonly MutableTuple<int, int> _currentSceneTileIndex = new MutableTuple<int, int>(0, 0);
+        private readonly MutableTuple<int, int> _currentTileIndex = new MutableTuple<int, int>(0, 0);
 
         private readonly ITileLoader _tileLoader;
         private readonly IMessageBus _messageBus;
@@ -55,7 +51,14 @@ namespace ActionStreetMap.Core.Tiling
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
         /// <inheritdoc />
-        public Tile CurrentTile { get { return _allSceneTiles[_currentSceneTileIndex.Item1, _currentSceneTileIndex.Item2]; } }
+        public Tile CurrentTile
+        {
+            get
+            {
+                return (_renderMode == RenderMode.Scene ? _allSceneTiles : _allOverviewTiles)
+                    [_currentTileIndex.Item1, _currentTileIndex.Item2];
+            }
+        }
 
         /// <summary> Gets all scene tile count. </summary>
         public int Count { get { return _allSceneTiles.Count(); } }
@@ -79,16 +82,15 @@ namespace ActionStreetMap.Core.Tiling
 
         private void Create(int i, int j)
         {
-            if (_renderModeEx != OverviewMode)
+            if (_renderMode != RenderMode.Overview)
                 LoadTile(i, j, RenderMode.Scene);
 
-            if (_renderModeEx != SceneMode)
-                for (int z = j - _overviewBuffer; z <= j + _overviewBuffer; z++)
-                    for (int k = i - _overviewBuffer; k <= i + _overviewBuffer; k++)
-                    {
-                        if (!_allOverviewTiles.ContainsKey(k, z)) 
-                            LoadTile(k, z, RenderMode.Overview);
-                   }
+            for (int z = j - _overviewBuffer; z <= j + _overviewBuffer; z++)
+                for (int k = i - _overviewBuffer; k <= i + _overviewBuffer; k++)
+                {
+                    if (!_allOverviewTiles.ContainsKey(k, z))
+                        LoadTile(k, z, RenderMode.Overview);
+                }
         }
 
         private void LoadTile(int i, int j, RenderMode renderMode)
@@ -208,7 +210,7 @@ namespace ActionStreetMap.Core.Tiling
                     int i = Convert.ToInt32(value.X / _tileSize);
                     int j = Convert.ToInt32(value.Y / _tileSize);
 
-                    var tileCollection = _renderModeEx != OverviewMode ? _allSceneTiles : _allOverviewTiles;
+                    var tileCollection = _renderMode != RenderMode.Overview ? _allSceneTiles : _allOverviewTiles;
 
                     bool hasTile = tileCollection.ContainsKey(i, j);
                     if (!hasTile)
@@ -221,8 +223,8 @@ namespace ActionStreetMap.Core.Tiling
                     if (ShouldPreload(tile, value))
                         PreloadNextTile(tile, value, i, j);
 
-                    _currentSceneTileIndex.Item1 = i;
-                    _currentSceneTileIndex.Item2 = j;
+                    _currentTileIndex.Item1 = i;
+                    _currentTileIndex.Item2 = j;
                 }
             }
         }
@@ -260,19 +262,8 @@ namespace ActionStreetMap.Core.Tiling
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
 
             // NOTE don't want to extend RenderMode enum with Mixed field
-            var renderModeString = configSection.GetString("render_mode", "mixed").ToLower();
-            switch (renderModeString)
-            {
-                case "overview":
-                    _renderModeEx = OverviewMode;
-                    break;
-                case "scene":
-                    _renderModeEx = SceneMode;
-                    break;
-                default:
-                    _renderModeEx = MixedMode;
-                    break;
-            }
+            var renderModeString = configSection.GetString("render_mode", "scene").ToLower();
+            _renderMode = renderModeString == "scene" ? RenderMode.Scene : RenderMode.Overview;
             _overviewBuffer = configSection.GetInt("overview_buffer", 1);
 
             _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
