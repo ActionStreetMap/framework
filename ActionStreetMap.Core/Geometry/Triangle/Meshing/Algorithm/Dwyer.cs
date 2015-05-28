@@ -45,7 +45,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
     /// </remarks>
     public class Dwyer : ITriangulator
     {
-        static Random rand = new Random(DateTime.Now.Millisecond);
+        Random rand = new Random(DateTime.Now.Millisecond);
 
         public bool UseDwyer = true;
 
