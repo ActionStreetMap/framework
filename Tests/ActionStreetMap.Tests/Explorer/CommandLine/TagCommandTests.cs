@@ -39,10 +39,10 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
                 return Disposable.Empty;
             }));
 
-            var positionObserver = new Mock<ITilePositionObserver>();
+            var positionObserver = new Mock<ITileController>();
             positionObserver.Setup(p => p.CurrentTile).Returns(tile);
-            positionObserver.As<IPositionObserver<GeoCoordinate>>().Setup(p => p.Current).Returns(coordinate);
-            _command = new SearchCommand(positionObserver.As<ITilePositionObserver>().Object, _searchMock.Object);
+            positionObserver.As<IPositionObserver<GeoCoordinate>>().Setup(p => p.CurrentPosition).Returns(coordinate);
+            _command = new SearchCommand(positionObserver.As<ITileController>().Object, _searchMock.Object);
         }
 
         [Test]

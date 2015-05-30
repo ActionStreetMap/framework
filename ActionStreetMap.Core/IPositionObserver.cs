@@ -7,6 +7,6 @@ namespace ActionStreetMap.Core
     public interface IPositionObserver<T>: IObserver<T>
     {
         /// <summary> Gets current position. </summary>
-        T Current { get; }
+        T CurrentPosition { get; }
     }
 }

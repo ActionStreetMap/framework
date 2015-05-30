@@ -55,7 +55,7 @@ namespace ActionStreetMap.Explorer
         {
             var messageBus = _container.Resolve<IMessageBus>();
             // resolve actual position observers
-            var tilePositionObserver = _container.Resolve<ITilePositionObserver>();
+            var tilePositionObserver = _container.Resolve<ITileController>();
             _mapPositionObserver = tilePositionObserver;
             _geoPositionObserver = tilePositionObserver;
 
@@ -81,7 +81,7 @@ namespace ActionStreetMap.Explorer
 
         #region IObserver<MapPoint> implementation
 
-        MapPoint IPositionObserver<MapPoint>.Current { get { return _mapPositionObserver.Current; } }
+        MapPoint IPositionObserver<MapPoint>.CurrentPosition { get { return _mapPositionObserver.CurrentPosition; } }
 
         void IObserver<MapPoint>.OnNext(MapPoint value) { _mapPositionObserver.OnNext(value); }
 
@@ -93,7 +93,7 @@ namespace ActionStreetMap.Explorer
 
         #region IObserver<GeoCoordinate> implementation
 
-        GeoCoordinate IPositionObserver<GeoCoordinate>.Current { get { return _geoPositionObserver.Current; } }
+        GeoCoordinate IPositionObserver<GeoCoordinate>.CurrentPosition { get { return _geoPositionObserver.CurrentPosition; } }
 
         void IObserver<GeoCoordinate>.OnNext(GeoCoordinate value) { _geoPositionObserver.OnNext(value); }
 

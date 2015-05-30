@@ -3,27 +3,6 @@ using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.Tiling
 {
-    #region Lookup
-    /// <summary> Defines "Tile found" message. </summary>
-    public sealed class TileFoundMessage
-    {
-        /// <summary> Gets tile. </summary>
-        public Tile Tile { get; private set; }
-
-        /// <summary> Gets position. </summary>
-        public MapPoint Position { get; private set; }
-
-        /// <summary> Creates message. </summary>
-        /// <param name="tile">Tile.</param>
-        /// <param name="position">Position.</param>
-        public TileFoundMessage(Tile tile, MapPoint position)
-        {
-            Tile = tile;
-            Position = position;
-        }
-    }
-    #endregion
-
     #region Loading
     /// <summary> Defines "Tile load start" message. </summary>
     public sealed class TileLoadStartMessage

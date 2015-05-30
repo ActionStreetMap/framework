@@ -58,7 +58,6 @@ namespace ActionStreetMap.Tests
             _logger.Start();
 
             var config = ConfigBuilder.GetDefault()
-                .SetRenderMode(RenderMode.Scene, 1)
                 .Build();
                 
             var componentRoot = TestHelper.GetGameRunner(_container, config);
@@ -70,7 +69,7 @@ namespace ActionStreetMap.Tests
             // start game on default position
             componentRoot.RunGame(StartGeoCoordinate);
 
-            _positionObserver = _container.Resolve<ITilePositionObserver>();
+            _positionObserver = _container.Resolve<ITileController>();
 
             _messageBus.AsObservable<GeoPosition>().Do(position =>
             {

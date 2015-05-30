@@ -21,12 +21,12 @@ namespace ActionStreetMap.Explorer.Commands
         public string Description { get { return Strings.LocateCommand; } }
 
         /// <summary> Creates instance of <see cref="LocateCommand" />. </summary>
-        /// <param name="positionObserver">Position listener.</param>
+        /// <param name="controller">Position listener.</param>
         [Dependency]
-        public LocateCommand(ITilePositionObserver positionObserver)
+        public LocateCommand(ITileController controller)
         {
-            _geoPositionObserver = positionObserver;
-            _mapPositionObserver = positionObserver;
+            _geoPositionObserver = controller;
+            _mapPositionObserver = controller;
         }
 
         /// <inheritdoc />
@@ -42,8 +42,8 @@ namespace ActionStreetMap.Explorer.Commands
                 }
                 else
                 {
-                    response.AppendLine(String.Format("geo: {0}", _geoPositionObserver.Current));
-                    response.AppendLine(String.Format("map: {0}", _mapPositionObserver.Current));
+                    response.AppendLine(String.Format("geo: {0}", _geoPositionObserver.CurrentPosition));
+                    response.AppendLine(String.Format("map: {0}", _mapPositionObserver.CurrentPosition));
                 }
 
                 o.OnNext(response.ToString());

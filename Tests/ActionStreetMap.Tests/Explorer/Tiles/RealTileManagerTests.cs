@@ -1,6 +1,9 @@
-﻿using ActionStreetMap.Core.Tiling;
+﻿using System.Linq;
+using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
+using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Maps.Data;
 using NUnit.Framework;
 
@@ -38,9 +41,9 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             logger.Stop();
 
             // ASSERT
-            var tileLoader = _container.Resolve<ITilePositionObserver>() as TileManager;
+            var tileLoader = _container.Resolve<ITileController>() as TileManager;
             Assert.IsNotNull(tileLoader);
-            Assert.AreEqual(1, tileLoader.Count);
+            Assert.AreEqual(1, GetSceneTileCount(tileLoader));
 
             Assert.Less(logger.Seconds, 3, "Loading took too long");
             // NOTE Actual value should be close to expected consumption for test data
@@ -61,9 +64,14 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             componentRoot.RunGame(TestHelper.BerlinTestFilePoint);
 
             // ASSERT
-            var tileLoader = _container.Resolve<ITilePositionObserver>();
+            var tileLoader = _container.Resolve<ITileController>();
             Assert.IsNotNull(tileLoader);
             Assert.IsTrue(tileLoader.GetType().FullName.Contains("ActionStreetMap.Dynamics"));
+        }
+
+        private int GetSceneTileCount(TileManager manager)
+        {
+            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(manager, "_allSceneTiles").Count();
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Config;
+using ActionStreetMap.Infrastructure.Primitives;
 using ActionStreetMap.Infrastructure.Reactive;
 using Moq;
 using NUnit.Framework;
@@ -143,7 +144,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             for (int i = 0; i < 10; i++)
             {
                 (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i * Size + Half - Offset, 0));
-                Assert.LessOrEqual(observer.Count, 3);
+                Assert.LessOrEqual(GetSceneTileCount(observer), 3);
             }
         }
 
@@ -159,7 +160,40 @@ namespace ActionStreetMap.Tests.Core.Tiling
                 for (int j = 0; j < 10; j++)
                 {
                     (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i, j));
-                    Assert.AreEqual(1, observer.Count);
+                    Assert.AreEqual(1, GetSceneTileCount(observer));
+                }
+            }
+        }
+
+        [Test]
+        public void CanSwitchFromSceneToOverviewMode()
+        {
+            // ARRANGE
+            var observer = GetManager();
+
+            int expectedSceneTileCount = 1;
+            int expectedOverviewTileCount = 8;
+
+            // ACT & ASSERT
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+
+                    if (i == 5)
+                    {
+                        observer.Mode = RenderMode.Overview;
+                        observer.Viewport = new MapRectangle(0, 0, Size*6, Size*6);
+
+                        expectedOverviewTileCount = 24;
+                    }
+
+                    // ACT
+                    (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i, j));
+
+                    // ASSERT
+                    Assert.AreEqual(expectedSceneTileCount, GetSceneTileCount(observer));
+                    Assert.AreEqual(expectedOverviewTileCount, GetOverviewTileCount(observer));
                 }
             }
         }
@@ -177,7 +211,6 @@ namespace ActionStreetMap.Tests.Core.Tiling
             configMock.Setup(c => c.GetFloat("sensitivity", It.IsAny<float>())).Returns(Sensitivity);
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
             configMock.Setup(c => c.GetString("render_mode", It.IsAny<string>())).Returns("scene");
-            configMock.Setup(c => c.GetInt("overview_buffer", It.IsAny<int>())).Returns(0);
 
             var observer = new TileManager(sceneBuilderMock.Object,
                 activatorMock.Object, new MessageBus(), new ObjectPool());
@@ -201,15 +234,25 @@ namespace ActionStreetMap.Tests.Core.Tiling
             observer.OnNext(second);
 
             Assert.AreSame(tileCenter, manager.CurrentTile);
-            Assert.AreEqual(++tileCount, manager.Count);
+            Assert.AreEqual(++tileCount, GetSceneTileCount(manager));
 
             var previous = manager.CurrentTile;
             // this shouldn't load new tile but we're in next now
             observer.OnNext(third);
             Assert.AreNotSame(previous, manager.CurrentTile);
-            Assert.AreEqual(tileCount, manager.Count);
+            Assert.AreEqual(tileCount, GetSceneTileCount(manager));
 
             return manager.CurrentTile;
+        }
+
+        private int GetSceneTileCount(TileManager manager)
+        {
+            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(manager, "_allSceneTiles").Count();
+        }
+
+        private int GetOverviewTileCount(TileManager manager)
+        {
+            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(manager, "_allOverviewTiles").Count();
         }
     }
 }

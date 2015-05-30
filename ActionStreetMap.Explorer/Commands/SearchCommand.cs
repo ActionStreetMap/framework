@@ -16,7 +16,7 @@ namespace ActionStreetMap.Explorer.Commands
     /// <summary> Search  command. </summary>
     internal class SearchCommand : ICommand
     {
-        private readonly ITilePositionObserver _tilePositionObserver;
+        private readonly ITileController _tileController;
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
         private readonly ISearchEngine _searchEngine;
 
@@ -27,16 +27,16 @@ namespace ActionStreetMap.Explorer.Commands
         public string Description { get { return Strings.SearchCommand; } }
 
         /// <summary> Returns geocoordinate which is used for search. </summary>
-        internal GeoCoordinate SearchCenter { get { return _geoPositionObserver.Current; } }
+        internal GeoCoordinate SearchCenter { get { return _geoPositionObserver.CurrentPosition; } }
 
         /// <summary> Creates instance of <see cref="SearchCommand" />. </summary>
-        /// <param name="positionObserver">Position listener.</param>
+        /// <param name="controller">Position listener.</param>
         /// <param name="searchEngine">Search engine instance.</param>
         [Dependency]
-        public SearchCommand(ITilePositionObserver positionObserver, ISearchEngine searchEngine)
+        public SearchCommand(ITileController controller, ISearchEngine searchEngine)
         {
-            _tilePositionObserver = positionObserver;
-            _geoPositionObserver = positionObserver;
+            _tileController = controller;
+            _geoPositionObserver = controller;
             _searchEngine = searchEngine;
         }
 
@@ -80,7 +80,7 @@ namespace ActionStreetMap.Explorer.Commands
         /// <summary> Gets elements for specific tag. </summary>
         internal IObservable<Element> GetElementsByTag(string key, string value, float radius, string type = null)
         {
-            var bbox = _tilePositionObserver.CurrentTile.BoundingBox;
+            var bbox = _tileController.CurrentTile.BoundingBox;
             return _searchEngine
                 .SearchByTag(key, value, bbox)
                 .Where(e => IsElementMatch(type, e) && (radius <= 0 || IsInCircle(radius, e)));
@@ -90,7 +90,7 @@ namespace ActionStreetMap.Explorer.Commands
         internal IObservable<Element> GetElementsByText(string text, float radius, 
             string type = null, int zoomLevel = MapConsts.MaxZoomLevel)
         {
-            var bbox = _tilePositionObserver.CurrentTile.BoundingBox;
+            var bbox = _tileController.CurrentTile.BoundingBox;
             return _searchEngine
                 .SearchByText(text, bbox, zoomLevel)
                 .Where(e => IsElementMatch(type, e) && (radius <= 0 || IsInCircle(radius, e)));
@@ -124,13 +124,13 @@ namespace ActionStreetMap.Explorer.Commands
 
         private bool Check(float radius, Node node)
         {
-            return GeoProjection.Distance(node.Coordinate, _geoPositionObserver.Current) <= radius;
+            return GeoProjection.Distance(node.Coordinate, _geoPositionObserver.CurrentPosition) <= radius;
         }
 
         private bool Check(float radius, Way way)
         {
             return way.Coordinates.Any(geoCoordinate =>
-                GeoProjection.Distance(geoCoordinate, _geoPositionObserver.Current) <= radius);
+                GeoProjection.Distance(geoCoordinate, _geoPositionObserver.CurrentPosition) <= radius);
         }
 
         private bool Check(float radius, Relation relation)

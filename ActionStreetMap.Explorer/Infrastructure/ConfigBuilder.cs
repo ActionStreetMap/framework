@@ -98,12 +98,13 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
         /// <summary> Sets rendering mode. </summary>
         /// <param name="renderMode">Render mode.</param>
-        /// <param name="overviewBuffer">Overview buffer count.</param>
+        /// <param name="viewport"> Viewport in world coordinates (meters).</param>
         /// <returns></returns>
-        public ConfigBuilder SetRenderMode(RenderMode renderMode, int overviewBuffer)
+        public ConfigBuilder SetRenderOptions(RenderMode renderMode, MapRectangle viewport)
         {
             Add<string>(@"tile/render_mode", renderMode.ToString().ToLower());
-            Add<int>(@"tile/overview_buffer", overviewBuffer);
+            Add<float>(@"tile/viewport/w", viewport.Width);
+            Add<float>(@"tile/viewport/h", viewport.Height);
             return this;
         }
 
@@ -115,6 +116,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <remarks> You can call methods to override settings with custom ones. </remarks>
         public static ConfigBuilder GetDefault()
         {
+            const float tileSize = 400;
             return new ConfigBuilder()
                 .SetLocalMapData("Maps/osm")
                 .SetIndexSettings("Config/index.json")
@@ -124,8 +126,8 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 .SetMapCss("Config/default.mapcss")
                 .SetGeocodingServer("http://nominatim.openstreetmap.org/search")
                 .SetSandbox(false)
-                .SetTileSettings(400, 80)
-                .SetRenderMode(RenderMode.Scene, 1);
+                .SetTileSettings(tileSize, 80)
+                .SetRenderOptions(RenderMode.Scene, new MapRectangle(0, 0, tileSize * 3, tileSize * 3));
         }
 
         #endregion

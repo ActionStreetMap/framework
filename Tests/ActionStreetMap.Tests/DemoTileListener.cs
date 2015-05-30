@@ -21,8 +21,6 @@ namespace ActionStreetMap.Tests
         public DemoTileListener(IMessageBus messageBus, PerformanceLogger logger)
         {
             _logger = logger;
-            messageBus.AsObservable<TileFoundMessage>().Do(m => OnTileFound(m.Tile, m.Position)).Subscribe();
-
             messageBus.AsObservable<TileLoadStartMessage>().Do(m => OnTileBuildStarted(m.TileCenter)).Subscribe();
             messageBus.AsObservable<TileLoadFinishMessage>().Do(m => OnTileBuildFinished(m.Tile)).Subscribe();
             messageBus.AsObservable<TileDestroyMessage>().Do(m => OnTileDestroyed(m.Tile)).Subscribe();
@@ -31,11 +29,6 @@ namespace ActionStreetMap.Tests
         private void OnTileDestroyed(Tile tile)
         {
             Console.WriteLine("Tile destroyed: center:{0}", tile.MapCenter);
-        }
-
-        public void OnTileFound(Tile tile, MapPoint position)
-        {
-            //Console.WriteLine("Tile {0} found for {1}", tile.MapCenter, position);
         }
 
         public void OnTileBuildStarted(MapPoint center)

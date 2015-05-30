@@ -11,18 +11,21 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Tiling
 {
-    /// <summary>
-    ///     This is workaround for DI container which doesn't support multi interface registrations for 
-    ///     one object instance.
-    /// </summary>
-    public interface ITilePositionObserver : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    /// <summary> Controls flow of loading/unloading tiles. </summary>
+    public interface ITileController : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
     {
         /// <summary> Gets current tile. </summary>
         Tile CurrentTile { get; }
+        
+        /// <summary> Gets or sets current render mode. </summary>
+        RenderMode Mode { get; set; }
+
+        /// <summary> Gets or sets current viewport. </summary>
+        MapRectangle Viewport { get; set; }
     }
 
     /// <summary> This class listens to position changes and manages tile processing. </summary>
-    public class TileManager : ITilePositionObserver, IConfigurable
+    public class TileManager : ITileController, IConfigurable
     {
         private readonly object _lockObj = new object();
 
@@ -32,7 +35,8 @@ namespace ActionStreetMap.Core.Tiling
         private RenderMode _renderMode;
         private int _overviewBuffer;
         private float _thresholdDistance;
-        private MapPoint _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
+        private MapPoint _lastUpdatePosition;
+        private MapRectangle _viewport;
 
         private GeoCoordinate _currentPosition;
         private MapPoint _currentMapPoint;
@@ -47,8 +51,11 @@ namespace ActionStreetMap.Core.Tiling
         private readonly DoubleKeyDictionary<int, int, Tile> _allSceneTiles = new DoubleKeyDictionary<int, int, Tile>();
         private readonly DoubleKeyDictionary<int, int, Tile> _allOverviewTiles = new DoubleKeyDictionary<int, int, Tile>();
 
+        // TODO used only inside this class. Should be private?
         /// <summary> Gets relative null point. </summary>
-        public GeoCoordinate RelativeNullPoint { get; private set; }
+        public GeoCoordinate RelativeNullPoint;
+
+        #region ITileController implementation
 
         /// <inheritdoc />
         public Tile CurrentTile
@@ -60,8 +67,36 @@ namespace ActionStreetMap.Core.Tiling
             }
         }
 
-        /// <summary> Gets all scene tile count. </summary>
-        public int Count { get { return _allSceneTiles.Count(); } }
+        /// <inheritdoc />
+        public RenderMode Mode
+        {
+            get { return _renderMode; }
+            set
+            {
+                lock (_lockObj)
+                {
+                    _renderMode = value;
+                    InvalidateLastKnownPosition();
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public MapRectangle Viewport
+        {
+            get { return _viewport; }
+            set
+            {
+                lock (_lockObj)
+                {
+                    _viewport = value;
+                    RecalculateOverviewBuffer();
+                    InvalidateLastKnownPosition();
+                }
+            }
+        }
+
+        #endregion
 
         /// <summary> Creates <see cref="TileManager"/>. </summary>
         /// <param name="tileLoader">Tile loeader.</param>
@@ -76,24 +111,27 @@ namespace ActionStreetMap.Core.Tiling
             _messageBus = messageBus;
             _tileActivator = tileActivator;
             _objectPool = objectPool;
+            InvalidateLastKnownPosition();
         }
 
         #region Create/Destroy tile
 
+        /// <summary> Creates tile if necessary. </summary>
         private void Create(int i, int j)
         {
             if (_renderMode != RenderMode.Overview)
-                LoadTile(i, j, RenderMode.Scene);
+                Load(i, j, RenderMode.Scene);
 
             for (int z = j - _overviewBuffer; z <= j + _overviewBuffer; z++)
                 for (int k = i - _overviewBuffer; k <= i + _overviewBuffer; k++)
                 {
                     if (!_allOverviewTiles.ContainsKey(k, z))
-                        LoadTile(k, z, RenderMode.Overview);
+                        Load(k, z, RenderMode.Overview);
                 }
         }
 
-        private void LoadTile(int i, int j, RenderMode renderMode)
+        /// <summary> Loads tile if necessary. </summary>
+        private void Load(int i, int j, RenderMode renderMode)
         {
             if (_allSceneTiles.ContainsKey(i, j))
                 return;
@@ -191,7 +229,7 @@ namespace ActionStreetMap.Core.Tiling
 
         #region IObserver<MapPoint> implementation
 
-        MapPoint IPositionObserver<MapPoint>.Current { get { return _currentMapPoint; } }
+        MapPoint IPositionObserver<MapPoint>.CurrentPosition { get { return _currentMapPoint; } }
 
         void IObserver<MapPoint>.OnNext(MapPoint value)
         {
@@ -210,18 +248,17 @@ namespace ActionStreetMap.Core.Tiling
                     int i = Convert.ToInt32(value.X / _tileSize);
                     int j = Convert.ToInt32(value.Y / _tileSize);
 
-                    var tileCollection = _renderMode != RenderMode.Overview ? _allSceneTiles : _allOverviewTiles;
+                    // NOTE call always to enforce applying of changed settings when
+                    // tile is already created.
+                    Create(i, j);
 
-                    bool hasTile = tileCollection.ContainsKey(i, j);
-                    if (!hasTile)
-                        Create(i, j);
-
-                    var tile = tileCollection[i, j];
-                    if (hasTile) 
-                        _messageBus.Send(new TileFoundMessage(tile, _currentMapPoint));
-
-                    if (ShouldPreload(tile, value))
-                        PreloadNextTile(tile, value, i, j);
+                    // NOTE preload feature is used only by scene mode
+                    if (_renderMode == RenderMode.Scene)
+                    {
+                        var tile = _allSceneTiles[i, j];
+                        if (ShouldPreload(tile, value))
+                            PreloadNextTile(tile, value, i, j);
+                    }
 
                     _currentTileIndex.Item1 = i;
                     _currentTileIndex.Item2 = j;
@@ -236,7 +273,7 @@ namespace ActionStreetMap.Core.Tiling
 
         #region IObserver<GeoCoordinate> implementation
 
-        GeoCoordinate IPositionObserver<GeoCoordinate>.Current { get { return _currentPosition; } }
+        GeoCoordinate IPositionObserver<GeoCoordinate>.CurrentPosition { get { return _currentPosition; } }
 
         void IObserver<GeoCoordinate>.OnNext(GeoCoordinate value)
         {
@@ -252,7 +289,25 @@ namespace ActionStreetMap.Core.Tiling
 
         #endregion
 
-        #region IConfigurable
+        #region Helpers
+
+        /// <summary> Recalculates value which is used to detect grid size built from overview tiles. </summary>
+        private void RecalculateOverviewBuffer()
+        {
+            var maxSide = Math.Max(_viewport.Width, _viewport.Height);
+            if (maxSide == 0 || maxSide < _tileSize) maxSide = 3 * _tileSize;
+            _overviewBuffer = ((int)Math.Ceiling(maxSide / _tileSize) - 1) / 2;
+        }
+
+        /// <summary> Makes last known position invalid to force execution of tile loading logic. </summary>
+        private void InvalidateLastKnownPosition()
+        {
+            _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
+        }
+
+        #endregion
+
+        #region IConfigurable implementation
 
         /// <inheritdoc />
         public void Configure(IConfigSection configSection)
@@ -261,10 +316,15 @@ namespace ActionStreetMap.Core.Tiling
             _offset = configSection.GetFloat("offset", 50);
             _moveSensitivity = configSection.GetFloat("sensitivity", 10);
 
-            // NOTE don't want to extend RenderMode enum with Mixed field
             var renderModeString = configSection.GetString("render_mode", "scene").ToLower();
             _renderMode = renderModeString == "scene" ? RenderMode.Scene : RenderMode.Overview;
-            _overviewBuffer = configSection.GetInt("overview_buffer", 1);
+
+            var viewportConfig = configSection.GetSection("viewport");
+            var width = viewportConfig != null ? viewportConfig.GetFloat("w", 0) : 0;
+            var height =  viewportConfig != null ? viewportConfig.GetFloat("h", 0) : 0;
+            _viewport = new MapRectangle(0, 0, width, height);
+
+            RecalculateOverviewBuffer();
 
             _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
         }
