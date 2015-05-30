@@ -183,9 +183,9 @@ namespace ActionStreetMap.Tests.Core.Tiling
                     if (i == 5)
                     {
                         observer.Mode = RenderMode.Overview;
-                        observer.Viewport = new MapRectangle(0, 0, Size*6, Size*6);
+                        observer.Viewport = new MapRectangle(0, 0, Size*5, Size*3f);
 
-                        expectedOverviewTileCount = 24;
+                        expectedOverviewTileCount = 14;
                     }
 
                     // ACT

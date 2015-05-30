@@ -22,6 +22,9 @@ namespace ActionStreetMap.Core.Tiling
 
         /// <summary> Gets or sets current viewport. </summary>
         MapRectangle Viewport { get; set; }
+
+        /// <summary> Gets tile size. </summary>
+        float TileSize { get; }
     }
 
     /// <summary> This class listens to position changes and manages tile processing. </summary>
@@ -33,7 +36,10 @@ namespace ActionStreetMap.Core.Tiling
         private float _offset;
         private float _moveSensitivity;
         private RenderMode _renderMode;
-        private int _overviewBuffer;
+
+        private int _horizontalOverviewTileCount;
+        private int _verticalOverviewTileCount;
+
         private float _thresholdDistance;
         private MapPoint _lastUpdatePosition;
         private MapRectangle _viewport;
@@ -90,16 +96,19 @@ namespace ActionStreetMap.Core.Tiling
                 lock (_lockObj)
                 {
                     _viewport = value;
-                    RecalculateOverviewBuffer();
+                    RecalculateOverviewTileCount();
                     InvalidateLastKnownPosition();
                 }
             }
         }
 
+        /// <inheritdoc />
+        public float TileSize { get { return _tileSize; } }
+
         #endregion
 
         /// <summary> Creates <see cref="TileController"/>. </summary>
-        /// <param name="tileLoader">Tile loeader.</param>
+        /// <param name="tileLoader">Tile loader.</param>
         /// <param name="tileActivator">Tile activator.</param>
         /// <param name="messageBus">Message bus.</param>
         /// <param name="objectPool">Object pool.</param>
@@ -122,8 +131,8 @@ namespace ActionStreetMap.Core.Tiling
             if (_renderMode != RenderMode.Overview)
                 Load(i, j, RenderMode.Scene);
 
-            for (int z = j - _overviewBuffer; z <= j + _overviewBuffer; z++)
-                for (int k = i - _overviewBuffer; k <= i + _overviewBuffer; k++)
+            for (int z = j - _verticalOverviewTileCount; z <= j + _verticalOverviewTileCount; z++)
+                for (int k = i - _horizontalOverviewTileCount; k <= i + _horizontalOverviewTileCount; k++)
                 {
                     if (!_allOverviewTiles.ContainsKey(k, z))
                         Load(k, z, RenderMode.Overview);
@@ -196,7 +205,9 @@ namespace ActionStreetMap.Core.Tiling
         private void DestroyRemoteTiles(MapPoint position, RenderMode renderMode)
         {
             var collection = renderMode == RenderMode.Scene ? _allSceneTiles : _allOverviewTiles;
-            var threshold = renderMode == RenderMode.Scene ? _thresholdDistance : _thresholdDistance* (_overviewBuffer + 1);
+            var threshold = renderMode == RenderMode.Scene ? 
+                _thresholdDistance : 
+                _thresholdDistance * (Math.Max(_horizontalOverviewTileCount, _verticalOverviewTileCount) + 1);
             foreach (var doubleKeyPairValue in collection.ToList())
             {
                 var candidateToDie = doubleKeyPairValue.Value;
@@ -292,11 +303,16 @@ namespace ActionStreetMap.Core.Tiling
         #region Helpers
 
         /// <summary> Recalculates value which is used to detect grid size built from overview tiles. </summary>
-        private void RecalculateOverviewBuffer()
+        private void RecalculateOverviewTileCount()
         {
-            var maxSide = Math.Max(_viewport.Width, _viewport.Height);
-            if (maxSide == 0 || maxSide < _tileSize) maxSide = 3 * _tileSize;
-            _overviewBuffer = ((int)Math.Ceiling(maxSide / _tileSize) - 1) / 2;
+            _horizontalOverviewTileCount = GetTileCountFromSide(_viewport.Width);
+            _verticalOverviewTileCount = GetTileCountFromSide(_viewport.Height);
+        }
+
+        private int GetTileCountFromSide(float size)
+        {
+            if (Math.Abs(size) < 0.00001f || size < _tileSize) size = 3 * _tileSize;
+            return (int) Math.Ceiling((Math.Ceiling(size / _tileSize) - 1) / 2);
         }
 
         /// <summary> Makes last known position invalid to force execution of tile loading logic. </summary>
@@ -324,7 +340,7 @@ namespace ActionStreetMap.Core.Tiling
             var height =  viewportConfig != null ? viewportConfig.GetFloat("h", 0) : 0;
             _viewport = new MapRectangle(0, 0, width, height);
 
-            RecalculateOverviewBuffer();
+            RecalculateOverviewTileCount();
 
             _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
         }
