@@ -57,7 +57,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             // responsible for listening position changes and loading tiles.
             Container.Register(Component
                 .For<ITileController>()
-                .Use<TileManager>()
+                .Use<TileController>()
                 .SetConfig(tileConfig)
                 .Singleton());
 

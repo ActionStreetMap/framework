@@ -25,7 +25,7 @@ namespace ActionStreetMap.Core.Tiling
     }
 
     /// <summary> This class listens to position changes and manages tile processing. </summary>
-    public class TileManager : ITileController, IConfigurable
+    public class TileController : ITileController, IConfigurable
     {
         private readonly object _lockObj = new object();
 
@@ -98,13 +98,13 @@ namespace ActionStreetMap.Core.Tiling
 
         #endregion
 
-        /// <summary> Creates <see cref="TileManager"/>. </summary>
+        /// <summary> Creates <see cref="TileController"/>. </summary>
         /// <param name="tileLoader">Tile loeader.</param>
         /// <param name="tileActivator">Tile activator.</param>
         /// <param name="messageBus">Message bus.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
-        public TileManager(ITileLoader tileLoader, ITileActivator tileActivator, 
+        public TileController(ITileLoader tileLoader, ITileActivator tileActivator, 
             IMessageBus messageBus, IObjectPool objectPool)
         {
             _tileLoader = tileLoader;

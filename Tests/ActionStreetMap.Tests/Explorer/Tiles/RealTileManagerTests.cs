@@ -41,7 +41,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             logger.Stop();
 
             // ASSERT
-            var tileLoader = _container.Resolve<ITileController>() as TileManager;
+            var tileLoader = _container.Resolve<ITileController>() as TileController;
             Assert.IsNotNull(tileLoader);
             Assert.AreEqual(1, GetSceneTileCount(tileLoader));
 
@@ -69,9 +69,9 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             Assert.IsTrue(tileLoader.GetType().FullName.Contains("ActionStreetMap.Dynamics"));
         }
 
-        private int GetSceneTileCount(TileManager manager)
+        private int GetSceneTileCount(TileController controller)
         {
-            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(manager, "_allSceneTiles").Count();
+            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(controller, "_allSceneTiles").Count();
         }
     }
 }

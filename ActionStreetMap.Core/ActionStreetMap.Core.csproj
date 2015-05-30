@@ -151,7 +151,7 @@
     <Compile Include="Tiling\ITileActivator.cs" />
     <Compile Include="Tiling\TileMessages.cs" />
     <Compile Include="Geometry\GeometryUtils.cs" />
-    <Compile Include="Tiling\TileManager.cs" />
+    <Compile Include="Tiling\TileController.cs" />
     <Compile Include="Scene\Address.cs" />
     <Compile Include="MapCss\Visitors\Eval\ListTreeWalker.cs" />
     <Compile Include="Tiling\IModelBehaviour.cs" />

@@ -198,7 +198,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             }
         }
 
-        private TileManager GetManager()
+        private TileController GetManager()
         {
             var sceneBuilderMock = new Mock<ITileLoader>();
             sceneBuilderMock.Setup(l => l.Load(It.IsAny<Tile>())).Returns(Observable.Empty<Unit>());
@@ -212,47 +212,47 @@ namespace ActionStreetMap.Tests.Core.Tiling
             configMock.Setup(c => c.GetBool("autoclean", true)).Returns(false);
             configMock.Setup(c => c.GetString("render_mode", It.IsAny<string>())).Returns("scene");
 
-            var observer = new TileManager(sceneBuilderMock.Object,
+            var observer = new TileController(sceneBuilderMock.Object,
                 activatorMock.Object, new MessageBus(), new ObjectPool());
             observer.Configure(configMock.Object);
             
             return observer;
         }
 
-        private Tile CanLoadTile(TileManager manager, Tile tileCenter,
+        private Tile CanLoadTile(TileController controller, Tile tileCenter,
             MapPoint first, MapPoint second, MapPoint third, int tileCount)
         {
-            var observer = manager as IPositionObserver<MapPoint>;
+            var observer = controller as IPositionObserver<MapPoint>;
 
             // this shouldn't load new tile
             observer.OnNext(first);
-            Assert.AreSame(tileCenter, manager.CurrentTile);
+            Assert.AreSame(tileCenter, controller.CurrentTile);
 
             ++tileCount;
 
             // this force to load new tile but we still in first
             observer.OnNext(second);
 
-            Assert.AreSame(tileCenter, manager.CurrentTile);
-            Assert.AreEqual(++tileCount, GetSceneTileCount(manager));
+            Assert.AreSame(tileCenter, controller.CurrentTile);
+            Assert.AreEqual(++tileCount, GetSceneTileCount(controller));
 
-            var previous = manager.CurrentTile;
+            var previous = controller.CurrentTile;
             // this shouldn't load new tile but we're in next now
             observer.OnNext(third);
-            Assert.AreNotSame(previous, manager.CurrentTile);
-            Assert.AreEqual(tileCount, GetSceneTileCount(manager));
+            Assert.AreNotSame(previous, controller.CurrentTile);
+            Assert.AreEqual(tileCount, GetSceneTileCount(controller));
 
-            return manager.CurrentTile;
+            return controller.CurrentTile;
         }
 
-        private int GetSceneTileCount(TileManager manager)
+        private int GetSceneTileCount(TileController controller)
         {
-            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(manager, "_allSceneTiles").Count();
+            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(controller, "_allSceneTiles").Count();
         }
 
-        private int GetOverviewTileCount(TileManager manager)
+        private int GetOverviewTileCount(TileController controller)
         {
-            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(manager, "_allOverviewTiles").Count();
+            return ReflectionUtils.GetFieldValue<DoubleKeyDictionary<int, int, Tile>>(controller, "_allOverviewTiles").Count();
         }
     }
 }
