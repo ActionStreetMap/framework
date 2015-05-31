@@ -191,10 +191,6 @@ namespace ActionStreetMap.Core.Tiling
 
         private void PreloadNextTile(Tile tile, MapPoint position, int i, int j)
         {
-            // Let's cleanup old tiles first to release memory.
-            DestroyRemoteTiles(position, RenderMode.Scene);
-            DestroyRemoteTiles(position, RenderMode.Overview);
-
             var index = GetNextTileIndex(tile, position, i, j);
             if (_allSceneTiles.ContainsKey(index.Item1, index.Item2))
                 return;
@@ -259,6 +255,10 @@ namespace ActionStreetMap.Core.Tiling
                     int i = Convert.ToInt32(value.X / _tileSize);
                     int j = Convert.ToInt32(value.Y / _tileSize);
 
+                    // Cleanup old overview tiles first to release memory.
+                    // NOTE scene tiles are kept untouched in overview mode
+                    DestroyRemoteTiles(value, RenderMode.Overview);
+
                     // NOTE call always to enforce applying of changed settings when
                     // tile is already created.
                     Create(i, j);
@@ -266,6 +266,7 @@ namespace ActionStreetMap.Core.Tiling
                     // NOTE preload feature is used only by scene mode
                     if (_renderMode == RenderMode.Scene)
                     {
+                        DestroyRemoteTiles(value, RenderMode.Scene);
                         var tile = _allSceneTiles[i, j];
                         if (ShouldPreload(tile, value))
                             PreloadNextTile(tile, value, i, j);
