@@ -50,8 +50,8 @@ namespace ActionStreetMap.Explorer.Interactions
 
             if (elements == null || !elements.Any() || elements[0] == null)
                 return;
-
-            Array.Sort(elements, new ElementDistanceComparer(_searchCommand.SearchCenter));
+            var coordinate = _searchCommand.SearchCenter;
+            Array.Sort(elements, new ElementDistanceComparer(coordinate));
             _subject.OnNext(AddressExtractor.Extract(elements[0].Tags));
         }
 
