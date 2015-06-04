@@ -349,8 +349,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         protected void BuildSurface(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
-            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetColorNoiseFreq() : 0;
-            float eleNoiseFreq = rule.GetEleNoiseFreq();
+
+            float colorNoiseFreq = renderMode == RenderMode.Scene ? meshRegion.ColorNoiseFreq : 0;
+            float eleNoiseFreq = renderMode == RenderMode.Scene ? meshRegion.ElevationNoiseFreq: 0;
             var gradient = _resourceProvider.GetGradient(meshRegion.GradientKey);
 
             if (meshRegion.ModifyMeshAction != null)

@@ -34,6 +34,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             tile.Canvas.AddSurface(new Surface()
             {
                 GradientKey = rule.GetFillColor(),
+                ElevationNoise = rule.GetEleNoiseFreq(),
+                ColorNoise = rule.GetColorNoiseFreq(),
                 Points = points,
             }, fillAction);
 

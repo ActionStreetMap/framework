@@ -176,13 +176,16 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     PolyFillType.pftPositive);
                 _clipper.Clear();
 
-                // TODO this is workaround: we use action from first item of group
-                var modifyMeshAction = group.First().Item2;
+                // TODO this is workaround: we use values from first item of group
+                var first = group.First();
 
                 regions.Add(new MeshCanvas.Region
                 {
                     GradientKey = group.Key,
-                    ModifyMeshAction = modifyMeshAction,
+                    ElevationNoiseFreq = first.Item1.ElevationNoise,
+                    ColorNoiseFreq = first.Item1.ColorNoise,
+                    ModifyMeshAction = first.Item2,
+
                     Shape = ClipByTile(surfacesResult)
                 });
             }

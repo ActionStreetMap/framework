@@ -85,6 +85,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return new MeshRegion
             {
                 GradientKey = region.GradientKey,
+                ElevationNoiseFreq = region.ElevationNoiseFreq,
+                ColorNoiseFreq = region.ColorNoiseFreq,
                 ModifyMeshAction = region.ModifyMeshAction,
                 Mesh = mesh,
                 Contours = contours

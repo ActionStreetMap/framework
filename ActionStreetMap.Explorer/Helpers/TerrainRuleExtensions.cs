@@ -98,12 +98,12 @@ namespace ActionStreetMap.Explorer.Helpers
 
         #region Surfaces
 
-        public static float GetColorNoiseFreq(this Rule rule, float @default = 0.2f)
+        public static float GetColorNoiseFreq(this Rule rule, float @default = 0.05f)
         {
             return rule.EvaluateDefault<float>("color_noise_freq", @default);
         }
 
-        public static float GetEleNoiseFreq(this Rule rule, float @default = 0.1f)
+        public static float GetEleNoiseFreq(this Rule rule, float @default = 0.15f)
         {
             return rule.EvaluateDefault<float>("ele_noise_freq", @default);
         }

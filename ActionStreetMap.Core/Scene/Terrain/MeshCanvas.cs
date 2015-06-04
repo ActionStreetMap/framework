@@ -19,6 +19,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
         internal class Region
         {
             public string GradientKey;
+            public float ElevationNoiseFreq;
+            public float ColorNoiseFreq;
             public Action<IMesh> ModifyMeshAction;
 
             public Paths Shape;
