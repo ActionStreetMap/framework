@@ -18,10 +18,17 @@ namespace ActionStreetMap.Infrastructure.Diagnostic
         }
 
         /// <inheritdoc />
-        public void Debug(string category, string format, params object[] args)
+        public void Debug(string category, string format, string arg1)
         {
             if (Level == 0)
-                WriteRecord(RecordType.Debug, category, String.Format(format, args), null);
+                WriteRecord(RecordType.Debug, category, String.Format(format, arg1), null);
+        }
+
+        /// <inheritdoc />
+        public void Debug(string category, string format, string arg1, string arg2)
+        {
+            if (Level == 0)
+                WriteRecord(RecordType.Debug, category, String.Format(format, arg1, arg2), null);
         }
 
         /// <inheritdoc />
@@ -32,10 +39,17 @@ namespace ActionStreetMap.Infrastructure.Diagnostic
         }
 
         /// <inheritdoc />
-        public void Info(string category, string format, params object[] args)
+        public void Info(string category, string format, string arg1)
         {
             if (Level <= 1) 
-                WriteRecord(RecordType.Info, category, String.Format(format, args), null);
+                WriteRecord(RecordType.Info, category, String.Format(format, arg1), null);
+        }
+
+        /// <inheritdoc />
+        public void Info(string category, string format, string arg1, string arg2)
+        {
+            if (Level <= 1)
+                WriteRecord(RecordType.Info, category, String.Format(format, arg1, arg2), null);
         }
 
         /// <inheritdoc />
@@ -46,10 +60,17 @@ namespace ActionStreetMap.Infrastructure.Diagnostic
         }
 
         /// <inheritdoc />
-        public void Warn(string category, string format, params object[] args)
+        public void Warn(string category, string format, string arg1)
         {
             if (Level <= 2) 
-                WriteRecord(RecordType.Warn, category, String.Format(format, args), null);
+                WriteRecord(RecordType.Warn, category, String.Format(format, arg1), null);
+        }
+
+        /// <inheritdoc />
+        public void Warn(string category, string format, string arg1, string arg2)
+        {
+            if (Level <= 2)
+                WriteRecord(RecordType.Warn, category, String.Format(format, arg1, arg2), null);
         }
 
         /// <inheritdoc />
@@ -59,9 +80,15 @@ namespace ActionStreetMap.Infrastructure.Diagnostic
         }
 
         /// <inheritdoc />
-        public void Error(string category, Exception ex, string format, params object[] args)
+        public void Error(string category, Exception ex, string format, string arg1)
         {
-            WriteRecord(RecordType.Error, category, String.Format(format, args), ex);
+            WriteRecord(RecordType.Error, category, String.Format(format, arg1), ex);
+        }
+
+        /// <inheritdoc />
+        public void Error(string category, Exception ex, string format, string arg1, string arg2)
+        {
+            WriteRecord(RecordType.Error, category, String.Format(format, arg1, arg2), ex);
         }
 
         #endregion

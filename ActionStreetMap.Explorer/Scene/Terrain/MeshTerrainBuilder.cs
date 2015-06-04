@@ -113,7 +113,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             tasks.WhenAll().Wait();
 
             sw.Stop();
-            Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds);
+            Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds.ToString());
 
             return terrainObject;
         }
@@ -140,7 +140,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             foreach (var surfaceRegion in cell.Surfaces)
                 BuildSurface(rule, meshData, surfaceRegion, renderMode);
 
-            Trace.Debug(LogTag, "Total triangles: {0}", meshData.Triangles.Count);
+            Trace.Debug(LogTag, "Total triangles: {0}", meshData.Triangles.Count.ToString());
 
             meshData.Index.Build();
 

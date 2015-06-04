@@ -53,7 +53,7 @@ namespace ActionStreetMap.Maps.Data.Import
             Complete();
 
             sw.Stop();
-            Trace.Debug(LogTag, Strings.IndexBuildInMs, sw.ElapsedMilliseconds);
+            Trace.Debug(LogTag, Strings.IndexBuildInMs, sw.ElapsedMilliseconds.ToString());
         }
 
         protected override void Dispose(bool disposing)

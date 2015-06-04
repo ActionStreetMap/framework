@@ -66,7 +66,7 @@ namespace ActionStreetMap.Maps.Data
         public IObservable<IElementSource> Get(BoundingBox query)
         {
             // NOTE block thread here
-            Trace.Info(LogTag, "getting element sources for {0}", query);
+            Trace.Info(LogTag, "getting element sources for {0}", query.ToString());
             var elementSourcePath = _tree.Search(query).Wait();
 
             // 1. online case: should use data from remove server as persistent cache is not present in tree..
@@ -126,13 +126,13 @@ namespace ActionStreetMap.Maps.Data
             var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude,
                 query.MaxPoint.Longitude, query.MaxPoint.Latitude);
             var uri = String.Format("{0}{1}", _mapDataServerUri, Uri.EscapeDataString(queryString));
-            Trace.Warn(LogTag, Strings.NoPresistentElementSourceFound, query, uri);
+            Trace.Warn(LogTag, Strings.NoPresistentElementSourceFound, query.ToString(), uri);
             return ObservableWWW.GetAndGetBytes(uri)
                 .Take(1)
                 .SelectMany(bytes =>
                 {
                     Trace.Info(LogTag, "add to cache {0} and build index from {1} bytes received",
-                        path, bytes.Length);
+                        path, bytes.Length.ToString());
                     // add to persistent cache
                     using (var stream = _fileSystemService.WriteStream(path))
                         stream.Write(bytes, 0, bytes.Length);

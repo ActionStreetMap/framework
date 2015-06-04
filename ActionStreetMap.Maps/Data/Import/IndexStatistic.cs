@@ -61,7 +61,7 @@ namespace ActionStreetMap.Maps.Data.Import
         private void PrintProgress(int value, string typeName)
         {
             if (value % 10000 == 0)
-                _trace.Debug(LogTag, "processed {0}: {1}", typeName, value);
+                _trace.Debug(LogTag, "processed {0}: {1}", typeName, value.ToString());
         }
 
         public void Skip(long id, ElementType type)
@@ -89,10 +89,10 @@ namespace ActionStreetMap.Maps.Data.Import
 
         private void PrintSummary(string totalText, int nodes, int ways, int relations)
         {
-            _trace.Debug(LogTag, "Total {0} elements: {1}", totalText, nodes + ways + relations);
-            _trace.Debug(LogTag, "\tnodes: {0}", nodes);
-            _trace.Debug(LogTag, "\tways: {0}", ways);
-            _trace.Debug(LogTag, "\trelations: {0}", relations);
+            _trace.Debug(LogTag, "Total {0} elements: {1}", totalText, (nodes + ways + relations).ToString());
+            _trace.Debug(LogTag, "\tnodes: {0}", nodes.ToString());
+            _trace.Debug(LogTag, "\tways: {0}", ways.ToString());
+            _trace.Debug(LogTag, "\trelations: {0}", relations.ToString());
             _trace.Debug(LogTag, "");
         }
     }

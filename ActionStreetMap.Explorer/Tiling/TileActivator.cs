@@ -20,21 +20,21 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void Activate(Tile tile)
         {
-            Trace.Debug(LogTag, "activate tile: {0}", tile.MapCenter);
+            Trace.Debug(LogTag, "activate tile: {0}", tile.MapCenter.ToString());
             Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, true));
         }
 
         /// <inheritdoc />
         public void Deactivate(Tile tile)
         {
-            Trace.Debug(LogTag, "deactivate tile: {0}", tile.MapCenter);
+            Trace.Debug(LogTag, "deactivate tile: {0}", tile.MapCenter.ToString());
             Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, false));
         }
 
         /// <inheritdoc />
         public void Destroy(Tile tile)
         {
-            Trace.Debug(LogTag, "destroy tile: {0}", tile.MapCenter);
+            Trace.Debug(LogTag, "destroy tile: {0}", tile.MapCenter.ToString());
             tile.Registry.Dispose();
             Scheduler.MainThread.Schedule(() => DestroyWithChildren(tile));
         }

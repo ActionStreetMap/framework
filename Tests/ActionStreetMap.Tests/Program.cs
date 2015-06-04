@@ -73,7 +73,7 @@ namespace ActionStreetMap.Tests
 
             _messageBus.AsObservable<GeoPosition>().Do(position =>
             {
-                _trace.Debug(LogTag, "GeoPosition: {0}", position);
+                _trace.Debug(LogTag, "GeoPosition: {0}", position.ToString());
                 _positionObserver.OnNext(position.Coordinate);
             }).Subscribe();
         }

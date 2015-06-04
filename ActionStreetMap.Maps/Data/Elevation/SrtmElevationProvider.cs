@@ -100,11 +100,11 @@ namespace ActionStreetMap.Maps.Data.Elevation
 
         private IObservable<Unit> Download(GeoCoordinate coordinate)
         {
-            _trace.Info(LogTag, "downloading data for {0}", coordinate);
+            _trace.Info(LogTag, "downloading data for {0}", coordinate.ToString());
             return _downloader.Download(coordinate)
                     .SelectMany(bytes =>
                     {
-                        _trace.Info(LogTag, "downloaded {0} bytes", bytes.Length);
+                        _trace.Info(LogTag, "downloaded {0} bytes", bytes.Length.ToString());
                         _hgtData = CompressionUtils.Unzip(bytes).Single().Value;
                         InitData((int)coordinate.Latitude, (int)coordinate.Longitude);
                         // store data to disk
