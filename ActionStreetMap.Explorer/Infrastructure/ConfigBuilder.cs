@@ -88,7 +88,6 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <summary> Sets tile settings. </summary>
         /// <param name="size">Size of tile.</param>
         /// <param name="offset">Sensivity offset.</param>
-        /// <returns></returns>
         public ConfigBuilder SetTileSettings(float size, float offset)
         {
             Add<float>(@"tile/size", size);
@@ -96,10 +95,22 @@ namespace ActionStreetMap.Explorer.Infrastructure
 
             return this;
         }
+
+        /// <summary> Sets terrain cell settings. </summary>
+        /// <param name="cellSize">Size of terrain cell.</param>
+        /// <param name="maxTriArea">Max area of terrain triangle.</param>
+        /// <remarks>Big values of cell size and/or large max area may cause vertex limitation issue.</remarks>
+        public ConfigBuilder SetCellSettings(float cellSize, float maxTriArea)
+        {
+            Add<float>(@"tile/cell_size", cellSize);
+            Add<float>(@"tile/tri_area", maxTriArea);
+
+            return this;
+        }
+
         /// <summary> Sets rendering mode. </summary>
         /// <param name="renderMode">Render mode.</param>
         /// <param name="viewport"> Viewport in world coordinates (meters).</param>
-        /// <returns></returns>
         public ConfigBuilder SetRenderOptions(RenderMode renderMode, MapRectangle viewport)
         {
             Add<string>(@"tile/render_mode", renderMode.ToString().ToLower());
@@ -127,6 +138,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 .SetGeocodingServer("http://nominatim.openstreetmap.org/search")
                 .SetSandbox(false)
                 .SetTileSettings(tileSize, 80)
+                .SetCellSettings(100, 4)
                 .SetRenderOptions(RenderMode.Scene, new MapRectangle(0, 0, tileSize * 3, tileSize * 3));
         }
 
