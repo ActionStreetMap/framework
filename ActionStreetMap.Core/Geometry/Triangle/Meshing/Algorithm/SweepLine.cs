@@ -33,7 +33,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 
         public IMesh Triangulate(ICollection<Vertex> points)
         {
-            this.mesh = new Mesh();
+            this.mesh = TrianglePool.AllocMesh();
             this.mesh.TransferNodes(points);
 
             // Nonexistent x value used as a flag to mark circle events in sweepline

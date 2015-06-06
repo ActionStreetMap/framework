@@ -93,7 +93,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
             return String.Format("SID {0}", hash);
         }
 
-        internal void Cleanup()
+        internal void Reset()
         {
             subsegs[0] = default(Osub);
             subsegs[1] = default(Osub); ;

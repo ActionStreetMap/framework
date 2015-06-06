@@ -1,4 +1,5 @@
 ﻿using System;
+using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
 
@@ -19,7 +20,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         /// <inheritdoc />
         public void Dispose()
         {
-            Mesh.Dispose();
+            TrianglePool.FreeMesh((Mesh) Mesh);
         }
     }
 }

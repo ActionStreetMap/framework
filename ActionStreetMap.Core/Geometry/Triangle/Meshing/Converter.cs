@@ -44,7 +44,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             int elements = triangles == null ? 0 : triangles.Length;
             int segments = polygon.Segments.Count;
 
-            var mesh = new Mesh();
+            var mesh = TrianglePool.AllocMesh();
 
             mesh.TransferNodes(polygon.Points);
 

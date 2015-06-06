@@ -1,13 +1,30 @@
-﻿using System.Collections.Generic;
-using ActionStreetMap.Infrastructure.Primitives;
+﻿using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
     /// <summary> Provides pool of objects specific for triangle library. </summary>
     internal static class TrianglePool
     {
+        private static LockFreeStack<Mesh> _meshStack = new LockFreeStack<Mesh>();
         private static LockFreeStack<Topology.Triangle> _triStack = new LockFreeStack<Topology.Triangle>();
         private static LockFreeStack<Topology.Segment> _segStack = new LockFreeStack<Topology.Segment>();
+
+        #region Mesh
+
+        public static Mesh AllocMesh()
+        {
+            return _meshStack.Pop() ?? new Mesh();
+        }
+
+        public static void FreeMesh(Mesh mesh)
+        {
+            mesh.Dispose();
+            _meshStack.Push(mesh);
+        }
+
+        #endregion
+
+        #region Tris
 
         public static Topology.Triangle AllocTri()
         {
@@ -16,10 +33,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         public static void FreeTri(Topology.Triangle tri)
         {
-            tri.Cleanup();
+            tri.Reset();
             _triStack.Push(tri);
         }
-         
+
+        #endregion
+
+        #region Segs
+
         public static Topology.Segment AllocSeg()
         {
             return _segStack.Pop() ?? new Topology.Segment();
@@ -27,12 +48,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         public static void FreeSeg(Topology.Segment seg)
         {
-            seg.Cleanup();
+            seg.Reset();
             _segStack.Push(seg);
-        } 
-         
-         
-         
+        }
+
+        #endregion
+
 
         /*private static object _lockObj = new object();
         private static Stack<Topology.Triangle> _trisStack = new Stack<Topology.Triangle>(10240);

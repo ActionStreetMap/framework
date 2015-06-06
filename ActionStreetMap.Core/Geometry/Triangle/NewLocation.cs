@@ -4156,5 +4156,20 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 }
             }
         }
+
+        internal void Reset()
+        {
+            Array.Clear(petalx, 0, petalx.Length);
+            Array.Clear(petaly, 0, petaly.Length);
+            Array.Clear(petalr, 0, petalr.Length);
+            Array.Clear(wedges, 0, wedges.Length);
+            Array.Clear(initialConvexPoly, 0, initialConvexPoly.Length);
+            Array.Clear(points_p, 0, points_p.Length);
+            Array.Clear(points_q, 0, points_q.Length);
+            Array.Clear(points_r, 0, points_r.Length);
+            Array.Clear(poly1, 0, poly1.Length);
+            Array.Clear(poly2, 0, poly2.Length);
+            Array.Clear(polys, 0, polys.Length);
+        }
     }
 }

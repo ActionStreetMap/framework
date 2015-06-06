@@ -5,6 +5,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
 {
     using ActionStreetMap.Core.Geometry.Triangle.Geometry;
@@ -189,6 +191,16 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
             }
 
             return result;
+        }
+
+        internal void Reset()
+        {
+            Array.Clear(queuefront, 0, queuefront.Length);
+            Array.Clear(queuetail, 0, queuetail.Length);
+            Array.Clear(nextnonemptyq, 0, nextnonemptyq.Length);
+
+            firstnonemptyq = -1;
+            count = 0;
         }
     }
 }

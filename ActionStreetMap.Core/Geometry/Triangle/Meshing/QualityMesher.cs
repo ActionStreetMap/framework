@@ -812,5 +812,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         }
 
         #endregion
+
+        internal void Reset()
+        {
+            // NOTE beahvior and mesh are kept untouched
+
+            badsubsegs.Clear();
+            queue.Reset();
+            newLocation.Reset();
+        }
     }
 }

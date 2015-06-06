@@ -166,7 +166,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
             return String.Format("TID {0}", hash);
         }
 
-        internal void Cleanup()
+        internal void Reset()
         {
             hash = 0;
             id = 0;

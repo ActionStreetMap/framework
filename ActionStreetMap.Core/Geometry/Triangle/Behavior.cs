@@ -254,5 +254,31 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         #endregion
+
+        internal void Reset()
+        {
+            poly = false;
+            quality = false;
+            varArea = false;
+            convex = false;
+            jettison = false;
+            boundaryMarkers = true;
+            noHoles = false;
+            conformDel = false;
+
+            usertest = null;
+            noBisect = 0;
+            steiner = -1;
+            minAngle = 0;
+            maxAngle = 0;
+            maxArea = -1;
+
+            fixedArea = false;
+            useSegments = true;
+            useRegions = false;
+            goodAngle = 0;
+            maxGoodAngle = 0;
+            offconstant = 0;
+        }
     }
 }

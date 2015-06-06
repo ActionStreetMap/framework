@@ -62,7 +62,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         /// </remarks>
         public IMesh Triangulate(ICollection<Vertex> points)
         {
-            this.mesh = new Mesh();
+            this.mesh = TrianglePool.AllocMesh();
             this.mesh.TransferNodes(points);
 
             Otri hullleft = default(Otri), hullright = default(Otri);

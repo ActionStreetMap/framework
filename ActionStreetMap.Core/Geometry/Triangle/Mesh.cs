@@ -1921,15 +1921,52 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         {
             foreach (var triangle in this.triangles.Values)
             {
-                triangle.Cleanup();
+                triangle.Reset();
                 TrianglePool.FreeTri(triangle);
             }
 
+            triangles.Clear();
+
             foreach (var segment in this.subsegs.Values)
             {
-                segment.Cleanup();
+                segment.Reset();
                 TrianglePool.FreeSeg(segment);
             }
+
+            subsegs.Clear();
+            vertices.Clear();
+
+            behavior.Reset();
+
+            qualityMesher.Reset();
+            flipstack.Clear();
+
+            hash_vtx = 0;
+            hash_seg = 0;
+            hash_tri = 0;
+
+            holes.Clear();
+            regions.Clear();
+
+            bounds = default(Rectangle);
+            invertices = 0;
+            inelements = 0;
+            insegments = 0;
+            undeads = 0;
+            edges = 0;
+            mesh_dim = 0;
+            nextras = 0;
+            hullsize = 0;
+            steinerleft = 0;
+            checksegments = false;
+            checksegments = false;
+            infvertex1 = null;
+            infvertex2 = null;
+            infvertex3 = null;
+
+            locator.Reset();
+            numbering = default(NodeNumbering);
+            Reset();
         }
     }
 }
