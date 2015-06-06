@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Infrastructure.Primitives;
+﻿using ActionStreetMap.Core.Geometry.Triangle.Meshing.Data;
+using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
@@ -7,6 +8,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
     {
         private static LockFreeStack<Mesh> _meshStack = new LockFreeStack<Mesh>();
         private static LockFreeStack<Topology.Triangle> _triStack = new LockFreeStack<Topology.Triangle>();
+        private static LockFreeStack<BadTriangle> _badTriStack = new LockFreeStack<BadTriangle>();
         private static LockFreeStack<Topology.Segment> _segStack = new LockFreeStack<Topology.Segment>();
 
         #region Mesh
@@ -35,6 +37,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         {
             tri.Reset();
             _triStack.Push(tri);
+        }
+
+        public static BadTriangle AllocBadTri()
+        {
+            return _badTriStack.Pop() ?? new BadTriangle();
+        }
+
+        public static void FreeBadTri(BadTriangle badTri)
+        {
+            badTri.Reset();
+            _badTriStack.Push(badTri);
         }
 
         #endregion

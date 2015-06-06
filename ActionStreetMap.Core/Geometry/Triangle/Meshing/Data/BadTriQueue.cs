@@ -154,7 +154,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
         public void Enqueue(ref Otri enqtri, double minedge, Vertex apex, Vertex org, Vertex dest)
         {
             // Allocate space for the bad triangle.
-            BadTriangle newbad = new BadTriangle();
+            BadTriangle newbad = TrianglePool.AllocBadTri();
 
             newbad.poortri = enqtri;
             newbad.key = minedge;

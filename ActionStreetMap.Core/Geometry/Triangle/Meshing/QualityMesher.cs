@@ -793,6 +793,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         // Record any new bad triangles that result.
                         SplitEncSegs(true);
                     }
+                    else
+                    {
+                        TrianglePool.FreeBadTri(badtri);
+                    }
                 }
             }
 

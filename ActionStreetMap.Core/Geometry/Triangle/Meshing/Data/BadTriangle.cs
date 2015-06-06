@@ -30,5 +30,16 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
         {
             return String.Format("B-TID {0}", poortri.tri.hash);
         }
+
+        internal void Reset()
+        {
+            poortri = default(Otri);
+            key = 0;
+
+            org = null;
+            dest = null;
+            apex = null;
+            next = null;
+        }
     }
 }
