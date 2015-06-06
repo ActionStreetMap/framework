@@ -92,5 +92,22 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         {
             return String.Format("SID {0}", hash);
         }
+
+        internal void Cleanup()
+        {
+            subsegs[0] = default(Osub);
+            subsegs[1] = default(Osub); ;
+
+            triangles[0] = default(Otri);
+            triangles[1] = default(Otri);
+
+            vertices[0] = null;
+            vertices[1] = null;
+            vertices[2] = null;
+            vertices[3] = null;
+            
+            hash = 0;
+            boundary = 0;
+        }
     }
 }

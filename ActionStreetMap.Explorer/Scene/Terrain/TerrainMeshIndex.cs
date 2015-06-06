@@ -28,9 +28,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private readonly MapPoint _bottomLeft;
         private readonly Range[] _ranges;
+        private readonly int _maxIndex;
 
         private List<MeshTriangle> _triangles;
-        private int _modifiedCount = 0;
+        private int _modifiedCount;
 
         /// <summary> Creates instance of <see cref="TerrainMeshIndex"/>. </summary>
         /// <param name="columnCount">Column count of given bounding box.</param>
@@ -53,6 +54,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _yAxisStep = boundingBox.Height/rowCount;
 
             _ranges = new Range[rowCount * columnCount];
+            _maxIndex = _ranges.Length - 1;
         }
 
         /// <inheritdoc />
@@ -87,7 +89,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var i = (int)Math.Floor((centroid.X - _left) / _xAxisStep);
             var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
 
-            triangle.Region = _columnCount * j + i;
+            triangle.Region = Math.Min(_columnCount * j + i, _maxIndex);
         }
 
         /// <inheritdoc />

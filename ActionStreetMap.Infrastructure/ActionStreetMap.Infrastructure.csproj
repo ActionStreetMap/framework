@@ -82,6 +82,7 @@
     <Compile Include="Diagnostic\DefaultTrace.cs" />
     <Compile Include="Diagnostic\ITrace.cs" />
     <Compile Include="Formats\Json\SimpleJSON.cs" />
+    <Compile Include="Primitives\LockFreeStack.cs" />
     <Compile Include="Primitives\DoubleKeyDictionary.cs" />
     <Compile Include="Primitives\Range.cs" />
     <Compile Include="Primitives\SafeHashSet.cs" />

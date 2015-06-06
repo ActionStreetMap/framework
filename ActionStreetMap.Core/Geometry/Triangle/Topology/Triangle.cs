@@ -31,7 +31,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         /// <summary>
         /// Initializes a new instance of the <see cref="Triangle" /> class.
         /// </summary>
-        public Triangle()
+        internal Triangle()
         {
             // Three NULL vertices.
             vertices = new Vertex[3];
@@ -164,6 +164,28 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         public override string ToString()
         {
             return String.Format("TID {0}", hash);
+        }
+
+        internal void Cleanup()
+        {
+            hash = 0;
+            id = 0;
+
+            region = 0;
+            area = 0;
+            infected = false;
+
+            neighbors[0] = default(Otri);
+            neighbors[1] = default(Otri);
+            neighbors[2] = default(Otri);
+
+            vertices[0] = null;
+            vertices[1] = null;
+            vertices[2] = null;
+
+            subsegs[0] = default(Osub);
+            subsegs[1] = default(Osub);
+            subsegs[2] = default(Osub);
         }
     }
 }

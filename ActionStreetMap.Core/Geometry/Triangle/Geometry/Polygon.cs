@@ -214,6 +214,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             double cx, cy; // Center of current edge.
             double dx, dy; // Direction perpendicular to edge.
 
+            if (contour.Count == 3)
+                return new Point((contour[0].x + contour[1].x + contour[2].x) / 3, 
+                    (contour[0].y + contour[1].y + contour[2].y) / 3);
+
             for (int i = 0; i < length; i++)
             {
                 a = contour[i];

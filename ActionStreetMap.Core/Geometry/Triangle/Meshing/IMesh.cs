@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 {
     using System.Collections.Generic;
@@ -8,7 +10,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
     /// <summary>
     /// Mesh interface.
     /// </summary>
-    public interface IMesh
+    public interface IMesh: IDisposable
     {
         /// <summary>
         /// Gets the vertices of the mesh.

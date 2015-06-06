@@ -310,6 +310,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetBackgroundLayerColorNoiseFreq() : 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
+            
+            meshRegion.Dispose();
         }
 
         #endregion
@@ -326,6 +328,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq, 0);
+
+            meshRegion.Dispose();
         }
 
         #endregion
@@ -340,6 +344,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetPedestrianLayerColorNoiseFreq() : 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
+
+            meshRegion.Dispose();
         }
 
         #endregion
@@ -359,6 +365,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
+
+            meshRegion.Dispose();
         }
 
         #endregion

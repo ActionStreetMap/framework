@@ -4,7 +4,7 @@ using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.L
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
-    internal class MeshRegion
+    internal class MeshRegion: IDisposable
     {
         public string GradientKey;
         public float ElevationNoiseFreq;
@@ -15,5 +15,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         // TODO should be refactored: this looks like workaround
         public VertexPaths Contours;
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Mesh.Dispose();
+        }
     }
 }

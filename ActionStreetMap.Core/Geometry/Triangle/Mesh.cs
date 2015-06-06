@@ -195,7 +195,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             dummysub.subsegs[1].seg = dummysub;
 
             // Set up 'dummytri', the 'triangle' that occupies "outer space."
-            dummytri = new Triangle();
+            dummytri = TrianglePool.AllocTri();
             dummytri.hash = dummytri.id = DUMMY;
 
             // Initialize the three adjoining triangles to be "outer space." These
@@ -647,7 +647,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// <param name="newotri">Reference to the new triangle.</param>
         internal void MakeTriangle(ref Otri newotri)
         {
-            Triangle tri = new Triangle();
+            Triangle tri = TrianglePool.AllocTri();
 
             tri.hash = tri.id = this.hash_tri++;
 
@@ -1915,5 +1915,21 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            foreach (var triangle in this.triangles.Values)
+            {
+                triangle.Cleanup();
+                TrianglePool.FreeTri(triangle);
+            }
+
+            foreach (var segment in this.subsegs.Values)
+            {
+                segment.Cleanup();
+                TrianglePool.FreeSeg(segment);
+            }
+        }
     }
 }
