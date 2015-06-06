@@ -8,13 +8,10 @@ namespace ActionStreetMap.Infrastructure.Utilities
     {
         #region Objects
 
-        /// <summary> Returns object from pool which is likely to be single instance. </summary>
-        T NewObject<T>(Func<T> factoryMethod);
+        /// <summary> Returns object from pool. </summary>
+        T NewObject<T>();
 
-        /// <summary> Returns object from pool which is likely to be single instance. </summary>
-        T NewObject<T>() where T: new();
-
-        /// <summary> Returns object to pool which is likely to be single instance. </summary>
+        /// <summary> Stores object to pool. </summary>
         void StoreObject<T>(T instance);
 
         #endregion
@@ -30,21 +27,13 @@ namespace ActionStreetMap.Infrastructure.Utilities
         void StoreList<T>(List<T> list, bool isClean = false);
         #endregion
 
-        #region Arrays
-        /// <summary> Returns array from pool or creates new one. </summary>
-        T[,] NewArray<T>(int length1, int length2);
+        /// <summary> Initializes internal data structure for given type to speed up lookup. </summary>
+        IObjectPool RegisterObjectType<T>(Func<T> factoryMethod, int capacity);
 
-        /// <summary> Stores array in pool. </summary>
-        void StoreArray<T>(T[,] array);
+        /// <summary> Initializes internal data structure for given type to speed up lookup. </summary>
+        IObjectPool RegisterListType<T>(int capacity);
 
-        /// <summary> Returns array from pool or creates new one. </summary>
-        T[, ,] NewArray<T>(int length1, int length2, int length3);
-
-        /// <summary> Stores array in pool. </summary>
-        void StoreArray<T>(T[, ,] array);
-        #endregion
-
-        /// <summary>  Reduces internal buffers. </summary>
+        /// <summary> Reduces internal buffers. </summary>
         void Shrink();
     }
 }

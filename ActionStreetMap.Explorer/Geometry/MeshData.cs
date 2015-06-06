@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
     public class MeshData
     {
+        private readonly IObjectPool _objectPool;
+
         /// <summary> Triangles. </summary>
         public List<MeshTriangle> Triangles;
 
@@ -16,19 +19,26 @@ namespace ActionStreetMap.Explorer.Geometry
         /// <summary> Built game object. </summary>
         public IGameObject GameObject;
 
+        /// <summary> Mesh index provides way to find affected vertices of given area quickly. </summary>
         public IMeshIndex Index;
+
+        /// <summary> Creates instance of <see cref="MeshData"/>. </summary>
+        /// <param name="objectPool">Object pool.</param>
+        public MeshData(IObjectPool objectPool)
+        {
+            _objectPool = objectPool;
+        }
 
         public void AddTriangle(MapPoint v0, MapPoint v1, MapPoint v2, Color color)
         {
-            var triangle = new MeshTriangle()
-            {
-                Vertex0 = v0,
-                Vertex1 = v1,
-                Vertex2 = v2,
-                Color0 = color,
-                Color1 = color,
-                Color2 = color,
-            };
+            var triangle = _objectPool.NewObject<MeshTriangle>();
+            triangle.Vertex0 = v0;
+            triangle.Vertex1 = v1;
+            triangle.Vertex2 = v2;
+            triangle.Color0 = color;
+            triangle.Color1 = color;
+            triangle.Color2 = color;
+
             Triangles.Add(triangle);
 
             if(Index != null)
@@ -64,6 +74,8 @@ namespace ActionStreetMap.Explorer.Geometry
                 triangles[first] = third;
                 triangles[second] = second;
                 triangles[third] = first;
+
+                _objectPool.StoreObject<MeshTriangle>(triangle);
             }
         }
     }

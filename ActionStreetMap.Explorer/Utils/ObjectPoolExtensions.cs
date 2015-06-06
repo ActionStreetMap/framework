@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ActionStreetMap.Explorer.Geometry;
+﻿using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Utils
@@ -8,9 +7,9 @@ namespace ActionStreetMap.Explorer.Utils
     {
         public static MeshData CreateMeshData(this IObjectPool objectPool, int capacity = 256)
         {
-            return new MeshData()
+            return new MeshData(objectPool)
             {
-                Triangles = new List<MeshTriangle>(capacity)
+                Triangles = objectPool.NewList<MeshTriangle>(capacity)
             };
         }
 
