@@ -480,6 +480,28 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         internal TEdge PrevInAEL;
         internal TEdge NextInSEL;
         internal TEdge PrevInSEL;
+
+        internal void Reset()
+        {
+            Bot = default(IntPoint);
+            Curr = default(IntPoint);
+            Top = default(IntPoint);
+            Delta = default(IntPoint);
+            Dx = 0;
+            PolyTyp = default(PolyType);
+            Side = default(EdgeSide);
+            WindDelta = 0;
+            WindCnt = 0;
+            WindCnt2 = 0;
+            OutIdx = 0;
+            Next = null;
+            Prev = null;
+            NextInLML = null;
+            NextInAEL = null;
+            PrevInAEL = null;
+            NextInSEL = null;
+            PrevInSEL = null;
+        }
     };
 
     public class IntersectNode
@@ -692,7 +714,11 @@ namespace ActionStreetMap.Core.Geometry.Clipping
             DisposeLocalMinimaList();
             for (int i = 0; i < m_edges.Count; ++i)
             {
-                for (int j = 0; j < m_edges[i].Count; ++j) m_edges[i][j] = null;
+                for (int j = 0; j < m_edges[i].Count; ++j)
+                {
+                    ClipperPool.FreeEdge(m_edges[i][j]);
+                    m_edges[i][j] = null;
+                }
                 m_edges[i].Clear();
             }
             m_edges.Clear();
@@ -919,7 +945,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
             //create a new edge array ...
             List<TEdge> edges = new List<TEdge>(highI + 1);
-            for (int i = 0; i <= highI; i++) edges.Add(new TEdge());
+            for (int i = 0; i <= highI; i++) edges.Add(ClipperPool.AllocEdge());
 
             bool IsFlat = true;
 
