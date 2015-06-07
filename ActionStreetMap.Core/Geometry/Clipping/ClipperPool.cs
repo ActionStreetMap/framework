@@ -1,35 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using ActionStreetMap.Infrastructure.Primitives;
-using ActionStreetMap.Infrastructure.Utilities;
+﻿using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Core.Geometry.Clipping
 {
     internal static class ClipperPool
     {
-        private static LockFreeStack<TEdge> _edgeStack = new LockFreeStack<TEdge>();
-        //private static ObjectListPool<TEdge> _edgeListPool = new ObjectListPool<TEdge>(128);
+        private static readonly LockFreeStack<TEdge> EdgeStack = new LockFreeStack<TEdge>();
+        private static readonly LockFreeStack<Scanbeam> ScanbeamStack = new LockFreeStack<Scanbeam>();
 
         public static TEdge AllocEdge()
         {
-            return _edgeStack.Pop() ?? new TEdge();
+            return EdgeStack.Pop() ?? new TEdge();
         }
 
         public static void FreeEdge(TEdge edge)
         {
             edge.Reset();
-            _edgeStack.Push(edge);
+            EdgeStack.Push(edge);
         }
 
-        /*public static List<TEdge> AllocEdgeList(int capacity)
+        public static Scanbeam AllocScanbeam()
         {
-            return _edgeListPool.New(capacity);
+            return ScanbeamStack.Pop() ?? new Scanbeam();
         }
 
-        public static void FreeEdgeList(List<TEdge> edges)
+        public static void FreeScanbeam(Scanbeam scanbeam)
         {
-            _edgeListPool.Store(edges, false);
-        }*/
-
+            scanbeam.Next = null;
+            scanbeam.Y = 0;
+            ScanbeamStack.Push(scanbeam);
+        }
     }
 }

@@ -1291,6 +1291,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
             while (m_Scanbeam != null)
             {
                 Scanbeam sb2 = m_Scanbeam.Next;
+                ClipperPool.FreeScanbeam(m_Scanbeam);
                 m_Scanbeam = null;
                 m_Scanbeam = sb2;
             }
@@ -1334,13 +1335,13 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         {
             if (m_Scanbeam == null)
             {
-                m_Scanbeam = new Scanbeam();
+                m_Scanbeam = ClipperPool.AllocScanbeam();
                 m_Scanbeam.Next = null;
                 m_Scanbeam.Y = Y;
             }
             else if (Y > m_Scanbeam.Y)
             {
-                Scanbeam newSb = new Scanbeam();
+                Scanbeam newSb = ClipperPool.AllocScanbeam();
                 newSb.Y = Y;
                 newSb.Next = m_Scanbeam;
                 m_Scanbeam = newSb;
@@ -1350,7 +1351,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
                 Scanbeam sb2 = m_Scanbeam;
                 while (sb2.Next != null && (Y <= sb2.Next.Y)) sb2 = sb2.Next;
                 if (Y == sb2.Y) return; //ie ignores duplicates
-                Scanbeam newSb = new Scanbeam();
+                Scanbeam newSb = ClipperPool.AllocScanbeam();
                 newSb.Y = Y;
                 newSb.Next = sb2.Next;
                 sb2.Next = newSb;
@@ -1501,7 +1502,9 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         private Int64 PopScanbeam()
         {
             Int64 Y = m_Scanbeam.Y;
-            m_Scanbeam = m_Scanbeam.Next;
+            var next = m_Scanbeam.Next;
+            ClipperPool.FreeScanbeam(m_Scanbeam);
+            m_Scanbeam = next;
             return Y;
         }
 
