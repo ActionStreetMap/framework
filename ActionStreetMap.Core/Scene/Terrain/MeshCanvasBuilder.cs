@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Geometry.Clipping;
-using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Infrastructure.Utilities;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
@@ -11,8 +11,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCanvasBuilder
     {
-        private readonly Clipper _clipper = new Clipper();
-        private readonly ClipperOffset _offset = new ClipperOffset();
+        private readonly IObjectPool _objectPool;
+        private readonly Clipper _clipper;
+        private readonly ClipperOffset _offset;
 
         private Tile _tile;
         private MapRectangle _tileRect;
@@ -23,6 +24,13 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private MeshCanvas.Region _carRoads;
         private MeshCanvas.Region _walkRoads;
         private List<MeshCanvas.Region> _surfaces;
+
+        public MeshCanvasBuilder(IObjectPool objectPool)
+        {
+            _objectPool = objectPool;
+            _clipper = objectPool.NewObject<Clipper>();
+            _offset = objectPool.NewObject<ClipperOffset>();
+        }
 
         public MeshCanvasBuilder SetScale(float scale)
         {
@@ -50,6 +58,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
             BuildRoads();
             BuildSurfaces();
             BuildBackground();
+
+            Cleanup();
 
             return new MeshCanvas
             {
@@ -260,5 +270,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
         }
 
         #endregion
+
+        private void Cleanup()
+        {
+            _objectPool.StoreObject(_clipper);
+            _objectPool.StoreObject(_offset);
+        }
     }
 }

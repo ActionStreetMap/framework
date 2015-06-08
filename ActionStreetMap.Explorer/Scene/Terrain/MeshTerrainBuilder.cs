@@ -63,7 +63,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
             _objectPool = objectPool;
-            _meshCellBuilder = new MeshCellBuilder();
+            _meshCellBuilder = new MeshCellBuilder(_objectPool);
         }
 
         public IGameObject Build(Tile tile, Rule rule)
@@ -86,7 +86,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var cellWidth = tile.Width/cellColumnCount;
 
             Trace.Debug(LogTag, "Building mesh canvas..");
-            var meshCanvas = new MeshCanvasBuilder()
+            var meshCanvas = new MeshCanvasBuilder(_objectPool)
                 .SetTile(tile)
                 .SetScale(MeshCellBuilder.Scale)
                 .Build(renderMode);

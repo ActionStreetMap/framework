@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
+using ActionStreetMap.Infrastructure.Utilities;
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
@@ -13,9 +14,16 @@ namespace ActionStreetMap.Core.Scene.Terrain
 {
     internal class MeshCellBuilder
     {
+        private readonly IObjectPool _objectPool;
+
         internal const float Scale = 1000f;
         internal const float DoubleScale = Scale*Scale;
         private float _maximumArea = 4;
+
+        public MeshCellBuilder(IObjectPool objectPool)
+        {
+            _objectPool = objectPool;
+        }
 
         #region Public methods
 
@@ -95,7 +103,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         private VertexPaths GetContour(MapRectangle rect, Path path)
         {
-            ClipperOffset offset = new ClipperOffset();
+            ClipperOffset offset = _objectPool.NewObject<ClipperOffset>();
             offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
             var offsetPath = new Paths();
             offset.Execute(ref offsetPath, 10);
@@ -112,8 +120,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
             offset.AddPath(intRect, JoinType.jtMiter, EndType.etClosedLine);
             var offsetRect = new Paths();
             offset.Execute(ref offsetRect, 10);
+            _objectPool.StoreObject(offset);
 
-            var clipper = new Clipper();
+            var clipper = _objectPool.NewObject<Clipper>();
             clipper.AddPaths(offsetPath, PolyType.ptSubject, true);
             clipper.AddPaths(offsetRect, PolyType.ptClip, true);
             var diffSolution = new Paths();
@@ -125,6 +134,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
+            _objectPool.StoreObject(clipper);
 
             return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
         }
@@ -141,7 +151,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         private Paths ClipByRectangle(MapRectangle rect, Paths subjects)
         {
-            Clipper clipper = new Clipper();
+            Clipper clipper = _objectPool.NewObject<Clipper>();
             clipper.AddPath(new Path
             {
                 new IntPoint(rect.Left*Scale, rect.Bottom*Scale),
@@ -152,6 +162,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             clipper.AddPaths(subjects, PolyType.ptSubject, true);
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
+            _objectPool.StoreObject(clipper);
             return solution;
         }
     }

@@ -29,5 +29,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
             scanbeam.Y = 0;
             ScanbeamStack.Push(scanbeam);
         }
+
+
     }
 }
