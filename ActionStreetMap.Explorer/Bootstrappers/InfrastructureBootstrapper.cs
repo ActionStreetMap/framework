@@ -31,10 +31,10 @@ namespace ActionStreetMap.Explorer.Bootstrappers
 
             // Register object pool and all consumed types as it's necessary by its current implementation
             var objectPool = new ObjectPool()
-                .RegisterObjectType<MeshTriangle>(() => new MeshTriangle(), 10240)
+                .RegisterObjectType<MeshTriangle>(() => new MeshTriangle())
                 .RegisterListType<MeshTriangle>(32)
-                .RegisterObjectType<Clipper>(() => new Clipper(), 16)
-                .RegisterObjectType<ClipperOffset>(() => new ClipperOffset(), 16)
+                .RegisterObjectType<Clipper>(() => new Clipper())
+                .RegisterObjectType<ClipperOffset>(() => new ClipperOffset())
                 .RegisterListType<Tuple<Surface, Action<IMesh>>>(32)
                 .RegisterListType<RoadElement>(32)
                 .RegisterListType<Surface>(32)

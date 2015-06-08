@@ -28,7 +28,7 @@ namespace ActionStreetMap.Infrastructure.Utilities
         #endregion
 
         /// <summary> Initializes internal data structure for given type to speed up lookup. </summary>
-        IObjectPool RegisterObjectType<T>(Func<T> factoryMethod, int capacity);
+        IObjectPool RegisterObjectType<T>(Func<T> factoryMethod);
 
         /// <summary> Initializes internal data structure for given type to speed up lookup. </summary>
         IObjectPool RegisterListType<T>(int capacity);

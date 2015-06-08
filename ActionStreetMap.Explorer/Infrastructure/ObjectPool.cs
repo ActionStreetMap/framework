@@ -45,10 +45,10 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <inheritdoc />
-        public IObjectPool RegisterObjectType<T>(Func<T> factoryMethod, int capacity)
+        public IObjectPool RegisterObjectType<T>(Func<T> factoryMethod)
         {
             var type = typeof (T);
-            _objectPoolMap.Add(type, new ObjectTypePool<T>(factoryMethod, capacity));
+            _objectPoolMap.Add(type, new ObjectTypePool<T>(factoryMethod));
             return this;
         }
 
@@ -56,7 +56,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         public IObjectPool RegisterListType<T>(int capacity)
         {
             var type = typeof (T);
-            _listPoolMap.Add(type, new ObjectListPool<T>(capacity));
+            _listPoolMap.Add(type, new ObjectListPool<T>());
             return this;
         }
 

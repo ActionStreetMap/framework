@@ -1,33 +1,24 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Infrastructure.Primitives;
 
 namespace ActionStreetMap.Infrastructure.Utilities
 {
     /// <summary> Provides pool of lists of certain size. </summary>
-    public class ObjectListPool<T>
+    internal class ObjectListPool<T>
     {
-        private readonly object _lockObj = new object();
-        private readonly Stack<List<T>> _objectStack;
+        private readonly LockFreeStack<List<T>> _objectStack;
 
         /// <summary> Creates <see cref="ObjectListPool{T}"/>. </summary>
-        /// <param name="initialBufferSize">Initial buffer size.</param>
-        public ObjectListPool(int initialBufferSize)
+        public ObjectListPool()
         {
-            _objectStack = new Stack<List<T>>(initialBufferSize);
+            _objectStack = new LockFreeStack<List<T>>();
         }
 
         /// <summary> Returns list from pool or create new one. </summary>
         /// <returns> List.</returns>
         public List<T> New(int capacity)
         {
-            lock (_lockObj)
-            {
-                if (_objectStack.Count > 0)
-                {
-                    var list = _objectStack.Pop();
-                    return list;
-                }
-            }
-            return new List<T>(capacity);
+            return _objectStack.Pop() ?? new List<T>(capacity);
         }
 
         /// <summary> Stores list in pool. </summary>
@@ -36,10 +27,7 @@ namespace ActionStreetMap.Infrastructure.Utilities
         public void Store(List<T> list, bool isClean)
         {
             if (!isClean) list.Clear();
-            lock (_lockObj)
-            {
-                _objectStack.Push(list);
-            }
+            _objectStack.Push(list);
         }
     }
 }
