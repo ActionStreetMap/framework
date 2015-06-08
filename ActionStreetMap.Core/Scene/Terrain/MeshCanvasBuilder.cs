@@ -273,6 +273,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         private void Cleanup()
         {
+            _clipper.Clear();
+            _offset.Clear();
             _objectPool.StoreObject(_clipper);
             _objectPool.StoreObject(_offset);
         }

@@ -120,6 +120,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             offset.AddPath(intRect, JoinType.jtMiter, EndType.etClosedLine);
             var offsetRect = new Paths();
             offset.Execute(ref offsetRect, 10);
+            offset.Clear();
             _objectPool.StoreObject(offset);
 
             var clipper = _objectPool.NewObject<Clipper>();
@@ -134,6 +135,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
+            clipper.Clear();
             _objectPool.StoreObject(clipper);
 
             return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
@@ -162,6 +164,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
             clipper.AddPaths(subjects, PolyType.ptSubject, true);
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
+            
+            clipper.Clear();
             _objectPool.StoreObject(clipper);
             return solution;
         }

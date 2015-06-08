@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
@@ -32,6 +33,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             var objectPool = new ObjectPool()
                 .RegisterObjectType<MeshTriangle>(() => new MeshTriangle(), 10240)
                 .RegisterListType<MeshTriangle>(32)
+                .RegisterObjectType<Clipper>(() => new Clipper(), 16)
+                .RegisterObjectType<ClipperOffset>(() => new ClipperOffset(), 16)
                 .RegisterListType<Tuple<Surface, Action<IMesh>>>(32)
                 .RegisterListType<RoadElement>(32)
                 .RegisterListType<Surface>(32)
