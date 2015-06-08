@@ -133,18 +133,18 @@ namespace ActionStreetMap.Maps.Data.Spatial
         {
             using (var reader = new BinaryReader(stream))
             {
-                SpatialIndex.SpatialIndexNode root;
-                ReadNode(out root, reader);
+                SpatialIndexNode root;
+                ReadNode(reader, out root);
                 return new SpatialIndex(root);
             }
         }
 
-        private static bool ReadNode(out SpatialIndex.SpatialIndexNode root, BinaryReader reader)
+        private static bool ReadNode(BinaryReader reader, out SpatialIndexNode root)
         {
             var data = reader.ReadUInt32();
             if (data == Marker)
             {
-                root = default(SpatialIndex.SpatialIndexNode);
+                root = default(SpatialIndexNode);
                 return true;
             }
 
@@ -157,17 +157,18 @@ namespace ActionStreetMap.Maps.Data.Spatial
                 (IEnvelop)new PointEnvelop(reader.ReadInt32(), reader.ReadInt32()) :
                 new Envelop(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
-            List<SpatialIndex.SpatialIndexNode> children = null;
+            List<SpatialIndexNode> children = null;
             while (true)
             {
-                SpatialIndex.SpatialIndexNode child;
-                if (ReadNode(out child, reader))
+                SpatialIndexNode child;
+                if (ReadNode(reader, out child))
                     break;
                 if (children == null)
-                    children = new List<SpatialIndex.SpatialIndexNode>();
+                    children = new List<SpatialIndexNode>(64);
                 children.Add(child);
             }
-            root = new SpatialIndex.SpatialIndexNode(data, envelop, children != null && children.Count > 0 ? children.ToArray() : null);
+
+            root = new SpatialIndexNode(data, envelop, children != null && children.Count > 0 ? children.ToArray() : null);
             root.IsLeaf = isLeaf;
             return false;
         }

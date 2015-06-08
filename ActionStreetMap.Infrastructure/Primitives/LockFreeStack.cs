@@ -8,13 +8,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
     public class LockFreeStack<T>
     {
         private volatile Node _head;
-
-        private class Node
-        {
-            internal T Value;
-            internal volatile Node Next;
-        }  
-     
+    
         /// <summary> Pushes value to stack. </summary>
         public void Push(T value)
         {
@@ -42,5 +36,21 @@ namespace ActionStreetMap.Infrastructure.Primitives
             while (Interlocked.CompareExchange(ref _head, n.Next, n) != n);
             return n.Value;
         }
+
+        /// <summary> Clears stack. </summary>
+        public void Clear()
+        {
+            _head = null;
+        }
+
+        #region Nested classes
+
+        private class Node
+        {
+            internal T Value;
+            internal volatile Node Next;
+        }  
+
+        #endregion
     }
 }
