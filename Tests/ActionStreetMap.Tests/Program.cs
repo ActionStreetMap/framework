@@ -17,7 +17,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.53152, 13.38708);
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.53192, 13.38736);
         public static readonly Container _container = new Container();
 
         private const string LogTag = "host";
@@ -27,15 +27,16 @@ namespace ActionStreetMap.Tests
         private IMessageBus _messageBus;
         private ITrace _trace;
         private DemoTileListener _tileListener;
-        private IPositionObserver<GeoCoordinate> _positionObserver;
+        private IPositionObserver<GeoCoordinate> _geoPositionObserver;
+        private IPositionObserver<MapPoint> _mapPositionObserver;
 
         private readonly ManualResetEvent _waitEvent = new ManualResetEvent(false);
 
         private static void Main(string[] args)
         {
             var program = new Program();
-             program.RunGame();
-            // program.DoContinuosMovements();
+            program.RunGame();
+            //program.DoContinuosMovements();
             //program.RunMocker();
             //program.Wait(); 
 
@@ -69,12 +70,19 @@ namespace ActionStreetMap.Tests
             // start game on default position
             componentRoot.RunGame(StartGeoCoordinate);
 
-            _positionObserver = _container.Resolve<ITileController>();
+            _geoPositionObserver = _container.Resolve<ITileController>();
+            _mapPositionObserver = _container.Resolve<ITileController>();
 
             _messageBus.AsObservable<GeoPosition>().Do(position =>
             {
                 _trace.Debug(LogTag, "GeoPosition: {0}", position.ToString());
-                _positionObserver.OnNext(position.Coordinate);
+                _geoPositionObserver.OnNext(position.Coordinate);
+            }).Subscribe();
+
+            _messageBus.AsObservable<MapPoint>().Do(position =>
+            {
+                _trace.Debug(LogTag, "MapPosition: {0}", position.ToString());
+                _mapPositionObserver.OnNext(position);
             }).Subscribe();
         }
 
@@ -88,23 +96,19 @@ namespace ActionStreetMap.Tests
 
         public void DoContinuosMovements()
         {
-            for (int j = 0; j < 10; j++)
-            {
-                for (int i = 0; i < 15000; i++)
-                {
-                    var newCoordinate = new GeoCoordinate(
-                        StartGeoCoordinate.Latitude + 0.00001*i,
-                        StartGeoCoordinate.Longitude);
-                    _positionObserver.OnNext(newCoordinate);
-                }
+            _geoPositionObserver.OnNext(StartGeoCoordinate);
+            int speed = 30; // meters per second
+            int maxDistance = 900;
 
-                for (int i = 15000; i >= 0; i--)
-                {
-                    var newCoordinate = new GeoCoordinate(
-                        StartGeoCoordinate.Latitude + 0.00001*i,
-                        StartGeoCoordinate.Longitude);
-                    _positionObserver.OnNext(newCoordinate);
-                }
+            int angle = 30;
+            var steps = maxDistance/(float) speed;
+            double angleInRad = angle * Math.PI / 180;
+            for (int i = 0; i < steps; i++)
+            {
+                float xOffset = (float)(i * speed * Math.Cos(angleInRad));
+                float yOffset = (float)(i * speed * Math.Sin(angleInRad));
+                _messageBus.Send(new MapPoint(xOffset, yOffset));
+                Thread.Sleep(1000);
             }
 
             _trace.Debug(LogTag, "DoContinuosMovements: end");
