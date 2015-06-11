@@ -22,6 +22,7 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
         public StringEvalTreeWalker(CommonTree tree)
         {
             _tree = tree;
+            _tree.Parent = null;
         }
 
         /// <inheritdoc />

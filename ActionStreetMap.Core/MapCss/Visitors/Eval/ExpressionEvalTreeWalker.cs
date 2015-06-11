@@ -28,6 +28,9 @@ namespace ActionStreetMap.Core.MapCss.Visitors.Eval
         public ExpressionEvalTreeWalker(CommonTree tree)
         {
             _tree = tree;
+            // NOTE we're not interesting in parent node. However, tree walk is lazy and
+            // holding reference will prevent GC to collect whole tree and its references.
+            _tree.Parent = null;
             _opStack = new OperationStack(_param);
         }
 
