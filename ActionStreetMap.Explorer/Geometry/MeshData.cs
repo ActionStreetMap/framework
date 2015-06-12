@@ -38,6 +38,7 @@ namespace ActionStreetMap.Explorer.Geometry
             triangle.Color0 = color;
             triangle.Color1 = color;
             triangle.Color2 = color;
+            triangle.Region = 0;
 
             Triangles.Add(triangle);
 

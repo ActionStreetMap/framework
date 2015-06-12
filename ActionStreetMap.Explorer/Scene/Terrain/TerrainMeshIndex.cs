@@ -89,7 +89,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var i = (int)Math.Floor((centroid.X - _left) / _xAxisStep);
             var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
 
-            triangle.Region = Math.Min(_columnCount * j + i, _maxIndex);
+            // NOTE this is workaround: we shoud not have values outside [0, _maxIndex]
+            // TODO investigate why it happens
+            triangle.Region = Math.Max(Math.Min(_columnCount * j + i, _maxIndex), 0 );
         }
 
         /// <inheritdoc />
