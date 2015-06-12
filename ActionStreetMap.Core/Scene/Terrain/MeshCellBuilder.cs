@@ -67,7 +67,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             bool conformingDelaunay, bool useContours = false)
         {
             var polygon = new Polygon();
-            var simplifiedPath = Clipper.CleanPolygons(Clipper.SimplifyPolygons(ClipByRectangle(rectangle, region.Shape)));
+            var simplifiedPath = ClipByRectangle(rectangle, region.Shape);
             var contours = useContours ? new VertexPaths(): null;
             foreach (var path in simplifiedPath)
             {
