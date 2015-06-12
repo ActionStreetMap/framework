@@ -92,7 +92,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 .Build(renderMode);
 
             Trace.Debug(LogTag, "Building mesh cells..");
-            var tasks = new List<IObservable<Unit>>(cellRowCount*cellColumnCount);
+            // NOTE keeping this code single threaded dramatically reduces memory presure
             for (int j = 0; j < cellRowCount; j++)
                 for (int i = 0; i < cellColumnCount; i++)
                 {
@@ -103,14 +103,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         cellWidth,
                         cellHeight);
                     var name = String.Format("cell {0}_{1}", i, j);
-                    tasks.Add(Observable.Start(() =>
-                    {
-                        var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                        BuildCell(rule, terrainObject, cell, rectangle, renderMode, name);
-                    }));
+                    var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
+                    BuildCell(rule, terrainObject, cell, rectangle, renderMode, name);
                 }
-
-            tasks.WhenAll().Wait();
 
             sw.Stop();
             Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds.ToString());
