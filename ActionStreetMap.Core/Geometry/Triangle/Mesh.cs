@@ -184,7 +184,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         private void Initialize()
         {
-            dummysub = new Segment();
+            dummysub = TrianglePool.AllocSeg();
             dummysub.hash = DUMMY;
 
             // Initialize the two adjoining subsegments to be the omnipresent
@@ -671,7 +671,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// <param name="newsubseg">Reference to the new subseg.</param>
         internal void MakeSegment(ref Osub newsubseg)
         {
-            Segment seg = new Segment();
+            Segment seg = TrianglePool.AllocSeg();
 
             seg.hash = this.hash_seg++;
 
@@ -1920,18 +1920,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         public void Dispose()
         {
             foreach (var triangle in this.triangles.Values)
-            {
-                triangle.Reset();
                 TrianglePool.FreeTri(triangle);
-            }
 
             triangles.Clear();
 
             foreach (var segment in this.subsegs.Values)
-            {
-                segment.Reset();
                 TrianglePool.FreeSeg(segment);
-            }
 
             subsegs.Clear();
             vertices.Clear();
