@@ -128,7 +128,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             _clipper.AddPaths(_carRoads.Shape, PolyType.ptClip, true);
             _clipper.AddPaths(_walkRoads.Shape, PolyType.ptClip, true);
             _clipper.AddPaths(_water.Shape, PolyType.ptClip, true);
-            _clipper.AddPaths(_surfaces.SelectMany(r => r.Shape).ToList(), PolyType.ptClip, true);
+            _clipper.AddPaths(_surfaces.SelectMany(r => r.Shape), PolyType.ptClip, true);
             var solution = new Paths();
             _clipper.Execute(ClipType.ctDifference, solution, PolyFillType.pftPositive,
                 PolyFillType.pftPositive);
@@ -146,9 +146,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         private void BuildWater()
         {
-            _clipper.AddPaths(_tile.Canvas.Water
-                .Select(a => a.Points.Select(p => new IntPoint(p.X*_scale, p.Y*_scale)).ToList()).ToList(),
-                PolyType.ptSubject, true);
+            _clipper.AddPaths(_tile.Canvas.Water.Select(a => a.Points),
+                PolyType.ptSubject, _scale, true);
             var solution = new Paths();
             _clipper.Execute(ClipType.ctUnion, solution);
             _clipper.Clear();
@@ -167,10 +166,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
             var regions = new List<MeshCanvas.Region>();
             foreach (var group in _tile.Canvas.Surfaces.GroupBy(s => s.Item1.GradientKey))
             {
-                var paths = group.Select(a => a.Item1.Points
-                    .Select(p => new IntPoint(p.X*_scale, p.Y*_scale)).ToList())
-                    .ToList();
-                _clipper.AddPaths(paths, PolyType.ptSubject, true);
+                var paths = group.Select(a => a.Item1.Points);
+                _clipper.AddPaths(paths, PolyType.ptSubject, _scale, true);
 
                 var surfacesUnion = new Paths();
                 _clipper.Execute(ClipType.ctUnion, surfacesUnion);

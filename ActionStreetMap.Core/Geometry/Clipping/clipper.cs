@@ -565,7 +565,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
     public class ClipperBase
     {
         protected const double horizontal = -3.4E+38;
-        protected const int Skip = -2;
+        internal const int Skip = -2;
         protected const int Unassigned = -1;
         protected const double tolerance = 1.0E-20;
 
@@ -675,7 +675,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //------------------------------------------------------------------------------
 
-        protected static bool SlopesEqual(IntPoint pt1, IntPoint pt2,
+        internal static bool SlopesEqual(IntPoint pt1, IntPoint pt2,
             IntPoint pt3, bool UseFullRange)
         {
             if (UseFullRange)
@@ -741,7 +741,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //------------------------------------------------------------------------------
 
-        private void RangeTest(IntPoint Pt, ref bool useFullRange)
+        internal void RangeTest(IntPoint Pt, ref bool useFullRange)
         {
             if (useFullRange)
             {
@@ -757,7 +757,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //------------------------------------------------------------------------------
 
-        private void InitEdge(TEdge e, TEdge eNext,
+        internal void InitEdge(TEdge e, TEdge eNext,
           TEdge ePrev, IntPoint pt)
         {
             e.Next = eNext;
@@ -768,7 +768,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //------------------------------------------------------------------------------
 
-        private void InitEdge2(TEdge e, PolyType polyType)
+        internal void InitEdge2(TEdge e, PolyType polyType)
         {
             if (e.Curr.Y >= e.Next.Curr.Y)
             {
@@ -786,7 +786,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //------------------------------------------------------------------------------
 
-        private TEdge FindNextLocMin(TEdge E)
+        internal TEdge FindNextLocMin(TEdge E)
         {
             TEdge E2;
             for (; ; )
@@ -805,7 +805,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //------------------------------------------------------------------------------
 
-        private TEdge ProcessBound(TEdge E, bool LeftBoundIsForward)
+        internal TEdge ProcessBound(TEdge E, bool LeftBoundIsForward)
         {
             TEdge EStart, Result = E;
             TEdge Horz;
@@ -1119,7 +1119,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //------------------------------------------------------------------------------
 
-        private TEdge RemoveEdge(TEdge e)
+        internal TEdge RemoveEdge(TEdge e)
         {
             //removes e from double_linked_list (but without removing from memory)
             e.Prev.Next = e.Next;
@@ -1141,7 +1141,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
         //---------------------------------------------------------------------------
 
-        private void InsertLocalMinima(LocalMinima newLm)
+        internal void InsertLocalMinima(LocalMinima newLm)
         {
             if (m_MinimaList == null)
             {
