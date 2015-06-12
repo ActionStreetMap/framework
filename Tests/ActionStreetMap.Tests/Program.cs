@@ -36,7 +36,7 @@ namespace ActionStreetMap.Tests
         {
             var program = new Program();
             program.RunGame();
-            //program.DoContinuosMovements();
+            program.DoContinuosMovements();
             //program.RunMocker();
             //program.Wait(); 
 
@@ -94,14 +94,22 @@ namespace ActionStreetMap.Tests
 
         #region Performance analysis
 
-        public void DoContinuosMovements()
+        private void DoContinuosMovements()
         {
             _geoPositionObserver.OnNext(StartGeoCoordinate);
-            int speed = 30; // meters per second
-            int maxDistance = 900;
+            float speed = 30; // meters per second
+            float distance = 1000; // meters
+            float angle = 30; // grads
 
-            int angle = 30;
-            var steps = maxDistance/(float) speed;
+            MoveTo(angle, speed, distance);
+            MoveTo(360-angle, speed, distance);
+
+            _trace.Debug(LogTag, "DoContinuosMovements: end");
+        }
+
+        private void MoveTo(float angle, float speed, float distance)
+        {
+            var steps = distance / speed;
             double angleInRad = angle * Math.PI / 180;
             for (int i = 0; i < steps; i++)
             {
@@ -110,8 +118,6 @@ namespace ActionStreetMap.Tests
                 _messageBus.Send(new MapPoint(xOffset, yOffset));
                 Thread.Sleep(1000);
             }
-
-            _trace.Debug(LogTag, "DoContinuosMovements: end");
         }
 
         #endregion
