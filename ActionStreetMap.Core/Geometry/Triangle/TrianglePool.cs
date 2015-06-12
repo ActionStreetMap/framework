@@ -4,6 +4,7 @@ using ActionStreetMap.Infrastructure.Primitives;
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
     /// <summary> Provides pool of objects specific for triangle library. </summary>
+    /// <remarks> It's done as static class to keep library's public API untouched. </remarks>
     internal static class TrianglePool
     {
         private static LockFreeStack<Mesh> _meshStack = new LockFreeStack<Mesh>();

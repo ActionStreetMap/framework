@@ -2,6 +2,8 @@
 
 namespace ActionStreetMap.Core.Geometry.Clipping
 {
+    /// <summary> Provides pool of objects specific for clipper library. </summary>
+    /// <remarks> It's done as static class to keep library's public API untouched. </remarks>
     internal static class ClipperPool
     {
         private static readonly LockFreeStack<TEdge> EdgeStack = new LockFreeStack<TEdge>();
