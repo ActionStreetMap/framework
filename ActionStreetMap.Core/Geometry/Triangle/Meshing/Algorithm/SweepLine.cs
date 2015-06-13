@@ -16,7 +16,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
     /// <summary>
     /// Builds a delaunay triangulation using the sweepline algorithm.
     /// </summary>
-    public class SweepLine : ITriangulator
+    internal class SweepLine : ITriangulator
     {
         static int randomseed = 1;
         static int SAMPLERATE = 10;

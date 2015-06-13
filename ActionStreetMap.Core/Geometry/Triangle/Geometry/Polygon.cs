@@ -8,7 +8,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary>
     /// A polygon represented as a planar straight line graph.
     /// </summary>
-    public class Polygon : IPolygon
+    internal class Polygon : IPolygon
     {
         List<Vertex> points;
         List<Point> holes;

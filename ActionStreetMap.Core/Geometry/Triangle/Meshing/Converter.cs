@@ -20,7 +20,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
     /// <summary>
     /// The Converter class provides methods for mesh reconstruction and conversion.
     /// </summary>
-    public static class Converter
+    internal static class Converter
     {
         #region Triangle mesh conversion
 

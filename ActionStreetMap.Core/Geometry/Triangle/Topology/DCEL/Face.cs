@@ -11,7 +11,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
     /// <summary>
     /// A face of DCEL mesh.
     /// </summary>
-    public class Face
+    internal class Face
     {
         #region Static initialization of "Outer Space" face
 

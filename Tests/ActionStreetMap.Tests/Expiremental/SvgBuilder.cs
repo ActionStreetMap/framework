@@ -9,7 +9,7 @@ using Paths = System.Collections.Generic.List<System.Collections.Generic.List<Ac
 
 namespace ActionStreetMap.Tests.Expiremental
 {
-    public class SVGBuilder
+    internal class SVGBuilder
     {
         public class StyleInfo
         {

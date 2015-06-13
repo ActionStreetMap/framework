@@ -8,7 +8,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
 {
     using System.Collections.Generic;
 
-    public class Vertex : ActionStreetMap.Core.Geometry.Triangle.Geometry.Point
+    internal class Vertex : ActionStreetMap.Core.Geometry.Triangle.Geometry.Point
     {
         internal HalfEdge leaving;
 

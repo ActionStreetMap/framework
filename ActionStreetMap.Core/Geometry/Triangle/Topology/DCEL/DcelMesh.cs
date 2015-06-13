@@ -9,7 +9,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
     using System.Collections.Generic;
     using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 
-    public class DcelMesh
+    internal class DcelMesh
     {
         protected List<Vertex> vertices;
         protected List<HalfEdge> edges;
@@ -24,7 +24,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="" /> class.
+        /// Initializes a new instance of the <see cref="DcelMesh" /> class.
         /// </summary>
         /// <param name="initialize">If false, lists will not be initialized.</param>
         protected DcelMesh(bool initialize)

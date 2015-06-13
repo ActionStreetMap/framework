@@ -15,7 +15,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
     /// <summary>
     /// The adjacency matrix of the mesh.
     /// </summary>
-    public class AdjacencyMatrix
+    internal class AdjacencyMatrix
     {
         // Number of nodes in the mesh.
         int node_num;
@@ -277,26 +277,27 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
         #region Heap sort
 
-        /// <summary>
-        /// Reorders an array of integers into a descending heap.
-        /// </summary>
+        ///  <summary>
+        ///  Reorders an array of integers into a descending heap.
+        ///  </summary>
+        /// <param name="offset">Offset</param>
         /// <param name="size">the size of the input array.</param>
-        /// <param name="a">an unsorted array.</param>
-        /// <remarks>
-        /// A heap is an array A with the property that, for every index J,
-        /// A[J] >= A[2*J+1] and A[J] >= A[2*J+2], (as long as the indices
-        /// 2*J+1 and 2*J+2 are legal).
-        ///
-        /// Diagram:
-        ///
-        ///                  A(0)
-        ///                /      \
-        ///            A(1)         A(2)
-        ///          /     \        /  \
-        ///      A(3)       A(4)  A(5) A(6)
-        ///      /  \       /   \
-        ///    A(7) A(8)  A(9) A(10)
-        /// </remarks>
+        ///  <param name="a">an unsorted array.</param>
+        ///  <remarks>
+        ///  A heap is an array A with the property that, for every index J,
+        ///  A[J] >= A[2*J+1] and A[J] >= A[2*J+2], (as long as the indices
+        ///  2*J+1 and 2*J+2 are legal).
+        /// 
+        ///  Diagram:
+        /// 
+        ///                   A(0)
+        ///                 /      \
+        ///             A(1)         A(2)
+        ///           /     \        /  \
+        ///       A(3)       A(4)  A(5) A(6)
+        ///       /  \       /   \
+        ///     A(7) A(8)  A(9) A(10)
+        ///  </remarks>
         private void CreateHeap(int[] a, int offset, int size)
         {
             int i;
@@ -363,6 +364,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
         /// <summary>
         /// ascending sorts an array of integers using heap sort.
         /// </summary>
+        /// <param name="offset">Offset.</param>
         /// <param name="size">Number of entries in the array.</param>
         /// <param name="a">Array to be sorted;</param>
         private void HeapSort(int[] a, int offset, int size)

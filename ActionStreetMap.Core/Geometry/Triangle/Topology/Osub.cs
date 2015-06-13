@@ -18,7 +18,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
     /// side of the edge. Hence, there are two possible orientations. By convention, the
     /// edge is always directed so that the "side" denoted is the right side of the edge.
     /// </remarks>
-    public struct Osub
+    internal struct Osub
     {
         internal Segment seg;
         internal int orient; // Ranges from 0 to 1.

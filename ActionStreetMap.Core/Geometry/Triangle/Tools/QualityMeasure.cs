@@ -54,7 +54,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
     ///      = a * b * c / (8 * (s - a) * (s - b) * (s - c))
     ///      = a * b * c / ((b + c - a) * (c + a - b) * (a + b - c))
     /// </remarks>
-    public class QualityMeasure
+    internal class QualityMeasure
     {
         AreaMeasure areaMeasure;
         AlphaMeasure alphaMeasure;

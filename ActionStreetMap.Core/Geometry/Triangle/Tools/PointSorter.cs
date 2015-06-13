@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
     /// <summary>
     /// Sort an array of points using quicksort.
     /// </summary>
-    public class PointSorter
+    internal class PointSorter
     {
         static Random rand = new Random(57113);
 

@@ -3,7 +3,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 
-    public static class ExtensionMethods
+    internal static class ExtensionMethods
     {
         #region IPolygon extensions
 
@@ -20,6 +20,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary>
         /// Triangulates a polygon, applying constraint options.
         /// </summary>
+        /// <param name="polygon">Polygon.</param>
         /// <param name="options">Constraint options.</param>
         public static IMesh Triangulate(this IPolygon polygon, ConstraintOptions options)
         {
@@ -31,6 +32,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary>
         /// Triangulates a polygon, applying quality options.
         /// </summary>
+        /// <param name="polygon">Polygon.</param>
         /// <param name="quality">Quality options.</param>
         public static IMesh Triangulate(this IPolygon polygon, QualityOptions quality)
         {
@@ -42,6 +44,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary>
         /// Triangulates a polygon, applying quality and constraint options.
         /// </summary>
+        /// <param name="polygon">Polygon.</param>
         /// <param name="options">Constraint options.</param>
         /// <param name="quality">Quality options.</param>
         public static IMesh Triangulate(this IPolygon polygon, ConstraintOptions options, QualityOptions quality)
@@ -58,6 +61,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary>
         /// Triangulates a polygon, applying quality and constraint options.
         /// </summary>
+        /// <param name="polygon">Polygon.</param>
         /// <param name="options">Constraint options.</param>
         /// <param name="quality">Quality options.</param>
         /// <param name="triangulator">The triangulation algorithm.</param>

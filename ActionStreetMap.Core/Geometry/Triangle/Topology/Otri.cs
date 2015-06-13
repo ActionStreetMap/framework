@@ -18,7 +18,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
     /// of the triangle. Hence, there are three possible orientations. By convention, each
     /// edge always points counterclockwise about the corresponding triangle.
     /// </remarks>
-    public struct Otri
+    internal struct Otri
     {
         internal Triangle tri;
         internal int orient; // Ranges from 0 to 2.
@@ -77,6 +77,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         /// <summary>
         /// Find the abutting triangle; same edge. [sym(abc) -> ba*]
         /// </summary>
+        /// <remarks>
         /// Note that the edge direction is necessarily reversed, because the handle specified 
         /// by an oriented triangle is directed counterclockwise around the triangle.
         /// </remarks>

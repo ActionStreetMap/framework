@@ -643,7 +643,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             Point newloc; // Location of the new vertex
             double xi = 0, eta = 0;
             InsertVertexResult success;
-            bool errorflag;
+            //bool errorflag;
 
             badotri = badtri.poortri;
             borg = badotri.Org();
@@ -656,7 +656,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             if (!Otri.IsDead(badotri.tri) && (borg == badtri.org) &&
                 (bdest == badtri.dest) && (bapex == badtri.apex))
             {
-                errorflag = false;
+                //errorflag = false;
                 // Create a new vertex at the triangle's circumcenter.
 
                 // Using the original (simpler) Steiner point location method

@@ -10,7 +10,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
 
     using Vertex = ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL.Vertex;
 
-    public static class IntersectionHelper
+    internal static class IntersectionHelper
     {
         /// <summary>
         /// Compute intersection of two segments.

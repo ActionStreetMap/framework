@@ -10,7 +10,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
     /// <summary>
     /// Mesh interface.
     /// </summary>
-    public interface IMesh: IDisposable
+    internal interface IMesh : IDisposable
     {
         /// <summary>
         /// Gets the vertices of the mesh.

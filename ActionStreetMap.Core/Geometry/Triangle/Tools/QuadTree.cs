@@ -14,7 +14,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Tools
     /// <summary>
     /// A Quadtree implementation optimized for triangles.
     /// </summary>
-    public class QuadTree
+    internal class QuadTree
     {
         QuadNode root;
 

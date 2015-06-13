@@ -16,7 +16,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Iterators
     /// to each connected trianlge in that region. Default action is to set the 
     /// region id.
     /// </summary>
-    public class RegionIterator
+    internal class RegionIterator
     {
         Mesh mesh;
         List<Triangle> viri;

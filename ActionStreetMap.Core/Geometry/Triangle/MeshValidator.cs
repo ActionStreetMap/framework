@@ -11,7 +11,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
     using ActionStreetMap.Core.Geometry.Triangle.Topology;
     using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 
-    public static class MeshValidator
+    internal static class MeshValidator
     {
         /// <summary>
         /// Test the mesh for topological consistency.

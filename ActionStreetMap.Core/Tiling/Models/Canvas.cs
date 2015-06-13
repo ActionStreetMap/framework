@@ -14,7 +14,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         private readonly IObjectPool _objectPool;
 
         public List<RoadElement> Roads { get; private set; }
-        public List<Tuple<Surface, Action<IMesh>>> Surfaces { get; private set; }
+        internal List<Tuple<Surface, Action<IMesh>>> Surfaces { get; private set; }
         public List<Surface> Water { get; private set; }
 
         /// <inheritdoc />
@@ -47,12 +47,19 @@ namespace ActionStreetMap.Core.Tiling.Models
         }
 
         /// <summary> Adds surface. </summary>
-        public void AddSurface(Surface surface, Action<IMesh> modifyMeshAction = null)
+        internal void AddSurface(Surface surface, Action<IMesh> modifyMeshAction)
         {
             lock (Surfaces)
             {
                 Surfaces.Add(new Tuple<Surface, Action<IMesh>>(surface, modifyMeshAction));
             }
+        }
+
+        /// <summary> Adds surface. </summary>
+        public void AddSurface(Surface surface)
+        {
+            // TODO Mesh is internal and should be as it is.
+            throw new NotImplementedException("Not implemented yet");
         }
 
         /// <summary> Adds water. </summary>

@@ -57,6 +57,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// Update sampling parameters if mesh changed.
         /// </summary>
         /// <param name="mesh">Current mesh.</param>
+        /// <param name="forceUpdate">Force update.</param>
         public void Update(Mesh mesh, bool forceUpdate)
         {
             int count = mesh.triangles.Count;

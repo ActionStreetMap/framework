@@ -6,7 +6,7 @@
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL
 {
-    public class HalfEdge
+    internal class HalfEdge
     {
         internal int id;
         internal int mark;

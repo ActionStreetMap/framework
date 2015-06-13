@@ -11,7 +11,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary>
     /// Triangle interface.
     /// </summary>
-    public interface ITriangle
+    internal interface ITriangle
     {
         /// <summary>
         /// The triangle id.

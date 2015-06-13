@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Iterators
     /// <summary>
     /// Enumerates the edges of a triangulation.
     /// </summary>
-    public class EdgeIterator : IEnumerator<Edge>
+    internal class EdgeIterator : IEnumerator<Edge>
     {
         IEnumerator<Triangle> triangles;
         Otri tri = default(Otri);

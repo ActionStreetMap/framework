@@ -12,7 +12,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
     /// <summary>
     /// Interface for point set triangulation.
     /// </summary>
-    public interface ITriangulator
+    internal interface ITriangulator
     {
         /// <summary>
         /// Triangulates a point set.

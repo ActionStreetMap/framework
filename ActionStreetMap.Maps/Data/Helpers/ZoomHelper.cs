@@ -8,7 +8,7 @@ namespace ActionStreetMap.Maps.Data.Helpers
     /// <summary> Provides helper functionality to work with zoom levels. </summary>
     internal static class ZoomHelper
     {
-        /// <summary> Meters per pixel map. See <see cref="http://wiki.openstreetmap.org/wiki/Zoom_levels"/>. </summary>
+        /// <summary> Meters per pixel map. See http://wiki.openstreetmap.org/wiki/Zoom_levels. </summary>
         private static readonly Dictionary<int, float> ZoomResolutionMap = new Dictionary<int, float>()
         {
              {0, 156412}, {1, 78206}, {2, 39103}, {3, 19551}, {4, 9776},

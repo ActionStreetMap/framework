@@ -7,7 +7,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary>
     /// Polygon interface.
     /// </summary>
-    public interface IPolygon
+    internal interface IPolygon
     {
         /// <summary>
         /// Gets the vertices of the polygon.

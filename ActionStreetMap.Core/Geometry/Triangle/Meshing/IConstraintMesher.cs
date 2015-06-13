@@ -6,7 +6,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
     /// <summary>
     /// Interface for polygon triangulation.
     /// </summary>
-    public interface IConstraintMesher
+    internal interface IConstraintMesher
     {
         /// <summary>
         /// Triangulates a polygon.

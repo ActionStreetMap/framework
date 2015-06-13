@@ -18,7 +18,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Voronoi
     /// <summary>
     /// The Voronoi diagram is the dual of a pointset triangulation.
     /// </summary>
-    public abstract class VoronoiBase : DcelMesh
+    internal abstract class VoronoiBase : DcelMesh
     {
         // List of infinite half-edges, i.e. half-edges that start at circumcenters of triangles
         // which lie on the domain boundary.
@@ -43,7 +43,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Voronoi
         /// Generate the Voronoi diagram from given triangle mesh..
         /// </summary>
         /// <param name="mesh"></param>
-        /// <param name="bounded"></param>
         protected void Generate(Mesh mesh)
         {
             mesh.Renumber();

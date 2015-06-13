@@ -14,7 +14,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Voronoi
     using HVertex = ActionStreetMap.Core.Geometry.Triangle.Topology.DCEL.Vertex;
     using TVertex = ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex;
 
-    public class BoundedVoronoi : VoronoiBase
+    internal class BoundedVoronoi : VoronoiBase
     {
         int offset;
 

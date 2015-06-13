@@ -11,7 +11,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Smoothing
     /// <summary>
     /// Interface for mesh smoothers.
     /// </summary>
-    public interface ISmoother
+    internal interface ISmoother
     {
         void Smooth(IMesh mesh);
         void Smooth(IMesh mesh, int limit);

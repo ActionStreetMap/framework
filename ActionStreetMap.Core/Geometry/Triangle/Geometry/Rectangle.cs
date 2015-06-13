@@ -12,7 +12,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary>
     /// A simple bounding box class.
     /// </summary>
-    public class Rectangle
+    internal class Rectangle
     {
         double xmin, ymin, xmax, ymax;
 
@@ -142,8 +142,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary>
         /// Expand rectangle to include given rectangle.
         /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
         public void Expand(Rectangle other)
         {
             xmin = Math.Min(xmin, other.xmin);

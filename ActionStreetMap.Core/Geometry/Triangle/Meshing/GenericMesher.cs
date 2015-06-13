@@ -10,7 +10,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
     /// <summary>
     /// Create meshes of point sets or polygons.
     /// </summary>
-    public class GenericMesher : ITriangulator, IConstraintMesher, IQualityMesher
+    internal class GenericMesher : ITriangulator, IConstraintMesher, IQualityMesher
     {
         ITriangulator triangulator;
 

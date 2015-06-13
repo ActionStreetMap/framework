@@ -66,7 +66,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
 
     #endif
 
-    public struct DoublePoint
+    internal struct DoublePoint
     {
         public double X;
         public double Y;
@@ -91,7 +91,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
     // PolyTree & PolyNode classes
     //------------------------------------------------------------------------------
 
-    public class PolyTree : PolyNode
+    internal class PolyTree : PolyNode
     {
         internal List<PolyNode> m_AllPolys = new List<PolyNode>();
 
@@ -128,7 +128,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         }
     }
 
-    public class PolyNode
+    internal class PolyNode
     {
         internal PolyNode m_Parent;
         internal List<IntPoint> m_polygon = new List<IntPoint>();
@@ -349,7 +349,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
     //------------------------------------------------------------------------------
     //------------------------------------------------------------------------------
 
-    public struct IntPoint
+    internal struct IntPoint
     {
         public Int64 X;
         public Int64 Y;
@@ -422,7 +422,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         }
     }// end struct IntPoint
 
-    public struct IntRect
+    internal struct IntRect
     {
         public Int64 left;
         public Int64 top;
@@ -504,14 +504,14 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         }
     };
 
-    public class IntersectNode
+    internal class IntersectNode
     {
         internal TEdge Edge1;
         internal TEdge Edge2;
         internal IntPoint Pt;
     };
 
-    public class MyIntersectNodeSort : IComparer<IntersectNode>
+    internal class MyIntersectNodeSort : IComparer<IntersectNode>
     {
         public int Compare(IntersectNode node1, IntersectNode node2)
         {
@@ -562,7 +562,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         internal IntPoint OffPt;
     };
 
-    public class ClipperBase
+    internal class ClipperBase
     {
         protected const double horizontal = -3.4E+38;
         internal const int Skip = -2;
@@ -1236,7 +1236,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         }
     } //end ClipperBase
 
-    public class Clipper : ClipperBase
+    internal class Clipper : ClipperBase
     {
         //InitOptions that can be passed to the constructor ...
         public const int ioReverseSolution = 1;
@@ -4427,7 +4427,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         //------------------------------------------------------------------------------
     } //end Clipper
 
-    public class ClipperOffset
+    internal class ClipperOffset
     {
         private List<List<IntPoint>> m_destPolys;
         private List<IntPoint> m_srcPoly;

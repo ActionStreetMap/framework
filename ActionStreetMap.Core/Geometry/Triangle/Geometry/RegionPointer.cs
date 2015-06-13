@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// Pointer to a region in the mesh geometry. A region is a well-defined
     /// subset of the geomerty (enclosed by subsegments).
     /// </summary>
-    public class RegionPointer
+    internal class RegionPointer
     {
         internal Point point;
         internal int id;

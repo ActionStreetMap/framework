@@ -8,7 +8,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Voronoi
 {
     using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 
-    public class StandardVoronoi : VoronoiBase
+    internal class StandardVoronoi : VoronoiBase
     {
         public StandardVoronoi(Mesh mesh)
             : base(mesh, true)

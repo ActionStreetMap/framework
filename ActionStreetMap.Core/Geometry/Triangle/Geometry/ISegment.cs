@@ -9,7 +9,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary>
     /// Interface for segment geometry.
     /// </summary>
-    public interface ISegment : IEdge
+    internal interface ISegment : IEdge
     {
         /// <summary>
         /// Gets the segments endpoint.

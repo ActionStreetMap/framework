@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
     /// <summary>
     /// The subsegment data structure.
     /// </summary>
-    public class Segment : ISegment
+    internal class Segment : ISegment
     {
         // Hash for dictionary. Will be set by mesh instance.
         internal int hash;

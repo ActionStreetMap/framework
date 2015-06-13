@@ -1,7 +1,7 @@
 ﻿
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
-    public interface IEdge
+    internal interface IEdge
     {
         /// <summary>
         /// Gets the first endpoints index.

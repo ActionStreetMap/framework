@@ -12,7 +12,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.IO
     /// <summary>
     /// Simple triangle class for input.
     /// </summary>
-    public class InputTriangle : ITriangle
+    internal class InputTriangle : ITriangle
     {
         internal int[] vertices;
         internal int region;

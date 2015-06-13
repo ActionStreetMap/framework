@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
     /// <summary>
     /// The triangle data structure.
     /// </summary>
-    public class Triangle : ITriangle
+    internal class Triangle : ITriangle
     {
         // Hash for dictionary. Will be set by mesh instance.
         internal int hash;

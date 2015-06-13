@@ -13,7 +13,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary>
     /// The vertex data structure.
     /// </summary>
-    public class Vertex : Point
+    internal class Vertex : Point
     {
         // Hash for dictionary. Will be set by mesh instance.
         internal int hash;
