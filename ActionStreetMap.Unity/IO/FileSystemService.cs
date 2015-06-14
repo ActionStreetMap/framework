@@ -14,7 +14,7 @@ namespace ActionStreetMap.Unity.IO
     /// <summary> Provides a way to interact with regular file system. </summary>
     public class FileSystemService : IFileSystemService
     {
-        private const string LogTag = "file";
+        protected const string LogTag = "file";
 
         protected readonly IPathResolver PathResolver;
         protected readonly ITrace Trace;
@@ -113,7 +113,7 @@ namespace ActionStreetMap.Unity.IO
 #endif
         }
 
-        public void CreateDirectory(string path)
+        public virtual void CreateDirectory(string path)
         {
 #if UNITY_WEBPLAYER
              throw new NotImplementedException();

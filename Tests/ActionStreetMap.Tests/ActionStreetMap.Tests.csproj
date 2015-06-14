@@ -113,6 +113,7 @@
     <Compile Include="TestBootstrapperPlugin.cs" />
     <Compile Include="Core\Tiling\TileManagerTests.cs" />
     <Compile Include="Explorer\Tiles\RealTileManagerTests.cs" />
+    <Compile Include="WebFileSystemService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
