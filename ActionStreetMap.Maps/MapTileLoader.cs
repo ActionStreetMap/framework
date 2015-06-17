@@ -11,7 +11,7 @@ using ActionStreetMap.Maps.Visitors;
 namespace ActionStreetMap.Maps
 {
     /// <summary> Loads tile from given element source. </summary>
-    internal class MapTileLoader: ITileLoader
+    internal class MapTileLoader : ITileLoader
     {
         private readonly IElementSourceProvider _elementSourceProvider;
         private readonly IElevationProvider _elevationProvider;
@@ -24,7 +24,7 @@ namespace ActionStreetMap.Maps
         /// <param name="modelLoader">model visitor.</param>
         /// <param name="objectPool">Object pool.</param>
         [Dependency]
-        public MapTileLoader(IElementSourceProvider elementSourceProvider, 
+        public MapTileLoader(IElementSourceProvider elementSourceProvider,
             IElevationProvider elevationProvider,
             IModelLoader modelLoader, IObjectPool objectPool)
         {
@@ -39,7 +39,7 @@ namespace ActionStreetMap.Maps
         {
             var boundingBox = tile.BoundingBox;
             var zoomLevel = ZoomHelper.GetZoomLevel(tile.RenderMode);
-            
+
             var filterElementVisitor = new CompositeElementVisitor(
                 new NodeVisitor(tile, _modelLoader, _objectPool),
                 new WayVisitor(tile, _modelLoader, _objectPool),
@@ -54,21 +54,17 @@ namespace ActionStreetMap.Maps
             // prepare tile
             tile.Accept(tile, _modelLoader);
 
-            var result = new Subject<Unit>();
-            _elementSourceProvider.Get(tile.BoundingBox).Subscribe(elementSource =>
+            // NOTE all elements sources and their elements are processed on the same thread
+            var mainTask = _elementSourceProvider.Get(tile.BoundingBox);
+            mainTask.Subscribe(elementSource =>
                 elementSource.Get(boundingBox, zoomLevel)
-                .ObserveOn(Scheduler.ThreadPool)
-                .Do(element => element.Accept(filterElementVisitor),
-                    () =>
-                    {
-                        // NOTE so far, we call this for every element source
-                        // However, it will break multiply element sources case
-                        tile.Canvas.Accept(tile, _modelLoader);
-                        result.OnCompleted();
-                    })
-                .Subscribe());
+                .Subscribe(element => element.Accept(filterElementVisitor)));
 
-            return result;
+            return mainTask.ContinueWith(() =>
+            {
+                tile.Canvas.Accept(tile, _modelLoader);
+                return Observable.Empty<Unit>();
+            }, Scheduler.CurrentThread);
         }
     }
 }
