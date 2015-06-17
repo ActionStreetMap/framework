@@ -62,6 +62,7 @@ namespace ActionStreetMap.Maps
 
             return mainTask.ContinueWith(() =>
             {
+                // complete tile
                 tile.Canvas.Accept(tile, _modelLoader);
                 return Observable.Empty<Unit>();
             }, Scheduler.CurrentThread);

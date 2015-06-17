@@ -22,13 +22,17 @@ namespace ActionStreetMap.Maps.Data
         /// <summary> Returns element sources by query represented by bounding box. </summary>
         /// <returns>Element source.</returns>
         IObservable<IElementSource> Get(BoundingBox query);
+
+        // <summary> Adds element source represented by stream to collection. </summary>
+        void Add(Stream stream, BoundingBox query);
     }
 
     /// <summary> Default implementation of <see cref="IElementSourceProvider"/>. </summary>
     internal sealed class ElementSourceProvider : IElementSourceProvider, IConfigurable
     {
         private const string LogTag = "mapdata.source";
-        private const string CacheFileNameExtension = ".cache";
+        private const string CacheFileNameExtension = ".map";
+        private const string SaveFileNameExtension = ".sav";
         private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
         private readonly string[] _splitString= { " " };
 
@@ -37,6 +41,7 @@ namespace ActionStreetMap.Maps.Data
         private string _mapDataFormat;
         private string _indexSettingsPath;
         private string _cachePath;
+        private string _savePath;
 
         private readonly IPathResolver _pathResolver;
         private readonly IFileSystemService _fileSystemService;
@@ -115,6 +120,15 @@ namespace ActionStreetMap.Maps.Data
 
             // element source should be already in memory cache
             return Observable.Return(_elementSourceCache.Item2);
+        }
+
+        /// <inheritdoc />
+        public void Add(Stream stream, BoundingBox query)
+        {
+            // TODO update tree rather than use file list approach
+            // TODO change accordingly cache implementation
+
+            throw new NotImplementedException();
         }
 
         #region Element source manipulation logic
@@ -233,8 +247,12 @@ namespace ActionStreetMap.Maps.Data
             if (!String.IsNullOrEmpty(rootFolder))
             {
                 SearchAndReadMapIndexHeaders(_pathResolver.Resolve(rootFolder));
+                // create cache directory
                 _cachePath = Path.Combine(rootFolder, ".cache");
                 _fileSystemService.CreateDirectory(_cachePath);
+                // create save directory
+                _savePath = Path.Combine(rootFolder, ".saves");
+                _fileSystemService.CreateDirectory(_savePath);
             }
         }
 
