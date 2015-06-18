@@ -65,6 +65,10 @@ namespace ActionStreetMap.Maps.Data.Spatial
             MaxPointLongitude = (int)(maxPoint.Longitude * MapConsts.ScaleFactor);
         }
 
+        public Envelop(BoundingBox boundingBox) : this(boundingBox.MinPoint, boundingBox.MaxPoint)
+        {
+        }
+
         public long Area { get { return ((long)(MaxPointLongitude - MinPointLongitude)) * (MaxPointLatitude - MinPointLatitude); } }
         public long Margin { get { return ((long)(MaxPointLongitude - MinPointLongitude)) + (MaxPointLatitude - MinPointLatitude); } }
 

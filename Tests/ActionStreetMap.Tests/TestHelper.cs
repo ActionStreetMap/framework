@@ -27,6 +27,10 @@ namespace ActionStreetMap.Tests
 
         public static readonly GeoCoordinate MoscowRedSquare = new GeoCoordinate(55.7537315, 37.6198537);
 
+        // these values are defined in header.txt of test element source
+        public static readonly GeoCoordinate TestMinPoint = new GeoCoordinate(52.54, 13.346);
+        public static readonly GeoCoordinate TestMaxPoint = new GeoCoordinate(52.552, 13.354);
+
         public const string ConfigTestRootFile = "test.json";
         public const string ConfigAppRootFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\settings.json";
 

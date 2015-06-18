@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace ActionStreetMap.Infrastructure.Reactive
 {
@@ -26,6 +27,15 @@ namespace ActionStreetMap.Infrastructure.Reactive
           this IObservable<T> observable, Func<IObservable<TRet>> selector, IScheduler scheduler)
         {
             return observable.AsCompletion().ObserveOn(scheduler).SelectMany(_ => selector());
+        }
+
+        /// <summary> Naive implementation of Count function. </summary>
+        public static int Count<T>(this IObservable<T> observable)
+        {
+            long count = 0;
+            observable.Subscribe(o => Interlocked.Increment(ref count));
+            observable.Wait();
+            return (int) count;
         }
     }
 }

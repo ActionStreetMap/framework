@@ -1,50 +1,60 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using ActionStreetMap.Core;
-using ActionStreetMap.Infrastructure.Config;
-using ActionStreetMap.Infrastructure.Diagnostic;
-using ActionStreetMap.Infrastructure.IO;
+﻿using ActionStreetMap.Core;
+using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data;
 using Moq;
 using NUnit.Framework;
-using ActionStreetMap.Explorer.Infrastructure;
 
 namespace ActionStreetMap.Tests.Maps.Index
 {
     [TestFixture]
     public class ElementSourceProviderTests
     {
+        private IContainer _container;
+        private IElementSourceProvider _elementSourceProvider;
+
+        [SetUp]
+        public void Setup()
+        {
+            _container = new Container();
+            var gameRunner = TestHelper.GetGameRunner(_container);
+            _elementSourceProvider = _container.Resolve<IElementSourceProvider>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _container.Dispose();
+        }
+
         [Test]
         public void CanCreateElementSource()
         {
+            // ACT
+            var observable = _elementSourceProvider.Get(CreateDefaultBoundingBox());
+            
+            // ASSERT
+            Assert.IsNotNull(observable.Wait());
+        }
+
+        [Test]
+        public void CanAddElementSource()
+        {
             // ARRANGE
-            var directory = "local";
-            var configSection = new Mock<IConfigSection>();
-            configSection.Setup(c => c.GetString(directory, It.IsAny<string>()))
-                .Returns(directory);
-            var fileSystemService = Utils.GetFileSystemServiceMock(directory);
-            var pathResolver = new Mock<IPathResolver>();
-            pathResolver.Setup(p => p.Resolve(It.IsAny<string>())).Returns<string>(s => s);
-
-            fileSystemService.Setup(fs => fs.GetFiles(It.IsAny<string>(), MapConsts.HeaderFileName))
-                .Returns(new[] { directory + @"\" + MapConsts.HeaderFileName });
-            fileSystemService.Setup(fs => fs.ReadStream(It.IsAny<string>()))
-                .Returns(new MemoryStream(Encoding.UTF8.GetBytes("52.0,13.0 52.4,13.4")));
-
-            var provider = new ElementSourceProvider(pathResolver.Object, fileSystemService.Object,
-                TestHelper.GetObjectPool());
-            provider.Trace = new Mock<ITrace>().Object;
+            var boundingBox = CreateDefaultBoundingBox();
+            Mock<IElementSource> elementSource = new Mock<IElementSource>();
+            elementSource.Setup(e => e.BoundingBox).Returns(boundingBox);
 
             // ACT
-            provider.Configure(configSection.Object);
-            
-            var elementSource1 = provider.Get(new BoundingBox(
-                new GeoCoordinate(52.0f, 13.0f), new GeoCoordinate(52.1f, 13.1f)));
+            _elementSourceProvider.Add(elementSource.Object);
 
-            // ARRANGE
-            Assert.IsNotNull(elementSource1.Wait());
+            // ASSERT
+            Assert.AreEqual(2, _elementSourceProvider.Get(boundingBox).Count());
+        }
+
+        private BoundingBox CreateDefaultBoundingBox()
+        {
+            return new BoundingBox(TestHelper.TestMinPoint, TestHelper.TestMaxPoint);
         }
     }
 }

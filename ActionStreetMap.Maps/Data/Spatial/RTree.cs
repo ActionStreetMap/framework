@@ -34,6 +34,24 @@ namespace ActionStreetMap.Maps.Data.Spatial
 	        Root = root;
 	    }
 
+        #region Traverse
+
+        /// <summary> Performs tree traversal using BFS. </summary>
+        public void Traverse(Action<RTreeNode> action)
+        {
+            Traverse(Root, action);
+        }
+
+        /// <summary> Breadth first search. </summary>
+        private static void Traverse(RTreeNode node, Action<RTreeNode> action)
+        {
+            action(node);
+            foreach (var rTreeNode in node.Children)
+                action(rTreeNode);
+        }
+
+        #endregion
+
         #region ISpatialIndex implementation. The same as optimized version.
 
         public IObservable<T> Search(BoundingBox query)
