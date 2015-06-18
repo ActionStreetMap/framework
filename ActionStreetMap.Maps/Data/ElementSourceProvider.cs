@@ -212,8 +212,7 @@ namespace ActionStreetMap.Maps.Data
         {
             var jsonContent = _fileSystemService.ReadText(_indexSettingsPath);
             var node = JSON.Parse(jsonContent);
-            _settings = new IndexSettings();
-            _settings.ReadFromJson(node);
+            _settings = new IndexSettings().ReadFromJson(node);
         }
 
         /// <inheritdoc />

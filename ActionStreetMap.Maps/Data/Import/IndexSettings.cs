@@ -16,7 +16,7 @@ namespace ActionStreetMap.Maps.Data.Import
 
         #region Reading
 
-        public void ReadFromJson(JSONNode node)
+        public IndexSettings ReadFromJson(JSONNode node)
         {
             var spatialNode = node["spatial"];
             Spatial.MaxEntries = spatialNode["rtree_max_entries"].AsInt;
@@ -27,6 +27,7 @@ namespace ActionStreetMap.Maps.Data.Import
             var searchNode = node["search"];
             Search.PrefixLength = searchNode["prefix_length"].AsInt;
             Search.KvIndexCapacity = searchNode["keyvalue_index_capacity"].AsInt;
+            return this;
         }
 
         private TagList ReadTagList(JSONNode node)

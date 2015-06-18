@@ -10,9 +10,11 @@ using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Maps.Data.Import;
 using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Tests
@@ -72,6 +74,13 @@ namespace ActionStreetMap.Tests
         {
             return new JsonConfigSection(new FileSystemService(new TestPathResolver(), new DefaultTrace())
                 .ReadText(configPath));
+        }
+
+        internal static IndexSettings GetIndexSettings()
+        {
+            var jsonContent = GetFileSystemService().ReadText(TestIndexSettingsPath);
+            var node = JSON.Parse(jsonContent);
+            return new IndexSettings().ReadFromJson(node);
         }
 
         public static IFileSystemService GetFileSystemService()

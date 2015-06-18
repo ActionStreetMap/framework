@@ -61,6 +61,7 @@
     <Compile Include="Infrastructure\CodeConfigTests.cs" />
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />
     <Compile Include="Expiremental\SvgBuilder.cs" />
+    <Compile Include="Maps\Index\ElementSourceEditorTests.cs" />
     <Compile Include="ReflectionUtils.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="TestScheduler.cs" />
