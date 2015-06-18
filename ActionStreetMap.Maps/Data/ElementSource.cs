@@ -6,6 +6,7 @@ using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Data.Storage;
 using ActionStreetMap.Maps.Entities;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Maps.Data.Import;
 
 namespace ActionStreetMap.Maps.Data
 {
@@ -35,6 +36,7 @@ namespace ActionStreetMap.Maps.Data
         internal ElementSource(string directory, IFileSystemService fileService, IObjectPool objectPool)
         {
             // load map data from streams
+            BoundingBox = PersistentIndexBuilder.ReadBoundingBox(fileService.ReadStream(MapConsts.HeaderFileName));
             KvUsage = new KeyValueUsage(fileService.ReadStream(string.Format(MapConsts.KeyValueUsagePathFormat, directory)));
             KvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(MapConsts.KeyValueIndexPathFormat, directory)));
             KvStore = new KeyValueStore(KvIndex, KvUsage, fileService.ReadStream(string.Format(MapConsts.KeyValueStorePathFormat, directory)));
@@ -46,9 +48,10 @@ namespace ActionStreetMap.Maps.Data
         ///     Creates instance of <see cref="ElementSource" /> from streams and 
         ///     created spatial index.
         /// </summary>
-        internal ElementSource(KeyValueUsage keyValueUsage, KeyValueIndex keyValueIndex, KeyValueStore keyValueStore,
+        internal ElementSource(BoundingBox boundingBox, KeyValueUsage keyValueUsage, KeyValueIndex keyValueIndex, KeyValueStore keyValueStore,
             ElementStore elementStore, ISpatialIndex<uint> spatialIndex)
         {
+            BoundingBox = boundingBox;
             KvUsage = keyValueUsage;
             KvIndex = keyValueIndex;
             KvStore = keyValueStore;
@@ -57,10 +60,7 @@ namespace ActionStreetMap.Maps.Data
         }
 
         /// <inheritdoc />
-        public BoundingBox BoundingBox
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public BoundingBox BoundingBox { get; internal set; }
 
         /// <inheritdoc />
         public IObservable<Element> Get(BoundingBox bbox, int zoomLevel)

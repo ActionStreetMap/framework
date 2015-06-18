@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -32,8 +31,6 @@ namespace ActionStreetMap.Maps.Data
     {
         private const string LogTag = "mapdata.source";
         private const string CacheFileNameExtension = ".map";
-        private readonly Regex _geoCoordinateRegex = new Regex(@"([-+]?\d{1,2}([.]\d+)?),\s*([-+]?\d{1,3}([.]\d+)?)");
-        private readonly string[] _splitString= { " " };
 
         private string _mapDataServerUri;
         private string _mapDataServerQuery;
@@ -177,8 +174,8 @@ namespace ActionStreetMap.Maps.Data
             var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), 
                 _settings, _objectPool, Trace);
             indexBuilder.Build();
-            var elementSource = new ElementSource(indexBuilder.KvUsage, indexBuilder.KvIndex,
-                indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
+            var elementSource = new ElementSource(indexBuilder.BoundingBox, indexBuilder.KvUsage, 
+                indexBuilder.KvIndex, indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
             return elementSource;
         }
 
@@ -205,26 +202,8 @@ namespace ActionStreetMap.Maps.Data
 
         private void ReadMapIndexHeader(string headerPath)
         {
-            using (var reader = new StreamReader(_fileSystemService.ReadStream(headerPath)))
-            {
-                var str = reader.ReadLine();
-                var coordinateStrings = str.Split(_splitString, StringSplitOptions.None);
-                var minPoint = GetCoordinateFromString(coordinateStrings[0]);
-                var maxPoint = GetCoordinateFromString(coordinateStrings[1]);
-
-                var envelop = new Envelop(minPoint, maxPoint);
-                _tree.Insert(Path.GetDirectoryName(headerPath), envelop);
-            }
-        }
-
-        private GeoCoordinate GetCoordinateFromString(string coordinateStr)
-        {
-            var coordinates = _geoCoordinateRegex.Match(coordinateStr).Value.Split(',');
-
-            var latitude = double.Parse(coordinates[0]);
-            var longitude = double.Parse(coordinates[1]);
-
-            return new GeoCoordinate(latitude, longitude);
+            var boundingBox = PersistentIndexBuilder.ReadBoundingBox(_fileSystemService.ReadStream(headerPath));
+            _tree.Insert(Path.GetDirectoryName(headerPath), new Envelop(boundingBox.MinPoint, boundingBox.MaxPoint));
         }
 
         #endregion

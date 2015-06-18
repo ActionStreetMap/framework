@@ -31,6 +31,7 @@ namespace ActionStreetMap.Maps.Data.Import
 
         internal RTree<uint> Tree { get; set; }
         internal ElementStore Store { get; set; }
+        internal BoundingBox BoundingBox { get; private set; }
         protected IndexSettings Settings;
         protected IndexStatistic IndexStatistic;
 
@@ -184,7 +185,10 @@ namespace ActionStreetMap.Maps.Data.Import
             _relations.Add(new MutableTuple<Relation, Envelop>(relation, envelop));
        }
 
-        public virtual void ProcessBoundingBox(BoundingBox bbox) { }
+        public virtual void ProcessBoundingBox(BoundingBox bbox)
+        {
+            BoundingBox = bbox;
+        }
 
         private void FinishRelaitonProcessing()
         {
