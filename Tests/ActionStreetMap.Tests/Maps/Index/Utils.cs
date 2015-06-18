@@ -28,7 +28,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStream);
 
             var elementStoreStream = new MemoryStream(new byte[10000]);
-            var elementStore = new ElementStore(keyValueStore, elementStoreStream, new ObjectPool());
+            var elementStore = new ElementStore(keyValueStore, elementStoreStream, TestHelper.GetObjectPool());
             var tree = new RTree<uint>();
 
             var node = new Node()

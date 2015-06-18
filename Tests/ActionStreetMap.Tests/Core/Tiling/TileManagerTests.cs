@@ -213,7 +213,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             configMock.Setup(c => c.GetString("render_mode", It.IsAny<string>())).Returns("scene");
 
             var observer = new TileController(sceneBuilderMock.Object,
-                activatorMock.Object, new MessageBus(), new ObjectPool());
+                activatorMock.Object, new MessageBus(), TestHelper.GetObjectPool());
             observer.Configure(configMock.Object);
             
             return observer;

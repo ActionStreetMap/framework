@@ -28,7 +28,7 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
             _searchMock = new Mock<ISearchEngine>();
             var coordinate = new GeoCoordinate(52, 13);
             var tile = new Tile(coordinate, new MapPoint(0, 0), RenderMode.Scene,
-                new Canvas(new ObjectPool()), 500, 500);
+                new Canvas(TestHelper.GetObjectPool()), 500, 500);
             _searchMock.Setup(s => s.SearchByTag("amenity", "bar", tile.BoundingBox)).Returns(Observable.Create<Element>(o =>
             {
                 o.OnNext(new Node() { Id = 1, Tags = new Dictionary<string, string>() { { "amenity", "bar" } }.ToTags(), Coordinate = new GeoCoordinate(52.001, 13) });

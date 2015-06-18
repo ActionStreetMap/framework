@@ -16,7 +16,8 @@ namespace ActionStreetMap.Tests.Maps.Index
         public void Setup()
         {
             var directory = "index";
-            _source = new ElementSource(directory, Utils.GetFileSystemServiceMock(directory).Object, new ObjectPool());
+            _source = new ElementSource(directory, Utils.GetFileSystemServiceMock(directory).Object,
+                TestHelper.GetObjectPool());
         }
 
         [Test]

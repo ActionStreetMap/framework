@@ -46,18 +46,18 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             var sceneVisitor = new TestModelLoader();
             var pathResolver = new TestPathResolver();
             var config = new Mock<IConfigSection>();
-            var objectPool = new ObjectPool();
+            var objectPool = TestHelper.GetObjectPool();
             config.Setup(c => c.GetString("local", null)).Returns(TestHelper.MapDataPath);
-            var elementSourceProvider = new ElementSourceProvider(pathResolver, TestHelper.GetFileSystemService(), new ObjectPool());
+            var elementSourceProvider = new ElementSourceProvider(pathResolver, TestHelper.GetFileSystemService(), objectPool);
             elementSourceProvider.Trace = new ConsoleTrace();
             elementSourceProvider.Configure(config.Object);
 
             var elevationProvider = new Mock<IElevationProvider>();
             elevationProvider.Setup(e => e.HasElevation(It.IsAny<BoundingBox>())).Returns(true);
-            var loader = new MapTileLoader(elementSourceProvider, elevationProvider.Object, sceneVisitor, new ObjectPool());
+            var loader = new MapTileLoader(elementSourceProvider, elevationProvider.Object, sceneVisitor, objectPool);
 
             var tile = new Tile(TestHelper.BerlinTestFilePoint, new MapPoint(0, 0), RenderMode.Scene,
-                new Canvas(new ObjectPool()), 1000, 1000);
+                new Canvas(objectPool), 1000, 1000);
             loader.Load(tile).Wait();
 
             // ACT & ARRANGE

@@ -25,7 +25,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             var keyValueStore = new KeyValueStore(index, kvUsage, keyValueStream);
 
             var elementStoreStream = new MemoryStream(new byte[10000]);
-            _store = new ElementStore(keyValueStore, elementStoreStream, new ObjectPool());
+            _store = new ElementStore(keyValueStore, elementStoreStream, TestHelper.GetObjectPool());
         }
 
         [Test]

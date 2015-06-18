@@ -24,7 +24,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
         {
             // ARRANGE
             var stylesheet = MapCssHelper.GetStylesheetFromFile(path, canUseExprTree);
-            var canvas = new Canvas(new ObjectPool());
+            var canvas = new Canvas(TestHelper.GetObjectPool());
 
             // ACT
             var rule = stylesheet.GetModelRule(canvas, MapConsts.MaxZoomLevel);

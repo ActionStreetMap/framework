@@ -27,18 +27,19 @@ namespace ActionStreetMap.Tests.Maps.Index
             var fileSystemService = Utils.GetFileSystemServiceMock(directory);
             var pathResolver = new Mock<IPathResolver>();
             pathResolver.Setup(p => p.Resolve(It.IsAny<string>())).Returns<string>(s => s);
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes("52.0,13.0 52.4,13.4"));
 
             fileSystemService.Setup(fs => fs.GetFiles(It.IsAny<string>(), MapConsts.HeaderFileName))
                 .Returns(new[] { directory + @"\" + MapConsts.HeaderFileName });
-            fileSystemService.Setup(fs => fs.ReadStream(directory + @"\" + MapConsts.HeaderFileName))
-                .Returns(stream);
+            fileSystemService.Setup(fs => fs.ReadStream(It.IsAny<string>()))
+                .Returns(new MemoryStream(Encoding.UTF8.GetBytes("52.0,13.0 52.4,13.4")));
 
-            var provider = new ElementSourceProvider(pathResolver.Object, fileSystemService.Object, new ObjectPool());
+            var provider = new ElementSourceProvider(pathResolver.Object, fileSystemService.Object,
+                TestHelper.GetObjectPool());
             provider.Trace = new Mock<ITrace>().Object;
 
             // ACT
             provider.Configure(configSection.Object);
+            
             var elementSource1 = provider.Get(new BoundingBox(
                 new GeoCoordinate(52.0f, 13.0f), new GeoCoordinate(52.1f, 13.1f)));
 

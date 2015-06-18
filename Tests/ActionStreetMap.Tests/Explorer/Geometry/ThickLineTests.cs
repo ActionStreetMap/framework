@@ -48,7 +48,8 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
 
             // ACT
             var result = new List<LineElement>();
-            ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner, lineElements, result, new ObjectPool());
+            ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner,
+                lineElements, result, TestHelper.GetObjectPool());
 
             // ASSERT
             Assert.AreEqual(3, result.Count);
@@ -88,7 +89,8 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
 
             // ACT
             var result = new List<LineElement>();
-            ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner, lineElements, result, new ObjectPool());
+            ThickLineUtils.GetLineElementsInTile(leftBottomCorner, rightUpperCorner,
+                lineElements, result, TestHelper.GetObjectPool());
 
             // ASSERT
             Assert.AreEqual(1, result.Count);

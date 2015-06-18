@@ -16,7 +16,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new MansardRoofBuilder();
-            roofBuilder.ObjectPool = new ObjectPool();
+            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
             roofBuilder.ResourceProvider = new UnityResourceProvider();
 
             // ACT
@@ -44,7 +44,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ARRANGE
             var roofBuilder = new GabledRoofBuilder();
             roofBuilder.ResourceProvider = new UnityResourceProvider();
-            roofBuilder.ObjectPool = new ObjectPool();
+            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
             // ACT
             var meshData = roofBuilder.Build(new Building()
             {
@@ -71,6 +71,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new HippedRoofBuilder();
+            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
             roofBuilder.ResourceProvider = new UnityResourceProvider();
             // ACT
             var meshData = roofBuilder.Build(new Building()

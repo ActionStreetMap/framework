@@ -36,7 +36,7 @@ namespace ActionStreetMap.Maps.Data
         internal ElementSource(string directory, IFileSystemService fileService, IObjectPool objectPool)
         {
             // load map data from streams
-            BoundingBox = PersistentIndexBuilder.ReadBoundingBox(fileService.ReadStream(MapConsts.HeaderFileName));
+            BoundingBox = PersistentIndexBuilder.ReadBoundingBox(fileService.ReadStream(string.Format(MapConsts.HeaderPathFormat, directory)));
             KvUsage = new KeyValueUsage(fileService.ReadStream(string.Format(MapConsts.KeyValueUsagePathFormat, directory)));
             KvIndex = KeyValueIndex.Load(fileService.ReadStream(string.Format(MapConsts.KeyValueIndexPathFormat, directory)));
             KvStore = new KeyValueStore(KvIndex, KvUsage, fileService.ReadStream(string.Format(MapConsts.KeyValueStorePathFormat, directory)));

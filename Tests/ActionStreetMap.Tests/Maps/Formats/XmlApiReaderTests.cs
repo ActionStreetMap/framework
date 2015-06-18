@@ -29,7 +29,7 @@ namespace ActionStreetMap.Tests.Maps.Formats
             _xmlContent = File.ReadAllText(TestHelper.BerlinXmlData);
             var settings = new IndexSettings();
             settings.ReadFromJson(JSON.Parse(File.ReadAllText(TestHelper.TestIndexSettingsPath)));
-            _indexBuilder = new TestableIndexBuilder(settings, new ObjectPool(), new ConsoleTrace());
+            _indexBuilder = new TestableIndexBuilder(settings, TestHelper.GetObjectPool(), new ConsoleTrace());
         }
 
         [SetUp]
@@ -68,7 +68,8 @@ namespace ActionStreetMap.Tests.Maps.Formats
                 : base(settings, objectPool, trace)
             {
                 Store = new ElementStore(new KeyValueStore(new KeyValueIndex(1000, 3),
-                    new KeyValueUsage(new MemoryStream()), new MemoryStream()), new MemoryStream(), new ObjectPool());
+                    new KeyValueUsage(new MemoryStream()), new MemoryStream()),
+                    new MemoryStream(), TestHelper.GetObjectPool());
 
                 Tree = new RTree<uint>();
             }

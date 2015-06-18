@@ -1,10 +1,18 @@
-﻿using ActionStreetMap.Core;
+﻿using System;
+using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry.Clipping;
+using ActionStreetMap.Core.Geometry.Triangle.Meshing;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer;
+using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
+using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Tests
@@ -65,6 +73,22 @@ namespace ActionStreetMap.Tests
         public static IFileSystemService GetFileSystemService()
         {
             return new FileSystemService(new TestPathResolver(), new ConsoleTrace());
+        }
+
+        public static IObjectPool GetObjectPool()
+        {
+            return new ObjectPool()
+                .RegisterObjectType<MeshTriangle>(() => new MeshTriangle())
+                .RegisterListType<MeshTriangle>(32)
+                .RegisterObjectType<Clipper>(() => new Clipper())
+                .RegisterObjectType<ClipperOffset>(() => new ClipperOffset())
+                .RegisterListType<Tuple<Surface, Action<IMesh>>>(32)
+                .RegisterListType<RoadElement>(32)
+                .RegisterListType<Surface>(32)
+                .RegisterListType<GeoCoordinate>(256)
+                .RegisterListType<MapPoint>(256)
+                .RegisterListType<LineElement>(32)
+                .RegisterListType<int>(256);
         }
     }
 }

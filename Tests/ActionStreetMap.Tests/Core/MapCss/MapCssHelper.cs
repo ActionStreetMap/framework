@@ -60,7 +60,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
 
         public static Canvas GetCanvas()
         {
-            return new Canvas(new ObjectPool());
+            return new Canvas(TestHelper.GetObjectPool());
         }
 
         public static Area GetArea(TagCollection tags)
