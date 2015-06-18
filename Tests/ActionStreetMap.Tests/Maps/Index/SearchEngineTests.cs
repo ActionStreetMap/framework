@@ -24,8 +24,7 @@ namespace ActionStreetMap.Tests.Maps.Index
         [TearDown]
         public void TearDown()
         {
-            // free resources: this class opens various file streams
-            _container.Resolve<IElementSourceProvider>().Dispose();
+            _container.Dispose();
         }
 
         [TestCase("amenity", "bar")]
@@ -38,7 +37,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             componentRoot.RunGame(TestHelper.BerlinTestFilePoint);
 
             // NOTE wait for tile loading ends before ask search engine
-            messageBus.AsObservable<TileLoadFinishMessage>().Take(1).Wait();
+            messageBus.AsObservable<TileLoadFinishMessage>().Take(1).Wait(TimeSpan.FromSeconds(10));
 
             var searchEngine = _container.Resolve<ISearchEngine>();
             var bbox = BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100);
@@ -46,7 +45,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             var bars = (!String.IsNullOrEmpty(value)
                 ? searchEngine.SearchByTag(key, value, bbox)
                 : searchEngine.SearchByText(key, bbox, MapConsts.MaxZoomLevel))
-                .ToArray().Wait();
+                .ToArray().Wait(TimeSpan.FromSeconds(10));
         
             // ASSERT
             Assert.IsNotNull(bars);

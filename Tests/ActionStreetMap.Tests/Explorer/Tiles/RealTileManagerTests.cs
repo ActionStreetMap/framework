@@ -4,7 +4,6 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Dependencies.Interception.Behaviors;
 using ActionStreetMap.Infrastructure.Primitives;
-using ActionStreetMap.Maps.Data;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Tiles
@@ -23,8 +22,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
         [TearDown]
         public void TearDown()
         {
-            // free resources: this class opens various file streams
-            _container.Resolve<IElementSourceProvider>().Dispose();
+            _container.Dispose();
         }
 
         [Test]
