@@ -12,6 +12,9 @@ namespace ActionStreetMap.Maps.Data
     /// <summary> Represents an abstract source of Element objects. </summary>
     public interface IElementSource : IDisposable
     {
+        /// <summary> Returns bounding box covered by element source. </summary>
+        BoundingBox BoundingBox { get; }
+
         /// <summary> Returns elements which are located in the corresponding bbox for given zoom level. </summary>
         IObservable<Element> Get(BoundingBox bbox, int zoomLevel);
     }
@@ -19,16 +22,13 @@ namespace ActionStreetMap.Maps.Data
     /// <summary> ASM's spatial index based element store implementation. </summary>
     internal sealed class ElementSource : IElementSource
     {
-        // these values are used by search
         internal readonly ISpatialIndex<uint> SpatialIndexTree;
         internal readonly KeyValueIndex KvIndex;
         internal readonly KeyValueStore KvStore;
         internal readonly KeyValueUsage KvUsage;
         internal readonly ElementStore ElementStore;
 
-        /// <summary>
-        ///     Creates instance of <see cref="ElementSource" /> from persistent storage.
-        /// </summary>
+        /// <summary> Creates instance of <see cref="ElementSource" /> from persistent storage. </summary>
         /// <param name="directory">Already resolved directory which contains all indecies.</param>
         /// <param name="fileService">File system service.</param>
         /// <param name="objectPool">ObjectPool.</param>
@@ -54,6 +54,12 @@ namespace ActionStreetMap.Maps.Data
             KvStore = keyValueStore;
             ElementStore = elementStore;
             SpatialIndexTree = spatialIndex;
+        }
+
+        /// <inheritdoc />
+        public BoundingBox BoundingBox
+        {
+            get { throw new NotImplementedException(); }
         }
 
         /// <inheritdoc />
