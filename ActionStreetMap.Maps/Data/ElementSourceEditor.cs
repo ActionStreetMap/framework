@@ -24,6 +24,7 @@ namespace ActionStreetMap.Maps.Data
     }
 
     /// <summary> Default implementation of <see cref="IElementSourceEditor"/>. </summary>
+    /// <remarks> Current implementation works only with <see cref="ElementSource"/>. </remarks>
     internal sealed class ElementSourceEditor : IElementSourceEditor
     {
         private ElementSource _elementSource;

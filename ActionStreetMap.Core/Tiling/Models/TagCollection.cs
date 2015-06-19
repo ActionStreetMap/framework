@@ -27,12 +27,13 @@ namespace ActionStreetMap.Core.Tiling.Models
         }
 
         /// <summary> Adds tag with given key and value to collection. </summary>
-        public void Add(string key, string value)
+        public TagCollection Add(string key, string value)
         {
             if (_isReadOnly) throw new InvalidOperationException(Strings.CannotAddTagCollection);
 
             _keys.Add(key);
             _values.Add(value);
+            return this;
         }
 
         /// <summary> Gets tag for given index. </summary>
