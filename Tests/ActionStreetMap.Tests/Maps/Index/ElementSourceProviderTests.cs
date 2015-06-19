@@ -52,6 +52,21 @@ namespace ActionStreetMap.Tests.Maps.Index
             Assert.AreEqual(2, _elementSourceProvider.Get(boundingBox).Count());
         }
 
+        [Test(Description = "Non readonly element sources should be first.")]
+        public void CanReturnNonReadOnlyFirst()
+        {
+            // ARRANGE
+            var boundingBox = CreateDefaultBoundingBox();
+            Mock<IElementSource> elementSource = new Mock<IElementSource>();
+            elementSource.Setup(e => e.BoundingBox).Returns(boundingBox);
+
+            // ACT
+            _elementSourceProvider.Add(elementSource.Object);
+
+            // ASSERT
+            Assert.IsFalse(_elementSourceProvider.Get(boundingBox).Wait().IsReadOnly);
+        }
+
         private BoundingBox CreateDefaultBoundingBox()
         {
             return new BoundingBox(TestHelper.TestMinPoint, TestHelper.TestMaxPoint);
