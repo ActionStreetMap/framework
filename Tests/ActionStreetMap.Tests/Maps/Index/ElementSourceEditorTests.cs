@@ -5,7 +5,6 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Data.Import;
-using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Entities;
 using NUnit.Framework;
 
@@ -15,7 +14,8 @@ namespace ActionStreetMap.Tests.Maps.Index
     public class ElementSourceEditorTests
     {
         private BoundingBox _boundingBox;
-        private ElementSource _elementSource;
+        private IElementSourceEditor _editor;
+        private IElementSource _elementSource;
 
         [SetUp]
         public void Setup()
@@ -28,26 +28,25 @@ namespace ActionStreetMap.Tests.Maps.Index
 
             _boundingBox = indexBuilder.BoundingBox;
 
-            _elementSource = new ElementSource(_boundingBox, indexBuilder.KvUsage,
+            _editor = new ElementSourceEditor();
+            _editor.ElementSource = _elementSource = new ElementSource(_boundingBox, indexBuilder.KvUsage,
                 indexBuilder.KvIndex, indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
         }
 
         [TearDown]
         public void TearDown()
         {
-            _elementSource.Dispose();
+            _editor.Dispose();
         }
 
         [Test]
-        public void CanInsertElementIntoElementSource()
+        public void CanAddElementIntoElementSource()
         {
             // ARRANGE
             var way = CreateWay();
-            var wayBoundingBox = GetBoundingBox(way);
 
             // ACT
-            var offset = _elementSource.ElementStore.Insert(way);
-            _elementSource.SpatialIndexTree.Insert(offset, wayBoundingBox);
+            _editor.Add(way);
 
             // ASSERT
             var results = _elementSource.Get(_boundingBox, MapConsts.MaxZoomLevel).ToArray().Wait();
@@ -91,14 +90,6 @@ namespace ActionStreetMap.Tests.Maps.Index
                 Coordinates = coordinates,
                 Tags = new Dictionary<string, string> {{"key1", "value1"}, {"key2", "value2"}}.ToTags()
             };
-        }
-
-        private BoundingBox GetBoundingBox(Way way)
-        {
-            var envelop = new Envelop();
-            foreach (var geoCoordinate in way.Coordinates)
-                envelop.Extend(geoCoordinate);
-            return new BoundingBox(envelop.MinPoint, envelop.MaxPoint);
         }
     }
 }

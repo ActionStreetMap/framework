@@ -1,12 +1,15 @@
 ﻿using System;
-using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Core;
 using ActionStreetMap.Maps.Entities;
 
 namespace ActionStreetMap.Maps.Data
 {
     /// <summary> Defines behavior of element source editor. </summary>
-    public interface IElementSourceEditor
+    public interface IElementSourceEditor: IDisposable
     {
+        /// <summary> Gets or sets elements source to edit; </summary>
+        IElementSource ElementSource { get; set; }
+
         /// <summary> Gets element from  element source by given id.</summary>
         Element Get(int elementId);
 
@@ -24,44 +27,48 @@ namespace ActionStreetMap.Maps.Data
     }
 
     /// <summary> Default implementation of <see cref="IElementSourceEditor"/>. </summary>
-    internal sealed class ElementSourceEditor : IElementSourceEditor, IDisposable
+    internal sealed class ElementSourceEditor : IElementSourceEditor
     {
-        private readonly IElementSourceProvider _elementSourceProvider;
-        private IElementSource _elementSource;
-
-        /// <summary> Creates instance of <see cref="ElementSourceEditor"/>. </summary>
-        /// <param name="elementSourceProvider">Element source provider. </param>
-        [Dependency]
-        public ElementSourceEditor(IElementSourceProvider elementSourceProvider)
-        {
-            _elementSourceProvider = elementSourceProvider;
-        }
+        private ElementSource _elementSource;
 
         #region IElementSourceEditor implementation
 
         /// <inheritdoc />
+        public IElementSource ElementSource
+        {
+            get { return _elementSource; }
+            set
+            {
+                _elementSource = value as ElementSource;
+                if (_elementSource == null)
+                    throw new NotSupportedException(Strings.UnsupportedElementSource);
+            }
+        }
+
+        /// <inheritdoc />
         public Element Get(int elementId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public void Add(Element element)
         {
-            EnsureElementSource();
-            throw new System.NotImplementedException();
+            var boundingBox = GetBoundingBox(element);
+            var offset = _elementSource.ElementStore.Insert(element);
+            _elementSource.SpatialIndexTree.Insert(offset, boundingBox);
         }
 
         /// <inheritdoc />
         public void Edit(Element element)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public void Delete(int elementId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
@@ -71,16 +78,28 @@ namespace ActionStreetMap.Maps.Data
 
         #endregion
 
-        private void EnsureElementSource()
+        private BoundingBox GetBoundingBox(Element element)
         {
-            if (_elementSource == null)
-                _elementSource = null; // TODO
+            var boundingBox = new BoundingBox(
+                new GeoCoordinate(double.MaxValue, double.MaxValue), 
+                new GeoCoordinate(double.MinValue, double.MinValue));
+
+            if (element is Way)
+                foreach (var geoCoordinate in ((Way)element).Coordinates)
+                    boundingBox += geoCoordinate;
+            else if (element is Node)
+                boundingBox += ((Node) element).Coordinate;
+            else
+                throw new NotSupportedException(Strings.UnsupportedElementType);
+
+            return boundingBox;
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
             Commit();
+            _elementSource.Dispose();
         }
     }
 }

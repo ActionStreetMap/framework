@@ -14,5 +14,8 @@
         public static string IndexBuildInMs = "Index is build in {0}ms";
 
         public static string InvalidZoomLevel = "Invalid zoom level.";
+
+        public static string UnsupportedElementSource = "Unsupported element source";
+        public static string UnsupportedElementType = "Unsupported element type";
     }
 }
