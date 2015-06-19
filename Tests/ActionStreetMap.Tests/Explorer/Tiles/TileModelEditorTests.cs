@@ -59,16 +59,44 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
             _tileEditor.AddBuilding(building);
 
             // ASSERT
-            _buildingModelBuilder.Verify(b => 
-                b.BuildArea(It.IsAny<Tile>(), It.IsAny<Rule>(), It.Is<Area>(w => w.Id == 0)), 
-                Times.Once(), "Building model builder is not called.");
+            AssertMocks(Times.Once(), Times.Once(), Times.Once(), Times.Never());
+        }
+
+        [Test (Description = "Cehcks whether additional logic is executed only once.")]
+        public void AddTwoBuildings()
+        {
+            // ARRANGE & ACT
+            _tileEditor.AddBuilding(CreateBuilding());
+
+            _elementSourceProvider.Setup(p => p.Get(It.IsAny<BoundingBox>()))
+                .Returns(Observable.Return(ReflectionUtils
+                    .GetFieldValue<IElementSource>(_tileEditor, "_currentElementSource")));
+
+            _tileEditor.AddBuilding(CreateBuilding());
+
+            // ASSERT
+            AssertMocks(Times.Exactly(2), Times.AtLeast(1), Times.Once(), Times.Never());
+        }
+
+        #region AssertHelpers
+
+        private void AssertMocks(Times buildingModelTimes, Times setElementSourceTimes, 
+            Times addElementSourceTimes, Times commitElementSource)
+        {
+            _buildingModelBuilder.Verify(b =>
+               b.BuildArea(It.IsAny<Tile>(), It.IsAny<Rule>(), It.IsAny<Area>()),
+               buildingModelTimes, "Building model builder is not called.");
 
             _elementSourceEditor.VerifySet(e => e.ElementSource = It.IsNotNull<IElementSource>(),
-                Times.Once, "Element source should be set.");
+                setElementSourceTimes, "Element source should be set.");
 
-            _elementSourceProvider.Verify(p => p.Add(It.IsNotNull<IElementSource>()), Times.Once,
-                "Element source should be added to element source provider.");
+            _elementSourceProvider.Verify(p => p.Add(It.IsNotNull<IElementSource>()), 
+                addElementSourceTimes, "Element source should be added to element source provider.");
+
+            _elementSourceEditor.Verify(e => e.Commit(), commitElementSource, "Commit: element source.");
         }
+
+        #endregion
 
         #region Helpers
 
@@ -76,7 +104,6 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
         {
             return new Building()
             {
-                Id = 0,
                 Footprint = new List<MapPoint>()
                 {
                     new MapPoint(0, 0),

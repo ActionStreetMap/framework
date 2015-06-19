@@ -84,7 +84,8 @@ namespace ActionStreetMap.Explorer.Tiling
         {
             EnsureElementSource(building.Footprint.First());
 
-            var way = CreateWayFromPoints(building.Footprint);
+            building.Id = _currentModelId++;
+            var way = CreateWayFromPoints(building.Id , building.Footprint);
             way.Tags = new TagCollection()
                 .Add("building", "yes") // TODO add correct tags
                 .AsReadOnly();
@@ -96,25 +97,23 @@ namespace ActionStreetMap.Explorer.Tiling
         private void EnsureElementSource(MapPoint point)
         {
             var boundingBox = _tileController.GetTile(point).BoundingBox;
-            var currentElementSource = _elementSourceProvider.Get(boundingBox)
-                .SingleOrDefault(e => e.IsReadOnly).Wait();
+            var elementSource = _elementSourceProvider.Get(boundingBox)
+                .SingleOrDefault(e => !e.IsReadOnly).Wait();
 
             // create in memory element source
-            if (currentElementSource == null)
+            if (elementSource == null)
             {
                 var indexBuilder = new InMemoryIndexBuilder(boundingBox, IndexSettings.CreateDefault(), 
                     _objectPool, Trace);
                 indexBuilder.Build();
 
-                currentElementSource = new ElementSource(indexBuilder) {IsReadOnly = false};
-                _elementSourceProvider.Add(currentElementSource);
+                elementSource = new ElementSource(indexBuilder) {IsReadOnly = false};
+                _elementSourceProvider.Add(elementSource);
             }
 
-            // commit changes for old element source
-            if (_currentElementSource != currentElementSource)
-                _elementSourceEditor.Commit();
+            CommitIfNecessary(elementSource);
 
-            _currentElementSource = currentElementSource;
+            _currentElementSource = elementSource;
             _elementSourceEditor.ElementSource = _currentElementSource;
         }
 
@@ -124,15 +123,22 @@ namespace ActionStreetMap.Explorer.Tiling
             way.Accept(new WayVisitor(_tileController.CurrentTile, _modelLoader, _objectPool));
         }
 
+        /// <summary> Commits changes for old element source. </summary>
+        private void CommitIfNecessary(IElementSource elementSource)
+        {
+            if (_currentElementSource != null && _currentElementSource != elementSource)
+                _elementSourceEditor.Commit();
+        }
+
         #region Helper methods
         
         /// <summary> Creates way from points plus adds id. </summary>
-        private Way CreateWayFromPoints(List<MapPoint> points)
+        private Way CreateWayFromPoints(long id, List<MapPoint> points)
         {
             var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
             return new Way()
             {
-                Id = _currentModelId++,
+                Id = id,
                 Coordinates = points.Select(p => GeoProjection.ToGeoCoordinate(nullPoint, p)).ToList()
             };
         }
