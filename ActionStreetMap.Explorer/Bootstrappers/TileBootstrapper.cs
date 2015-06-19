@@ -73,7 +73,11 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .Use<MeshTerrainBuilder>()
                 .SetConfig(tileConfig)
                 .Singleton());
-            
+
+            // editor
+            Container.Register(Component.For<IElementSourceEditor>().Use<ElementSourceEditor>().Singleton());
+            Container.Register(Component.For<ITileModelEditor>().Use<TileModelEditor>().Singleton());
+
             return true;
         }
     }

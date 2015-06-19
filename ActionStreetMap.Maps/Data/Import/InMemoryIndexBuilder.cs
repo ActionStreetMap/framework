@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using ActionStreetMap.Core;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Maps.Data.Spatial;
 using ActionStreetMap.Maps.Data.Storage;
@@ -10,17 +11,26 @@ namespace ActionStreetMap.Maps.Data.Import
 {
     internal class InMemoryIndexBuilder: IndexBuilder
     {
-        private readonly string _extension;
+        private readonly IReader _reader;
         private readonly Stream _sourceStream;
 
         internal KeyValueIndex KvIndex { get; private set; }
         internal KeyValueStore KvStore { get; private set; }
         internal KeyValueUsage KvUsage { get; private set; }
 
-        public InMemoryIndexBuilder(string extension, Stream sourceStream, IndexSettings settings, IObjectPool objectPool, ITrace trace)
+        public InMemoryIndexBuilder(BoundingBox boundingBox, IndexSettings settings, 
+            IObjectPool objectPool, ITrace trace)
             : base(settings, objectPool, trace)
         {
-            _extension = extension;
+            BoundingBox = boundingBox;
+            _reader = new EmptyReader();
+        }
+
+        public InMemoryIndexBuilder(string extension, Stream sourceStream, IndexSettings settings, 
+            IObjectPool objectPool, ITrace trace)
+            : base(settings, objectPool, trace)
+        {
+            _reader = GetReader(extension);
             _sourceStream = sourceStream;
         }
 
@@ -28,8 +38,6 @@ namespace ActionStreetMap.Maps.Data.Import
         {
             var sw = new Stopwatch();
             sw.Start();
-
-            var reader = GetReader(_extension);
 
             var kvUsageMemoryStream = new MemoryStream();
             KvUsage = new KeyValueUsage(kvUsageMemoryStream);
@@ -42,7 +50,7 @@ namespace ActionStreetMap.Maps.Data.Import
             Store = new ElementStore(KvStore, storeFile, ObjectPool);
             Tree = new RTree<uint>(65);
 
-            reader.Read(new ReaderContext
+            _reader.Read(new ReaderContext
             {
                 SourceStream = _sourceStream,
                 Builder = this,
@@ -62,6 +70,13 @@ namespace ActionStreetMap.Maps.Data.Import
             KvStore.Dispose();
             KvUsage.Dispose();
             base.Dispose(disposing);
+        }
+
+        private class EmptyReader : IReader
+        {
+            public void Read(ReaderContext context)
+            {
+            }
         }
     }
 }

@@ -32,8 +32,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             _boundingBox = indexBuilder.BoundingBox;
 
             _editor = new ElementSourceEditor();
-            _editor.ElementSource = _elementSource = new ElementSource(_boundingBox, indexBuilder.KvUsage,
-                indexBuilder.KvIndex, indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
+            _editor.ElementSource = _elementSource = new ElementSource(indexBuilder);
         }
 
         [TearDown]
@@ -43,7 +42,7 @@ namespace ActionStreetMap.Tests.Maps.Index
         }
 
         [Test]
-        public void CanAddElementIntoElementSource()
+        public void CanAddElement()
         {
             // ARRANGE
             var way = CreateWay();
@@ -58,7 +57,7 @@ namespace ActionStreetMap.Tests.Maps.Index
         }
 
         [Test]
-        public void CanEditElementInElementSource()
+        public void CanEditElement()
         {
             // ARRANGE
             var newKey = "some_new_key";
@@ -80,7 +79,7 @@ namespace ActionStreetMap.Tests.Maps.Index
         }
 
         [Test]
-        public void CanDeleteElementInElementSource()
+        public void CanDeleteElement()
         {
             // ARRANGE
             var way = GetAnyWay();

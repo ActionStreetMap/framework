@@ -173,9 +173,7 @@ namespace ActionStreetMap.Maps.Data
             var indexBuilder = new InMemoryIndexBuilder(_mapDataFormat, new MemoryStream(bytes), 
                 _settings, _objectPool, Trace);
             indexBuilder.Build();
-            var elementSource = new ElementSource(indexBuilder.BoundingBox, indexBuilder.KvUsage, 
-                indexBuilder.KvIndex, indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree);
-            return elementSource;
+            return new ElementSource(indexBuilder);
         }
 
         #endregion

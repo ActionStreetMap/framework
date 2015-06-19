@@ -16,6 +16,9 @@ namespace ActionStreetMap.Core.Tiling
     {
         /// <summary> Gets current tile. </summary>
         Tile CurrentTile { get; }
+
+        /// <summary> Gets tile for given point. Null if tile is not loaded. </summary>
+        Tile GetTile(MapPoint point);
         
         /// <summary> Gets or sets current render mode. </summary>
         RenderMode Mode { get; set; }
@@ -71,6 +74,21 @@ namespace ActionStreetMap.Core.Tiling
                 return (_renderMode == RenderMode.Scene ? _allSceneTiles : _allOverviewTiles)
                     [_currentTileIndex.Item1, _currentTileIndex.Item2];
             }
+        }
+
+        /// <inheritdoc />
+        public Tile GetTile(MapPoint point)
+        {
+            int i = Convert.ToInt32(point.X / _tileSize);
+            int j = Convert.ToInt32(point.Y / _tileSize);
+
+            if (_allSceneTiles.ContainsKey(i, j))
+                return _allSceneTiles[i, j];
+
+            if (_allOverviewTiles.ContainsKey(i, j))
+                return _allOverviewTiles[i, j];
+
+            return null;
         }
 
         /// <inheritdoc />

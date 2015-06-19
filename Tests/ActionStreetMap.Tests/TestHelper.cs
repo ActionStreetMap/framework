@@ -47,27 +47,27 @@ namespace ActionStreetMap.Tests
 
         public const string BerlinXmlData = @"..\..\..\..\Tests\TestAssets\Osm\berlin_xml_api.osm";
 
-        public static GameRunner GetGameRunner()
+        public static GameRunner GetGameRunner(bool bootstrap = true)
         {
-            return GetGameRunner(new Container());
+            return GetGameRunner(new Container(), bootstrap);
         }
 
-        public static GameRunner GetGameRunner(IContainer container)
+        public static GameRunner GetGameRunner(IContainer container, bool bootstrap = true)
         {
             var jsonConfigSection = GetJsonConfig(ConfigAppRootFile);
-            return GetGameRunner(container, jsonConfigSection);
+            return GetGameRunner(container, jsonConfigSection, bootstrap);
         }
 
-        public static GameRunner GetGameRunner(IContainer container, IConfigSection config)
+        public static GameRunner GetGameRunner(IContainer container, IConfigSection config, bool bootstrap = true)
         {
             // this three service should be registered before game runner is started
             container.Register(Component.For<ITrace>().Use<ConsoleTrace>().Singleton());
             container.Register(Component.For<IPathResolver>().Use<TestPathResolver>().Singleton());
             container.Register(Component.For<IMessageBus>().Use<MessageBus>().Singleton());
 
-            return new GameRunner(container, config)
-                .RegisterPlugin<TestBootstrapperPlugin>("test")
-                .Bootstrap();
+            var runner = new GameRunner(container, config)
+                .RegisterPlugin<TestBootstrapperPlugin>("test");
+            return bootstrap ? runner.Bootstrap() : runner;
         }
 
         public static JsonConfigSection GetJsonConfig(string configPath)

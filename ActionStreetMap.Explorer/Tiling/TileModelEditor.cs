@@ -5,8 +5,12 @@ using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utils;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Maps.Data;
+using ActionStreetMap.Maps.Data.Import;
 using ActionStreetMap.Maps.Visitors;
 using Way = ActionStreetMap.Maps.Entities.Way;
 
@@ -26,26 +30,37 @@ namespace ActionStreetMap.Explorer.Tiling
     }
 
     /// <summary> Default implementation of <see cref="ITileModelEditor"/>. </summary>
+    /// <remarks> Not thread safe. </remarks>
     internal sealed class TileModelEditor : ITileModelEditor
     {
         private readonly ITileController _tileController;
+        private readonly IElementSourceProvider _elementSourceProvider;
         private readonly IElementSourceEditor _elementSourceEditor;
         private readonly IModelLoader _modelLoader;
         private readonly IObjectPool _objectPool;
 
-        private long _lastId = 0;
+        private long _currentModelId = 0;
+        private IElementSource _currentElementSource;
+
+        /// <summary> Gets or sets trace. </summary>
+        [Dependency]
+        public ITrace Trace { get; set; }
 
         /// <summary> Creates instance of <see cref="TileModelEditor"/>. </summary>
         /// <param name="tileController">Tile controller. </param>
+        /// <param name="elementSourceProvider">Element source provider.</param>
         /// <param name="elementSourceEditor">Element source editor.</param>
         /// <param name="modelLoader">Model loader.</param>
         /// <param name="objectPool">Object pool.</param>
+        [Dependency]
         public TileModelEditor(ITileController tileController, 
+                               IElementSourceProvider elementSourceProvider,
                                IElementSourceEditor elementSourceEditor,
                                IModelLoader modelLoader,
                                IObjectPool objectPool)
         {
             _tileController = tileController;
+            _elementSourceProvider = elementSourceProvider;
             _elementSourceEditor = elementSourceEditor;
             _modelLoader = modelLoader;
             _objectPool = objectPool;
@@ -54,8 +69,8 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public long StartId
         {
-            get { return _lastId; }
-            set { _lastId = value; }
+            get { return _currentModelId; }
+            set { _currentModelId = value; }
         }
 
         /// <inheritdoc />
@@ -67,13 +82,35 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void AddBuilding(Building building)
         {
+            EnsureElementSource(building.Footprint.First());
+
             var way = CreateWayFromPoints(building.Footprint);
-            // TODO add correct tags
             way.Tags = new TagCollection()
+                .Add("building", "yes") // TODO add correct tags
                 .AsReadOnly();
-            // this add it to underlying store
             _elementSourceEditor.Add(way);
             LoadWay(way);
+        }
+
+        /// <summary> Ensures that the corresponding element source is loaded. </summary>
+        private void EnsureElementSource(MapPoint point)
+        {
+            var boundingBox = _tileController.GetTile(point).BoundingBox;
+            _currentElementSource = _elementSourceProvider.Get(boundingBox)
+                .SingleOrDefault(e => e.IsReadOnly).Wait();
+
+            // create in memory element source
+            if (_currentElementSource == null)
+            {
+                var indexBuilder = new InMemoryIndexBuilder(boundingBox, IndexSettings.CreateDefault(), 
+                    _objectPool, Trace);
+                indexBuilder.Build();
+
+                var currentElementSource = new ElementSource(indexBuilder) {IsReadOnly = false};
+                _elementSourceProvider.Add(currentElementSource);
+                _currentElementSource = currentElementSource;
+            }
+            _elementSourceEditor.ElementSource = _currentElementSource;
         }
 
         /// <summary> Visualizes way in scene. </summary>
@@ -90,7 +127,7 @@ namespace ActionStreetMap.Explorer.Tiling
             var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
             return new Way()
             {
-                Id = _lastId++,
+                Id = _currentModelId++,
                 Coordinates = points.Select(p => GeoProjection.ToGeoCoordinate(nullPoint, p)).ToList()
             };
         }

@@ -16,6 +16,9 @@ namespace ActionStreetMap.Maps.Data
         /// <summary> Returns bounding box covered by element source. </summary>
         BoundingBox BoundingBox { get; }
 
+        /// <summary> Gets true if element source is read only. </summary>
+        bool IsReadOnly { get; }
+
         /// <summary> Returns elements which are located in the corresponding bbox for given zoom level. </summary>
         IObservable<Element> Get(BoundingBox bbox, int zoomLevel);
     }
@@ -59,8 +62,19 @@ namespace ActionStreetMap.Maps.Data
             SpatialIndexTree = spatialIndex;
         }
 
+        /// <summary> Creates instance of <see cref="ElementSource"/>. from in memory index builder. </summary>
+        /// <param name="indexBuilder"></param>
+        internal ElementSource(InMemoryIndexBuilder indexBuilder) : 
+            this(indexBuilder.BoundingBox, indexBuilder.KvUsage, indexBuilder.KvIndex, 
+            indexBuilder.KvStore, indexBuilder.Store, indexBuilder.Tree)
+        {
+        }
+
         /// <inheritdoc />
         public BoundingBox BoundingBox { get; internal set; }
+
+        /// <inheritdoc />
+        public bool IsReadOnly { get; set; }
 
         /// <inheritdoc />
         public IObservable<Element> Get(BoundingBox bbox, int zoomLevel)

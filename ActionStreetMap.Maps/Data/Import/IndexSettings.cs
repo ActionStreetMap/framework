@@ -78,5 +78,25 @@ namespace ActionStreetMap.Maps.Data.Import
         }
 
         #endregion
+
+        /// <summary> Creates default index settings. </summary>
+        public static IndexSettings CreateDefault()
+        {
+            return new IndexSettings()
+            {
+                Spatial = new SpatialOptions()
+                {
+                    MaxEntries = 65,
+                    Exclude = new TagList(),
+                    Include = new TagList(),
+                    RemoveTags = new HashSet<string>()
+                },
+                Search = new SearchOptions()
+                {
+                    KvIndexCapacity = 1024,
+                    PrefixLength = 4
+                }
+            };
+        }
     }
 }

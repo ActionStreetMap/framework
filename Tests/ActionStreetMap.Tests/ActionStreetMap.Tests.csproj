@@ -53,6 +53,7 @@
     <Compile Include="..\..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
+    <Compile Include="Explorer\Tiles\TileModelEditorTests.cs" />
     <Compile Include="Explorer\Utils\GradientTests.cs" />
     <Compile Include="Core\Scene\GeometryUtilsTests.cs" />
     <Compile Include="Core\Tiling\TagCollectionTests.cs" />

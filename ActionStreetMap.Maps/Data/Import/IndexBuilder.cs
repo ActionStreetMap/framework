@@ -31,7 +31,7 @@ namespace ActionStreetMap.Maps.Data.Import
 
         internal RTree<uint> Tree { get; set; }
         internal ElementStore Store { get; set; }
-        internal BoundingBox BoundingBox { get; private set; }
+        internal BoundingBox BoundingBox { get; set; }
         protected IndexSettings Settings;
         protected IndexStatistic IndexStatistic;
 
