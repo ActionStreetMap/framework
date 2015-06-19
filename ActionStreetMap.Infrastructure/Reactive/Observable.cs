@@ -350,6 +350,19 @@ namespace ActionStreetMap.Infrastructure.Reactive
             });
         }
 
+        public static IObservable<List<T>> ToList<T>(this IObservable<T> source)
+        {
+            return Observable.Create<List<T>>(observer =>
+            {
+                var list = new List<T>();
+                return source.Subscribe(x => list.Add(x), observer.OnError, () =>
+                {
+                    observer.OnNext(list);
+                    observer.OnCompleted();
+                });
+            });
+        }
+
         public static IObservable<T> Do<T>(this IObservable<T> source, IObserver<T> observer)
         {
             return Do(source, observer.OnNext, observer.OnError, observer.OnCompleted);

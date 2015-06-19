@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ActionStreetMap.Core;
@@ -71,22 +72,20 @@ namespace ActionStreetMap.Maps.Data
             return Observable.Create<IElementSource>(observer =>
             {
                 Trace.Info(Category, "getting element sources for {0}", query.ToString());
-                int count = 0;
-                _tree.Search(query).ObserveOn(Scheduler.CurrentThread).Subscribe(node =>
+
+                // Non read only element source should be first as it may override
+                // some elements. Also search in tree should be fast
+                var nodes = _tree.Search(query).ToList().Wait()
+                    .OrderBy(e => e.ElementSource != null && !e.ElementSource.IsReadOnly);
+
+                foreach (var node in nodes)
                 {
-                    count++;
                     EnsureElementSourceIntoNode(node);
                     observer.OnNext(node.ElementSource);
-                }, () =>
-                {
-                    // something was found, no need to query remote server
-                    if (count != 0)
-                    {
-                        observer.OnCompleted();
-                        return;
-                    }
+                }
 
-                    // no local element sources are found, will query remote server
+                if (!nodes.Any())
+                {
                     var cacheFileName = query.ToString().Replace(",", "_") + CacheFileNameExtension;
                     var cacheFullPath = Path.Combine(_cachePath, cacheFileName);
                     GetRemoteElementSource(cacheFullPath, query).Subscribe(e =>
@@ -94,7 +93,10 @@ namespace ActionStreetMap.Maps.Data
                         observer.OnNext(e);
                         observer.OnCompleted();
                     });
-                });
+                }
+                else
+                    observer.OnCompleted();
+
                 return Disposable.Empty;
             });
         }
