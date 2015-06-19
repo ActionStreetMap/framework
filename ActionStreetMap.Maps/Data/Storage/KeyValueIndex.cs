@@ -4,6 +4,7 @@ using System.IO;
 
 namespace ActionStreetMap.Maps.Data.Storage
 {
+    /// <summary> Represents index for key-value store. </summary>
     internal sealed class KeyValueIndex
     {
         private readonly int _capacity;
@@ -12,6 +13,9 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         #region Constructors
 
+        /// <summary> Creates instance of <see cref="KeyValueIndex"/>. </summary>
+        /// <param name="capacity"> Bucket capacity. </param>
+        /// <param name="prefixLength"> Key prefix length. </param>
         public KeyValueIndex(int capacity, int prefixLength)
         {
             _capacity = capacity;
@@ -25,17 +29,14 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         #region Public members
 
+        /// <summary> Adds pair with given offset to index. </summary>
         public void Add(KeyValuePair<string, string> pair, uint offset)
         {
             var index = GetIndex(pair);
             _buckets[index] = offset;
         }
 
-        /// <summary>
-        ///     Gets offset for given pair.
-        /// </summary>
-        /// <param name="pair">Pair.</param>
-        /// <returns>Offset.</returns>
+        /// <summary> Gets offset for given pair. </summary>
         public uint GetOffset(KeyValuePair<string, string> pair)
         {
             var index = GetIndex(pair);
@@ -77,6 +78,7 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         #region Static members
 
+        /// <summary> Saves key value index to stream. </summary>
         public static void Save(KeyValueIndex index, Stream stream)
         {
             using (var writer = new BinaryWriter(stream))
@@ -90,6 +92,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             }
         }
 
+        /// <summary> Loads key value index from stream. </summary>
         public static KeyValueIndex Load(Stream stream)
         {
             using (var reader = new BinaryReader(stream))

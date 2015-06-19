@@ -9,6 +9,8 @@ using TagCollection = ActionStreetMap.Core.Tiling.Models.TagCollection;
 
 namespace ActionStreetMap.Maps.Data.Storage
 {
+    /// <summary> Implements element storage. </summary>
+    /// <remarks> Not thread safe. </remarks>
     internal sealed class ElementStore: IDisposable
     {
         private readonly KeyValueStore _keyValueStore;
@@ -21,7 +23,11 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         // deserialize specific
         private BinaryReader _reader;
-        
+
+        /// <summary> Creates instance of <see cref="ElementStore"/>. </summary>
+        /// <param name="keyValueStore"> Key value store. </param>
+        /// <param name="stream"> Stream to write. </param>
+        /// <param name="objectPool"> Object pool. </param>
         public ElementStore(KeyValueStore keyValueStore, Stream stream, IObjectPool objectPool)
         {
             _keyValueStore = keyValueStore;
@@ -32,8 +38,6 @@ namespace ActionStreetMap.Maps.Data.Storage
         #region Public methods
 
         /// <summary> Inserts element into store and returns offset. </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>Offset.</returns>
         public uint Insert(Element element)
         {
             // NOTE should be at correct position 
@@ -46,6 +50,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             return offset;
         }
 
+        /// <summary> Gets element by offset. </summary>
         public Element Get(uint offset)
         {
             // NOTE ElementStore is not thread-safe 
@@ -222,6 +227,7 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         #endregion
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _keyValueStore.Dispose();

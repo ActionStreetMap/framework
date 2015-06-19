@@ -4,26 +4,22 @@ using System.IO;
 
 namespace ActionStreetMap.Maps.Data.Storage
 {
-    /// <summary>
-    ///     Represents inverted index to search for elements which uses the corresponding key/value pair.
-    /// </summary>
+    /// <summary> Represents inverted index to search for elements which uses the corresponding key/value pair. </summary>
     internal class KeyValueUsage: IDisposable
     {
         private readonly Stream _stream;
 
         private uint _nextOffset;
 
+        /// <summary> Creates instance of <see cref="KeyValueUsage"/>. </summary>
+        /// <param name="stream">Stream.</param>
         public KeyValueUsage(Stream stream)
         {
             _stream = stream;
             _nextOffset = 2;
         }
 
-        /// <summary>
-        ///     Inserts new and update last reference to point to it
-        /// </summary>
-        /// <param name="previousEntryOffset"></param>
-        /// <param name="usageOffset"></param>
+        /// <summary> Inserts new and update last reference to point to it. </summary>
         public uint Insert(uint previousEntryOffset, uint usageOffset)
         {
             _stream.Seek(_nextOffset, SeekOrigin.Begin);
@@ -34,9 +30,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             return (uint)position;
         }
 
-        /// <summary>
-        ///     Gets element offsets which use given entry.
-        /// </summary>
+        /// <summary> Gets element offsets which use given entry. </summary>
         /// <param name="offset">Entry offset.</param>
         /// <returns>Element offset collection.</returns>
         public IEnumerable<uint> Get(uint offset)
@@ -71,6 +65,7 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         #endregion
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _stream.Dispose();

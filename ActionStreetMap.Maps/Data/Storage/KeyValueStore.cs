@@ -4,9 +4,7 @@ using System.IO;
 
 namespace ActionStreetMap.Maps.Data.Storage
 {
-    /// <summary>
-    ///     Stores key value pairs.
-    /// </summary>
+    /// <summary> Stores key value pairs. </summary>
     internal sealed class KeyValueStore: IDisposable
     {
         private readonly Stream _stream;
@@ -19,6 +17,10 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         private uint _nextOffset;
 
+        /// <summary> Creates instance of <see cref="KeyValueStore"/>. </summary>
+        /// <param name="index">Index.</param>
+        /// <param name="usage">Usage.</param>
+        /// <param name="stream">Stream.</param>
         public KeyValueStore(KeyValueIndex index, KeyValueUsage usage, Stream stream)
         {
             _prefixLength = index.PrefixLength;
@@ -37,9 +39,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             stream.Seek(_nextOffset, SeekOrigin.Begin);
         }
 
-        /// <summary>
-        ///     Inserts pair into store if it's not there
-        /// </summary>
+        /// <summary> Inserts pair into store if it's not there. </summary>
         /// <param name="pair">Pair.</param>
         /// <param name="usageOffset">Element usage offset.</param>
         /// <returns>Pair offset.</returns>
@@ -55,9 +55,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             return InsertNext(pair, offset, usageOffset);
         }
 
-        /// <summary>
-        ///     Searches pairs by given query.
-        /// </summary>
+        /// <summary> Searches pairs by given query. </summary>
         /// <param name="query">Query.</param>
         /// <returns>List of matched pairs.</returns>
         public IEnumerable<KeyValuePair<string,string>> Search(KeyValuePair<string, string> query)
@@ -66,9 +64,7 @@ namespace ActionStreetMap.Maps.Data.Storage
                 yield return new KeyValuePair<string, string>(result.Key, result.Value);
         }
 
-        /// <summary>
-        ///     Gets pair by given offset.
-        /// </summary>
+        /// <summary> Gets pair by given offset. </summary>
         /// <param name="offset">Offset.</param>
         /// <returns>Pair.</returns>
         public KeyValuePair<string, string> Get(uint offset)
@@ -77,9 +73,7 @@ namespace ActionStreetMap.Maps.Data.Storage
             return new KeyValuePair<string, string>(entry.Key, entry.Value);
         }
 
-        /// <summary>
-        ///     Gets usage offset by given key value offset.
-        /// </summary>
+        /// <summary> Gets usage offset by given key value offset. </summary>
         /// <param name="offset">Offset.</param>
         /// <returns>Usage offset.</returns>
         public uint GetUsage(uint offset)
@@ -257,6 +251,7 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         #endregion
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _usage.Dispose();
