@@ -114,7 +114,7 @@
     <Compile Include="TestPathResolver.cs" />
     <Compile Include="TestBootstrapperPlugin.cs" />
     <Compile Include="Core\Tiling\TileManagerTests.cs" />
-    <Compile Include="Explorer\Tiles\RealTileManagerTests.cs" />
+    <Compile Include="Explorer\Tiles\TileControllerTests.cs" />
     <Compile Include="WebFileSystemService.cs" />
   </ItemGroup>
   <ItemGroup>

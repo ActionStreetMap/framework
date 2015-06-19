@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace ActionStreetMap.Tests.Explorer.Tiles
 {
     [TestFixture]
-    public class RealTileManagerTests
+    public class TileControllerTests
     {
         private Container _container;
 
