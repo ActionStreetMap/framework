@@ -10,9 +10,6 @@ namespace ActionStreetMap.Maps.Data
         /// <summary> Gets or sets elements source to edit; </summary>
         IElementSource ElementSource { get; set; }
 
-        /// <summary> Gets element from  element source by given id.</summary>
-        Element Get(int elementId);
-
         /// <summary> Adds element to element source. </summary>
         void Add(Element element);
 
@@ -20,7 +17,7 @@ namespace ActionStreetMap.Maps.Data
         void Edit(Element element);
 
         /// <summary> Deletes element with given id from element source. </summary>
-        void Delete(int elementId);
+        void Delete(long elementId);
 
         /// <summary> Commits changes. </summary>
         void Commit();
@@ -46,12 +43,6 @@ namespace ActionStreetMap.Maps.Data
         }
 
         /// <inheritdoc />
-        public Element Get(int elementId)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
         public void Add(Element element)
         {
             var boundingBox = GetBoundingBox(element);
@@ -62,11 +53,12 @@ namespace ActionStreetMap.Maps.Data
         /// <inheritdoc />
         public void Edit(Element element)
         {
+            // TODO delete original and insert new
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public void Delete(int elementId)
+        public void Delete(long elementId)
         {
             throw new NotImplementedException();
         }

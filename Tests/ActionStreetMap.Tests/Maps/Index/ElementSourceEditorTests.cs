@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Data.Import;
-using ActionStreetMap.Maps.Entities;
 using NUnit.Framework;
+using Way = ActionStreetMap.Maps.Entities.Way;
 
 namespace ActionStreetMap.Tests.Maps.Index
 {
@@ -22,9 +23,11 @@ namespace ActionStreetMap.Tests.Maps.Index
         {
             var indexSettings = TestHelper.GetIndexSettings();
             var fileSystemService = TestHelper.GetFileSystemService();
-            var indexBuilder = new InMemoryIndexBuilder("xml", fileSystemService.ReadStream(TestHelper.BerlinXmlData),
+            var rawDataStream = fileSystemService.ReadStream(TestHelper.BerlinXmlData);
+            var indexBuilder = new InMemoryIndexBuilder("xml", rawDataStream,
                 indexSettings, TestHelper.GetObjectPool(), new ConsoleTrace());
             indexBuilder.Build();
+            rawDataStream.Dispose();
 
             _boundingBox = indexBuilder.BoundingBox;
 
@@ -54,6 +57,44 @@ namespace ActionStreetMap.Tests.Maps.Index
             AssertWays(way, result);
         }
 
+        [Test]
+        public void CanEditElementInElementSource()
+        {
+            // ARRANGE
+            var newKey = "some_new_key";
+            var newValue = "some_new_value";
+            var way = GetAnyWay();
+            
+            // tags manipulations
+            var tags = new TagCollection(way.Tags.Count + 1);
+            CopyTags(way.Tags, tags);
+            tags.Add(newKey, newValue);
+            way.Tags = tags.AsReadOnly();
+
+            // ACT
+            _editor.Edit(way);
+
+            // ASSERT
+            var result = GetWayById(way.Id);
+            AssertWays(way, result);
+        }
+
+        [Test]
+        public void CanDeleteElementInElementSource()
+        {
+            // ARRANGE
+            var way = GetAnyWay();
+
+            // ACT
+            _editor.Delete(way.Id);
+
+            // ASSERT
+            var result = GetWayById(way.Id);
+            Assert.IsNull(result);
+        }
+
+        #region Assertion helpers
+
         private void AssertWays(Way expected, Way result)
         {
             Assert.AreEqual(expected.Id, result.Id);
@@ -71,6 +112,28 @@ namespace ActionStreetMap.Tests.Maps.Index
         {
             Assert.IsTrue(Math.Abs(expected.Latitude - result.Latitude) < MapConsts.GeoCoordinateAccuracy);
             Assert.IsTrue(Math.Abs(expected.Longitude - result.Longitude) < MapConsts.GeoCoordinateAccuracy);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private void CopyTags(TagCollection source, TagCollection destination)
+        {
+            foreach (var tag in source)
+                destination.Add(tag.Key, tag.Value);
+        }
+
+        private Way GetAnyWay()
+        {
+            var elements = _elementSource.Get(_boundingBox, MapConsts.MaxZoomLevel).ToArray().Wait();
+            return elements.OfType<Way>().First();
+        }
+
+        private Way GetWayById(long id)
+        {
+            var results = _elementSource.Get(_boundingBox, MapConsts.MaxZoomLevel).ToArray().Wait();
+            return results.OfType<Way>().SingleOrDefault(w => w.Id == id);
         }
 
         private Way CreateWay()
@@ -91,5 +154,7 @@ namespace ActionStreetMap.Tests.Maps.Index
                 Tags = new Dictionary<string, string> {{"key1", "value1"}, {"key2", "value2"}}.ToTags()
             };
         }
+
+        #endregion
     }
 }
