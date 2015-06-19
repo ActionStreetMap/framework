@@ -21,16 +21,11 @@ namespace ActionStreetMap.Tests.Maps.Index
         [SetUp]
         public void Setup()
         {
-            var indexSettings = TestHelper.GetIndexSettings();
-            var fileSystemService = TestHelper.GetFileSystemService();
-            var rawDataStream = fileSystemService.ReadStream(TestHelper.BerlinXmlData);
-            var indexBuilder = new InMemoryIndexBuilder("xml", rawDataStream,
-                indexSettings, TestHelper.GetObjectPool(), new ConsoleTrace());
+            _boundingBox = BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 500);
+            var indexBuilder = new InMemoryIndexBuilder(_boundingBox,
+                TestHelper.GetIndexSettings(), TestHelper.GetObjectPool(), new ConsoleTrace());
             indexBuilder.Build();
-            rawDataStream.Dispose();
-
-            _boundingBox = indexBuilder.BoundingBox;
-
+            
             _editor = new ElementSourceEditor();
             _editor.ElementSource = _elementSource = new ElementSource(indexBuilder);
         }
