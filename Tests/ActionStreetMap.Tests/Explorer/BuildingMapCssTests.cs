@@ -24,7 +24,7 @@ namespace ActionStreetMap.Tests.Explorer
             {
                 Id = 1,
                 Points = new List<GeoCoordinate>(),
-                Tags = tags.Complete()
+                Tags = tags.AsReadOnly()
             };
 
             // ACT

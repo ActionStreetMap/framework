@@ -17,7 +17,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             tags.Add("key2", "value2");
             tags.Add("key0", "value0");
 
-            tags = tags.Complete();
+            tags = tags.AsReadOnly();
 
             // ASSERT
             Assert.IsTrue(tags.IndexOf("key0") >= 0);
@@ -43,8 +43,8 @@ namespace ActionStreetMap.Tests.Core.Tiling
             tags2.Add("key2", "value2");
             tags2.Add("key4", "value4");
 
-            tags1 = tags1.Complete();
-            tags2 = tags2.Complete();
+            tags1 = tags1.AsReadOnly();
+            tags2 = tags2.AsReadOnly();
 
             // ACT
             tags1.Merge(tags2);

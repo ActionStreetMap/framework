@@ -7,7 +7,7 @@ namespace ActionStreetMap.Core.Tiling.Models
     /// <summary> Represents tag collection. </summary>
     public class TagCollection : IEnumerable<KeyValuePair<string, string>>
     {
-        private bool _isCompleted;
+        private bool _isReadOnly;
 
         private readonly List<string> _keys;
         private readonly List<string> _values;
@@ -29,7 +29,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Adds tag with given key and value to collection. </summary>
         public void Add(string key, string value)
         {
-            if (_isCompleted) throw new InvalidOperationException(Strings.CannotAddTagCollection);
+            if (_isReadOnly) throw new InvalidOperationException(Strings.CannotAddTagCollection);
 
             _keys.Add(key);
             _values.Add(value);
@@ -50,19 +50,19 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Gets key by given index. </summary>
         public string KeyAt(int index) { return _keys[index]; }
 
-        /// <summary>  Gets index of given key. </summary>
+        /// <summary> Gets index of given key. </summary>
         public int IndexOf(string key)
         {
-            if (!_isCompleted)
+            if (!_isReadOnly)
                 throw new InvalidOperationException(Strings.CannotSearchTagCollection);
             
             return _keys.BinarySearch(key, StringComparer.OrdinalIgnoreCase); 
         }
 
         /// <summary> Makes collection readonly. </summary>
-        public TagCollection Complete()
+        public TagCollection AsReadOnly()
         {
-            if (_isCompleted) return this;
+            if (_isReadOnly) return this;
 
             if (_keys.Count < _keys.Capacity)
             {
@@ -70,7 +70,7 @@ namespace ActionStreetMap.Core.Tiling.Models
                 _values.TrimExcess();
             }
             SortLists();
-            _isCompleted = true;
+            _isReadOnly = true;
 
             return this;
         }
@@ -109,12 +109,12 @@ namespace ActionStreetMap.Core.Tiling.Models
                 var index = IndexOf(kv.Key);
                 if (index < 0)
                 {
-                    _isCompleted = false;
+                    _isReadOnly = false;
                     Add(kv.Key, kv.Value);
                     // NOTE that's not nice: O(N^3) complexity, hopefully we don't expect big collections here
                     // So, can use this approach instead to allocate extra memory
                     SortLists();
-                    _isCompleted = true;
+                    _isReadOnly = true;
                 }
             }
         }

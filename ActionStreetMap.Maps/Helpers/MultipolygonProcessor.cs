@@ -178,7 +178,7 @@ namespace ActionStreetMap.Maps.Helpers
                     areas.Add(new Area()
                     {
                         Id = outer.Id,
-                        Tags = tags.Complete(),
+                        Tags = tags.AsReadOnly(),
                         Points = outer.Coordinates,
                         Holes = holes
                     });
