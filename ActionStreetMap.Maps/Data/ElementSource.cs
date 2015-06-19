@@ -45,6 +45,7 @@ namespace ActionStreetMap.Maps.Data
             KvStore = new KeyValueStore(KvIndex, KvUsage, fileService.ReadStream(string.Format(MapConsts.KeyValueStorePathFormat, directory)));
             ElementStore = new ElementStore(KvStore, fileService.ReadStream(string.Format(MapConsts.ElementStorePathFormat, directory)), objectPool);
             SpatialIndexTree = SpatialIndex.Load(fileService.ReadStream(string.Format(MapConsts.SpatialIndexPathFormat, directory)));
+            IsReadOnly = true;
         }
 
         /// <summary>
@@ -60,6 +61,7 @@ namespace ActionStreetMap.Maps.Data
             KvStore = keyValueStore;
             ElementStore = elementStore;
             SpatialIndexTree = spatialIndex;
+            IsReadOnly = true;
         }
 
         /// <summary> Creates instance of <see cref="ElementSource"/>. from in memory index builder. </summary>

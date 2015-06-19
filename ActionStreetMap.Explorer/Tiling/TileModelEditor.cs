@@ -96,20 +96,25 @@ namespace ActionStreetMap.Explorer.Tiling
         private void EnsureElementSource(MapPoint point)
         {
             var boundingBox = _tileController.GetTile(point).BoundingBox;
-            _currentElementSource = _elementSourceProvider.Get(boundingBox)
+            var currentElementSource = _elementSourceProvider.Get(boundingBox)
                 .SingleOrDefault(e => e.IsReadOnly).Wait();
 
             // create in memory element source
-            if (_currentElementSource == null)
+            if (currentElementSource == null)
             {
                 var indexBuilder = new InMemoryIndexBuilder(boundingBox, IndexSettings.CreateDefault(), 
                     _objectPool, Trace);
                 indexBuilder.Build();
 
-                var currentElementSource = new ElementSource(indexBuilder) {IsReadOnly = false};
+                currentElementSource = new ElementSource(indexBuilder) {IsReadOnly = false};
                 _elementSourceProvider.Add(currentElementSource);
-                _currentElementSource = currentElementSource;
             }
+
+            // commit changes for old element source
+            if (_currentElementSource != currentElementSource)
+                _elementSourceEditor.Commit();
+
+            _currentElementSource = currentElementSource;
             _elementSourceEditor.ElementSource = _currentElementSource;
         }
 
