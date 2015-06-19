@@ -109,6 +109,7 @@
     <Compile Include="Geometry\Utils\TriangleUtils.cs" />
     <Compile Include="Scene\Terrain\MeshTerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />
+    <Compile Include="Tiling\TileModelEditor.cs" />
     <Compile Include="Utils\GradientUtils.cs" />
     <Compile Include="Utils\ObjectPoolExtensions.cs" />
     <Compile Include="Utils\RandomHelper.cs" />
