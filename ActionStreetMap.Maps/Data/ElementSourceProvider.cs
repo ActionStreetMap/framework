@@ -76,7 +76,7 @@ namespace ActionStreetMap.Maps.Data
                 // Non read only element source should be first as it may override
                 // some elements. Also search in tree should be fast
                 var nodes = _tree.Search(query).ToList().Wait()
-                    .OrderBy(e => e.ElementSource != null && !e.ElementSource.IsReadOnly);
+                    .OrderByDescending(e => e.ElementSource != null && !e.ElementSource.IsReadOnly);
 
                 foreach (var node in nodes)
                 {

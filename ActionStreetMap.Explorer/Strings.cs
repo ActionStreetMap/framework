@@ -27,5 +27,11 @@
         public static string GeocodeCommand = "Performs reverse geocoding.";
 
         #endregion
+
+        #region Consts
+
+        public static string DeletedElementTagKey = "deleted";
+
+        #endregion
     }
 }

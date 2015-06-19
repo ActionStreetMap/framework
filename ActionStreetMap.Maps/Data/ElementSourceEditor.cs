@@ -54,14 +54,13 @@ namespace ActionStreetMap.Maps.Data
         /// <inheritdoc />
         public void Edit(Element element)
         {
-            // TODO delete original and insert new
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         /// <inheritdoc />
         public void Delete(long elementId)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         /// <inheritdoc />

@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Tiles
 {
-    [TestFixture]
+    [TestFixture (Description = "This test class uses mocks.")]
     public class TileModelEditorTests
     {
         private ITileModelEditor _tileEditor;

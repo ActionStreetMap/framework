@@ -59,12 +59,13 @@ namespace ActionStreetMap.Tests.Maps.Index
             var boundingBox = CreateDefaultBoundingBox();
             Mock<IElementSource> elementSource = new Mock<IElementSource>();
             elementSource.Setup(e => e.BoundingBox).Returns(boundingBox);
+            elementSource.Setup(e => e.IsReadOnly).Returns(false);
 
             // ACT
             _elementSourceProvider.Add(elementSource.Object);
 
             // ASSERT
-            Assert.IsFalse(_elementSourceProvider.Get(boundingBox).Wait().IsReadOnly);
+            Assert.IsFalse(_elementSourceProvider.Get(boundingBox).First().Wait().IsReadOnly);
         }
 
         private BoundingBox CreateDefaultBoundingBox()
