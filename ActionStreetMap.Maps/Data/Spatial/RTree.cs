@@ -9,9 +9,7 @@ using ActionStreetMap.Maps.Helpers;
 
 namespace ActionStreetMap.Maps.Data.Spatial
 {
-    /// <summary>
-    ///     Implements R-Tree data structure which is used to index spatial data.
-    /// </summary>
+    /// <summary> Implements R-Tree data structure which is used to index spatial data. </summary>
     /// <typeparam name="T">Data type which is associated with envelop.</typeparam>
     internal class RTree<T> : ISpatialIndex<T>
 	{
@@ -54,14 +52,22 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
         #region ISpatialIndex implementation. The same as optimized version.
 
+        /// <inheritdoc />
         public IObservable<T> Search(BoundingBox query)
         {
             return Search(query, MapConsts.MaxZoomLevel);
         }
 
+        /// <inheritdoc />
         public IObservable<T> Search(BoundingBox query, int zoomLevel)
         {
             return Search(new Envelop(query.MinPoint, query.MaxPoint), zoomLevel);
+        }
+
+        /// <inheritdoc />
+        public void Insert(T data, BoundingBox boundingBox)
+        {
+            Insert(data, new Envelop(boundingBox));
         }
 
         private IObservable<T> Search(IEnvelop envelope, int zoomLevel)
@@ -124,12 +130,12 @@ namespace ActionStreetMap.Maps.Data.Spatial
             }
         }
 
-        public void Insert(RTreeNode item)
+        private void Insert(RTreeNode item)
 		{
 			Insert(item, Root.Height - 1);
 		}
 
-		public void Insert(T data, IEnvelop bounds)
+		internal void Insert(T data, IEnvelop bounds)
 		{
             Insert(new RTreeNode(data, bounds));
 		}

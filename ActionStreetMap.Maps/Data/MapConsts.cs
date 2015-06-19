@@ -4,6 +4,8 @@
     {
         public const uint ScaleFactor = 10000000;
 
+        public const double GeoCoordinateAccuracy = 0.0000001;
+
         #region Zooming
 
         /// <summary> Max supported zoom level. </summary>

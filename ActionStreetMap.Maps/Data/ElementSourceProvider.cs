@@ -107,7 +107,7 @@ namespace ActionStreetMap.Maps.Data
             _tree.Insert(new TreeNode()
             {
                 ElementSource = elementSource
-            }, new Envelop(elementSource.BoundingBox));
+            }, elementSource.BoundingBox);
         }
 
         #region Element source manipulation logic
@@ -159,7 +159,7 @@ namespace ActionStreetMap.Maps.Data
                         {
                             Path = path,
                             ElementSource = elementSource
-                        }, new Envelop(query));
+                        }, query);
                     }
                     return Observable.Return(elementSource);
                 });
@@ -198,7 +198,7 @@ namespace ActionStreetMap.Maps.Data
             {
                 Path = Path.GetDirectoryName(headerPath)
             };
-            _tree.Insert(node, new Envelop(boundingBox.MinPoint, boundingBox.MaxPoint));
+            _tree.Insert(node, boundingBox);
         }
 
         #endregion

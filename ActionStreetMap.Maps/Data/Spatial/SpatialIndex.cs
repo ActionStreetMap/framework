@@ -32,6 +32,12 @@ namespace ActionStreetMap.Maps.Data.Spatial
             return Search(new Envelop(query.MinPoint, query.MaxPoint), zoomLevel);
         }
 
+        /// <inheritdoc />
+        public void Insert(uint data, BoundingBox boundingBox)
+        {
+            throw new System.NotSupportedException();
+        }
+
         private IObservable<uint> Search(IEnvelop envelope, int zoomLevel)
         {
             var minMargin = ZoomHelper.GetMinMargin(zoomLevel);

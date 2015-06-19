@@ -17,5 +17,10 @@ namespace ActionStreetMap.Maps.Data.Spatial
         /// <param name="zoomLevel">Zoom level.</param>
         /// <returns>Observable results.</returns>
         IObservable<T> Search(BoundingBox query, int zoomLevel);
+
+        /// <summary> Performs insertion into tree. </summary>
+        /// <param name="data">Data to insert. </param>
+        /// <param name="boundingBox">Bounding box of data.</param>
+        void Insert(T data, BoundingBox boundingBox);
     }
 }
