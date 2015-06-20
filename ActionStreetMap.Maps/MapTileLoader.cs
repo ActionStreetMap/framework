@@ -54,18 +54,19 @@ namespace ActionStreetMap.Maps
             // prepare tile
             tile.Accept(tile, _modelLoader);
 
-            // NOTE all elements sources and their elements are processed on the same thread
-            var mainTask = _elementSourceProvider.Get(tile.BoundingBox);
-            mainTask.Subscribe(elementSource =>
-                elementSource.Get(boundingBox, zoomLevel)
-                .Subscribe(element => element.Accept(filterElementVisitor)));
+            var subject = new Subject<Unit>();
+            _elementSourceProvider
+                .Get(tile.BoundingBox)
+                .SelectMany(e => e.Get(boundingBox, zoomLevel))
+                .ObserveOn(Scheduler.ThreadPool)
+                .Subscribe(element => element.Accept(filterElementVisitor),
+                    () =>
+                    {
+                        tile.Canvas.Accept(tile, _modelLoader);
+                        subject.OnCompleted();
+                    });
 
-            return mainTask.ContinueWith(() =>
-            {
-                // complete tile
-                tile.Canvas.Accept(tile, _modelLoader);
-                return Observable.Empty<Unit>();
-            }, Scheduler.CurrentThread);
+             return subject;
         }
     }
 }
