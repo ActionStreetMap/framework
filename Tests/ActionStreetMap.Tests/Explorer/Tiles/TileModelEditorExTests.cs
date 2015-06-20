@@ -4,6 +4,7 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -54,7 +55,18 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
         [Test]
         public void CanDeleteBuilding()
         {
-            throw new NotImplementedException();
+            // ARRANGE
+            var testBuilding = GetSomeBuildingFromTestData();
+            var rectangle = GetMapRectangleFromWay(testBuilding);
+
+            // ACT
+            _tileEditor.DeleteBuilding(testBuilding.Id, rectangle);
+
+            // ASSERT
+            var buildings = GetElementById(testBuilding.Id).ToList();
+            Assert.AreEqual(2, buildings.Count());
+            Assert.IsTrue(buildings[0].Tags
+                .ContainsKey(ActionStreetMap.Maps.Strings.DeletedElementTagKey));
         }
 
         #region Helpers
@@ -67,6 +79,24 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
 
             return elementSources.SelectMany(es => es.Get(boundingBox, MapConsts.MaxZoomLevel)
                 .ToArray().Wait().Where(e => e.Id == id));
+        }
+
+        private Way GetSomeBuildingFromTestData()
+        {
+            var boundingBox = _tileController.CurrentTile.BoundingBox;
+
+            var elementSources = _elementSourceProvider.Get(boundingBox).ToList().Wait();
+
+            return elementSources.SelectMany(es => es.Get(boundingBox, MapConsts.MaxZoomLevel)
+                .ToArray().Wait().Where(e => e.Tags.ContainsKey("building")).OfType<Way>()).First();
+        }
+
+        private MapRectangle GetMapRectangleFromWay(Way way)
+        {
+            var relativeNullPoint = _tileController.CurrentTile.RelativeNullPoint;
+            var somePoint = GeoProjection.ToMapCoordinate(relativeNullPoint, way.Coordinates[0]);
+            // NOTE change this code if it does matter
+            return new MapRectangle(somePoint.X, somePoint.Y, 10, 10);
         }
 
         private Building CreateBuilding()

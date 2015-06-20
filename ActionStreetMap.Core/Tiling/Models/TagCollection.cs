@@ -26,6 +26,18 @@ namespace ActionStreetMap.Core.Tiling.Models
             _values = new List<string>();
         }
 
+        /// <summary> Checks whether key exists. </summary>
+        public bool ContainsKey(string key)
+        {
+            return _keys.Contains(key);
+        }
+
+        /// <summary> Checks whether value exists. </summary>
+        public bool ContainsValue(string value)
+        {
+            return _values.Contains(value);
+        }
+
         /// <summary> Adds tag with given key and value to collection. </summary>
         public TagCollection Add(string key, string value)
         {
