@@ -119,8 +119,10 @@ namespace ActionStreetMap.Explorer.Tiling
             // create in memory element source
             if (elementSource == null)
             {
-                var indexBuilder = new InMemoryIndexBuilder(boundingBox, IndexSettings.CreateDefault(), 
-                    _objectPool, Trace);
+                // NOTE use bounding box which fits whole world
+                var indexBuilder = new InMemoryIndexBuilder(new BoundingBox(
+                    new GeoCoordinate(-90, -180), new GeoCoordinate(90, 180)), 
+                        IndexSettings.CreateDefault(), _objectPool, Trace);
                 indexBuilder.Build();
 
                 elementSource = new ElementSource(indexBuilder) {IsReadOnly = false};

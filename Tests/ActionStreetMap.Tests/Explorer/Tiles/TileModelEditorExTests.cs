@@ -52,7 +52,7 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
         }
 
         [Test]
-        public void CanEditBuilding()
+        public void CanDeleteBuilding()
         {
             throw new NotImplementedException();
         }

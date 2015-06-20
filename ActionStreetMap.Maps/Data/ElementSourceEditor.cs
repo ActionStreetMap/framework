@@ -79,6 +79,7 @@ namespace ActionStreetMap.Maps.Data
                 var elementInStore = _elementSource.ElementStore.Get(offset);
                 if (elementInStore.Id == elementId)
                 {
+                    // NOTE so far, element is deleted only from spatial tree
                     _elementSource.SpatialIndexTree.Remove(offset, GetBoundingBox(elementInStore));
                     break;
                 }

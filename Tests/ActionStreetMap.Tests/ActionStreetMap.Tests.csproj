@@ -99,7 +99,6 @@
     <Compile Include="Maps\Index\KeyValueStoreTests.cs" />
     <Compile Include="Maps\Index\KeyValueUsageTests.cs" />
     <Compile Include="Maps\Index\SearchEngineTests.cs" />
-    <Compile Include="Maps\Index\Utils.cs" />
     <Compile Include="Maps\LocationInfoTests.cs" />
     <Compile Include="Maps\MultipolygonProcessorTests.cs" />
     <Compile Include="Maps\TestModelLoader.cs" />
