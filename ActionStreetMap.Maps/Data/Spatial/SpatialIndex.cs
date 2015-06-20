@@ -38,6 +38,11 @@ namespace ActionStreetMap.Maps.Data.Spatial
             throw new System.NotSupportedException();
         }
 
+        public void Remove(uint data, BoundingBox boundingBox)
+        {
+            throw new System.NotSupportedException();
+        }
+
         private IObservable<uint> Search(IEnvelop envelope, int zoomLevel)
         {
             var minMargin = ZoomHelper.GetMinMargin(zoomLevel);

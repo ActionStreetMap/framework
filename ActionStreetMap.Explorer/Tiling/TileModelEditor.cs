@@ -27,6 +27,9 @@ namespace ActionStreetMap.Explorer.Tiling
 
         /// <summary> Adds building to current scene. </summary>
         void AddBuilding(Building building);
+
+        /// <summary> Delets building with given id from element source covered by given map rectangle. </summary>
+        void DeleteBuilding(long id, MapRectangle rectangle);
     }
 
     /// <summary> Default implementation of <see cref="ITileModelEditor"/>. </summary>
@@ -91,6 +94,19 @@ namespace ActionStreetMap.Explorer.Tiling
                 .AsReadOnly();
             _elementSourceEditor.Add(way);
             LoadWay(way);
+        }
+
+        /// <inheritdoc />
+        public void DeleteBuilding(long id, MapRectangle rectangle)
+        {
+            EnsureElementSource(rectangle.BottomLeft);
+            
+            var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
+            var boundingBox = new BoundingBox(
+                GeoProjection.ToGeoCoordinate(nullPoint, rectangle.BottomLeft),
+                GeoProjection.ToGeoCoordinate(nullPoint, rectangle.TopRight));
+            
+            _elementSourceEditor.Delete<Way>(id, boundingBox);
         }
 
         /// <summary> Ensures that the corresponding element source is loaded. </summary>

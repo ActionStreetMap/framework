@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Entities;
+using Node = ActionStreetMap.Maps.Entities.Node;
+using Way = ActionStreetMap.Maps.Entities.Way;
 
 namespace ActionStreetMap.Maps.Data
 {
@@ -16,8 +21,8 @@ namespace ActionStreetMap.Maps.Data
         /// <summary> Edits element in element source. </summary>
         void Edit(Element element);
 
-        /// <summary> Deletes element with given id from element source. </summary>
-        void Delete(long elementId);
+        /// <summary> Deletes element with given id from element source covered by given bounding box. </summary>
+        void Delete<T>(long elementId, BoundingBox bbox) where T : Element;
 
         /// <summary> Commits changes. </summary>
         void Commit();
@@ -58,9 +63,28 @@ namespace ActionStreetMap.Maps.Data
         }
 
         /// <inheritdoc />
-        public void Delete(long elementId)
+        public void Delete<T>(long elementId, BoundingBox bbox) where T : Element
         {
-            throw new NotSupportedException();
+            var element = CreateElementOfType(typeof (T), bbox);
+            element.Id = elementId;
+            element.Tags = new TagCollection()
+                .Add(Strings.DeletedElementTagKey, String.Empty)
+                .AsReadOnly();
+
+            var offsets = _elementSource.SpatialIndexTree
+                .Search(bbox).ToArray().Wait();
+
+            foreach (var offset in offsets)
+            {
+                var elementInStore = _elementSource.ElementStore.Get(offset);
+                if (elementInStore.Id == elementId)
+                {
+                    _elementSource.SpatialIndexTree.Remove(offset, GetBoundingBox(elementInStore));
+                    break;
+                }
+            }
+
+            Add(element);
         }
 
         /// <inheritdoc />
@@ -69,6 +93,17 @@ namespace ActionStreetMap.Maps.Data
         }
 
         #endregion
+
+        private Element CreateElementOfType(Type type, BoundingBox bbox)
+        {
+            if (type == typeof (Node))
+                return new Node() { Coordinate = bbox.MinPoint };
+
+            if (type == typeof(Way))
+                return new Way() { Coordinates = new List<GeoCoordinate>() { bbox.MinPoint, bbox.MaxPoint} };
+
+            throw new NotSupportedException(Strings.UnsupportedElementType);
+        }
 
         private BoundingBox GetBoundingBox(Element element)
         {

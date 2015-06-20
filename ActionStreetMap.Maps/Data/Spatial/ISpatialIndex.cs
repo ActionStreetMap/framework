@@ -22,5 +22,10 @@ namespace ActionStreetMap.Maps.Data.Spatial
         /// <param name="data">Data to insert. </param>
         /// <param name="boundingBox">Bounding box of data.</param>
         void Insert(T data, BoundingBox boundingBox);
+
+        /// <summary> Removes data from the tree. </summary>
+        /// <param name="data">Data to remove. </param>
+        /// <param name="boundingBox">Bounding box of data.</param>
+        void Remove(T data, BoundingBox boundingBox);
     }
 }

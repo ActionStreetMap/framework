@@ -17,5 +17,7 @@
 
         public static string UnsupportedElementSource = "Unsupported element source";
         public static string UnsupportedElementType = "Unsupported element type";
+
+        public static string DeletedElementTagKey = "deleted";
     }
 }

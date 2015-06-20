@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Data.Import;
@@ -51,40 +50,21 @@ namespace ActionStreetMap.Tests.Maps.Index
             AssertWays(way, result);
         }
 
-        [Test]
-        public void CanEditElement()
-        {
-            // ARRANGE
-            var newKey = "some_new_key";
-            var newValue = "some_new_value";
-            var way = GetAnyWay();
-            
-            // tags manipulations
-            var tags = new TagCollection(way.Tags.Count + 1);
-            CopyTags(way.Tags, tags);
-            tags.Add(newKey, newValue);
-            way.Tags = tags.AsReadOnly();
 
-            // ACT
-            _editor.Edit(way);
-
-            // ASSERT
-            var result = GetWayById(way.Id);
-            AssertWays(way, result);
-        }
-
-        [Test]
+        [Test (Description = "We're expecting two elements with the same id but one with special tag. ")]
         public void CanDeleteElement()
         {
             // ARRANGE
-            var way = GetAnyWay();
+            var way = CreateWay();
+            _editor.Add(way);
 
             // ACT
-            _editor.Delete(way.Id);
+            _editor.Delete<Way>(way.Id, new BoundingBox(way.Coordinates[0], way.Coordinates[1]));
 
             // ASSERT
             var result = GetWayById(way.Id);
-            Assert.IsNull(result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result[0].Tags.Count(t => t.Key == ActionStreetMap.Maps.Strings.DeletedElementTagKey));
         }
 
         #region Assertion helpers
@@ -112,22 +92,10 @@ namespace ActionStreetMap.Tests.Maps.Index
 
         #region Helpers
 
-        private void CopyTags(TagCollection source, TagCollection destination)
-        {
-            foreach (var tag in source)
-                destination.Add(tag.Key, tag.Value);
-        }
-
-        private Way GetAnyWay()
-        {
-            var elements = _elementSource.Get(_boundingBox, MapConsts.MaxZoomLevel).ToArray().Wait();
-            return elements.OfType<Way>().First();
-        }
-
-        private Way GetWayById(long id)
+        private List<Way> GetWayById(long id)
         {
             var results = _elementSource.Get(_boundingBox, MapConsts.MaxZoomLevel).ToArray().Wait();
-            return results.OfType<Way>().SingleOrDefault(w => w.Id == id);
+            return results.OfType<Way>().Where(w => w.Id == id).ToList();
         }
 
         private Way CreateWay()

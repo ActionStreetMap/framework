@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -70,6 +71,14 @@ namespace ActionStreetMap.Maps.Data.Spatial
             Insert(data, new Envelop(boundingBox));
         }
 
+        /// <inheritdoc />
+        public void Remove(T data, BoundingBox boundingBox)
+        {
+            Remove(data, new Envelop(boundingBox));
+        }
+
+        #endregion
+
         private IObservable<T> Search(IEnvelop envelope, int zoomLevel)
         {
             var minMargin = ZoomHelper.GetMinMargin(zoomLevel);
@@ -109,7 +118,76 @@ namespace ActionStreetMap.Maps.Data.Spatial
             });
         }
 
-        #endregion
+        private void Remove(T item, Envelop envelope)
+        {
+            var node = Root;
+            var itemEnvelope = envelope;
+
+            var path = new Stack<RTreeNode>();
+            var indexes = new Stack<int>();
+
+            var i = 0;
+            var goingUp = false;
+            RTreeNode parent = null;
+
+            // depth-first iterative tree traversal
+            while (node != null || path.Count > 0)
+            {
+                if (node == null)
+                {
+                    // go up
+                    node = path.TryPop();
+                    parent = path.TryPeek();
+                    i = indexes.TryPop();
+
+                    goingUp = true;
+                }
+
+                if (node != null && node.IsLeaf)
+                {
+                    // check current node
+                    var index = node.Children.FindIndex(n => Comparer.Equals(item, n.Data));
+
+                    if (index != -1)
+                    {
+                        // item found, remove the item and condense tree upwards
+                        node.Children.RemoveAt(index);
+                        path.Push(node);
+                        CondenseNodes(path.ToArray());
+
+                        return;
+                    }
+                }
+
+                if (!goingUp && !node.IsLeaf && node.Envelope.Contains(itemEnvelope))
+                {
+                    // go down
+                    path.Push(node);
+                    indexes.Push(i);
+                    i = 0;
+                    parent = node;
+                    node = node.Children[0];
+
+                }
+                else if (parent != null)
+                {
+                    i++;
+                    if (i == parent.Children.Count)
+                    {
+                        // end of list; will go up
+                        node = null;
+                    }
+                    else
+                    {
+                        // go right
+                        node = parent.Children[i];
+                        goingUp = false;
+                    }
+
+                }
+                else node = null; // nothing found
+            }
+        }
 
         private static void Collect(RTreeNode node, long minMargin, IObserver<T> observer)
         {
@@ -309,6 +387,30 @@ namespace ActionStreetMap.Maps.Data.Spatial
 			return index;
 		}
 
+        private void CondenseNodes(IList<RTreeNode> path)
+        {
+            // go through the path, removing empty nodes and updating bboxes
+            for (var i = path.Count - 1; i >= 0; i--)
+            {
+                if (path[i].Children.Count == 0)
+                {
+                    if (i == 0)
+                    {
+                        Clear();
+                    }
+                    else
+                    {
+                        var siblings = path[i - 1].Children;
+                        siblings.Remove(path[i]);
+                    }
+                }
+                else
+                {
+                    RefreshEnvelope(path[i]);
+                }
+            }
+        }
+
 		// calculate node's bbox from bboxes of its children
         private static void RefreshEnvelope(RTreeNode node)
 		{
@@ -382,6 +484,11 @@ namespace ActionStreetMap.Maps.Data.Spatial
 
 			return margin;
 		}
+
+        public void Clear()
+        {
+            Root = new RTreeNode { IsLeaf = true, Height = 1 };
+        }
 
         internal class RTreeNode
         {
