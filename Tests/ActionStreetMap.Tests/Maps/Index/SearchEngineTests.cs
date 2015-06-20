@@ -33,11 +33,11 @@ namespace ActionStreetMap.Tests.Maps.Index
         {
             // ARRANGE
             var componentRoot = TestHelper.GetGameRunner(_container);
-            var messageBus = _container.Resolve<IMessageBus>();
+           // var messageBus = _container.Resolve<IMessageBus>();
             componentRoot.RunGame(TestHelper.BerlinTestFilePoint);
 
             // NOTE wait for tile loading ends before ask search engine
-            messageBus.AsObservable<TileLoadFinishMessage>().Take(1).Wait(TimeSpan.FromSeconds(10));
+            //messageBus.AsObservable<TileLoadFinishMessage>().Take(1).Wait(TimeSpan.FromSeconds(10));
 
             var searchEngine = _container.Resolve<ISearchEngine>();
             var bbox = BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100);
