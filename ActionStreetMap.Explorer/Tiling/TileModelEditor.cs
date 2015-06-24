@@ -13,6 +13,7 @@ using ActionStreetMap.Maps.Data;
 using ActionStreetMap.Maps.Data.Import;
 using ActionStreetMap.Maps.Visitors;
 using Way = ActionStreetMap.Maps.Entities.Way;
+using Node = ActionStreetMap.Maps.Entities.Node;
 
 namespace ActionStreetMap.Explorer.Tiling
 {
@@ -25,11 +26,24 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <summary> Save all changes. </summary>
         void Commit();
 
+        #region Model manipulations
+
         /// <summary> Adds building to current scene. </summary>
         void AddBuilding(Building building);
-
-        /// <summary> Delets building with given id from element source covered by given map rectangle. </summary>
+        /// <summary> Deletes building with given id from element source covered by given map rectangle. </summary>
         void DeleteBuilding(long id, MapRectangle rectangle);
+
+        /// <summary> Adds barrier to current scene. </summary>
+        void AddBarrier(Barrier barrier);
+        /// <summary> Deletes barrier with given id from element source covered by given map rectangle. </summary>
+        void DeleteBarrier(long id, MapRectangle rectangle);
+
+        /// <summary> Adds building to current scene. </summary>
+        void AddTree(Tree tree);
+        /// <summary> Deletes tree with given id from element source. </summary>
+        void DeleteTree(long id, MapPoint point);
+
+        #endregion
     }
 
     /// <summary> Default implementation of <see cref="ITileModelEditor"/>. </summary>
@@ -69,6 +83,8 @@ namespace ActionStreetMap.Explorer.Tiling
             _objectPool = objectPool;
         }
 
+        #region ITileModelEditor implementation
+
         /// <inheritdoc />
         public long StartId
         {
@@ -85,15 +101,10 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void AddBuilding(Building building)
         {
-            EnsureElementSource(building.Footprint.First());
-
             building.Id = _currentModelId++;
-            var way = CreateWayFromPoints(building.Id , building.Footprint);
-            way.Tags = new TagCollection()
-                .Add("building", "yes") // TODO add correct tags
-                .AsReadOnly();
-            _elementSourceEditor.Add(way);
-            LoadWay(way);
+            AddWayModel(building.Id, building.Footprint, new TagCollection()
+                .Add("building", "yes")
+                .AsReadOnly());
         }
 
         /// <inheritdoc />
@@ -108,6 +119,38 @@ namespace ActionStreetMap.Explorer.Tiling
             
             _elementSourceEditor.Delete<Way>(id, boundingBox);
         }
+
+        /// <inheritdoc />
+        public void AddBarrier(Barrier barrier)
+        {
+            barrier.Id = _currentModelId++;
+            AddWayModel(barrier.Id, barrier.Footprint, new TagCollection()
+                .Add("barrier", "yes")
+                .AsReadOnly());
+        }
+
+        /// <inheritdoc />
+        public void DeleteBarrier(long id, MapRectangle rectangle)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public void AddTree(Tree tree)
+        {
+            tree.Id = _currentModelId++;
+            AddNodeModel(tree.Id, tree.Point, new TagCollection()
+                .Add("natural", "tree")
+                .AsReadOnly());
+        }
+
+        /// <inheritdoc />
+        public void DeleteTree(long id, MapPoint point)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
 
         /// <summary> Ensures that the corresponding element source is loaded. </summary>
         private void EnsureElementSource(MapPoint point)
@@ -135,10 +178,38 @@ namespace ActionStreetMap.Explorer.Tiling
             _elementSourceEditor.ElementSource = _currentElementSource;
         }
 
-        /// <summary> Visualizes way in scene. </summary>
-        private void LoadWay(Way way)
+        /// <summary> Adds way model to element source and scene. </summary>
+        private void AddWayModel(long id, List<MapPoint> footprint, TagCollection tags)
         {
+            EnsureElementSource(footprint.First());
+            var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
+
+            var way = new Way()
+            {
+                Id = id,
+                Tags = tags,
+                Coordinates = footprint.Select(p => GeoProjection.ToGeoCoordinate(nullPoint, p)).ToList()
+            };
+            
+            _elementSourceEditor.Add(way);
             way.Accept(new WayVisitor(_tileController.CurrentTile, _modelLoader, _objectPool));
+        }
+
+        /// <summary> Adds node model to to element source and scene. </summary>
+        private void AddNodeModel(long id, MapPoint point, TagCollection tags)
+        {
+            EnsureElementSource(point);
+            var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
+
+            var node = new Node()
+            {
+                Id = id,
+                Tags = tags,
+                Coordinate = GeoProjection.ToGeoCoordinate(nullPoint, point)
+            };
+
+            _elementSourceEditor.Add(node);
+            node.Accept(new NodeVisitor(_tileController.CurrentTile, _modelLoader, _objectPool));
         }
 
         /// <summary> Commits changes for old element source. </summary>
@@ -147,20 +218,5 @@ namespace ActionStreetMap.Explorer.Tiling
             if (_currentElementSource != null && _currentElementSource != elementSource)
                 _elementSourceEditor.Commit();
         }
-
-        #region Helper methods
-        
-        /// <summary> Creates way from points plus adds id. </summary>
-        private Way CreateWayFromPoints(long id, List<MapPoint> points)
-        {
-            var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
-            return new Way()
-            {
-                Id = id,
-                Coordinates = points.Select(p => GeoProjection.ToGeoCoordinate(nullPoint, p)).ToList()
-            };
-        }
-
-        #endregion
     }
 }
