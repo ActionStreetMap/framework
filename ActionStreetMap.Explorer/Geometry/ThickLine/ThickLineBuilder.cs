@@ -67,10 +67,10 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         /// <summary> Builds line. </summary>
         public virtual void Build(MapRectangle rectangle, List<LineElement> elements, Action<MeshData> builder)
         {
-            var lineElements = _objectPool.NewList<LineElement>(8);
-            ThickLineUtils.GetLineElementsInTile(rectangle.BottomLeft,
-                rectangle.TopRight, elements, lineElements, _objectPool);
-            var elementsCount = lineElements.Count;
+            //var lineElements = _objectPool.NewList<LineElement>(8);
+            /*ThickLineUtils.GetLineElementsInTile(rectangle.BottomLeft,
+                rectangle.TopRight, elements, lineElements, _objectPool);*/
+            var elementsCount = elements.Count;
 
             // TODO сurrent implementation of GetLineElementsInTile skip segment if its
             // points are located outside given rectangle
@@ -78,13 +78,13 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
 
             for (var i = 0; i < elementsCount; i++)
             {
-                _currentElement = lineElements[i];
-                _nextElement = i == elementsCount - 1 ? null : lineElements[i + 1];
-                ProcessLine(lineElements);
+                _currentElement = elements[i];
+                _nextElement = i == elementsCount - 1 ? null : elements[i + 1];
+                ProcessLine(elements);
             }
 
             builder(Data);
-            _objectPool.StoreList(lineElements);
+            //_objectPool.StoreList(elements);
         }
 
         #region Segment processing

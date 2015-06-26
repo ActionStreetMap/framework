@@ -23,6 +23,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 return null;
             }
 
+            if (tile.Registry.Contains(way.Id)) return null;
+
             var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(way));
             var materialKey = rule.GetMaterialKey();
             var gradientKey = rule.GetFillColor();
@@ -49,6 +51,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             ObjectPool.StoreList(lines);
             ObjectPool.StoreList(points);
+
+            tile.Registry.RegisterGlobal(way.Id);
 
             return gameObjectWrapper;
         }

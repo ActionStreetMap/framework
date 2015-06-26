@@ -105,7 +105,6 @@
     <Compile Include="Geometry\ThickLine\ThickLineBuilder.cs" />
     <Compile Include="Geometry\ThickLine\ThickLineHelper.cs" />
     <Compile Include="Geometry\ThickLine\ThickLineSegment.cs" />
-    <Compile Include="Geometry\ThickLine\ThickLineUtils.cs" />
     <Compile Include="Geometry\Utils\TriangleUtils.cs" />
     <Compile Include="Scene\Terrain\MeshTerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />
