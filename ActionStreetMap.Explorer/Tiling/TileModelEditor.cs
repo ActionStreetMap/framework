@@ -56,7 +56,7 @@ namespace ActionStreetMap.Explorer.Tiling
         private readonly IModelLoader _modelLoader;
         private readonly IObjectPool _objectPool;
 
-        private long _currentModelId = 0;
+        private long _currentModelId;
         private IElementSource _currentElementSource;
 
         /// <summary> Gets or sets trace. </summary>
@@ -110,14 +110,7 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void DeleteBuilding(long id, MapRectangle rectangle)
         {
-            EnsureElementSource(rectangle.BottomLeft);
-            
-            var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
-            var boundingBox = new BoundingBox(
-                GeoProjection.ToGeoCoordinate(nullPoint, rectangle.BottomLeft),
-                GeoProjection.ToGeoCoordinate(nullPoint, rectangle.TopRight));
-            
-            _elementSourceEditor.Delete<Way>(id, boundingBox);
+            DeleteElement(id, rectangle);
         }
 
         /// <inheritdoc />
@@ -132,7 +125,7 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void DeleteBarrier(long id, MapRectangle rectangle)
         {
-            throw new System.NotImplementedException();
+            DeleteElement(id, rectangle);
         }
 
         /// <inheritdoc />
@@ -147,7 +140,7 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void DeleteTree(long id, MapPoint point)
         {
-            throw new System.NotImplementedException();
+            DeleteElement(id, new MapRectangle(point.X, point.Y, 0, 0));
         }
 
         #endregion
@@ -210,6 +203,19 @@ namespace ActionStreetMap.Explorer.Tiling
 
             _elementSourceEditor.Add(node);
             node.Accept(new NodeVisitor(_tileController.CurrentTile, _modelLoader, _objectPool));
+        }
+
+        /// <summary> Deletes way from element source. </summary>
+        private void DeleteElement(long id, MapRectangle rectangle)
+        {
+            EnsureElementSource(rectangle.BottomLeft);
+
+            var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
+            var boundingBox = new BoundingBox(
+                GeoProjection.ToGeoCoordinate(nullPoint, rectangle.BottomLeft),
+                GeoProjection.ToGeoCoordinate(nullPoint, rectangle.TopRight));
+
+            _elementSourceEditor.Delete<Way>(id, boundingBox);
         }
 
         /// <summary> Commits changes for old element source. </summary>

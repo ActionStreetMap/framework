@@ -140,6 +140,7 @@ namespace ActionStreetMap.Explorer.Tiling
         {
             if (rule.IsSkipped())
             {
+                tile.Registry.RegisterGlobal(model.Id);
 #if DEBUG
                 // Performance optimization: do not create in release
                 _gameObjectFactory.CreateNew(String.Format("skip {0}", model), tile.GameObject);
