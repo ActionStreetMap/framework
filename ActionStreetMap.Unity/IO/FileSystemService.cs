@@ -128,13 +128,15 @@ namespace ActionStreetMap.Unity.IO
         private string GetTextSync(string resolvedPath)
         {
             // NOTE this method should NOT be called from MainThread.
-             return Observable.Start(() => Resources.Load<TextAsset>(resolvedPath).text, Scheduler.MainThread).Wait();
+             return Observable.Start(() => Resources.Load<TextAsset>(resolvedPath).text, Scheduler.MainThread)
+                 .Wait(TimeSpan.FromSeconds(15));
         }
 
         private byte[] GetBytesSync(string resolvedPath)
         {
             // NOTE this method should NOT be called from MainThread.
-            return Observable.Start(() => Resources.Load<TextAsset>(resolvedPath).bytes, Scheduler.MainThread).Wait();
+            return Observable.Start(() => Resources.Load<TextAsset>(resolvedPath).bytes, Scheduler.MainThread)
+                .Wait(TimeSpan.FromSeconds(15));
         }
 #endif
     }

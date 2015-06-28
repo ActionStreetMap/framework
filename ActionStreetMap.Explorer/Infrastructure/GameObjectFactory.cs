@@ -20,12 +20,12 @@ namespace ActionStreetMap.Explorer.Infrastructure
             var go = CreateNew(name);
             if (go.IsEmpty)
             {
-                Scheduler.MainThread.Schedule(() =>
+                Observable.Start(() =>
                 {
                     go.AddComponent(new GameObject());
                     if (go is UnityGameObject)
                         (go as UnityGameObject).SetParent(parent);
-                });
+                }, Scheduler.MainThread);
             }
             else
                 go.Parent = parent;

@@ -60,12 +60,12 @@ namespace ActionStreetMap.Explorer.Infrastructure
         {
             set
             {
-                Scheduler.MainThread.Schedule(() =>
+                Observable.Start(() =>
                 {
                     if (IsEmpty)
                         throw new InvalidOperationException("Propery setter: parent cannot be set for empty object: " + Name);
                     (_gameObject as GameObject).transform.parent = value.GetComponent<GameObject>().transform;
-                });
+                }, Scheduler.MainThread);
             }
         }
 

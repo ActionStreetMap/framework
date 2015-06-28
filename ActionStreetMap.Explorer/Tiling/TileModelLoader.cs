@@ -53,7 +53,8 @@ namespace ActionStreetMap.Explorer.Tiling
         {
             tile.GameObject = _gameObjectFactory.CreateNew(
                 String.Format("tile_{0}", tile.RenderMode.ToString().ToLower()));
-            Scheduler.MainThread.Schedule(() => tile.GameObject.AddComponent(new GameObject()));
+            Observable.Start((() => tile.GameObject.AddComponent(new GameObject())), 
+                Scheduler.MainThread);
         }
 
         /// <inheritdoc />
@@ -125,7 +126,7 @@ namespace ActionStreetMap.Explorer.Tiling
         {
             var behaviourTypes = rule.GetModelBehaviours(_behaviourProvider);
             if (gameObject != null && !gameObject.IsBehaviourAttached && behaviourTypes.Any())
-                Scheduler.MainThread.Schedule(() =>
+                Observable.Start(() =>
                 {
                     foreach (var behaviourType in behaviourTypes)
                     {
@@ -133,7 +134,7 @@ namespace ActionStreetMap.Explorer.Tiling
                         if (behaviour != null)
                             behaviour.Apply(gameObject, model);
                     }
-                });
+                }, Scheduler.MainThread);
         }
 
         private bool ShouldUseBuilder(Tile tile, Rule rule, Model model)

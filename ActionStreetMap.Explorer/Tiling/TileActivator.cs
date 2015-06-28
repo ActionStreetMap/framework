@@ -21,14 +21,14 @@ namespace ActionStreetMap.Explorer.Tiling
         public void Activate(Tile tile)
         {
             Trace.Debug(LogTag, "activate tile: {0}", tile.MapCenter.ToString());
-            Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, true));
+            Observable.Start(() => ProcessWithChildren(tile, true), Scheduler.MainThread);
         }
 
         /// <inheritdoc />
         public void Deactivate(Tile tile)
         {
             Trace.Debug(LogTag, "deactivate tile: {0}", tile.MapCenter.ToString());
-            Scheduler.MainThread.Schedule(() => ProcessWithChildren(tile, false));
+            Observable.Start(() => ProcessWithChildren(tile, false), Scheduler.MainThread);
         }
 
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Tiling
         {
             Trace.Debug(LogTag, "destroy tile: {0}", tile.MapCenter.ToString());
             tile.Registry.Dispose();
-            Scheduler.MainThread.Schedule(() => DestroyWithChildren(tile));
+            Observable.Start(() => DestroyWithChildren(tile), Scheduler.MainThread);
         }
 
         /// <summary> Destroys tile using UnityEngine.Object.Destroy. </summary>

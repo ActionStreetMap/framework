@@ -109,7 +109,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             meshData.GenerateObjectData(out vertices, out triangles, out colors);
             ObjectPool.RecycleMeshData(meshData);
 
-            Scheduler.MainThread.Schedule(() =>
+            Observable.Start(() =>
             {
                 var gameObject = meshData.GameObject.AddComponent(new GameObject());
                 var mesh = new Mesh();
@@ -135,7 +135,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 gameObject.isStatic = true;
                 gameObject.transform.parent = parent.GetComponent<GameObject>().transform;
-            });
+            }, Scheduler.MainThread);
         }
 
         /// <summary> Returns name of game object. </summary>

@@ -35,7 +35,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var minHeight = rule.GetMinHeight();
             mapPoint.Elevation = ElevationProvider.GetElevation(mapPoint);
 
-            Scheduler.MainThread.Schedule(() => BuildObject(tile, gameObjectWrapper, rule, rect, mapPoint, minHeight));
+            Observable.Start(() => BuildObject(tile, gameObjectWrapper, rule, rect, mapPoint, minHeight),
+                Scheduler.MainThread);
 
             return gameObjectWrapper;
         }

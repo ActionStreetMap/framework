@@ -150,8 +150,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             _objectPool.RecycleMeshData(meshData);
 
-            Scheduler.MainThread.Schedule(() => BuildObject(cellGameObject, canvas, rule,
-                meshData, vertices, triangles, colors));
+            Observable.Start(() => BuildObject(cellGameObject, canvas, rule,
+                meshData, vertices, triangles, colors), Scheduler.MainThread);
         }
 
         #region Water layer
@@ -225,7 +225,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var vs = waterVertices.ToArray();
                 var ts = waterTriangles.ToArray();
                 var cs = waterColors.ToArray();
-                Scheduler.MainThread.Schedule(() => BuildWaterObject(rule, meshData, vs, ts, cs));
+                Observable.Start(() => BuildWaterObject(rule, meshData, vs, ts, cs), Scheduler.MainThread);
             }
         }
 
