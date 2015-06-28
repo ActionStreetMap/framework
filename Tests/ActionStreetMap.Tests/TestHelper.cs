@@ -64,6 +64,7 @@ namespace ActionStreetMap.Tests
             container.Register(Component.For<ITrace>().Use<ConsoleTrace>().Singleton());
             container.Register(Component.For<IPathResolver>().Use<TestPathResolver>().Singleton());
             container.Register(Component.For<IMessageBus>().Use<MessageBus>().Singleton());
+            container.Register(Component.For<IFileSystemService>().Use<FileSystemService>().Singleton());
 
             var runner = new GameRunner(container, config)
                 .RegisterPlugin<TestBootstrapperPlugin>("test");

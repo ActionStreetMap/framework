@@ -28,7 +28,6 @@ namespace ActionStreetMap.Explorer
         public GameRunner(IContainer container, IConfigSection config)
         {
             _container = container;
-            _container.Register(Component.For<IFileSystemService>().Use<FileSystemService>().Singleton());
             _container.RegisterInstance<IConfigSection>(config);
 
             // register bootstrappers
