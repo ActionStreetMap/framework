@@ -9,7 +9,6 @@ using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Helpers;
 using NUnit.Framework;
 using UnityEngine;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Maps.Data;
 using Canvas = ActionStreetMap.Core.Tiling.Models.Canvas;
 
@@ -393,6 +392,51 @@ namespace ActionStreetMap.Tests.Core.MapCss
         private ActionStreetMap.Core.Unity.Color32 GetOriginalColorTypeObject(Color32 color)
         {
             return new ActionStreetMap.Core.Unity.Color32(color.r, color.g, color.b, color.a);
-        }      
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CanGetListFromDeclaration(bool canUseExprTree)
+        {
+            // ARRANGE
+            var stylesheet = MapCssHelper.GetStylesheetFromContent(
+                "area[building] { behaviours:test1,test2; non-important:test}", canUseExprTree);
+            var building = MapCssHelper.GetArea(new Dictionary<string, string>()
+            {
+                {"building", "commercial"},
+            }.ToTags());
+            var rule = stylesheet.GetModelRule(building, MapConsts.MaxZoomLevel);
+
+            // ACT
+            var behaviours = rule.EvaluateList<string>("behaviours");
+
+            // ASSERT
+            var list = behaviours.ToList();
+            Assert.AreEqual(2, list.Count);
+            Assert.AreEqual("test1", list[0]);
+            Assert.AreEqual("test2", list[1]);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CanUseSingleValueInList(bool canUseExprTree)
+        {
+            // ARRANGE
+            var stylesheet = MapCssHelper.GetStylesheetFromContent(
+                "area[building] { behaviours:test1; non-important:test}", canUseExprTree);
+            var building = MapCssHelper.GetArea(new Dictionary<string, string>()
+            {
+                {"building", "commercial"},
+            }.ToTags());
+            var rule = stylesheet.GetModelRule(building, MapConsts.MaxZoomLevel);
+
+            // ACT
+            var behaviours = rule.EvaluateList<string>("behaviours");
+
+            // ASSERT
+            var list = behaviours.ToList();
+            Assert.AreEqual(1, list.Count);
+            Assert.AreEqual("test1", list[0]);
+        }
     }
 }

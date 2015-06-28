@@ -46,7 +46,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 {
                     data.GameObject = gameObjectWrapper;
                     data.MaterialKey = materialKey;
-                    BuildObject(tile.GameObject, data);
+                    BuildObject(tile.GameObject, data, rule, way);
                 });
 
             ObjectPool.StoreList(lines);

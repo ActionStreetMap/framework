@@ -84,7 +84,6 @@
     <Compile Include="Infrastructure\InterceptionTests.cs" />
     <Compile Include="Infrastructure\PrimitiveTypeTests.cs" />
     <Compile Include="Infrastructure\Stubs\TestStringBuilderTrace.cs" />
-    <Compile Include="Core\MapCss\CanvasTests.cs" />
     <Compile Include="Core\MapCss\MapCssHelper.cs" />
     <Compile Include="Core\MapCss\SelectorsTests.cs" />
     <Compile Include="Core\TypeHelperTests.cs" />

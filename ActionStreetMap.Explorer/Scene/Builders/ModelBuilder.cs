@@ -1,9 +1,11 @@
 ﻿using System;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss.Domain;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
 using ActionStreetMap.Explorer.Utils;
@@ -55,6 +57,10 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         [Dependency]
         public ITrace Trace { get; set; }
 
+        /// <summary> Gets behaviour provider. </summary>
+        [Dependency]
+        public BehaviourProvider BehaviourProvider { get; set; }
+
         /// <summary> Gets elevation provider. </summary>
         [Dependency]
         public IElevationProvider ElevationProvider { get; set; }
@@ -95,7 +101,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         }
 
         /// <summary> Builds game object from meshData </summary>
-        protected void BuildObject(IGameObject parent, MeshData meshData)
+        protected void BuildObject(IGameObject parent, MeshData meshData, Rule rule, Model model)
         {
             Vector3[] vertices;
             int[] triangles;
@@ -117,7 +123,15 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 gameObject.AddComponent<MeshRenderer>().material = ResourceProvider
                     .GetMaterial(meshData.MaterialKey);
 
+                // attach behaviours
                 gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
+                var behaviourTypes = rule.GetModelBehaviours(BehaviourProvider);
+                foreach (var behaviourType in behaviourTypes)
+                {
+                    var behaviour = gameObject.AddComponent(behaviourType) as IModelBehaviour;
+                    if (behaviour != null)
+                        behaviour.Apply(meshData.GameObject, model);
+                }
 
                 gameObject.isStatic = true;
                 gameObject.transform.parent = parent.GetComponent<GameObject>().transform;

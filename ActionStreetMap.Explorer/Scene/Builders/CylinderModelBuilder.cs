@@ -52,7 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetGradient(gradient)
                 .Build();
 
-            BuildObject(tile.GameObject, meshData);
+            BuildObject(tile.GameObject, meshData, rule, area);
 
             return meshData.GameObject;
         }

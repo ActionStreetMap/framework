@@ -7,6 +7,7 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -21,9 +22,9 @@ namespace ActionStreetMap.Explorer.Tiling
     public class TileModelLoader : IModelLoader
     {
         private readonly ITerrainBuilder _terrainBuilder;
+        private readonly BehaviourProvider _behaviourProvider;
         private readonly IObjectPool _objectPool;
         private readonly IModelBuilder[] _builders;
-        private readonly IModelBehaviour[] _behaviours;
         private readonly IGameObjectFactory _gameObjectFactory;
 
         private readonly Stylesheet _stylesheet;
@@ -32,14 +33,15 @@ namespace ActionStreetMap.Explorer.Tiling
         [Dependency]
         public TileModelLoader(IGameObjectFactory gameObjectFactory,
             ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
-            IEnumerable<IModelBuilder> builders, IEnumerable<IModelBehaviour> behaviours,
+            IEnumerable<IModelBuilder> builders, BehaviourProvider behaviourProvider,
             IObjectPool objectPool)
         {
             _terrainBuilder = terrainBuilder;
+            _behaviourProvider = behaviourProvider;
 
             _objectPool = objectPool;
             _builders = builders.ToArray();
-            _behaviours = behaviours.ToArray();
+
             _gameObjectFactory = gameObjectFactory;
             _stylesheet = stylesheetProvider.Get();
         }
@@ -100,10 +102,7 @@ namespace ActionStreetMap.Explorer.Tiling
                 if (modelBuilder != null)
                 {
                     var gameObject = func(rule, modelBuilder);
-                    var behaviour = rule.GetModelBehaviour(_behaviours);
-                    // behavior should be attached on main thread
-                    if (gameObject != null && behaviour != null)
-                        Scheduler.MainThread.Schedule(() => AttachBehavior(gameObject, model, behaviour));
+                    AttachBehaviours(gameObject, rule, model);
                 }
             }
         }
@@ -111,12 +110,30 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void CompleteTile(Tile tile)
         {
-            var rule = _stylesheet.GetCanvasRule(tile.Canvas);
+            var canvas = tile.Canvas;
+            var rule = _stylesheet.GetCanvasRule(canvas);
 
-            _terrainBuilder.Build(tile, rule);
+            var gameObject = _terrainBuilder.Build(tile, rule);
+
+            AttachBehaviours(gameObject, rule, canvas);
 
             tile.Canvas.Dispose();
             _objectPool.Shrink();
+        }
+
+        private void AttachBehaviours(IGameObject gameObject, Rule rule, Model model)
+        {
+            var behaviourTypes = rule.GetModelBehaviours(_behaviourProvider);
+            if (gameObject != null && !gameObject.IsBehaviourAttached && behaviourTypes.Any())
+                Scheduler.MainThread.Schedule(() =>
+                {
+                    foreach (var behaviourType in behaviourTypes)
+                    {
+                        var behaviour = gameObject.AddComponent<IModelBehaviour>(behaviourType);
+                        if (behaviour != null)
+                            behaviour.Apply(gameObject, model);
+                    }
+                });
         }
 
         private bool ShouldUseBuilder(Tile tile, Rule rule, Model model)
@@ -130,12 +147,6 @@ namespace ActionStreetMap.Explorer.Tiling
                 return false;
             }
             return true;
-        }
-
-        private void AttachBehavior(IGameObject gameObject, Model model, IModelBehaviour behaviour)
-        {
-            if (behaviour != null)
-                behaviour.Apply(gameObject, model);
         }
 
         #endregion

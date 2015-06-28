@@ -1,7 +1,10 @@
-﻿using ActionStreetMap.Core.MapCss.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
-using ActionStreetMap.Explorer.Scene;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 
 namespace ActionStreetMap.Explorer.Helpers
@@ -26,16 +29,14 @@ namespace ActionStreetMap.Explorer.Helpers
             return null;
         }
 
-        public static IModelBehaviour GetModelBehaviour(this Rule rule, IModelBehaviour[] behaviours)
+        /// <summary> Gets list of behaviours for the rule. </summary>
+        public static IEnumerable<Type> GetModelBehaviours(this Rule rule, 
+            BehaviourProvider provider)
         {
-            var behaviorName = rule.EvaluateDefault<string>("behaviour", null);
-            if (behaviorName == null)
-                return null;
-            // NOTE use for to avoid allocations
-            for (int i = 0; i < behaviours.Length; i++)
-                if (behaviours[i].Name == behaviorName)
-                    return behaviours[i];
-            return null;
+            // TODO check performance impact
+            var names = rule.EvaluateList<string>("behaviours");
+            foreach (var name in names)
+                yield return provider.GetBehaviour(name);
         }
 
         /// <summary> Gets width. </summary>

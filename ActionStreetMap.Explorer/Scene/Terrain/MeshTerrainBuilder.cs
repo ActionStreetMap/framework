@@ -6,6 +6,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Topology;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Terrain;
+using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
@@ -21,6 +22,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
+using Canvas = ActionStreetMap.Core.Tiling.Models.Canvas;
 using Mesh = UnityEngine.Mesh;
 using RenderMode = ActionStreetMap.Core.RenderMode;
 
@@ -41,6 +43,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     {
         private const string LogTag = "mesh.terrain";
 
+        private readonly BehaviourProvider _behaviourProvider;
         private readonly IElevationProvider _elevationProvider;
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
@@ -54,11 +57,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         /// <summary> Creates instance of <see cref="MeshTerrainBuilder"/>. </summary>
         [Dependency]
-        public MeshTerrainBuilder(IElevationProvider elevationProvider,
+        public MeshTerrainBuilder(BehaviourProvider behaviourProvider,
+                                  IElevationProvider elevationProvider,
                                   IResourceProvider resourceProvider,
                                   IGameObjectFactory gameObjectFactory,
                                   IObjectPool objectPool)
         {
+            _behaviourProvider = behaviourProvider;
             _elevationProvider = elevationProvider;
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
@@ -104,16 +109,15 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         cellHeight);
                     var name = String.Format("cell {0}_{1}", i, j);
                     var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                    BuildCell(rule, terrainObject, cell, rectangle, renderMode, name);
+                    BuildCell(tile.Canvas, rule, terrainObject, cell, rectangle, renderMode, name);
                 }
-
+            terrainObject.IsBehaviourAttached = true;
             sw.Stop();
-            Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds.ToString());
-
+            Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds.ToString());         
             return terrainObject;
         }
 
-        private void BuildCell(Rule rule, IGameObject terrainObject, MeshCell cell, MapRectangle cellRect, 
+        private void BuildCell(Canvas canvas, Rule rule, IGameObject terrainObject, MeshCell cell, MapRectangle cellRect, 
             RenderMode renderMode, string name)
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
@@ -146,7 +150,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             _objectPool.RecycleMeshData(meshData);
 
-            Scheduler.MainThread.Schedule(() => BuildObject(cellGameObject, rule,
+            Scheduler.MainThread.Schedule(() => BuildObject(cellGameObject, canvas, rule,
                 meshData, vertices, triangles, colors));
         }
 
@@ -394,7 +398,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildObject(IGameObject goWrapper, Rule rule, MeshData meshData,
+        private void BuildObject(IGameObject goWrapper, Canvas canvas, Rule rule, MeshData meshData,
             Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = goWrapper.GetComponent<GameObject>();
@@ -410,6 +414,14 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshCollider>();
 
             gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
+
+            var behaviourTypes = rule.GetModelBehaviours(_behaviourProvider);
+            foreach (var behaviourType in behaviourTypes)
+            {
+                var behaviour = gameObject.AddComponent(behaviourType) as IModelBehaviour;
+                if (behaviour != null)
+                    behaviour.Apply(goWrapper, canvas);
+            }
         }
 
         /// <inheritdoc />

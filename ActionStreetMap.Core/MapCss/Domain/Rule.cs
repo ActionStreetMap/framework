@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.MapCss.Domain
@@ -18,6 +19,12 @@ namespace ActionStreetMap.Core.MapCss.Domain
         {
             _model = model;
             Declarations = new Dictionary<string, Declaration>(8);
+        }
+
+        /// <summary> Checks whether declaration with given name is registered. </summary>
+        public bool HasDeclaration(string name)
+        {
+            return Declarations.ContainsKey(name);
         }
 
         /// <summary> Checks whether this rule can be used. </summary>
@@ -55,8 +62,7 @@ namespace ActionStreetMap.Core.MapCss.Domain
         /// <summary> Evaluates list of values for gived qualifier. </summary>
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
-        /// <returns>Evaluated list</returns>
-        public List<T> EvaluateList<T>(string qualifier)
+        public IEnumerable<T> EvaluateList<T>(string qualifier)
         {
             return EvaluateList(qualifier, v => (T) Convert.ChangeType(v, typeof (T)));
         }
@@ -65,20 +71,29 @@ namespace ActionStreetMap.Core.MapCss.Domain
         /// <typeparam name="T">Return type</typeparam>
         /// <param name="qualifier">Qualifier: osm tag key</param>
         /// <param name="converter">Convertrs string to given type</param>
-        /// <returns>Evaluated list</returns>
-        public List<T> EvaluateList<T>(string qualifier, Func<string, T> converter)
+        public IEnumerable<T> EvaluateList<T>(string qualifier, Func<string, T> converter)
         {
-            var listDeclaration = (ListDeclaration) Declarations[qualifier];
-            var values = new List<T>();
-            foreach (var declaration in listDeclaration.Items)
-            {
-                values.Add(declaration.IsEval
-                    ? declaration.Evaluator.Walk<T>(_model)
-                    : converter(declaration.Value));
-            }
+            if (!Declarations.ContainsKey(qualifier))
+                return Enumerable.Empty<T>();
 
-            return values;
+            Declaration declaration;
+            var listDeclaration = Declarations[qualifier] as ListDeclaration;
+            if (listDeclaration != null)
+            {
+                declaration = listDeclaration.Items.First();
+                return declaration.Evaluator.Walk<IEnumerable<T>>(_model);
+            }
+            declaration = Declarations[qualifier];
+            return Evaluate(declaration, converter);
         }
+
+        /// <summary> Helper method. </summary>
+        private IEnumerable<T> Evaluate<T>(Declaration declaration, Func<string, T> converter)
+        {
+            yield return declaration.IsEval
+                  ? declaration.Evaluator.Walk<T>(_model)
+                  : converter(declaration.Value);
+        } 
 
         /// <summary> Evaluates  value for gived qualifier. </summary>
         /// <typeparam name="T">Return type</typeparam>
@@ -95,10 +110,9 @@ namespace ActionStreetMap.Core.MapCss.Domain
 
             var declaration = Declarations[qualifier];
 
-            if (declaration.IsEval) 
-                return declaration.Evaluator.Walk<T>(_model);
-
-            return converter(declaration.Value);
+            return declaration.IsEval
+                ? declaration.Evaluator.Walk<T>(_model)
+                : converter(declaration.Value);
         }
 
         private void Assert()

@@ -19,6 +19,12 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <inheritdoc />
+        public T AddComponent<T>(Type type)
+        {
+            return (T) ((object) (_gameObject as GameObject).AddComponent(type));
+        }
+
+        /// <inheritdoc />
         public T AddComponent<T>(T component)
         {
             // work-around to run Unity-specific
@@ -62,6 +68,9 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 });
             }
         }
+
+        /// <inheritdoc />
+        public bool IsBehaviourAttached { get; set; }
 
         /// <summary>  Sets parent on current thread. </summary>
         internal void SetParent(IGameObject parent)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling.Models;

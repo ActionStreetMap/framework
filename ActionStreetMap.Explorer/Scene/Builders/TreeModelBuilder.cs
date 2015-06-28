@@ -33,7 +33,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetPosition(new Vector3(mapPoint.X, elevation, mapPoint.Y))
                 .Build();
 
-            BuildObject(tile.GameObject, meshData);
+            BuildObject(tile.GameObject, meshData, rule, node);
 
             return meshData.GameObject;
         }

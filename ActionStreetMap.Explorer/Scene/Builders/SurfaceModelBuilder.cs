@@ -47,7 +47,9 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var trunkGradientKey = rule.Evaluate<string>("trunk-color");
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
             int treeFreq = (int) (1 / rule.EvaluateDefault<float>("tree-freq", 0.1f));
-
+            // TODO reuse tree builder?
+            // TODO behaviour should be set somehow
+            var node = new Node();
             foreach (var triangle in mesh.Triangles)
             {
                 // TODO reuse mesh and/or generator?
@@ -68,7 +70,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                     .SetPosition(new Vector3(center.X, elevation, center.Y))
                     .Build();
 
-                BuildObject(parent, meshData);
+                BuildObject(parent, meshData, rule, node);
             }
         }
     }

@@ -108,14 +108,14 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var facadeMeshData = facadeBuilder.Build(building);
             facadeMeshData.GameObject = GameObjectFactory.CreateNew("facade");
             facadeMeshData.MaterialKey = building.FacadeMaterial;
-            BuildObject(gameObjectWrapper, facadeMeshData);
+            BuildObject(gameObjectWrapper, facadeMeshData, rule, model);
 
             // roof
             var roofBuilder = _roofBuilders.Single(f => f.Name == building.RoofType);
             var roofMeshData = roofBuilder.Build(building);
             roofMeshData.GameObject = GameObjectFactory.CreateNew("roof");
             roofMeshData.MaterialKey = building.RoofMaterial;
-            BuildObject(gameObjectWrapper, roofMeshData);
+            BuildObject(gameObjectWrapper, roofMeshData, rule, model);
 
             return gameObjectWrapper;
         }
