@@ -1,4 +1,5 @@
 ﻿using ActionStreetMap.Explorer.Geometry;
+using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Utils
@@ -9,6 +10,7 @@ namespace ActionStreetMap.Explorer.Utils
         {
             return new MeshData(objectPool)
             {
+                Index = DummyMeshIndex.Default,
                 Triangles = objectPool.NewList<MeshTriangle>(capacity)
             };
         }

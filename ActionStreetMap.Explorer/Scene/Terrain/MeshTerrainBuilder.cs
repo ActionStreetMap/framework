@@ -128,7 +128,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             meshData.GameObject = cellGameObject;
             meshData.Index = renderMode == RenderMode.Scene ?
                 new TerrainMeshIndex(16, 16, rect, meshData.Triangles) :
-                (IMeshIndex) new DummyMeshIndex();
+                DummyMeshIndex.Default;
 
             // build canvas
             BuildBackground(rule, meshData, cell.Background, renderMode);

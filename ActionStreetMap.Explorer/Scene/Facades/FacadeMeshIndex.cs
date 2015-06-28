@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
@@ -9,7 +8,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Facades
 {
     /// <summary> Represents facade index. </summary>
-    internal class FacadeMeshIndex: IMeshIndex
+    internal sealed class FacadeMeshIndex: IMeshIndex
     {
         private List<MeshTriangle> _triangles;
         private int _region = -1;
