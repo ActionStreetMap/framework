@@ -52,7 +52,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 var xStart = (int) Math.Ceiling(start.X/_cellSize)*_cellSize;
                 var xEnd = (int) Math.Floor(end.X/_cellSize)*_cellSize;
                 for (int x = xStart; x <= xEnd; x += _cellSize)
-                    points.Add(new Point(x, Math.Round((slope * (x - start.X) + start.Y)), _roundDigitCount));
+                    points.Add(new Point(x, Math.Round((slope * (x - start.X) + start.Y), _roundDigitCount)));
 
                 if (!isBottomTop)
                 {
@@ -82,8 +82,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         private void MergeLists(List<Point> points, List<Point> result)
         {
-            result.Add(points[0]);
-            //result.AddRange(points);
+            //result.Add(points[0]);
+            result.AddRange(points);
             //return;
             /*if (points.Count == 1)
                 result.AddRange(points);

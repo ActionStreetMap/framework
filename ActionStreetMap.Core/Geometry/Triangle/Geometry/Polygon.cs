@@ -126,7 +126,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                 centroid.y += contour[i].y;
 
                 // Add segments to polygon.
-                this.segments.Add(new Edge(offset + i, offset + ((i + 1) % count), marker));
+                segments.Add(new Edge(offset + i, offset + ((i + 1) % count), marker));
             }
 
             if (hole)
@@ -137,11 +137,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                     centroid.x /= count;
                     centroid.y /= count;
 
-                    this.holes.Add(centroid);
+                    holes.Add(centroid);
                 }
                 else
                 {
-                    this.holes.Add(FindPointInPolygon(contour));
+                    Point point;
+                    if (FindPointInPolygon(contour, out point))
+                        holes.Add(point);
                 }
             }
         }
@@ -209,7 +211,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             this.segments.Add(edge);
         }
 
-        private Point FindPointInPolygon(List<Vertex> contour)
+        private bool FindPointInPolygon(List<Vertex> contour, out Point point)
         {
             var bounds = new Rectangle();
             bounds.Expand(contour);
@@ -217,15 +219,18 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             int length = contour.Count;
             int limit = 8;
 
-            var test = new Point();
+            point = new Point();
 
             Point a, b; // Current edge.
             double cx, cy; // Center of current edge.
             double dx, dy; // Direction perpendicular to edge.
 
             if (contour.Count == 3)
-                return new Point((contour[0].x + contour[1].x + contour[2].x) / 3, 
-                    (contour[0].y + contour[1].y + contour[2].y) / 3);
+            {
+                point = new Point((contour[0].x + contour[1].x + contour[2].x)/3,
+                    (contour[0].y + contour[1].y + contour[2].y)/3);
+                return true;
+            }
 
             for (int i = 0; i < length; i++)
             {
@@ -241,26 +246,26 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                 for (int j = 1; j <= limit; j++)
                 {
                     // Search to the right of the segment.
-                    test.x = cx + dx / j;
-                    test.y = cy + dy / j;
+                    point.x = cx + dx / j;
+                    point.y = cy + dy / j;
 
-                    if (bounds.Contains(test) && IsPointInPolygon(test, contour))
+                    if (bounds.Contains(point) && IsPointInPolygon(point, contour))
                     {
-                        return test;
+                        return true;
                     }
 
                     // Search on the other side of the segment.
-                    test.x = cx - dx / j;
-                    test.y = cy - dy / j;
+                    point.x = cx - dx / j;
+                    point.y = cy - dy / j;
 
-                    if (bounds.Contains(test) && IsPointInPolygon(test, contour))
+                    if (bounds.Contains(point) && IsPointInPolygon(point, contour))
                     {
-                        return test;
+                        return true;
                     }
                 }
             }
 
-            throw new Exception();
+            return false;
         }
 
         /// <summary>

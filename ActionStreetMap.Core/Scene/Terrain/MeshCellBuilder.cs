@@ -129,7 +129,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             }
 
             var lastItemIndex =  path.Count - 1;
-            var lineGridSplitter = new LineGridSplitter(2, RoundDigitCount);
+            var lineGridSplitter = new LineGridSplitter(1, RoundDigitCount);
             
             for (int i = 0; i < lastItemIndex; i++)
             {
@@ -203,7 +203,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     new ConstraintOptions 
                     {
                         ConformingDelaunay = conformingDelaunay, 
-                        SegmentSplitting = 0
+                        SegmentSplitting = 1
                     },
                     new QualityOptions {MaximumArea = _maximumArea});
         }
