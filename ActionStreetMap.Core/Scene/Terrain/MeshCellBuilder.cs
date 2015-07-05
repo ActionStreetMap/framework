@@ -75,9 +75,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
             foreach (var path in simplifiedPath)
             {
                 var area = Clipper.Area(path);
+
                 // skip small polygons to prevent triangulation issues
-                if (Math.Abs(area/DoubleScale) < 1)
-                    continue;
+                if (Math.Abs(area/DoubleScale) < 0.001) continue;
 
                 var vertices = GetVertices(path, renderMode);
 
@@ -129,7 +129,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             }
 
             var lastItemIndex =  path.Count - 1;
-            var lineGridSplitter = new LineGridSplitter(2);
+            var lineGridSplitter = new LineGridSplitter(2, RoundDigitCount);
             
             for (int i = 0; i < lastItemIndex; i++)
             {
@@ -200,8 +200,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return renderMode == RenderMode.Overview
                 ? (Mesh) polygon.Triangulate()
                 : (Mesh) polygon.Triangulate(
-                    new ConstraintOptions {ConformingDelaunay = conformingDelaunay, 
-                        SegmentSplitting = 1},
+                    new ConstraintOptions 
+                    {
+                        ConformingDelaunay = conformingDelaunay, 
+                        SegmentSplitting = 0
+                    },
                     new QualityOptions {MaximumArea = _maximumArea});
         }
 

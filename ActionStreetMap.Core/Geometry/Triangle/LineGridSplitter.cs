@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Infrastructure.Utilities;
 
@@ -10,16 +8,19 @@ namespace ActionStreetMap.Core.Geometry.Triangle
     /// <summary> Splits line to segments according to axis alignet grid. </summary>
     internal sealed class LineGridSplitter
     {
-        private readonly float _minDistance;
+        //private readonly float _minDistance;
         private readonly int _cellSize;
+        private readonly int _roundDigitCount;
         private static readonly Comparison<Point> Reverse = (a, b) => -1 * a.X.CompareTo(b.X);
 
         /// <summary> Creates instance of <see cref="LineGridSplitter"/>. </summary>
         /// <param name="cellSize">Grid cell size.</param>
-        public LineGridSplitter(int cellSize)
+        /// <param name="roundDigitCount">Round digits</param>
+        public LineGridSplitter(int cellSize, int roundDigitCount)
         {
             _cellSize = cellSize;
-            _minDistance = cellSize/2f;
+            _roundDigitCount = roundDigitCount;
+            //_minDistance = cellSize/2f;
         }
 
         /// <summary> Splits line to segments. </summary>
@@ -51,7 +52,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 var xStart = (int) Math.Ceiling(start.X/_cellSize)*_cellSize;
                 var xEnd = (int) Math.Floor(end.X/_cellSize)*_cellSize;
                 for (int x = xStart; x <= xEnd; x += _cellSize)
-                    points.Add(new Point(x, Math.Round((slope*(x - start.X) + start.Y)), 3));
+                    points.Add(new Point(x, Math.Round((slope * (x - start.X) + start.Y)), _roundDigitCount));
 
                 if (!isBottomTop)
                 {
@@ -63,7 +64,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 var yStart = (int) Math.Ceiling(start.Y/_cellSize)*_cellSize;
                 var yEnd = (int) Math.Floor(end.Y/_cellSize)*_cellSize;
                 for (int y = yStart; y <= yEnd; y += _cellSize)
-                    points.Add(new Point(Math.Round((inverseSlope*(y - start.Y) + start.X), 3), y));
+                    points.Add(new Point(Math.Round((inverseSlope*(y - start.Y) + start.X), _roundDigitCount), y));
 
                 if (isLeftRight) points.Sort();
                 else points.Sort(Reverse);
@@ -81,9 +82,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         private void MergeLists(List<Point> points, List<Point> result)
         {
-            result.AddRange(points);
-            /*return;
-            if (points.Count == 1)
+            result.Add(points[0]);
+            //result.AddRange(points);
+            //return;
+            /*if (points.Count == 1)
                 result.AddRange(points);
             else if (points.Count > 1)
             {
@@ -99,7 +101,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
                     var last = result[result.Count - 1];
                     if (Math.Sqrt(last.X - candidate.X) * (last.X - candidate.X) +
-                        (last.Y - candidate.Y) * (last.Y - candidate.Y) > _minDistance)
+                        (last.Y - candidate.Y) * (last.Y - candidate.Y) > 0.001)
                         result.Add(candidate);
                 }
             }*/
