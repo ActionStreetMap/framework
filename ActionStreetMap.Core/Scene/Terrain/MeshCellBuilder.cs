@@ -14,6 +14,7 @@ using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.L
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
+    /// <summary> Creates mesh cell from polygon data. </summary>
     internal class MeshCellBuilder
     {
         private readonly IObjectPool _objectPool;
@@ -21,9 +22,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
         internal const float Scale = 1000f;
         internal const float DoubleScale = Scale*Scale;
 
-        private int _gridCell = 1;
+        private int _gridCellSize = 1;
         private float _maximumArea = 6;
 
+        /// <summary> Creates instance of <see cref="MeshCellBuilder"/>. </summary>
+        /// <param name="objectPool"></param>
         public MeshCellBuilder(IObjectPool objectPool)
         {
             _objectPool = objectPool;
@@ -31,6 +34,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         #region Public methods
 
+        /// <summary> Builds mesh cell. </summary>
         public MeshCell Build(MapRectangle rectangle, MeshCanvas content)
         {
             var renderMode = content.RenderMode;
@@ -51,6 +55,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             };
         }
 
+        /// <summary> Sets max area of triangle </summary>
         public void SetMaxArea(float maxArea)
         {
             _maximumArea = maxArea;
@@ -84,7 +89,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
                 var isHole = area < 0;
                 // sign of area defines polygon orientation
-                polygon.AddContour(vertices, 0, isHole);
+                polygon.AddContour(vertices, isHole);
 
                 // NOTE I don't like how this is implemented so far
                 if (useContours)
@@ -120,9 +125,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
             // split path for scene mode
             var lastItemIndex =  path.Count - 1;
-            var lineGridSplitter = new LineGridSplitter(_gridCell, MathUtils.RoundDigitCount);
+            var lineGridSplitter = new LineGridSplitter(_gridCellSize);
             
-            for (int i = 0; i < lastItemIndex; i++)
+            for (int i = 0; i <= lastItemIndex; i++)
             {
                 var start = path[i];
                 var end = path[i == lastItemIndex ? 0 : i + 1];
@@ -134,11 +139,6 @@ namespace ActionStreetMap.Core.Scene.Terrain
                               Math.Round(end.Y / Scale, MathUtils.RoundDigitCount)),
                     _objectPool, points);
             }
-
-            // NOTE last is not handled by splitter
-            var last = path[path.Count - 1];
-            points.Add(new Point(Math.Round(last.X / Scale, MathUtils.RoundDigitCount),
-                                 Math.Round(last.Y / Scale, MathUtils.RoundDigitCount)));
 
             return points;
         }
@@ -188,14 +188,14 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private Mesh GetMesh(Polygon polygon, RenderMode renderMode)
         {
             return renderMode == RenderMode.Overview
-                ? (Mesh) polygon.Triangulate()
-                : (Mesh) polygon.Triangulate(
+                ? polygon.Triangulate()
+                : polygon.Triangulate(
                     new ConstraintOptions 
                     {
                         ConformingDelaunay = false, 
                         SegmentSplitting = 0
                     },
-                    new QualityOptions {MaximumArea = _maximumArea});
+                    new QualityOptions { MaximumArea = _maximumArea });
         }
 
         private Paths ClipByRectangle(MapRectangle rect, Paths subjects)

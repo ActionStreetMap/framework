@@ -1,62 +1,50 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Mesh.cs">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using ActionStreetMap.Core.Geometry.Triangle.Meshing;
+using ActionStreetMap.Core.Geometry.Triangle.Meshing.Data;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
-    using System;
-    using System.Collections.Generic;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-    using ActionStreetMap.Core.Geometry.Triangle.Meshing;
-    using ActionStreetMap.Core.Geometry.Triangle.Meshing.Data;
-    using ActionStreetMap.Core.Geometry.Triangle.Meshing.Iterators;
-    using ActionStreetMap.Core.Geometry.Triangle.Tools;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-
-    /// <summary>
-    /// Mesh data structure.
-    /// </summary>
-    internal class Mesh : IMesh
+    /// <summary> Mesh data structure. </summary>
+    public sealed class Mesh: IDisposable
     {
         #region Variables
 
-        QualityMesher qualityMesher;
+        private readonly QualityMesher qualityMesher;
 
         // Stack that maintains a list of recently flipped triangles.
-        Stack<Otri> flipstack;
+        private readonly Stack<Otri> flipstack;
 
         // TODO: Check if custom hashmap implementation could be faster.
 
         // Using hashsets for memory management should quite fast.
-        internal Dictionary<int, Triangle> triangles;
+        internal Dictionary<int, Topology.Triangle> triangles;
         internal Dictionary<int, Segment> subsegs;
         internal Dictionary<int, Vertex> vertices;
 
         // Hash seeds (should belong to mesh instance)
-        internal int hash_vtx = 0;
-        internal int hash_seg = 0;
-        internal int hash_tri = 0;
+        internal int hash_vtx;
+        internal int hash_seg;
+        internal int hash_tri;
 
         internal List<Point> holes;
-        internal List<RegionPointer> regions;
 
         // Other variables.
         internal Rectangle bounds; // x and y bounds.
-        internal int invertices;     // Number of input vertices.
-        internal int inelements;     // Number of input triangles.
-        internal int insegments;     // Number of input segments.
-        internal int undeads;        // Number of input vertices that don't appear in the mesh.
-        internal int edges;          // Number of output edges.
-        internal int mesh_dim;       // Dimension (ought to be 2).
-        internal int nextras;        // Number of attributes per vertex.
+        internal int invertices; // Number of input vertices.
+        internal int inelements; // Number of input triangles.
+        internal int insegments; // Number of input segments.
+        internal int undeads; // Number of input vertices that don't appear in the mesh.
+        internal int edges; // Number of output edges.
+        internal int mesh_dim; // Dimension (ought to be 2).
+        internal int nextras; // Number of attributes per vertex.
         //internal int eextras;        // Number of attributes per triangle.
-        internal int hullsize;       // Number of edges in convex hull.
-        internal int steinerleft;    // Number of Steiner points not yet used.
+        internal int hullsize; // Number of edges in convex hull.
+        internal int steinerleft; // Number of Steiner points not yet used.
         internal bool checksegments; // Are there segments in the triangulation yet?
-        internal bool checkquality;  // Has quality triangulation begun yet?
+        internal bool checkquality; // Has quality triangulation begun yet?
 
         // Triangular bounding box vertices.
         internal Vertex infvertex1, infvertex2, infvertex3;
@@ -73,83 +61,32 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         #region Public properties
 
-        /// <summary>
-        /// Gets the mesh bounding box.
-        /// </summary>
-        public Rectangle Bounds
-        {
-            get { return this.bounds; }
-        }
+        /// <summary> Gets the mesh bounding box. </summary>
+        public Rectangle Bounds { get { return bounds; } }
 
-        /// <summary>
-        /// Gets the mesh vertices.
-        /// </summary>
-        public ICollection<Vertex> Vertices
-        {
-            get { return this.vertices.Values; }
-        }
+        /// <summary> Gets the mesh vertices. </summary>
+        public ICollection<Vertex> Vertices { get { return vertices.Values; } }
 
-        /// <summary>
-        /// Gets the mesh holes.
-        /// </summary>
-        public IList<Point> Holes
-        {
-            get { return this.holes; }
-        }
+        /// <summary> Gets the mesh holes. </summary>
+        public IList<Point> Holes { get { return holes; } }
 
-        /// <summary>
-        /// Gets the mesh triangles.
-        /// </summary>
-        public ICollection<Triangle> Triangles
-        {
-            get { return this.triangles.Values; }
-        }
+        /// <summary> Gets the mesh triangles. </summary>
+        public ICollection<Topology.Triangle> Triangles { get { return triangles.Values; } }
 
-        /// <summary>
-        /// Gets the mesh segments.
-        /// </summary>
-        public ICollection<Segment> Segments
-        {
-            get { return this.subsegs.Values; }
-        }
+        /// <summary> Gets the mesh segments. </summary>
+        public ICollection<Segment> Segments { get { return subsegs.Values; } }
 
-        /// <summary>
-        /// Gets the mesh edges.
-        /// </summary>
-        public IEnumerable<Edge> Edges
-        {
-            get
-            {
-                var e = new EdgeIterator(this);
-                while (e.MoveNext())
-                {
-                    yield return e.Current;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the number of input vertices.
-        /// </summary>
+        /// <summary> Gets the number of input vertices. </summary>
         public int NumberOfInputPoints { get { return invertices; } }
 
-        /// <summary>
-        /// Gets the number of mesh edges.
-        /// </summary>
-        public int NumberOfEdges { get { return this.edges; } }
+        /// <summary> Gets the number of mesh edges. </summary>
+        public int NumberOfEdges { get { return edges; } }
 
-        /// <summary>
-        /// Indicates whether the input is a PSLG or a point set.
-        /// </summary>
-        public bool IsPolygon { get { return this.insegments > 0; } }
+        /// <summary> Indicates whether the input is a PSLG or a point set. </summary>
+        public bool IsPolygon { get { return insegments > 0; } }
 
-        /// <summary>
-        /// Gets the current node numbering.
-        /// </summary>
-        public NodeNumbering CurrentNumbering
-        {
-            get { return numbering; }
-        }
+        /// <summary> Gets the current node numbering. </summary>
+        public NodeNumbering CurrentNumbering { get { return numbering; } }
 
         #endregion
 
@@ -174,7 +111,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         // 'dummytri' and 'dummysub' as if they were real mesh entities, with no
         // harm done.
 
-        internal Triangle dummytri;
+        internal Topology.Triangle dummytri;
 
         // Set up 'dummysub', the omnipresent subsegment pointed to by any
         // triangle side or subsegment end that isn't attached to a real
@@ -215,9 +152,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         #endregion
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Mesh" /> class.
-        /// </summary>
+        /// <summary> Initializes a new instance of the <see cref="Mesh" /> class. </summary>
         public Mesh()
         {
             Initialize();
@@ -225,13 +160,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             behavior = new Behavior();
 
             vertices = new Dictionary<int, Vertex>();
-            triangles = new Dictionary<int, Triangle>();
+            triangles = new Dictionary<int, Topology.Triangle>();
             subsegs = new Dictionary<int, Segment>();
 
             flipstack = new Stack<Otri>();
 
             holes = new List<Point>();
-            regions = new List<RegionPointer>();
 
             qualityMesher = new QualityMesher(this);
 
@@ -248,138 +182,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             behavior.MaxArea = quality.MaximumArea;
             behavior.VarArea = quality.VariableArea;
 
-            this.Refine();
-        }
-
-        /// <summary>
-        /// Renumber vertex and triangle id's.
-        /// </summary>
-        public void Renumber()
-        {
-            this.Renumber(NodeNumbering.Linear);
-        }
-
-        /// <summary>
-        /// Renumber vertex and triangle id's.
-        /// </summary>
-        public void Renumber(NodeNumbering num)
-        {
-            // Don't need to do anything if the nodes are already numbered.
-            if (num == this.numbering)
-            {
-                return;
-            }
-
-            int id;
-
-            if (num == NodeNumbering.Linear)
-            {
-                id = 0;
-                foreach (var node in this.vertices.Values)
-                {
-                    node.id = id++;
-                }
-            }
-            else if (num == NodeNumbering.CuthillMcKee)
-            {
-                CuthillMcKee rcm = new CuthillMcKee();
-                int[] perm_inv = rcm.Renumber(this);
-
-                // Permute the node indices.
-                foreach (var node in this.vertices.Values)
-                {
-                    node.id = perm_inv[node.id];
-                }
-            }
-
-            // Remember the current numbering.
-            numbering = num;
-
-            // Triangles will always be numbered from 0 to n-1
-            id = 0;
-            foreach (var item in this.triangles.Values)
-            {
-                item.id = id++;
-            }
+            Refine();
         }
 
         #region Misc
 
-        /*
-        /// <summary>
-        /// Load a mesh from file (.node/poly and .ele).
-        /// </summary>
-        public void Load(string filename)
-        {
-            List<ITriangle> triangles;
-            InputGeometry geometry;
-
-            FileReader.Read(filename, out geometry, out triangles);
-
-            if (geometry != null && triangles != null)
-            {
-                Load(geometry, triangles);
-            }
-        }
-
-        /// <summary>
-        /// Reconstructs a mesh from raw input data.
-        /// </summary>
-        public void Load(InputGeometry input, List<ITriangle> triangles)
-        {
-            if (input == null || triangles == null)
-            {
-                throw new ArgumentException("Invalid input (argument is null).");
-            }
-
-            // Clear all data structures / reset hash seeds
-            this.ResetData();
-
-            if (input.HasSegments)
-            {
-                behavior.Poly = true;
-
-                this.holes.AddRange(input.Holes);
-            }
-
-            //if (input.EdgeMarkers != null)
-            //{
-            //    behavior.UseBoundaryMarkers = true;
-            //}
-
-            //if (input.TriangleAreas != null)
-            //{
-            //    behavior.VarArea = true;
-            //}
-
-            // TODO: remove
-            if (!behavior.Poly)
-            {
-                // Be careful not to allocate space for element area constraints that
-                // will never be assigned any value (other than the default -1.0).
-                behavior.VarArea = false;
-
-                // Be careful not to add an extra attribute to each element unless the
-                // input supports it (PSLG in, but not refining a preexisting mesh).
-                behavior.useRegions = false;
-            }
-
-            behavior.useRegions = input.Regions.Count > 0;
-
-            TransferNodes(input.points);
-
-            // Read and reconstruct a mesh.
-            hullsize = DataReader.Reconstruct(this, input, triangles.ToArray());
-
-            // Calculate the number of edges.
-            edges = (3 * triangles.Count + hullsize) / 2;
-        }
-        */
-
-        /// <summary>
-        /// Triangulate given input data.
-        /// </summary>
-        internal void ApplyConstraints(IPolygon input, ConstraintOptions options, QualityOptions quality)
+        /// <summary> Triangulate given input data. </summary>
+        internal Mesh ApplyConstraints(Polygon input, ConstraintOptions options, QualityOptions quality)
         {
             behavior.Poly = input.Segments.Count > 0;
 
@@ -409,11 +218,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 behavior.Quality = true;
             }
 
-            //if (input.EdgeMarkers != null)
-            //{
-            //    behavior.UseBoundaryMarkers = true;
-            //}
-
             // TODO: remove
             if (!behavior.Poly)
             {
@@ -421,8 +225,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 // will never be assigned any value (other than the default -1.0).
                 behavior.VarArea = false;
             }
-
-            behavior.useRegions = input.Regions.Count > 0;
 
             steinerleft = behavior.SteinerPoints;
 
@@ -448,15 +250,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             {
                 // Copy holes
                 foreach (var item in input.Holes)
-                {
                     holes.Add(item);
-                }
-
-                // Copy regions
-                foreach (var item in input.Regions)
-                {
-                    regions.Add(item);
-                }
 
                 // Carve out holes and concavities.
                 mesher.CarveHoles();
@@ -469,23 +263,20 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             }
 
             // Calculate the number of edges.
-            edges = (3 * triangles.Count + hullsize) / 2;
+            edges = (3*triangles.Count + hullsize)/2;
+
+            return this;
         }
 
-        /// <summary>
-        /// Refines the current mesh.
-        /// </summary>
+        /// <summary> Refines the current mesh. </summary>
         internal void Refine()
         {
             inelements = triangles.Count;
             invertices = vertices.Count;
 
             // TODO: Set all vertex types to input (i.e. NOT free)?
-
             if (behavior.Poly)
-            {
                 insegments = behavior.useSegments ? subsegs.Count : hullsize;
-            }
 
             Reset();
 
@@ -496,41 +287,36 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             infvertex1 = infvertex2 = infvertex3 = null;
 
             if (behavior.useSegments)
-            {
                 checksegments = true;
-            }
 
             if (triangles.Count > 0)
-            {
                 // Enforce angle and area constraints.
                 qualityMesher.EnforceQuality();
-            }
 
             // Calculate the number of edges.
-            edges = (3 * triangles.Count + hullsize) / 2;
+            edges = (3*triangles.Count + hullsize)/2;
         }
 
         internal void CopyTo(Mesh target)
         {
-            target.vertices = this.vertices;
-            target.triangles = this.triangles;
-            target.subsegs = this.subsegs;
+            target.vertices = vertices;
+            target.triangles = triangles;
+            target.subsegs = subsegs;
 
-            target.holes = this.holes;
-            target.regions = this.regions;
+            target.holes = holes;
 
-            target.hash_vtx = this.hash_vtx;
-            target.hash_seg = this.hash_seg;
-            target.hash_tri = this.hash_tri;
+            target.hash_vtx = hash_vtx;
+            target.hash_seg = hash_seg;
+            target.hash_tri = hash_tri;
 
-            target.numbering = this.numbering;
-            target.hullsize = this.hullsize;
-            target.edges = this.edges;
+            target.numbering = numbering;
+            target.hullsize = hullsize;
+            target.edges = edges;
         }
 
         /// <summary>
-        /// Reset all the mesh data. This method will also wipe 
-        /// out all mesh data.
+        ///     Reset all the mesh data. This method will also wipe
+        ///     out all mesh data.
         /// </summary>
         private void ResetData()
         {
@@ -539,11 +325,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             subsegs.Clear();
 
             holes.Clear();
-            regions.Clear();
 
-            this.hash_vtx = 0;
-            this.hash_seg = 0;
-            this.hash_tri = 0;
+            hash_vtx = 0;
+            hash_seg = 0;
+            hash_tri = 0;
 
             flipstack.Clear();
 
@@ -555,41 +340,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             locator.Reset();
         }
 
-        /// <summary>
-        /// Reset the mesh triangulation state.
-        /// </summary>
+        /// <summary> Reset the mesh triangulation state. </summary>
         private void Reset()
         {
             numbering = NodeNumbering.None;
 
-            undeads = 0;               // No eliminated input vertices yet.
-            checksegments = false;     // There are no segments in the triangulation yet.
-            checkquality = false;      // The quality triangulation stage has not begun.
-
-            Statistic.InCircleCount = 0;
-            Statistic.CounterClockwiseCount = 0;
-            Statistic.InCircleAdaptCount = 0;
-            Statistic.CounterClockwiseAdaptCount = 0;
-            Statistic.Orient3dCount = 0;
-            Statistic.HyperbolaCount = 0;
-            Statistic.CircleTopCount = 0;
-            Statistic.CircumcenterCount = 0;
+            undeads = 0; // No eliminated input vertices yet.
+            checksegments = false; // There are no segments in the triangulation yet.
+            checkquality = false; // The quality triangulation stage has not begun.
         }
 
-        /// <summary>
-        /// Read the vertices from memory.
-        /// </summary>
-        /// <param name="points">The input data.</param>
+        /// <summary> Read the vertices from memory. </summary>
         internal void TransferNodes(ICollection<Vertex> points)
         {
-            this.invertices = points.Count;
-            this.mesh_dim = 2;
-            this.bounds = new Rectangle();
+            invertices = points.Count;
+            mesh_dim = 2;
+            bounds = new Rectangle();
 
-            if (this.invertices < 3)
-            {
+            if (invertices < 3)
                 throw new Exception("Input must have at least three input vertices.");
-            }
 
             bool first = true;
 
@@ -597,34 +366,34 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             {
                 if (first)
                 {
-                    this.nextras = p.attributes == null ? 0 : p.attributes.Length;
+                    nextras = p.attributes == null ? 0 : p.attributes.Length;
                     first = false;
                 }
 
-                p.hash = p.id = this.hash_vtx++;
+                p.hash = p.id = hash_vtx++;
 
-                this.vertices.Add(p.hash, p);
-                this.bounds.Expand(p);
+                vertices.Add(p.hash, p);
+                bounds.Expand(p);
             }
         }
 
         /// <summary>
-        /// Construct a mapping from vertices to triangles to improve the speed of 
-        /// point location for segment insertion.
+        ///     Construct a mapping from vertices to triangles to improve the speed of
+        ///     point location for segment insertion.
         /// </summary>
         /// <remarks>
-        /// Traverses all the triangles, and provides each corner of each triangle
-        /// with a pointer to that triangle. Of course, pointers will be overwritten
-        /// by other pointers because (almost) each vertex is a corner of several
-        /// triangles, but in the end every vertex will point to some triangle
-        /// that contains it.
+        ///     Traverses all the triangles, and provides each corner of each triangle
+        ///     with a pointer to that triangle. Of course, pointers will be overwritten
+        ///     by other pointers because (almost) each vertex is a corner of several
+        ///     triangles, but in the end every vertex will point to some triangle
+        ///     that contains it.
         /// </remarks>
         internal void MakeVertexMap()
         {
             Otri tri = default(Otri);
             Vertex triorg;
 
-            foreach (var t in this.triangles.Values)
+            foreach (var t in triangles.Values)
             {
                 tri.tri = t;
                 // Check all three vertices of the triangle.
@@ -640,15 +409,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         #region Factory
 
-        /// <summary>
-        /// Create a new triangle with orientation zero.
-        /// </summary>
+        /// <summary> Create a new triangle with orientation zero. </summary>
         /// <param name="newotri">Reference to the new triangle.</param>
         internal void MakeTriangle(ref Otri newotri)
         {
-            Triangle tri = TrianglePool.AllocTri();
+            Topology.Triangle tri = TrianglePool.AllocTri();
 
-            tri.hash = tri.id = this.hash_tri++;
+            tri.hash = tri.id = hash_tri++;
 
             tri.subsegs[0].seg = dummysub;
             tri.subsegs[1].seg = dummysub;
@@ -664,15 +431,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             triangles.Add(tri.hash, tri);
         }
 
-        /// <summary>
-        /// Create a new subsegment with orientation zero.
-        /// </summary>
+        /// <summary> Create a new subsegment with orientation zero. </summary>
         /// <param name="newsubseg">Reference to the new subseg.</param>
         internal void MakeSegment(ref Osub newsubseg)
         {
             Segment seg = TrianglePool.AllocSeg();
 
-            seg.hash = this.hash_seg++;
+            seg.hash = hash_seg++;
 
             seg.subsegs[0].seg = dummysub;
             seg.subsegs[1].seg = dummysub;
@@ -691,53 +456,51 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         #region Manipulation
 
         /// <summary>
-        /// Insert a vertex into a Delaunay triangulation, performing flips as necessary 
-        /// to maintain the Delaunay property.
+        ///     Insert a vertex into a Delaunay triangulation, performing flips as necessary
+        ///     to maintain the Delaunay property.
         /// </summary>
         /// <param name="newvertex">The point to be inserted.</param>
         /// <param name="searchtri">The triangle to start the search.</param>
         /// <param name="splitseg">Segment to split.</param>
         /// <param name="segmentflaws">Check for creation of encroached subsegments.</param>
         /// <param name="triflaws">Check for creation of bad quality triangles.</param>
-        /// <returns>If a duplicate vertex or violated segment does not prevent the 
-        /// vertex from being inserted, the return value will be ENCROACHINGVERTEX if 
-        /// the vertex encroaches upon a subsegment (and checking is enabled), or
-        /// SUCCESSFULVERTEX otherwise. In either case, 'searchtri' is set to a handle
-        /// whose origin is the newly inserted vertex.</returns>
+        /// <returns>
+        ///     If a duplicate vertex or violated segment does not prevent the
+        ///     vertex from being inserted, the return value will be ENCROACHINGVERTEX if
+        ///     the vertex encroaches upon a subsegment (and checking is enabled), or
+        ///     SUCCESSFULVERTEX otherwise. In either case, 'searchtri' is set to a handle
+        ///     whose origin is the newly inserted vertex.
+        /// </returns>
         /// <remarks>
-        /// The point 'newvertex' is located. If 'searchtri.triangle' is not NULL,
-        /// the search for the containing triangle begins from 'searchtri'.  If
-        /// 'searchtri.triangle' is NULL, a full point location procedure is called.
-        /// If 'insertvertex' is found inside a triangle, the triangle is split into
-        /// three; if 'insertvertex' lies on an edge, the edge is split in two,
-        /// thereby splitting the two adjacent triangles into four. Edge flips are
-        /// used to restore the Delaunay property. If 'insertvertex' lies on an
-        /// existing vertex, no action is taken, and the value DUPLICATEVERTEX is
-        /// returned. On return, 'searchtri' is set to a handle whose origin is the
-        /// existing vertex.
-        ///
-        /// InsertVertex() does not use flip() for reasons of speed; some
-        /// information can be reused from edge flip to edge flip, like the
-        /// locations of subsegments.
-        /// 
-        /// Param 'splitseg': Normally, the parameter 'splitseg' is set to NULL, 
-        /// implying that no subsegment should be split. In this case, if 'insertvertex' 
-        /// is found to lie on a segment, no action is taken, and the value VIOLATINGVERTEX 
-        /// is returned. On return, 'searchtri' is set to a handle whose primary edge is the 
-        /// violated subsegment.
-        /// If the calling routine wishes to split a subsegment by inserting a vertex in it, 
-        /// the parameter 'splitseg' should be that subsegment. In this case, 'searchtri' 
-        /// MUST be the triangle handle reached by pivoting from that subsegment; no point 
-        /// location is done.
-        /// 
-        /// Param 'segmentflaws': Flags that indicate whether or not there should
-        /// be checks for the creation of encroached subsegments. If a newly inserted 
-        /// vertex encroaches upon subsegments, these subsegments are added to the list 
-        /// of subsegments to be split if 'segmentflaws' is set.
-        /// 
-        /// Param 'triflaws': Flags that indicate whether or not there should be
-        /// checks for the creation of bad quality triangles. If bad triangles are 
-        /// created, these are added to the queue if 'triflaws' is set.
+        ///     The point 'newvertex' is located. If 'searchtri.triangle' is not NULL,
+        ///     the search for the containing triangle begins from 'searchtri'.  If
+        ///     'searchtri.triangle' is NULL, a full point location procedure is called.
+        ///     If 'insertvertex' is found inside a triangle, the triangle is split into
+        ///     three; if 'insertvertex' lies on an edge, the edge is split in two,
+        ///     thereby splitting the two adjacent triangles into four. Edge flips are
+        ///     used to restore the Delaunay property. If 'insertvertex' lies on an
+        ///     existing vertex, no action is taken, and the value DUPLICATEVERTEX is
+        ///     returned. On return, 'searchtri' is set to a handle whose origin is the
+        ///     existing vertex.
+        ///     InsertVertex() does not use flip() for reasons of speed; some
+        ///     information can be reused from edge flip to edge flip, like the
+        ///     locations of subsegments.
+        ///     Param 'splitseg': Normally, the parameter 'splitseg' is set to NULL,
+        ///     implying that no subsegment should be split. In this case, if 'insertvertex'
+        ///     is found to lie on a segment, no action is taken, and the value VIOLATINGVERTEX
+        ///     is returned. On return, 'searchtri' is set to a handle whose primary edge is the
+        ///     violated subsegment.
+        ///     If the calling routine wishes to split a subsegment by inserting a vertex in it,
+        ///     the parameter 'splitseg' should be that subsegment. In this case, 'searchtri'
+        ///     MUST be the triangle handle reached by pivoting from that subsegment; no point
+        ///     location is done.
+        ///     Param 'segmentflaws': Flags that indicate whether or not there should
+        ///     be checks for the creation of encroached subsegments. If a newly inserted
+        ///     vertex encroaches upon subsegments, these subsegments are added to the list
+        ///     of subsegments to be split if 'segmentflaws' is set.
+        ///     Param 'triflaws': Flags that indicate whether or not there should be
+        ///     checks for the creation of bad quality triangles. If bad triangles are
+        ///     created, these are added to the queue if 'triflaws' is set.
         /// </remarks>
         internal InsertVertexResult InsertVertex(Vertex newvertex, ref Otri searchtri,
             ref Osub splitseg, bool segmentflaws, bool triflaws)
@@ -1074,9 +837,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         {
                             // Does the new vertex encroach upon this subsegment?
                             if (qualityMesher.CheckSeg4Encroach(ref checksubseg) > 0)
-                            {
                                 success = InsertVertexResult.Encroaching;
-                            }
                         }
                     }
                 }
@@ -1156,39 +917,27 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                                 botleft.Pivot(ref botlsubseg);
                                 botright.Pivot(ref botrsubseg);
                                 topright.Pivot(ref toprsubseg);
+
                                 if (toplsubseg.seg.hash == DUMMY)
-                                {
-                                    topright.SegDissolve(dummysub);
-                                }
+                                     topright.SegDissolve(dummysub);
                                 else
-                                {
                                     topright.SegBond(ref toplsubseg);
-                                }
+
                                 if (botlsubseg.seg.hash == DUMMY)
-                                {
                                     topleft.SegDissolve(dummysub);
-                                }
                                 else
-                                {
                                     topleft.SegBond(ref botlsubseg);
-                                }
+
                                 if (botrsubseg.seg.hash == DUMMY)
-                                {
                                     botleft.SegDissolve(dummysub);
-                                }
                                 else
-                                {
                                     botleft.SegBond(ref botrsubseg);
-                                }
+
                                 if (toprsubseg.seg.hash == DUMMY)
-                                {
                                     botright.SegDissolve(dummysub);
-                                }
                                 else
-                                {
                                     botright.SegBond(ref toprsubseg);
-                                }
-                            }
+ }
                             // New vertex assignments for the rotated quadrilateral.
                             horiz.SetOrg(farvertex);
                             horiz.SetDest(newvertex);
@@ -1214,7 +963,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                                     // Take the average of the two triangles' area constraints.
                                     // This prevents small area constraints from migrating a
                                     // long, long way from their original location due to flips.
-                                    area = 0.5 * (top.tri.area + horiz.tri.area);
+                                    area = 0.5*(top.tri.area + horiz.tri.area);
                                 }
 
                                 top.tri.area = area;
@@ -1268,13 +1017,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Create a new subsegment and inserts it between two triangles. Its 
-        /// vertices are properly initialized.
+        ///     Create a new subsegment and inserts it between two triangles. Its
+        ///     vertices are properly initialized.
         /// </summary>
-        /// <param name="tri">The new subsegment is inserted at the edge 
-        /// described by this handle.</param>
-        /// <param name="subsegmark">The marker 'subsegmark' is applied to the 
-        /// subsegment and, if appropriate, its vertices.</param>
+        /// <param name="tri">
+        ///     The new subsegment is inserted at the edge
+        ///     described by this handle.
+        /// </param>
+        /// <param name="subsegmark">
+        ///     The marker 'subsegmark' is applied to the
+        ///     subsegment and, if appropriate, its vertices.
+        /// </param>
         internal void InsertSubseg(ref Otri tri, int subsegmark)
         {
             Otri oppotri = default(Otri);
@@ -1285,13 +1038,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             tridest = tri.Dest();
             // Mark vertices if possible.
             if (triorg.mark == 0)
-            {
                 triorg.mark = subsegmark;
-            }
+
             if (tridest.mark == 0)
-            {
                 tridest.mark = subsegmark;
-            }
+
             // Check if there's already a subsegment here.
             tri.Pivot(ref newsubseg);
             if (newsubseg.seg.hash == DUMMY)
@@ -1318,46 +1069,41 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Transform two triangles to two different triangles by flipping an edge 
-        /// counterclockwise within a quadrilateral.
+        ///     Transform two triangles to two different triangles by flipping an edge
+        ///     counterclockwise within a quadrilateral.
         /// </summary>
         /// <param name="flipedge">Handle to the edge that will be flipped.</param>
-        /// <remarks>Imagine the original triangles, abc and bad, oriented so that the
-        /// shared edge ab lies in a horizontal plane, with the vertex b on the left
-        /// and the vertex a on the right. The vertex c lies below the edge, and
-        /// the vertex d lies above the edge. The 'flipedge' handle holds the edge
-        /// ab of triangle abc, and is directed left, from vertex a to vertex b.
-        ///
-        /// The triangles abc and bad are deleted and replaced by the triangles cdb
-        /// and dca.  The triangles that represent abc and bad are NOT deallocated;
-        /// they are reused for dca and cdb, respectively.  Hence, any handles that
-        /// may have held the original triangles are still valid, although not
-        /// directed as they were before.
-        ///
-        /// Upon completion of this routine, the 'flipedge' handle holds the edge
-        /// dc of triangle dca, and is directed down, from vertex d to vertex c.
-        /// (Hence, the two triangles have rotated counterclockwise.)
-        ///
-        /// WARNING:  This transformation is geometrically valid only if the
-        /// quadrilateral adbc is convex.  Furthermore, this transformation is
-        /// valid only if there is not a subsegment between the triangles abc and
-        /// bad.  This routine does not check either of these preconditions, and
-        /// it is the responsibility of the calling routine to ensure that they are
-        /// met.  If they are not, the streets shall be filled with wailing and
-        /// gnashing of teeth.
-        /// 
-        /// Terminology
-        ///
-        /// A "local transformation" replaces a small set of triangles with another
-        /// set of triangles.  This may or may not involve inserting or deleting a
-        /// vertex.
-        ///
-        /// The term "casing" is used to describe the set of triangles that are
-        /// attached to the triangles being transformed, but are not transformed
-        /// themselves.  Think of the casing as a fixed hollow structure inside
-        /// which all the action happens.  A "casing" is only defined relative to
-        /// a single transformation; each occurrence of a transformation will
-        /// involve a different casing.
+        /// <remarks>
+        ///     Imagine the original triangles, abc and bad, oriented so that the
+        ///     shared edge ab lies in a horizontal plane, with the vertex b on the left
+        ///     and the vertex a on the right. The vertex c lies below the edge, and
+        ///     the vertex d lies above the edge. The 'flipedge' handle holds the edge
+        ///     ab of triangle abc, and is directed left, from vertex a to vertex b.
+        ///     The triangles abc and bad are deleted and replaced by the triangles cdb
+        ///     and dca.  The triangles that represent abc and bad are NOT deallocated;
+        ///     they are reused for dca and cdb, respectively.  Hence, any handles that
+        ///     may have held the original triangles are still valid, although not
+        ///     directed as they were before.
+        ///     Upon completion of this routine, the 'flipedge' handle holds the edge
+        ///     dc of triangle dca, and is directed down, from vertex d to vertex c.
+        ///     (Hence, the two triangles have rotated counterclockwise.)
+        ///     WARNING:  This transformation is geometrically valid only if the
+        ///     quadrilateral adbc is convex.  Furthermore, this transformation is
+        ///     valid only if there is not a subsegment between the triangles abc and
+        ///     bad.  This routine does not check either of these preconditions, and
+        ///     it is the responsibility of the calling routine to ensure that they are
+        ///     met.  If they are not, the streets shall be filled with wailing and
+        ///     gnashing of teeth.
+        ///     Terminology
+        ///     A "local transformation" replaces a small set of triangles with another
+        ///     set of triangles.  This may or may not involve inserting or deleting a
+        ///     vertex.
+        ///     The term "casing" is used to describe the set of triangles that are
+        ///     attached to the triangles being transformed, but are not transformed
+        ///     themselves.  Think of the casing as a fixed hollow structure inside
+        ///     which all the action happens.  A "casing" is only defined relative to
+        ///     a single transformation; each occurrence of a transformation will
+        ///     involve a different casing.
         /// </remarks>
         internal void Flip(ref Otri flipedge)
         {
@@ -1376,26 +1122,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             leftvertex = flipedge.Dest();
             botvertex = flipedge.Apex();
             flipedge.Sym(ref top);
-
-            // SELF CHECK
-
-            //if (top.triangle.id == DUMMY)
-            //{
-            //    logger.Error("Attempt to flip on boundary.", "Mesh.Flip()");
-            //    flipedge.LnextSelf();
-            //    return;
-            //}
-
-            //if (checksegments)
-            //{
-            //    flipedge.SegPivot(ref toplsubseg);
-            //    if (toplsubseg.ss != Segment.Empty)
-            //    {
-            //        logger.Error("Attempt to flip a segment.", "Mesh.Flip()");
-            //        flipedge.LnextSelf();
-            //        return;
-            //    }
-            //}
 
             farvertex = top.Apex();
 
@@ -1423,40 +1149,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 topright.Pivot(ref toprsubseg);
 
                 if (toplsubseg.seg.hash == DUMMY)
-                {
                     topright.SegDissolve(dummysub);
-                }
                 else
-                {
                     topright.SegBond(ref toplsubseg);
-                }
 
                 if (botlsubseg.seg.hash == DUMMY)
-                {
                     topleft.SegDissolve(dummysub);
-                }
                 else
-                {
                     topleft.SegBond(ref botlsubseg);
-                }
 
                 if (botrsubseg.seg.hash == DUMMY)
-                {
                     botleft.SegDissolve(dummysub);
-                }
                 else
-                {
                     botleft.SegBond(ref botrsubseg);
-                }
 
                 if (toprsubseg.seg.hash == DUMMY)
-                {
                     botright.SegDissolve(dummysub);
-                }
                 else
-                {
                     botright.SegBond(ref toprsubseg);
-                }
             }
 
             // New vertex assignments for the rotated quadrilateral.
@@ -1469,18 +1179,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Transform two triangles to two different triangles by flipping an edge 
-        /// clockwise within a quadrilateral. Reverses the flip() operation so that 
-        /// the data structures representing the triangles are back where they were 
-        /// before the flip().
+        ///     Transform two triangles to two different triangles by flipping an edge
+        ///     clockwise within a quadrilateral. Reverses the flip() operation so that
+        ///     the data structures representing the triangles are back where they were
+        ///     before the flip().
         /// </summary>
         /// <param name="flipedge"></param>
         /// <remarks>
-        /// See above Flip() remarks for more information.
-        ///
-        /// Upon completion of this routine, the 'flipedge' handle holds the edge
-        /// cd of triangle cdb, and is directed up, from vertex c to vertex d.
-        /// (Hence, the two triangles have rotated clockwise.)
+        ///     See above Flip() remarks for more information.
+        ///     Upon completion of this routine, the 'flipedge' handle holds the edge
+        ///     cd of triangle cdb, and is directed up, from vertex c to vertex d.
+        ///     (Hence, the two triangles have rotated clockwise.)
         /// </remarks>
         internal void Unflip(ref Otri flipedge)
         {
@@ -1524,38 +1233,26 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 botleft.Pivot(ref botlsubseg);
                 botright.Pivot(ref botrsubseg);
                 topright.Pivot(ref toprsubseg);
+                
                 if (toplsubseg.seg.hash == DUMMY)
-                {
                     botleft.SegDissolve(dummysub);
-                }
                 else
-                {
                     botleft.SegBond(ref toplsubseg);
-                }
+
                 if (botlsubseg.seg.hash == DUMMY)
-                {
                     botright.SegDissolve(dummysub);
-                }
                 else
-                {
                     botright.SegBond(ref botlsubseg);
-                }
+
                 if (botrsubseg.seg.hash == DUMMY)
-                {
                     topright.SegDissolve(dummysub);
-                }
                 else
-                {
                     topright.SegBond(ref botrsubseg);
-                }
+
                 if (toprsubseg.seg.hash == DUMMY)
-                {
                     topleft.SegDissolve(dummysub);
-                }
                 else
-                {
                     topleft.SegBond(ref toprsubseg);
-                }
             }
 
             // New vertex assignments for the rotated quadrilateral.
@@ -1567,71 +1264,75 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             top.SetApex(rightvertex);
         }
 
+        //  This is a conceptually difficult routine. The starting assumption is
+        //  that we have a polygon with n sides. n - 1 of these sides are currently
+        //  represented as edges in the mesh. One side, called the "base", need not
+        //  be.
+        //
+        //  Inside the polygon is a structure I call a "fan", consisting of n - 1
+        //  triangles that share a common origin. For each of these triangles, the
+        //  edge opposite the origin is one of the sides of the polygon. The
+        //  primary edge of each triangle is the edge directed from the origin to
+        //  the destination; note that this is not the same edge that is a side of
+        //  the polygon. 'firstedge' is the primary edge of the first triangle.
+        //  From there, the triangles follow in counterclockwise order about the
+        //  polygon, until 'lastedge', the primary edge of the last triangle.
+        //  'firstedge' and 'lastedge' are probably connected to other triangles
+        //  beyond the extremes of the fan, but their identity is not important, as
+        //  long as the fan remains connected to them.
+        //
+        //  Imagine the polygon oriented so that its base is at the bottom.  This
+        //  puts 'firstedge' on the far right, and 'lastedge' on the far left.
+        //  The right vertex of the base is the destination of 'firstedge', and the
+        //  left vertex of the base is the apex of 'lastedge'.
+        //
+        //  The challenge now is to find the right sequence of edge flips to
+        //  transform the fan into a Delaunay triangulation of the polygon.  Each
+        //  edge flip effectively removes one triangle from the fan, committing it
+        //  to the polygon.  The resulting polygon has one fewer edge. If 'doflip'
+        //  is set, the final flip will be performed, resulting in a fan of one
+        //  (useless?) triangle. If 'doflip' is not set, the final flip is not
+        //  performed, resulting in a fan of two triangles, and an unfinished
+        //  triangular polygon that is not yet filled out with a single triangle.
+        //  On completion of the routine, 'lastedge' is the last remaining triangle,
+        //  or the leftmost of the last two.
+        //
+        //  Although the flips are performed in the order described above, the
+        //  decisions about what flips to perform are made in precisely the reverse
+        //  order. The recursive triangulatepolygon() procedure makes a decision,
+        //  uses up to two recursive calls to triangulate the "subproblems"
+        //  (polygons with fewer edges), and then performs an edge flip.
+        //
+        //  The "decision" it makes is which vertex of the polygon should be
+        //  connected to the base. This decision is made by testing every possible
+        //  vertex.  Once the best vertex is found, the two edges that connect this
+        //  vertex to the base become the bases for two smaller polygons. These
+        //  are triangulated recursively. Unfortunately, this approach can take
+        //  O(n^2) time not only in the worst case, but in many common cases. It's
+        //  rarely a big deal for vertex deletion, where n is rarely larger than
+        //  ten, but it could be a big deal for segment insertion, especially if
+        //  there's a lot of long segments that each cut many triangles. I ought to
+        //  code a faster algorithm some day.
         /// <summary>
-        /// Find the Delaunay triangulation of a polygon that has a certain "nice" shape. 
-        /// This includes the polygons that result from deletion of a vertex or insertion 
-        /// of a segment.
+        ///     Find the Delaunay triangulation of a polygon that has a certain "nice" shape.
+        ///     This includes the polygons that result from deletion of a vertex or insertion
+        ///     of a segment.
         /// </summary>
         /// <param name="firstedge">The primary edge of the first triangle.</param>
         /// <param name="lastedge">The primary edge of the last triangle.</param>
-        /// <param name="edgecount">The number of sides of the polygon, including its 
-        /// base.</param>
+        /// <param name="edgecount">
+        ///     The number of sides of the polygon, including its
+        ///     base.
+        /// </param>
         /// <param name="doflip">A flag, wether to perform the last flip.</param>
-        /// <param name="triflaws">A flag that determines whether the new triangles should 
-        /// be tested for quality, and enqueued if they are bad.</param>
+        /// <param name="triflaws">
+        ///     A flag that determines whether the new triangles should
+        ///     be tested for quality, and enqueued if they are bad.
+        /// </param>
         /// <remarks>
-        ///  This is a conceptually difficult routine. The starting assumption is
-        ///  that we have a polygon with n sides. n - 1 of these sides are currently
-        ///  represented as edges in the mesh. One side, called the "base", need not
-        ///  be.
-        ///
-        ///  Inside the polygon is a structure I call a "fan", consisting of n - 1
-        ///  triangles that share a common origin. For each of these triangles, the
-        ///  edge opposite the origin is one of the sides of the polygon. The
-        ///  primary edge of each triangle is the edge directed from the origin to
-        ///  the destination; note that this is not the same edge that is a side of
-        ///  the polygon. 'firstedge' is the primary edge of the first triangle.
-        ///  From there, the triangles follow in counterclockwise order about the
-        ///  polygon, until 'lastedge', the primary edge of the last triangle.
-        ///  'firstedge' and 'lastedge' are probably connected to other triangles
-        ///  beyond the extremes of the fan, but their identity is not important, as
-        ///  long as the fan remains connected to them.
-        ///
-        ///  Imagine the polygon oriented so that its base is at the bottom.  This
-        ///  puts 'firstedge' on the far right, and 'lastedge' on the far left.
-        ///  The right vertex of the base is the destination of 'firstedge', and the
-        ///  left vertex of the base is the apex of 'lastedge'.
-        ///
-        ///  The challenge now is to find the right sequence of edge flips to
-        ///  transform the fan into a Delaunay triangulation of the polygon.  Each
-        ///  edge flip effectively removes one triangle from the fan, committing it
-        ///  to the polygon.  The resulting polygon has one fewer edge. If 'doflip'
-        ///  is set, the final flip will be performed, resulting in a fan of one
-        ///  (useless?) triangle. If 'doflip' is not set, the final flip is not
-        ///  performed, resulting in a fan of two triangles, and an unfinished
-        ///  triangular polygon that is not yet filled out with a single triangle.
-        ///  On completion of the routine, 'lastedge' is the last remaining triangle,
-        ///  or the leftmost of the last two.
-        ///
-        ///  Although the flips are performed in the order described above, the
-        ///  decisions about what flips to perform are made in precisely the reverse
-        ///  order. The recursive triangulatepolygon() procedure makes a decision,
-        ///  uses up to two recursive calls to triangulate the "subproblems"
-        ///  (polygons with fewer edges), and then performs an edge flip.
-        ///
-        ///  The "decision" it makes is which vertex of the polygon should be
-        ///  connected to the base. This decision is made by testing every possible
-        ///  vertex.  Once the best vertex is found, the two edges that connect this
-        ///  vertex to the base become the bases for two smaller polygons. These
-        ///  are triangulated recursively. Unfortunately, this approach can take
-        ///  O(n^2) time not only in the worst case, but in many common cases. It's
-        ///  rarely a big deal for vertex deletion, where n is rarely larger than
-        ///  ten, but it could be a big deal for segment insertion, especially if
-        ///  there's a lot of long segments that each cut many triangles. I ought to
-        ///  code a faster algorithm some day.
         /// </remarks>
         private void TriangulatePolygon(Otri firstedge, Otri lastedge,
-                                int edgecount, bool doflip, bool triflaws)
+            int edgecount, bool doflip, bool triflaws)
         {
             Otri testtri = default(Otri);
             Otri besttri = default(Otri);
@@ -1696,16 +1397,16 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Delete a vertex from a Delaunay triangulation, ensuring that the 
-        /// triangulation remains Delaunay.
+        ///     Delete a vertex from a Delaunay triangulation, ensuring that the
+        ///     triangulation remains Delaunay.
         /// </summary>
         /// <param name="deltri"></param>
-        /// <remarks>The origin of 'deltri' is deleted. The union of the triangles 
-        /// adjacent to this vertex is a polygon, for which the Delaunay triangulation 
-        /// is found. Two triangles are removed from the mesh.
-        ///
-        /// Only interior vertices that do not lie on segments or boundaries 
-        /// may be deleted.
+        /// <remarks>
+        ///     The origin of 'deltri' is deleted. The union of the triangles
+        ///     adjacent to this vertex is a polygon, for which the Delaunay triangulation
+        ///     is found. Two triangles are removed from the mesh.
+        ///     Only interior vertices that do not lie on segments or boundaries
+        ///     may be deleted.
         /// </remarks>
         internal void DeleteVertex(ref Otri deltri)
         {
@@ -1764,23 +1465,19 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             neworg = lefttri.Org();
             deltri.SetOrg(neworg);
             if (behavior.NoBisect == 0)
-            {
                 qualityMesher.TestTriangle(ref deltri);
-            }
 
             // Delete the two spliced-out triangles.
             TriangleDealloc(lefttri.tri);
             TriangleDealloc(righttri.tri);
         }
 
-        /// <summary>
-        /// Undo the most recent vertex insertion.
-        /// </summary>
+        /// <summary> Undo the most recent vertex insertion. </summary>
         /// <remarks>
-        /// Walks through the list of transformations (flips and a vertex insertion)
-        /// in the reverse of the order in which they were done, and undoes them.
-        /// The inserted vertex is removed from the triangulation and deallocated.
-        /// Two triangles (possibly just one) are also deallocated.
+        ///     Walks through the list of transformations (flips and a vertex insertion)
+        ///     in the reverse of the order in which they were done, and undoes them.
+        ///     The inserted vertex is removed from the triangulation and deallocated.
+        ///     Two triangles (possibly just one) are also deallocated.
         /// </remarks>
         internal void UndoVertex()
         {
@@ -1877,11 +1574,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         #region Dealloc
 
-        /// <summary>
-        /// Deallocate space for a triangle, marking it dead.
-        /// </summary>
+        /// <summary> Deallocate space for a triangle, marking it dead. </summary>
         /// <param name="dyingtriangle"></param>
-        internal void TriangleDealloc(Triangle dyingtriangle)
+        internal void TriangleDealloc(Topology.Triangle dyingtriangle)
         {
             // Mark the triangle as dead. This makes it possible to detect dead 
             // triangles when traversing the list of all triangles.
@@ -1889,9 +1584,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             triangles.Remove(dyingtriangle.hash);
         }
 
-        /// <summary>
-        /// Deallocate space for a vertex, marking it dead.
-        /// </summary>
+        /// <summary> Deallocate space for a vertex, marking it dead. </summary>
         /// <param name="dyingvertex"></param>
         internal void VertexDealloc(Vertex dyingvertex)
         {
@@ -1901,9 +1594,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             vertices.Remove(dyingvertex.hash);
         }
 
-        /// <summary>
-        /// Deallocate space for a subsegment, marking it dead.
-        /// </summary>
+        /// <summary> Deallocate space for a subsegment, marking it dead. </summary>
         /// <param name="dyingsubseg"></param>
         internal void SubsegDealloc(Segment dyingsubseg)
         {
@@ -1939,7 +1630,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             hash_tri = 0;
 
             holes.Clear();
-            regions.Clear();
 
             bounds = default(Rectangle);
             invertices = 0;

@@ -430,7 +430,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         public void Configure(IConfigSection configSection)
         {
             _maxCellSize = configSection.GetFloat("cell_size", 100);
-            var maxArea = configSection.GetFloat("tri_area", 4);
+            var maxArea = configSection.GetFloat("tri_area", 6);
 
             _meshCellBuilder.SetMaxArea(maxArea);
         }

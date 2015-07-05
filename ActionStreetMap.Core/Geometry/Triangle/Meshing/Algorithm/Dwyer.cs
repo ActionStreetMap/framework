@@ -1,19 +1,12 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Dwyer.cs">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 {
-    using System;
-    using System.Collections.Generic;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-
     /// <summary>
-    /// Builds a delaunay triangulation using the divide-and-conquer algorithm.
+    ///     Builds a delaunay triangulation using the divide-and-conquer algorithm.
     /// </summary>
     /// <remarks>
     /// The divide-and-conquer bounding box
@@ -43,9 +36,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
     /// The bounding box also makes it easy to traverse the convex hull, as the
     /// divide-and-conquer algorithm needs to do.
     /// </remarks>
-    internal class Dwyer : ITriangulator
+    public class Dwyer : ITriangulator
     {
-        Random rand = new Random(DateTime.Now.Millisecond);
+        static Random rand = new Random(1000);
 
         public bool UseDwyer = true;
 
@@ -60,7 +53,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         /// Sorts the vertices, calls a recursive procedure to triangulate them, and
         /// removes the bounding box, setting boundary markers as appropriate.
         /// </remarks>
-        public IMesh Triangulate(ICollection<Vertex> points)
+        public Mesh Triangulate(ICollection<Vertex> points)
         {
             this.mesh = TrianglePool.AllocMesh();
             this.mesh.TransferNodes(points);
@@ -88,12 +81,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             {
                 if ((sortarray[i].x == sortarray[j].x) && (sortarray[i].y == sortarray[j].y))
                 {
-                    //if (Log.Verbose)
-                    //{
-                    //    Log.Instance.Warning(
-                    //        String.Format("A duplicate vertex appeared and was ignored (ID {0}).", sortarray[j].hash),
-                    //        "Dwyer.Triangulate()");
-                    //}
                     sortarray[j].type = VertexType.UndeadVertex;
                     mesh.undeads++;
                 }

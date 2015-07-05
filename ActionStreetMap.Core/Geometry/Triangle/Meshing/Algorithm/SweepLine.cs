@@ -1,44 +1,36 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="SweepLine.cs">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 {
-    using System;
-    using System.Collections.Generic;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-    using ActionStreetMap.Core.Geometry.Triangle.Tools;
-
     /// <summary>
-    /// Builds a delaunay triangulation using the sweepline algorithm.
+    ///     Builds a delaunay triangulation using the sweepline algorithm.
     /// </summary>
-    internal class SweepLine : ITriangulator
+    public class SweepLine : ITriangulator
     {
-        static int randomseed = 1;
-        static int SAMPLERATE = 10;
+        private static int randomseed = 1;
+        private static readonly int SAMPLERATE = 10;
 
-        static int randomnation(int choices)
+        private static int randomnation(int choices)
         {
-            randomseed = (randomseed * 1366 + 150889) % 714025;
-            return randomseed / (714025 / choices + 1);
+            randomseed = (randomseed*1366 + 150889)%714025;
+            return randomseed/(714025/choices + 1);
         }
 
-        Mesh mesh;
-        double xminextreme; // Nonexistent x value used as a flag in sweepline.
-        List<SplayNode> splaynodes;
+        private Mesh mesh;
+        private double xminextreme; // Nonexistent x value used as a flag in sweepline.
+        private List<SplayNode> splaynodes;
 
-        public IMesh Triangulate(ICollection<Vertex> points)
+        public Mesh Triangulate(ICollection<Vertex> points)
         {
-            this.mesh = TrianglePool.AllocMesh();
-            this.mesh.TransferNodes(points);
+            mesh = TrianglePool.AllocMesh();
+            mesh.TransferNodes(points);
 
             // Nonexistent x value used as a flag to mark circle events in sweepline
             // Delaunay algorithm.
-            xminextreme = 10 * mesh.bounds.Left - 9 * mesh.bounds.Right;
+            xminextreme = 10*mesh.bounds.Left - 9*mesh.bounds.Right;
 
             SweepEvent[] eventheap;
 
@@ -64,7 +56,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             splaynodes = new List<SplayNode>();
             splayroot = null;
 
-            CreateHeap(out eventheap);//, out events, out freeevents);
+            CreateHeap(out eventheap); //, out events, out freeevents);
             heapsize = mesh.invertices;
 
             mesh.MakeTriangle(ref lefttri);
@@ -83,20 +75,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             do
             {
                 if (heapsize == 0)
-                {
                     throw new Exception("Input vertices are all identical.");
-                }
+
                 secondvertex = eventheap[0].vertexEvent;
                 HeapDelete(eventheap, heapsize, 0);
                 heapsize--;
                 if ((firstvertex.x == secondvertex.x) &&
                     (firstvertex.y == secondvertex.y))
                 {
-                    //if (Log.Verbose)
-                    //{
-                    //    Log.Instance.Warning("A duplicate vertex appeared and was ignored (ID " + secondvertex.id + ").",
-                    //        "SweepLine.Triangulate().1");
-                    //}
                     secondvertex.type = VertexType.UndeadVertex;
                     mesh.undeads++;
                 }
@@ -139,7 +125,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                         leftvertex = fliptri.Dest();
                         midvertex = fliptri.Apex();
                         rightvertex = fliptri.Org();
-                        splayroot = CircleTopInsert(splayroot, lefttri, leftvertex, midvertex, rightvertex, nextevent.ykey);
+                        splayroot = CircleTopInsert(splayroot, lefttri, leftvertex, midvertex, rightvertex,
+                            nextevent.ykey);
                     }
                 }
                 else
@@ -148,11 +135,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                     if ((nextvertex.x == lastvertex.x) &&
                         (nextvertex.y == lastvertex.y))
                     {
-                        //if (Log.Verbose)
-                        //{
-                        //    Log.Instance.Warning("A duplicate vertex appeared and was ignored (ID " + nextvertex.id + ").",
-                        //        "SweepLine.Triangulate().2");
-                        //}
                         nextvertex.type = VertexType.UndeadVertex;
                         mesh.undeads++;
                         check4events = false;
@@ -245,14 +227,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             splaynodes.Clear();
             bottommost.Lprev();
 
-            this.mesh.hullsize = RemoveGhosts(ref bottommost);
+            mesh.hullsize = RemoveGhosts(ref bottommost);
 
-            return this.mesh;
+            return mesh;
         }
 
         #region Heap
 
-        void HeapInsert(SweepEvent[] heap, int heapsize, SweepEvent newevent)
+        private void HeapInsert(SweepEvent[] heap, int heapsize, SweepEvent newevent)
         {
             double eventx, eventy;
             int eventnum;
@@ -285,7 +267,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             newevent.heapposition = eventnum;
         }
 
-        void Heapify(SweepEvent[] heap, int heapsize, int eventnum)
+        private void Heapify(SweepEvent[] heap, int heapsize, int eventnum)
         {
             SweepEvent thisevent;
             double eventx, eventy;
@@ -296,7 +278,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             thisevent = heap[eventnum];
             eventx = thisevent.xkey;
             eventy = thisevent.ykey;
-            leftchild = 2 * eventnum + 1;
+            leftchild = 2*eventnum + 1;
             notdone = leftchild < heapsize;
             while (notdone)
             {
@@ -332,13 +314,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                     thisevent.heapposition = smallest;
 
                     eventnum = smallest;
-                    leftchild = 2 * eventnum + 1;
+                    leftchild = 2*eventnum + 1;
                     notdone = leftchild < heapsize;
                 }
             }
         }
 
-        void HeapDelete(SweepEvent[] heap, int heapsize, int eventnum)
+        private void HeapDelete(SweepEvent[] heap, int heapsize, int eventnum)
         {
             SweepEvent moveevent;
             double eventx, eventy;
@@ -374,14 +356,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             Heapify(heap, heapsize - 1, eventnum);
         }
 
-        void CreateHeap(out SweepEvent[] eventheap)
+        private void CreateHeap(out SweepEvent[] eventheap)
         {
             Vertex thisvertex;
             int maxevents;
             int i;
             SweepEvent evt;
 
-            maxevents = (3 * mesh.invertices) / 2;
+            maxevents = (3*mesh.invertices)/2;
             eventheap = new SweepEvent[maxevents];
 
             i = 0;
@@ -400,7 +382,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 
         #region Splaytree
 
-        SplayNode Splay(SplayNode splaytree, Point searchpoint, ref Otri searchtri)
+        private SplayNode Splay(SplayNode splaytree, Point searchpoint, ref Otri searchtri)
         {
             SplayNode child, grandchild;
             SplayNode lefttree, righttree;
@@ -504,47 +486,41 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 }
                 return grandchild;
             }
-            else
-            {
-                lefttree = Splay(splaytree.lchild, searchpoint, ref searchtri);
-                righttree = Splay(splaytree.rchild, searchpoint, ref searchtri);
+            lefttree = Splay(splaytree.lchild, searchpoint, ref searchtri);
+            righttree = Splay(splaytree.rchild, searchpoint, ref searchtri);
 
-                splaynodes.Remove(splaytree);
-                if (lefttree == null)
-                {
-                    return righttree;
-                }
-                else if (righttree == null)
-                {
-                    return lefttree;
-                }
-                else if (lefttree.rchild == null)
-                {
-                    lefttree.rchild = righttree.lchild;
-                    righttree.lchild = lefttree;
-                    return righttree;
-                }
-                else if (righttree.lchild == null)
-                {
-                    righttree.lchild = lefttree.rchild;
-                    lefttree.rchild = righttree;
-                    return lefttree;
-                }
-                else
-                {
-                    //      printf("Holy Toledo!!!\n");
-                    leftright = lefttree.rchild;
-                    while (leftright.rchild != null)
-                    {
-                        leftright = leftright.rchild;
-                    }
-                    leftright.rchild = righttree;
-                    return lefttree;
-                }
+            splaynodes.Remove(splaytree);
+            if (lefttree == null)
+            {
+                return righttree;
             }
+            if (righttree == null)
+            {
+                return lefttree;
+            }
+            if (lefttree.rchild == null)
+            {
+                lefttree.rchild = righttree.lchild;
+                righttree.lchild = lefttree;
+                return righttree;
+            }
+            if (righttree.lchild == null)
+            {
+                righttree.lchild = lefttree.rchild;
+                lefttree.rchild = righttree;
+                return lefttree;
+            }
+            //      printf("Holy Toledo!!!\n");
+            leftright = lefttree.rchild;
+            while (leftright.rchild != null)
+            {
+                leftright = leftright.rchild;
+            }
+            leftright.rchild = righttree;
+            return lefttree;
         }
 
-        SplayNode SplayInsert(SplayNode splayroot, Otri newkey, Point searchpoint)
+        private SplayNode SplayInsert(SplayNode splayroot, Otri newkey, Point searchpoint)
         {
             SplayNode newsplaynode;
 
@@ -572,8 +548,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             return newsplaynode;
         }
 
-        SplayNode FrontLocate(SplayNode splayroot, Otri bottommost, Vertex searchvertex,
-                              ref Otri searchtri, ref bool farright)
+        private SplayNode FrontLocate(SplayNode splayroot, Otri bottommost, Vertex searchvertex,
+            ref Otri searchtri, ref bool farright)
         {
             bool farrightflag;
 
@@ -590,8 +566,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             return splayroot;
         }
 
-        SplayNode CircleTopInsert(SplayNode splayroot, Otri newkey,
-                                  Vertex pa, Vertex pb, Vertex pc, double topy)
+        private SplayNode CircleTopInsert(SplayNode splayroot, Otri newkey,
+            Vertex pa, Vertex pb, Vertex pc, double topy)
         {
             double ccwabc;
             double xac, yac, xbc, ybc;
@@ -604,21 +580,19 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             yac = pa.y - pc.y;
             xbc = pb.x - pc.x;
             ybc = pb.y - pc.y;
-            aclen2 = xac * xac + yac * yac;
-            bclen2 = xbc * xbc + ybc * ybc;
-            searchpoint.x = pc.x - (yac * bclen2 - ybc * aclen2) / (2.0 * ccwabc);
+            aclen2 = xac*xac + yac*yac;
+            bclen2 = xbc*xbc + ybc*ybc;
+            searchpoint.x = pc.x - (yac*bclen2 - ybc*aclen2)/(2.0*ccwabc);
             searchpoint.y = topy;
             return SplayInsert(Splay(splayroot, searchpoint, ref dummytri), newkey, searchpoint);
         }
 
         #endregion
 
-        bool RightOfHyperbola(ref Otri fronttri, Point newsite)
+        private bool RightOfHyperbola(ref Otri fronttri, Point newsite)
         {
             Vertex leftvertex, rightvertex;
             double dxa, dya, dxb, dyb;
-
-            Statistic.HyperbolaCount++;
 
             leftvertex = fronttri.Dest();
             rightvertex = fronttri.Apex();
@@ -642,15 +616,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             dya = leftvertex.y - newsite.y;
             dxb = rightvertex.x - newsite.x;
             dyb = rightvertex.y - newsite.y;
-            return dya * (dxb * dxb + dyb * dyb) > dyb * (dxa * dxa + dya * dya);
+            return dya*(dxb*dxb + dyb*dyb) > dyb*(dxa*dxa + dya*dya);
         }
 
-        double CircleTop(Vertex pa, Vertex pb, Vertex pc, double ccwabc)
+        private double CircleTop(Vertex pa, Vertex pb, Vertex pc, double ccwabc)
         {
             double xac, yac, xbc, ybc, xab, yab;
             double aclen2, bclen2, ablen2;
-
-            Statistic.CircleTopCount++;
 
             xac = pa.x - pc.x;
             yac = pa.y - pc.y;
@@ -658,13 +630,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             ybc = pb.y - pc.y;
             xab = pa.x - pb.x;
             yab = pa.y - pb.y;
-            aclen2 = xac * xac + yac * yac;
-            bclen2 = xbc * xbc + ybc * ybc;
-            ablen2 = xab * xab + yab * yab;
-            return pc.y + (xac * bclen2 - xbc * aclen2 + Math.Sqrt(aclen2 * bclen2 * ablen2)) / (2.0 * ccwabc);
+            aclen2 = xac*xac + yac*yac;
+            bclen2 = xbc*xbc + ybc*ybc;
+            ablen2 = xab*xab + yab*yab;
+            return pc.y + (xac*bclen2 - xbc*aclen2 + Math.Sqrt(aclen2*bclen2*ablen2))/(2.0*ccwabc);
         }
 
-        void Check4DeadEvent(ref Otri checktri, SweepEvent[] eventheap, ref int heapsize)
+        private void Check4DeadEvent(ref Otri checktri, SweepEvent[] eventheap, ref int heapsize)
         {
             SweepEvent deadevent;
             SweepEventVertex eventvertex;
@@ -683,11 +655,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         }
 
         /// <summary>
-        /// Removes ghost triangles.
+        ///     Removes ghost triangles.
         /// </summary>
         /// <param name="startghost"></param>
         /// <returns>Number of vertices on the hull.</returns>
-        int RemoveGhosts(ref Otri startghost)
+        private int RemoveGhosts(ref Otri startghost)
         {
             Otri searchedge = default(Otri);
             Otri dissolveedge = default(Otri);
@@ -742,32 +714,31 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         #region Internal classes
 
         /// <summary>
-        /// A node in a heap used to store events for the sweepline Delaunay algorithm.
+        ///     A node in a heap used to store events for the sweepline Delaunay algorithm.
         /// </summary>
         /// <remarks>
-        /// Only used in the sweepline algorithm.
-        /// 
-        /// Nodes do not point directly to their parents or children in the heap. Instead, each
-        /// node knows its position in the heap, and can look up its parent and children in a
-        /// separate array. To distinguish site events from circle events, all circle events are
-        /// given an invalid (smaller than 'xmin') x-coordinate 'xkey'.
+        ///     Only used in the sweepline algorithm.
+        ///     Nodes do not point directly to their parents or children in the heap. Instead, each
+        ///     node knows its position in the heap, and can look up its parent and children in a
+        ///     separate array. To distinguish site events from circle events, all circle events are
+        ///     given an invalid (smaller than 'xmin') x-coordinate 'xkey'.
         /// </remarks>
-        class SweepEvent
+        private class SweepEvent
         {
-            public double xkey, ykey;     // Coordinates of the event.
-            public Vertex vertexEvent;    // Vertex event.
-            public Otri otriEvent;        // Circle event.
-            public int heapposition;      // Marks this event's position in the heap.
+            public double xkey, ykey; // Coordinates of the event.
+            public Vertex vertexEvent; // Vertex event.
+            public Otri otriEvent; // Circle event.
+            public int heapposition; // Marks this event's position in the heap.
         }
 
         /// <summary>
-        /// Introducing a new class which aggregates a sweep event is the easiest way
-        /// to handle the pointer magic of the original code (casting a sweep event 
-        /// to vertex etc.).
+        ///     Introducing a new class which aggregates a sweep event is the easiest way
+        ///     to handle the pointer magic of the original code (casting a sweep event
+        ///     to vertex etc.).
         /// </summary>
-        class SweepEventVertex : Vertex
+        private class SweepEventVertex : Vertex
         {
-            public SweepEvent evt;
+            public readonly SweepEvent evt;
 
             public SweepEventVertex(SweepEvent e)
             {
@@ -776,26 +747,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         }
 
         /// <summary>
-        /// A node in the splay tree.
+        ///     A node in the splay tree.
         /// </summary>
         /// <remarks>
-        /// Only used in the sweepline algorithm.
-        /// 
-        /// Each node holds an oriented ghost triangle that represents a boundary edge
-        /// of the growing triangulation. When a circle event covers two boundary edges
-        /// with a triangle, so that they are no longer boundary edges, those edges are
-        /// not immediately deleted from the tree; rather, they are lazily deleted when
-        /// they are next encountered. (Since only a random sample of boundary edges are
-        /// kept in the tree, lazy deletion is faster.) 'keydest' is used to verify that
-        /// a triangle is still the same as when it entered the splay tree; if it has
-        /// been rotated (due to a circle event), it no longer represents a boundary
-        /// edge and should be deleted.
+        ///     Only used in the sweepline algorithm.
+        ///     Each node holds an oriented ghost triangle that represents a boundary edge
+        ///     of the growing triangulation. When a circle event covers two boundary edges
+        ///     with a triangle, so that they are no longer boundary edges, those edges are
+        ///     not immediately deleted from the tree; rather, they are lazily deleted when
+        ///     they are next encountered. (Since only a random sample of boundary edges are
+        ///     kept in the tree, lazy deletion is faster.) 'keydest' is used to verify that
+        ///     a triangle is still the same as when it entered the splay tree; if it has
+        ///     been rotated (due to a circle event), it no longer represents a boundary
+        ///     edge and should be deleted.
         /// </remarks>
-        class SplayNode
+        private class SplayNode
         {
-            public Otri keyedge;              // Lprev of an edge on the front.
-            public Vertex keydest;            // Used to verify that splay node is still live.
-            public SplayNode lchild, rchild;  // Children in splay tree.
+            public Otri keyedge; // Lprev of an edge on the front.
+            public Vertex keydest; // Used to verify that splay node is still live.
+            public SplayNode lchild, rchild; // Children in splay tree.
         }
 
         #endregion

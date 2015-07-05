@@ -5,7 +5,10 @@ namespace ActionStreetMap.Core.Utils
     internal static class MathUtils
     {
         /// <summary> Round digit count. </summary>
-        internal const int RoundDigitCount = 4;
+        internal const int RoundDigitCount = 5;
+
+        /// <summary> Current epsion </summary>
+        internal const double Epsion = 0.00001;
 
         /// <summary> Converts degrees to radians. </summary>
         public static double Deg2Rad(double degrees)

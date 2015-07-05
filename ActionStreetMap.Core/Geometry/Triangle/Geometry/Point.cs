@@ -1,17 +1,10 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Point.cs" company="">
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
-
+﻿
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     using System;
 
-    /// <summary>
-    /// Represents a 2D point.
-    /// </summary>
-    internal class Point : IComparable<Point>, IEquatable<Point>
+    /// <summary> Represents a 2D point. </summary>
+    public class Point : IComparable<Point>, IEquatable<Point>
     {
         internal int id;
         internal double x;

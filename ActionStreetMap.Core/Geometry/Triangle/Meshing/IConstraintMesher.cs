@@ -1,26 +1,14 @@
-﻿
+﻿using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 {
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-
-    /// <summary>
-    /// Interface for polygon triangulation.
-    /// </summary>
-    internal interface IConstraintMesher
+    /// <summary> Interface for polygon triangulation. </summary>
+    public interface IConstraintMesher
     {
-        /// <summary>
-        /// Triangulates a polygon.
-        /// </summary>
-        /// <param name="polygon">The polygon.</param>
-        /// <returns>Mesh</returns>
-        IMesh Triangulate(IPolygon polygon);
+        /// <summary> Triangulates a polygon. </summary>
+        Mesh Triangulate(Polygon polygon);
 
-        /// <summary>
-        /// Triangulates a polygon, applying constraint options.
-        /// </summary>
-        /// <param name="polygon">The polygon.</param>
-        /// <param name="options">Constraint options.</param>
-        /// <returns>Mesh</returns>
-        IMesh Triangulate(IPolygon polygon, ConstraintOptions options);
+        /// <summary> Triangulates a polygon, applying constraint options. </summary>
+        Mesh Triangulate(Polygon polygon, ConstraintOptions options);
     }
 }

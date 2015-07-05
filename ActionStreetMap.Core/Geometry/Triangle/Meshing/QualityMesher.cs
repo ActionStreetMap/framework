@@ -1,29 +1,20 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="QualityMesher.cs">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using ActionStreetMap.Core.Geometry.Triangle.Meshing.Data;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 {
-    using System;
-    using System.Collections.Generic;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-    using ActionStreetMap.Core.Geometry.Triangle.Meshing.Data;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-
-    /// <summary>
-    /// Provides methods for mesh quality enforcement and testing.
-    /// </summary>
-    class QualityMesher
+    /// <summary> Provides methods for mesh quality enforcement and testing. </summary>
+    internal class QualityMesher
     {
-        Queue<BadSubseg> badsubsegs;
-        BadTriQueue queue;
-        Mesh mesh;
-        Behavior behavior;
+        private readonly Queue<BadSubseg> badsubsegs;
+        private readonly BadTriQueue queue;
+        private readonly Mesh mesh;
+        private readonly Behavior behavior;
 
-        NewLocation newLocation;
+        private readonly NewLocation newLocation;
 
         public QualityMesher(Mesh mesh)
         {
@@ -31,14 +22,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             queue = new BadTriQueue();
 
             this.mesh = mesh;
-            this.behavior = mesh.behavior;
+            behavior = mesh.behavior;
 
             newLocation = new NewLocation(mesh);
         }
 
-        /// <summary>
-        /// Add a bad subsegment to the queue.
-        /// </summary>
+        /// <summary> Add a bad subsegment to the queue. </summary>
         /// <param name="badseg">Bad subsegment.</param>
         public void AddBadSubseg(BadSubseg badseg)
         {
@@ -48,24 +37,23 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         #region Check
 
         /// <summary>
-        /// Check a subsegment to see if it is encroached; add it to the list if it is.
+        ///     Check a subsegment to see if it is encroached; add it to the list if it is.
         /// </summary>
         /// <param name="testsubseg">The subsegment to check.</param>
         /// <returns>Returns a nonzero value if the subsegment is encroached.</returns>
         /// <remarks>
-        /// A subsegment is encroached if there is a vertex in its diametral lens.
-        /// For Ruppert's algorithm (-D switch), the "diametral lens" is the
-        /// diametral circle. For Chew's algorithm (default), the diametral lens is
-        /// just big enough to enclose two isosceles triangles whose bases are the
-        /// subsegment. Each of the two isosceles triangles has two angles equal
-        /// to 'b.minangle'.
-        ///
-        /// Chew's algorithm does not require diametral lenses at all--but they save
-        /// time. Any vertex inside a subsegment's diametral lens implies that the
-        /// triangle adjoining the subsegment will be too skinny, so it's only a
-        /// matter of time before the encroaching vertex is deleted by Chew's
-        /// algorithm. It's faster to simply not insert the doomed vertex in the
-        /// first place, which is why I use diametral lenses with Chew's algorithm.
+        ///     A subsegment is encroached if there is a vertex in its diametral lens.
+        ///     For Ruppert's algorithm (-D switch), the "diametral lens" is the
+        ///     diametral circle. For Chew's algorithm (default), the diametral lens is
+        ///     just big enough to enclose two isosceles triangles whose bases are the
+        ///     subsegment. Each of the two isosceles triangles has two angles equal
+        ///     to 'b.minangle'.
+        ///     Chew's algorithm does not require diametral lenses at all--but they save
+        ///     time. Any vertex inside a subsegment's diametral lens implies that the
+        ///     triangle adjoining the subsegment will be too skinny, so it's only a
+        ///     matter of time before the encroaching vertex is deleted by Chew's
+        ///     algorithm. It's faster to simply not insert the doomed vertex in the
+        ///     first place, which is why I use diametral lenses with Chew's algorithm.
         /// </remarks>
         public int CheckSeg4Encroach(ref Osub testsubseg)
         {
@@ -95,17 +83,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // of two sides of the triangle is used to check whether the angle
                 // at the apex is greater than (180 - 2 'minangle') degrees (for
                 // lenses; 90 degrees for diametral circles).
-                dotproduct = (eorg.x - eapex.x) * (edest.x - eapex.x) +
-                             (eorg.y - eapex.y) * (edest.y - eapex.y);
+                dotproduct = (eorg.x - eapex.x)*(edest.x - eapex.x) +
+                             (eorg.y - eapex.y)*(edest.y - eapex.y);
                 if (dotproduct < 0.0)
                 {
                     if (behavior.ConformingDelaunay ||
-                        (dotproduct * dotproduct >=
-                         (2.0 * behavior.goodAngle - 1.0) * (2.0 * behavior.goodAngle - 1.0) *
-                         ((eorg.x - eapex.x) * (eorg.x - eapex.x) +
-                          (eorg.y - eapex.y) * (eorg.y - eapex.y)) *
-                         ((edest.x - eapex.x) * (edest.x - eapex.x) +
-                          (edest.y - eapex.y) * (edest.y - eapex.y))))
+                        (dotproduct*dotproduct >=
+                         (2.0*behavior.goodAngle - 1.0)*(2.0*behavior.goodAngle - 1.0)*
+                         ((eorg.x - eapex.x)*(eorg.x - eapex.x) +
+                          (eorg.y - eapex.y)*(eorg.y - eapex.y))*
+                         ((edest.x - eapex.x)*(edest.x - eapex.x) +
+                          (edest.y - eapex.y)*(edest.y - eapex.y))))
                     {
                         encroached = 1;
                     }
@@ -122,17 +110,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 eapex = neighbortri.Apex();
                 // Check whether the apex is in the diametral lens of the subsegment
                 // (or the diametral circle, if 'conformdel' is set).
-                dotproduct = (eorg.x - eapex.x) * (edest.x - eapex.x) +
-                             (eorg.y - eapex.y) * (edest.y - eapex.y);
+                dotproduct = (eorg.x - eapex.x)*(edest.x - eapex.x) +
+                             (eorg.y - eapex.y)*(edest.y - eapex.y);
                 if (dotproduct < 0.0)
                 {
                     if (behavior.ConformingDelaunay ||
-                        (dotproduct * dotproduct >=
-                         (2.0 * behavior.goodAngle - 1.0) * (2.0 * behavior.goodAngle - 1.0) *
-                         ((eorg.x - eapex.x) * (eorg.x - eapex.x) +
-                          (eorg.y - eapex.y) * (eorg.y - eapex.y)) *
-                         ((edest.x - eapex.x) * (edest.x - eapex.x) +
-                          (edest.y - eapex.y) * (edest.y - eapex.y))))
+                        (dotproduct*dotproduct >=
+                         (2.0*behavior.goodAngle - 1.0)*(2.0*behavior.goodAngle - 1.0)*
+                         ((eorg.x - eapex.x)*(eorg.x - eapex.x) +
+                          (eorg.y - eapex.y)*(eorg.y - eapex.y))*
+                         ((edest.x - eapex.x)*(edest.x - eapex.x) +
+                          (edest.y - eapex.y)*(edest.y - eapex.y))))
                     {
                         encroached += 2;
                     }
@@ -164,13 +152,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         }
 
         /// <summary>
-        /// Test a triangle for quality and size.
+        ///     Test a triangle for quality and size.
         /// </summary>
         /// <param name="testtri">Triangle to check.</param>
         /// <remarks>
-        /// Tests a triangle to see if it satisfies the minimum angle condition and
-        /// the maximum area condition.  Triangles that aren't up to spec are added
-        /// to the bad triangle queue.
+        ///     Tests a triangle to see if it satisfies the minimum angle condition and
+        ///     the maximum area condition.  Triangles that aren't up to spec are added
+        ///     to the bad triangle queue.
         /// </remarks>
         public void TestTriangle(ref Otri testtri)
         {
@@ -198,12 +186,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             dyda = tdest.y - tapex.y;
             dxao = tapex.x - torg.x;
             dyao = tapex.y - torg.y;
-            dxod2 = dxod * dxod;
-            dyod2 = dyod * dyod;
-            dxda2 = dxda * dxda;
-            dyda2 = dyda * dyda;
-            dxao2 = dxao * dxao;
-            dyao2 = dyao * dyao;
+            dxod2 = dxod*dxod;
+            dyod2 = dyod*dyod;
+            dxda2 = dxda*dxda;
+            dyda2 = dyda*dyda;
+            dxao2 = dxao*dxao;
+            dyao2 = dyao*dyao;
             // Find the lengths of the triangle's three edges.
             apexlen = dxod2 + dyod2;
             orglen = dxda2 + dyda2;
@@ -214,8 +202,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // The edge opposite the apex is shortest.
                 minedge = apexlen;
                 // Find the square of the cosine of the angle at the apex.
-                angle = dxda * dxao + dyda * dyao;
-                angle = angle * angle / (orglen * destlen);
+                angle = dxda*dxao + dyda*dyao;
+                angle = angle*angle/(orglen*destlen);
                 base1 = torg;
                 base2 = tdest;
                 testtri.Copy(ref tri1);
@@ -225,8 +213,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // The edge opposite the origin is shortest.
                 minedge = orglen;
                 // Find the square of the cosine of the angle at the origin.
-                angle = dxod * dxao + dyod * dyao;
-                angle = angle * angle / (apexlen * destlen);
+                angle = dxod*dxao + dyod*dyao;
+                angle = angle*angle/(apexlen*destlen);
                 base1 = tdest;
                 base2 = tapex;
                 testtri.Lnext(ref tri1);
@@ -236,8 +224,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // The edge opposite the destination is shortest.
                 minedge = destlen;
                 // Find the square of the cosine of the angle at the destination.
-                angle = dxod * dxda + dyod * dyda;
-                angle = angle * angle / (apexlen * orglen);
+                angle = dxod*dxda + dyod*dyda;
+                angle = angle*angle/(apexlen*orglen);
                 base1 = tapex;
                 base2 = torg;
                 testtri.Lprev(ref tri1);
@@ -246,7 +234,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             if (behavior.VarArea || behavior.fixedArea || (behavior.UserTest != null))
             {
                 // Check whether the area is larger than permitted.
-                area = 0.5 * (dxod * dyda - dyod * dxda);
+                area = 0.5*(dxod*dyda - dyod*dxda);
                 if (behavior.fixedArea && (area > behavior.MaxArea))
                 {
                     // Add this triangle to the list of bad triangles.
@@ -279,21 +267,21 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // The edge opposite the apex is longest.
                 // maxedge = apexlen;
                 // Find the cosine of the angle at the apex.
-                maxangle = (orglen + destlen - apexlen) / (2 * Math.Sqrt(orglen * destlen));
+                maxangle = (orglen + destlen - apexlen)/(2*Math.Sqrt(orglen*destlen));
             }
             else if (orglen > destlen)
             {
                 // The edge opposite the origin is longest.
                 // maxedge = orglen;
                 // Find the cosine of the angle at the origin.
-                maxangle = (apexlen + destlen - orglen) / (2 * Math.Sqrt(apexlen * destlen));
+                maxangle = (apexlen + destlen - orglen)/(2*Math.Sqrt(apexlen*destlen));
             }
             else
             {
                 // The edge opposite the destination is longest.
                 // maxedge = destlen;
                 // Find the cosine of the angle at the destination.
-                maxangle = (apexlen + orglen - destlen) / (2 * Math.Sqrt(apexlen * orglen));
+                maxangle = (apexlen + orglen - destlen)/(2*Math.Sqrt(apexlen*orglen));
             }
 
             // Check whether the angle is smaller than permitted.
@@ -349,12 +337,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         {
                             // Compute the distance from the common endpoint (of the two
                             // segments) to each of the endpoints of the shortest edge.
-                            dist1 = ((base1.x - joinvertex.x) * (base1.x - joinvertex.x) +
-                                     (base1.y - joinvertex.y) * (base1.y - joinvertex.y));
-                            dist2 = ((base2.x - joinvertex.x) * (base2.x - joinvertex.x) +
-                                     (base2.y - joinvertex.y) * (base2.y - joinvertex.y));
+                            dist1 = ((base1.x - joinvertex.x)*(base1.x - joinvertex.x) +
+                                     (base1.y - joinvertex.y)*(base1.y - joinvertex.y));
+                            dist2 = ((base2.x - joinvertex.x)*(base2.x - joinvertex.x) +
+                                     (base2.y - joinvertex.y)*(base2.y - joinvertex.y));
                             // If the two distances are equal, don't split the triangle.
-                            if ((dist1 < 1.001 * dist2) && (dist1 > 0.999 * dist2))
+                            if ((dist1 < 1.001*dist2) && (dist1 > 0.999*dist2))
                             {
                                 // Return now to avoid enqueueing the bad triangle.
                                 return;
@@ -373,8 +361,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         #region Maintanance
 
         /// <summary>
-        /// Traverse the entire list of subsegments, and check each to see if it 
-        /// is encroached. If so, add it to the list.
+        ///     Traverse the entire list of subsegments, and check each to see if it
+        ///     is encroached. If so, add it to the list.
         /// </summary>
         private void TallyEncs()
         {
@@ -390,15 +378,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         }
 
         /// <summary>
-        /// Split all the encroached subsegments.
+        ///     Split all the encroached subsegments.
         /// </summary>
-        /// <param name="triflaws">A flag that specifies whether one should take 
-        /// note of new bad triangles that result from inserting vertices to repair 
-        /// encroached subsegments.</param>
+        /// <param name="triflaws">
+        ///     A flag that specifies whether one should take
+        ///     note of new bad triangles that result from inserting vertices to repair
+        ///     encroached subsegments.
+        /// </param>
         /// <remarks>
-        /// Each encroached subsegment is repaired by splitting it - inserting a
-        /// vertex at or near its midpoint.  Newly inserted vertices may encroach
-        /// upon other subsegments; these are also repaired.
+        ///     Each encroached subsegment is repaired by splitting it - inserting a
+        ///     vertex at or near its midpoint.  Newly inserted vertices may encroach
+        ///     upon other subsegments; these are also repaired.
         /// </remarks>
         private void SplitEncSegs(bool triflaws)
         {
@@ -467,8 +457,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     {
                         eapex = enctri.Apex();
                         while ((eapex.type == VertexType.FreeVertex) &&
-                               ((eorg.x - eapex.x) * (edest.x - eapex.x) +
-                                (eorg.y - eapex.y) * (edest.y - eapex.y) < 0.0))
+                               ((eorg.x - eapex.x)*(edest.x - eapex.x) +
+                                (eorg.y - eapex.y)*(edest.y - eapex.y) < 0.0))
                         {
                             mesh.DeleteVertex(ref testtri);
                             currentenc.Pivot(ref enctri);
@@ -497,8 +487,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         {
                             eapex = testtri.Org();
                             while ((eapex.type == VertexType.FreeVertex) &&
-                                   ((eorg.x - eapex.x) * (edest.x - eapex.x) +
-                                    (eorg.y - eapex.y) * (edest.y - eapex.y) < 0.0))
+                                   ((eorg.x - eapex.x)*(edest.x - eapex.x) +
+                                    (eorg.y - eapex.y)*(edest.y - eapex.y) < 0.0))
                             {
                                 mesh.DeleteVertex(ref testtri);
                                 enctri.Sym(ref testtri);
@@ -512,21 +502,21 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     // with another adjacent segment.
                     if (acuteorg || acutedest)
                     {
-                        segmentlength = Math.Sqrt((edest.x - eorg.x) * (edest.x - eorg.x) +
-                                             (edest.y - eorg.y) * (edest.y - eorg.y));
+                        segmentlength = Math.Sqrt((edest.x - eorg.x)*(edest.x - eorg.x) +
+                                                  (edest.y - eorg.y)*(edest.y - eorg.y));
                         // Find the power of two that most evenly splits the segment.
                         // The worst case is a 2:1 ratio between subsegment lengths.
                         nearestpoweroftwo = 1.0;
-                        while (segmentlength > 3.0 * nearestpoweroftwo)
+                        while (segmentlength > 3.0*nearestpoweroftwo)
                         {
                             nearestpoweroftwo *= 2.0;
                         }
-                        while (segmentlength < 1.5 * nearestpoweroftwo)
+                        while (segmentlength < 1.5*nearestpoweroftwo)
                         {
                             nearestpoweroftwo *= 0.5;
                         }
                         // Where do we split the segment?
-                        split = nearestpoweroftwo / segmentlength;
+                        split = nearestpoweroftwo/segmentlength;
                         if (acutedest)
                         {
                             split = 1.0 - split;
@@ -541,8 +531,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
                     // Create the new vertex (interpolate coordinates).
                     newvertex = new Vertex(
-                        eorg.x + split * (edest.x - eorg.x),
-                        eorg.y + split * (edest.y - eorg.y),
+                        eorg.x + split*(edest.x - eorg.x),
+                        eorg.y + split*(edest.y - eorg.y),
                         currentenc.seg.boundary,
                         mesh.nextras);
 
@@ -557,7 +547,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     for (int i = 0; i < mesh.nextras; i++)
                     {
                         newvertex.attributes[i] = eorg.attributes[i]
-                            + split * (edest.attributes[i] - eorg.attributes[i]);
+                                                  + split*(edest.attributes[i] - eorg.attributes[i]);
                     }
 
                     if (!Behavior.NoExact)
@@ -566,16 +556,16 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         // that is not precisely collinear with 'eorg' and 'edest'.
                         // Improve collinearity by one step of iterative refinement.
                         multiplier = RobustPredicates.CounterClockwise(eorg, edest, newvertex);
-                        divisor = ((eorg.x - edest.x) * (eorg.x - edest.x) +
-                                   (eorg.y - edest.y) * (eorg.y - edest.y));
+                        divisor = ((eorg.x - edest.x)*(eorg.x - edest.x) +
+                                   (eorg.y - edest.y)*(eorg.y - edest.y));
                         if ((multiplier != 0.0) && (divisor != 0.0))
                         {
-                            multiplier = multiplier / divisor;
+                            multiplier = multiplier/divisor;
                             // Watch out for NANs.
                             if (!double.IsNaN(multiplier))
                             {
-                                newvertex.x += multiplier * (edest.y - eorg.y);
-                                newvertex.y += multiplier * (eorg.x - edest.x);
+                                newvertex.x += multiplier*(edest.y - eorg.y);
+                                newvertex.y += multiplier*(eorg.x - edest.x);
                             }
                         }
                     }
@@ -584,12 +574,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     if (((newvertex.x == eorg.x) && (newvertex.y == eorg.y)) ||
                         ((newvertex.x == edest.x) && (newvertex.y == edest.y)))
                     {
-
-                        //logger.Error("Ran out of precision: I attempted to split a"
-                        //    + " segment to a smaller size than can be accommodated by"
-                        //    + " the finite precision of floating point arithmetic.",
-                        //    "Quality.SplitEncSegs()");
-
                         throw new Exception("Ran out of precision");
                     }
                     // Insert the splitting vertex.  This should always succeed.
@@ -615,7 +599,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         }
 
         /// <summary>
-        /// Test every triangle in the mesh for quality measures.
+        ///     Test every triangle in the mesh for quality measures.
         /// </summary>
         private void TallyFaces()
         {
@@ -632,8 +616,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         }
 
         /// <summary>
-        /// Inserts a vertex at the circumcenter of a triangle. Deletes 
-        /// the newly inserted vertex if it encroaches upon a segment.
+        ///     Inserts a vertex at the circumcenter of a triangle. Deletes
+        ///     the newly inserted vertex if it encroaches upon a segment.
         /// </summary>
         /// <param name="badtri"></param>
         private void SplitTriangle(BadTriangle badtri)
@@ -643,7 +627,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             Point newloc; // Location of the new vertex
             double xi = 0, eta = 0;
             InsertVertexResult success;
-            //bool errorflag;
+            bool errorflag;
 
             badotri = badtri.poortri;
             borg = badotri.Org();
@@ -656,7 +640,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             if (!Otri.IsDead(badotri.tri) && (borg == badtri.org) &&
                 (bdest == badtri.dest) && (bapex == badtri.apex))
             {
-                //errorflag = false;
+                errorflag = false;
                 // Create a new vertex at the triangle's circumcenter.
 
                 // Using the original (simpler) Steiner point location method
@@ -677,6 +661,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     ((newloc.x == bdest.x) && (newloc.y == bdest.y)) ||
                     ((newloc.x == bapex.x) && (newloc.y == bapex.y)))
                 {
+                   
+                   //errorflag = true;
+                    
                 }
                 else
                 {
@@ -689,8 +676,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     {
                         // Interpolate the vertex attributes at the circumcenter.
                         newvertex.attributes[i] = borg.attributes[i]
-                            + xi * (bdest.attributes[i] - borg.attributes[i])
-                            + eta * (bapex.attributes[i] - borg.attributes[i]);
+                                                  + xi*(bdest.attributes[i] - borg.attributes[i])
+                                                  + eta*(bapex.attributes[i] - borg.attributes[i]);
                     }
 
                     // Ensure that the handle 'badotri' does not represent the longest
@@ -734,29 +721,19 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         // marked as being encroached.
                     }
                     else
-                    {   // success == DUPLICATEVERTEX
-                        // Couldn't insert the new vertex because a vertex is already there.
-                        //if (Log.Verbose)
-                        //{
-                        //    logger.Warning("New vertex falls on existing vertex.", "Quality.SplitTriangle()");
-                        //    errorflag = true;
-                        //}
+                    {
+                        //errorflag = true;
                     }
                 }
-                //if (errorflag)
-                //{
-                //    logger.Error("The new vertex is at the circumcenter of triangle: This probably "
-                //        + "means that I am trying to refine triangles to a smaller size than can be "
-                //        + "accommodated by the finite precision of floating point arithmetic.",
-                //        "Quality.SplitTriangle()");
-
-                //    throw new Exception("The new vertex is at the circumcenter of triangle.");
-                //}
+                if (errorflag)
+                {
+                    throw new Exception("The new vertex is at the circumcenter of triangle.");
+                }
             }
         }
 
         /// <summary>
-        /// Remove all the encroached subsegments and bad triangles from the triangulation.
+        ///     Remove all the encroached subsegments and bad triangles from the triangulation.
         /// </summary>
         public void EnforceQuality()
         {
@@ -805,14 +782,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             // and have no low-quality triangles.
 
             // Might we have run out of Steiner points too soon?
-            //if (Log.Verbose && behavior.ConformingDelaunay && (badsubsegs.Count > 0) && (mesh.steinerleft == 0))
-            //{
-
-            //    logger.Warning("I ran out of Steiner points, but the mesh has encroached subsegments, "
-            //            + "and therefore might not be truly Delaunay. If the Delaunay property is important "
-            //            + "to you, try increasing the number of Steiner points.",
-            //            "Quality.EnforceQuality()");
-            //}
+            if (behavior.ConformingDelaunay && (badsubsegs.Count > 0) && (mesh.steinerleft == 0))
+            {
+            }
         }
 
         #endregion

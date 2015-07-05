@@ -1,39 +1,31 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="BadTriQueue.cs">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
-
-using System;
+﻿using System;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
 {
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-
     /// <summary>
-    /// A (priority) queue for bad triangles.
+    ///     A (priority) queue for bad triangles.
     /// </summary>
     /// <remarks>
-    ///  The queue is actually a set of 4096 queues. I use multiple queues to
-    ///  give priority to smaller angles. I originally implemented a heap, but
-    ///  the queues are faster by a larger margin than I'd suspected.
+    ///     The queue is actually a set of 4096 queues. I use multiple queues to
+    ///     give priority to smaller angles. I originally implemented a heap, but
+    ///     the queues are faster by a larger margin than I'd suspected.
     /// </remarks>
-    class BadTriQueue
+    internal class BadTriQueue
     {
-        const double SQRT2 = 1.4142135623730950488016887242096980785696718753769480732;
+        private const double SQRT2 = 1.4142135623730950488016887242096980785696718753769480732;
 
-        public int Count { get { return this.count; } }
+        public int Count { get { return count; } }
 
         // Variables that maintain the bad triangle queues.  The queues are
         // ordered from 4095 (highest priority) to 0 (lowest priority).
-        BadTriangle[] queuefront;
-        BadTriangle[] queuetail;
-        int[] nextnonemptyq;
-        int firstnonemptyq;
+        private readonly BadTriangle[] queuefront;
+        private readonly BadTriangle[] queuetail;
+        private readonly int[] nextnonemptyq;
+        private int firstnonemptyq;
 
-        int count;
+        private int count;
 
         public BadTriQueue()
         {
@@ -46,9 +38,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
             count = 0;
         }
 
-        /// <summary>
-        /// Add a bad triangle data structure to the end of a queue.
-        /// </summary>
+        /// <summary> Add a bad triangle data structure to the end of a queue. </summary>
         /// <param name="badtri">The bad triangle to enqueue.</param>
         public void Enqueue(BadTriangle badtri)
         {
@@ -58,7 +48,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
             int posexponent;
             int i;
 
-            this.count++;
+            count++;
 
             // Determine the appropriate queue to put the bad triangle into.
             // Recall that the key is the square of its shortest edge length.
@@ -71,7 +61,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
             {
                 // 'badtri.key' is 2.0 to a negative exponent, so we'll record that
                 // fact and use the reciprocal of 'badtri.key', which is > 1.0.
-                length = 1.0 / badtri.key;
+                length = 1.0/badtri.key;
                 posexponent = 0;
             }
             // 'length' is approximately 2.0 to what exponent?  The following code
@@ -82,7 +72,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
                 // Find an approximation by repeated squaring of two.
                 expincrement = 1;
                 multiplier = 0.5;
-                while (length * multiplier * multiplier > 1.0)
+                while (length*multiplier*multiplier > 1.0)
                 {
                     expincrement *= 2;
                     multiplier *= multiplier;
@@ -92,7 +82,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
                 length *= multiplier;
             }
             // 'length' is approximately squareroot(2.0) to what exponent?
-            exponent = 2 * exponent + (length > SQRT2 ? 1 : 0);
+            exponent = 2*exponent + (length > SQRT2 ? 1 : 0);
             // 'exponent' is now in the range 0...2047 for IEEE double precision.
             // Choose a queue in the range 0...4095.  The shortest edges have the
             // highest priority (queue 4095).
@@ -143,9 +133,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
             badtri.next = null;
         }
 
-        /// <summary>
-        /// Add a bad triangle to the end of a queue.
-        /// </summary>
+        /// <summary> Add a bad triangle to the end of a queue. </summary>
         /// <param name="enqtri"></param>
         /// <param name="minedge"></param>
         /// <param name="apex"></param>
@@ -165,19 +153,15 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
             Enqueue(newbad);
         }
 
-        /// <summary>
-        /// Remove a triangle from the front of the queue.
-        /// </summary>
+        /// <summary> Remove a triangle from the front of the queue. </summary>
         /// <returns></returns>
         public BadTriangle Dequeue()
         {
             // If no queues are nonempty, return NULL.
             if (firstnonemptyq < 0)
-            {
                 return null;
-            }
 
-            this.count--;
+            count--;
 
             // Find the first triangle of the highest-priority queue.
             BadTriangle result = queuefront[firstnonemptyq];
@@ -186,9 +170,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
             // If this queue is now empty, note the new highest-priority
             // nonempty queue.
             if (result == queuetail[firstnonemptyq])
-            {
                 firstnonemptyq = nextnonemptyq[firstnonemptyq];
-            }
 
             return result;
         }

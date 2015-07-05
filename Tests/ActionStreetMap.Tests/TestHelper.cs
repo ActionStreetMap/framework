@@ -1,6 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Clipping;
+using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
@@ -98,7 +99,7 @@ namespace ActionStreetMap.Tests
                 .RegisterListType<Point>(32)
                 .RegisterObjectType<Clipper>(() => new Clipper())
                 .RegisterObjectType<ClipperOffset>(() => new ClipperOffset())
-                .RegisterListType<Tuple<Surface, Action<IMesh>>>(32)
+                .RegisterListType<Tuple<Surface, Action<Mesh>>>(32)
                 .RegisterListType<RoadElement>(32)
                 .RegisterListType<Surface>(32)
                 .RegisterListType<GeoCoordinate>(256)

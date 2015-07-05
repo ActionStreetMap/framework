@@ -1,32 +1,25 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Incremental.cs">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 {
-    using System.Collections.Generic;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-
-    /// <summary>
-    /// Builds a delaunay triangulation using the incremental algorithm.
-    /// </summary>
-    internal class Incremental : ITriangulator
+    /// <summary>  Builds a delaunay triangulation using the incremental algorithm. </summary>
+    public class Incremental : ITriangulator
     {
-        Mesh mesh;
+        private Mesh mesh;
 
         /// <summary>
-        /// Form a Delaunay triangulation by incrementally inserting vertices.
+        ///     Form a Delaunay triangulation by incrementally inserting vertices.
         /// </summary>
-        /// <returns>Returns the number of edges on the convex hull of the 
-        /// triangulation.</returns>
-        public IMesh Triangulate(ICollection<Vertex> points)
+        /// <returns>
+        ///     Returns the number of edges on the convex hull of the
+        ///     triangulation.
+        /// </returns>
+        public Mesh Triangulate(ICollection<Vertex> points)
         {
-            this.mesh = TrianglePool.AllocMesh();
-            this.mesh.TransferNodes(points);
+            mesh = TrianglePool.AllocMesh();
+            mesh.TransferNodes(points);
 
             Otri starttri = new Otri();
 
@@ -39,31 +32,26 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 Osub tmp = default(Osub);
                 if (mesh.InsertVertex(v, ref starttri, ref tmp, false, false) == InsertVertexResult.Duplicate)
                 {
-                    //if (Log.Verbose)
-                    //{
-                    //    Log.Instance.Warning("A duplicate vertex appeared and was ignored.",
-                    //        "Incremental.Triangulate()");
-                    //}
                     v.type = VertexType.UndeadVertex;
                     mesh.undeads++;
                 }
             }
 
             // Remove the bounding box.
-            this.mesh.hullsize = RemoveBox();
+            mesh.hullsize = RemoveBox();
 
-            return this.mesh;
+            return mesh;
         }
 
         /// <summary>
-        /// Form an "infinite" bounding triangle to insert vertices into.
+        ///     Form an "infinite" bounding triangle to insert vertices into.
         /// </summary>
         /// <remarks>
-        /// The vertices at "infinity" are assigned finite coordinates, which are
-        /// used by the point location routines, but (mostly) ignored by the
-        /// Delaunay edge flip routines.
+        ///     The vertices at "infinity" are assigned finite coordinates, which are
+        ///     used by the point location routines, but (mostly) ignored by the
+        ///     Delaunay edge flip routines.
         /// </remarks>
-        void GetBoundingBox()
+        private void GetBoundingBox()
         {
             Otri inftri = default(Otri); // Handle for the triangular bounding box.
             Rectangle box = mesh.bounds;
@@ -79,9 +67,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 width = 1.0;
             }
             // Create the vertices of the bounding box.
-            mesh.infvertex1 = new Vertex(box.Left - 50.0 * width, box.Bottom - 40.0 * width);
-            mesh.infvertex2 = new Vertex(box.Right + 50.0 * width, box.Bottom - 40.0 * width);
-            mesh.infvertex3 = new Vertex(0.5 * (box.Left + box.Right), box.Top + 60.0 * width);
+            mesh.infvertex1 = new Vertex(box.Left - 50.0*width, box.Bottom - 40.0*width);
+            mesh.infvertex2 = new Vertex(box.Right + 50.0*width, box.Bottom - 40.0*width);
+            mesh.infvertex3 = new Vertex(0.5*(box.Left + box.Right), box.Top + 60.0*width);
 
             // Create the bounding box.
             mesh.MakeTriangle(ref inftri);
@@ -96,16 +84,16 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         }
 
         /// <summary>
-        /// Remove the "infinite" bounding triangle, setting boundary markers as appropriate.
+        ///     Remove the "infinite" bounding triangle, setting boundary markers as appropriate.
         /// </summary>
         /// <returns>Returns the number of edges on the convex hull of the triangulation.</returns>
         /// <remarks>
-        /// The triangular bounding box has three boundary triangles (one for each
-        /// side of the bounding box), and a bunch of triangles fanning out from
-        /// the three bounding box vertices (one triangle for each edge of the
-        /// convex hull of the inner mesh).  This routine removes these triangles.
+        ///     The triangular bounding box has three boundary triangles (one for each
+        ///     side of the bounding box), and a bunch of triangles fanning out from
+        ///     the three bounding box vertices (one triangle for each edge of the
+        ///     convex hull of the inner mesh).  This routine removes these triangles.
         /// </remarks>
-        int RemoveBox()
+        private int RemoveBox()
         {
             Otri deadtriangle = default(Otri);
             Otri searchedge = default(Otri);

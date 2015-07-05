@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core.Geometry.Triangle.Meshing;
+using ActionStreetMap.Core.Geometry.Triangle;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 
 namespace ActionStreetMap.Core.Scene.Terrain
@@ -21,7 +21,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             public string GradientKey;
             public float ElevationNoiseFreq;
             public float ColorNoiseFreq;
-            public Action<IMesh> ModifyMeshAction;
+            public Action<Mesh> ModifyMeshAction;
 
             public Paths Shape;
         }

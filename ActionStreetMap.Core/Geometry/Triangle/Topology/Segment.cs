@@ -1,19 +1,10 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Segment.cs" company="">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Topology
 {
-    using System;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-
-    /// <summary>
-    /// The subsegment data structure.
-    /// </summary>
-    internal class Segment : ISegment
+    /// <summary> The subsegment data structure. </summary>
+    public class Segment
     {
         // Hash for dictionary. Will be set by mesh instance.
         internal int hash;
@@ -23,6 +14,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         internal Otri[] triangles;
         internal int boundary;
 
+        /// <summary> Initializes a new instance of the <see cref="Segment" /> class. </summary>
         public Segment()
         {
             // Four NULL vertices.
@@ -41,56 +33,33 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
 
         #region Public properties
 
-        /// <summary>
-        /// Gets the first endpoints vertex id.
-        /// </summary>
-        public int P0
-        {
-            get { return this.vertices[0].id; }
-        }
+        /// <summary> Gets the first endpoints vertex id. </summary>
+        public int P0 { get { return vertices[0].id; } }
 
-        /// <summary>
-        /// Gets the seconds endpoints vertex id.
-        /// </summary>
-        public int P1
-        {
-            get { return this.vertices[1].id; }
-        }
+        /// <summary> Gets the seconds endpoints vertex id. </summary>
+        public int P1 { get { return vertices[1].id; } }
 
-        /// <summary>
-        /// Gets the segment boundary mark.
-        /// </summary>
-        public int Boundary
-        {
-            get { return this.boundary; }
-        }
+        /// <summary> Gets the segment boundary mark. </summary>
+        public int Boundary { get { return boundary; } }
 
         #endregion
 
-        /// <summary>
-        /// Gets the segments endpoint.
-        /// </summary>
+        /// <summary> Gets the segments endpoint. </summary>
         public Vertex GetVertex(int index)
         {
-            return this.vertices[index]; // TODO: Check range?
+            return vertices[index]; // TODO: Check range?
         }
 
-        /// <summary>
-        /// Gets an adjoining triangle.
-        /// </summary>
-        public ITriangle GetTriangle(int index)
+        /// <summary> Gets an adjoining triangle. </summary>
+        public Triangle GetTriangle(int index)
         {
             return triangles[index].tri.hash == Mesh.DUMMY ? null : triangles[index].tri;
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
-            return this.hash;
-        }
-
-        public override string ToString()
-        {
-            return String.Format("SID {0}", hash);
+            return hash;
         }
 
         internal void Reset()
@@ -105,9 +74,15 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
             vertices[1] = null;
             vertices[2] = null;
             vertices[3] = null;
-            
+
             hash = 0;
             boundary = 0;
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return String.Format("SID {0}", hash);
         }
     }
 }

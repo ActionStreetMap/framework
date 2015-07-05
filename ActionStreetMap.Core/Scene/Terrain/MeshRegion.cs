@@ -10,9 +10,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
         public string GradientKey;
         public float ElevationNoiseFreq;
         public float ColorNoiseFreq;
-        public Action<IMesh> ModifyMeshAction;
+        public Action<Mesh> ModifyMeshAction;
 
-        public IMesh Mesh;
+        public Mesh Mesh;
 
         // TODO should be refactored: this looks like workaround
         public VertexPaths Contours;

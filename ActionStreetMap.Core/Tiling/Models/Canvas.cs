@@ -14,7 +14,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         private readonly IObjectPool _objectPool;
 
         public List<RoadElement> Roads { get; private set; }
-        internal List<Tuple<Surface, Action<IMesh>>> Surfaces { get; private set; }
+        internal List<Tuple<Surface, Action<Mesh>>> Surfaces { get; private set; }
         public List<Surface> Water { get; private set; }
 
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
-            Surfaces = objectPool.NewList<Tuple<Surface, Action<IMesh>>>(32);
+            Surfaces = objectPool.NewList<Tuple<Surface, Action<Mesh>>>(32);
             Roads = objectPool.NewList<RoadElement>(32);
             Water = objectPool.NewList<Surface>(32);
         }
@@ -47,11 +47,11 @@ namespace ActionStreetMap.Core.Tiling.Models
         }
 
         /// <summary> Adds surface. </summary>
-        internal void AddSurface(Surface surface, Action<IMesh> modifyMeshAction)
+        internal void AddSurface(Surface surface, Action<Mesh> modifyMeshAction)
         {
             lock (Surfaces)
             {
-                Surfaces.Add(new Tuple<Surface, Action<IMesh>>(surface, modifyMeshAction));
+                Surfaces.Add(new Tuple<Surface, Action<Mesh>>(surface, modifyMeshAction));
             }
         }
 

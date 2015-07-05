@@ -1,20 +1,9 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="RobustPredicates.cs">
-// Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 
 namespace ActionStreetMap.Core.Geometry.Triangle
-{
-    using System;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-    using ActionStreetMap.Core.Geometry.Triangle.Tools;
-
-    /// <summary>
-    /// Adaptive exact arithmetic geometric predicates.
-    /// </summary>
+{   
+    /// <summary> Adaptive exact arithmetic geometric predicates. </summary>
     /// <remarks>
     /// The adaptive exact arithmetic geometric predicates implemented herein are described in
     /// detail in the paper "Adaptive Precision Floating-Point Arithmetic and Fast Robust
@@ -25,16 +14,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
     /// command prompt with the command "CL /P /C EXACT.C", see
     /// http://msdn.microsoft.com/en-us/library/8z9z0bx6.aspx
     /// </remarks>
-    internal static class RobustPredicates
+    public static class RobustPredicates
     {
         private static double epsilon, splitter, resulterrbound;
         private static double ccwerrboundA, ccwerrboundB, ccwerrboundC;
         private static double iccerrboundA, iccerrboundB, iccerrboundC;
-        //private static double o3derrboundA, o3derrboundB, o3derrboundC;
 
-        /// <summary>
-        /// Initialize the variables used for exact arithmetic.  
-        /// </summary>
+        /// <summary> Initialize the variables used for exact arithmetic. </summary>
         /// <remarks>
         /// 'epsilon' is the largest power of two such that 1.0 + epsilon = 1.0 in
         /// floating-point arithmetic. 'epsilon' bounds the relative roundoff
@@ -69,9 +55,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 lastcheck = check;
                 epsilon *= half;
                 if (every_other)
-                {
                     splitter *= 2.0;
-                }
                 every_other = !every_other;
                 check = 1.0 + epsilon;
             } while ((check != 1.0) && (check != lastcheck));
@@ -84,9 +68,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             iccerrboundA = (10.0 + 96.0 * epsilon) * epsilon;
             iccerrboundB = (4.0 + 48.0 * epsilon) * epsilon;
             iccerrboundC = (44.0 + 576.0 * epsilon) * epsilon * epsilon;
-            //o3derrboundA = (7.0 + 56.0 * epsilon) * epsilon;
-            //o3derrboundB = (3.0 + 28.0 * epsilon) * epsilon;
-            //o3derrboundC = (26.0 + 288.0 * epsilon) * epsilon * epsilon;
         }
 
         /// <summary>
@@ -105,51 +86,34 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double detleft, detright, det;
             double detsum, errbound;
 
-            Statistic.CounterClockwiseCount++;
-
             detleft = (pa.x - pc.x) * (pb.y - pc.y);
             detright = (pa.y - pc.y) * (pb.x - pc.x);
             det = detleft - detright;
 
             if (Behavior.NoExact)
-            {
                 return det;
-            }
 
             if (detleft > 0.0)
             {
                 if (detright <= 0.0)
-                {
                     return det;
-                }
                 else
-                {
                     detsum = detleft + detright;
-                }
             }
             else if (detleft < 0.0)
             {
                 if (detright >= 0.0)
-                {
                     return det;
-                }
                 else
-                {
                     detsum = -detleft - detright;
-                }
             }
             else
-            {
                 return det;
-            }
 
             errbound = ccwerrboundA * detsum;
             if ((det >= errbound) || (-det >= errbound))
-            {
                 return det;
-            }
 
-            Statistic.CounterClockwiseAdaptCount++;
             return CounterClockwiseAdapt(pa, pb, pc, detsum);
         }
 
@@ -172,8 +136,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double alift, blift, clift;
             double det;
             double permanent, errbound;
-
-            Statistic.InCircleCount++;
 
             adx = pa.x - pd.x;
             bdx = pb.x - pd.x;
@@ -199,20 +161,15 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 + clift * (adxbdy - bdxady);
 
             if (Behavior.NoExact)
-            {
                 return det;
-            }
 
             permanent = (Math.Abs(bdxcdy) + Math.Abs(cdxbdy)) * alift
                       + (Math.Abs(cdxady) + Math.Abs(adxcdy)) * blift
                       + (Math.Abs(adxbdy) + Math.Abs(bdxady)) * clift;
             errbound = iccerrboundA * permanent;
             if ((det > errbound) || (-det > errbound))
-            {
                 return det;
-            }
 
-            Statistic.InCircleAdaptCount++;
             return InCircleAdapt(pa, pb, pc, pd, permanent);
         }
 
@@ -236,9 +193,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return InCircle(pa, pb, pc, pd);
         }
 
-        /// <summary>
-        /// Find the circumcenter of a triangle.
-        /// </summary>
+        /// <summary> Find the circumcenter of a triangle. </summary>
         /// <param name="org">Triangle point.</param>
         /// <param name="dest">Triangle point.</param>
         /// <param name="apex">Triangle point.</param>
@@ -253,8 +208,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double dodist, aodist, dadist;
             double denominator;
             double dx, dy, dxoff, dyoff;
-
-            Statistic.CircumcenterCount++;
 
             // Compute the circumcenter of the triangle.
             xdo = dest.x - org.x;
@@ -276,8 +229,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 // reasonably accurate) result, avoiding any possibility of
                 // division by zero.
                 denominator = 0.5 / CounterClockwise(dest, apex, org);
-                // Don't count the above as an orientation test.
-                Statistic.CounterClockwiseCount--;
             }
 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -347,9 +298,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return new Point(org.x + dx, org.y + dy);
         }
 
-        /// <summary>
-        /// Find the circumcenter of a triangle.
-        /// </summary>
+        /// <summary> Find the circumcenter of a triangle. </summary>
         /// <param name="org">Triangle point.</param>
         /// <param name="dest">Triangle point.</param>
         /// <param name="apex">Triangle point.</param>
@@ -373,8 +322,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double denominator;
             double dx, dy;
 
-            Statistic.CircumcenterCount++;
-
             // Compute the circumcenter of the triangle.
             xdo = dest.x - org.x;
             ydo = dest.y - org.y;
@@ -393,8 +340,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 // reasonably accurate) result, avoiding any possibility of
                 // division by zero.
                 denominator = 0.5 / CounterClockwise(dest, apex, org);
-                // Don't count the above as an orientation test.
-                Statistic.CounterClockwiseCount--;
             }
 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -413,9 +358,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         #region Exact arithmetics
 
-        /// <summary>
-        /// Sum two expansions, eliminating zero components from the output expansion.  
-        /// </summary>
+        /// <summary> Sum two expansions, eliminating zero components from the output expansion.  </summary>
         /// <param name="elen"></param>
         /// <param name="e"></param>
         /// <param name="flen"></param>
@@ -457,12 +400,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             {
                 if ((fnow > enow) == (fnow > -enow))
                 {
-                    Qnew = (double)(enow + Q); bvirt = Qnew - enow; hh = Q - bvirt;
+                    Qnew = (enow + Q); bvirt = Qnew - enow; hh = Q - bvirt;
                     enow = e[++eindex];
                 }
                 else
                 {
-                    Qnew = (double)(fnow + Q); bvirt = Qnew - fnow; hh = Q - bvirt;
+                    Qnew = (fnow + Q); bvirt = Qnew - fnow; hh = Q - bvirt;
                     fnow = f[++findex];
                 }
                 Q = Qnew;
@@ -474,8 +417,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 {
                     if ((fnow > enow) == (fnow > -enow))
                     {
-                        Qnew = (double)(Q + enow);
-                        bvirt = (double)(Qnew - Q);
+                        Qnew = (Q + enow);
+                        bvirt = (Qnew - Q);
                         avirt = Qnew - bvirt;
                         bround = enow - bvirt;
                         around = Q - avirt;
@@ -485,8 +428,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     }
                     else
                     {
-                        Qnew = (double)(Q + fnow);
-                        bvirt = (double)(Qnew - Q);
+                        Qnew = (Q + fnow);
+                        bvirt = (Qnew - Q);
                         avirt = Qnew - bvirt;
                         bround = fnow - bvirt;
                         around = Q - avirt;
@@ -503,8 +446,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             }
             while (eindex < elen)
             {
-                Qnew = (double)(Q + enow);
-                bvirt = (double)(Qnew - Q);
+                Qnew = (Q + enow);
+                bvirt = (Qnew - Q);
                 avirt = Qnew - bvirt;
                 bround = enow - bvirt;
                 around = Q - avirt;
@@ -519,8 +462,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             }
             while (findex < flen)
             {
-                Qnew = (double)(Q + fnow);
-                bvirt = (double)(Qnew - Q);
+                Qnew = (Q + fnow);
+                bvirt = (Qnew - Q);
                 avirt = Qnew - bvirt;
                 bround = fnow - bvirt;
                 around = Q - avirt;
@@ -570,8 +513,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double ahi, alo, bhi, blo;
             double err1, err2, err3;
 
-            c = (double)(splitter * b); abig = (double)(c - b); bhi = c - abig; blo = b - bhi;
-            Q = (double)(e[0] * b); c = (double)(splitter * e[0]); abig = (double)(c - e[0]); ahi = c - abig; alo = e[0] - ahi; err1 = Q - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); hh = (alo * blo) - err3;
+            c = (splitter * b); abig = (c - b); bhi = c - abig; blo = b - bhi;
+            Q = (e[0] * b); c = (splitter * e[0]); abig = (c - e[0]); ahi = c - abig; alo = e[0] - ahi; err1 = Q - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); hh = (alo * blo) - err3;
             hindex = 0;
             if (hh != 0)
             {
@@ -580,13 +523,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             for (eindex = 1; eindex < elen; eindex++)
             {
                 enow = e[eindex];
-                product1 = (double)(enow * b); c = (double)(splitter * enow); abig = (double)(c - enow); ahi = c - abig; alo = enow - ahi; err1 = product1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); product0 = (alo * blo) - err3;
-                sum = (double)(Q + product0); bvirt = (double)(sum - Q); avirt = sum - bvirt; bround = product0 - bvirt; around = Q - avirt; hh = around + bround;
+                product1 = (enow * b); c = (splitter * enow); abig = (c - enow); ahi = c - abig; alo = enow - ahi; err1 = product1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); product0 = (alo * blo) - err3;
+                sum = (Q + product0); bvirt = (sum - Q); avirt = sum - bvirt; bround = product0 - bvirt; around = Q - avirt; hh = around + bround;
                 if (hh != 0)
                 {
                     h[hindex++] = hh;
                 }
-                Q = (double)(product1 + sum); bvirt = Q - product1; hh = sum - bvirt;
+                Q = (product1 + sum); bvirt = Q - product1; hh = sum - bvirt;
                 if (hh != 0)
                 {
                     h[hindex++] = hh;
@@ -599,9 +542,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return hindex;
         }
 
-        /// <summary>
-        /// Produce a one-word estimate of an expansion's value. 
-        /// </summary>
+        /// <summary> Produce a one-word estimate of an expansion's value. </summary>
         /// <param name="elen"></param>
         /// <param name="e"></param>
         /// <returns></returns>
@@ -612,9 +553,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
             Q = e[0];
             for (eindex = 1; eindex < elen; eindex++)
-            {
                 Q += e[eindex];
-            }
+            
             return Q;
         }
 
@@ -663,15 +603,15 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double _i, _j;
             double _0;
 
-            acx = (double)(pa.X - pc.X);
-            bcx = (double)(pb.X - pc.X);
-            acy = (double)(pa.Y - pc.Y);
-            bcy = (double)(pb.Y - pc.Y);
+            acx = (pa.X - pc.X);
+            bcx = (pb.X - pc.X);
+            acy = (pa.Y - pc.Y);
+            bcy = (pb.Y - pc.Y);
 
-            detleft = (double)(acx * bcy); c = (double)(splitter * acx); abig = (double)(c - acx); ahi = c - abig; alo = acx - ahi; c = (double)(splitter * bcy); abig = (double)(c - bcy); bhi = c - abig; blo = bcy - bhi; err1 = detleft - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); detlefttail = (alo * blo) - err3;
-            detright = (double)(acy * bcx); c = (double)(splitter * acy); abig = (double)(c - acy); ahi = c - abig; alo = acy - ahi; c = (double)(splitter * bcx); abig = (double)(c - bcx); bhi = c - abig; blo = bcx - bhi; err1 = detright - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); detrighttail = (alo * blo) - err3;
+            detleft = (acx * bcy); c = (splitter * acx); abig = c - acx; ahi = c - abig; alo = acx - ahi; c = (splitter * bcy); abig = (c - bcy); bhi = c - abig; blo = bcy - bhi; err1 = detleft - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); detlefttail = (alo * blo) - err3;
+            detright = (acy * bcx); c = (splitter * acy); abig = (c - acy); ahi = c - abig; alo = acy - ahi; c = (splitter * bcx); abig = (c - bcx); bhi = c - abig; blo = bcx - bhi; err1 = detright - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); detrighttail = (alo * blo) - err3;
 
-            _i = (double)(detlefttail - detrighttail); bvirt = (double)(detlefttail - _i); avirt = _i + bvirt; bround = bvirt - detrighttail; around = detlefttail - avirt; B[0] = around + bround; _j = (double)(detleft + _i); bvirt = (double)(_j - detleft); avirt = _j - bvirt; bround = _i - bvirt; around = detleft - avirt; _0 = around + bround; _i = (double)(_0 - detright); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - detright; around = _0 - avirt; B[1] = around + bround; B3 = (double)(_j + _i); bvirt = (double)(B3 - _j); avirt = B3 - bvirt; bround = _i - bvirt; around = _j - avirt; B[2] = around + bround;
+            _i = (detlefttail - detrighttail); bvirt = (detlefttail - _i); avirt = _i + bvirt; bround = bvirt - detrighttail; around = detlefttail - avirt; B[0] = around + bround; _j = (detleft + _i); bvirt = (_j - detleft); avirt = _j - bvirt; bround = _i - bvirt; around = detleft - avirt; _0 = around + bround; _i = (_0 - detright); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - detright; around = _0 - avirt; B[1] = around + bround; B3 = (_j + _i); bvirt = (B3 - _j); avirt = B3 - bvirt; bround = _i - bvirt; around = _j - avirt; B[2] = around + bround;
 
             B[3] = B3;
 
@@ -682,10 +622,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 return det;
             }
 
-            bvirt = (double)(pa.X - acx); avirt = acx + bvirt; bround = bvirt - pc.X; around = pa.X - avirt; acxtail = around + bround;
-            bvirt = (double)(pb.X - bcx); avirt = bcx + bvirt; bround = bvirt - pc.X; around = pb.X - avirt; bcxtail = around + bround;
-            bvirt = (double)(pa.Y - acy); avirt = acy + bvirt; bround = bvirt - pc.Y; around = pa.Y - avirt; acytail = around + bround;
-            bvirt = (double)(pb.Y - bcy); avirt = bcy + bvirt; bround = bvirt - pc.Y; around = pb.Y - avirt; bcytail = around + bround;
+            bvirt = pa.X - acx; avirt = acx + bvirt; bround = bvirt - pc.X; around = pa.X - avirt; acxtail = around + bround;
+            bvirt = (pb.X - bcx); avirt = bcx + bvirt; bround = bvirt - pc.X; around = pb.X - avirt; bcxtail = around + bround;
+            bvirt = (pa.Y - acy); avirt = acy + bvirt; bround = bvirt - pc.Y; around = pa.Y - avirt; acytail = around + bround;
+            bvirt = (pb.Y - bcy); avirt = bcy + bvirt; bround = bvirt - pc.Y; around = pb.Y - avirt; bcytail = around + bround;
 
             if ((acxtail == 0.0) && (acytail == 0.0)
                 && (bcxtail == 0.0) && (bcytail == 0.0))
@@ -701,21 +641,21 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 return det;
             }
 
-            s1 = (double)(acxtail * bcy); c = (double)(splitter * acxtail); abig = (double)(c - acxtail); ahi = c - abig; alo = acxtail - ahi; c = (double)(splitter * bcy); abig = (double)(c - bcy); bhi = c - abig; blo = bcy - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
-            t1 = (double)(acytail * bcx); c = (double)(splitter * acytail); abig = (double)(c - acytail); ahi = c - abig; alo = acytail - ahi; c = (double)(splitter * bcx); abig = (double)(c - bcx); bhi = c - abig; blo = bcx - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
-            _i = (double)(s0 - t0); bvirt = (double)(s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (double)(s1 + _i); bvirt = (double)(_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (double)(_0 - t1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (double)(_j + _i); bvirt = (double)(u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
+            s1 = (acxtail * bcy); c = (splitter * acxtail); abig = (c - acxtail); ahi = c - abig; alo = acxtail - ahi; c = (splitter * bcy); abig = (c - bcy); bhi = c - abig; blo = bcy - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
+            t1 = (acytail * bcx); c = (splitter * acytail); abig = (c - acytail); ahi = c - abig; alo = acytail - ahi; c = (splitter * bcx); abig = (c - bcx); bhi = c - abig; blo = bcx - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
+            _i = (s0 - t0); bvirt = (s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (s1 + _i); bvirt = (_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (_0 - t1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
             u[3] = u3;
             C1length = FastExpansionSumZeroElim(4, B, 4, u, C1);
 
-            s1 = (double)(acx * bcytail); c = (double)(splitter * acx); abig = (double)(c - acx); ahi = c - abig; alo = acx - ahi; c = (double)(splitter * bcytail); abig = (double)(c - bcytail); bhi = c - abig; blo = bcytail - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
-            t1 = (double)(acy * bcxtail); c = (double)(splitter * acy); abig = (double)(c - acy); ahi = c - abig; alo = acy - ahi; c = (double)(splitter * bcxtail); abig = (double)(c - bcxtail); bhi = c - abig; blo = bcxtail - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
-            _i = (double)(s0 - t0); bvirt = (double)(s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (double)(s1 + _i); bvirt = (double)(_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (double)(_0 - t1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (double)(_j + _i); bvirt = (double)(u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
+            s1 = (acx * bcytail); c = (splitter * acx); abig = (c - acx); ahi = c - abig; alo = acx - ahi; c = (splitter * bcytail); abig = (c - bcytail); bhi = c - abig; blo = bcytail - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
+            t1 = (acy * bcxtail); c = (splitter * acy); abig = (c - acy); ahi = c - abig; alo = acy - ahi; c = (splitter * bcxtail); abig = (c - bcxtail); bhi = c - abig; blo = bcxtail - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
+            _i = (s0 - t0); bvirt = (s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (s1 + _i); bvirt = (_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (_0 - t1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
             u[3] = u3;
             C2length = FastExpansionSumZeroElim(C1length, C1, 4, u, C2);
 
-            s1 = (double)(acxtail * bcytail); c = (double)(splitter * acxtail); abig = (double)(c - acxtail); ahi = c - abig; alo = acxtail - ahi; c = (double)(splitter * bcytail); abig = (double)(c - bcytail); bhi = c - abig; blo = bcytail - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
-            t1 = (double)(acytail * bcxtail); c = (double)(splitter * acytail); abig = (double)(c - acytail); ahi = c - abig; alo = acytail - ahi; c = (double)(splitter * bcxtail); abig = (double)(c - bcxtail); bhi = c - abig; blo = bcxtail - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
-            _i = (double)(s0 - t0); bvirt = (double)(s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (double)(s1 + _i); bvirt = (double)(_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (double)(_0 - t1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (double)(_j + _i); bvirt = (double)(u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
+            s1 = (acxtail * bcytail); c = (splitter * acxtail); abig = (c - acxtail); ahi = c - abig; alo = acxtail - ahi; c = (splitter * bcytail); abig = (c - bcytail); bhi = c - abig; blo = bcytail - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
+            t1 = (acytail * bcxtail); c = (splitter * acytail); abig = (c - acytail); ahi = c - abig; alo = acytail - ahi; c = (splitter * bcxtail); abig = (c - bcxtail); bhi = c - abig; blo = bcxtail - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
+            _i = (s0 - t0); bvirt = (s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (s1 + _i); bvirt = (_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (_0 - t1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
             u[3] = u3;
             Dlength = FastExpansionSumZeroElim(C2length, C2, 4, u, D);
 
@@ -806,23 +746,23 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double _i, _j;
             double _0;
 
-            adx = (double)(pa.X - pd.X);
-            bdx = (double)(pb.X - pd.X);
-            cdx = (double)(pc.X - pd.X);
-            ady = (double)(pa.Y - pd.Y);
-            bdy = (double)(pb.Y - pd.Y);
-            cdy = (double)(pc.Y - pd.Y);
+            adx = (pa.X - pd.X);
+            bdx = (pb.X - pd.X);
+            cdx = (pc.X - pd.X);
+            ady = (pa.Y - pd.Y);
+            bdy = (pb.Y - pd.Y);
+            cdy = (pc.Y - pd.Y);
 
-            adx = (double)(pa.X - pd.X);
-            bdx = (double)(pb.X - pd.X);
-            cdx = (double)(pc.X - pd.X);
-            ady = (double)(pa.Y - pd.Y);
-            bdy = (double)(pb.Y - pd.Y);
-            cdy = (double)(pc.Y - pd.Y);
+            adx = (pa.X - pd.X);
+            bdx = (pb.X - pd.X);
+            cdx = (pc.X - pd.X);
+            ady = (pa.Y - pd.Y);
+            bdy = (pb.Y - pd.Y);
+            cdy = (pc.Y - pd.Y);
 
-            bdxcdy1 = (double)(bdx * cdy); c = (double)(splitter * bdx); abig = (double)(c - bdx); ahi = c - abig; alo = bdx - ahi; c = (double)(splitter * cdy); abig = (double)(c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = bdxcdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); bdxcdy0 = (alo * blo) - err3;
-            cdxbdy1 = (double)(cdx * bdy); c = (double)(splitter * cdx); abig = (double)(c - cdx); ahi = c - abig; alo = cdx - ahi; c = (double)(splitter * bdy); abig = (double)(c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = cdxbdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); cdxbdy0 = (alo * blo) - err3;
-            _i = (double)(bdxcdy0 - cdxbdy0); bvirt = (double)(bdxcdy0 - _i); avirt = _i + bvirt; bround = bvirt - cdxbdy0; around = bdxcdy0 - avirt; bc[0] = around + bround; _j = (double)(bdxcdy1 + _i); bvirt = (double)(_j - bdxcdy1); avirt = _j - bvirt; bround = _i - bvirt; around = bdxcdy1 - avirt; _0 = around + bround; _i = (double)(_0 - cdxbdy1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - cdxbdy1; around = _0 - avirt; bc[1] = around + bround; bc3 = (double)(_j + _i); bvirt = (double)(bc3 - _j); avirt = bc3 - bvirt; bround = _i - bvirt; around = _j - avirt; bc[2] = around + bround;
+            bdxcdy1 = (bdx * cdy); c = (splitter * bdx); abig = (c - bdx); ahi = c - abig; alo = bdx - ahi; c = (splitter * cdy); abig = (c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = bdxcdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); bdxcdy0 = (alo * blo) - err3;
+            cdxbdy1 = (cdx * bdy); c = (splitter * cdx); abig = (c - cdx); ahi = c - abig; alo = cdx - ahi; c = (splitter * bdy); abig = (c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = cdxbdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); cdxbdy0 = (alo * blo) - err3;
+            _i = (bdxcdy0 - cdxbdy0); bvirt = (bdxcdy0 - _i); avirt = _i + bvirt; bround = bvirt - cdxbdy0; around = bdxcdy0 - avirt; bc[0] = around + bround; _j = (bdxcdy1 + _i); bvirt = (_j - bdxcdy1); avirt = _j - bvirt; bround = _i - bvirt; around = bdxcdy1 - avirt; _0 = around + bround; _i = (_0 - cdxbdy1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - cdxbdy1; around = _0 - avirt; bc[1] = around + bround; bc3 = (_j + _i); bvirt = (bc3 - _j); avirt = bc3 - bvirt; bround = _i - bvirt; around = _j - avirt; bc[2] = around + bround;
             bc[3] = bc3;
             axbclen = ScaleExpansionZeroElim(4, bc, adx, axbc);
             axxbclen = ScaleExpansionZeroElim(axbclen, axbc, adx, axxbc);
@@ -830,9 +770,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             ayybclen = ScaleExpansionZeroElim(aybclen, aybc, ady, ayybc);
             alen = FastExpansionSumZeroElim(axxbclen, axxbc, ayybclen, ayybc, adet);
 
-            cdxady1 = (double)(cdx * ady); c = (double)(splitter * cdx); abig = (double)(c - cdx); ahi = c - abig; alo = cdx - ahi; c = (double)(splitter * ady); abig = (double)(c - ady); bhi = c - abig; blo = ady - bhi; err1 = cdxady1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); cdxady0 = (alo * blo) - err3;
-            adxcdy1 = (double)(adx * cdy); c = (double)(splitter * adx); abig = (double)(c - adx); ahi = c - abig; alo = adx - ahi; c = (double)(splitter * cdy); abig = (double)(c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = adxcdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); adxcdy0 = (alo * blo) - err3;
-            _i = (double)(cdxady0 - adxcdy0); bvirt = (double)(cdxady0 - _i); avirt = _i + bvirt; bround = bvirt - adxcdy0; around = cdxady0 - avirt; ca[0] = around + bround; _j = (double)(cdxady1 + _i); bvirt = (double)(_j - cdxady1); avirt = _j - bvirt; bround = _i - bvirt; around = cdxady1 - avirt; _0 = around + bround; _i = (double)(_0 - adxcdy1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - adxcdy1; around = _0 - avirt; ca[1] = around + bround; ca3 = (double)(_j + _i); bvirt = (double)(ca3 - _j); avirt = ca3 - bvirt; bround = _i - bvirt; around = _j - avirt; ca[2] = around + bround;
+            cdxady1 = (cdx * ady); c = (splitter * cdx); abig = (c - cdx); ahi = c - abig; alo = cdx - ahi; c = (splitter * ady); abig = (c - ady); bhi = c - abig; blo = ady - bhi; err1 = cdxady1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); cdxady0 = (alo * blo) - err3;
+            adxcdy1 = (adx * cdy); c = (splitter * adx); abig = (c - adx); ahi = c - abig; alo = adx - ahi; c = (splitter * cdy); abig = (c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = adxcdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); adxcdy0 = (alo * blo) - err3;
+            _i = (cdxady0 - adxcdy0); bvirt = (cdxady0 - _i); avirt = _i + bvirt; bround = bvirt - adxcdy0; around = cdxady0 - avirt; ca[0] = around + bround; _j = (cdxady1 + _i); bvirt = (_j - cdxady1); avirt = _j - bvirt; bround = _i - bvirt; around = cdxady1 - avirt; _0 = around + bround; _i = (_0 - adxcdy1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - adxcdy1; around = _0 - avirt; ca[1] = around + bround; ca3 = (_j + _i); bvirt = (ca3 - _j); avirt = ca3 - bvirt; bround = _i - bvirt; around = _j - avirt; ca[2] = around + bround;
             ca[3] = ca3;
             bxcalen = ScaleExpansionZeroElim(4, ca, bdx, bxca);
             bxxcalen = ScaleExpansionZeroElim(bxcalen, bxca, bdx, bxxca);
@@ -840,9 +780,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             byycalen = ScaleExpansionZeroElim(bycalen, byca, bdy, byyca);
             blen = FastExpansionSumZeroElim(bxxcalen, bxxca, byycalen, byyca, bdet);
 
-            adxbdy1 = (double)(adx * bdy); c = (double)(splitter * adx); abig = (double)(c - adx); ahi = c - abig; alo = adx - ahi; c = (double)(splitter * bdy); abig = (double)(c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = adxbdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); adxbdy0 = (alo * blo) - err3;
-            bdxady1 = (double)(bdx * ady); c = (double)(splitter * bdx); abig = (double)(c - bdx); ahi = c - abig; alo = bdx - ahi; c = (double)(splitter * ady); abig = (double)(c - ady); bhi = c - abig; blo = ady - bhi; err1 = bdxady1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); bdxady0 = (alo * blo) - err3;
-            _i = (double)(adxbdy0 - bdxady0); bvirt = (double)(adxbdy0 - _i); avirt = _i + bvirt; bround = bvirt - bdxady0; around = adxbdy0 - avirt; ab[0] = around + bround; _j = (double)(adxbdy1 + _i); bvirt = (double)(_j - adxbdy1); avirt = _j - bvirt; bround = _i - bvirt; around = adxbdy1 - avirt; _0 = around + bround; _i = (double)(_0 - bdxady1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - bdxady1; around = _0 - avirt; ab[1] = around + bround; ab3 = (double)(_j + _i); bvirt = (double)(ab3 - _j); avirt = ab3 - bvirt; bround = _i - bvirt; around = _j - avirt; ab[2] = around + bround;
+            adxbdy1 = (adx * bdy); c = (splitter * adx); abig = (c - adx); ahi = c - abig; alo = adx - ahi; c = (splitter * bdy); abig = (c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = adxbdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); adxbdy0 = (alo * blo) - err3;
+            bdxady1 = (bdx * ady); c = (splitter * bdx); abig = (c - bdx); ahi = c - abig; alo = bdx - ahi; c = (splitter * ady); abig = (c - ady); bhi = c - abig; blo = ady - bhi; err1 = bdxady1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); bdxady0 = (alo * blo) - err3;
+            _i = (adxbdy0 - bdxady0); bvirt = (adxbdy0 - _i); avirt = _i + bvirt; bround = bvirt - bdxady0; around = adxbdy0 - avirt; ab[0] = around + bround; _j = (adxbdy1 + _i); bvirt = (_j - adxbdy1); avirt = _j - bvirt; bround = _i - bvirt; around = adxbdy1 - avirt; _0 = around + bround; _i = (_0 - bdxady1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - bdxady1; around = _0 - avirt; ab[1] = around + bround; ab3 = (_j + _i); bvirt = (ab3 - _j); avirt = ab3 - bvirt; bround = _i - bvirt; around = _j - avirt; ab[2] = around + bround;
             ab[3] = ab3;
             cxablen = ScaleExpansionZeroElim(4, ab, cdx, cxab);
             cxxablen = ScaleExpansionZeroElim(cxablen, cxab, cdx, cxxab);
@@ -860,12 +800,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 return det;
             }
 
-            bvirt = (double)(pa.X - adx); avirt = adx + bvirt; bround = bvirt - pd.X; around = pa.X - avirt; adxtail = around + bround;
-            bvirt = (double)(pa.Y - ady); avirt = ady + bvirt; bround = bvirt - pd.Y; around = pa.Y - avirt; adytail = around + bround;
-            bvirt = (double)(pb.X - bdx); avirt = bdx + bvirt; bround = bvirt - pd.X; around = pb.X - avirt; bdxtail = around + bround;
-            bvirt = (double)(pb.Y - bdy); avirt = bdy + bvirt; bround = bvirt - pd.Y; around = pb.Y - avirt; bdytail = around + bround;
-            bvirt = (double)(pc.X - cdx); avirt = cdx + bvirt; bround = bvirt - pd.X; around = pc.X - avirt; cdxtail = around + bround;
-            bvirt = (double)(pc.Y - cdy); avirt = cdy + bvirt; bround = bvirt - pd.Y; around = pc.Y - avirt; cdytail = around + bround;
+            bvirt = (pa.X - adx); avirt = adx + bvirt; bround = bvirt - pd.X; around = pa.X - avirt; adxtail = around + bround;
+            bvirt = (pa.Y - ady); avirt = ady + bvirt; bround = bvirt - pd.Y; around = pa.Y - avirt; adytail = around + bround;
+            bvirt = (pb.X - bdx); avirt = bdx + bvirt; bround = bvirt - pd.X; around = pb.X - avirt; bdxtail = around + bround;
+            bvirt = (pb.Y - bdy); avirt = bdy + bvirt; bround = bvirt - pd.Y; around = pb.Y - avirt; bdytail = around + bround;
+            bvirt = (pc.X - cdx); avirt = cdx + bvirt; bround = bvirt - pd.X; around = pc.X - avirt; cdxtail = around + bround;
+            bvirt = (pc.Y - cdy); avirt = cdy + bvirt; bround = bvirt - pd.Y; around = pc.Y - avirt; cdytail = around + bround;
             if ((adxtail == 0.0) && (bdxtail == 0.0) && (cdxtail == 0.0)
                 && (adytail == 0.0) && (bdytail == 0.0) && (cdytail == 0.0))
             {
@@ -890,25 +830,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             if ((bdxtail != 0.0) || (bdytail != 0.0)
                 || (cdxtail != 0.0) || (cdytail != 0.0))
             {
-                adxadx1 = (double)(adx * adx); c = (double)(splitter * adx); abig = (double)(c - adx); ahi = c - abig; alo = adx - ahi; err1 = adxadx1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); adxadx0 = (alo * alo) - err3;
-                adyady1 = (double)(ady * ady); c = (double)(splitter * ady); abig = (double)(c - ady); ahi = c - abig; alo = ady - ahi; err1 = adyady1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); adyady0 = (alo * alo) - err3;
-                _i = (double)(adxadx0 + adyady0); bvirt = (double)(_i - adxadx0); avirt = _i - bvirt; bround = adyady0 - bvirt; around = adxadx0 - avirt; aa[0] = around + bround; _j = (double)(adxadx1 + _i); bvirt = (double)(_j - adxadx1); avirt = _j - bvirt; bround = _i - bvirt; around = adxadx1 - avirt; _0 = around + bround; _i = (double)(_0 + adyady1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = adyady1 - bvirt; around = _0 - avirt; aa[1] = around + bround; aa3 = (double)(_j + _i); bvirt = (double)(aa3 - _j); avirt = aa3 - bvirt; bround = _i - bvirt; around = _j - avirt; aa[2] = around + bround;
+                adxadx1 = (adx * adx); c = (splitter * adx); abig = (c - adx); ahi = c - abig; alo = adx - ahi; err1 = adxadx1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); adxadx0 = (alo * alo) - err3;
+                adyady1 = (ady * ady); c = (splitter * ady); abig = (c - ady); ahi = c - abig; alo = ady - ahi; err1 = adyady1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); adyady0 = (alo * alo) - err3;
+                _i = (adxadx0 + adyady0); bvirt = (_i - adxadx0); avirt = _i - bvirt; bround = adyady0 - bvirt; around = adxadx0 - avirt; aa[0] = around + bround; _j = (adxadx1 + _i); bvirt = (_j - adxadx1); avirt = _j - bvirt; bround = _i - bvirt; around = adxadx1 - avirt; _0 = around + bround; _i = (_0 + adyady1); bvirt = (_i - _0); avirt = _i - bvirt; bround = adyady1 - bvirt; around = _0 - avirt; aa[1] = around + bround; aa3 = (_j + _i); bvirt = (aa3 - _j); avirt = aa3 - bvirt; bround = _i - bvirt; around = _j - avirt; aa[2] = around + bround;
                 aa[3] = aa3;
             }
             if ((cdxtail != 0.0) || (cdytail != 0.0)
                 || (adxtail != 0.0) || (adytail != 0.0))
             {
-                bdxbdx1 = (double)(bdx * bdx); c = (double)(splitter * bdx); abig = (double)(c - bdx); ahi = c - abig; alo = bdx - ahi; err1 = bdxbdx1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); bdxbdx0 = (alo * alo) - err3;
-                bdybdy1 = (double)(bdy * bdy); c = (double)(splitter * bdy); abig = (double)(c - bdy); ahi = c - abig; alo = bdy - ahi; err1 = bdybdy1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); bdybdy0 = (alo * alo) - err3;
-                _i = (double)(bdxbdx0 + bdybdy0); bvirt = (double)(_i - bdxbdx0); avirt = _i - bvirt; bround = bdybdy0 - bvirt; around = bdxbdx0 - avirt; bb[0] = around + bround; _j = (double)(bdxbdx1 + _i); bvirt = (double)(_j - bdxbdx1); avirt = _j - bvirt; bround = _i - bvirt; around = bdxbdx1 - avirt; _0 = around + bround; _i = (double)(_0 + bdybdy1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = bdybdy1 - bvirt; around = _0 - avirt; bb[1] = around + bround; bb3 = (double)(_j + _i); bvirt = (double)(bb3 - _j); avirt = bb3 - bvirt; bround = _i - bvirt; around = _j - avirt; bb[2] = around + bround;
+                bdxbdx1 = (bdx * bdx); c = (splitter * bdx); abig = (c - bdx); ahi = c - abig; alo = bdx - ahi; err1 = bdxbdx1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); bdxbdx0 = (alo * alo) - err3;
+                bdybdy1 = (bdy * bdy); c = (splitter * bdy); abig = (c - bdy); ahi = c - abig; alo = bdy - ahi; err1 = bdybdy1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); bdybdy0 = (alo * alo) - err3;
+                _i = (bdxbdx0 + bdybdy0); bvirt = (_i - bdxbdx0); avirt = _i - bvirt; bround = bdybdy0 - bvirt; around = bdxbdx0 - avirt; bb[0] = around + bround; _j = (bdxbdx1 + _i); bvirt = (_j - bdxbdx1); avirt = _j - bvirt; bround = _i - bvirt; around = bdxbdx1 - avirt; _0 = around + bround; _i = (_0 + bdybdy1); bvirt = (_i - _0); avirt = _i - bvirt; bround = bdybdy1 - bvirt; around = _0 - avirt; bb[1] = around + bround; bb3 = (_j + _i); bvirt = (bb3 - _j); avirt = bb3 - bvirt; bround = _i - bvirt; around = _j - avirt; bb[2] = around + bround;
                 bb[3] = bb3;
             }
             if ((adxtail != 0.0) || (adytail != 0.0)
                 || (bdxtail != 0.0) || (bdytail != 0.0))
             {
-                cdxcdx1 = (double)(cdx * cdx); c = (double)(splitter * cdx); abig = (double)(c - cdx); ahi = c - abig; alo = cdx - ahi; err1 = cdxcdx1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); cdxcdx0 = (alo * alo) - err3;
-                cdycdy1 = (double)(cdy * cdy); c = (double)(splitter * cdy); abig = (double)(c - cdy); ahi = c - abig; alo = cdy - ahi; err1 = cdycdy1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); cdycdy0 = (alo * alo) - err3;
-                _i = (double)(cdxcdx0 + cdycdy0); bvirt = (double)(_i - cdxcdx0); avirt = _i - bvirt; bround = cdycdy0 - bvirt; around = cdxcdx0 - avirt; cc[0] = around + bround; _j = (double)(cdxcdx1 + _i); bvirt = (double)(_j - cdxcdx1); avirt = _j - bvirt; bround = _i - bvirt; around = cdxcdx1 - avirt; _0 = around + bround; _i = (double)(_0 + cdycdy1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = cdycdy1 - bvirt; around = _0 - avirt; cc[1] = around + bround; cc3 = (double)(_j + _i); bvirt = (double)(cc3 - _j); avirt = cc3 - bvirt; bround = _i - bvirt; around = _j - avirt; cc[2] = around + bround;
+                cdxcdx1 = (cdx * cdx); c = (splitter * cdx); abig = (c - cdx); ahi = c - abig; alo = cdx - ahi; err1 = cdxcdx1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); cdxcdx0 = (alo * alo) - err3;
+                cdycdy1 = (cdy * cdy); c = (splitter * cdy); abig = (c - cdy); ahi = c - abig; alo = cdy - ahi; err1 = cdycdy1 - (ahi * ahi); err3 = err1 - ((ahi + ahi) * alo); cdycdy0 = (alo * alo) - err3;
+                _i = (cdxcdx0 + cdycdy0); bvirt = (_i - cdxcdx0); avirt = _i - bvirt; bround = cdycdy0 - bvirt; around = cdxcdx0 - avirt; cc[0] = around + bround; _j = (cdxcdx1 + _i); bvirt = (_j - cdxcdx1); avirt = _j - bvirt; bround = _i - bvirt; around = cdxcdx1 - avirt; _0 = around + bround; _i = (_0 + cdycdy1); bvirt = (_i - _0); avirt = _i - bvirt; bround = cdycdy1 - bvirt; around = _0 - avirt; cc[1] = around + bround; cc3 = (_j + _i); bvirt = (cc3 - _j); avirt = cc3 - bvirt; bround = _i - bvirt; around = _j - avirt; cc[2] = around + bround;
                 cc[3] = cc3;
             }
 
@@ -1014,21 +954,21 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 if ((bdxtail != 0.0) || (bdytail != 0.0)
                     || (cdxtail != 0.0) || (cdytail != 0.0))
                 {
-                    ti1 = (double)(bdxtail * cdy); c = (double)(splitter * bdxtail); abig = (double)(c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (double)(splitter * cdy); abig = (double)(c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
-                    tj1 = (double)(bdx * cdytail); c = (double)(splitter * bdx); abig = (double)(c - bdx); ahi = c - abig; alo = bdx - ahi; c = (double)(splitter * cdytail); abig = (double)(c - cdytail); bhi = c - abig; blo = cdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 + tj0); bvirt = (double)(_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; u[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 + tj1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; u[1] = around + bround; u3 = (double)(_j + _i); bvirt = (double)(u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
+                    ti1 = (bdxtail * cdy); c = (splitter * bdxtail); abig = (c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (splitter * cdy); abig = (c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    tj1 = (bdx * cdytail); c = (splitter * bdx); abig = (c - bdx); ahi = c - abig; alo = bdx - ahi; c = (splitter * cdytail); abig = (c - cdytail); bhi = c - abig; blo = cdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 + tj0); bvirt = (_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; u[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 + tj1); bvirt = (_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
                     u[3] = u3;
                     negate = -bdy;
-                    ti1 = (double)(cdxtail * negate); c = (double)(splitter * cdxtail); abig = (double)(c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (double)(splitter * negate); abig = (double)(c - negate); bhi = c - abig; blo = negate - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    ti1 = (cdxtail * negate); c = (splitter * cdxtail); abig = (c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (splitter * negate); abig = (c - negate); bhi = c - abig; blo = negate - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
                     negate = -bdytail;
-                    tj1 = (double)(cdx * negate); c = (double)(splitter * cdx); abig = (double)(c - cdx); ahi = c - abig; alo = cdx - ahi; c = (double)(splitter * negate); abig = (double)(c - negate); bhi = c - abig; blo = negate - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 + tj0); bvirt = (double)(_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; v[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 + tj1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; v[1] = around + bround; v3 = (double)(_j + _i); bvirt = (double)(v3 - _j); avirt = v3 - bvirt; bround = _i - bvirt; around = _j - avirt; v[2] = around + bround;
+                    tj1 = (cdx * negate); c = (splitter * cdx); abig = (c - cdx); ahi = c - abig; alo = cdx - ahi; c = (splitter * negate); abig = (c - negate); bhi = c - abig; blo = negate - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 + tj0); bvirt = (_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; v[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 + tj1); bvirt = (_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; v[1] = around + bround; v3 = (_j + _i); bvirt = (v3 - _j); avirt = v3 - bvirt; bround = _i - bvirt; around = _j - avirt; v[2] = around + bround;
                     v[3] = v3;
                     bctlen = FastExpansionSumZeroElim(4, u, 4, v, bct);
 
-                    ti1 = (double)(bdxtail * cdytail); c = (double)(splitter * bdxtail); abig = (double)(c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (double)(splitter * cdytail); abig = (double)(c - cdytail); bhi = c - abig; blo = cdytail - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
-                    tj1 = (double)(cdxtail * bdytail); c = (double)(splitter * cdxtail); abig = (double)(c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (double)(splitter * bdytail); abig = (double)(c - bdytail); bhi = c - abig; blo = bdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 - tj0); bvirt = (double)(ti0 - _i); avirt = _i + bvirt; bround = bvirt - tj0; around = ti0 - avirt; bctt[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 - tj1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - tj1; around = _0 - avirt; bctt[1] = around + bround; bctt3 = (double)(_j + _i); bvirt = (double)(bctt3 - _j); avirt = bctt3 - bvirt; bround = _i - bvirt; around = _j - avirt; bctt[2] = around + bround;
+                    ti1 = (bdxtail * cdytail); c = (splitter * bdxtail); abig = (c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (splitter * cdytail); abig = (c - cdytail); bhi = c - abig; blo = cdytail - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    tj1 = (cdxtail * bdytail); c = (splitter * cdxtail); abig = (c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (splitter * bdytail); abig = (c - bdytail); bhi = c - abig; blo = bdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 - tj0); bvirt = (ti0 - _i); avirt = _i + bvirt; bround = bvirt - tj0; around = ti0 - avirt; bctt[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 - tj1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - tj1; around = _0 - avirt; bctt[1] = around + bround; bctt3 = (_j + _i); bvirt = (bctt3 - _j); avirt = bctt3 - bvirt; bround = _i - bvirt; around = _j - avirt; bctt[2] = around + bround;
                     bctt[3] = bctt3;
                     bcttlen = 4;
                 }
@@ -1097,21 +1037,21 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 if ((cdxtail != 0.0) || (cdytail != 0.0)
                     || (adxtail != 0.0) || (adytail != 0.0))
                 {
-                    ti1 = (double)(cdxtail * ady); c = (double)(splitter * cdxtail); abig = (double)(c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (double)(splitter * ady); abig = (double)(c - ady); bhi = c - abig; blo = ady - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
-                    tj1 = (double)(cdx * adytail); c = (double)(splitter * cdx); abig = (double)(c - cdx); ahi = c - abig; alo = cdx - ahi; c = (double)(splitter * adytail); abig = (double)(c - adytail); bhi = c - abig; blo = adytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 + tj0); bvirt = (double)(_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; u[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 + tj1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; u[1] = around + bround; u3 = (double)(_j + _i); bvirt = (double)(u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
+                    ti1 = (cdxtail * ady); c = (splitter * cdxtail); abig = (c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (splitter * ady); abig = (c - ady); bhi = c - abig; blo = ady - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    tj1 = (cdx * adytail); c = (splitter * cdx); abig = (c - cdx); ahi = c - abig; alo = cdx - ahi; c = (splitter * adytail); abig = (c - adytail); bhi = c - abig; blo = adytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 + tj0); bvirt = (_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; u[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 + tj1); bvirt = (_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
                     u[3] = u3;
                     negate = -cdy;
-                    ti1 = (double)(adxtail * negate); c = (double)(splitter * adxtail); abig = (double)(c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (double)(splitter * negate); abig = (double)(c - negate); bhi = c - abig; blo = negate - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    ti1 = (adxtail * negate); c = (splitter * adxtail); abig = (c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (splitter * negate); abig = (c - negate); bhi = c - abig; blo = negate - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
                     negate = -cdytail;
-                    tj1 = (double)(adx * negate); c = (double)(splitter * adx); abig = (double)(c - adx); ahi = c - abig; alo = adx - ahi; c = (double)(splitter * negate); abig = (double)(c - negate); bhi = c - abig; blo = negate - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 + tj0); bvirt = (double)(_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; v[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 + tj1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; v[1] = around + bround; v3 = (double)(_j + _i); bvirt = (double)(v3 - _j); avirt = v3 - bvirt; bround = _i - bvirt; around = _j - avirt; v[2] = around + bround;
+                    tj1 = (adx * negate); c = (splitter * adx); abig = (c - adx); ahi = c - abig; alo = adx - ahi; c = (splitter * negate); abig = (c - negate); bhi = c - abig; blo = negate - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 + tj0); bvirt = (_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; v[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 + tj1); bvirt = (_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; v[1] = around + bround; v3 = (_j + _i); bvirt = (v3 - _j); avirt = v3 - bvirt; bround = _i - bvirt; around = _j - avirt; v[2] = around + bround;
                     v[3] = v3;
                     catlen = FastExpansionSumZeroElim(4, u, 4, v, cat);
 
-                    ti1 = (double)(cdxtail * adytail); c = (double)(splitter * cdxtail); abig = (double)(c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (double)(splitter * adytail); abig = (double)(c - adytail); bhi = c - abig; blo = adytail - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
-                    tj1 = (double)(adxtail * cdytail); c = (double)(splitter * adxtail); abig = (double)(c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (double)(splitter * cdytail); abig = (double)(c - cdytail); bhi = c - abig; blo = cdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 - tj0); bvirt = (double)(ti0 - _i); avirt = _i + bvirt; bround = bvirt - tj0; around = ti0 - avirt; catt[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 - tj1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - tj1; around = _0 - avirt; catt[1] = around + bround; catt3 = (double)(_j + _i); bvirt = (double)(catt3 - _j); avirt = catt3 - bvirt; bround = _i - bvirt; around = _j - avirt; catt[2] = around + bround;
+                    ti1 = (cdxtail * adytail); c = (splitter * cdxtail); abig = (c - cdxtail); ahi = c - abig; alo = cdxtail - ahi; c = (splitter * adytail); abig = (c - adytail); bhi = c - abig; blo = adytail - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    tj1 = (adxtail * cdytail); c = (splitter * adxtail); abig = (c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (splitter * cdytail); abig = (c - cdytail); bhi = c - abig; blo = cdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 - tj0); bvirt = (ti0 - _i); avirt = _i + bvirt; bround = bvirt - tj0; around = ti0 - avirt; catt[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 - tj1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - tj1; around = _0 - avirt; catt[1] = around + bround; catt3 = (_j + _i); bvirt = (catt3 - _j); avirt = catt3 - bvirt; bround = _i - bvirt; around = _j - avirt; catt[2] = around + bround;
                     catt[3] = catt3;
                     cattlen = 4;
                 }
@@ -1179,21 +1119,21 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 if ((adxtail != 0.0) || (adytail != 0.0)
                     || (bdxtail != 0.0) || (bdytail != 0.0))
                 {
-                    ti1 = (double)(adxtail * bdy); c = (double)(splitter * adxtail); abig = (double)(c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (double)(splitter * bdy); abig = (double)(c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
-                    tj1 = (double)(adx * bdytail); c = (double)(splitter * adx); abig = (double)(c - adx); ahi = c - abig; alo = adx - ahi; c = (double)(splitter * bdytail); abig = (double)(c - bdytail); bhi = c - abig; blo = bdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 + tj0); bvirt = (double)(_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; u[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 + tj1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; u[1] = around + bround; u3 = (double)(_j + _i); bvirt = (double)(u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
+                    ti1 = (adxtail * bdy); c = (splitter * adxtail); abig = (c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (splitter * bdy); abig = (c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    tj1 = (adx * bdytail); c = (splitter * adx); abig = (c - adx); ahi = c - abig; alo = adx - ahi; c = (splitter * bdytail); abig = (c - bdytail); bhi = c - abig; blo = bdytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 + tj0); bvirt = (_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; u[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 + tj1); bvirt = (_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
                     u[3] = u3;
                     negate = -ady;
-                    ti1 = (double)(bdxtail * negate); c = (double)(splitter * bdxtail); abig = (double)(c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (double)(splitter * negate); abig = (double)(c - negate); bhi = c - abig; blo = negate - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    ti1 = (bdxtail * negate); c = (splitter * bdxtail); abig = (c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (splitter * negate); abig = (c - negate); bhi = c - abig; blo = negate - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
                     negate = -adytail;
-                    tj1 = (double)(bdx * negate); c = (double)(splitter * bdx); abig = (double)(c - bdx); ahi = c - abig; alo = bdx - ahi; c = (double)(splitter * negate); abig = (double)(c - negate); bhi = c - abig; blo = negate - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 + tj0); bvirt = (double)(_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; v[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 + tj1); bvirt = (double)(_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; v[1] = around + bround; v3 = (double)(_j + _i); bvirt = (double)(v3 - _j); avirt = v3 - bvirt; bround = _i - bvirt; around = _j - avirt; v[2] = around + bround;
+                    tj1 = (bdx * negate); c = (splitter * bdx); abig = (c - bdx); ahi = c - abig; alo = bdx - ahi; c = (splitter * negate); abig = (c - negate); bhi = c - abig; blo = negate - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 + tj0); bvirt = (_i - ti0); avirt = _i - bvirt; bround = tj0 - bvirt; around = ti0 - avirt; v[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 + tj1); bvirt = (_i - _0); avirt = _i - bvirt; bround = tj1 - bvirt; around = _0 - avirt; v[1] = around + bround; v3 = (_j + _i); bvirt = (v3 - _j); avirt = v3 - bvirt; bround = _i - bvirt; around = _j - avirt; v[2] = around + bround;
                     v[3] = v3;
                     abtlen = FastExpansionSumZeroElim(4, u, 4, v, abt);
 
-                    ti1 = (double)(adxtail * bdytail); c = (double)(splitter * adxtail); abig = (double)(c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (double)(splitter * bdytail); abig = (double)(c - bdytail); bhi = c - abig; blo = bdytail - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
-                    tj1 = (double)(bdxtail * adytail); c = (double)(splitter * bdxtail); abig = (double)(c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (double)(splitter * adytail); abig = (double)(c - adytail); bhi = c - abig; blo = adytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
-                    _i = (double)(ti0 - tj0); bvirt = (double)(ti0 - _i); avirt = _i + bvirt; bround = bvirt - tj0; around = ti0 - avirt; abtt[0] = around + bround; _j = (double)(ti1 + _i); bvirt = (double)(_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (double)(_0 - tj1); bvirt = (double)(_0 - _i); avirt = _i + bvirt; bround = bvirt - tj1; around = _0 - avirt; abtt[1] = around + bround; abtt3 = (double)(_j + _i); bvirt = (double)(abtt3 - _j); avirt = abtt3 - bvirt; bround = _i - bvirt; around = _j - avirt; abtt[2] = around + bround;
+                    ti1 = (adxtail * bdytail); c = (splitter * adxtail); abig = (c - adxtail); ahi = c - abig; alo = adxtail - ahi; c = (splitter * bdytail); abig = (c - bdytail); bhi = c - abig; blo = bdytail - bhi; err1 = ti1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); ti0 = (alo * blo) - err3;
+                    tj1 = (bdxtail * adytail); c = (splitter * bdxtail); abig = (c - bdxtail); ahi = c - abig; alo = bdxtail - ahi; c = (splitter * adytail); abig = (c - adytail); bhi = c - abig; blo = adytail - bhi; err1 = tj1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); tj0 = (alo * blo) - err3;
+                    _i = (ti0 - tj0); bvirt = (ti0 - _i); avirt = _i + bvirt; bround = bvirt - tj0; around = ti0 - avirt; abtt[0] = around + bround; _j = (ti1 + _i); bvirt = (_j - ti1); avirt = _j - bvirt; bround = _i - bvirt; around = ti1 - avirt; _0 = around + bround; _i = (_0 - tj1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - tj1; around = _0 - avirt; abtt[1] = around + bround; abtt3 = (_j + _i); bvirt = (abtt3 - _j); avirt = abtt3 - bvirt; bround = _i - bvirt; around = _j - avirt; abtt[2] = around + bround;
                     abtt[3] = abtt3;
                     abttlen = 4;
                 }

@@ -1,20 +1,10 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="NewLocation.cs">
-// Original code by Hale Erten and Alper Üngör, http://www.cise.ufl.edu/~ungor/aCute/index.html
-// Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using ActionStreetMap.Core.Geometry.Triangle.Topology;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
-    using System;
-    using ActionStreetMap.Core.Geometry.Triangle.Topology;
-    using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-    using ActionStreetMap.Core.Geometry.Triangle.Tools;
-
-    /// <summary>
-    /// Find new Steiner point locations.
-    /// </summary>
+    /// <summary> Find new Steiner point locations. </summary>
     /// <remarks>
     /// http://www.cise.ufl.edu/~ungor/aCute/index.html
     /// </remarks>
@@ -48,40 +38,19 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             this.behavior = mesh.behavior;
         }
 
-        /// <summary>
-        /// Find a new location for a Steiner point.
-        /// </summary>
-        /// <param name="org"></param>
-        /// <param name="dest"></param>
-        /// <param name="apex"></param>
-        /// <param name="xi"></param>
-        /// <param name="eta"></param>
-        /// <param name="offcenter"></param>
-        /// <param name="badotri"></param>
-        /// <returns></returns>
+        /// <summary> Find a new location for a Steiner point. </summary>
         public Point FindLocation(Vertex org, Vertex dest, Vertex apex,
             ref double xi, ref double eta, bool offcenter, Otri badotri)
         {
             // Based on using -U switch, call the corresponding function
             if (behavior.MaxAngle == 0.0)
-            {
                 return FindNewLocationWithoutMaxAngle(org, dest, apex, ref xi, ref eta, true, badotri);
-            }
 
             // With max angle
             return FindNewLocation(org, dest, apex, ref xi, ref eta, true, badotri);
         }
 
-        /// <summary>
-        /// Find a new location for a Steiner point.
-        /// </summary>
-        /// <param name="torg"></param>
-        /// <param name="tdest"></param>
-        /// <param name="tapex"></param>
-        /// <param name="xi"></param>
-        /// <param name="eta"></param>
-        /// <param name="offcenter"></param>
-        /// <param name="badotri"></param>
+        /// <summary> Find a new location for a Steiner point. </summary>
         private Point FindNewLocationWithoutMaxAngle(Vertex torg, Vertex tdest, Vertex tapex,
             ref double xi, ref double eta, bool offcenter, Otri badotri)
         {
@@ -153,8 +122,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double xMidOfMiddleEdge, yMidOfMiddleEdge;
             ////////////////////////////// END OF HALE'S VARIABLES //////////////////////////////
 
-            Statistic.CircumcenterCount++;
-
             // Compute the circumcenter of the triangle.
             xdo = tdest.x - torg.x;
             ydo = tdest.y - torg.y;
@@ -179,7 +146,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 //   division by zero.
                 denominator = 0.5 / RobustPredicates.CounterClockwise(tdest, tapex, torg);
                 // Don't count the above as an orientation test.
-                Statistic.CounterClockwiseCount--;
             }
             // calculate the circumcenter in terms of distance to origin point 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -257,8 +223,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     largestAngleCorner = tapex;
                     break;
                 case 231: 	// assign necessary information
-                    // smallest angle corner: org
-                    // largest angle corner: dest
+                    /// smallest angle corner: org
+                    /// largest angle corner: dest
                     xShortestEdge = xda; yShortestEdge = yda;
                     xMiddleEdge = xdo; yMiddleEdge = ydo;
                     xLongestEdge = xao; yLongestEdge = yao;
@@ -315,14 +281,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     dyoff = 0.5 * yShortestEdge + offconstant * xShortestEdge;
                     // If the off-center is closer to destination than the
                     //   circumcenter, use the off-center instead.
-                    // doubleLY BAD CASE ///			
+                    // doubleLY BAD CASE //			
                     if (dxoff * dxoff + dyoff * dyoff <
                         (dx - xdo) * (dx - xdo) + (dy - ydo) * (dy - ydo))
                     {
                         dx = xdo + dxoff;
                         dy = ydo + dyoff;
                     }
-                    // ALMOST GOOD CASE ///
+                    // ALMOST GOOD CASE //
                     else
                     {
                         almostGood = 1;
@@ -336,13 +302,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     dyoff = 0.5 * yShortestEdge - offconstant * xShortestEdge;
                     // If the off-center is closer to the origin than the
                     //   circumcenter, use the off-center instead.
-                    // doubleLY BAD CASE ///
+                    // doubleLY BAD CASE //
                     if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy)
                     {
                         dx = dxoff;
                         dy = dyoff;
                     }
-                    // ALMOST GOOD CASE ///		
+                    // ALMOST GOOD CASE //		
                     else
                     {
                         almostGood = 1;
@@ -356,13 +322,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     dyoff = 0.5 * yShortestEdge + offconstant * xShortestEdge;
                     // If the off-center is closer to the origin than the
                     //   circumcenter, use the off-center instead.
-                    // doubleLY BAD CASE ///
+                    // doubleLY BAD CASE //
                     if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy)
                     {
                         dx = dxoff;
                         dy = dyoff;
                     }
-                    // ALMOST GOOD CASE ///		
+                    // ALMOST GOOD CASE //		
                     else
                     {
                         almostGood = 1;
@@ -373,7 +339,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             if (almostGood == 1)
             {
 
-                // calculate cosine of largest angle	///	
+                // calculate cosine of largest angle	//	
                 cosMaxAngle = (middleEdgeDist + shortestEdgeDist - longestEdgeDist) / (2 * Math.Sqrt(middleEdgeDist) * Math.Sqrt(shortestEdgeDist));
                 if (cosMaxAngle < 0.0)
                 {
@@ -390,14 +356,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     // nonobtuse
                     isObtuse = false;
                 }
-                // RELOCATION	(LOCAL SMOOTHING) ///
-                // check for possible relocation of one of triangle's points ///				
+                // RELOCATION	(LOCAL SMOOTHING) //
+                // check for possible relocation of one of triangle's points //				
                 relocated = DoSmoothing(delotri, torg, tdest, tapex, ref newloc);
-                // if relocation is possible, delete that vertex and insert a vertex at the new location ///		
+                // if relocation is possible, delete that vertex and insert a vertex at the new location //		
                 if (relocated > 0)
                 {
-                    Statistic.RelocationCount++;
-
                     dx = newloc[0] - torg.x;
                     dy = newloc[1] - torg.y;
                     origin_x = torg.x;	// keep for later use
@@ -427,7 +391,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     // first find the visible region, PETAL
                     // find the center of the circle and radius
                     petalRadius = Math.Sqrt(shortestEdgeDist) / (2 * Math.Sin(behavior.MinAngle * Math.PI / 180.0));
-                    // compute two possible centers of the petal ///
+                    // compute two possible centers of the petal //
                     // finding the center
                     // first find the middle point of smallest edge
                     xMidOfShortestEdge = (middleAngleCorner.x + largestAngleCorner.x) / 2.0;
@@ -459,10 +423,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         xPetalCtr = xPetalCtr_2; yPetalCtr = yPetalCtr_2;
                     }
 
-                    // find the third point of the neighbor triangle  ///
+                    // find the third point of the neighbor triangle  //
                     neighborNotFound = GetNeighborsVertex(badotri, middleAngleCorner.x, middleAngleCorner.y,
                                 smallestAngleCorner.x, smallestAngleCorner.y, ref thirdPoint, ref neighborotri);
-                    // find the circumcenter of the neighbor triangle ///
+                    // find the circumcenter of the neighbor triangle //
                     dxFirstSuggestion = dx;	// if we cannot find any appropriate suggestion, we use circumcenter
                     dyFirstSuggestion = dy;
                     // if there is a neighbor triangle
@@ -475,7 +439,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         neighborCircumcenter = RobustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
                             ref xi_tmp, ref eta_tmp);
 
-                        // compute petal and Voronoi edge intersection ///
+                        // compute petal and Voronoi edge intersection //
                         // in order to avoid degenerate cases, we need to do a vector based calculation for line		
                         vector_x = (middleAngleCorner.y - smallestAngleCorner.y);//(-y, x)
                         vector_y = smallestAngleCorner.x - middleAngleCorner.x;
@@ -487,7 +451,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         // then this line and circle should be intersected
                         CircleLineIntersection(myCircumcenter.x, myCircumcenter.y, vector_x, vector_y,
                                 xPetalCtr, yPetalCtr, petalRadius, ref p);
-                        // choose the correct intersection point ///
+                        // choose the correct intersection point //
                         // calculate middle point of the longest edge(bisector)
                         xMidOfLongestEdge = (middleAngleCorner.x + smallestAngleCorner.x) / 2.0;
                         yMidOfLongestEdge = (middleAngleCorner.y + smallestAngleCorner.y) / 2.0;
@@ -505,12 +469,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                             inter_x = p[1];
                             inter_y = p[2];
                         }
-                        // check if there is a Voronoi vertex between before intersection ///
+                        // check if there is a Voronoi vertex between before intersection //
                         // check if the voronoi vertex is between the intersection and circumcenter
                         PointBetweenPoints(inter_x, inter_y, myCircumcenter.x, myCircumcenter.y,
                                 neighborCircumcenter.x, neighborCircumcenter.y, ref voronoiOrInter);
 
-                        // determine the point to be suggested ///
+                        // determine the point to be suggested //
                         if (p[0] > 0.0)
                         { // there is at least one intersection point
                             // if it is between circumcenter and intersection	
@@ -572,7 +536,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                                     dyFirstSuggestion = inter_y - torg.y;
                                 }
                             }
-                            // if it is an acute triangle, check if it is a good enough location ///
+                            // if it is an acute triangle, check if it is a good enough location //
                             // for acute triangle case, we need to check if it is ok to use either of them
                             if ((smallestAngleCorner.x - myCircumcenter.x) * (smallestAngleCorner.x - myCircumcenter.x) +
                                 (smallestAngleCorner.y - myCircumcenter.y) * (smallestAngleCorner.y - myCircumcenter.y) >
@@ -589,11 +553,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
                     }// if it is on the boundary, meaning no neighbor triangle in this direction, try other direction	
 
-                    // DO THE SAME THING FOR THE OTHER DIRECTION ///
-                    // find the third point of the neighbor triangle  ///
+                    // DO THE SAME THING FOR THE OTHER DIRECTION //
+                    // find the third point of the neighbor triangle  //
                     neighborNotFound = GetNeighborsVertex(badotri, largestAngleCorner.x, largestAngleCorner.y,
                                 smallestAngleCorner.x, smallestAngleCorner.y, ref thirdPoint, ref neighborotri);
-                    // find the circumcenter of the neighbor triangle ///
+                    // find the circumcenter of the neighbor triangle //
                     dxSecondSuggestion = dx;	// if we cannot find any appropriate suggestion, we use circumcenter
                     dySecondSuggestion = dy;
                     // if there is a neighbor triangle
@@ -606,7 +570,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         neighborCircumcenter = RobustPredicates.FindCircumcenter(neighborvertex_1, neighborvertex_2, neighborvertex_3,
                             ref xi_tmp, ref eta_tmp);
 
-                        // compute petal and Voronoi edge intersection ///
+                        // compute petal and Voronoi edge intersection //
                         // in order to avoid degenerate cases, we need to do a vector based calculation for line		
                         vector_x = (largestAngleCorner.y - smallestAngleCorner.y);//(-y, x)
                         vector_y = smallestAngleCorner.x - largestAngleCorner.x;
@@ -619,7 +583,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         CircleLineIntersection(myCircumcenter.x, myCircumcenter.y, vector_x, vector_y,
                                 xPetalCtr, yPetalCtr, petalRadius, ref p);
 
-                        // choose the correct intersection point ///
+                        // choose the correct intersection point //
                         // calcuwedgeslate middle point of the longest edge(bisector)
                         xMidOfMiddleEdge = (largestAngleCorner.x + smallestAngleCorner.x) / 2.0;
                         yMidOfMiddleEdge = (largestAngleCorner.y + smallestAngleCorner.y) / 2.0;
@@ -639,12 +603,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                             inter_y = p[2];
                         }
 
-                        // check if there is a Voronoi vertex between before intersection ///
+                        // check if there is a Voronoi vertex between before intersection //
                         // check if the voronoi vertex is between the intersection and circumcenter
                         PointBetweenPoints(inter_x, inter_y, myCircumcenter.x, myCircumcenter.y,
                                 neighborCircumcenter.x, neighborCircumcenter.y, ref voronoiOrInter);
 
-                        // determine the point to be suggested ///
+                        // determine the point to be suggested //
                         if (p[0] > 0.0)
                         { // there is at least one intersection point
                             // if it is between circumcenter and intersection	
@@ -707,7 +671,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                                     dySecondSuggestion = inter_y - torg.y;
                                 }
                             }
-                            // if it is an acute triangle, check if it is a good enough location ///
+                            // if it is an acute triangle, check if it is a good enough location //
                             // for acute triangle case, we need to check if it is ok to use either of them
                             if ((smallestAngleCorner.x - myCircumcenter.x) * (smallestAngleCorner.x - myCircumcenter.x) +
                                 (smallestAngleCorner.y - myCircumcenter.y) * (smallestAngleCorner.y - myCircumcenter.y) >
@@ -771,16 +735,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return circumcenter;
         }
 
-        /// <summary>
-        /// Find a new location for a Steiner point.
-        /// </summary>
-        /// <param name="torg"></param>
-        /// <param name="tdest"></param>
-        /// <param name="tapex"></param>
-        /// <param name="xi"></param>
-        /// <param name="eta"></param>
-        /// <param name="offcenter"></param>
-        /// <param name="badotri"></param>
+        /// <summary> Find a new location for a Steiner point. </summary>
         private Point FindNewLocation(Vertex torg, Vertex tdest, Vertex tapex,
             ref double xi, ref double eta, bool offcenter, Otri badotri)
         {
@@ -865,8 +820,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             bool neighborNotFound_second;
             ////////////////////////////// END OF HALE'S VARIABLES //////////////////////////////
 
-            Statistic.CircumcenterCount++;
-
             // Compute the circumcenter of the triangle.
             xdo = tdest.x - torg.x;
             ydo = tdest.y - torg.y;
@@ -890,8 +843,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 //   reasonably accurate) result, avoiding any possibility of
                 //   division by zero.
                 denominator = 0.5 / RobustPredicates.CounterClockwise(tdest, tapex, torg);
-                // Don't count the above as an orientation test.
-                Statistic.CounterClockwiseCount--;
             }
             // calculate the circumcenter in terms of distance to origin point 
             dx = (yao * dodist - ydo * aodist) * denominator;
@@ -1027,14 +978,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     dyoff = 0.5 * yShortestEdge + offconstant * xShortestEdge;
                     // If the off-center is closer to destination than the
                     //   circumcenter, use the off-center instead.
-                    // doubleLY BAD CASE ///			
+                    // doubleLY BAD CASE //			
                     if (dxoff * dxoff + dyoff * dyoff <
                         (dx - xdo) * (dx - xdo) + (dy - ydo) * (dy - ydo))
                     {
                         dx = xdo + dxoff;
                         dy = ydo + dyoff;
                     }
-                    // ALMOST GOOD CASE ///
+                    // ALMOST GOOD CASE //
                     else
                     {
                         almostGood = 1;
@@ -1048,13 +999,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     dyoff = 0.5 * yShortestEdge - offconstant * xShortestEdge;
                     // If the off-center is closer to the origin than the
                     //   circumcenter, use the off-center instead.
-                    // doubleLY BAD CASE ///
+                    // doubleLY BAD CASE //
                     if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy)
                     {
                         dx = dxoff;
                         dy = dyoff;
                     }
-                    // ALMOST GOOD CASE ///		
+                    // ALMOST GOOD CASE //		
                     else
                     {
                         almostGood = 1;
@@ -1068,13 +1019,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     dyoff = 0.5 * yShortestEdge + offconstant * xShortestEdge;
                     // If the off-center is closer to the origin than the
                     //   circumcenter, use the off-center instead.
-                    // doubleLY BAD CASE ///
+                    // doubleLY BAD CASE //
                     if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy)
                     {
                         dx = dxoff;
                         dy = dyoff;
                     }
-                    // ALMOST GOOD CASE ///		
+                    // ALMOST GOOD CASE //		
                     else
                     {
                         almostGood = 1;
@@ -1085,7 +1036,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             if (almostGood == 1)
             {
 
-                // calculate cosine of largest angle	///	
+                // calculate cosine of largest angle	//	
                 cosMaxAngle = (middleEdgeDist + shortestEdgeDist - longestEdgeDist) / (2 * Math.Sqrt(middleEdgeDist) * Math.Sqrt(shortestEdgeDist));
                 if (cosMaxAngle < 0.0)
                 {
@@ -1102,14 +1053,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     // nonobtuse
                     isObtuse = false;
                 }
-                // RELOCATION	(LOCAL SMOOTHING) ///
-                // check for possible relocation of one of triangle's points ///				
+                // RELOCATION	(LOCAL SMOOTHING) //
+                // check for possible relocation of one of triangle's points //				
                 relocated = DoSmoothing(delotri, torg, tdest, tapex, ref newloc);
-                // if relocation is possible, delete that vertex and insert a vertex at the new location ///		
+                // if relocation is possible, delete that vertex and insert a vertex at the new location //		
                 if (relocated > 0)
                 {
-                    Statistic.RelocationCount++;
-
                     dx = newloc[0] - torg.x;
                     dy = newloc[1] - torg.y;
                     origin_x = torg.x;	// keep for later use
@@ -1148,7 +1097,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         minangle = minangle + 0.5;
                     }
                     petalRadius = Math.Sqrt(shortestEdgeDist) / (2 * Math.Sin(minangle * Math.PI / 180.0));
-                    // compute two possible centers of the petal ///
+                    // compute two possible centers of the petal //
                     // finding the center
                     // first find the middle point of smallest edge
                     xMidOfShortestEdge = (middleAngleCorner.x + largestAngleCorner.x) / 2.0;
@@ -1499,7 +1448,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     // find the third point of the neighbor triangle  ///
                     neighborNotFound_second = GetNeighborsVertex(badotri, largestAngleCorner.x, largestAngleCorner.y,
                                 smallestAngleCorner.x, smallestAngleCorner.y, ref thirdPoint, ref neighborotri);
-                    // find the circumcenter of the neighbor triangle ///
+                    /// find the circumcenter of the neighbor triangle ///
                     dxSecondSuggestion = dx;	// if we cannot find any appropriate suggestion, we use circumcenter
                     dySecondSuggestion = dy;
 
@@ -1972,10 +1921,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return circumcenter;
         }
 
-        /// <summary> Given square of edge lengths of a triangle, determine its orientation </summary>
-        /// <param name="aodist"></param>
-        /// <param name="dadist"></param>
-        /// <param name="dodist"></param>
+        /// <summary> Given square of edge lengths of a triangle, determine its orientation. </summary>
         /// <returns>Returns a number indicating an orientation.</returns>
         private int LongestShortestEdge(double aodist, double dadist, double dodist)
         {
@@ -2034,14 +1980,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return minMidMax;
         }
 
-        /// <summary>
-        /// Checks if smothing is possible for a given bad triangle.
-        /// </summary>
-        /// <param name="badotri"></param>
-        /// <param name="torg"></param>
-        /// <param name="tdest"></param>
-        /// <param name="tapex"></param>
-        /// <param name="newloc">The new location for the point, if somothing is possible.</param>
+        /// <summary>  Checks if smothing is possible for a given bad triangle.  </summary>
         /// <returns>Returns 1, 2 or 3 if smoothing will work, 0 otherwise.</returns>
         private int DoSmoothing(Otri badotri, Vertex torg, Vertex tdest, Vertex tapex,
             ref double[] newloc)
@@ -2235,15 +2174,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return 0;// could not find any good relocation
         }
 
-        /// <summary>
-        /// Finds the star of a given point.
-        /// </summary>
-        /// <param name="badotri"></param>
-        /// <param name="p"></param>
-        /// <param name="q"></param>
-        /// <param name="r"></param>
-        /// <param name="whichPoint"></param>
-        /// <param name="points">List of points on the star of the given point.</param>
+        /// <summary> Finds the star of a given point. </summary>
         /// <returns>Number of points on the star of the given point.</returns>
         private int GetStarPoints(Otri badotri, Vertex p, Vertex q, Vertex r,
                     int whichPoint, ref double[] points)
@@ -2322,16 +2253,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         }
 
-        /// <summary>
-        /// Gets a neighbours vertex.
-        /// </summary>
-        /// <param name="badotri"></param>
-        /// <param name="first_x"></param>
-        /// <param name="first_y"></param>
-        /// <param name="second_x"></param>
-        /// <param name="second_y"></param>
-        /// <param name="thirdpoint">Neighbor's third vertex incident to given edge.</param>
-        /// <param name="neighotri">Pointer for the neighbor triangle.</param>
+        /// <summary> Gets a neighbours vertex. </summary>
         /// <returns>Returns true if vertex was found.</returns>
         private bool GetNeighborsVertex(Otri badotri,
                         double first_x, double first_y,
@@ -2482,12 +2404,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         }
 
-        /// <summary>
-        /// Find a new point location by wedge intersection.
-        /// </summary>
-        /// <param name="numpoints"></param>
-        /// <param name="points"></param>
-        /// <param name="newloc">A new location for the point according to surrounding points.</param>
+        /// <summary> Find a new point location by wedge intersection. </summary>
         /// <returns>Returns true if new location found</returns>
         private bool GetWedgeIntersectionWithoutMaxAngle(int numpoints,
             double[] points, ref double[] newloc)
@@ -2515,11 +2432,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 petaly = new double[2 * numpoints];
                 petalr = new double[2 * numpoints];
                 wedges = new double[2 * numpoints * 16 + 36];
-
-                //if (Log.Verbose)
-                //{
-                //    Log.Instance.Info("NewLocation: resized work arrays (" + 2 * numpoints + ")");
-                //}
             }
 
             double xmid, ymid, dist, x3, y3;
@@ -2750,12 +2662,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return false;
         }
 
-        /// <summary>
-        /// Find a new point location by wedge intersection.
-        /// </summary>
-        /// <param name="numpoints"></param>
-        /// <param name="points"></param>
-        /// <param name="newloc">A new location for the point according to surrounding points.</param>
+        /// <summary> Find a new point location by wedge intersection. </summary>
         /// <returns>Returns true if new location found</returns>
         private bool GetWedgeIntersection(int numpoints, double[] points, ref double[] newloc)
         {
@@ -2782,11 +2689,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 petaly = new double[2 * numpoints];
                 petalr = new double[2 * numpoints];
                 wedges = new double[2 * numpoints * 20 + 40];
-
-                //if (Log.Verbose)
-                //{
-                //    Log.Instance.Info("NewLocation: resized work arrays (" + 2 * numpoints + ")");
-                //}
             }
 
             double xmid, ymid, dist, x3, y3;
@@ -2883,7 +2785,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 // cw rotation about (x,y) [ux*cosX + uy*sinX + x - x*cosX - y*sinX; -ux*sinX + uy*cosX + y + x*sinX - y*cosX]
                 // ccw rotation matrix [cosX -sinX; sinX cosX]
                 // ccw rotation about (x,y) [ux*cosX - uy*sinX + x - x*cosX + y*sinX; ux*sinX + uy*cosX + y - x*sinX - y*cosX]
-                // LINE #1: (x1,y1) & (x_1,y_1) 
+                /// LINE #1: (x1,y1) & (x_1,y_1) 
                 // vector from p to q
                 ux = x1 - x0;
                 uy = y1 - y0;
@@ -3249,11 +3151,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return false;
         }
 
-        /// <summary>
-        /// Check polygon for min angle.
-        /// </summary>
-        /// <param name="numpoints"></param>
-        /// <param name="points"></param>
+        /// <summary> Check polygon for min angle. </summary>
         /// <returns>Returns true if the polygon has angles greater than 2*minangle.</returns>
         private bool ValidPolygonAngles(int numpoints, double[] points)
         {
@@ -3286,17 +3184,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Given three coordinates of a polygon, tests to see if it satisfies the minimum 
-        /// angle condition for relocation.
+        ///     Given three coordinates of a polygon, tests to see if it satisfies the minimum 
+        ///     angle condition for relocation.
         /// </summary>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <param name="x3"></param>
-        /// <param name="y3"></param>
-        /// <returns>Returns true, if it is a BAD polygon corner, returns false if it is a GOOD 
-        /// polygon corner</returns>
+        /// <returns>
+        ///     Returns true, if it is a BAD polygon corner, returns false if it is a GOOD 
+        ///     polygon corner
+        /// </returns>
         private bool IsBadPolygonAngle(double x1, double y1,
                         double x2, double y2, double x3, double y3)
         {
@@ -3331,18 +3225,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         }
 
-        /// <summary>
-        /// Given four points representing two lines, returns the intersection point.
-        /// </summary>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <param name="x3"></param>
-        /// <param name="y3"></param>
-        /// <param name="x4"></param>
-        /// <param name="y4"></param>
-        /// <param name="p">The intersection point.</param>
+        /// <summary> Given four points representing two lines, returns the intersection point. </summary>
         /// <remarks> Referenced to: http://local.wasp.uwa.edu.au/~pbourke/geometry/ </remarks>
         private void LineLineIntersection(
             double x1, double y1,
@@ -3386,17 +3269,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Returns the convex polygon which is the intersection of the given convex 
-        /// polygon with the halfplane on the left side (regarding the directional vector) 
-        /// of the given line.
+        ///     Returns the convex polygon which is the intersection of the given convex 
+        ///     polygon with the halfplane on the left side (regarding the directional vector) 
+        ///     of the given line.
         /// </summary>
-        /// <param name="numvertices"></param>
-        /// <param name="convexPoly"></param>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <returns></returns>
         /// <remarks>
         /// http://www.mathematik.uni-ulm.de/stochastik/lehre/ws03_04/rt/Geometry2D.ps
         /// </remarks>
@@ -3459,17 +3335,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Splits a convex polygons into one or two polygons through the intersection 
-        /// with the given line (regarding the directional vector of the given line).
+        ///     Splits a convex polygons into one or two polygons through the intersection 
+        ///     with the given line (regarding the directional vector of the given line).
         /// </summary>
-        /// <param name="numvertices"></param>
-        /// <param name="convexPoly"></param>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <param name="polys"></param>
-        /// <returns></returns>
         /// <remarks>
         /// http://www.mathematik.uni-ulm.de/stochastik/lehre/ws03_04/rt/Geometry2D.ps
         /// </remarks>
@@ -3650,13 +3518,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// Determines on which side (relative to the direction) of the given line and the 
         /// point lies (regarding the directional vector) of the given line.
         /// </summary>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
         /// <remarks>
         /// http://www.mathematik.uni-ulm.de/stochastik/lehre/ws03_04/rt/Geometry2D.ps
         /// </remarks>
@@ -3690,20 +3551,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         }
 
         /// <summary>
-        /// Given four points representing one line and a line segment, returns the intersection point
+        ///     Given four points representing one line and a line segment, returns the intersection point
         /// </summary>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <param name="x3"></param>
-        /// <param name="y3"></param>
-        /// <param name="x4"></param>
-        /// <param name="y4"></param>
-        /// <param name="p"></param>
-        /// <remarks>
-        /// referenced to: http://local.wasp.uwa.edu.au/~pbourke/geometry/
-        /// </remarks>
+        /// <remarks> referenced to: http://local.wasp.uwa.edu.au/~pbourke/geometry/ </remarks>
         private void LineLineSegmentIntersection(
             double x1, double y1,
             double x2, double y2,
@@ -3761,12 +3611,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         }
 
-        /// <summary>
-        /// Returns the centroid of a given polygon 
-        /// </summary>
-        /// <param name="numpoints"></param>
-        /// <param name="points"></param>
-        /// <param name="centroid">Centroid of a given polygon </param>
+        /// <summary> Returns the centroid of a given polygon  </summary>
         private void FindPolyCentroid(int numpoints, double[] points, ref double[] centroid)
         {
             int i;
@@ -3788,14 +3633,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         /// Given two points representing a line and  a radius together with a center point 
         /// representing a circle, returns the intersection points.
         /// </summary>
-        /// <param name="x1"></param>
-        /// <param name="y1"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <param name="x3"></param>
-        /// <param name="y3"></param>
-        /// <param name="r"></param>
-        /// <param name="p">Pointer to list of intersection points</param>
         /// <remarks>
         /// referenced to: http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
         /// </remarks>

@@ -1,6 +1,5 @@
 ﻿using System;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
@@ -10,6 +9,7 @@ using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
+using Mesh = ActionStreetMap.Core.Geometry.Triangle.Mesh;
 using RenderMode = ActionStreetMap.Core.RenderMode;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
@@ -27,7 +27,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, points);
 
             var parent = tile.GameObject;
-            Action<IMesh> fillAction = null;
+            Action<Mesh> fillAction = null;
             if (rule.IsForest() && tile.RenderMode == RenderMode.Scene)
                 fillAction = mesh => CreateForest(parent, rule, mesh);
 
@@ -42,7 +42,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return null;
         }
 
-        private void CreateForest(IGameObject parent, Rule rule, IMesh mesh)
+        private void CreateForest(IGameObject parent, Rule rule, Mesh mesh)
         {
             var trunkGradientKey = rule.Evaluate<string>("trunk-color");
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
