@@ -46,7 +46,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <param name="marker">Contour marker.</param>
         /// <param name="hole">Treat contour as a hole (interior boundary).</param>
         /// <param name="convex">The hole is convex.</param>
-        void AddContour(IEnumerable<Vertex> points, int marker, bool hole, bool convex);
+        void AddContour(List<Vertex> points, int marker, bool hole, bool convex);
 
         /// <summary>
         /// Adds a contour to the polygon.
@@ -54,7 +54,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <param name="points">Points making up the contour.</param>
         /// <param name="marker">Contour marker.</param>
         /// <param name="hole">Point inside the contour, making it a hole.</param>
-        void AddContour(IEnumerable<Vertex> points, int marker, Point hole);
+        void AddContour(List<Vertex> points, int marker, Point hole);
 
         /// <summary>
         /// Compute the bounds of the polygon.

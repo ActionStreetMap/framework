@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
@@ -18,6 +19,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         internal const float Scale = 1000f;
         internal const float DoubleScale = Scale*Scale;
+        internal const int RoundDigitCount = 5;
+
         private float _maximumArea = 4;
 
         public MeshCellBuilder(IObjectPool objectPool)
@@ -75,7 +78,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 // skip small polygons to prevent triangulation issues
                 if (Math.Abs(area/DoubleScale) < 1)
                     continue;
-                var vertices = path.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList();
+
+                var vertices = GetVertices(path, renderMode);
 
                 var isHole = area < 0;
                 // sign of area defines polygon orientation
@@ -99,6 +103,53 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 Mesh = mesh,
                 Contours = contours
             };
+        }
+
+        private void DumpRegion(Paths simplifiedPath)
+        {
+            var writer = new StreamWriter(File.Create(@"F:\gg.txt"));
+            foreach (var shape in simplifiedPath)
+            {
+                writer.WriteLine(shape.Count);
+                for(int i=0; i < shape.Count;i++)
+                    writer.WriteLine("{0} {1}", shape[i].X, shape[i].Y);
+            }
+            writer.Close();
+        }
+
+        private List<Point> GetVertices(Path path, RenderMode renderMode)
+        {
+            var points = _objectPool.NewList<Point>(path.Count);
+            if (renderMode == RenderMode.Overview)
+            {
+                path.ForEach(p => points.Add(new Point(
+                    Math.Round(p.X / Scale, RoundDigitCount), 
+                    Math.Round(p.Y / Scale, RoundDigitCount))));
+                return points;
+            }
+
+            var lastItemIndex =  path.Count - 1;
+            var lineGridSplitter = new LineGridSplitter(2);
+            
+            for (int i = 0; i < lastItemIndex; i++)
+            {
+                var start = path[i];
+                var end = path[i == lastItemIndex ? 0 : i + 1];
+
+                lineGridSplitter.Split(
+                    new Point(Math.Round(start.X / Scale, RoundDigitCount),
+                              Math.Round(start.Y / Scale, RoundDigitCount)),
+                    new Point(Math.Round(end.X / Scale, RoundDigitCount), 
+                              Math.Round(end.Y / Scale, RoundDigitCount)),
+                    _objectPool, points);
+            }
+
+            // NOTE last is not handled by splitter
+            var last = path[path.Count - 1];
+            points.Add(new Point(Math.Round(last.X / Scale, RoundDigitCount),
+                                 Math.Round(last.Y / Scale, RoundDigitCount)));
+
+            return points;
         }
 
         private VertexPaths GetContour(MapRectangle rect, Path path)
@@ -138,7 +189,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
             clipper.Clear();
             _objectPool.StoreObject(clipper);
 
-            return solution.Select(c => c.Select(p => new Vertex(p.X/Scale, p.Y/Scale)).ToList()).ToList();
+            return solution.Select(c => c.Select(p =>
+                new Vertex(Math.Round(p.X / Scale, RoundDigitCount), 
+                           Math.Round(p.Y / Scale, RoundDigitCount))).ToList()).ToList();
         }
 
 
@@ -147,7 +200,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return renderMode == RenderMode.Overview
                 ? (Mesh) polygon.Triangulate()
                 : (Mesh) polygon.Triangulate(
-                    new ConstraintOptions {ConformingDelaunay = conformingDelaunay},
+                    new ConstraintOptions {ConformingDelaunay = conformingDelaunay, 
+                        SegmentSplitting = 1},
                     new QualityOptions {MaximumArea = _maximumArea});
         }
 

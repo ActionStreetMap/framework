@@ -1,6 +1,7 @@
 ﻿using System;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Clipping;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
@@ -41,6 +42,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .RegisterListType<GeoCoordinate>(256)
                 .RegisterListType<MapPoint>(256)
                 .RegisterListType<LineElement>(32)
+                .RegisterListType<Point>(256)
                 .RegisterListType<int>(256);
 
             Container.RegisterInstance<IObjectPool>(objectPool);

@@ -420,6 +420,12 @@ namespace ActionStreetMap.Core.Geometry.Clipping
             //simply prevents a compiler warning
             return base.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return String.Format("[{0},{1}]", X, Y);
+        }
+
     }// end struct IntPoint
 
     internal struct IntRect

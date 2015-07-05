@@ -52,6 +52,7 @@
     <Compile Include="AlgorithmException.cs" />
     <Compile Include="Geometry\Clipping\ClipperExtensions.cs" />
     <Compile Include="Geometry\Clipping\ClipperPool.cs" />
+    <Compile Include="Geometry\Triangle\LineGridSplitter.cs" />
     <Compile Include="Geometry\Triangle\Meshing\IMesh.cs" />
     <Compile Include="Geometry\Triangle\Tools\ISmoother.cs" />
     <Compile Include="Geometry\Triangle\TrianglePool.cs" />

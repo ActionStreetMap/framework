@@ -1,4 +1,6 @@
 ﻿
+using System.Linq;
+
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     using System;
@@ -86,12 +88,22 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             HasSegmentMarkers = markers;
         }
 
-        /// <inherit />
-        public void AddContour(IEnumerable<Vertex> points, int marker = 0,
+        public void AddContour(List<Point> pointList, int marker = 0,
             bool hole = false, bool convex = false)
         {
-            // Copy input to list.
-            var contour = new List<Vertex>(points);
+            if (!pointList.Any())
+                return;
+
+            var contour = new List<Vertex>(pointList.Count);
+            foreach (var point in pointList)
+                contour.Add(new Vertex(point.X, point.Y));
+            AddContour(contour, marker, hole, convex);
+        }
+
+        /// <inherit />
+        public void AddContour(List<Vertex> contour, int marker = 0,
+            bool hole = false, bool convex = false)
+        {
 
             int offset = this.points.Count;
             int count = contour.Count;
@@ -135,11 +147,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         }
 
         /// <inherit />
-        public void AddContour(IEnumerable<Vertex> points, int marker, Point hole)
+        public void AddContour(List<Vertex> contour, int marker, Point hole)
         {
-            // Copy input to list.
-            var contour = new List<Vertex>(points);
-
             int offset = this.points.Count;
             int count = contour.Count;
 
