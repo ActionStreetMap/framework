@@ -7,41 +7,29 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary> A polygon represented as a planar straight line graph. </summary>
     public class Polygon
     {
-        private List<Vertex> points;
-        private List<Point> holes;
-        private List<Edge> segments;
+        private readonly List<Vertex> _points;
+        private readonly List<Point> _holes;
+        private readonly List<Edge> _segments;
 
         /// <summary> Gets the vertices of the polygon. </summary>
-        public List<Vertex> Points { get { return points; } }
+        public List<Vertex> Points { get { return _points; } }
 
         /// <summary> Gets a list of points defining the holes of the polygon. </summary>
-        public List<Point> Holes { get { return holes; } }
+        public List<Point> Holes { get { return _holes; } }
 
         /// <summary> Gets the segments of the polygon. </summary>
-        public List<Edge> Segments { get { return segments; } }
+        public List<Edge> Segments { get { return _segments; } }
 
         /// <summary> Gets point count. </summary>
-        public int Count { get { return points.Count; } }
-
-        /// <summary> Initializes a new instance of the <see cref="Polygon" /> class. </summary>
-        public Polygon(): this(3, false)
-        {
-        }
+        public int Count { get { return _points.Count; } }
 
         /// <summary> Initializes a new instance of the <see cref="Polygon" /> class. </summary>
         /// <param name="capacity">The default capacity for the points list.</param>
-        public Polygon(int capacity): this(3, false)
+        public Polygon(int capacity)
         {
-        }
-
-        /// <summary> Initializes a new instance of the <see cref="Polygon" /> class. </summary>
-        /// <param name="capacity">The default capacity for the points list.</param>
-        /// <param name="markers">Use point and segment markers.</param>
-        public Polygon(int capacity, bool markers)
-        {
-            points = new List<Vertex>(capacity);
-            holes = new List<Point>();
-            segments = new List<Edge>();
+            _points = new List<Vertex>(capacity);
+            _holes = new List<Point>();
+            _segments = new List<Edge>();
         }
 
         public void AddContour(List<Point> pointList, bool hole = false, bool convex = false)
@@ -58,8 +46,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary> Adds a contour to the polygon. </summary>
         public void AddContour(List<Vertex> contour, bool hole = false, bool convex = false)
         {
-            int offset = this.points.Count;
-            int count = contour.Count;
+            ushort offset = (ushort) _points.Count;
+            ushort count = (ushort) contour.Count;
 
             // Check if first vertex equals last vertex.
             if (contour[0] == contour[count - 1])
@@ -69,17 +57,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             }
 
             // Add points to polygon.
-            this.points.AddRange(contour);
+            _points.AddRange(contour);
 
             var centroid = new Point(0.0, 0.0);
 
-            for (int i = 0; i < count; i++)
+            for (ushort i = 0; i < count; i++)
             {
-                centroid.x += contour[i].x;
-                centroid.y += contour[i].y;
+                centroid.X += contour[i].X;
+                centroid.Y += contour[i].Y;
 
                 // Add segments to polygon.
-                this.segments.Add(new Edge(offset + i, offset + ((i + 1) % count)));
+                this._segments.Add(new Edge((ushort)(offset + i), (ushort)(offset + ((i + 1) % count))));
             }
 
             if (hole)
@@ -87,54 +75,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                 if (convex)
                 {
                     // If the hole is convex, use its centroid.
-                    centroid.x /= count;
-                    centroid.y /= count;
+                    centroid.X /= count;
+                    centroid.Y /= count;
 
-                    this.holes.Add(centroid);
+                    this._holes.Add(centroid);
                 }
                 else
                 {
                     Point point;
                     if (FindPointInPolygon(contour, out point))
-                        holes.Add(point);
+                        _holes.Add(point);
                 }
             }
-        }
-
-        /// <summary> Adds a contour to the polygon. </summary>
-        public void AddContour(IEnumerable<Vertex> points, Point hole)
-        {
-            // Copy input to list.
-            var contour = new List<Vertex>(points);
-
-            int offset = this.points.Count;
-            int count = contour.Count;
-
-            // Check if first vertex equals last vertex.
-            if (contour[0] == contour[count - 1])
-            {
-                count--;
-                contour.RemoveAt(count);
-            }
-
-            // Add points to polygon.
-            this.points.AddRange(contour);
-
-            for (int i = 0; i < count; i++)
-            {
-                // Add segments to polygon.
-                this.segments.Add(new Edge(offset + i, offset + ((i + 1) % count)));
-            }
-
-            // TODO: check if hole is actually inside contour?
-            this.holes.Add(hole);
         }
 
         /// <summary> Compute the bounds of the polygon. </summary>
         public Rectangle Bounds()
         {
             var bounds = new Rectangle();
-            bounds.Expand(points);
+            bounds.Expand(_points);
 
             return bounds;
         }
@@ -142,23 +101,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary> Add a vertex to the polygon. </summary>
         public void Add(Vertex vertex)
         {
-            points.Add(vertex);
-        }
-
-        /// <summary> Add a vertex to the polygon. </summary>
-        public void Add(Vertex vertex, double[] attributes)
-        {
-            // TODO: check attibutes
-
-            vertex.attributes = attributes;
-
-            this.points.Add(vertex);
+            _points.Add(vertex);
         }
 
         /// <summary> Add a segment to the polygon. </summary>
         public void Add(Edge edge)
         {
-            this.segments.Add(edge);
+            _segments.Add(edge);
         }
 
         private bool FindPointInPolygon(List<Vertex> contour, out Point point)
@@ -177,8 +126,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
             if (contour.Count == 3)
             {
-                point = new Point((contour[0].x + contour[1].x + contour[2].x) / 3,
-                    (contour[0].y + contour[1].y + contour[2].y) / 3);
+                point = new Point((contour[0].X + contour[1].X + contour[2].X) / 3,
+                    (contour[0].Y + contour[1].Y + contour[2].Y) / 3);
                 return true;
             }
 
@@ -188,24 +137,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                 a = contour[i];
                 b = contour[(i + 1) % length];
 
-                cx = (a.x + b.x) / 2;
-                cy = (a.y + b.y) / 2;
+                cx = (a.X + b.X) / 2;
+                cy = (a.Y + b.Y) / 2;
 
-                dx = (b.y - a.y) / 1.374;
-                dy = (a.x - b.x) / 1.374;
+                dx = (b.Y - a.Y) / 1.374;
+                dy = (a.X - b.X) / 1.374;
 
                 for (int j = 1; j <= limit; j++)
                 {
                     // Search to the right of the segment.
-                    point.x = cx + dx / j;
-                    point.y = cy + dy / j;
+                    point.X = cx + dx / j;
+                    point.Y = cy + dy / j;
 
                     if (bounds.Contains(point) && IsPointInPolygon(point, contour))
                         return true;
 
                     // Search on the other side of the segment.
-                    point.x = cx - dx / j;
-                    point.y = cy - dy / j;
+                    point.X = cx - dx / j;
+                    point.Y = cy - dy / j;
 
                     if (bounds.Contains(point) && IsPointInPolygon(point, contour))
                         return true;
@@ -229,17 +178,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         {
             bool inside = false;
 
-            double x = point.x;
-            double y = point.y;
+            double x = point.X;
+            double y = point.Y;
 
             int count = poly.Count;
 
             for (int i = 0, j = count - 1; i < count; i++)
             {
-                if (((poly[i].y < y && poly[j].y >= y) || (poly[j].y < y && poly[i].y >= y))
-                    && (poly[i].x <= x || poly[j].x <= x))
+                if (((poly[i].Y < y && poly[j].Y >= y) || (poly[j].Y < y && poly[i].Y >= y))
+                    && (poly[i].X <= x || poly[j].X <= x))
                 {
-                    inside ^= (poly[i].x + (y - poly[i].y) / (poly[j].y - poly[i].y) * (poly[j].x - poly[i].x) < x);
+                    inside ^= (poly[i].X + (y - poly[i].Y) / (poly[j].Y - poly[i].Y) * (poly[j].X - poly[i].X) < x);
                 }
 
                 j = i;

@@ -12,7 +12,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         internal Osub[] subsegs;
         internal Vertex[] vertices;
         internal Otri[] triangles;
-        internal int boundary;
+        internal ushort boundary;
 
         /// <summary> Initializes a new instance of the <see cref="Segment" /> class. </summary>
         public Segment()
@@ -34,10 +34,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         #region Public properties
 
         /// <summary> Gets the first endpoints vertex id. </summary>
-        public int P0 { get { return vertices[0].id; } }
+        public int P0 { get { return vertices[0].Id; } }
 
         /// <summary> Gets the seconds endpoints vertex id. </summary>
-        public int P1 { get { return vertices[1].id; } }
+        public int P1 { get { return vertices[1].Id; } }
 
         /// <summary> Gets the segment boundary mark. </summary>
         public int Boundary { get { return boundary; } }
@@ -53,7 +53,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         /// <summary> Gets an adjoining triangle. </summary>
         public Triangle GetTriangle(int index)
         {
-            return triangles[index].tri.hash == Mesh.DUMMY ? null : triangles[index].tri;
+            return triangles[index].tri.Id == Mesh.DUMMY ? null : triangles[index].tri;
         }
 
         /// <inheritdoc />

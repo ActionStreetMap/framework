@@ -24,7 +24,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
         {
             if (tri == null)
                 return "O-TID [null]";
-            return String.Format("O-TID {0}", tri.hash);
+            return String.Format("O-TID {0}", tri.Id);
         }
 
         #region Otri primitives (public)

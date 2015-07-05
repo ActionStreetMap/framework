@@ -75,7 +75,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private MeshRegion CreateMeshRegions(MapRectangle rectangle, MeshCanvas.Region region, RenderMode renderMode,
             bool useContours = false)
         {
-            var polygon = new Polygon();
+            var polygon = new Polygon(256);
             var simplifiedPath = ClipByRectangle(rectangle, region.Shape);
             var contours = useContours ? new VertexPaths(): null;
             foreach (var path in simplifiedPath)

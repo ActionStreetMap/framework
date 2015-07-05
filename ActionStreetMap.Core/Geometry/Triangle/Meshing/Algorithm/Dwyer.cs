@@ -79,7 +79,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             i = 0;
             for (j = 1; j < n; j++)
             {
-                if ((sortarray[i].x == sortarray[j].x) && (sortarray[i].y == sortarray[j].y))
+                if ((sortarray[i].X == sortarray[j].X) && (sortarray[i].Y == sortarray[j].Y))
                 {
                     sortarray[j].type = VertexType.UndeadVertex;
                     mesh.undeads++;
@@ -141,7 +141,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 {
                     var a = sortarray[i];
                     int j = i - 1;
-                    while (j >= left && (sortarray[j].x > a.x || (sortarray[j].x == a.x && sortarray[j].y > a.y)))
+                    while (j >= left && (sortarray[j].X > a.X || (sortarray[j].X == a.X && sortarray[j].Y > a.Y)))
                     {
                         sortarray[j + 1] = sortarray[j];
                         j--;
@@ -154,8 +154,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 
             // Choose a random pivot to split the array.
             pivot = rand.Next(left, right);
-            pivotx = sortarray[pivot].x;
-            pivoty = sortarray[pivot].y;
+            pivotx = sortarray[pivot].X;
+            pivoty = sortarray[pivot].Y;
             // Split the array.
             left--;
             right++;
@@ -166,15 +166,15 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 {
                     left++;
                 }
-                while ((left <= right) && ((sortarray[left].x < pivotx) ||
-                    ((sortarray[left].x == pivotx) && (sortarray[left].y < pivoty))));
+                while ((left <= right) && ((sortarray[left].X < pivotx) ||
+                    ((sortarray[left].X == pivotx) && (sortarray[left].Y < pivoty))));
                 // Search for a vertex whose x-coordinate is too small for the right.
                 do
                 {
                     right--;
                 }
-                while ((left <= right) && ((sortarray[right].x > pivotx) ||
-                    ((sortarray[right].x == pivotx) && (sortarray[right].y > pivoty))));
+                while ((left <= right) && ((sortarray[right].X > pivotx) ||
+                    ((sortarray[right].X == pivotx) && (sortarray[right].Y > pivoty))));
 
                 if (left < right)
                 {
@@ -385,7 +385,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 // The pointers to the extremal vertices are shifted to point to the
                 // topmost and bottommost vertex of each hull, rather than the
                 // leftmost and rightmost vertices.
-                while (farleftapex.y < farleftpt.y)
+                while (farleftapex.Y < farleftpt.Y)
                 {
                     farleft.Lnext();
                     farleft.Sym();
@@ -394,7 +394,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 }
                 innerleft.Sym(ref checkedge);
                 checkvertex = checkedge.Apex();
-                while (checkvertex.y > innerleftdest.y)
+                while (checkvertex.Y > innerleftdest.Y)
                 {
                     checkedge.Lnext(ref innerleft);
                     innerleftapex = innerleftdest;
@@ -402,7 +402,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                     innerleft.Sym(ref checkedge);
                     checkvertex = checkedge.Apex();
                 }
-                while (innerrightapex.y < innerrightorg.y)
+                while (innerrightapex.Y < innerrightorg.Y)
                 {
                     innerright.Lnext();
                     innerright.Sym();
@@ -411,7 +411,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 }
                 farright.Sym(ref checkedge);
                 checkvertex = checkedge.Apex();
-                while (checkvertex.y > farrightpt.y)
+                while (checkvertex.Y > farrightpt.Y)
                 {
                     checkedge.Lnext(ref farright);
                     farrightapex = farrightpt;
@@ -510,7 +510,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                         // The pointers to the extremal vertices are restored to the
                         // leftmost and rightmost vertices (rather than topmost and
                         // bottommost).
-                        while (checkvertex.x < farleftpt.x)
+                        while (checkvertex.X < farleftpt.X)
                         {
                             checkedge.Lprev(ref farleft);
                             farleftapex = farleftpt;
@@ -518,7 +518,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                             farleft.Sym(ref checkedge);
                             checkvertex = checkedge.Apex();
                         }
-                        while (farrightapex.x > farrightpt.x)
+                        while (farrightapex.X > farrightpt.X)
                         {
                             farright.Lprev();
                             farright.Sym();
@@ -864,12 +864,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 if (noPoly)
                 {
                     // Watch out for the case where all the input vertices are collinear.
-                    if (dissolveedge.tri.id != Mesh.DUMMY)
+                    if (dissolveedge.tri.Id != Mesh.DUMMY)
                     {
                         markorg = dissolveedge.Org();
-                        if (markorg.mark == 0)
+                        if (markorg.Mark == 0)
                         {
-                            markorg.mark = 1;
+                            markorg.Mark = 1;
                         }
                     }
                 }

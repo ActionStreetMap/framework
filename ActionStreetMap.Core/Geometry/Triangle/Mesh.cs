@@ -25,7 +25,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         internal Dictionary<int, Vertex> vertices;
 
         // Hash seeds (should belong to mesh instance)
-        internal int hash_vtx;
+        internal ushort hash_vtx;
         internal int hash_seg;
         internal int hash_tri;
 
@@ -133,7 +133,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
             // Set up 'dummytri', the 'triangle' that occupies "outer space."
             dummytri = TrianglePool.AllocTri();
-            dummytri.hash = dummytri.id = DUMMY;
+            dummytri.Id = DUMMY;
 
             // Initialize the three adjoining triangles to be "outer space." These
             // will eventually be changed by various bonding operations, but their
@@ -360,19 +360,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             if (invertices < 3)
                 throw new Exception("Input must have at least three input vertices.");
 
-            bool first = true;
-
             foreach (Vertex p in points)
             {
-                if (first)
-                {
-                    nextras = p.attributes == null ? 0 : p.attributes.Length;
-                    first = false;
-                }
-
-                p.hash = p.id = hash_vtx++;
-
-                vertices.Add(p.hash, p);
+                p.Id = hash_vtx++;
+                vertices.Add(p.Id, p);
                 bounds.Expand(p);
             }
         }
@@ -415,7 +406,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         {
             Topology.Triangle tri = TrianglePool.AllocTri();
 
-            tri.hash = tri.id = hash_tri++;
+            tri.Id = hash_tri++;
 
             tri.subsegs[0].seg = dummysub;
             tri.subsegs[1].seg = dummysub;
@@ -428,7 +419,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             newotri.tri = tri;
             newotri.orient = 0;
 
-            triangles.Add(tri.hash, tri);
+            triangles.Add(tri.Id, tri);
         }
 
         /// <summary> Create a new subsegment with orientation zero. </summary>
@@ -537,7 +528,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             {
                 // Find the location of the vertex to be inserted.  Check if a good
                 // starting triangle has already been provided by the caller.
-                if (searchtri.tri.id == DUMMY)
+                if (searchtri.tri.Id == DUMMY)
                 {
                     // Find a boundary triangle.
                     horiz.tri = dummytri;
@@ -588,7 +579,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                                 // This subsegment may be split only if it is an
                                 // internal boundary.
                                 horiz.Sym(ref testtri);
-                                enq = testtri.tri.id != DUMMY;
+                                enq = testtri.tri.Id != DUMMY;
                             }
                             if (enq)
                             {
@@ -615,7 +606,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 botright.Sym(ref botrcasing);
                 horiz.Sym(ref topright);
                 // Is there a second triangle?  (Or does this edge lie on a boundary?)
-                mirrorflag = topright.tri.id != DUMMY;
+                mirrorflag = topright.tri.Id != DUMMY;
                 if (mirrorflag)
                 {
                     topright.Lnext();
@@ -638,9 +629,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 newbotright.SetApex(newvertex);
                 horiz.SetOrg(newvertex);
 
-                // Set the region of a new triangle.
-                newbotright.tri.region = botright.tri.region;
-
                 if (behavior.VarArea)
                 {
                     // Set the area constraint of a new triangle.
@@ -654,9 +642,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     newtopright.SetDest(topvertex);
                     newtopright.SetApex(newvertex);
                     topright.SetOrg(newvertex);
-
-                    // Set the region of another new triangle.
-                    newtopright.tri.region = topright.tri.region;
 
                     if (behavior.VarArea)
                     {
@@ -721,9 +706,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     splitseg.Sym();
 
                     // Transfer the subsegment's boundary marker to the vertex if required.
-                    if (newvertex.mark == 0)
+                    if (newvertex.Mark == 0)
                     {
-                        newvertex.mark = splitseg.seg.boundary;
+                        newvertex.Mark = splitseg.seg.boundary;
                     }
                 }
 
@@ -760,10 +745,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 newbotright.SetDest(rightvertex);
                 newbotright.SetApex(newvertex);
                 horiz.SetApex(newvertex);
-
-                // Set the region of the new triangles.
-                newbotleft.tri.region = horiz.tri.region;
-                newbotright.tri.region = horiz.tri.region;
 
                 if (behavior.VarArea)
                 {
@@ -846,7 +827,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 {
                     // Check if the edge is a boundary edge.
                     horiz.Sym(ref top);
-                    if (top.tri.id == DUMMY)
+                    if (top.tri.Id == DUMMY)
                     {
                         // The edge is a boundary edge and cannot be flipped.
                         doflip = false;
@@ -946,12 +927,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                             top.SetDest(farvertex);
                             top.SetApex(leftvertex);
 
-                            // Assign region.
-                            // TODO: check region ok (no Math.Min necessary)
-                            region = Math.Min(top.tri.region, horiz.tri.region);
-                            top.tri.region = region;
-                            horiz.tri.region = region;
-
                             if (behavior.VarArea)
                             {
                                 if ((top.tri.area <= 0.0) || (horiz.tri.area <= 0.0))
@@ -997,7 +972,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     // Check for finishing a complete revolution about the new vertex, or
                     // falling outside of the triangulation. The latter will happen when
                     // a vertex is inserted at a boundary.
-                    if ((leftvertex == first) || (testtri.tri.id == DUMMY))
+                    if ((leftvertex == first) || (testtri.tri.Id == DUMMY))
                     {
                         // We're done. Return a triangle whose origin is the new vertex.
                         horiz.Lnext(ref searchtri);
@@ -1028,7 +1003,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         ///     The marker 'subsegmark' is applied to the
         ///     subsegment and, if appropriate, its vertices.
         /// </param>
-        internal void InsertSubseg(ref Otri tri, int subsegmark)
+        internal void InsertSubseg(ref Otri tri, ushort subsegmark)
         {
             Otri oppotri = default(Otri);
             Osub newsubseg = default(Osub);
@@ -1037,11 +1012,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             triorg = tri.Org();
             tridest = tri.Dest();
             // Mark vertices if possible.
-            if (triorg.mark == 0)
-                triorg.mark = subsegmark;
+            if (triorg.Mark == 0)
+                triorg.Mark = subsegmark;
 
-            if (tridest.mark == 0)
-                tridest.mark = subsegmark;
+            if (tridest.Mark == 0)
+                tridest.Mark = subsegmark;
 
             // Check if there's already a subsegment here.
             tri.Pivot(ref newsubseg);
@@ -1545,7 +1520,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     TriangleDealloc(botright.tri);
 
                     fliptri.Sym(ref gluetri);
-                    if (gluetri.tri.id != DUMMY)
+                    if (gluetri.tri.Id != DUMMY)
                     {
                         gluetri.Lnext();
                         gluetri.Dnext(ref topright);
@@ -1581,7 +1556,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             // Mark the triangle as dead. This makes it possible to detect dead 
             // triangles when traversing the list of all triangles.
             Otri.Kill(dyingtriangle);
-            triangles.Remove(dyingtriangle.hash);
+            triangles.Remove(dyingtriangle.Id);
         }
 
         /// <summary> Deallocate space for a vertex, marking it dead. </summary>
@@ -1591,7 +1566,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             // Mark the vertex as dead. This makes it possible to detect dead 
             // vertices when traversing the list of all vertices.
             dyingvertex.type = VertexType.DeadVertex;
-            vertices.Remove(dyingvertex.hash);
+            vertices.Remove(dyingvertex.Id);
         }
 
         /// <summary> Deallocate space for a subsegment, marking it dead. </summary>

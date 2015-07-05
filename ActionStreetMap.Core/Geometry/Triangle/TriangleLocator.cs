@@ -96,7 +96,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         {
             Otri backtracktri = default(Otri);
             Osub checkedge = default(Osub);
-            Vertex forg, fdest, fapex;
+            Point forg, fdest, fapex;
             double orgorient, destorient;
             bool moveleft;
 
@@ -107,7 +107,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             while (true)
             {
                 // Check whether the apex is the point we seek.
-                if ((fapex.x == searchpoint.X) && (fapex.y == searchpoint.Y))
+                if ((fapex.X == searchpoint.X) && (fapex.Y == searchpoint.Y))
                 {
                     searchtri.Lprev();
                     return LocateResult.OnVertex;
@@ -127,8 +127,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                         // a line perpendicular to the line (forg, fdest) and passing
                         // through 'fapex', and determining which side of this line
                         // 'searchpoint' falls on.
-                        moveleft = (fapex.x - searchpoint.X)*(fdest.x - forg.x) +
-                                   (fapex.y - searchpoint.Y)*(fdest.y - forg.y) > 0.0;
+                        moveleft = (fapex.X - searchpoint.X)*(fdest.X - forg.X) +
+                                   (fapex.Y - searchpoint.Y)*(fdest.Y - forg.Y) > 0.0;
                     }
                     else
                     {
@@ -186,7 +186,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     }
                 }
                 // Check for walking right out of the triangulation.
-                if (searchtri.tri.id == Mesh.DUMMY)
+                if (searchtri.tri.Id == Mesh.DUMMY)
                 {
                     // Go back to the last triangle.
                     backtracktri.Copy(ref searchtri);
@@ -235,8 +235,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             // Record the distance from the suggested starting triangle to the
             // point we seek.
             torg = searchtri.Org();
-            searchdist = (searchpoint.X - torg.x)*(searchpoint.X - torg.x) +
-                         (searchpoint.Y - torg.y)*(searchpoint.Y - torg.y);
+            searchdist = (searchpoint.X - torg.X)*(searchpoint.X - torg.X) +
+                         (searchpoint.Y - torg.Y)*(searchpoint.Y - torg.Y);
 
             // If a recently encountered triangle has been recorded and has not been
             // deallocated, test it as a good starting point.
@@ -245,13 +245,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 if (!Otri.IsDead(recenttri.tri))
                 {
                     torg = recenttri.Org();
-                    if ((torg.x == searchpoint.X) && (torg.y == searchpoint.Y))
+                    if ((torg.X == searchpoint.X) && (torg.Y == searchpoint.Y))
                     {
                         recenttri.Copy(ref searchtri);
                         return LocateResult.OnVertex;
                     }
-                    dist = (searchpoint.X - torg.x)*(searchpoint.X - torg.x) +
-                           (searchpoint.Y - torg.y)*(searchpoint.Y - torg.y);
+                    dist = (searchpoint.X - torg.X)*(searchpoint.X - torg.X) +
+                           (searchpoint.Y - torg.Y)*(searchpoint.Y - torg.Y);
                     if (dist < searchdist)
                     {
                         recenttri.Copy(ref searchtri);
@@ -270,8 +270,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 if (!Otri.IsDead(sampletri.tri))
                 {
                     torg = sampletri.Org();
-                    dist = (searchpoint.X - torg.x)*(searchpoint.X - torg.x) +
-                           (searchpoint.Y - torg.y)*(searchpoint.Y - torg.y);
+                    dist = (searchpoint.X - torg.X)*(searchpoint.X - torg.X) +
+                           (searchpoint.Y - torg.Y)*(searchpoint.Y - torg.Y);
                     if (dist < searchdist)
                     {
                         sampletri.Copy(ref searchtri);
@@ -284,11 +284,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             torg = searchtri.Org();
             tdest = searchtri.Dest();
             // Check the starting triangle's vertices.
-            if ((torg.x == searchpoint.X) && (torg.y == searchpoint.Y))
+            if ((torg.X == searchpoint.X) && (torg.Y == searchpoint.Y))
             {
                 return LocateResult.OnVertex;
             }
-            if ((tdest.x == searchpoint.X) && (tdest.y == searchpoint.Y))
+            if ((tdest.X == searchpoint.X) && (tdest.Y == searchpoint.Y))
             {
                 searchtri.Lnext();
                 return LocateResult.OnVertex;
@@ -304,8 +304,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             else if (ahead == 0.0)
             {
                 // Check if 'searchpoint' is between 'torg' and 'tdest'.
-                if (((torg.x < searchpoint.X) == (searchpoint.X < tdest.x)) &&
-                    ((torg.y < searchpoint.Y) == (searchpoint.Y < tdest.y)))
+                if (((torg.X < searchpoint.X) == (searchpoint.X < tdest.X)) &&
+                    ((torg.Y < searchpoint.Y) == (searchpoint.Y < tdest.Y)))
                 {
                     return LocateResult.OnEdge;
                 }

@@ -80,14 +80,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 secondvertex = eventheap[0].vertexEvent;
                 HeapDelete(eventheap, heapsize, 0);
                 heapsize--;
-                if ((firstvertex.x == secondvertex.x) &&
-                    (firstvertex.y == secondvertex.y))
+                if ((firstvertex.X == secondvertex.X) &&
+                    (firstvertex.Y == secondvertex.Y))
                 {
                     secondvertex.type = VertexType.UndeadVertex;
                     mesh.undeads++;
                 }
-            } while ((firstvertex.x == secondvertex.x) &&
-                     (firstvertex.y == secondvertex.y));
+            } while ((firstvertex.X == secondvertex.X) &&
+                     (firstvertex.Y == secondvertex.Y));
             lefttri.SetOrg(firstvertex);
             lefttri.SetDest(secondvertex);
             righttri.SetOrg(secondvertex);
@@ -132,8 +132,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 else
                 {
                     nextvertex = nextevent.vertexEvent;
-                    if ((nextvertex.x == lastvertex.x) &&
-                        (nextvertex.y == lastvertex.y))
+                    if ((nextvertex.X == lastvertex.X) &&
+                        (nextvertex.Y == lastvertex.Y))
                     {
                         nextvertex.type = VertexType.UndeadVertex;
                         mesh.undeads++;
@@ -372,8 +372,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 thisvertex = v;
                 evt = new SweepEvent();
                 evt.vertexEvent = thisvertex;
-                evt.xkey = thisvertex.x;
-                evt.ykey = thisvertex.y;
+                evt.xkey = thisvertex.X;
+                evt.ykey = thisvertex.Y;
                 HeapInsert(eventheap, i++, evt);
             }
         }
@@ -576,14 +576,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             Otri dummytri = default(Otri);
 
             ccwabc = RobustPredicates.CounterClockwise(pa, pb, pc);
-            xac = pa.x - pc.x;
-            yac = pa.y - pc.y;
-            xbc = pb.x - pc.x;
-            ybc = pb.y - pc.y;
+            xac = pa.X - pc.X;
+            yac = pa.Y - pc.Y;
+            xbc = pb.X - pc.X;
+            ybc = pb.Y - pc.Y;
             aclen2 = xac*xac + yac*yac;
             bclen2 = xbc*xbc + ybc*ybc;
-            searchpoint.x = pc.x - (yac*bclen2 - ybc*aclen2)/(2.0*ccwabc);
-            searchpoint.y = topy;
+            searchpoint.X = pc.X - (yac*bclen2 - ybc*aclen2)/(2.0*ccwabc);
+            searchpoint.Y = topy;
             return SplayInsert(Splay(splayroot, searchpoint, ref dummytri), newkey, searchpoint);
         }
 
@@ -596,26 +596,26 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 
             leftvertex = fronttri.Dest();
             rightvertex = fronttri.Apex();
-            if ((leftvertex.y < rightvertex.y) ||
-                ((leftvertex.y == rightvertex.y) &&
-                 (leftvertex.x < rightvertex.x)))
+            if ((leftvertex.Y < rightvertex.Y) ||
+                ((leftvertex.Y == rightvertex.Y) &&
+                 (leftvertex.X < rightvertex.X)))
             {
-                if (newsite.x >= rightvertex.x)
+                if (newsite.X >= rightvertex.X)
                 {
                     return true;
                 }
             }
             else
             {
-                if (newsite.x <= leftvertex.x)
+                if (newsite.X <= leftvertex.X)
                 {
                     return false;
                 }
             }
-            dxa = leftvertex.x - newsite.x;
-            dya = leftvertex.y - newsite.y;
-            dxb = rightvertex.x - newsite.x;
-            dyb = rightvertex.y - newsite.y;
+            dxa = leftvertex.X - newsite.X;
+            dya = leftvertex.Y - newsite.Y;
+            dxb = rightvertex.X - newsite.X;
+            dyb = rightvertex.Y - newsite.Y;
             return dya*(dxb*dxb + dyb*dyb) > dyb*(dxa*dxa + dya*dya);
         }
 
@@ -624,16 +624,16 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             double xac, yac, xbc, ybc, xab, yab;
             double aclen2, bclen2, ablen2;
 
-            xac = pa.x - pc.x;
-            yac = pa.y - pc.y;
-            xbc = pb.x - pc.x;
-            ybc = pb.y - pc.y;
-            xab = pa.x - pb.x;
-            yab = pa.y - pb.y;
+            xac = pa.X - pc.X;
+            yac = pa.Y - pc.Y;
+            xbc = pb.X - pc.X;
+            ybc = pb.Y - pc.Y;
+            xab = pa.X - pb.X;
+            yab = pa.Y - pb.Y;
             aclen2 = xac*xac + yac*yac;
             bclen2 = xbc*xbc + ybc*ybc;
             ablen2 = xab*xab + yab*yab;
-            return pc.y + (xac*bclen2 - xbc*aclen2 + Math.Sqrt(aclen2*bclen2*ablen2))/(2.0*ccwabc);
+            return pc.Y + (xac*bclen2 - xbc*aclen2 + Math.Sqrt(aclen2*bclen2*ablen2))/(2.0*ccwabc);
         }
 
         private void Check4DeadEvent(ref Otri checktri, SweepEvent[] eventheap, ref int heapsize)
@@ -690,12 +690,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 if (noPoly)
                 {
                     // Watch out for the case where all the input vertices are collinear.
-                    if (dissolveedge.tri.id != Mesh.DUMMY)
+                    if (dissolveedge.tri.Id != Mesh.DUMMY)
                     {
                         markorg = dissolveedge.Org();
-                        if (markorg.mark == 0)
+                        if (markorg.Mark == 0)
                         {
-                            markorg.mark = 1;
+                            markorg.Mark = 1;
                         }
                     }
                 }

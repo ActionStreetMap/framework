@@ -121,7 +121,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             // adjacent to the first one.
             nextedge.Lnext(ref checkedge);
             checkedge.Sym();
-            if (checkedge.tri.id == Mesh.DUMMY)
+            if (checkedge.tri.Id == Mesh.DUMMY)
             {
                 // Go on to the next triangle.  There are only three boundary
                 // triangles, and this next triangle cannot be the third one,
@@ -148,12 +148,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                     // vertices are collinear, and thus all the triangles are part of
                     // the bounding box.  Otherwise, the setvertexmark() call below
                     // will cause a bad pointer reference.
-                    if (dissolveedge.tri.id != Mesh.DUMMY)
+                    if (dissolveedge.tri.Id != Mesh.DUMMY)
                     {
                         markorg = dissolveedge.Org();
-                        if (markorg.mark == 0)
+                        if (markorg.Mark == 0)
                         {
-                            markorg.mark = 1;
+                            markorg.Mark = 1;
                         }
                     }
                 }
@@ -164,7 +164,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
                 // Get rid of the bounding box triangle.
                 mesh.TriangleDealloc(deadtriangle.tri);
                 // Do we need to turn the corner?
-                if (nextedge.tri.id == Mesh.DUMMY)
+                if (nextedge.tri.Id == Mesh.DUMMY)
                 {
                     // Turn the corner.
                     dissolveedge.Copy(ref nextedge);

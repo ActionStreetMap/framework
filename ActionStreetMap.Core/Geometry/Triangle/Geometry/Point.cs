@@ -6,67 +6,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary> Represents a 2D point. </summary>
     public class Point : IComparable<Point>, IEquatable<Point>
     {
-        internal int id;
-        internal double x;
-        internal double y;
-        internal int mark;
+        internal ushort Id;
+        internal double X;
+        internal double Y;
+        internal ushort Mark;
 
-        public Point()
-            : this(0, 0, 0)
+        public Point() : this(0, 0, 0)
         {
         }
 
-        public Point(double x, double y)
-            : this(x, y, 0)
+        public Point(double x, double y) : this(x, y, 0)
         {
         }
 
-        public Point(double x, double y, int mark)
+        public Point(double x, double y, ushort mark)
         {
-            this.x = x;
-            this.y = y;
-            this.mark = mark;
+            X = x;
+            Y = y;
+            Mark = mark;
         }
-
-        #region Public properties
-
-        /// <summary>
-        /// Gets or sets the vertex id.
-        /// </summary>
-        public int ID
-        {
-            get { return this.id; }
-            set { this.id = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the vertex x coordinate.
-        /// </summary>
-        public double X
-        {
-            get { return this.x; }
-            set { this.x = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the vertex y coordinate.
-        /// </summary>
-        public double Y
-        {
-            get { return this.y; }
-            set { this.y = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the vertex boundary mark.
-        /// </summary>
-        public int Boundary
-        {
-            get { return this.mark; }
-            set { this.mark = value; }
-        }
-
-        #endregion
 
         #region Operator overloading / overriding Equals
 
@@ -82,7 +40,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             }
 
             // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null))
+            if (((object) a == null) || ((object) b == null))
             {
                 return false;
             }
@@ -105,50 +63,46 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
             Point p = obj as Point;
 
-            if ((object)p == null)
+            if ((object) p == null)
             {
                 return false;
             }
 
-            return (x == p.x) && (y == p.y);
+            return (X == p.X) && (Y == p.Y);
         }
 
         public bool Equals(Point p)
         {
             // If vertex is null return false.
-            if ((object)p == null)
+            if ((object) p == null)
             {
                 return false;
             }
 
             // Return true if the fields match:
-            return (x == p.x) && (y == p.y);
+            return (X == p.X) && (Y == p.Y);
         }
 
         #endregion
 
         public int CompareTo(Point other)
         {
-            if (x == other.x && y == other.y)
+            if (X == other.X && Y == other.Y)
             {
                 return 0;
             }
 
-            return (x < other.x || (x == other.x && y < other.y)) ? -1 : 1;
+            return (X < other.X || (X == other.X && Y < other.Y)) ? -1 : 1;
         }
 
         public override int GetHashCode()
         {
-            int hash = 19;
-            hash = hash * 31 + x.GetHashCode();
-            hash = hash * 31 + y.GetHashCode();
-
-            return hash;
+            return Id;
         }
 
         public override string ToString()
         {
-            return String.Format("[{0},{1}]", x, y);
+            return String.Format("[{0},{1}]", X, Y);
         }
     }
 }

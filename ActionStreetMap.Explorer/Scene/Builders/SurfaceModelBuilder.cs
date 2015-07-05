@@ -53,13 +53,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             foreach (var triangle in mesh.Triangles)
             {
                 // TODO reuse mesh and/or generator?
-                if (triangle.ID % treeFreq != 0) continue;
+                if (triangle.Id % treeFreq != 0) continue;
 
                 var v0 = triangle.GetVertex(0);
                 var v1 = triangle.GetVertex(1);
                 var v2 = triangle.GetVertex(2);
 
-                var center = new MapPoint((float)(v0.x + v1.x + v2.x) / 3, (float)(v0.y + v1.y + v2.y) / 3);
+                var center = new MapPoint((float)(v0.X + v1.X + v2.X) / 3, (float)(v0.Y + v1.Y + v2.Y) / 3);
                 var elevation = ElevationProvider.GetElevation(center);
                 var meshData = ObjectPool.CreateMeshData();
                 meshData.GameObject = GameObjectFactory.CreateNew("tree");

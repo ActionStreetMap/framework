@@ -6,16 +6,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
     /// <summary> The triangle data structure. </summary>
     public class Triangle
     {
-        // Hash for dictionary. Will be set by mesh instance.
-        internal int hash;
-
         // The ID is only used for mesh output.
-        internal int id;
+        internal int Id;
 
         internal Otri[] neighbors;
         internal Vertex[] vertices;
         internal Osub[] subsegs;
-        internal int region;
+
         internal double area;
         internal bool infected;
 
@@ -30,51 +27,39 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
 
             // Initialize the three adjoining triangles to be "outer space".
             neighbors = new Otri[3];
-
-            // area = -1.0;
         }
 
         #region Public properties
 
-        /// <summary> Gets or sets the triangle id. </summary>
-        public int ID
-        {
-            get { return id; }
-            set { id = value; }
-        }
-
         /// <summary> Gets the first corners vertex id. </summary>
-        public int P0 { get { return vertices[0] == null ? -1 : vertices[0].id; } }
+        public int P0 { get { return vertices[0] == null ? -1 : vertices[0].Id; } }
 
         /// <summary> Gets the seconds corners vertex id. </summary>
-        public int P1 { get { return vertices[1] == null ? -1 : vertices[1].id; } }
+        public int P1 { get { return vertices[1] == null ? -1 : vertices[1].Id; } }
 
         /// <summary> Gets the third corners vertex id. </summary>
-        public int P2 { get { return vertices[2] == null ? -1 : vertices[2].id; } }
+        public int P2 { get { return vertices[2] == null ? -1 : vertices[2].Id; } }
 
         /// <summary> Gets the specified corners vertex. </summary>
-        public Vertex GetVertex(int index)
-        {
-            return vertices[index]; // TODO: Check range?
-        }
+        public Vertex GetVertex(int index) { return vertices[index]; }
 
         public bool SupportsNeighbors { get { return true; } }
 
         /// <summary> Gets the first neighbors id. </summary>
-        public int N0 { get { return neighbors[0].tri.id; } }
+        public int N0 { get { return neighbors[0].tri.Id; } }
 
         /// <summary> Gets the second neighbors id. </summary>
-        public int N1 { get { return neighbors[1].tri.id; } }
+        public int N1 { get { return neighbors[1].tri.Id; } }
 
         /// <summary> Gets the third neighbors id. </summary>
-        public int N2 { get { return neighbors[2].tri.id; } }
+        public int N2 { get { return neighbors[2].tri.Id; } }
 
         /// <summary> Gets a triangles' neighbor. </summary>
         /// <param name="index">The neighbor index (0, 1 or 2).</param>
         /// <returns>The neigbbor opposite of vertex with given index.</returns>
         public Triangle GetNeighbor(int index)
         {
-            return neighbors[index].tri.hash == Mesh.DUMMY ? null : neighbors[index].tri;
+            return neighbors[index].tri.Id == Mesh.DUMMY ? null : neighbors[index].tri;
         }
 
         /// <summary> Gets a triangles segment. </summary>
@@ -92,29 +77,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Topology
             set { area = value; }
         }
 
-        /// <summary> Region ID the triangle belongs to. </summary>
-        public int Region { get { return region; } }
-
         #endregion
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return hash;
+            return Id;
         }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            return String.Format("TID {0}", hash);
+            return String.Format("TID {0}", Id);
         }
 
         internal void Reset()
         {
-            hash = 0;
-            id = 0;
+            Id = 0;
 
-            region = 0;
             area = 0;
             infected = false;
 

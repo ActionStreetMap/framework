@@ -68,10 +68,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary> Expand rectangle to include given point. </summary>
         public void Expand(Point p)
         {
-            _xmin = Math.Min(_xmin, p.x);
-            _ymin = Math.Min(_ymin, p.y);
-            _xmax = Math.Max(_xmax, p.x);
-            _ymax = Math.Max(_ymax, p.y);
+            _xmin = Math.Min(_xmin, p.X);
+            _ymin = Math.Min(_ymin, p.Y);
+            _xmax = Math.Max(_xmax, p.X);
+            _ymax = Math.Max(_ymax, p.Y);
         }
 
         /// <summary> Expand rectangle to include a list of points. </summary>

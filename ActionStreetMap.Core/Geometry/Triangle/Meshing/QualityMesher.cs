@@ -73,7 +73,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             // Check one neighbor of the subsegment.
             testsubseg.Pivot(ref neighbortri);
             // Does the neighbor exist, or is this a boundary edge?
-            if (neighbortri.tri.id != Mesh.DUMMY)
+            if (neighbortri.tri.Id != Mesh.DUMMY)
             {
                 sides++;
                 // Find a vertex opposite this subsegment.
@@ -83,17 +83,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // of two sides of the triangle is used to check whether the angle
                 // at the apex is greater than (180 - 2 'minangle') degrees (for
                 // lenses; 90 degrees for diametral circles).
-                dotproduct = (eorg.x - eapex.x)*(edest.x - eapex.x) +
-                             (eorg.y - eapex.y)*(edest.y - eapex.y);
+                dotproduct = (eorg.X - eapex.X)*(edest.X - eapex.X) +
+                             (eorg.Y - eapex.Y)*(edest.Y - eapex.Y);
                 if (dotproduct < 0.0)
                 {
                     if (behavior.ConformingDelaunay ||
                         (dotproduct*dotproduct >=
                          (2.0*behavior.goodAngle - 1.0)*(2.0*behavior.goodAngle - 1.0)*
-                         ((eorg.x - eapex.x)*(eorg.x - eapex.x) +
-                          (eorg.y - eapex.y)*(eorg.y - eapex.y))*
-                         ((edest.x - eapex.x)*(edest.x - eapex.x) +
-                          (edest.y - eapex.y)*(edest.y - eapex.y))))
+                         ((eorg.X - eapex.X)*(eorg.X - eapex.X) +
+                          (eorg.Y - eapex.Y)*(eorg.Y - eapex.Y))*
+                         ((edest.X - eapex.X)*(edest.X - eapex.X) +
+                          (edest.Y - eapex.Y)*(edest.Y - eapex.Y))))
                     {
                         encroached = 1;
                     }
@@ -103,24 +103,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             testsubseg.Sym(ref testsym);
             testsym.Pivot(ref neighbortri);
             // Does the neighbor exist, or is this a boundary edge?
-            if (neighbortri.tri.id != Mesh.DUMMY)
+            if (neighbortri.tri.Id != Mesh.DUMMY)
             {
                 sides++;
                 // Find the other vertex opposite this subsegment.
                 eapex = neighbortri.Apex();
                 // Check whether the apex is in the diametral lens of the subsegment
                 // (or the diametral circle, if 'conformdel' is set).
-                dotproduct = (eorg.x - eapex.x)*(edest.x - eapex.x) +
-                             (eorg.y - eapex.y)*(edest.y - eapex.y);
+                dotproduct = (eorg.X - eapex.X)*(edest.X - eapex.X) +
+                             (eorg.Y - eapex.Y)*(edest.Y - eapex.Y);
                 if (dotproduct < 0.0)
                 {
                     if (behavior.ConformingDelaunay ||
                         (dotproduct*dotproduct >=
                          (2.0*behavior.goodAngle - 1.0)*(2.0*behavior.goodAngle - 1.0)*
-                         ((eorg.x - eapex.x)*(eorg.x - eapex.x) +
-                          (eorg.y - eapex.y)*(eorg.y - eapex.y))*
-                         ((edest.x - eapex.x)*(edest.x - eapex.x) +
-                          (edest.y - eapex.y)*(edest.y - eapex.y))))
+                         ((eorg.X - eapex.X)*(eorg.X - eapex.X) +
+                          (eorg.Y - eapex.Y)*(eorg.Y - eapex.Y))*
+                         ((edest.X - eapex.X)*(edest.X - eapex.X) +
+                          (edest.Y - eapex.Y)*(edest.Y - eapex.Y))))
                     {
                         encroached += 2;
                     }
@@ -180,12 +180,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             torg = testtri.Org();
             tdest = testtri.Dest();
             tapex = testtri.Apex();
-            dxod = torg.x - tdest.x;
-            dyod = torg.y - tdest.y;
-            dxda = tdest.x - tapex.x;
-            dyda = tdest.y - tapex.y;
-            dxao = tapex.x - torg.x;
-            dyao = tapex.y - torg.y;
+            dxod = torg.X - tdest.X;
+            dyod = torg.Y - tdest.Y;
+            dxda = tdest.X - tapex.X;
+            dyda = tdest.Y - tapex.Y;
+            dxao = tapex.X - torg.X;
+            dyao = tapex.Y - torg.Y;
             dxod2 = dxod*dxod;
             dyod2 = dyod*dyod;
             dxda2 = dxda*dxda;
@@ -325,11 +325,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         dest2 = testsub.SegDest();
                         // Check if the two containing segments have an endpoint in common.
                         joinvertex = null;
-                        if ((dest1.x == org2.x) && (dest1.y == org2.y))
+                        if ((dest1.X == org2.X) && (dest1.Y == org2.Y))
                         {
                             joinvertex = dest1;
                         }
-                        else if ((org1.x == dest2.x) && (org1.y == dest2.y))
+                        else if ((org1.X == dest2.X) && (org1.Y == dest2.Y))
                         {
                             joinvertex = org1;
                         }
@@ -337,10 +337,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         {
                             // Compute the distance from the common endpoint (of the two
                             // segments) to each of the endpoints of the shortest edge.
-                            dist1 = ((base1.x - joinvertex.x)*(base1.x - joinvertex.x) +
-                                     (base1.y - joinvertex.y)*(base1.y - joinvertex.y));
-                            dist2 = ((base2.x - joinvertex.x)*(base2.x - joinvertex.x) +
-                                     (base2.y - joinvertex.y)*(base2.y - joinvertex.y));
+                            dist1 = ((base1.X - joinvertex.X)*(base1.X - joinvertex.X) +
+                                     (base1.Y - joinvertex.Y)*(base1.Y - joinvertex.Y));
+                            dist2 = ((base2.X - joinvertex.X)*(base2.X - joinvertex.X) +
+                                     (base2.Y - joinvertex.Y)*(base2.Y - joinvertex.Y));
                             // If the two distances are equal, don't split the triangle.
                             if ((dist1 < 1.001*dist2) && (dist1 > 0.999*dist2))
                             {
@@ -457,8 +457,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     {
                         eapex = enctri.Apex();
                         while ((eapex.type == VertexType.FreeVertex) &&
-                               ((eorg.x - eapex.x)*(edest.x - eapex.x) +
-                                (eorg.y - eapex.y)*(edest.y - eapex.y) < 0.0))
+                               ((eorg.X - eapex.X)*(edest.X - eapex.X) +
+                                (eorg.Y - eapex.Y)*(edest.Y - eapex.Y) < 0.0))
                         {
                             mesh.DeleteVertex(ref testtri);
                             currentenc.Pivot(ref enctri);
@@ -469,7 +469,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
                     // Now, check the other side of the segment, if there's a triangle there.
                     enctri.Sym(ref testtri);
-                    if (testtri.tri.id != Mesh.DUMMY)
+                    if (testtri.tri.Id != Mesh.DUMMY)
                     {
                         // Is the destination shared with another segment?
                         testtri.Lnext();
@@ -487,8 +487,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         {
                             eapex = testtri.Org();
                             while ((eapex.type == VertexType.FreeVertex) &&
-                                   ((eorg.x - eapex.x)*(edest.x - eapex.x) +
-                                    (eorg.y - eapex.y)*(edest.y - eapex.y) < 0.0))
+                                   ((eorg.X - eapex.X)*(edest.X - eapex.X) +
+                                    (eorg.Y - eapex.Y)*(edest.Y - eapex.Y) < 0.0))
                             {
                                 mesh.DeleteVertex(ref testtri);
                                 enctri.Sym(ref testtri);
@@ -502,8 +502,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     // with another adjacent segment.
                     if (acuteorg || acutedest)
                     {
-                        segmentlength = Math.Sqrt((edest.x - eorg.x)*(edest.x - eorg.x) +
-                                                  (edest.y - eorg.y)*(edest.y - eorg.y));
+                        segmentlength = Math.Sqrt((edest.X - eorg.X)*(edest.X - eorg.X) +
+                                                  (edest.Y - eorg.Y)*(edest.Y - eorg.Y));
                         // Find the power of two that most evenly splits the segment.
                         // The worst case is a 2:1 ratio between subsegment lengths.
                         nearestpoweroftwo = 1.0;
@@ -531,24 +531,15 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
                     // Create the new vertex (interpolate coordinates).
                     newvertex = new Vertex(
-                        eorg.x + split*(edest.x - eorg.x),
-                        eorg.y + split*(edest.y - eorg.y),
-                        currentenc.seg.boundary,
-                        mesh.nextras);
+                        eorg.X + split*(edest.X - eorg.X),
+                        eorg.Y + split*(edest.Y - eorg.Y),
+                        currentenc.seg.boundary);
 
                     newvertex.type = VertexType.SegmentVertex;
 
-                    newvertex.hash = mesh.hash_vtx++;
-                    newvertex.id = newvertex.hash;
+                    newvertex.Id = mesh.hash_vtx++;
 
-                    mesh.vertices.Add(newvertex.hash, newvertex);
-
-                    // Interpolate attributes.
-                    for (int i = 0; i < mesh.nextras; i++)
-                    {
-                        newvertex.attributes[i] = eorg.attributes[i]
-                                                  + split*(edest.attributes[i] - eorg.attributes[i]);
-                    }
+                    mesh.vertices.Add(newvertex.Id, newvertex);
 
                     if (!Behavior.NoExact)
                     {
@@ -556,23 +547,23 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         // that is not precisely collinear with 'eorg' and 'edest'.
                         // Improve collinearity by one step of iterative refinement.
                         multiplier = RobustPredicates.CounterClockwise(eorg, edest, newvertex);
-                        divisor = ((eorg.x - edest.x)*(eorg.x - edest.x) +
-                                   (eorg.y - edest.y)*(eorg.y - edest.y));
+                        divisor = ((eorg.X - edest.X)*(eorg.X - edest.X) +
+                                   (eorg.Y - edest.Y)*(eorg.Y - edest.Y));
                         if ((multiplier != 0.0) && (divisor != 0.0))
                         {
                             multiplier = multiplier/divisor;
                             // Watch out for NANs.
                             if (!double.IsNaN(multiplier))
                             {
-                                newvertex.x += multiplier*(edest.y - eorg.y);
-                                newvertex.y += multiplier*(eorg.x - edest.x);
+                                newvertex.X += multiplier*(edest.Y - eorg.Y);
+                                newvertex.Y += multiplier*(eorg.X - edest.X);
                             }
                         }
                     }
 
                     // Check whether the new vertex lies on an endpoint.
-                    if (((newvertex.x == eorg.x) && (newvertex.y == eorg.y)) ||
-                        ((newvertex.x == edest.x) && (newvertex.y == edest.y)))
+                    if (((newvertex.X == eorg.X) && (newvertex.Y == eorg.Y)) ||
+                        ((newvertex.X == edest.X) && (newvertex.Y == edest.Y)))
                     {
                         throw new Exception("Ran out of precision");
                     }
@@ -657,9 +648,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 }
 
                 // Check whether the new vertex lies on a triangle vertex.
-                if (((newloc.x == borg.x) && (newloc.y == borg.y)) ||
-                    ((newloc.x == bdest.x) && (newloc.y == bdest.y)) ||
-                    ((newloc.x == bapex.x) && (newloc.y == bapex.y)))
+                if (((newloc.X == borg.X) && (newloc.Y == borg.Y)) ||
+                    ((newloc.X == bdest.X) && (newloc.Y == bdest.Y)) ||
+                    ((newloc.X == bapex.X) && (newloc.Y == bapex.Y)))
                 {
                    
                    //errorflag = true;
@@ -669,16 +660,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 {
                     // The new vertex must be in the interior, and therefore is a
                     // free vertex with a marker of zero.
-                    Vertex newvertex = new Vertex(newloc.x, newloc.y, 0, mesh.nextras);
+                    Vertex newvertex = new Vertex(newloc.X, newloc.Y, 0);
                     newvertex.type = VertexType.FreeVertex;
-
-                    for (int i = 0; i < mesh.nextras; i++)
-                    {
-                        // Interpolate the vertex attributes at the circumcenter.
-                        newvertex.attributes[i] = borg.attributes[i]
-                                                  + xi*(bdest.attributes[i] - borg.attributes[i])
-                                                  + eta*(bapex.attributes[i] - borg.attributes[i]);
-                    }
 
                     // Ensure that the handle 'badotri' does not represent the longest
                     // edge of the triangle.  This ensures that the circumcenter must
@@ -699,10 +682,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
                     if (success == InsertVertexResult.Successful)
                     {
-                        newvertex.hash = mesh.hash_vtx++;
-                        newvertex.id = newvertex.hash;
+                        newvertex.Id = mesh.hash_vtx++;
 
-                        mesh.vertices.Add(newvertex.hash, newvertex);
+                        mesh.vertices.Add(newvertex.Id, newvertex);
 
                         if (mesh.steinerleft > 0)
                         {

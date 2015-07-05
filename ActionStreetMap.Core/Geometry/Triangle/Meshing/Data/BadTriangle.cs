@@ -30,7 +30,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Data
 
         public override string ToString()
         {
-            return String.Format("B-TID {0}", poortri.tri.hash);
+            return String.Format("B-TID {0}", poortri.tri.Id);
         }
     }
 }

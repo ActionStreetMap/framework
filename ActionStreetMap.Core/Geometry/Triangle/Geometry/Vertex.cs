@@ -8,31 +8,18 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     /// <summary> The vertex data structure. </summary>
     public class Vertex : Point
     {
-        // Hash for dictionary. Will be set by mesh instance.
-        internal int hash;
-
-        internal double[] attributes;
-
         internal VertexType type;
         internal Otri tri;
 
         /// <summary> Initializes a new instance of the <see cref="Vertex" /> class. </summary>
-        public Vertex(): this(0, 0, 0, 0)
+        public Vertex(): this(0, 0, 0)
         {
         }
 
         /// <summary> Initializes a new instance of the <see cref="Vertex" /> class. </summary>
         /// <param name="x">The x coordinate of the vertex.</param>
         /// <param name="y">The y coordinate of the vertex.</param>
-        public Vertex(double x, double y): this(x, y, 0, 0)
-        {
-        }
-
-        /// <summary> Initializes a new instance of the <see cref="Vertex" /> class. </summary>
-        /// <param name="x">The x coordinate of the vertex.</param>
-        /// <param name="y">The y coordinate of the vertex.</param>
-        /// <param name="mark">The boundary mark.</param>
-        public Vertex(double x, double y, int mark): this(x, y, mark, 0)
+        public Vertex(double x, double y): this(x, y, 0)
         {
         }
 
@@ -40,19 +27,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <param name="x">The x coordinate of the vertex.</param>
         /// <param name="y">The y coordinate of the vertex.</param>
         /// <param name="mark">The boundary mark.</param>
-        /// <param name="attribs">The number of point attributes.</param>
-        public Vertex(double x, double y, int mark, int attribs): base(x, y, mark)
+        public Vertex(double x, double y, ushort mark)
+            : base(x, y, mark)
         {
             this.type = VertexType.InputVertex;
-
-            if (attribs > 0)
-                this.attributes = new double[attribs];
         }
 
         #region Public properties
-
-        /// <summary> Gets the vertex attributes (may be null). </summary>
-        public double[] Attributes { get { return this.attributes; } }
 
         /// <summary> Gets the vertex type. </summary>
         public VertexType Type { get { return this.type; } }
@@ -64,17 +45,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         {
             get
             {
-                if (i == 0) return x;
-                if (i == 1) return y;
+                if (i == 0) return X;
+                if (i == 1) return Y;
                 throw new ArgumentOutOfRangeException("Index must be 0 or 1.");
             }
         }
 
         #endregion
-
-        public override int GetHashCode()
-        {
-            return this.hash;
-        }
     }
 }

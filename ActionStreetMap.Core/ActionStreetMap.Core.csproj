@@ -70,8 +70,6 @@
     <Compile Include="Geometry\Triangle\Meshing\Data\BadSubseg.cs" />
     <Compile Include="Geometry\Triangle\Meshing\Data\BadTriangle.cs" />
     <Compile Include="Geometry\Triangle\Meshing\Data\BadTriQueue.cs" />
-    <Compile Include="Geometry\Triangle\Meshing\IConstraintMesher.cs" />
-    <Compile Include="Geometry\Triangle\Meshing\IQualityMesher.cs" />
     <Compile Include="Geometry\Triangle\Meshing\ITriangulator.cs" />
     <Compile Include="Geometry\Triangle\Meshing\QualityMesher.cs" />
     <Compile Include="Geometry\Triangle\Meshing\QualityOptions.cs" />

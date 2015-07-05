@@ -95,7 +95,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         {
             Vertex endpoint1, endpoint2;
             int end1, end2;
-            int boundmarker;
+            ushort boundmarker;
 
             mesh.insegments = 0;
 
@@ -140,7 +140,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         // Find the vertices numbered 'end1' and 'end2'.
                         endpoint1 = mesh.vertices[end1];
                         endpoint2 = mesh.vertices[end2];
-                        if ((endpoint1.x == endpoint2.x) && (endpoint1.y == endpoint2.y))
+                        if ((endpoint1.X == endpoint2.X) && (endpoint1.Y == endpoint2.Y))
                         {
                         }
                         else
@@ -208,13 +208,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                             hullsubseg.seg.boundary = 1;
                             horg = hulltri.Org();
                             hdest = hulltri.Dest();
-                            if (horg.mark == 0)
+                            if (horg.Mark == 0)
                             {
-                                horg.mark = 1;
+                                horg.Mark = 1;
                             }
-                            if (hdest.mark == 0)
+                            if (hdest.Mark == 0)
                             {
-                                hdest.mark = 1;
+                                hdest.Mark = 1;
                             }
                         }
                     }
@@ -222,7 +222,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // To find the next hull edge, go clockwise around the next vertex.
                 hulltri.Lnext();
                 hulltri.Oprev(ref nexttri);
-                while (nexttri.tri.id != Mesh.DUMMY)
+                while (nexttri.tri.Id != Mesh.DUMMY)
                 {
                     nexttri.Copy(ref hulltri);
                     hulltri.Oprev(ref nexttri);
@@ -278,7 +278,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                     // Check for a subsegment between the triangle and its neighbor.
                     testtri.Pivot(ref neighborsubseg);
                     // Check if the neighbor is nonexistent or already infected.
-                    if ((neighbor.tri.id == Mesh.DUMMY) || neighbor.IsInfected())
+                    if ((neighbor.tri.Id == Mesh.DUMMY) || neighbor.IsInfected())
                     {
                         if (neighborsubseg.seg.hash != Mesh.DUMMY)
                         {
@@ -286,7 +286,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                             // neighbor, but both triangles are dying, so the subsegment
                             // dies too.
                             mesh.SubsegDealloc(neighborsubseg.seg);
-                            if (neighbor.tri.id != Mesh.DUMMY)
+                            if (neighbor.tri.Id != Mesh.DUMMY)
                             {
                                 // Make sure the subsegment doesn't get deallocated again
                                 // later when the infected neighbor is visited.
@@ -319,13 +319,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                             }
                             norg = neighbor.Org();
                             ndest = neighbor.Dest();
-                            if (norg.mark == 0)
+                            if (norg.Mark == 0)
                             {
-                                norg.mark = 1;
+                                norg.Mark = 1;
                             }
-                            if (ndest.mark == 0)
+                            if (ndest.Mark == 0)
                             {
-                                ndest.mark = 1;
+                                ndest.Mark = 1;
                             }
                         }
                     }
@@ -354,7 +354,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                         // Walk counterclockwise about the vertex.
                         testtri.Onext(ref neighbor);
                         // Stop upon reaching a boundary or the starting triangle.
-                        while ((neighbor.tri.id != Mesh.DUMMY) &&
+                        while ((neighbor.tri.Id != Mesh.DUMMY) &&
                                (!neighbor.Equal(testtri)))
                         {
                             if (neighbor.IsInfected())
@@ -371,12 +371,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                             neighbor.Onext();
                         }
                         // If we reached a boundary, we must walk clockwise as well.
-                        if (neighbor.tri.id == Mesh.DUMMY)
+                        if (neighbor.tri.Id == Mesh.DUMMY)
                         {
                             // Walk clockwise about the vertex.
                             testtri.Oprev(ref neighbor);
                             // Stop upon reaching a boundary.
-                            while (neighbor.tri.id != Mesh.DUMMY)
+                            while (neighbor.tri.Id != Mesh.DUMMY)
                             {
                                 if (neighbor.IsInfected())
                                 {
@@ -406,7 +406,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 for (testtri.orient = 0; testtri.orient < 3; testtri.orient++)
                 {
                     testtri.Sym(ref neighbor);
-                    if (neighbor.tri.id == Mesh.DUMMY)
+                    if (neighbor.tri.Id == Mesh.DUMMY)
                     {
                         // There is no neighboring triangle on this edge, so this edge
                         // is a boundary edge. This triangle is being deleted, so this
@@ -473,7 +473,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // 'searchtri' faces directly away from 'searchpoint'. We could go left
                 // or right. Ask whether it's a triangle or a boundary on the left.
                 searchtri.Onext(ref checktri);
-                if (checktri.tri.id == Mesh.DUMMY)
+                if (checktri.tri.Id == Mesh.DUMMY)
                 {
                     leftflag = false;
                 }
@@ -486,7 +486,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             {
                 // Turn left until satisfied.
                 searchtri.Onext();
-                if (searchtri.tri.id == Mesh.DUMMY)
+                if (searchtri.tri.Id == Mesh.DUMMY)
                 {
                     throw new Exception("Unable to find a triangle on path.");
                 }
@@ -499,7 +499,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             {
                 // Turn right until satisfied.
                 searchtri.Oprev();
-                if (searchtri.tri.id == Mesh.DUMMY)
+                if (searchtri.tri.Id == Mesh.DUMMY)
                 {
                     throw new Exception("Unable to find a triangle on path.");
                 }
@@ -555,12 +555,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             torg = splittri.Org();
             tdest = splittri.Dest();
             // Segment intersection formulae; see the Antonio reference.
-            tx = tdest.x - torg.x;
-            ty = tdest.y - torg.y;
-            ex = endpoint2.x - endpoint1.x;
-            ey = endpoint2.y - endpoint1.y;
-            etx = torg.x - endpoint2.x;
-            ety = torg.y - endpoint2.y;
+            tx = tdest.X - torg.X;
+            ty = tdest.Y - torg.Y;
+            ex = endpoint2.X - endpoint1.X;
+            ey = endpoint2.Y - endpoint1.Y;
+            etx = torg.X - endpoint2.X;
+            ety = torg.Y - endpoint2.Y;
             denom = ty*ex - tx*ey;
             if (denom == 0.0)
             {
@@ -570,21 +570,13 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             // Create the new vertex.
             newvertex = new Vertex(
-                torg.x + split*(tdest.x - torg.x),
-                torg.y + split*(tdest.y - torg.y),
-                splitsubseg.seg.boundary,
-                mesh.nextras);
+                torg.X + split*(tdest.X - torg.X),
+                torg.Y + split*(tdest.Y - torg.Y),
+                splitsubseg.seg.boundary);
 
-            newvertex.hash = mesh.hash_vtx++;
-            newvertex.id = newvertex.hash;
+            newvertex.Id = mesh.hash_vtx++;
 
-            // Interpolate its attributes.
-            for (int i = 0; i < mesh.nextras; i++)
-            {
-                newvertex.attributes[i] = torg.attributes[i] + split*(tdest.attributes[i] - torg.attributes[i]);
-            }
-
-            mesh.vertices.Add(newvertex.hash, newvertex);
+            mesh.vertices.Add(newvertex.Id, newvertex);
 
             // Insert the intersection vertex.  This should always succeed.
             success = mesh.InsertVertex(newvertex, ref splittri, ref splitsubseg, false, false);
@@ -621,11 +613,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             rightvertex = splittri.Dest();
             leftvertex = splittri.Apex();
-            if ((leftvertex.x == endpoint1.x) && (leftvertex.y == endpoint1.y))
+            if ((leftvertex.X == endpoint1.X) && (leftvertex.Y == endpoint1.Y))
             {
                 splittri.Onext();
             }
-            else if ((rightvertex.x != endpoint1.x) || (rightvertex.y != endpoint1.y))
+            else if ((rightvertex.X != endpoint1.X) || (rightvertex.Y != endpoint1.Y))
             {
                 throw new Exception("Topological inconsistency after splitting a segment.");
             }
@@ -655,7 +647,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         ///     then there is a segment that intersects the segment being inserted.
         ///     Their intersection vertex is inserted, splitting the subsegment.
         /// </remarks>
-        private bool ScoutSegment(ref Otri searchtri, Vertex endpoint2, int newmark)
+        private bool ScoutSegment(ref Otri searchtri, Vertex endpoint2, ushort newmark)
         {
             Otri crosstri = default(Otri);
             Osub crosssubseg = default(Osub);
@@ -665,11 +657,11 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             collinear = FindDirection(ref searchtri, endpoint2);
             rightvertex = searchtri.Dest();
             leftvertex = searchtri.Apex();
-            if (((leftvertex.x == endpoint2.x) && (leftvertex.y == endpoint2.y)) ||
-                ((rightvertex.x == endpoint2.x) && (rightvertex.y == endpoint2.y)))
+            if (((leftvertex.X == endpoint2.X) && (leftvertex.Y == endpoint2.Y)) ||
+                ((rightvertex.X == endpoint2.X) && (rightvertex.Y == endpoint2.Y)))
             {
                 // The segment is already an edge in the mesh.
-                if ((leftvertex.x == endpoint2.x) && (leftvertex.y == endpoint2.y))
+                if ((leftvertex.X == endpoint2.X) && (leftvertex.Y == endpoint2.Y))
                 {
                     searchtri.Lprev();
                 }
@@ -753,7 +745,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             fixuptri.Lnext(ref neartri);
             neartri.Sym(ref fartri);
             // Check if the edge opposite the origin of fixuptri can be flipped.
-            if (fartri.tri.id == Mesh.DUMMY)
+            if (fartri.tri.Id == Mesh.DUMMY)
             {
                 return;
             }
@@ -855,7 +847,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         ///     triangle will take its place on the stack.) These details are handled
         ///     by the DelaunayFixup() routine above.
         /// </remarks>
-        private void ConstrainedEdge(ref Otri starttri, Vertex endpoint2, int newmark)
+        private void ConstrainedEdge(ref Otri starttri, Vertex endpoint2, ushort newmark)
         {
             Otri fixuptri = default(Otri), fixuptri2 = default(Otri);
             Osub crosssubseg = default(Osub);
@@ -877,7 +869,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 farvertex = fixuptri.Org();
                 // 'farvertex' is the extreme point of the polygon we are "digging"
                 //  to get from endpoint1 to endpoint2.
-                if ((farvertex.x == endpoint2.x) && (farvertex.y == endpoint2.y))
+                if ((farvertex.X == endpoint2.X) && (farvertex.Y == endpoint2.Y))
                 {
                     fixuptri.Oprev(ref fixuptri2);
                     // Enforce the Delaunay condition around endpoint2.
@@ -960,7 +952,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         /// <param name="endpoint1"></param>
         /// <param name="endpoint2"></param>
         /// <param name="newmark"></param>
-        private void InsertSegment(Vertex endpoint1, Vertex endpoint2, int newmark)
+        private void InsertSegment(Vertex endpoint1, Vertex endpoint2, ushort newmark)
         {
             Otri searchtri1 = default(Otri), searchtri2 = default(Otri);
             Vertex checkvertex = null;
@@ -1059,7 +1051,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // To find the next hull edge, go clockwise around the next vertex.
                 hulltri.Lnext();
                 hulltri.Oprev(ref nexttri);
-                while (nexttri.tri.id != Mesh.DUMMY)
+                while (nexttri.tri.Id != Mesh.DUMMY)
                 {
                     nexttri.Copy(ref hulltri);
                     hulltri.Oprev(ref nexttri);

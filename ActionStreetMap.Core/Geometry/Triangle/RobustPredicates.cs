@@ -86,8 +86,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double detleft, detright, det;
             double detsum, errbound;
 
-            detleft = (pa.x - pc.x) * (pb.y - pc.y);
-            detright = (pa.y - pc.y) * (pb.x - pc.x);
+            detleft = (pa.X - pc.X) * (pb.Y - pc.Y);
+            detright = (pa.Y - pc.Y) * (pb.X - pc.X);
             det = detleft - detright;
 
             if (Behavior.NoExact)
@@ -137,12 +137,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double det;
             double permanent, errbound;
 
-            adx = pa.x - pd.x;
-            bdx = pb.x - pd.x;
-            cdx = pc.x - pd.x;
-            ady = pa.y - pd.y;
-            bdy = pb.y - pd.y;
-            cdy = pc.y - pd.y;
+            adx = pa.X - pd.X;
+            bdx = pb.X - pd.X;
+            cdx = pc.X - pd.X;
+            ady = pa.Y - pd.Y;
+            bdy = pb.Y - pd.Y;
+            cdy = pc.Y - pd.Y;
 
             bdxcdy = bdx * cdy;
             cdxbdy = cdx * bdy;
@@ -210,14 +210,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double dx, dy, dxoff, dyoff;
 
             // Compute the circumcenter of the triangle.
-            xdo = dest.x - org.x;
-            ydo = dest.y - org.y;
-            xao = apex.x - org.x;
-            yao = apex.y - org.y;
+            xdo = dest.X - org.X;
+            ydo = dest.Y - org.Y;
+            xao = apex.X - org.X;
+            yao = apex.Y - org.Y;
             dodist = xdo * xdo + ydo * ydo;
             aodist = xao * xao + yao * yao;
-            dadist = (dest.x - apex.x) * (dest.x - apex.x) +
-                     (dest.y - apex.y) * (dest.y - apex.y);
+            dadist = (dest.X - apex.X) * (dest.X - apex.X) +
+                     (dest.Y - apex.Y) * (dest.Y - apex.Y);
 
             if (Behavior.NoExact)
             {
@@ -274,8 +274,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             {
                 if (offconstant > 0.0)
                 {
-                    dxoff = 0.5 * (apex.x - dest.x) - offconstant * (apex.y - dest.y);
-                    dyoff = 0.5 * (apex.y - dest.y) + offconstant * (apex.x - dest.x);
+                    dxoff = 0.5 * (apex.X - dest.X) - offconstant * (apex.Y - dest.Y);
+                    dyoff = 0.5 * (apex.Y - dest.Y) + offconstant * (apex.X - dest.X);
                     // If the off-center is closer to the destination than the
                     // circumcenter, use the off-center instead.
                     if (dxoff * dxoff + dyoff * dyoff <
@@ -295,7 +295,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             xi = (yao * dx - xao * dy) * (2.0 * denominator);
             eta = (xdo * dy - ydo * dx) * (2.0 * denominator);
 
-            return new Point(org.x + dx, org.y + dy);
+            return new Point(org.X + dx, org.Y + dy);
         }
 
         /// <summary> Find the circumcenter of a triangle. </summary>
@@ -323,10 +323,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double dx, dy;
 
             // Compute the circumcenter of the triangle.
-            xdo = dest.x - org.x;
-            ydo = dest.y - org.y;
-            xao = apex.x - org.x;
-            yao = apex.y - org.y;
+            xdo = dest.X - org.X;
+            ydo = dest.Y - org.Y;
+            xao = apex.X - org.X;
+            yao = apex.Y - org.Y;
             dodist = xdo * xdo + ydo * ydo;
             aodist = xao * xao + yao * yao;
 
@@ -353,7 +353,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             xi = (yao * dx - xao * dy) * (2.0 * denominator);
             eta = (xdo * dy - ydo * dx) * (2.0 * denominator);
 
-            return new Point(org.x + dx, org.y + dy);
+            return new Point(org.X + dx, org.Y + dy);
         }
 
         #region Exact arithmetics
