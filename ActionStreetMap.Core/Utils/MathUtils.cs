@@ -4,6 +4,9 @@ namespace ActionStreetMap.Core.Utils
 {
     internal static class MathUtils
     {
+        /// <summary> Round digit count. </summary>
+        internal const int RoundDigitCount = 4;
+
         /// <summary> Converts degrees to radians. </summary>
         public static double Deg2Rad(double degrees)
         {

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
+using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Utilities;
+
 using Path = System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Clipping.IntPoint>>;
 using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
@@ -19,9 +20,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         internal const float Scale = 1000f;
         internal const float DoubleScale = Scale*Scale;
-        internal const int RoundDigitCount = 5;
 
-        private float _maximumArea = 4;
+        private int _gridCell = 1;
+        private float _maximumArea = 6;
 
         public MeshCellBuilder(IObjectPool objectPool)
         {
@@ -34,11 +35,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
         {
             var renderMode = content.RenderMode;
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(rectangle, content.Water, renderMode, false, renderMode == RenderMode.Scene);
-            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, renderMode, false);
-            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, renderMode, true);
-            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, renderMode, false);
-            var background = CreateMeshRegions(rectangle, content.Background, renderMode, false);
+            var water = CreateMeshRegions(rectangle, content.Water, renderMode, renderMode == RenderMode.Scene);
+            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, renderMode);
+            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, renderMode);
+            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, renderMode);
+            var background = CreateMeshRegions(rectangle, content.Background, renderMode);
 
             return new MeshCell
             {
@@ -58,16 +59,16 @@ namespace ActionStreetMap.Core.Scene.Terrain
         #endregion
 
         private List<MeshRegion> CreateMeshRegions(MapRectangle rectangle, List<MeshCanvas.Region> regionDatas,
-            RenderMode renderMode, bool conformingDelaunay)
+            RenderMode renderMode)
         {
             var meshRegions = new List<MeshRegion>();
             foreach (var regionData in regionDatas)
-                meshRegions.Add(CreateMeshRegions(rectangle, regionData, renderMode, conformingDelaunay));
+                meshRegions.Add(CreateMeshRegions(rectangle, regionData, renderMode));
             return meshRegions;
         }
 
         private MeshRegion CreateMeshRegions(MapRectangle rectangle, MeshCanvas.Region region, RenderMode renderMode,
-            bool conformingDelaunay, bool useContours = false)
+            bool useContours = false)
         {
             var polygon = new Polygon();
             var simplifiedPath = ClipByRectangle(rectangle, region.Shape);
@@ -93,7 +94,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     contours.AddRange(contour);
                 }
             }
-            var mesh = polygon.Points.Any() ? GetMesh(polygon, renderMode, conformingDelaunay) : null;
+            var mesh = polygon.Points.Any() ? GetMesh(polygon, renderMode) : null;
             return new MeshRegion
             {
                 GradientKey = region.GradientKey,
@@ -105,31 +106,21 @@ namespace ActionStreetMap.Core.Scene.Terrain
             };
         }
 
-        private void DumpRegion(Paths simplifiedPath)
-        {
-            var writer = new StreamWriter(File.Create(@"F:\gg.txt"));
-            foreach (var shape in simplifiedPath)
-            {
-                writer.WriteLine(shape.Count);
-                for(int i=0; i < shape.Count;i++)
-                    writer.WriteLine("{0} {1}", shape[i].X, shape[i].Y);
-            }
-            writer.Close();
-        }
-
         private List<Point> GetVertices(Path path, RenderMode renderMode)
         {
+            // do not split path for overview mode
             var points = _objectPool.NewList<Point>(path.Count);
             if (renderMode == RenderMode.Overview)
             {
                 path.ForEach(p => points.Add(new Point(
-                    Math.Round(p.X / Scale, RoundDigitCount), 
-                    Math.Round(p.Y / Scale, RoundDigitCount))));
+                    Math.Round(p.X / Scale, MathUtils.RoundDigitCount),
+                    Math.Round(p.Y / Scale, MathUtils.RoundDigitCount))));
                 return points;
             }
 
+            // split path for scene mode
             var lastItemIndex =  path.Count - 1;
-            var lineGridSplitter = new LineGridSplitter(1, RoundDigitCount);
+            var lineGridSplitter = new LineGridSplitter(_gridCell, MathUtils.RoundDigitCount);
             
             for (int i = 0; i < lastItemIndex; i++)
             {
@@ -137,17 +128,17 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 var end = path[i == lastItemIndex ? 0 : i + 1];
 
                 lineGridSplitter.Split(
-                    new Point(Math.Round(start.X / Scale, RoundDigitCount),
-                              Math.Round(start.Y / Scale, RoundDigitCount)),
-                    new Point(Math.Round(end.X / Scale, RoundDigitCount), 
-                              Math.Round(end.Y / Scale, RoundDigitCount)),
+                    new Point(Math.Round(start.X / Scale, MathUtils.RoundDigitCount),
+                              Math.Round(start.Y / Scale, MathUtils.RoundDigitCount)),
+                    new Point(Math.Round(end.X / Scale, MathUtils.RoundDigitCount),
+                              Math.Round(end.Y / Scale, MathUtils.RoundDigitCount)),
                     _objectPool, points);
             }
 
             // NOTE last is not handled by splitter
             var last = path[path.Count - 1];
-            points.Add(new Point(Math.Round(last.X / Scale, RoundDigitCount),
-                                 Math.Round(last.Y / Scale, RoundDigitCount)));
+            points.Add(new Point(Math.Round(last.X / Scale, MathUtils.RoundDigitCount),
+                                 Math.Round(last.Y / Scale, MathUtils.RoundDigitCount)));
 
             return points;
         }
@@ -190,20 +181,19 @@ namespace ActionStreetMap.Core.Scene.Terrain
             _objectPool.StoreObject(clipper);
 
             return solution.Select(c => c.Select(p =>
-                new Vertex(Math.Round(p.X / Scale, RoundDigitCount), 
-                           Math.Round(p.Y / Scale, RoundDigitCount))).ToList()).ToList();
+                new Vertex(Math.Round(p.X / Scale, MathUtils.RoundDigitCount),
+                           Math.Round(p.Y / Scale, MathUtils.RoundDigitCount))).ToList()).ToList();
         }
 
-
-        private Mesh GetMesh(Polygon polygon, RenderMode renderMode, bool conformingDelaunay)
+        private Mesh GetMesh(Polygon polygon, RenderMode renderMode)
         {
             return renderMode == RenderMode.Overview
                 ? (Mesh) polygon.Triangulate()
                 : (Mesh) polygon.Triangulate(
                     new ConstraintOptions 
                     {
-                        ConformingDelaunay = conformingDelaunay, 
-                        SegmentSplitting = 1
+                        ConformingDelaunay = false, 
+                        SegmentSplitting = 0
                     },
                     new QualityOptions {MaximumArea = _maximumArea});
         }
