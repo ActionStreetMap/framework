@@ -18,7 +18,7 @@ namespace ActionStreetMap.Maps.Data
     /// <summary> Provides the way to get the corresponding element source by geocoordinate. </summary>
     public interface IElementSourceProvider: IDisposable
     {
-        // <summary> Adds element source. </summary>
+        /// <summary> Adds element source. </summary>
         void Add(IElementSource elementSource);
 
         /// <summary> Returns element sources by query represented by bounding box. </summary>

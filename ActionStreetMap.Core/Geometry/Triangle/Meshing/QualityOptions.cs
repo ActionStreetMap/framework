@@ -23,13 +23,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         /// </remarks>
         public Func<Topology.Triangle, double, bool> UserTest { get; set; }
 
-        /// <summary> Gets or sets an area constraint per triangle. </summary>
-        /// <remarks>
-        ///     If this flag is set to true, the <see cref="Triangle.Area" /> value will
-        ///     be used to check if a triangle needs refinement.
-        /// </remarks>
-        public bool VariableArea { get; set; }
-
         /// <summary>
         ///     Gets or sets the maximum number of Steiner points to be inserted into the mesh.
         /// </summary>

@@ -223,8 +223,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     largestAngleCorner = tapex;
                     break;
                 case 231: 	// assign necessary information
-                    /// smallest angle corner: org
-                    /// largest angle corner: dest
+                    // smallest angle corner: org
+                    // largest angle corner: dest
                     xShortestEdge = xda; yShortestEdge = yda;
                     xMiddleEdge = xdo; yMiddleEdge = ydo;
                     xLongestEdge = xao; yLongestEdge = yao;
@@ -1448,7 +1448,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     // find the third point of the neighbor triangle  ///
                     neighborNotFound_second = GetNeighborsVertex(badotri, largestAngleCorner.X, largestAngleCorner.Y,
                                 smallestAngleCorner.X, smallestAngleCorner.Y, ref thirdPoint, ref neighborotri);
-                    /// find the circumcenter of the neighbor triangle ///
+                    // find the circumcenter of the neighbor triangle ///
                     dxSecondSuggestion = dx;	// if we cannot find any appropriate suggestion, we use circumcenter
                     dySecondSuggestion = dy;
 
@@ -2785,7 +2785,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 // cw rotation about (x,y) [ux*cosX + uy*sinX + x - x*cosX - y*sinX; -ux*sinX + uy*cosX + y + x*sinX - y*cosX]
                 // ccw rotation matrix [cosX -sinX; sinX cosX]
                 // ccw rotation about (x,y) [ux*cosX - uy*sinX + x - x*cosX + y*sinX; ux*sinX + uy*cosX + y - x*sinX - y*cosX]
-                /// LINE #1: (x1,y1) & (x_1,y_1) 
+                // LINE #1: (x1,y1) & (x_1,y_1) 
                 // vector from p to q
                 ux = x1 - x0;
                 uy = y1 - y0;

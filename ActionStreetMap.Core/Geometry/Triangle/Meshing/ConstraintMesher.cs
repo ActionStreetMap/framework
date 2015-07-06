@@ -33,8 +33,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
             Vertex searchorg, searchdest;
             LocateResult intersect;
 
-            Topology.Triangle[] regionTris = null;
-
             var dummytri = mesh.dummytri;
 
             if (!mesh.behavior.Convex)

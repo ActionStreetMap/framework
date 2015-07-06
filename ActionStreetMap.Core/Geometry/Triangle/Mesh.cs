@@ -440,7 +440,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             Vertex first;
             Vertex leftvertex, rightvertex, botvertex, topvertex, farvertex;
             Vertex segmentorg, segmentdest;
-            int region;
+            
             double area;
             InsertVertexResult success;
             LocateResult intersect;
