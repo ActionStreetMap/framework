@@ -585,8 +585,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             double det, errbound;
             // Edited to work around index out of range exceptions (changed array length from 4 to 5).
             // See unsafe indexing in FastExpansionSumZeroElim.
-            double[] B = new double[5], u = new double[5];
-            double[] C1 = new double[8], C2 = new double[12], D = new double[16];
+
             double B3;
             int C1length, C2length, Dlength;
             
@@ -611,11 +610,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             detleft = (acx * bcy); c = (splitter * acx); abig = c - acx; ahi = c - abig; alo = acx - ahi; c = (splitter * bcy); abig = (c - bcy); bhi = c - abig; blo = bcy - bhi; err1 = detleft - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); detlefttail = (alo * blo) - err3;
             detright = (acy * bcx); c = (splitter * acy); abig = (c - acy); ahi = c - abig; alo = acy - ahi; c = (splitter * bcx); abig = (c - bcx); bhi = c - abig; blo = bcx - bhi; err1 = detright - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); detrighttail = (alo * blo) - err3;
 
+            double[] B = TrianglePool.AllocDoubleArray(5);
             _i = (detlefttail - detrighttail); bvirt = (detlefttail - _i); avirt = _i + bvirt; bround = bvirt - detrighttail; around = detlefttail - avirt; B[0] = around + bround; _j = (detleft + _i); bvirt = (_j - detleft); avirt = _j - bvirt; bround = _i - bvirt; around = detleft - avirt; _0 = around + bround; _i = (_0 - detright); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - detright; around = _0 - avirt; B[1] = around + bround; B3 = (_j + _i); bvirt = (B3 - _j); avirt = B3 - bvirt; bround = _i - bvirt; around = _j - avirt; B[2] = around + bround;
 
+           
             B[3] = B3;
 
             det = Estimate(4, B);
+            TrianglePool.FreeDoubleArray(B);
             errbound = ccwerrboundB * detsum;
             if ((det >= errbound) || (-det >= errbound))
             {
@@ -643,22 +645,29 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
             s1 = (acxtail * bcy); c = (splitter * acxtail); abig = (c - acxtail); ahi = c - abig; alo = acxtail - ahi; c = (splitter * bcy); abig = (c - bcy); bhi = c - abig; blo = bcy - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
             t1 = (acytail * bcx); c = (splitter * acytail); abig = (c - acytail); ahi = c - abig; alo = acytail - ahi; c = (splitter * bcx); abig = (c - bcx); bhi = c - abig; blo = bcx - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
+            double[] u = TrianglePool.AllocDoubleArray(5);
             _i = (s0 - t0); bvirt = (s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (s1 + _i); bvirt = (_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (_0 - t1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
             u[3] = u3;
+            double[] C1 = TrianglePool.AllocDoubleArray(8);
             C1length = FastExpansionSumZeroElim(4, B, 4, u, C1);
 
             s1 = (acx * bcytail); c = (splitter * acx); abig = (c - acx); ahi = c - abig; alo = acx - ahi; c = (splitter * bcytail); abig = (c - bcytail); bhi = c - abig; blo = bcytail - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
             t1 = (acy * bcxtail); c = (splitter * acy); abig = (c - acy); ahi = c - abig; alo = acy - ahi; c = (splitter * bcxtail); abig = (c - bcxtail); bhi = c - abig; blo = bcxtail - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
             _i = (s0 - t0); bvirt = (s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (s1 + _i); bvirt = (_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (_0 - t1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
             u[3] = u3;
+
+            double[] C2 = TrianglePool.AllocDoubleArray(12);
             C2length = FastExpansionSumZeroElim(C1length, C1, 4, u, C2);
+            TrianglePool.FreeDoubleArray(C1);
 
             s1 = (acxtail * bcytail); c = (splitter * acxtail); abig = (c - acxtail); ahi = c - abig; alo = acxtail - ahi; c = (splitter * bcytail); abig = (c - bcytail); bhi = c - abig; blo = bcytail - bhi; err1 = s1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); s0 = (alo * blo) - err3;
             t1 = (acytail * bcxtail); c = (splitter * acytail); abig = (c - acytail); ahi = c - abig; alo = acytail - ahi; c = (splitter * bcxtail); abig = (c - bcxtail); bhi = c - abig; blo = bcxtail - bhi; err1 = t1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); t0 = (alo * blo) - err3;
             _i = (s0 - t0); bvirt = (s0 - _i); avirt = _i + bvirt; bround = bvirt - t0; around = s0 - avirt; u[0] = around + bround; _j = (s1 + _i); bvirt = (_j - s1); avirt = _j - bvirt; bround = _i - bvirt; around = s1 - avirt; _0 = around + bround; _i = (_0 - t1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - t1; around = _0 - avirt; u[1] = around + bround; u3 = (_j + _i); bvirt = (u3 - _j); avirt = u3 - bvirt; bround = _i - bvirt; around = _j - avirt; u[2] = around + bround;
             u[3] = u3;
+            double[] D = TrianglePool.AllocDoubleArray(16);
             Dlength = FastExpansionSumZeroElim(C2length, C2, 4, u, D);
-
+            TrianglePool.FreeDoubleArray(C2);
+            TrianglePool.FreeDoubleArray(D);
             return (D[Dlength - 1]);
         }
 
@@ -688,51 +697,41 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
             double bdxcdy1, cdxbdy1, cdxady1, adxcdy1, adxbdy1, bdxady1;
             double bdxcdy0, cdxbdy0, cdxady0, adxcdy0, adxbdy0, bdxady0;
-            double[] bc = new double[4], ca = new double[4], ab = new double[4];
+            
             double bc3, ca3, ab3;
-            double[] axbc = new double[8], axxbc = new double[16], aybc = new double[8], ayybc = new double[16], adet = new double[32];
             int axbclen, axxbclen, aybclen, ayybclen, alen;
-            double[] bxca = new double[8], bxxca = new double[16], byca = new double[8], byyca = new double[16], bdet = new double[32];
+
             int bxcalen, bxxcalen, bycalen, byycalen, blen;
-            double[] cxab = new double[8], cxxab = new double[16], cyab = new double[8], cyyab = new double[16], cdet = new double[32];
             int cxablen, cxxablen, cyablen, cyyablen, clen;
-            double[] abdet = new double[64];
+
             int ablen;
-            double[] fin1 = new double[1152], fin2 = new double[1152];
             double[] finnow, finother, finswap;
             int finlength;
 
             double adxtail, bdxtail, cdxtail, adytail, bdytail, cdytail;
             double adxadx1, adyady1, bdxbdx1, bdybdy1, cdxcdx1, cdycdy1;
             double adxadx0, adyady0, bdxbdx0, bdybdy0, cdxcdx0, cdycdy0;
-            double[] aa = new double[4], bb = new double[4], cc = new double[4];
             double aa3, bb3, cc3;
             double ti1, tj1;
             double ti0, tj0;
-            // Edited to work around index out of range exceptions (changed array length from 4 to 5).
-            // See unsafe indexing in FastExpansionSumZeroElim.
-            double[] u = new double[5], v = new double[5];
+
             double u3, v3;
-            double[] temp8 = new double[8], temp16a = new double[16], temp16b = new double[16], temp16c = new double[16];
-            double[] temp32a = new double[32], temp32b = new double[32], temp48 = new double[48], temp64 = new double[64];
+
             int temp8len, temp16alen, temp16blen, temp16clen;
             int temp32alen, temp32blen, temp48len, temp64len;
-            double[] axtbb = new double[8], axtcc = new double[8], aytbb = new double[8], aytcc = new double[8];
+
             int axtbblen, axtcclen, aytbblen, aytcclen;
-            double[] bxtaa = new double[8], bxtcc = new double[8], bytaa = new double[8], bytcc = new double[8];
+
             int bxtaalen, bxtcclen, bytaalen, bytcclen;
-            double[] cxtaa = new double[8], cxtbb = new double[8], cytaa = new double[8], cytbb = new double[8];
             int cxtaalen, cxtbblen, cytaalen, cytbblen;
-            double[] axtbc = new double[8], aytbc = new double[8], bxtca = new double[8], bytca = new double[8], cxtab = new double[8], cytab = new double[8];
+
             int axtbclen = 0, aytbclen = 0, bxtcalen = 0, bytcalen = 0, cxtablen = 0, cytablen = 0;
-            double[] axtbct = new double[16], aytbct = new double[16], bxtcat = new double[16], bytcat = new double[16], cxtabt = new double[16], cytabt = new double[16];
+
             int axtbctlen, aytbctlen, bxtcatlen, bytcatlen, cxtabtlen, cytabtlen;
-            double[] axtbctt = new double[8], aytbctt = new double[8], bxtcatt = new double[8];
-            double[] bytcatt = new double[8], cxtabtt = new double[8], cytabtt = new double[8];
+
             int axtbcttlen, aytbcttlen, bxtcattlen, bytcattlen, cxtabttlen, cytabttlen;
-            double[] abt = new double[8], bct = new double[8], cat = new double[8];
+
             int abtlen, bctlen, catlen;
-            double[] abtt = new double[4], bctt = new double[4], catt = new double[4];
             int abttlen, bcttlen, cattlen;
             double abtt3, bctt3, catt3;
             double negate;
@@ -753,50 +752,89 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             bdy = (pb.Y - pd.Y);
             cdy = (pc.Y - pd.Y);
 
-            adx = (pa.X - pd.X);
-            bdx = (pb.X - pd.X);
-            cdx = (pc.X - pd.X);
-            ady = (pa.Y - pd.Y);
-            bdy = (pb.Y - pd.Y);
-            cdy = (pc.Y - pd.Y);
-
             bdxcdy1 = (bdx * cdy); c = (splitter * bdx); abig = (c - bdx); ahi = c - abig; alo = bdx - ahi; c = (splitter * cdy); abig = (c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = bdxcdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); bdxcdy0 = (alo * blo) - err3;
             cdxbdy1 = (cdx * bdy); c = (splitter * cdx); abig = (c - cdx); ahi = c - abig; alo = cdx - ahi; c = (splitter * bdy); abig = (c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = cdxbdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); cdxbdy0 = (alo * blo) - err3;
+            double[] bc = TrianglePool.AllocDoubleArray(4);
             _i = (bdxcdy0 - cdxbdy0); bvirt = (bdxcdy0 - _i); avirt = _i + bvirt; bround = bvirt - cdxbdy0; around = bdxcdy0 - avirt; bc[0] = around + bround; _j = (bdxcdy1 + _i); bvirt = (_j - bdxcdy1); avirt = _j - bvirt; bround = _i - bvirt; around = bdxcdy1 - avirt; _0 = around + bround; _i = (_0 - cdxbdy1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - cdxbdy1; around = _0 - avirt; bc[1] = around + bround; bc3 = (_j + _i); bvirt = (bc3 - _j); avirt = bc3 - bvirt; bround = _i - bvirt; around = _j - avirt; bc[2] = around + bround;
+
+            
             bc[3] = bc3;
+            double[] axbc = TrianglePool.AllocDoubleArray(8);
             axbclen = ScaleExpansionZeroElim(4, bc, adx, axbc);
+            double[] axxbc = TrianglePool.AllocDoubleArray(16);
             axxbclen = ScaleExpansionZeroElim(axbclen, axbc, adx, axxbc);
+            TrianglePool.FreeDoubleArray(axbc);
+            double[] aybc = TrianglePool.AllocDoubleArray(8);
             aybclen = ScaleExpansionZeroElim(4, bc, ady, aybc);
+            double[] ayybc = TrianglePool.AllocDoubleArray(16);
             ayybclen = ScaleExpansionZeroElim(aybclen, aybc, ady, ayybc);
+            TrianglePool.FreeDoubleArray(aybc);
+            double[] adet = TrianglePool.AllocDoubleArray(32);
             alen = FastExpansionSumZeroElim(axxbclen, axxbc, ayybclen, ayybc, adet);
+            TrianglePool.FreeDoubleArray(axxbc);
+            TrianglePool.FreeDoubleArray(ayybc);
+
 
             cdxady1 = (cdx * ady); c = (splitter * cdx); abig = (c - cdx); ahi = c - abig; alo = cdx - ahi; c = (splitter * ady); abig = (c - ady); bhi = c - abig; blo = ady - bhi; err1 = cdxady1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); cdxady0 = (alo * blo) - err3;
             adxcdy1 = (adx * cdy); c = (splitter * adx); abig = (c - adx); ahi = c - abig; alo = adx - ahi; c = (splitter * cdy); abig = (c - cdy); bhi = c - abig; blo = cdy - bhi; err1 = adxcdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); adxcdy0 = (alo * blo) - err3;
+
+            double[] ca = TrianglePool.AllocDoubleArray(4);
             _i = (cdxady0 - adxcdy0); bvirt = (cdxady0 - _i); avirt = _i + bvirt; bround = bvirt - adxcdy0; around = cdxady0 - avirt; ca[0] = around + bround; _j = (cdxady1 + _i); bvirt = (_j - cdxady1); avirt = _j - bvirt; bround = _i - bvirt; around = cdxady1 - avirt; _0 = around + bround; _i = (_0 - adxcdy1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - adxcdy1; around = _0 - avirt; ca[1] = around + bround; ca3 = (_j + _i); bvirt = (ca3 - _j); avirt = ca3 - bvirt; bround = _i - bvirt; around = _j - avirt; ca[2] = around + bround;
+            
             ca[3] = ca3;
+            double[] bxca = TrianglePool.AllocDoubleArray(8);
             bxcalen = ScaleExpansionZeroElim(4, ca, bdx, bxca);
+            double[] bxxca = TrianglePool.AllocDoubleArray(16);
             bxxcalen = ScaleExpansionZeroElim(bxcalen, bxca, bdx, bxxca);
+            TrianglePool.FreeDoubleArray(bxca);
+            double[] byca = TrianglePool.AllocDoubleArray(8);
             bycalen = ScaleExpansionZeroElim(4, ca, bdy, byca);
+            double[] byyca = TrianglePool.AllocDoubleArray(16);
             byycalen = ScaleExpansionZeroElim(bycalen, byca, bdy, byyca);
+            TrianglePool.FreeDoubleArray(byca);
+            double[] bdet = TrianglePool.AllocDoubleArray(32);
             blen = FastExpansionSumZeroElim(bxxcalen, bxxca, byycalen, byyca, bdet);
+            TrianglePool.FreeDoubleArray(bxxca);
+            TrianglePool.FreeDoubleArray(byyca);
 
             adxbdy1 = (adx * bdy); c = (splitter * adx); abig = (c - adx); ahi = c - abig; alo = adx - ahi; c = (splitter * bdy); abig = (c - bdy); bhi = c - abig; blo = bdy - bhi; err1 = adxbdy1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); adxbdy0 = (alo * blo) - err3;
             bdxady1 = (bdx * ady); c = (splitter * bdx); abig = (c - bdx); ahi = c - abig; alo = bdx - ahi; c = (splitter * ady); abig = (c - ady); bhi = c - abig; blo = ady - bhi; err1 = bdxady1 - (ahi * bhi); err2 = err1 - (alo * bhi); err3 = err2 - (ahi * blo); bdxady0 = (alo * blo) - err3;
+            double[] ab = TrianglePool.AllocDoubleArray(4);
             _i = (adxbdy0 - bdxady0); bvirt = (adxbdy0 - _i); avirt = _i + bvirt; bround = bvirt - bdxady0; around = adxbdy0 - avirt; ab[0] = around + bround; _j = (adxbdy1 + _i); bvirt = (_j - adxbdy1); avirt = _j - bvirt; bround = _i - bvirt; around = adxbdy1 - avirt; _0 = around + bround; _i = (_0 - bdxady1); bvirt = (_0 - _i); avirt = _i + bvirt; bround = bvirt - bdxady1; around = _0 - avirt; ab[1] = around + bround; ab3 = (_j + _i); bvirt = (ab3 - _j); avirt = ab3 - bvirt; bround = _i - bvirt; around = _j - avirt; ab[2] = around + bround;
+            
             ab[3] = ab3;
+            double[] cxab = TrianglePool.AllocDoubleArray(8);
             cxablen = ScaleExpansionZeroElim(4, ab, cdx, cxab);
+            double[] cxxab = TrianglePool.AllocDoubleArray(16);
             cxxablen = ScaleExpansionZeroElim(cxablen, cxab, cdx, cxxab);
+            TrianglePool.FreeDoubleArray(cxab);
+            double[] cyab = TrianglePool.AllocDoubleArray(8);
             cyablen = ScaleExpansionZeroElim(4, ab, cdy, cyab);
+            double[] cyyab = TrianglePool.AllocDoubleArray(16);
             cyyablen = ScaleExpansionZeroElim(cyablen, cyab, cdy, cyyab);
+            TrianglePool.FreeDoubleArray(cyab);
+            double[] cdet = TrianglePool.AllocDoubleArray(32);
             clen = FastExpansionSumZeroElim(cxxablen, cxxab, cyyablen, cyyab, cdet);
+            TrianglePool.FreeDoubleArray(cyyab);
+            TrianglePool.FreeDoubleArray(cxxab);
 
+            double[] abdet = TrianglePool.AllocDoubleArray(64);
             ablen = FastExpansionSumZeroElim(alen, adet, blen, bdet, abdet);
+            TrianglePool.FreeDoubleArray(adet);
+            TrianglePool.FreeDoubleArray(bdet);
+            double[] fin1 = TrianglePool.AllocDoubleArray(1152);
             finlength = FastExpansionSumZeroElim(ablen, abdet, clen, cdet, fin1);
+            TrianglePool.FreeDoubleArray(abdet);
+            TrianglePool.FreeDoubleArray(cdet);
 
             det = Estimate(finlength, fin1);
             errbound = iccerrboundB * permanent;
             if ((det >= errbound) || (-det >= errbound))
             {
+                TrianglePool.FreeDoubleArray(ab);
+                TrianglePool.FreeDoubleArray(bc);
+                TrianglePool.FreeDoubleArray(ca);
+                TrianglePool.FreeDoubleArray(fin1);
                 return det;
             }
 
@@ -809,6 +847,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             if ((adxtail == 0.0) && (bdxtail == 0.0) && (cdxtail == 0.0)
                 && (adytail == 0.0) && (bdytail == 0.0) && (cdytail == 0.0))
             {
+                TrianglePool.FreeDoubleArray(ab);
+                TrianglePool.FreeDoubleArray(bc);
+                TrianglePool.FreeDoubleArray(ca);
+                TrianglePool.FreeDoubleArray(fin1);
                 return det;
             }
 
@@ -821,11 +863,25 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     + 2.0 * (cdx * cdxtail + cdy * cdytail) * (adx * bdy - ady * bdx));
             if ((det >= errbound) || (-det >= errbound))
             {
+                TrianglePool.FreeDoubleArray(ab);
+                TrianglePool.FreeDoubleArray(bc);
+                TrianglePool.FreeDoubleArray(ca);
+                TrianglePool.FreeDoubleArray(fin1);
                 return det;
             }
 
             finnow = fin1;
+            double[] fin2 = TrianglePool.AllocDoubleArray(1152);
             finother = fin2;
+
+            double[] aa = TrianglePool.AllocDoubleArray(4);
+            double[] bb = TrianglePool.AllocDoubleArray(4);
+            double[] cc = TrianglePool.AllocDoubleArray(4);
+
+            double[] temp16a = TrianglePool.AllocDoubleArray(16), temp16b = TrianglePool.AllocDoubleArray(16), 
+                temp16c = TrianglePool.AllocDoubleArray(16);
+            double[] temp32a = TrianglePool.AllocDoubleArray(32), temp32b = TrianglePool.AllocDoubleArray(32),
+                temp48 = TrianglePool.AllocDoubleArray(48), temp64 = TrianglePool.AllocDoubleArray(64);
 
             if ((bdxtail != 0.0) || (bdytail != 0.0)
                 || (cdxtail != 0.0) || (cdytail != 0.0))
@@ -852,105 +908,153 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 cc[3] = cc3;
             }
 
+
+            double[] axtbc = TrianglePool.AllocDoubleArray(8);
             if (adxtail != 0.0)
             {
                 axtbclen = ScaleExpansionZeroElim(4, bc, adxtail, axtbc);
                 temp16alen = ScaleExpansionZeroElim(axtbclen, axtbc, 2.0 * adx, temp16a);
 
+                double[] axtcc = TrianglePool.AllocDoubleArray(8);
                 axtcclen = ScaleExpansionZeroElim(4, cc, adxtail, axtcc);
                 temp16blen = ScaleExpansionZeroElim(axtcclen, axtcc, bdy, temp16b);
+                TrianglePool.FreeDoubleArray(axtcc);
 
+                double[] axtbb = TrianglePool.AllocDoubleArray(8); 
                 axtbblen = ScaleExpansionZeroElim(4, bb, adxtail, axtbb);
                 temp16clen = ScaleExpansionZeroElim(axtbblen, axtbb, -cdy, temp16c);
+                TrianglePool.FreeDoubleArray(axtbb);
 
                 temp32alen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32a);
                 temp48len = FastExpansionSumZeroElim(temp16clen, temp16c, temp32alen, temp32a, temp48);
                 finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                 finswap = finnow; finnow = finother; finother = finswap;
             }
+
+            double[] aytbc = TrianglePool.AllocDoubleArray(8); 
             if (adytail != 0.0)
             {
                 aytbclen = ScaleExpansionZeroElim(4, bc, adytail, aytbc);
                 temp16alen = ScaleExpansionZeroElim(aytbclen, aytbc, 2.0 * ady, temp16a);
 
+                double[] aytbb = TrianglePool.AllocDoubleArray(8);
                 aytbblen = ScaleExpansionZeroElim(4, bb, adytail, aytbb);
                 temp16blen = ScaleExpansionZeroElim(aytbblen, aytbb, cdx, temp16b);
+                TrianglePool.FreeDoubleArray(aytbb);
 
+                double[] aytcc = TrianglePool.AllocDoubleArray(8);
                 aytcclen = ScaleExpansionZeroElim(4, cc, adytail, aytcc);
                 temp16clen = ScaleExpansionZeroElim(aytcclen, aytcc, -bdx, temp16c);
+                TrianglePool.FreeDoubleArray(aytcc);
 
                 temp32alen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32a);
                 temp48len = FastExpansionSumZeroElim(temp16clen, temp16c, temp32alen, temp32a, temp48);
                 finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                 finswap = finnow; finnow = finother; finother = finswap;
             }
+            TrianglePool.FreeDoubleArray(bc);
+
+            double[] bxtca = TrianglePool.AllocDoubleArray(8);
             if (bdxtail != 0.0)
             {
                 bxtcalen = ScaleExpansionZeroElim(4, ca, bdxtail, bxtca);
                 temp16alen = ScaleExpansionZeroElim(bxtcalen, bxtca, 2.0 * bdx, temp16a);
 
+                double[] bxtaa = TrianglePool.AllocDoubleArray(8);
                 bxtaalen = ScaleExpansionZeroElim(4, aa, bdxtail, bxtaa);
                 temp16blen = ScaleExpansionZeroElim(bxtaalen, bxtaa, cdy, temp16b);
+                TrianglePool.FreeDoubleArray(bxtaa);
 
+                double[] bxtcc = TrianglePool.AllocDoubleArray(8);
                 bxtcclen = ScaleExpansionZeroElim(4, cc, bdxtail, bxtcc);
                 temp16clen = ScaleExpansionZeroElim(bxtcclen, bxtcc, -ady, temp16c);
+                TrianglePool.FreeDoubleArray(bxtcc);
 
                 temp32alen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32a);
                 temp48len = FastExpansionSumZeroElim(temp16clen, temp16c, temp32alen, temp32a, temp48);
                 finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                 finswap = finnow; finnow = finother; finother = finswap;
             }
+
+            double[] bytca = TrianglePool.AllocDoubleArray(8);
             if (bdytail != 0.0)
             {
                 bytcalen = ScaleExpansionZeroElim(4, ca, bdytail, bytca);
                 temp16alen = ScaleExpansionZeroElim(bytcalen, bytca, 2.0 * bdy, temp16a);
 
+                double[] bytcc = TrianglePool.AllocDoubleArray(8);
                 bytcclen = ScaleExpansionZeroElim(4, cc, bdytail, bytcc);
                 temp16blen = ScaleExpansionZeroElim(bytcclen, bytcc, adx, temp16b);
+                TrianglePool.FreeDoubleArray(bytcc);
 
+                double[] bytaa = TrianglePool.AllocDoubleArray(8);
                 bytaalen = ScaleExpansionZeroElim(4, aa, bdytail, bytaa);
                 temp16clen = ScaleExpansionZeroElim(bytaalen, bytaa, -cdx, temp16c);
+                TrianglePool.FreeDoubleArray(bytaa);
 
                 temp32alen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32a);
                 temp48len = FastExpansionSumZeroElim(temp16clen, temp16c, temp32alen, temp32a, temp48);
                 finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                 finswap = finnow; finnow = finother; finother = finswap;
             }
+            TrianglePool.FreeDoubleArray(ca);
+
+            double[] cxtab = TrianglePool.AllocDoubleArray(8); 
             if (cdxtail != 0.0)
             {
                 cxtablen = ScaleExpansionZeroElim(4, ab, cdxtail, cxtab);
                 temp16alen = ScaleExpansionZeroElim(cxtablen, cxtab, 2.0 * cdx, temp16a);
 
+                double[] cxtbb = TrianglePool.AllocDoubleArray(8);
                 cxtbblen = ScaleExpansionZeroElim(4, bb, cdxtail, cxtbb);
                 temp16blen = ScaleExpansionZeroElim(cxtbblen, cxtbb, ady, temp16b);
+                TrianglePool.FreeDoubleArray(cxtbb);
 
+                double[] cxtaa = TrianglePool.AllocDoubleArray(8);
                 cxtaalen = ScaleExpansionZeroElim(4, aa, cdxtail, cxtaa);
                 temp16clen = ScaleExpansionZeroElim(cxtaalen, cxtaa, -bdy, temp16c);
+                TrianglePool.FreeDoubleArray(cxtaa);
 
                 temp32alen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32a);
                 temp48len = FastExpansionSumZeroElim(temp16clen, temp16c, temp32alen, temp32a, temp48);
                 finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                 finswap = finnow; finnow = finother; finother = finswap;
             }
+
+            double[] cytab = TrianglePool.AllocDoubleArray(8);
             if (cdytail != 0.0)
             {
                 cytablen = ScaleExpansionZeroElim(4, ab, cdytail, cytab);
                 temp16alen = ScaleExpansionZeroElim(cytablen, cytab, 2.0 * cdy, temp16a);
 
+                double[] cytaa = TrianglePool.AllocDoubleArray(8);
                 cytaalen = ScaleExpansionZeroElim(4, aa, cdytail, cytaa);
                 temp16blen = ScaleExpansionZeroElim(cytaalen, cytaa, bdx, temp16b);
+                TrianglePool.FreeDoubleArray(cytaa);
 
+                double[] cytbb = TrianglePool.AllocDoubleArray(8);
                 cytbblen = ScaleExpansionZeroElim(4, bb, cdytail, cytbb);
                 temp16clen = ScaleExpansionZeroElim(cytbblen, cytbb, -adx, temp16c);
+                TrianglePool.FreeDoubleArray(cytbb);
 
                 temp32alen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32a);
                 temp48len = FastExpansionSumZeroElim(temp16clen, temp16c, temp32alen, temp32a, temp48);
                 finlength = FastExpansionSumZeroElim(finlength, finnow, temp48len, temp48, finother);
                 finswap = finnow; finnow = finother; finother = finswap;
             }
+            
+            TrianglePool.FreeDoubleArray(ab);
+
+            // Edited to work around index out of range exceptions (changed array length from 4 to 5).
+            // See unsafe indexing in FastExpansionSumZeroElim.
+            double[] v = TrianglePool.AllocDoubleArray(5);
+            double[] u = TrianglePool.AllocDoubleArray(5);
+            double[] temp8 = TrianglePool.AllocDoubleArray(8);
 
             if ((adxtail != 0.0) || (adytail != 0.0))
             {
+                double[] bctt = TrianglePool.AllocDoubleArray(8);
+                double[] bct = TrianglePool.AllocDoubleArray(8);
                 if ((bdxtail != 0.0) || (bdytail != 0.0)
                     || (cdxtail != 0.0) || (cdytail != 0.0))
                 {
@@ -982,6 +1086,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
                 if (adxtail != 0.0)
                 {
+                    double[] axtbct = TrianglePool.AllocDoubleArray(16);
                     temp16alen = ScaleExpansionZeroElim(axtbclen, axtbc, adxtail, temp16a);
                     axtbctlen = ScaleExpansionZeroElim(bctlen, bct, adxtail, axtbct);
                     temp32alen = ScaleExpansionZeroElim(axtbctlen, axtbct, 2.0 * adx, temp32a);
@@ -1004,9 +1109,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     }
 
                     temp32alen = ScaleExpansionZeroElim(axtbctlen, axtbct, adxtail, temp32a);
+                    TrianglePool.FreeDoubleArray(axtbct);
+                    double[] axtbctt = TrianglePool.AllocDoubleArray(8);
                     axtbcttlen = ScaleExpansionZeroElim(bcttlen, bctt, adxtail, axtbctt);
                     temp16alen = ScaleExpansionZeroElim(axtbcttlen, axtbctt, 2.0 * adx, temp16a);
                     temp16blen = ScaleExpansionZeroElim(axtbcttlen, axtbctt, adxtail, temp16b);
+                    TrianglePool.FreeDoubleArray(axtbctt);
                     temp32blen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32b);
                     temp64len = FastExpansionSumZeroElim(temp32alen, temp32a, temp32blen, temp32b, temp64);
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp64len, temp64, finother);
@@ -1014,6 +1122,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 }
                 if (adytail != 0.0)
                 {
+                    double[] aytbct = TrianglePool.AllocDoubleArray(16);
                     temp16alen = ScaleExpansionZeroElim(aytbclen, aytbc, adytail, temp16a);
                     aytbctlen = ScaleExpansionZeroElim(bctlen, bct, adytail, aytbct);
                     temp32alen = ScaleExpansionZeroElim(aytbctlen, aytbct, 2.0 * ady, temp32a);
@@ -1023,17 +1132,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
 
                     temp32alen = ScaleExpansionZeroElim(aytbctlen, aytbct, adytail, temp32a);
+                    TrianglePool.FreeDoubleArray(aytbct);
+                    double[] aytbctt = TrianglePool.AllocDoubleArray(8);
                     aytbcttlen = ScaleExpansionZeroElim(bcttlen, bctt, adytail, aytbctt);
                     temp16alen = ScaleExpansionZeroElim(aytbcttlen, aytbctt, 2.0 * ady, temp16a);
                     temp16blen = ScaleExpansionZeroElim(aytbcttlen, aytbctt, adytail, temp16b);
+                    TrianglePool.FreeDoubleArray(aytbctt);
                     temp32blen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32b);
                     temp64len = FastExpansionSumZeroElim(temp32alen, temp32a, temp32blen, temp32b, temp64);
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp64len, temp64, finother);
                     finswap = finnow; finnow = finother; finother = finswap;
                 }
+                TrianglePool.FreeDoubleArray(bctt);
+                TrianglePool.FreeDoubleArray(bct);
             }
             if ((bdxtail != 0.0) || (bdytail != 0.0))
             {
+                double[] catt = TrianglePool.AllocDoubleArray(4);
+                double[] cat = TrianglePool.AllocDoubleArray(8);
                 if ((cdxtail != 0.0) || (cdytail != 0.0)
                     || (adxtail != 0.0) || (adytail != 0.0))
                 {
@@ -1065,6 +1181,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
                 if (bdxtail != 0.0)
                 {
+                    double[] bxtcat = TrianglePool.AllocDoubleArray(16);
                     temp16alen = ScaleExpansionZeroElim(bxtcalen, bxtca, bdxtail, temp16a);
                     bxtcatlen = ScaleExpansionZeroElim(catlen, cat, bdxtail, bxtcat);
                     temp32alen = ScaleExpansionZeroElim(bxtcatlen, bxtcat, 2.0 * bdx, temp32a);
@@ -1087,9 +1204,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     }
 
                     temp32alen = ScaleExpansionZeroElim(bxtcatlen, bxtcat, bdxtail, temp32a);
+                    TrianglePool.FreeDoubleArray(bxtcat);
+                    double[] bxtcatt = TrianglePool.AllocDoubleArray(16);
                     bxtcattlen = ScaleExpansionZeroElim(cattlen, catt, bdxtail, bxtcatt);
                     temp16alen = ScaleExpansionZeroElim(bxtcattlen, bxtcatt, 2.0 * bdx, temp16a);
                     temp16blen = ScaleExpansionZeroElim(bxtcattlen, bxtcatt, bdxtail, temp16b);
+                    TrianglePool.FreeDoubleArray(bxtcatt);
                     temp32blen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32b);
                     temp64len = FastExpansionSumZeroElim(temp32alen, temp32a, temp32blen, temp32b, temp64);
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp64len, temp64, finother);
@@ -1097,6 +1217,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 }
                 if (bdytail != 0.0)
                 {
+                    double[] bytcat = TrianglePool.AllocDoubleArray(16);
                     temp16alen = ScaleExpansionZeroElim(bytcalen, bytca, bdytail, temp16a);
                     bytcatlen = ScaleExpansionZeroElim(catlen, cat, bdytail, bytcat);
                     temp32alen = ScaleExpansionZeroElim(bytcatlen, bytcat, 2.0 * bdy, temp32a);
@@ -1105,17 +1226,24 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     finswap = finnow; finnow = finother; finother = finswap;
 
                     temp32alen = ScaleExpansionZeroElim(bytcatlen, bytcat, bdytail, temp32a);
+                    TrianglePool.FreeDoubleArray(bytcat);
+                    double[] bytcatt = TrianglePool.AllocDoubleArray(8);
                     bytcattlen = ScaleExpansionZeroElim(cattlen, catt, bdytail, bytcatt);
                     temp16alen = ScaleExpansionZeroElim(bytcattlen, bytcatt, 2.0 * bdy, temp16a);
                     temp16blen = ScaleExpansionZeroElim(bytcattlen, bytcatt, bdytail, temp16b);
+                    TrianglePool.FreeDoubleArray(bytcatt);
                     temp32blen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32b);
                     temp64len = FastExpansionSumZeroElim(temp32alen, temp32a, temp32blen, temp32b, temp64);
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp64len, temp64, finother);
                     finswap = finnow; finnow = finother; finother = finswap;
                 }
+                TrianglePool.FreeDoubleArray(catt);
+                TrianglePool.FreeDoubleArray(cat);
             }
             if ((cdxtail != 0.0) || (cdytail != 0.0))
             {
+                double[] abtt = TrianglePool.AllocDoubleArray(4);
+                double[] abt = TrianglePool.AllocDoubleArray(8);
                 if ((adxtail != 0.0) || (adytail != 0.0)
                     || (bdxtail != 0.0) || (bdytail != 0.0))
                 {
@@ -1147,6 +1275,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
                 if (cdxtail != 0.0)
                 {
+                    double[] cxtabt = TrianglePool.AllocDoubleArray(16);
                     temp16alen = ScaleExpansionZeroElim(cxtablen, cxtab, cdxtail, temp16a);
                     cxtabtlen = ScaleExpansionZeroElim(abtlen, abt, cdxtail, cxtabt);
                     temp32alen = ScaleExpansionZeroElim(cxtabtlen, cxtabt, 2.0 * cdx, temp32a);
@@ -1169,9 +1298,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     }
 
                     temp32alen = ScaleExpansionZeroElim(cxtabtlen, cxtabt, cdxtail, temp32a);
+                    TrianglePool.FreeDoubleArray(cxtabt);
+                    double[] cxtabtt = TrianglePool.AllocDoubleArray(8);
                     cxtabttlen = ScaleExpansionZeroElim(abttlen, abtt, cdxtail, cxtabtt);
                     temp16alen = ScaleExpansionZeroElim(cxtabttlen, cxtabtt, 2.0 * cdx, temp16a);
                     temp16blen = ScaleExpansionZeroElim(cxtabttlen, cxtabtt, cdxtail, temp16b);
+                    TrianglePool.FreeDoubleArray(cxtabtt);
                     temp32blen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32b);
                     temp64len = FastExpansionSumZeroElim(temp32alen, temp32a, temp32blen, temp32b, temp64);
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp64len, temp64, finother);
@@ -1179,6 +1311,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 }
                 if (cdytail != 0.0)
                 {
+                    double[] cytabt = TrianglePool.AllocDoubleArray(16);
                     temp16alen = ScaleExpansionZeroElim(cytablen, cytab, cdytail, temp16a);
                     cytabtlen = ScaleExpansionZeroElim(abtlen, abt, cdytail, cytabt);
                     temp32alen = ScaleExpansionZeroElim(cytabtlen, cytabt, 2.0 * cdy, temp32a);
@@ -1188,17 +1321,49 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
 
                     temp32alen = ScaleExpansionZeroElim(cytabtlen, cytabt, cdytail, temp32a);
+                    TrianglePool.FreeDoubleArray(cytabt);
+                    double[] cytabtt = TrianglePool.AllocDoubleArray(8);
                     cytabttlen = ScaleExpansionZeroElim(abttlen, abtt, cdytail, cytabtt);
                     temp16alen = ScaleExpansionZeroElim(cytabttlen, cytabtt, 2.0 * cdy, temp16a);
                     temp16blen = ScaleExpansionZeroElim(cytabttlen, cytabtt, cdytail, temp16b);
+                    TrianglePool.FreeDoubleArray(cytabtt);
                     temp32blen = FastExpansionSumZeroElim(temp16alen, temp16a, temp16blen, temp16b, temp32b);
                     temp64len = FastExpansionSumZeroElim(temp32alen, temp32a, temp32blen, temp32b, temp64);
                     finlength = FastExpansionSumZeroElim(finlength, finnow, temp64len, temp64, finother);
                     finswap = finnow; finnow = finother; finother = finswap;
                 }
+                TrianglePool.FreeDoubleArray(abt);
+                TrianglePool.FreeDoubleArray(abtt);
             }
 
-            return finnow[finlength - 1];
+            var result = finnow[finlength - 1];
+
+            TrianglePool.FreeDoubleArray(axtbc);
+            TrianglePool.FreeDoubleArray(aytbc);
+            TrianglePool.FreeDoubleArray(bxtca);
+            TrianglePool.FreeDoubleArray(bytca);
+            TrianglePool.FreeDoubleArray(cxtab);
+            TrianglePool.FreeDoubleArray(cytab);
+            
+            TrianglePool.FreeDoubleArray(v);
+            TrianglePool.FreeDoubleArray(u);
+
+            TrianglePool.FreeDoubleArray(temp8);
+            TrianglePool.FreeDoubleArray(temp16a);
+            TrianglePool.FreeDoubleArray(temp16b);
+            TrianglePool.FreeDoubleArray(temp16c);
+            TrianglePool.FreeDoubleArray(temp32a);
+            TrianglePool.FreeDoubleArray(temp32b);
+            TrianglePool.FreeDoubleArray(temp48);
+            TrianglePool.FreeDoubleArray(temp64);
+
+            TrianglePool.FreeDoubleArray(aa);
+            TrianglePool.FreeDoubleArray(bb);
+            TrianglePool.FreeDoubleArray(cc);
+            TrianglePool.FreeDoubleArray(fin1);
+            TrianglePool.FreeDoubleArray(fin2);
+
+            return result;
         }
 
         #endregion

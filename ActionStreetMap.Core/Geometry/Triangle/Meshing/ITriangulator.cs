@@ -7,6 +7,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
     public interface ITriangulator
     {
         /// <summary> Triangulates a point set. </summary>
-        Mesh Triangulate(ICollection<Vertex> points);
+        Mesh Triangulate(List<Vertex> points);
     }
 }

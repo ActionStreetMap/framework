@@ -65,7 +65,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         /// <summary> Get a random sample set of triangle keys. </summary>
         /// <returns>Array of triangle keys.</returns>
-        public int[] GetSamples(Mesh mesh)
+        public List<int> GetSamples(Mesh mesh)
         {
             // TODO: Using currKeys to check key availability?
             List<int> randSamples = new List<int>(samples);
@@ -89,7 +89,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     randSamples.Add(keys[key]);
             }
 
-            return randSamples.ToArray();
+            return randSamples;
         }
     }
 }

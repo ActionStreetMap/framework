@@ -23,7 +23,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         private double xminextreme; // Nonexistent x value used as a flag in sweepline.
         private List<SplayNode> splaynodes;
 
-        public Mesh Triangulate(ICollection<Vertex> points)
+        public Mesh Triangulate(List<Vertex> points)
         {
             mesh = TrianglePool.AllocMesh();
             mesh.TransferNodes(points);

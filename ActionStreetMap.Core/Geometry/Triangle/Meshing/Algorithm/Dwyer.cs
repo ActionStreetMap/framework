@@ -42,7 +42,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 
         public bool UseDwyer = true;
 
-        Vertex[] sortarray;
+        List<Vertex> sortarray;
         Mesh mesh;
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         /// Sorts the vertices, calls a recursive procedure to triangulate them, and
         /// removes the bounding box, setting boundary markers as appropriate.
         /// </remarks>
-        public Mesh Triangulate(ICollection<Vertex> points)
+        public Mesh Triangulate(List<Vertex> points)
         {
             this.mesh = TrianglePool.AllocMesh();
             this.mesh.TransferNodes(points);
@@ -62,18 +62,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
             int divider;
             int i, j, n = points.Count;
 
-            //DebugWriter.Session.Start("test-dbg");
-
-            // Allocate an array of pointers to vertices for sorting.
-            // TODO: use ToArray
-            this.sortarray = new Vertex[n];
-            i = 0;
-            foreach (var v in points)
-            {
-                sortarray[i++] = v;
-            }
-            // Sort the vertices.
-            //Array.Sort(sortarray);
+            sortarray = points;
             VertexSort(0, n - 1);
             // Discard duplicate vertices, which can really mess up the algorithm.
             i = 0;
@@ -119,8 +108,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         /// <summary>
         /// Sort an array of vertices by x-coordinate, using the y-coordinate as a secondary key.
         /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
         /// <remarks>
         /// Uses quicksort. Randomized O(n log n) time. No, I did not make any of
         /// the usual quicksort mistakes.

@@ -174,17 +174,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             RobustPredicates.ExactInit();
         }
 
-        public void Refine(QualityOptions quality)
-        {
-            behavior.MinAngle = quality.MinimumAngle;
-            behavior.MaxAngle = quality.MaximumAngle;
-
-            behavior.MaxArea = quality.MaximumArea;
-            behavior.VarArea = quality.VariableArea;
-
-            Refine();
-        }
-
         #region Misc
 
         /// <summary> Triangulate given input data. </summary>
@@ -268,35 +257,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             return this;
         }
 
-        /// <summary> Refines the current mesh. </summary>
-        internal void Refine()
-        {
-            inelements = triangles.Count;
-            invertices = vertices.Count;
-
-            // TODO: Set all vertex types to input (i.e. NOT free)?
-            if (behavior.Poly)
-                insegments = behavior.useSegments ? subsegs.Count : hullsize;
-
-            Reset();
-
-            steinerleft = behavior.SteinerPoints;
-
-            // Ensure that no vertex can be mistaken for a triangular bounding
-            // box vertex in insertvertex().
-            infvertex1 = infvertex2 = infvertex3 = null;
-
-            if (behavior.useSegments)
-                checksegments = true;
-
-            if (triangles.Count > 0)
-                // Enforce angle and area constraints.
-                qualityMesher.EnforceQuality();
-
-            // Calculate the number of edges.
-            edges = (3*triangles.Count + hullsize)/2;
-        }
-
         internal void CopyTo(Mesh target)
         {
             target.vertices = vertices;
@@ -312,42 +272,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             target.numbering = numbering;
             target.hullsize = hullsize;
             target.edges = edges;
-        }
-
-        /// <summary>
-        ///     Reset all the mesh data. This method will also wipe
-        ///     out all mesh data.
-        /// </summary>
-        private void ResetData()
-        {
-            vertices.Clear();
-            triangles.Clear();
-            subsegs.Clear();
-
-            holes.Clear();
-
-            hash_vtx = 0;
-            hash_seg = 0;
-            hash_tri = 0;
-
-            flipstack.Clear();
-
-            hullsize = 0;
-            edges = 0;
-
-            Reset();
-
-            locator.Reset();
-        }
-
-        /// <summary> Reset the mesh triangulation state. </summary>
-        private void Reset()
-        {
-            numbering = NodeNumbering.None;
-
-            undeads = 0; // No eliminated input vertices yet.
-            checksegments = false; // There are no segments in the triangulation yet.
-            checkquality = false; // The quality triangulation stage has not begun.
         }
 
         /// <summary> Read the vertices from memory. </summary>
@@ -1624,7 +1548,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
             locator.Reset();
             numbering = default(NodeNumbering);
-            Reset();
+
+            numbering = NodeNumbering.None;
+
+            undeads = 0; // No eliminated input vertices yet.
+            checksegments = false; // There are no segments in the triangulation yet.
+            checkquality = false; // The quality triangulation stage has not begun.
         }
     }
 }

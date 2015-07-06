@@ -262,7 +262,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
             // TODO: Improve sampling.
             sampler.Update(mesh);
-            int[] samples = sampler.GetSamples(mesh);
+            var samples = sampler.GetSamples(mesh);
 
             foreach (var key in samples)
             {

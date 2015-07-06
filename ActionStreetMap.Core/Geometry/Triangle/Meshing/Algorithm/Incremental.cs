@@ -16,7 +16,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
         ///     Returns the number of edges on the convex hull of the
         ///     triangulation.
         /// </returns>
-        public Mesh Triangulate(ICollection<Vertex> points)
+        public Mesh Triangulate(List<Vertex> points)
         {
             mesh = TrianglePool.AllocMesh();
             mesh.TransferNodes(points);
