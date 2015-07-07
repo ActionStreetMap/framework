@@ -58,7 +58,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             Height = height;
 
             var geoCenter = GeoProjection.ToGeoCoordinate(relativeNullPoint, mapCenter);
-            BoundingBox = BoundingBox.CreateBoundingBox(geoCenter, width, height);
+            BoundingBox = BoundingBox.Create(geoCenter, width, height);
 
             Rectangle = new MapRectangle(MapCenter.X - width / 2, MapCenter.Y - height / 2, width, height);
 

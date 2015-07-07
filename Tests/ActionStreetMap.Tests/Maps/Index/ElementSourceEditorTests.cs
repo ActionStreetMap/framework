@@ -20,7 +20,7 @@ namespace ActionStreetMap.Tests.Maps.Index
         [SetUp]
         public void Setup()
         {
-            _boundingBox = BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 500);
+            _boundingBox = BoundingBox.Create(TestHelper.BerlinTestFilePoint, 500);
             var indexBuilder = new InMemoryIndexBuilder(_boundingBox,
                 TestHelper.GetIndexSettings(), TestHelper.GetObjectPool(), new ConsoleTrace());
             indexBuilder.Build();

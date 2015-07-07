@@ -30,7 +30,7 @@ namespace ActionStreetMap.Tests.Core
             const int delta = 5;
 
             // ACT
-            var bbox = BoundingBox.CreateBoundingBox(new GeoCoordinate(52, 13), expectedSize);
+            var bbox = BoundingBox.Create(new GeoCoordinate(52, 13), expectedSize);
             var calculatedSize = bbox.Size;
 
             // ASSERT

@@ -40,7 +40,7 @@ namespace ActionStreetMap.Tests.Maps.Index
             //messageBus.AsObservable<TileLoadFinishMessage>().Take(1).Wait(TimeSpan.FromSeconds(10));
 
             var searchEngine = _container.Resolve<ISearchEngine>();
-            var bbox = BoundingBox.CreateBoundingBox(TestHelper.BerlinTestFilePoint, 100, 100);
+            var bbox = BoundingBox.Create(TestHelper.BerlinTestFilePoint, 100, 100);
             // ACT
             var bars = (!String.IsNullOrEmpty(value)
                 ? searchEngine.SearchByTag(key, value, bbox)
