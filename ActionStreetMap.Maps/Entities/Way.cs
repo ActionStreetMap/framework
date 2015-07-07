@@ -8,10 +8,10 @@ namespace ActionStreetMap.Maps.Entities
     public class Way : Element
     {
         /// <summary> Holds the list of nodes. </summary>
-        internal List<long> NodeIds { get; set; }
+        internal List<long> NodeIds;
 
-        /// <summary> Gets or sets geo coordinates of way. </summary>
-        public List<GeoCoordinate> Coordinates { get; set; }
+        /// <summary> List of geocoordinates of way. </summary>
+        public List<GeoCoordinate> Coordinates;
 
         /// <inheritdoc />
         public override void Accept(IElementVisitor elementVisitor)
@@ -19,10 +19,14 @@ namespace ActionStreetMap.Maps.Entities
             elementVisitor.VisitWay(this);
         }
 
-        /// <summary> True if way is polygon. </summary>
-        public bool IsPolygon
+        /// <inheritdoc />
+        public override bool IsInside(BoundingBox bbox)
         {
-            get { return Coordinates.Count > 2; }
+            var wayBbox = BoundingBox.Empty();
+            foreach (var coordinate in Coordinates)
+                wayBbox += coordinate;
+
+            return wayBbox.Intersects(bbox);
         }
     }
 }

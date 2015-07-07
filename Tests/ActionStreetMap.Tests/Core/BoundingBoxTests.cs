@@ -21,20 +21,5 @@ namespace ActionStreetMap.Tests.Core
             Assert.AreEqual(bbox1.MinPoint, result.MinPoint);
             Assert.AreEqual(bbox2.MaxPoint, result.MaxPoint);
         }
-
-        [Test]
-        public void CanGetSize()
-        {
-            // ARRANGE
-            const int expectedSize = 2000;
-            const int delta = 5;
-
-            // ACT
-            var bbox = BoundingBox.Create(new GeoCoordinate(52, 13), expectedSize);
-            var calculatedSize = bbox.Size;
-
-            // ASSERT
-            Assert.LessOrEqual(Math.Abs(expectedSize - calculatedSize), delta);
-        }
     }
 }

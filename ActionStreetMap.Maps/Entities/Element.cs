@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Maps.Visitors;
+﻿using ActionStreetMap.Core;
+using ActionStreetMap.Maps.Visitors;
 using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Maps.Entities
@@ -27,6 +28,10 @@ namespace ActionStreetMap.Maps.Entities
         /// <summary> Accepts visitor. </summary>
         /// <param name="elementVisitor">Element visitor.</param>
         public abstract void Accept(IElementVisitor elementVisitor);
+
+        /// <summary> Checks whether element is inside bounding box. </summary>
+        /// <param name="bbox">Bounding box.</param>
+        public abstract bool IsInside(BoundingBox bbox);
 
         /// <inheritdoc />
         public override string ToString()

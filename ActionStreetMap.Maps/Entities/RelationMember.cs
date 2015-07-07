@@ -5,20 +5,20 @@ namespace ActionStreetMap.Maps.Entities
     /// <summary> Represents simple relation member. </summary>
     public class RelationMember
     {
-        /// <summary> Gets or sets relation member. </summary>
-        public Element Member { get; set; }
+        /// <summary> Relation member. </summary>
+        public Element Member;
 
-        /// <summary> Gets or sets relation member id. </summary>
-        public long MemberId { get; set; }
+        /// <summary> Relation member id. </summary>
+        public long MemberId;
 
-        /// <summary> Gets or sets relation member type id. </summary>
-        public int TypeId { get; set; }
+        /// <summary> Relation member type id. </summary>
+        public int TypeId;
 
-        /// <summary> Gets or sets relation member role. </summary>
-        public string Role { get; set; }
+        /// <summary> Relation member role. </summary>
+        public string Role;
 
-        /// <summary>  Offset in external storage. </summary>
-        internal uint Offset { get; set; }
+        /// <summary> Offset in external storage. </summary>
+        internal uint Offset;
 
         /// <inheritdoc />
         public override string ToString()

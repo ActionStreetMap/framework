@@ -6,13 +6,19 @@ namespace ActionStreetMap.Maps.Entities
     /// <summary> Represents a simple node. </summary>
     public class Node : Element
     {
-        /// <summary> Gets or sets coordinate of this node. </summary>
-        public GeoCoordinate Coordinate { get; set; }
+        /// <summary> Geocoordinate of the node. </summary>
+        public GeoCoordinate Coordinate;
 
         /// <inheritdoc />
         public override void Accept(IElementVisitor elementVisitor)
         {
             elementVisitor.VisitNode(this);
+        }
+
+        /// <inheritdoc />
+        public override bool IsInside(BoundingBox bbox)
+        {
+            return bbox.Contains(Coordinate);
         }
     }
 }

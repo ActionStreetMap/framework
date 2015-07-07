@@ -9,11 +9,11 @@ namespace ActionStreetMap.Core
     /// </summary>
     public class BoundingBox
     {
-        /// <summary> Gets or sets point with minimal latitude and longitude. </summary>
-        public GeoCoordinate MinPoint { get; set; }
+        /// <summary> Point with minimal latitude and longitude. </summary>
+        public GeoCoordinate MinPoint;
 
-        /// <summary> Gets or sets point with maximum latitude and longitude. </summary>
-        public GeoCoordinate MaxPoint { get; set; }
+        /// <summary> Point with maximum latitude and longitude. </summary>
+        public GeoCoordinate MaxPoint;
 
         /// <summary> Creates bounding box from given min and max points. </summary>
         /// <param name="minPoint">Point with minimal latitude and longitude</param>
@@ -22,29 +22,25 @@ namespace ActionStreetMap.Core
         {
             MinPoint = minPoint;
             MaxPoint = maxPoint;
-            Size = GeoProjection.Distance(minPoint, maxPoint)/Math.Sqrt(2);
         }
 
-        /// <summary> Gets size of bounding box. Assume that it's created as square. </summary>
-        public double Size { get; private set; }
+        #region Static operations
 
-        #region Operations
-
-        /// <summary> Adds point to bounding boxes together yielding as result the smallest box that surrounds both. </summary>
+        /// <summary> Adds geo coordinate to a bounding box. </summary>
         public static BoundingBox operator +(BoundingBox a, GeoCoordinate b)
         {
-            var minPoint = new GeoCoordinate(
+            a.MinPoint = new GeoCoordinate(
                 a.MinPoint.Latitude < b.Latitude ? a.MinPoint.Latitude : b.Latitude,
                 a.MinPoint.Longitude < b.Longitude ? a.MinPoint.Longitude : b.Longitude);
 
-            var maxPoint = new GeoCoordinate(
+            a.MaxPoint = new GeoCoordinate(
                 a.MaxPoint.Latitude > b.Latitude ? a.MaxPoint.Latitude : b.Latitude,
                 a.MaxPoint.Longitude > b.Longitude ? a.MaxPoint.Longitude : b.Longitude);
 
-            return new BoundingBox(minPoint, maxPoint);
+            return a;
         }
 
-        /// <summary> Adds bounding box to current. </summary>
+        /// <summary> Adds the right bounding box to the left one. </summary>
         public static BoundingBox operator +(BoundingBox a, BoundingBox b)
         {
             var minLat = a.MinPoint.Latitude < b.MinPoint.Latitude ? a.MinPoint.Latitude : b.MinPoint.Latitude;
@@ -53,7 +49,10 @@ namespace ActionStreetMap.Core
             var maxLat = a.MaxPoint.Latitude > b.MaxPoint.Latitude ? a.MaxPoint.Latitude : b.MaxPoint.Latitude;
             var maxLon = a.MaxPoint.Longitude > b.MaxPoint.Longitude ? a.MaxPoint.Longitude : b.MaxPoint.Longitude;
 
-            return new BoundingBox(new GeoCoordinate(minLat, minLon), new GeoCoordinate(maxLat, maxLon));
+            a.MinPoint = new GeoCoordinate(minLat, minLon);
+            a.MaxPoint = new GeoCoordinate(maxLat, maxLon);
+
+            return a;
         }
 
         #endregion
@@ -96,6 +95,35 @@ namespace ActionStreetMap.Core
         public static BoundingBox Create(GeoCoordinate center, float sideInMeters)
         {
             return Create(center, sideInMeters, sideInMeters);
+        }
+
+        /// <summary> Creates empty bounding box. </summary>
+        public static BoundingBox Empty()
+        {
+            return new BoundingBox(new GeoCoordinate(double.MaxValue, double.MaxValue),
+                                   new GeoCoordinate(double.MinValue, double.MinValue));
+        }
+
+        #endregion
+
+        #region Test functions
+
+        /// <summary> Checks whether given coordinate inside bounding box. </summary>
+        public bool Contains(GeoCoordinate coordinate)
+        {
+            return coordinate.Latitude > MinPoint.Latitude && coordinate.Longitude > MinPoint.Longitude &&
+                   coordinate.Latitude < MaxPoint.Latitude && coordinate.Longitude < MaxPoint.Longitude;
+        }
+
+        /// <summary> Checks whether bounding boxes are intersects </summary>
+        public bool Intersects(BoundingBox bbox)
+        {
+            double minX = Math.Max(MinPoint.Latitude, bbox.MinPoint.Latitude);
+            double minY = Math.Max(MinPoint.Longitude, bbox.MinPoint.Longitude);
+            double maxX = Math.Min(MaxPoint.Latitude, bbox.MaxPoint.Latitude);
+            double maxY = Math.Min(MaxPoint.Longitude, bbox.MaxPoint.Longitude);
+
+            return minX <= maxX && minY <= maxY;
         }
 
         #endregion

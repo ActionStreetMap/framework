@@ -108,9 +108,7 @@ namespace ActionStreetMap.Maps.Data
 
         private BoundingBox GetBoundingBox(Element element)
         {
-            var boundingBox = new BoundingBox(
-                new GeoCoordinate(double.MaxValue, double.MaxValue), 
-                new GeoCoordinate(double.MinValue, double.MinValue));
+            var boundingBox = BoundingBox.Empty();
 
             if (element is Way)
                 foreach (var geoCoordinate in ((Way)element).Coordinates)

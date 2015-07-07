@@ -60,16 +60,15 @@ namespace ActionStreetMap.Maps.Visitors
                 return;
             }
 
-            if (!way.IsPolygon)
+            if (way.Coordinates.Count <= 2)
                 return;
+
+            ModelLoader.LoadArea(Tile, new Area
             {
-                ModelLoader.LoadArea(Tile, new Area
-                {
-                    Id = way.Id,
-                    Points = way.Coordinates,
-                    Tags = way.Tags
-                });
-            }
+                Id = way.Id,
+                Points = way.Coordinates,
+                Tags = way.Tags
+            });
         }
 
         private bool IsArea(TagCollection tags)
