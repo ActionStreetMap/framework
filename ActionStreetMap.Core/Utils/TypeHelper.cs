@@ -5,7 +5,7 @@ namespace ActionStreetMap.Core.Utils
 {
     internal static class SanitizeHelper
     {
-        private static readonly Regex RegexFloat = new Regex(@"(?<number>[0-9\.]*).*");
+        private static readonly Regex RegexFloat = new Regex(@"(?<number>[-]?[0-9\.]*).*");
         
         public static string SanitizeFloat(string s)
         {

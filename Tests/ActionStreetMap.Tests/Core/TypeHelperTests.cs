@@ -11,6 +11,7 @@ namespace ActionStreetMap.Tests.Core
         {
             Assert.AreEqual("150", SanitizeHelper.SanitizeFloat("150m"));
             Assert.AreEqual("150.2", SanitizeHelper.SanitizeFloat("150.2m"));
+            Assert.AreEqual("-1", SanitizeHelper.SanitizeFloat("-1"));
         }
     }
 }
