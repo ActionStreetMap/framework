@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Maps.Entities;
@@ -53,6 +54,19 @@ namespace ActionStreetMap.Maps.Data.Storage
         /// <summary> Gets element by offset. </summary>
         public Element Get(uint offset)
         {
+            return Get(offset, null);
+        }
+
+        /// <summary> 
+        ///     Gets element by offset. If bbox is specified then performs checking of
+        ///     the given bbox and element's one. If element is outside then null is returned.
+        ///   </summary>
+        /// <remarks>
+        ///     This is some kind of performance optimization - we don't want to deserialize
+        ///     tags if we know that object is outside of the bbox.
+        /// </remarks>
+        internal Element Get(uint offset, BoundingBox bbox)
+        {
             // NOTE ElementStore is not thread-safe 
             lock (this)
             {
@@ -63,7 +77,7 @@ namespace ActionStreetMap.Maps.Data.Storage
                 // NOTE see relation processing inside index builder
                 var previousPosition = _stream.Position;
                 _stream.Seek(offset, SeekOrigin.Begin);
-                var element = ReadElement(_reader);
+                var element = ReadElement(_reader, bbox);
                 _stream.Seek(previousPosition, SeekOrigin.Begin);
                 return element;
             }
@@ -141,7 +155,7 @@ namespace ActionStreetMap.Maps.Data.Storage
 
         #region Private: Read
 
-        private Element ReadElement(BinaryReader reader)
+        private Element ReadElement(BinaryReader reader, BoundingBox bbox)
         {
             var elementId = reader.ReadInt64();
             var type = (ElementType) reader.ReadByte();
@@ -150,12 +164,27 @@ namespace ActionStreetMap.Maps.Data.Storage
             {
                  case ElementType.Node:
                     element = ReadNode(reader);
+                    if (bbox != null && !element.IsInside(bbox))
+                        return null;
                     break;
                  case ElementType.Way:
-                    element = ReadWay(reader);
+                    var way = ReadWay(reader);
+                    if (bbox != null && !way.IsInside(bbox))
+                    {
+                        _objectPool.StoreList(way.Coordinates);
+                        return null;
+                    }
+                    element = way;
                     break;
                  case ElementType.Relation:
-                    element = ReadRelation(reader);
+                    var relation = ReadRelation(reader);
+                    if (bbox != null && !relation.IsInside(bbox))
+                    {
+                        foreach (var relationWay in relation.Members.OfType<Way>())
+                            _objectPool.StoreList(relationWay.Coordinates);
+                        return null;
+                    }
+                    element = relation;
                     break;
                 default:
                     throw new InvalidOperationException(String.Format("Unknown element type: {0}", type));

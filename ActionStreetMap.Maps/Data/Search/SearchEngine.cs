@@ -51,7 +51,11 @@ namespace ActionStreetMap.Maps.Data.Search
                     var usageOffset = elementSource.KvStore.GetUsage(kvOffset);
                     var offsets = elementSource.KvUsage.Get(usageOffset);
                     foreach (var offset in offsets)
-                        o.OnNext(elementSource.ElementStore.Get(offset));
+                    {
+                        var element = elementSource.ElementStore.Get(offset, bbox);
+                        if (element != null)
+                            o.OnNext(element);
+                    }
                 }
                 o.OnCompleted();
                 return Disposable.Empty;
