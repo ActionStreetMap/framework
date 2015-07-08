@@ -11,13 +11,14 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data.Import;
+using ActionStreetMap.Maps.Data.Search;
 using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.53192, 13.38736);
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.47910, 13.45432);
         public static readonly Container _container = new Container();
 
         private const string LogTag = "host";
@@ -36,11 +37,23 @@ namespace ActionStreetMap.Tests
         {
             var program = new Program();
             program.RunGame();
-            program.DoContinuosMovements();
+            // program.PrintIndoorData();
+            //program.DoContinuosMovements();
             //program.RunMocker();
             //program.Wait(); 
 
             Console.ReadKey();
+        }
+
+        public void PrintIndoorData()
+        {
+            var boundingBox = BoundingBox.Create(StartGeoCoordinate, 500);
+            var search = _container.Resolve<ISearchEngine>();
+            search.SearchByTag("indoor", "yes", boundingBox).Subscribe(e =>
+            {
+                Console.WriteLine(e);
+            }, () =>
+                Console.WriteLine("Search completed"));
         }
 
         public void RunMocker()
@@ -59,6 +72,7 @@ namespace ActionStreetMap.Tests
             _logger.Start();
 
             var config = ConfigBuilder.GetDefault()
+                //.SetLocalMapData(@"g:\__ASM\__repository\_index\Index_Berlin_copy")
                 .Build();
                 
             var componentRoot = TestHelper.GetGameRunner(_container, config);
@@ -68,7 +82,7 @@ namespace ActionStreetMap.Tests
             _tileListener = new DemoTileListener(_messageBus, _logger);
 
             // start game on default position
-            componentRoot.RunGame(StartGeoCoordinate);
+            //componentRoot.RunGame(StartGeoCoordinate);
 
             _geoPositionObserver = _container.Resolve<ITileController>();
             _mapPositionObserver = _container.Resolve<ITileController>();
