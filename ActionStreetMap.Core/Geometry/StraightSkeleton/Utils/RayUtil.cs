@@ -57,14 +57,14 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
             var w = new Vector2d();
             w.Sub(s1p0, s2p0);
 
-            var d = perp(u, v);
+            var d = Perp(u, v);
 
             // test if they are parallel (includes either being a point)
             if (Math.Abs(d) < SmallNum)
             {
                 // they are NOT collinear
                 // S1 and S2 are parallel
-                if (perp(u, w) != 0 || perp(v, w) != 0)
+                if (Perp(u, w) != 0 || Perp(v, w) != 0)
                     return Empty;
 
                 // they are collinear or degenerate
@@ -152,12 +152,12 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
 
             // the segments are skew and may intersect in a point
             // get the intersect parameter for S1
-            var sI = perp(v, w)/d;
+            var sI = Perp(v, w)/d;
             if (sI < 0 /* || sI > 1 */)
                 return Empty;
 
             // get the intersect parameter for S2
-            var tI = perp(u, w)/d;
+            var tI = Perp(u, w)/d;
             if (tI < 0 /* || tI > 1 */)
                 return Empty;
 
@@ -186,7 +186,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
         }
 
         /// <summary> Perp Dot Product. </summary>
-        private static double perp(Vector2d u, Vector2d v)
+        private static double Perp(Vector2d u, Vector2d v)
         {
             return u.X*v.Y - u.Y*v.X;
         }
