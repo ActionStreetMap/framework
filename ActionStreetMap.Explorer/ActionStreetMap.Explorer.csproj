@@ -93,7 +93,6 @@
     <Compile Include="Geometry\Utils\LineUtils.cs" />
     <Compile Include="Geometry\Utils\PointUtils.cs" />
     <Compile Include="Geometry\Utils\DouglasPeuckerReduction.cs" />
-    <Compile Include="Geometry\Utils\StraightSkeleton.cs" />
     <Compile Include="Geometry\Utils\Triangulator.cs" />
     <Compile Include="Geometry\Utils\PolygonUtils.cs" />
     <Compile Include="Geometry\Primitives\Polygon.cs" />

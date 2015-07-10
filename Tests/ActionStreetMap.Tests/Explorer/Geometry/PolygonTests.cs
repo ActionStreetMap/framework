@@ -57,27 +57,5 @@ namespace ActionStreetMap.Tests.Explorer.Geometry
             // ASSERT
             Assert.AreEqual(new MapPoint(5, 5), center);
         }
-
-        [Test]
-        public void CanCalculateStraightSkeleton()
-        {
-            // ARRANGE
-            var polygon = new List<MapPoint>()
-            {
-                new MapPoint(0, 0),
-                new MapPoint(0, 10),
-                new MapPoint(10, 20),
-                new MapPoint(20, 10),
-                new MapPoint(20, 0),
-            };
-
-            // ACT
-            var skeleton = StraightSkeleton.Calculate(polygon);
-
-            // ASSERT
-            Assert.IsNotNull(skeleton);
-            Assert.AreEqual(21, skeleton.Item1.Count);
-            Assert.AreEqual(2, skeleton.Item2.Count);
-        }
     }
 }
