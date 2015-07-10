@@ -6,8 +6,8 @@
 	Changes: renamed namespace, removed logging, removed unneeded logic, performance optimizations
 
 * Clipper: http://www.angusj.com/delphi/clipper.php
-	Version: 6.1.3
-	Datestamp: 19 January 2014
+	Version: 6.4.0
+	Datestamp: 2 Jul 2014
 
 * StraightSkeleton: https://github.com/kendzi/kendzi-math/tree/master/kendzi-straight-skeleton
 	Datestamp: Dec 11, 2014
