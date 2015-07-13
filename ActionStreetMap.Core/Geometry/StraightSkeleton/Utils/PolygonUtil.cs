@@ -5,21 +5,17 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
 {
     internal class PolygonUtil
     {
-        /// <summary>
-        ///     Check if polygon is clockwise.
-        /// </summary>
-        /// <param name="polygon"> list of polygon points</param>
-        /// <returns>if polygon is clockwise</returns>
+        /// <summary> Check if polygon is clockwise. </summary>
+        /// <param name="polygon"> List of polygon points. </param>
+        /// <returns> If polygon is clockwise. </returns>
         public static bool IsClockwisePolygon(List<Vector2d> polygon)
         {
             return Area(polygon) < 0;
         }
 
-        /// <summary>
-        ///     Calculate area of polygon outline. For clockwise are will be less then
-        /// </summary>
+        /// <summary> Calculate area of polygon outline. For clockwise are will be less then. </summary>
         /// <param name="polygon">List of polygon points.</param>
-        /// <returns>Area</returns>
+        /// <returns> Area. </returns>
         public static double Area(List<Vector2d> polygon)
         {
             var n = polygon.Count;
@@ -30,11 +26,9 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
             return A*0.5f;
         }
 
-        /// <summary>
-        ///     Always returns points ordered as counter clockwise.
-        /// </summary>
-        /// <param name="polygon">Polygon as list of points.</param>
-        /// <returns>Counter clockwise polygon.</returns>
+        /// <summary> Always returns points ordered as counter clockwise. </summary>
+        /// <param name="polygon"> Polygon as list of points. </param>
+        /// <returns> Counter clockwise polygon.</returns>
         public static List<Vector2d> MakeCounterClockwise(List<Vector2d> polygon)
         {
             if (IsClockwisePolygon(polygon))

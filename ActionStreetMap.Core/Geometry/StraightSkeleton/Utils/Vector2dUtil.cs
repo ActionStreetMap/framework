@@ -42,19 +42,17 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
 
             // 90 - 180 || 180 - 270
             if (norm1.Dot(norm2) > 0)
-            {
-                e1v += e2v;
-                return e1v;
-            }
+                return e1v + e2v;
 
             // 0 - 180
             var ret = new Vector2d(norm1);
             ret.Negate();
             ret += norm2;
 
+            // 270 - 360
             if (e1v.Dot(norm2) < 0)
-                // 270 - 360
                 ret.Negate();
+
             return ret;
         }
     }
