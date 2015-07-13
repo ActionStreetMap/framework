@@ -20,9 +20,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
             var dot = rayDirection.Dot(pointVector);
 
             if (dot < epsilon)
-            {
                 return false;
-            }
+
             var x = rayDirection.X;
             rayDirection.X = rayDirection.Y;
             rayDirection.Y = -x;
@@ -45,7 +44,6 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
             var s1p1 = r1.A + r1.U;
 
             var s2p0 = r2.A;
-            var s2p1 = r2.A + r2.U;
 
             var u = r1.U;
             var v = r2.U;

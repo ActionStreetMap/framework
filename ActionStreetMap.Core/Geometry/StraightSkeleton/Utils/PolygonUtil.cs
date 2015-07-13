@@ -59,14 +59,11 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
             var first = points[it];
             var oddNodes = false;
 
-            Vector2d node1;
-            Vector2d node2;
-
             for (var i = 0; i < numpoints; i++)
             {
-                node1 = points[it];
+                var node1 = points[it];
                 it++;
-                node2 = i == numpoints - 1 ? first : points[it];
+                var node2 = i == numpoints - 1 ? first : points[it];
 
                 var x = point.X;
                 var y = point.Y;
