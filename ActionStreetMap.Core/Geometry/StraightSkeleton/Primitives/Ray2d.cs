@@ -15,9 +15,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
             if (collide.Equals(Vector2d.Empty))
                 return Vector2d.Empty;
 
-            var collideVector = new Vector2d(collide);
-            collideVector.Sub(ray.A);
-
+            var collideVector = collide - ray.A;
             return ray.U.Dot(collideVector) < epsilon ? Vector2d.Empty : collide;
         }
 

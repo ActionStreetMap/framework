@@ -21,17 +21,6 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
             Y = var3;
         }
 
-        public void Add(Vector2d var1)
-        {
-            X += var1.X;
-            Y += var1.Y;
-        }
-
-        public void Sub(Vector2d var1)
-        {
-            X -= var1.X;
-            Y -= var1.Y;
-        }
 
         public void Negate()
         {
@@ -39,23 +28,17 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
             Y = -Y;
         }
 
-        public void Sub(Vector2d var1, Vector2d var2)
+        public double DistanceTo(Vector2d var1)
         {
-            X = var1.X - var2.X;
-            Y = var1.Y - var2.Y;
+            var var2 = X - var1.X;
+            var var4 = Y - var1.Y;
+            return Math.Sqrt(var2 * var2 + var4 * var4);
         }
 
-        public void Scale(double var1)
-        {
-            X *= var1;
-            Y *= var1;
-        }
-
-        public void Normalize()
+        public Vector2d Normalized()
         {
             var var1 = 1.0D/Math.Sqrt(X*X + Y*Y);
-            X *= var1;
-            Y *= var1;
+            return new Vector2d(X *= var1, Y *= var1);
         }
 
         public double Dot(Vector2d var1)
@@ -68,6 +51,21 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
             var var2 = X - var1.X;
             var var4 = Y - var1.Y;
             return var2*var2 + var4*var4;
+        }
+
+        public static Vector2d operator -(Vector2d left, Vector2d right)
+        {
+            return new Vector2d(left.X - right.X, left.Y - right.Y);
+        }
+
+        public static Vector2d operator +(Vector2d left, Vector2d right)
+        {
+            return new Vector2d(left.X + right.X, left.Y + right.Y);
+        }
+
+        public static Vector2d operator *(Vector2d left, double scale)
+        {
+            return new Vector2d(left.X * scale, left.Y * scale);
         }
 
         public static bool operator ==(Vector2d left, Vector2d right)

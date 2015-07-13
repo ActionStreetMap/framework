@@ -20,10 +20,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
             End = end;
 
             LineLinear2d = new LineLinear2d(begin, end);
-
-            Norm = new Vector2d(end);
-            Norm.Sub(begin);
-            Norm.Normalize();
+            Norm = (end - begin).Normalized(); 
         }
 
         public override String ToString()

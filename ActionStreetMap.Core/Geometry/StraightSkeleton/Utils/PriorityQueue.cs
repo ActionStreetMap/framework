@@ -85,8 +85,6 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
         /// <returns>The first element in the queue, in ascending order.</returns>
         public T Next()
         {
-            if (!_heap.Any())
-                return default(T);
             // The element to return is of course the first element in the array, 
             // or the root of the tree. However, this will leave a 'hole' there. We
             // fill up this hole with the last element from the array. This will 

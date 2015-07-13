@@ -22,10 +22,9 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
         /// <summary>
         ///     <see cref="http://en.wikipedia.org/wiki/Vector_projection" />
         /// </summary>
-        public static Vector2d orthogonalProjection(Vector2d unitVector, Vector2d vectorToProject)
+        public static Vector2d OrthogonalProjection(Vector2d unitVector, Vector2d vectorToProject)
         {
-            var n = new Vector2d(unitVector);
-            n.Normalize();
+            var n = new Vector2d(unitVector).Normalized();
 
             var px = vectorToProject.X;
             var py = vectorToProject.Y;
@@ -44,14 +43,14 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
             // 90 - 180 || 180 - 270
             if (norm1.Dot(norm2) > 0)
             {
-                e1v.Add(e2v);
+                e1v += e2v;
                 return e1v;
             }
 
             // 0 - 180
             var ret = new Vector2d(norm1);
             ret.Negate();
-            ret.Add(norm2);
+            ret += norm2;
 
             if (e1v.Dot(norm2) < 0)
                 // 270 - 360

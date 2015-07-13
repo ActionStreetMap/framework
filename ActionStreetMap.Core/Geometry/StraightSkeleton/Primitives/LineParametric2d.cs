@@ -27,15 +27,13 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
 
         public bool IsOnLeftSite(Vector2d point, double epsilon)
         {
-            var direction = new Vector2d(point);
-            direction.Sub(A);
+            var direction = point - A;
             return Vector2dUtil.OrthogonalRight(U).Dot(direction) < epsilon;
         }
 
         public bool IsOnRightSite(Vector2d point, double epsilon)
         {
-            var direction = new Vector2d(point);
-            direction.Sub(A);
+            var direction = point - A;
             return Vector2dUtil.OrthogonalRight(U).Dot(direction) > -epsilon;
         }
     }

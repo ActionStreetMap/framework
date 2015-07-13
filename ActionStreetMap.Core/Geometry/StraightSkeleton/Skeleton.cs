@@ -52,7 +52,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             InitEvents(sLav, queue, edges);
 
             var count = 0;
-            while (queue.Count > 0)
+            while (!queue.Empty)
             {
                 // start processing skeleton level
                 count = AssertMaxNumberOfInteraction(count);
@@ -266,10 +266,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             // Check if edges are parallel and in opposite direction to each other.
             if (beginEdge.Norm.Dot(endEdge.Norm) < -0.97)
             {
-                var n1 = Vector2dUtil.FromTo(endPreviousVertex.Point, bisector.A);
-                var n2 = Vector2dUtil.FromTo(bisector.A, beginNextVertex.Point);
-                n1.Normalize();
-                n2.Normalize();
+                var n1 = Vector2dUtil.FromTo(endPreviousVertex.Point, bisector.A).Normalized();
+                var n2 = Vector2dUtil.FromTo(bisector.A, beginNextVertex.Point).Normalized();
                 var bisectorPrediction = CalcVectorBisector(n1, n2);
 
                 // Bisector is calculated in opposite direction to edges and center.
@@ -611,7 +609,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
                         j--;
                     }
                     // is near
-                    else if (Distance(eventCenter, test.V) < SplitEpsilon)
+                    else if (eventCenter.DistanceTo(test.V) < SplitEpsilon)
                     {
                         // group all event when the result point are near each other
                         var item = levelEvents[j];
@@ -676,13 +674,14 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
         private static List<SkeletonEvent> LoadLevelEvents(PriorityQueue<SkeletonEvent> queue)
         {
             var level = new List<SkeletonEvent>();
-
             SkeletonEvent levelStart;
+            // skip all obsolete events in level
             do
             {
-                levelStart = queue.Next();
-            } // skip all obsolete events in level
+                levelStart = queue.Empty ? null : queue.Next();
+            } 
             while (levelStart != null && levelStart.IsObsolete);
+
 
             // all events obsolete
             if (levelStart == null || levelStart.IsObsolete)
@@ -789,7 +788,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
         private static SkeletonResult AddFacesToOutput(List<FaceQueue> faces)
         {
             var edgeOutputs = new List<EdgeResult>();
-            var distances = new Dictionary<Vector2d, double>(new Vector2DistanceEqualityComparer());
+            var distances = new Dictionary<Vector2d, double>();
             foreach (var face in faces)
             {
                 if (face.Size > 0)
@@ -889,15 +888,15 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             var point1 = ComputeIntersectionBisectors(vertex, nextVertex);
             var point2 = ComputeIntersectionBisectors(previousVertex, vertex);
 
-            if (point1 == null && point2 == null)
+            if (point1 == Vector2d.Empty && point2 == Vector2d.Empty)
                 return -1;
 
             var distance1 = Double.MaxValue;
             var distance2 = Double.MaxValue;
 
-            if (point1 != null)
+            if (point1 != Vector2d.Empty)
                 distance1 = point.DistanceSquared(point1);
-            if (point2 != null)
+            if (point2 != Vector2d.Empty)
                 distance2 = point.DistanceSquared(point2);
 
             if (distance1 - SplitEpsilon < distance2)
@@ -917,7 +916,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             PriorityQueue<SkeletonEvent> queue)
         {
             var point = ComputeIntersectionBisectors(previousVertex, nextVertex);
-            if (point != null)
+            if (point != Vector2d.Empty)
                 queue.Add(CreateEdgeEvent(point, previousVertex, nextVertex));
         }
 
@@ -963,7 +962,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             // Simple intersection test between the bisector starting at V and the
             // whole line containing the currently tested line segment ei rejects
             // the line segments laying "behind" the vertex V
-            return Ray2d.Collide(bisector, edge, SplitEpsilon) == null;
+            return Ray2d.Collide(bisector, edge, SplitEpsilon) == Vector2d.Empty;
         }
 
         private static SplitCandidate CalcCandidatePointForSplit(Vertex vertex, Edge edge)
@@ -988,7 +987,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             // the edges starting at V and the tested line segment ei
             var candidatePoint = Ray2d.Collide(vertex.Bisector, edgesBisectorLine, SplitEpsilon);
 
-            if (candidatePoint == null)
+            if (candidatePoint == Vector2d.Empty)
                 return null;
 
             if (edge.BisectorPrevious.IsOnRightSite(candidatePoint, SplitEpsilon)
@@ -1061,18 +1060,14 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
             var edgeStart = oppositeEdge.Begin;
             var edgeNorm = oppositeEdge.Norm;
-            var centerVector = new Vector2d(center);
-            centerVector.Sub(edgeStart);
+            var centerVector = center - edgeStart;
             var centerDot = edgeNorm.Dot(centerVector);
             foreach (var end in edgeLavs)
             {
                 var begin = end.Previous as Vertex;
 
-                var beginVector = new Vector2d(begin.Point);
-                var endVector = new Vector2d(end.Point);
-
-                beginVector.Sub(edgeStart);
-                endVector.Sub(edgeStart);
+                var beginVector = begin.Point - edgeStart;
+                var endVector = end.Point - edgeStart;
 
                 var beginDot = edgeNorm.Dot(beginVector);
                 var endDot = edgeNorm.Dot(endVector);
@@ -1157,23 +1152,11 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
         private static double CalcDistance(Vector2d intersect, Edge currentEdge)
         {
-            var edge = new Vector2d(currentEdge.End);
-            edge.Sub(currentEdge.Begin);
+            var edge = currentEdge.End - currentEdge.Begin;
+            var vector = intersect - currentEdge.Begin;
 
-            var vector = new Vector2d(intersect);
-            vector.Sub(currentEdge.Begin);
-
-            var pointOnVector = Vector2dUtil.orthogonalProjection(edge, vector);
-
-            return Distance(vector, pointOnVector);
-        }
-
-        /// <summary>Computes the distance between this point and point p1. </summary>
-        private static double Distance(Vector2d p0, Vector2d p1)
-        {
-            var dx = p0.X - p1.X;
-            var dy = p0.Y - p1.Y;
-            return Math.Sqrt(dx*dx + dy*dy);
+            var pointOnVector = Vector2dUtil.OrthogonalProjection(edge, vector);
+            return vector.DistanceTo(pointOnVector);
         }
 
         private static Ray2d CalcBisector(Vector2d p, Edge e1, Edge e2)
@@ -1194,24 +1177,11 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
         private class SkeletonEventDistanseComparer : IComparer<SkeletonEvent>
         {
-            public int Compare(SkeletonEvent @event1, SkeletonEvent @event2)
+            public int Compare(SkeletonEvent left, SkeletonEvent right)
             {
-                return @event1.Distance.CompareTo(event2.Distance);
+                return left.Distance.CompareTo(right.Distance);
             }
         };
-
-        public class Vector2DistanceEqualityComparer : IEqualityComparer<Vector2d>
-        {
-            public bool Equals(Vector2d x, Vector2d y)
-            {
-                return ReferenceEquals(x, y);
-            }
-
-            public int GetHashCode(Vector2d obj)
-            {
-                return RuntimeHelpers.GetHashCode(obj);
-            }
-        }
 
         private class ChainComparer : IComparer<IChain>
         {

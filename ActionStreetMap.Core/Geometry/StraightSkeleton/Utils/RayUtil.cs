@@ -13,11 +13,9 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
 
         public static bool IsPointOnRay(Vector2d point, Ray2d ray, double epsilon)
         {
-            var rayDirection = new Vector2d(ray.U);
-            rayDirection.Normalize();
+            var rayDirection = new Vector2d(ray.U).Normalized();
             // test if point is on ray
-            var pointVector = new Vector2d(point);
-            pointVector.Sub(ray.A);
+            var pointVector = point - ray.A;
 
             var dot = rayDirection.Dot(pointVector);
 
@@ -44,19 +42,15 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
         public static IntersectPoints IntersectRays2D(Ray2d r1, Ray2d r2)
         {
             var s1p0 = r1.A;
-            var s1p1 = new Vector2d(r1.A);
-            s1p1.Add(r1.U);
+            var s1p1 = r1.A + r1.U;
 
             var s2p0 = r2.A;
-            var s2p1 = new Vector2d(r2.A);
-            s2p1.Add(r2.U);
+            var s2p1 = r2.A + r2.U;
 
             var u = r1.U;
             var v = r2.U;
 
-            var w = new Vector2d();
-            w.Sub(s1p0, s2p0);
-
+            var w = s1p0 - s2p0;
             var d = Perp(u, v);
 
             // test if they are parallel (includes either being a point)
@@ -99,8 +93,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
                 // they are collinear segments - get overlap (or not)
                 double t0, t1;
                 // endpoints of S1 in eqn for S2
-                var w2 = new Vector2d();
-                w2.Sub(s1p1, s2p0);
+                var w2 = s1p1 - s2p0;
                 if (v.X != 0)
                 {
                     t0 = w.X/v.X;
@@ -129,8 +122,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
                 {
                     // intersect is a point
                     var I0 = new Vector2d(v);
-                    I0.Scale(t0);
-                    I0.Add(s2p0);
+                    I0 *= t0;
+                    I0 += s2p0;
 
                     return new IntersectPoints(I0);
                 }
@@ -139,13 +132,13 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
 
                 // I0 = S2_P0 + t0 * v;
                 var I_0 = new Vector2d(v);
-                I_0.Scale(t0);
-                I_0.Add(s2p0);
+                I_0 *= t0;
+                I_0 += s2p0;
 
                 // I1 = S2_P0 + t1 * v;
                 var I1 = new Vector2d(v);
-                I1.Scale(t1);
-                I1.Add(s2p0);
+                I1 *= t1;
+                I1 += s2p0;
 
                 return new IntersectPoints(I_0, I1);
             }
@@ -163,8 +156,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
 
             // I0 = S1_P0 + sI * u; // compute S1 intersect point
             var IO = new Vector2d(u);
-            IO.Scale(sI);
-            IO.Add(s1p0);
+            IO *= sI;
+            IO += s1p0;
 
             return new IntersectPoints(IO);
         }
@@ -172,9 +165,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
         private static bool InCollinearRay(Vector2d p, Vector2d rayStart, Vector2d rayDirection)
         {
             // test if point is on ray
-            var collideVector = new Vector2d(p);
-            collideVector.Sub(rayStart);
-
+            var collideVector = p - rayStart;
             var dot = rayDirection.Dot(collideVector);
 
             return !(dot < 0);
