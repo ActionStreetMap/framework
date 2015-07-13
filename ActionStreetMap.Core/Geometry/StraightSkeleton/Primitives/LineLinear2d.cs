@@ -43,7 +43,7 @@
             var WBC = B1*C2 - B2*C1;
             var WCA = C1*A2 - C2*A1;
 
-            return WAB == 0 ? null : new Vector2d(WBC/WAB, WCA/WAB);
+            return WAB == 0 ? Vector2d.Empty : new Vector2d(WBC / WAB, WCA / WAB);
         }
     }
 }

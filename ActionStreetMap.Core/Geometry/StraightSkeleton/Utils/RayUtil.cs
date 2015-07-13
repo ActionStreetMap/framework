@@ -206,12 +206,12 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
             }
 
             public IntersectPoints(Vector2d intersect)
-                : this(intersect, null)
+                : this(intersect, Vector2d.Empty)
             {
             }
 
             public IntersectPoints()
-                : this(null, null)
+                : this(Vector2d.Empty, Vector2d.Empty)
             {
             }
         }

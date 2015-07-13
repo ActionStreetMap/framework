@@ -855,7 +855,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
                 }
 
                 // check if it is vertex split event
-                if (oppositeEdge.OppositePoint != null)
+                if (oppositeEdge.OppositePoint != Vector2d.Empty)
                 {
                     // some of vertex event can share the same opposite point
                     queue.Add(new VertexSplitEvent(point, oppositeEdge.Dist, vertex));
@@ -1001,7 +1001,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
                 if (edge.BisectorNext.IsOnRightSite(candidatePoint, SplitEpsilon))
                     return new SplitCandidate(candidatePoint, distance, null, edge.Begin);
 
-                return new SplitCandidate(candidatePoint, distance, edge, null);
+                return new SplitCandidate(candidatePoint, distance, edge, Vector2d.Empty);
             }
             return null;
         }
@@ -1039,7 +1039,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
             // skip the same points
             if (vertexPrevious.Point == intersect || vertexNext.Point == intersect)
-                return null;
+                return Vector2d.Empty;
 
             return intersect;
         }

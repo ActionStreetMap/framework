@@ -12,13 +12,13 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
         public static Vector2d Collide(Ray2d ray, LineLinear2d line, double epsilon)
         {
             var collide = LineLinear2d.Collide(ray.CreateLinearForm(), line);
-            if (collide == null)
-                return null;
+            if (collide.Equals(Vector2d.Empty))
+                return Vector2d.Empty;
 
             var collideVector = new Vector2d(collide);
             collideVector.Sub(ray.A);
 
-            return ray.U.Dot(collideVector) < epsilon ? null : collide;
+            return ray.U.Dot(collideVector) < epsilon ? Vector2d.Empty : collide;
         }
 
         public override String ToString()

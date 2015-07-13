@@ -2,16 +2,12 @@
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
 {
-    public class Vector2d
+    public struct Vector2d
     {
+        public static Vector2d Empty = new Vector2d(double.MinValue, double.MinValue);
+
         public double X;
         public double Y;
-
-        public Vector2d()
-        {
-            X = 0.0D;
-            Y = 0.0D;
-        }
 
         public Vector2d(Vector2d var1)
         {
@@ -76,9 +72,6 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
 
         public static bool operator ==(Vector2d left, Vector2d right)
         {
-            if (ReferenceEquals(left, null))
-                return ReferenceEquals(right, null);
-
             return left.Equals(right);
         }
 
@@ -87,19 +80,23 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
             return !(left == right);
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Vector2d);
-        }
-
         public bool Equals(Vector2d obj)
         {
-            return obj != null && obj.X == X && obj.Y == Y;
+            return X.Equals(obj.X) && Y.Equals(obj.Y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is Vector2d && Equals((Vector2d)obj);
         }
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode();
+            unchecked
+            {
+                return (X.GetHashCode()*397) ^ Y.GetHashCode();
+            }
         }
 
         public override string ToString()
