@@ -11,8 +11,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
         public readonly LineLinear2d LineLinear2d;
         public readonly Vector2d Norm;
 
-        public Ray2d BisectorNext;
-        public Ray2d BisectorPrevious;
+        public LineParametric2d BisectorNext;
+        public LineParametric2d BisectorPrevious;
 
         public Edge(Vector2d begin, Vector2d end)
         {

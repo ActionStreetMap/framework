@@ -1,6 +1,11 @@
 ﻿namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
 {
-    public class LineLinear2d
+    /// <summary>
+    ///     Geometry line in linear form. General form:
+    ///     Ax + By + C = 0;
+    ///     <see cref="http://en.wikipedia.org/wiki/Linear_equation"/>
+    /// </summary>
+    public struct LineLinear2d
     {
         public double A;
         public double B;

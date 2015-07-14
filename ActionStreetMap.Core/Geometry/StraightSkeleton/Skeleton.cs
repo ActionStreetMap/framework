@@ -177,7 +177,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
             // lav will be removed so it is final vertex.
             AddMultiBackFaces(edgeList, new Vertex(center, @event.Distance, 
-                null, null, null) { IsProcessed = true });
+                LineParametric2d.Empty, null, null) { IsProcessed = true });
         }
 
         private static void MultiSplitEvent(MultiSplitEvent @event, HashSet<CircularList<Vertex>> sLav,
@@ -250,7 +250,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             }
         }
 
-        private static void CorrectBisectorDirection(Ray2d bisector, Vertex beginNextVertex,
+        private static void CorrectBisectorDirection(LineParametric2d bisector, Vertex beginNextVertex,
             Vertex endPreviousVertex, Edge beginEdge, Edge endEdge)
         {
             // New bisector for vertex is created using connected edges. For
@@ -957,12 +957,12 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             return ret;
         }
 
-        internal static bool EdgeBehindBisector(Ray2d bisector, LineLinear2d edge)
+        internal static bool EdgeBehindBisector(LineParametric2d bisector, LineLinear2d edge)
         {
             // Simple intersection test between the bisector starting at V and the
             // whole line containing the currently tested line segment ei rejects
             // the line segments laying "behind" the vertex V
-            return Ray2d.Collide(bisector, edge, SplitEpsilon) == Vector2d.Empty;
+            return LineParametric2d.Collide(bisector, edge, SplitEpsilon) == Vector2d.Empty;
         }
 
         private static SplitCandidate CalcCandidatePointForSplit(Vertex vertex, Edge edge)
@@ -985,7 +985,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             // Compute the coordinates of the candidate point Bi as the intersection
             // between the bisector at V and the axis of the angle between one of
             // the edges starting at V and the tested line segment ei
-            var candidatePoint = Ray2d.Collide(vertex.Bisector, edgesBisectorLine, SplitEpsilon);
+            var candidatePoint = LineParametric2d.Collide(vertex.Bisector, edgesBisectorLine, SplitEpsilon);
 
             if (candidatePoint == Vector2d.Empty)
                 return null;
@@ -1159,13 +1159,13 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             return vector.DistanceTo(pointOnVector);
         }
 
-        private static Ray2d CalcBisector(Vector2d p, Edge e1, Edge e2)
+        private static LineParametric2d CalcBisector(Vector2d p, Edge e1, Edge e2)
         {
             var norm1 = e1.Norm;
             var norm2 = e2.Norm;
 
             var bisector = CalcVectorBisector(norm1, norm2);
-            return new Ray2d(p, bisector);
+            return new LineParametric2d(p, bisector);
         }
 
         private static Vector2d CalcVectorBisector(Vector2d norm1, Vector2d norm2)

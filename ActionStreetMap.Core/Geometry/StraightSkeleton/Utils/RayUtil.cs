@@ -11,7 +11,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
         /// <summary> Return value if there is no intersection. </summary>
         private static readonly IntersectPoints Empty = new IntersectPoints();
 
-        public static bool IsPointOnRay(Vector2d point, Ray2d ray, double epsilon)
+        public static bool IsPointOnRay(Vector2d point, LineParametric2d ray, double epsilon)
         {
             var rayDirection = new Vector2d(ray.U).Normalized();
             // test if point is on ray
@@ -38,7 +38,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
         ///     <see cref="http://softsurfer.com/Archive/algorithm_0102/algorithm_0102.htm" />
         /// </summary>
         /// <returns>class with intersection points. It never return null.</returns>
-        public static IntersectPoints IntersectRays2D(Ray2d r1, Ray2d r2)
+        public static IntersectPoints IntersectRays2D(LineParametric2d r1, LineParametric2d r2)
         {
             var s1p0 = r1.A;
             var s1p1 = r1.A + r1.U;

@@ -8,7 +8,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
     {
         public Vector2d Point;
         public readonly double Distance;
-        public readonly Ray2d Bisector;
+        public readonly LineParametric2d Bisector;
 
         public readonly Edge NextEdge;
         public readonly Edge PreviousEdge;
@@ -18,7 +18,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
 
         public bool IsProcessed;
 
-        public Vertex(Vector2d point, double distance, Ray2d bisector, Edge previousEdge, Edge nextEdge)
+        public Vertex(Vector2d point, double distance, LineParametric2d bisector, Edge previousEdge, Edge nextEdge)
         {
             Point = point;
             Distance = distance;

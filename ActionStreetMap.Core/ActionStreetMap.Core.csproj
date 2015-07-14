@@ -76,7 +76,6 @@
     <Compile Include="Geometry\StraightSkeleton\Path\PathQueueNode.cs" />
     <Compile Include="Geometry\StraightSkeleton\Primitives\LineLinear2d.cs" />
     <Compile Include="Geometry\StraightSkeleton\Primitives\LineParametric2d.cs" />
-    <Compile Include="Geometry\StraightSkeleton\Primitives\Ray2d.cs" />
     <Compile Include="Geometry\StraightSkeleton\Primitives\Vector2d.cs" />
     <Compile Include="Geometry\StraightSkeleton\Skeleton.cs" />
     <Compile Include="Geometry\StraightSkeleton\SkeletonResult.cs" />

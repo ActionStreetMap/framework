@@ -21,7 +21,6 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
             Y = var3;
         }
 
-
         public void Negate()
         {
             X = -X;
