@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.StraightSkeleton;
 using ActionStreetMap.Core.Geometry.Utils;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Scene.InDoor
 {
@@ -19,8 +20,15 @@ namespace ActionStreetMap.Core.Scene.InDoor
         public readonly double TransitAreaWidth;
         public readonly double MinimalArea;
 
-        public InDoorGeneratorSettings(double transitAreaWidth)
+        public readonly IObjectPool ObjectPool;
+        public readonly Clipper Clipper;
+
+        public InDoorGeneratorSettings(IObjectPool objectPool, Clipper clipper,
+            double transitAreaWidth)
         {
+            ObjectPool = objectPool;
+            Clipper = clipper;
+
             TransitAreaWidth = transitAreaWidth;
             HalfTransitAreaWidth = transitAreaWidth/2;
             MinimalArea = TransitAreaWidth*TransitAreaWidth;
@@ -34,41 +42,23 @@ namespace ActionStreetMap.Core.Scene.InDoor
         private const int DoubleScale = Scale * Scale;
         private const int IntPrecisionError = 10;
 
-        public static Floor Build(InDoorGeneratorSettings settings, List<MapPoint> footprint,
-            List<KeyValuePair<int, float>> doors, List<List<MapPoint>> holes)
+        public Floor Build(InDoorGeneratorSettings settings,
+            Skeleton skeleton, List<Vector2d> footprint, List<List<Vector2d>> holes, 
+            List<KeyValuePair<int, float>> doors)
         {
-
-            // create skeleton
-            var polygon = footprint.ToList();
-            polygon.RemoveAt(polygon.Count - 1);
-            var footPrint = polygon.Select(p => new Vector2d(p.X, p.Y)).ToList();
-
-            var skeleton = SkeletonBuilder.Build(footPrint);
-
-            // start building floor
-            var floor = new Floor
-            {
-                Entrances = new List<MapLine>(1),
-                Apartments = new List<Apartment>(16),
-                Stairs = new List<Vector2d>(4),
-                OuterWalls = new List<MapLine>(32),
-                PartitionWalls = new List<MapLine>(32),
-                TransitWalls = new List<MapLine>(32)
-            };
-
-            var clipper = new Clipper();
+            var floor = new Floor(settings.ObjectPool);
 
             var walls = CreateWalls(skeleton);
 
-            InsertEntrances(settings, floor, footPrint, skeleton, walls, doors);
+            InsertEntrances(settings, floor, footprint, skeleton, walls, doors);
 
             List<List<IntPoint>> transitPolygons;
 
             var connectedWalls = CreateConnectedAndTransit(settings, skeleton, walls, out transitPolygons);
 
-            var transitArea = CreateTransitArea(clipper, settings, floor, walls, transitPolygons);
+            var transitArea = CreateTransitArea(settings, floor, walls, transitPolygons);
 
-            CreateApartments(clipper, settings, floor, footprint, transitArea, connectedWalls);
+            CreateApartments(settings, floor, footprint, transitArea, connectedWalls);
 
             return floor;
         }
@@ -79,7 +69,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
         ///     Inserts Vertical Access Area (VAA): stairs, elevators, etc.
         ///     and merges it with corridors.
         /// </summary>
-        private static List<List<IntPoint>> CreateTransitArea(Clipper clipper, InDoorGeneratorSettings settings,
+        private static List<List<IntPoint>> CreateTransitArea(InDoorGeneratorSettings settings,
             Floor floor, List<SkeletonEdge> walls, List<List<IntPoint>> transitPolygons)
         {
             foreach (var wall in walls)
@@ -94,7 +84,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
                     var startOfVaa2 = startOfVaa1 + (wall.End - startOfVaa1).Normalized()*settings.VaaSizeWidth;
                     var endOfVaa2 = startOfVaa2 + orthogonalLeft*settings.VaaSizeHeight;
 
-                    clipper.AddPath(new List<IntPoint>
+                    settings.Clipper.AddPath(new List<IntPoint>
                     {
                         new IntPoint(startOfVaa1.X*Scale, startOfVaa1.Y*Scale),
                         new IntPoint(endOfVaa1.X*Scale, endOfVaa1.Y*Scale),
@@ -111,10 +101,10 @@ namespace ActionStreetMap.Core.Scene.InDoor
                 }
             }
 
-            clipper.AddPaths(transitPolygons, PolyType.ptSubject, true);
+            settings.Clipper.AddPaths(transitPolygons, PolyType.ptSubject, true);
             var transitArea = new List<List<IntPoint>>(1);
-            clipper.Execute(ClipType.ctUnion, transitArea);
-            clipper.Clear();
+            settings.Clipper.Execute(ClipType.ctUnion, transitArea);
+            settings.Clipper.Clear();
 
             return transitArea;
         }
@@ -237,15 +227,15 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
         #region Create apartments
 
-        private static void CreateApartments(Clipper clipper, InDoorGeneratorSettings settings, Floor floor,
-            List<MapPoint> footprint, List<List<IntPoint>> transitArea, List<Wall> connected)
+        private static void CreateApartments(InDoorGeneratorSettings settings, Floor floor,
+            List<Vector2d> footprint, List<List<IntPoint>> transitArea, List<Wall> connected)
         {
             var footprintPolygon = footprint.Select(p => new IntPoint(p.X*Scale, p.Y*Scale)).ToList();
             var extrudedPolygons = new List<List<IntPoint>>(4);
-            clipper.AddPaths(transitArea, PolyType.ptClip, true);
-            clipper.AddPath(footprintPolygon, PolyType.ptSubject, true);
-            clipper.Execute(ClipType.ctDifference, extrudedPolygons);
-            clipper.Clear();
+            settings.Clipper.AddPaths(transitArea, PolyType.ptClip, true);
+            settings.Clipper.AddPath(footprintPolygon, PolyType.ptSubject, true);
+            settings.Clipper.Execute(ClipType.ctDifference, extrudedPolygons);
+            settings.Clipper.Clear();
 
             foreach (var extrudedPolygon in extrudedPolygons)
             {
@@ -383,7 +373,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
             List<Wall> extrudedWalls, Vector2d outerWallSplitPoint, Vector2d transitWallSplitPoint,
             ref int lastOuterIndex, ref int lastTransitIntex)
         {
-            var apartment = new Apartment(null);
+            var apartment = new Apartment(settings.ObjectPool);
 
             AddOuterWalls(settings, floor, context, apartment, extrudedWalls,
                 outerWallSplitPoint, lastOuterIndex);
@@ -401,8 +391,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
         }
 
         private static void AddOuterWalls(InDoorGeneratorSettings settings, Floor floor, FloorContext context,
-            Apartment apartment,
-            List<Wall> extrudedWalls, Vector2d outerWallSplitPoint, int lastOuterIndex)
+            Apartment apartment, List<Wall> extrudedWalls, Vector2d outerWallSplitPoint, int lastOuterIndex)
         {
             // this is last apartment
             if (outerWallSplitPoint == Vector2d.Empty)
@@ -592,13 +581,15 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
         private struct SkeletonEdge
         {
-            public double MinDistance;
-            public readonly Vector2d End;
-            public readonly bool IsSkeleton;
-            public readonly LineLinear2d Line;
-            public readonly double Size;
             public readonly Vector2d Start;
+            public readonly Vector2d End;
+            public readonly LineLinear2d Line;
 
+            public readonly bool IsSkeleton;
+            public readonly double Size;
+
+            public double MinDistance;
+            
             public SkeletonEdge(Vector2d start, Vector2d end, bool isSkeleton, double minDistance)
             {
                 Start = start;

@@ -5,29 +5,58 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Scene.InDoor
 {
-    public class Floor
+    /// <summary> Represents building's floor. </summary>
+    public sealed class Floor: IDisposable
     {
+        private readonly IObjectPool _objectPool;
+
         /// <summary> Floor entrances. </summary>
-        public List<MapLine> Entrances;
+        public readonly List<MapLine> Entrances;
 
         /// <summary> List of apartments </summary>
-        public List<Apartment> Apartments;
+        public readonly List<Apartment> Apartments;
 
         /// <summary> Outer walls. </summary>
-        public List<MapLine> OuterWalls;
+        public readonly List<MapLine> OuterWalls;
 
         /// <summary> Walls which separate apartments. </summary>
-        public List<MapLine> PartitionWalls;
+        public readonly List<MapLine> PartitionWalls;
 
         /// <summary> Transit area walls. </summary>
-        public List<MapLine> TransitWalls;
+        public readonly List<MapLine> TransitWalls;
 
         /// <summary> Stairway or elevator areas. </summary>
-        public List<Vector2d> Stairs;
+        public readonly List<Vector2d> Stairs;
+
+        public Floor(IObjectPool objectPool)
+        {
+            _objectPool = objectPool;
+
+            Entrances = objectPool.NewList<MapLine>(1);
+            Apartments = objectPool.NewList<Apartment>(16);
+            Stairs = objectPool.NewList<Vector2d>(32);
+            OuterWalls = objectPool.NewList<MapLine>(32);
+            PartitionWalls = objectPool.NewList<MapLine>(32);
+            TransitWalls = objectPool.NewList<MapLine>(32);
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            _objectPool.StoreList(Entrances);
+            _objectPool.StoreList(Apartments);
+            _objectPool.StoreList(Stairs);
+            _objectPool.StoreList(OuterWalls);
+            _objectPool.StoreList(PartitionWalls);
+            _objectPool.StoreList(TransitWalls);
+        }
     }
 
-    public struct Apartment
+    /// <summary> Represents building's apartment. </summary>
+    public struct Apartment: IDisposable
     {
+        private readonly IObjectPool _objectPool;
+
         /// <summary> Outer wall indices. </summary>
         public readonly List<int> OuterWalls;
 
@@ -40,28 +69,19 @@ namespace ActionStreetMap.Core.Scene.InDoor
         /// <summary> Creates instance of <see cref="Apartment"/>. </summary>
         public Apartment(IObjectPool objectPool)
         {
-            // TODO allocate lists from object pool
-            OuterWalls = new List<int>();
-            TransitWalls = new List<int>();
-            PartitionWalls = new List<int>();
-        }
-    }
+            _objectPool = objectPool;
 
-    public struct MapLine
-    {
-        public Vector2d Start;
-        public Vector2d End;
-
-        public MapLine(Vector2d start, Vector2d end)
-        {
-            Start = start;
-            End = end;
+            OuterWalls = objectPool.NewList<int>(16);
+            TransitWalls = objectPool.NewList<int>(16);
+            PartitionWalls = objectPool.NewList<int>(16);
         }
 
-        public override string ToString()
+        /// <inheritdoc />
+        public void Dispose()
         {
-            return String.Format("[({0},{1}) ({2},{3})]", 
-                Start.X, Start.Y, End.X, End.Y);
+            _objectPool.StoreList(OuterWalls);
+            _objectPool.StoreList(TransitWalls);
+            _objectPool.StoreList(PartitionWalls);
         }
     }
 }
