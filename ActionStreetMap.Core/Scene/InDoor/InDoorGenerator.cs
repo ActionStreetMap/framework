@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
@@ -44,7 +43,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
             polygon.RemoveAt(polygon.Count - 1);
             var footPrint = polygon.Select(p => new Vector2d(p.X, p.Y)).ToList();
 
-            var skeleton = Skeleton.Create(footPrint);
+            var skeleton = SkeletonBuilder.Build(footPrint);
 
             // start building floor
             var floor = new Floor
@@ -125,7 +124,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
         #region Create walls
 
         /// <summary> Creates walls from skeleton. </summary>
-        private static List<SkeletonEdge> CreateWalls(SkeletonResult skeleton)
+        private static List<SkeletonEdge> CreateWalls(Skeleton skeleton)
         {
             var edges = new List<SkeletonEdge>();
             foreach (var edgeOutput in skeleton.Edges)
@@ -147,7 +146,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
         /// <summary> Creates skeleton lines connected to outer walls and transit polygons. </summary>
         private static List<Wall> CreateConnectedAndTransit(InDoorGeneratorSettings settings,
-            SkeletonResult skeleton, List<SkeletonEdge> walls, out List<List<IntPoint>> transitPolygons)
+            Skeleton skeleton, List<SkeletonEdge> walls, out List<List<IntPoint>> transitPolygons)
         {
             var offset = new ClipperOffset(0.00001);
             var connected = new List<Wall>();
@@ -179,7 +178,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
         #region Insert entrances
 
         private static void InsertEntrances(InDoorGeneratorSettings settings, Floor floor, 
-            List<Vector2d> footprint, SkeletonResult skeleton, 
+            List<Vector2d> footprint, Skeleton skeleton, 
             List<SkeletonEdge> walls, List<KeyValuePair<int, float>> doors)
         {
             foreach (var door in doors)
@@ -200,7 +199,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
             }
         }
 
-        private static void InsertEntrance(SkeletonResult skeleton, List<SkeletonEdge> walls, 
+        private static void InsertEntrance(Skeleton skeleton, List<SkeletonEdge> walls, 
             LineParametric2d ray, double minimalSideSize)
         {
             var doorEdge = default(SkeletonEdge);

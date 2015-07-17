@@ -22,7 +22,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             var expected = new List<Vector2d> {new Vector2d(75.000000, 75.000000)};
             expected.AddRange(polygon);
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
         }
@@ -45,7 +45,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             };
             expected.AddRange(polygon);
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -83,7 +83,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(inner);
 
 
-            var sk = Skeleton.Create(outer, innerList);
+            var sk = SkeletonBuilder.Build(outer, innerList);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -123,7 +123,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.Add(new Vector2d(0.7481994722534444, -0.7603900949775717));
             expected.Add(new Vector2d(0.7446762937827887, -0.7638366801629576));
 
-            var sk = Skeleton.Create(polygon, innerList);
+            var sk = SkeletonBuilder.Build(polygon, innerList);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -153,7 +153,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             };
             expected.AddRange(polygon);
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
         }
@@ -178,7 +178,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             };
             expected.AddRange(polygon);
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -205,7 +205,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -239,7 +239,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -273,7 +273,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -323,7 +323,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -361,7 +361,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -411,7 +411,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -445,7 +445,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
 
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -495,7 +495,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -552,7 +552,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
 
             expected.AddRange(polygon);
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -600,7 +600,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -632,7 +632,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -659,7 +659,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -686,7 +686,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -718,7 +718,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -747,7 +747,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));
@@ -773,7 +773,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
             expected.AddRange(polygon);
 
 
-            var sk = Skeleton.Create(polygon);
+            var sk = SkeletonBuilder.Build(polygon);
 
 
             SkeletonTestUtil.AssertExpectedPoints(expected, SkeletonTestUtil.GetFacePoints(sk));

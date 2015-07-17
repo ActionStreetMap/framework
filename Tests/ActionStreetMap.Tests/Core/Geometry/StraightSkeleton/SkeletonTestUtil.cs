@@ -9,7 +9,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
 {
     internal class SkeletonTestUtil
     {
-        public static List<Vector2d> GetFacePoints(SkeletonResult sk)
+        public static List<Vector2d> GetFacePoints(Skeleton sk)
         {
             List<Vector2d> ret = new List<Vector2d>();
 

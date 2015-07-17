@@ -30,7 +30,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
             // TODO Use common primitive type here
-            var skeleton = Skeleton.Create(building.Footprint
+            var skeleton = SkeletonBuilder.Build(building.Footprint
                 .Select(p => new Vector2d(p.X, p.Y)).ToList());
 
             var distances = skeleton.Distances;
@@ -46,7 +46,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             return meshData;
         }
 
-        private void AddPolygonAsTriangle(SkeletonResult skeleton, List<Vector2d> polygon, 
+        private void AddPolygonAsTriangle(Skeleton skeleton, List<Vector2d> polygon, 
             float roofHeight, float roofOffset, MeshData meshData, GradientWrapper gradient)
         {
             var distances = skeleton.Distances;

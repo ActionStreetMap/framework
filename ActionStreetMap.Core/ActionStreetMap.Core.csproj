@@ -78,8 +78,8 @@
     <Compile Include="Geometry\LineParametric2d.cs" />
     <Compile Include="Geometry\Utils\ClipperUtils.cs" />
     <Compile Include="Geometry\Vector2d.cs" />
+    <Compile Include="Geometry\StraightSkeleton\SkeletonBuilder.cs" />
     <Compile Include="Geometry\StraightSkeleton\Skeleton.cs" />
-    <Compile Include="Geometry\StraightSkeleton\SkeletonResult.cs" />
     <Compile Include="Geometry\StraightSkeleton\LavUtil.cs" />
     <Compile Include="Geometry\Utils\PolygonUtils.cs" />
     <Compile Include="Geometry\Utils\RayUtils.cs" />
