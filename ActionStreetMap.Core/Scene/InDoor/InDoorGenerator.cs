@@ -15,22 +15,34 @@ namespace ActionStreetMap.Core.Scene.InDoor
         private const int DoubleScale = Scale * Scale;
         private const int IntPrecisionError = 10;
 
-        public Floor Build(InDoorGeneratorSettings settings, Skeleton skeleton, List<Vector2d> footprint,
-            List<List<Vector2d>> holes, List<KeyValuePair<int, float>> doors)
+        private const int MinArea = 200*DoubleScale;
+
+        public Floor Build(InDoorGeneratorSettings settings)
         {
+            var intFootPrint = settings.ObjectPool.NewList<IntPoint>(settings.Footprint.Count);
+            for (int i = 0; i < settings.Footprint.Count; i++)
+            {
+                var point = settings.Footprint[i];
+                intFootPrint.Add(new IntPoint(point.X * Scale, point.Y * Scale));
+            }
+
+            // return null if footprint area is too small
+            if (Clipper.Area(intFootPrint) < MinArea)
+                return null;
+
             var floor = new Floor(settings.ObjectPool);
 
-            var walls = CreateWalls(skeleton);
+            var walls = CreateWalls(settings);
 
-            InsertEntrances(settings, floor, footprint, skeleton, walls, doors);
+            InsertEntrances(settings, floor, walls);
 
             List<List<IntPoint>> transitPolygons;
 
-            var connectedWalls = CreateConnectedAndTransit(settings, skeleton, walls, out transitPolygons);
+            var connectedWalls = CreateConnectedAndTransit(settings, walls, out transitPolygons);
 
             var transitArea = CreateTransitArea(settings, floor, walls, transitPolygons);
 
-            CreateApartments(settings, floor, footprint, transitArea, connectedWalls);
+            CreateApartments(settings, floor, intFootPrint, transitArea, connectedWalls);
 
             return floor;
         }
@@ -86,10 +98,10 @@ namespace ActionStreetMap.Core.Scene.InDoor
         #region Create walls
 
         /// <summary> Creates walls from skeleton. </summary>
-        private static List<SkeletonEdge> CreateWalls(Skeleton skeleton)
+        private static List<SkeletonEdge> CreateWalls(InDoorGeneratorSettings settings)
         {
             var edges = new List<SkeletonEdge>();
-            foreach (var edgeOutput in skeleton.Edges)
+            foreach (var edgeOutput in settings.Skeleton.Edges)
             {
                 var lastIndex = edgeOutput.Polygon.Count - 1;
                 for (var i = 0; i <= lastIndex; i++)
@@ -97,8 +109,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
                     var start = edgeOutput.Polygon[i];
                     var end = edgeOutput.Polygon[i == lastIndex ? 0 : i + 1];
 
-                    var sDist = skeleton.Distances[start];
-                    var eDist = skeleton.Distances[end];
+                    var sDist = settings.Skeleton.Distances[start];
+                    var eDist = settings.Skeleton.Distances[end];
                     edges.Add(new SkeletonEdge(start, end, sDist != 0 || eDist != 0, 
                         Math.Min(sDist, eDist)));
                 }
@@ -108,11 +120,12 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
         /// <summary> Creates skeleton lines connected to outer walls and transit polygons. </summary>
         private static List<Wall> CreateConnectedAndTransit(InDoorGeneratorSettings settings,
-            Skeleton skeleton, List<SkeletonEdge> walls, out List<List<IntPoint>> transitPolygons)
+            List<SkeletonEdge> walls, out List<List<IntPoint>> transitPolygons)
         {
             var offset = new ClipperOffset(0.00001);
             var connected = new List<Wall>();
             var paths = new List<List<IntPoint>>();
+            var skeleton = settings.Skeleton;
             foreach (var wall in walls)
             {
                 var start = new IntPoint(wall.Start.X*Scale, wall.Start.Y*Scale);
@@ -140,10 +153,10 @@ namespace ActionStreetMap.Core.Scene.InDoor
         #region Insert entrances
 
         private static void InsertEntrances(InDoorGeneratorSettings settings, Floor floor, 
-            List<Vector2d> footprint, Skeleton skeleton, 
-            List<SkeletonEdge> walls, List<KeyValuePair<int, float>> doors)
+            List<SkeletonEdge> walls)
         {
-            foreach (var door in doors)
+            var footprint = settings.Footprint;
+            foreach (var door in settings.Doors)
             {
                 var start = footprint[door.Key];
                 var end = footprint[(door.Key + 1) % footprint.Count];
@@ -157,7 +170,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
                 var centerOfDoor = start + vec * centerOffset;
                 vec.Negate();
                 var doorRay = new LineParametric2d(centerOfDoor, Vector2dUtils.OrthogonalRight(vec));
-                InsertEntrance(skeleton, walls, doorRay, centerOffset + settings.HalfTransitAreaWidth);
+                InsertEntrance(settings.Skeleton, walls, doorRay, centerOffset + settings.HalfTransitAreaWidth);
             }
         }
 
@@ -200,12 +213,11 @@ namespace ActionStreetMap.Core.Scene.InDoor
         #region Create apartments
 
         private static void CreateApartments(InDoorGeneratorSettings settings, Floor floor,
-            List<Vector2d> footprint, List<List<IntPoint>> transitArea, List<Wall> connected)
+            List<IntPoint> footprint, List<List<IntPoint>> transitArea, List<Wall> connected)
         {
-            var footprintPolygon = footprint.Select(p => new IntPoint(p.X*Scale, p.Y*Scale)).ToList();
             var extrudedPolygons = new List<List<IntPoint>>(4);
             settings.Clipper.AddPaths(transitArea, PolyType.ptClip, true);
-            settings.Clipper.AddPath(footprintPolygon, PolyType.ptSubject, true);
+            settings.Clipper.AddPath(footprint, PolyType.ptSubject, true);
             settings.Clipper.Execute(ClipType.ctDifference, extrudedPolygons);
             settings.Clipper.Clear();
 
@@ -229,8 +241,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
                     var start = extrudedPolygon[i];
                     var end = extrudedPolygon[i == lastItemIndex ? 0 : i + 1];
 
-                    var isOuterWall = ClipperUtils.CalcMinDistance(start, footprintPolygon) < IntPrecisionError &&
-                                      ClipperUtils.CalcMinDistance(end, footprintPolygon) < IntPrecisionError;
+                    var isOuterWall = ClipperUtils.CalcMinDistance(start, footprint) < IntPrecisionError &&
+                                      ClipperUtils.CalcMinDistance(end, footprint) < IntPrecisionError;
                     var p1 = new Vector2d(start.X/Scale, start.Y/Scale);
                     var p2 = new Vector2d(end.X/Scale, end.Y/Scale);
 

@@ -20,13 +20,15 @@ namespace ActionStreetMap.Tests.Core.Scene
         public void SetUp()
         {
             var objectPool = new ObjectPool()
-              .RegisterListType<Vector2d>(16)
-              .RegisterListType<MapLine>(16)
-              .RegisterListType<int>(16)
-              .RegisterListType<Apartment>(16);
+              .RegisterListType<Vector2d>(1)
+              .RegisterListType<MapLine>(1)
+              .RegisterListType<IntPoint>(1)
+              .RegisterListType<int>(1)
+              .RegisterListType<Apartment>(1);
 
             _generator = new InDoorGenerator();
-            _settings = new InDoorGeneratorSettings(objectPool, new Clipper(), 10)
+            _settings = new InDoorGeneratorSettings(objectPool, new Clipper(), 
+                null, null, null, null, 10)
             {
                 VaaSizeHeight = 20,
                 VaaSizeWidth = 40,
@@ -39,7 +41,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         public void CanGenerateFloorFromFootprint1()
         {
             // ARRANGE
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(200, 200),
                 new Vector2d(200, 100),
@@ -48,12 +50,13 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(500, 400),
                 new Vector2d(500, 200),
             };
-            var doors = new List<KeyValuePair<int, float>>() {new KeyValuePair<int, float>(1, 30)};
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() {new KeyValuePair<int, float>(1, 30)};
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
+
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint, 
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor, 14, 13, 20, 25);
@@ -63,7 +66,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         public void CanGenerateFloorFromFootprint2()
         {
             // ARRANGE
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(100, 80),
                 new Vector2d(100, 400),
@@ -71,12 +74,12 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(500, 250),
                 new Vector2d(500, 100),
             };
-            var doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint,
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor, 5, 4, 9, 15);
@@ -85,7 +88,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         [Test]
         public void CanGenerateFloorFromFootprint3()
         {
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(80, 72),
                 new Vector2d(83, 327),
@@ -100,12 +103,12 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(151, 171),
                 new Vector2d(154, 60),
             };
-            var doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(2, 30) };
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(2, 30) };
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint,
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor);
@@ -114,7 +117,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         [Test]
         public void CanGenerateFloorFromFootprint4()
         {
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(99, 79),
                 new Vector2d(94, 341),
@@ -129,12 +132,12 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(175, 229),
                 new Vector2d(180, 78),
             };
-            var doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(2, 30) };
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(2, 30) };
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint,
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor);
@@ -143,7 +146,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         [Test]
         public void CanGenerateFloorFromFootprint5()
         {
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(100, 66),
                 new Vector2d(93, 270),
@@ -155,12 +158,12 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(435, 40),
                 new Vector2d(290, 7),
             };
-            var doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(3, 30) };
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(3, 30) };
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint,
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor);
@@ -169,7 +172,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         [Test]
         public void CanGenerateFloorFromFootprint6()
         {
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(223, 107),
                 new Vector2d(79, 220),
@@ -180,12 +183,12 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(543, 0),
                 new Vector2d(373, 21),
             };
-            var doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint,
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor);
@@ -194,7 +197,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         [Test]
         public void CanGenerateFloorFromFootprint7()
         {
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(299, 133),
                 new Vector2d(99, 283),
@@ -203,12 +206,12 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(971, 250),
                 new Vector2d(792, 61),
             };
-            var doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint,
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor);
@@ -217,7 +220,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         [Test]
         public void CanGenerateFloorFromFootprint8()
         {
-            var footprint = new List<Vector2d>()
+            _settings.Footprint = new List<Vector2d>()
             {
                 new Vector2d(107, 62),
                 new Vector2d(284, 62),
@@ -238,12 +241,12 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(480, 600),
                 new Vector2d(103, 601),
             };
-            var doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
-            var skeleton = SkeletonBuilder.Build(footprint);
+            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
 
             // ACT
-            var floor = _generator.Build(_settings, skeleton, footprint,
-                new List<List<Vector2d>>(), doors);
+            var floor = _generator.Build(_settings);
 
             // ASSERT
             AssertFloor(floor);
