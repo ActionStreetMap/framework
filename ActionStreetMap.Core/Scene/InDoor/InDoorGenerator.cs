@@ -15,9 +15,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
         private const int DoubleScale = Scale * Scale;
         private const int IntPrecisionError = 10;
 
-        public Floor Build(InDoorGeneratorSettings settings,
-            Skeleton skeleton, List<Vector2d> footprint, List<List<Vector2d>> holes, 
-            List<KeyValuePair<int, float>> doors)
+        public Floor Build(InDoorGeneratorSettings settings, Skeleton skeleton, List<Vector2d> footprint,
+            List<List<Vector2d>> holes, List<KeyValuePair<int, float>> doors)
         {
             var floor = new Floor(settings.ObjectPool);
 

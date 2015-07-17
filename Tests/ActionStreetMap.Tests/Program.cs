@@ -8,17 +8,15 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
-using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Maps.Data.Import;
 using ActionStreetMap.Maps.Data.Search;
-using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.47910, 13.45432);
+        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.53192, 13.38736);
+
         public static readonly Container _container = new Container();
 
         private const string LogTag = "host";
@@ -47,7 +45,7 @@ namespace ActionStreetMap.Tests
 
         public void PrintIndoorData()
         {
-            var boundingBox = BoundingBox.Create(StartGeoCoordinate, 500);
+            var boundingBox = BoundingBox.Create(new GeoCoordinate(52.47910, 13.45432), 500);
             var search = _container.Resolve<ISearchEngine>();
             search.SearchByTag("indoor", "yes", boundingBox).Subscribe(e =>
             {
@@ -82,7 +80,7 @@ namespace ActionStreetMap.Tests
             _tileListener = new DemoTileListener(_messageBus, _logger);
 
             // start game on default position
-            //componentRoot.RunGame(StartGeoCoordinate);
+            componentRoot.RunGame(StartGeoCoordinate);
 
             _geoPositionObserver = _container.Resolve<ITileController>();
             _mapPositionObserver = _container.Resolve<ITileController>();
