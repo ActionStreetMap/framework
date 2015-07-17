@@ -2,7 +2,7 @@
 
 namespace ActionStreetMap.Core.Geometry.Utils
 {
-    internal class RayUtil
+    internal class RayUtils
     {
         /// <summary> Error epsilon. Anything that avoids division. </summary>
         private const double SmallNum = 0.00000001;

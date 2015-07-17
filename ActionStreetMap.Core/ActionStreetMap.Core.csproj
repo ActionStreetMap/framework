@@ -76,13 +76,14 @@
     <Compile Include="Geometry\StraightSkeleton\Path\PathQueueNode.cs" />
     <Compile Include="Geometry\LineLinear2d.cs" />
     <Compile Include="Geometry\LineParametric2d.cs" />
+    <Compile Include="Geometry\Utils\ClipperUtils.cs" />
     <Compile Include="Geometry\Vector2d.cs" />
     <Compile Include="Geometry\StraightSkeleton\Skeleton.cs" />
     <Compile Include="Geometry\StraightSkeleton\SkeletonResult.cs" />
     <Compile Include="Geometry\StraightSkeleton\LavUtil.cs" />
-    <Compile Include="Geometry\Utils\PolygonUtil.cs" />
-    <Compile Include="Geometry\Utils\RayUtil.cs" />
-    <Compile Include="Geometry\Utils\Vector2dUtil.cs" />
+    <Compile Include="Geometry\Utils\PolygonUtils.cs" />
+    <Compile Include="Geometry\Utils\RayUtils.cs" />
+    <Compile Include="Geometry\Utils\Vector2dUtils.cs" />
     <Compile Include="Geometry\Triangle\Behavior.cs" />
     <Compile Include="Geometry\Triangle\Enums.cs" />
     <Compile Include="Geometry\Triangle\Geometry\Edge.cs" />
@@ -136,6 +137,8 @@
     <Compile Include="Positioning\Nmea\RMC.cs" />
     <Compile Include="RenderMode.cs" />
     <Compile Include="Scene\Barrier.cs" />
+    <Compile Include="Scene\InDoor\FloorTypes.cs" />
+    <Compile Include="Scene\InDoor\InDoorGenerator.cs" />
     <Compile Include="Scene\Surface.cs" />
     <Compile Include="Scene\Terrain\MeshCanvas.cs" />
     <Compile Include="Scene\Terrain\MeshCanvasBuilder.cs" />

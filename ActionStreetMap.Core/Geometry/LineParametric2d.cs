@@ -46,13 +46,13 @@ namespace ActionStreetMap.Core.Geometry
         public bool IsOnLeftSite(Vector2d point, double epsilon)
         {
             var direction = point - A;
-            return Vector2dUtil.OrthogonalRight(U).Dot(direction) < epsilon;
+            return Vector2dUtils.OrthogonalRight(U).Dot(direction) < epsilon;
         }
 
         public bool IsOnRightSite(Vector2d point, double epsilon)
         {
             var direction = point - A;
-            return Vector2dUtil.OrthogonalRight(U).Dot(direction) > -epsilon;
+            return Vector2dUtils.OrthogonalRight(U).Dot(direction) > -epsilon;
         }
     }
 }

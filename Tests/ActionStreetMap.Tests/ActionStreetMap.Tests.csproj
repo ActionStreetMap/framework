@@ -57,6 +57,7 @@
     <Compile Include="Core\Geometry\StraightSkeleton\SkeletonLevelEventsTest.cs" />
     <Compile Include="Core\Geometry\StraightSkeleton\SkeletonTest.cs" />
     <Compile Include="Core\Geometry\StraightSkeleton\SkeletonTestUtil.cs" />
+    <Compile Include="Core\Scene\InDoorGeneratorTests.cs" />
     <Compile Include="Explorer\Tiles\TileModelEditorExTests.cs" />
     <Compile Include="Explorer\Tiles\TileModelEditorTests.cs" />
     <Compile Include="Explorer\Utils\GradientTests.cs" />

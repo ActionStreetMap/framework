@@ -266,8 +266,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             // Check if edges are parallel and in opposite direction to each other.
             if (beginEdge.Norm.Dot(endEdge.Norm) < -0.97)
             {
-                var n1 = Vector2dUtil.FromTo(endPreviousVertex.Point, bisector.A).Normalized();
-                var n2 = Vector2dUtil.FromTo(bisector.A, beginNextVertex.Point).Normalized();
+                var n1 = Vector2dUtils.FromTo(endPreviousVertex.Point, bisector.A).Normalized();
+                var n2 = Vector2dUtils.FromTo(bisector.A, beginNextVertex.Point).Normalized();
                 var bisectorPrediction = CalcVectorBisector(n1, n2);
 
                 // Bisector is calculated in opposite direction to edges and center.
@@ -717,7 +717,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             var ret = new List<List<Vector2d>>(holes.Count);
             foreach (var hole in holes)
             {
-                if (PolygonUtil.IsClockwisePolygon(hole))
+                if (PolygonUtils.IsClockwisePolygon(hole))
                     ret.Add(hole);
                 else
                 {
@@ -730,7 +730,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
         private static List<Vector2d> MakeCounterClockwise(List<Vector2d> polygon)
         {
-            return PolygonUtil.MakeCounterClockwise(polygon);
+            return PolygonUtils.MakeCounterClockwise(polygon);
         }
 
         private static void InitSlav(List<Vector2d> polygon, HashSet<CircularList<Vertex>> sLav,
@@ -930,10 +930,10 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
         /// <returns>previous opposite edge if it is vertex split event.</returns>
         protected static Edge VertexOpositeEdge(Vector2d point, Edge edge)
         {
-            if (RayUtil.IsPointOnRay(point, edge.BisectorNext, SplitEpsilon))
+            if (RayUtils.IsPointOnRay(point, edge.BisectorNext, SplitEpsilon))
                 return edge;
 
-            if (RayUtil.IsPointOnRay(point, edge.BisectorPrevious, SplitEpsilon))
+            if (RayUtils.IsPointOnRay(point, edge.BisectorPrevious, SplitEpsilon))
                 return edge.Previous as Edge;
             return null;
         }
@@ -1033,7 +1033,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             var bisectorPrevious = vertexPrevious.Bisector;
             var bisectorNext = vertexNext.Bisector;
 
-            var intersectRays2d = RayUtil.IntersectRays2D(bisectorPrevious, bisectorNext);
+            var intersectRays2d = RayUtils.IntersectRays2D(bisectorPrevious, bisectorNext);
             var intersect = intersectRays2d.Intersect;
 
             // skip the same points
@@ -1091,7 +1091,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
                     points.Add(next.Point);
                     next = next.Next as Vertex;
                 }
-                if (PolygonUtil.IsPointInsidePolygon(center, points))
+                if (PolygonUtils.IsPointInsidePolygon(center, points))
                     return end;
             }
             throw new InvalidOperationException("Could not find lav for opposite edge, it could be correct " +
@@ -1155,7 +1155,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             var edge = currentEdge.End - currentEdge.Begin;
             var vector = intersect - currentEdge.Begin;
 
-            var pointOnVector = Vector2dUtil.OrthogonalProjection(edge, vector);
+            var pointOnVector = Vector2dUtils.OrthogonalProjection(edge, vector);
             return vector.DistanceTo(pointOnVector);
         }
 
@@ -1170,7 +1170,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
         private static Vector2d CalcVectorBisector(Vector2d norm1, Vector2d norm2)
         {
-            return Vector2dUtil.BisectorNormalized(norm1, norm2);
+            return Vector2dUtils.BisectorNormalized(norm1, norm2);
         }
 
         #region Nested classes

@@ -2,7 +2,7 @@
 
 namespace ActionStreetMap.Core.Geometry.Utils
 {
-    internal class PolygonUtil
+    internal class PolygonUtils
     {
         /// <summary> Check if polygon is clockwise. </summary>
         /// <param name="polygon"> List of polygon points. </param>
