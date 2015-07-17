@@ -140,6 +140,7 @@
     <Compile Include="Scene\Barrier.cs" />
     <Compile Include="Scene\InDoor\FloorTypes.cs" />
     <Compile Include="Scene\InDoor\InDoorGenerator.cs" />
+    <Compile Include="Scene\InDoor\InDoorGeneratorSettings.cs" />
     <Compile Include="Scene\Surface.cs" />
     <Compile Include="Scene\Terrain\MeshCanvas.cs" />
     <Compile Include="Scene\Terrain\MeshCanvasBuilder.cs" />
