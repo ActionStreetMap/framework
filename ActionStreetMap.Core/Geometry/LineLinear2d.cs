@@ -1,4 +1,4 @@
-﻿namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
+﻿namespace ActionStreetMap.Core.Geometry
 {
     /// <summary>
     ///     Geometry line in linear form. General form:

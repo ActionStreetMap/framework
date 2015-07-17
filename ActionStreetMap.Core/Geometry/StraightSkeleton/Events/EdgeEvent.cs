@@ -1,6 +1,5 @@
 ﻿using System;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Circular;
-using ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives;
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Events
 {

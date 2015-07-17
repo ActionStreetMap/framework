@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
+namespace ActionStreetMap.Core.Geometry
 {
     public struct Vector2d
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Circular;
 
-namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
+namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 {
     internal class LavUtil
     {

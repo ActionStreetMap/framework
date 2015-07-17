@@ -1,7 +1,6 @@
 ﻿using System;
-using ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives;
 
-namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Utils
+namespace ActionStreetMap.Core.Geometry.Utils
 {
     internal class RayUtil
     {

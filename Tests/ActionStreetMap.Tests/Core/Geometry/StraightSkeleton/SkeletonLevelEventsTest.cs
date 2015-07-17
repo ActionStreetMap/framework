@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.StraightSkeleton;
-using ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton

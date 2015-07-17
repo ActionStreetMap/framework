@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.Geometry.Utils;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.Scene

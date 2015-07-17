@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core.Utils;
 
-namespace ActionStreetMap.Core.Geometry
+namespace ActionStreetMap.Core.Geometry.Utils
 {
     /// <summary> Contains some generic geometry utility methods. </summary>
     internal class GeometryUtils

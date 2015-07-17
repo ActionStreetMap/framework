@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Config;

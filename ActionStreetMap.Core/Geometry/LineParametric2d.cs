@@ -1,6 +1,6 @@
-﻿using ActionStreetMap.Core.Geometry.StraightSkeleton.Utils;
+﻿using ActionStreetMap.Core.Geometry.Utils;
 
-namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives
+namespace ActionStreetMap.Core.Geometry
 {
     /// <summary>
     ///     Geometry line in parametric form:

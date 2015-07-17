@@ -1,5 +1,4 @@
 ﻿using ActionStreetMap.Core.Geometry.StraightSkeleton.Events.Chains;
-using ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives;
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Events
 {

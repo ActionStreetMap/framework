@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.StraightSkeleton;
-using ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives;
 
 namespace ActionStreetMap.Tests.Core.Geometry.StraightSkeleton
 {

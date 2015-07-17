@@ -84,6 +84,7 @@
     <Compile Include="Formats\Json\SimpleJSON.cs" />
     <Compile Include="Primitives\LockFreeStack.cs" />
     <Compile Include="Primitives\DoubleKeyDictionary.cs" />
+    <Compile Include="Primitives\PriorityQueue.cs" />
     <Compile Include="Primitives\Range.cs" />
     <Compile Include="Primitives\SafeHashSet.cs" />
     <Compile Include="IO\Compression\CompressionUtils.cs" />

@@ -6,8 +6,8 @@ using ActionStreetMap.Core.Geometry.StraightSkeleton.Circular;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Events;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Events.Chains;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Path;
-using ActionStreetMap.Core.Geometry.StraightSkeleton.Primitives;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Utils;
+using ActionStreetMap.Core.Geometry.Utils;
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 {
