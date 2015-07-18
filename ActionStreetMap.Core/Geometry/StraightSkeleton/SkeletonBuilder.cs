@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Circular;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Events;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Events.Chains;
@@ -124,8 +123,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             sLav.RemoveWhere(circularList => circularList.Size == 0);
         }
 
-        private static void MultiEdgeEvent(MultiEdgeEvent @event, PriorityQueue<SkeletonEvent> queue,
-            List<Edge> edges)
+        private static void MultiEdgeEvent(MultiEdgeEvent @event, 
+            PriorityQueue<SkeletonEvent> queue, List<Edge> edges)
         {
             var center = @event.V;
             var edgeList = @event.Chain.EdgeList;
@@ -692,7 +691,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             level.Add(levelStart);
 
             SkeletonEvent @event;
-            while ((@event = queue.Peek()) != null && @event.Distance - levelStartHeight < SplitEpsilon)
+            while ((@event = queue.Peek()) != null && 
+                Math.Abs(@event.Distance - levelStartHeight) < SplitEpsilon)
             {
                 var nextLevelEvent = queue.Next();
                 if (!nextLevelEvent.IsObsolete)
@@ -830,7 +830,6 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             double distanceSquared)
         {
             var source = vertex.Point;
-
             var oppositeEdges = CalcOppositeEdges(vertex, edges);
 
             // check if it is vertex split event
@@ -838,7 +837,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             {
                 var point = oppositeEdge.Point;
 
-                if (distanceSquared != -1)
+                if (Math.Abs(distanceSquared - (-1)) > SplitEpsilon)
                 {
                     if (source.DistanceSquared(point) > distanceSquared + SplitEpsilon)
                     {
@@ -857,10 +856,10 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
                 if (oppositeEdge.OppositePoint != Vector2d.Empty)
                 {
                     // some of vertex event can share the same opposite point
-                    queue.Add(new VertexSplitEvent(point, oppositeEdge.Dist, vertex));
+                    queue.Add(new VertexSplitEvent(point, oppositeEdge.Distance, vertex));
                     continue;
                 }
-                queue.Add(new SplitEvent(point, oppositeEdge.Dist, vertex, oppositeEdge.OppositeEdge));
+                queue.Add(new SplitEvent(point, oppositeEdge.Distance, vertex, oppositeEdge.OppositeEdge));
             }
         }
 
@@ -891,17 +890,17 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             if (point1 == Vector2d.Empty && point2 == Vector2d.Empty)
                 return -1;
 
-            var distance1 = Double.MaxValue;
-            var distance2 = Double.MaxValue;
+            var distance1 = double.MaxValue;
+            var distance2 = double.MaxValue;
 
             if (point1 != Vector2d.Empty)
                 distance1 = point.DistanceSquared(point1);
             if (point2 != Vector2d.Empty)
                 distance2 = point.DistanceSquared(point2);
 
-            if (distance1 - SplitEpsilon < distance2)
+            if (Math.Abs(distance1 - SplitEpsilon) < distance2)
                 queue.Add(CreateEdgeEvent(point1, vertex, nextVertex));
-            if (distance2 - SplitEpsilon < distance1)
+            if (Math.Abs(distance2 - SplitEpsilon) < distance1)
                 queue.Add(CreateEdgeEvent(point2, previousVertex, vertex));
 
             return distance1 < distance2 ? distance1 : distance2;
@@ -1047,10 +1046,10 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             Edge oppositeEdge, Vector2d center)
         {
             var edgeLavs = FindEdgeLavs(sLav, oppositeEdge, null);
-            return ChoseOppositeEdgeLav(edgeLavs, oppositeEdge, center);
+            return ChooseOppositeEdgeLav(edgeLavs, oppositeEdge, center);
         }
 
-        private static Vertex ChoseOppositeEdgeLav(List<Vertex> edgeLavs, Edge oppositeEdge, Vector2d center)
+        private static Vertex ChooseOppositeEdgeLav(List<Vertex> edgeLavs, Edge oppositeEdge, Vector2d center)
         {
             if (!edgeLavs.Any())
                 return null;
@@ -1076,7 +1075,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
                 // are vertex chosen by opposite edge (then point to opposite edge).
                 // Chose lav only when center is between begin and end. Only one lav
                 // should meet criteria.
-                if (beginDot < centerDot && centerDot < endDot || beginDot > centerDot && centerDot > endDot)
+                if (beginDot < centerDot && centerDot < endDot || 
+                    beginDot > centerDot && centerDot > endDot)
                     return end;
             }
 
@@ -1102,7 +1102,6 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             CircularList<Vertex> skippedLav)
         {
             var edgeLavs = new List<Vertex>();
-
             foreach (var lav in sLav)
             {
                 if (lav == skippedLav)
@@ -1122,10 +1121,10 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
         private static Vertex GetEdgeInLav(CircularList<Vertex> lav, Edge oppositeEdge)
         {
             foreach (var node in lav.Iterate())
-            {
-                if (oppositeEdge == node.PreviousEdge || oppositeEdge == node.Previous.Next)
+                if (oppositeEdge == node.PreviousEdge || 
+                    oppositeEdge == node.Previous.Next)
                     return node;
-            }
+            
             return null;
         }
 
@@ -1213,15 +1212,15 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
         private class SplitCandidateComparer : IComparer<SplitCandidate>
         {
-            public int Compare(SplitCandidate x, SplitCandidate y)
+            public int Compare(SplitCandidate left, SplitCandidate right)
             {
-                return x.Dist.CompareTo(y.Dist);
+                return left.Distance.CompareTo(right.Distance);
             }
         }
 
         private class SplitCandidate
         {
-            public readonly double Dist;
+            public readonly double Distance;
             public readonly Edge OppositeEdge;
             public readonly Vector2d OppositePoint;
             public readonly Vector2d Point;
@@ -1229,7 +1228,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
             public SplitCandidate(Vector2d point, double distance, Edge oppositeEdge, Vector2d oppositePoint)
             {
                 Point = point;
-                Dist = distance;
+                Distance = distance;
                 OppositeEdge = oppositeEdge;
                 OppositePoint = oppositePoint;
             }

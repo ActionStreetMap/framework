@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
-using ActionStreetMap.Core.Geometry.StraightSkeleton;
 using ActionStreetMap.Core.Geometry.Utils;
 
 namespace ActionStreetMap.Core.Scene.InDoor
@@ -15,7 +14,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
         private const int DoubleScale = Scale * Scale;
         private const int IntPrecisionError = 10;
 
-        private const int MinArea = 200*DoubleScale;
+        private const int MinArea = 200 * DoubleScale;
 
         public Floor Build(InDoorGeneratorSettings settings)
         {
@@ -59,14 +58,14 @@ namespace ActionStreetMap.Core.Scene.InDoor
             foreach (var wall in walls)
             {
                 if (wall.Size - settings.TransitAreaWidth > settings.VaaSizeWidth &&
-                    wall.MinDistance > settings.VaaSizeHeight)
+                    wall.Distance > settings.VaaSizeHeight)
                 {
-                    var startOfVaa1 = wall.Start + (wall.End - wall.Start).Normalized()*settings.HalfTransitAreaWidth;
+                    var startOfVaa1 = wall.Start + (wall.End - wall.Start).Normalized() * settings.HalfTransitAreaWidth;
 
                     var orthogonalLeft = Vector2dUtils.OrthogonalLeft(wall.Start - wall.End).Normalized();
-                    var endOfVaa1 = startOfVaa1 + orthogonalLeft*settings.VaaSizeHeight;
-                    var startOfVaa2 = startOfVaa1 + (wall.End - startOfVaa1).Normalized()*settings.VaaSizeWidth;
-                    var endOfVaa2 = startOfVaa2 + orthogonalLeft*settings.VaaSizeHeight;
+                    var endOfVaa1 = startOfVaa1 + orthogonalLeft * settings.VaaSizeHeight;
+                    var startOfVaa2 = startOfVaa1 + (wall.End - startOfVaa1).Normalized() * settings.VaaSizeWidth;
+                    var endOfVaa2 = startOfVaa2 + orthogonalLeft * settings.VaaSizeHeight;
 
                     settings.Clipper.AddPath(new List<IntPoint>
                     {
@@ -111,8 +110,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
                     var sDist = settings.Skeleton.Distances[start];
                     var eDist = settings.Skeleton.Distances[end];
-                    edges.Add(new SkeletonEdge(start, end, sDist != 0 || eDist != 0, 
-                        Math.Min(sDist, eDist)));
+                    edges.Add(new SkeletonEdge(start, end, sDist != 0 || eDist != 0,
+                        Math.Min(sDist, eDist), settings.HalfTransitAreaWidth));
                 }
             }
             return edges;
@@ -122,18 +121,19 @@ namespace ActionStreetMap.Core.Scene.InDoor
         private static List<Wall> CreateConnectedAndTransit(InDoorGeneratorSettings settings,
             List<SkeletonEdge> walls, out List<List<IntPoint>> transitPolygons)
         {
-            var offset = new ClipperOffset(0.00001);
+            var offset = new ClipperOffset();
             var connected = new List<Wall>();
             var paths = new List<List<IntPoint>>();
             var skeleton = settings.Skeleton;
             foreach (var wall in walls)
             {
-                var start = new IntPoint(wall.Start.X*Scale, wall.Start.Y*Scale);
-                var end = new IntPoint(wall.End.X*Scale, wall.End.Y*Scale);
-                if (wall.MinDistance != 0)
-                    paths.Add(new List<IntPoint> {start, end});
+                var start = new IntPoint(wall.Start.X * Scale, wall.Start.Y * Scale);
+                var end = new IntPoint(wall.End.X * Scale, wall.End.Y * Scale);
+                if (!wall.IsOuter)
+                    paths.Add(new List<IntPoint> { start, end });
                 else if (wall.IsSkeleton &&
-                        (skeleton.Distances[wall.Start] == 0 || skeleton.Distances[wall.End] == 0))
+                        (skeleton.Distances[wall.Start] < settings.HalfTransitAreaWidth ||
+                         skeleton.Distances[wall.End] < settings.HalfTransitAreaWidth))
                 {
                     var undesired = new Wall(wall.Start, wall.End, false);
                     // TODO do I need this check here?
@@ -144,7 +144,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
             transitPolygons = new List<List<IntPoint>>(1);
             offset.AddPaths(paths, JoinType.jtMiter, EndType.etClosedLine);
-            offset.Execute(ref transitPolygons, settings.HalfTransitAreaWidth*Scale);
+            offset.Execute(ref transitPolygons, settings.HalfTransitAreaWidth * Scale);
             return connected;
         }
 
@@ -152,10 +152,15 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
         #region Insert entrances
 
-        private static void InsertEntrances(InDoorGeneratorSettings settings, Floor floor, 
+        private static void InsertEntrances(InDoorGeneratorSettings settings, Floor floor,
             List<SkeletonEdge> walls)
         {
             var footprint = settings.Footprint;
+
+            // doors are not set
+            if (settings.Doors == null)
+                FindDoorPosition(settings);
+
             foreach (var door in settings.Doors)
             {
                 var start = footprint[door.Key];
@@ -170,25 +175,47 @@ namespace ActionStreetMap.Core.Scene.InDoor
                 var centerOfDoor = start + vec * centerOffset;
                 vec.Negate();
                 var doorRay = new LineParametric2d(centerOfDoor, Vector2dUtils.OrthogonalRight(vec));
-                InsertEntrance(settings.Skeleton, walls, doorRay, centerOffset + settings.HalfTransitAreaWidth);
+                InsertEntrance(settings, walls, doorRay, centerOffset + settings.HalfTransitAreaWidth);
             }
         }
 
-        private static void InsertEntrance(Skeleton skeleton, List<SkeletonEdge> walls, 
+        private static void FindDoorPosition(InDoorGeneratorSettings settings)
+        {
+            var footprint = settings.Footprint;
+            var index = 0;
+            var maxDistance = 0d;
+            for (int i = 0; i < footprint.Count; i++)
+            {
+                var start = footprint[i];
+                var end = footprint[i == footprint.Count - 1 ? 0 : i + 1];
+                var distance = start.DistanceTo(end);
+                if (distance > maxDistance)
+                {
+                    index = i;
+                    maxDistance = distance;
+                }
+            }
+            settings.Doors = new List<KeyValuePair<int, double>>
+                {
+                    new KeyValuePair<int, double>(index, maxDistance/2d)
+                };
+        }
+
+        private static void InsertEntrance(InDoorGeneratorSettings settings, List<SkeletonEdge> walls,
             LineParametric2d ray, double minimalSideSize)
         {
             var doorEdge = default(SkeletonEdge);
             var distance = double.MaxValue;
             var intersectPoint = Vector2d.Empty;
 
-            int i = - 1;
+            int i = -1;
             foreach (var edge in walls)
             {
                 i++;
                 if (edge.IsOuter && !edge.IsSkeleton) continue;
 
                 var currIntersect = LineParametric2d.Collide(ray, edge.Line, 0.00001);
-                if (currIntersect == Vector2d.Empty || 
+                if (currIntersect == Vector2d.Empty ||
                     !Vector2dUtils.IsPointOnSegment(edge.Start, edge.End, currIntersect))
                     continue;
 
@@ -201,11 +228,12 @@ namespace ActionStreetMap.Core.Scene.InDoor
                 }
             }
 
-            walls.Add(new SkeletonEdge(doorEdge.Start, intersectPoint, false,
-                Math.Min(distance, skeleton.Distances[doorEdge.Start])));
-            walls.Add(new SkeletonEdge(intersectPoint, doorEdge.End, false,
-                Math.Min(distance, skeleton.Distances[doorEdge.End])));
-            walls.Add(new SkeletonEdge(ray.A, intersectPoint, false, distance));
+            var startDist = Math.Min(distance, settings.Skeleton.Distances[doorEdge.Start]);
+            var endDistance = Math.Min(distance, settings.Skeleton.Distances[doorEdge.End]);
+
+            walls.Add(new SkeletonEdge(doorEdge.Start, intersectPoint, false, startDist, settings.HalfTransitAreaWidth));
+            walls.Add(new SkeletonEdge(intersectPoint, doorEdge.End, false, endDistance, settings.HalfTransitAreaWidth));
+            walls.Add(new SkeletonEdge(ray.A, intersectPoint, false, distance, settings.HalfTransitAreaWidth));
         }
 
         #endregion
@@ -220,6 +248,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
             settings.Clipper.AddPath(footprint, PolyType.ptSubject, true);
             settings.Clipper.Execute(ClipType.ctDifference, extrudedPolygons);
             settings.Clipper.Clear();
+
+            //SVGBuilder.SaveToFile(extrudedPolygons, "regions_ex.svg", 0.01, 100);
 
             foreach (var extrudedPolygon in extrudedPolygons)
             {
@@ -243,8 +273,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
                     var isOuterWall = ClipperUtils.CalcMinDistance(start, footprint) < IntPrecisionError &&
                                       ClipperUtils.CalcMinDistance(end, footprint) < IntPrecisionError;
-                    var p1 = new Vector2d(start.X/Scale, start.Y/Scale);
-                    var p2 = new Vector2d(end.X/Scale, end.Y/Scale);
+                    var p1 = new Vector2d(start.X / Scale, start.Y / Scale);
+                    var p2 = new Vector2d(end.X / Scale, end.Y / Scale);
 
                     // NOTE this allows to skip artifacts of clipper offset library
                     // which I don't know to avoid by clipper API. 
@@ -301,7 +331,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
             var stopIterationIndex = context.FirstOuterWallIndex + context.OuterWallCount;
             for (var i = context.FirstOuterWallIndex; i < stopIterationIndex; i++)
             {
-                var index = i == extrudedWalls.Count ? 0 : i%extrudedWalls.Count;
+                var index = i == extrudedWalls.Count ? 0 : i % extrudedWalls.Count;
 
                 var wall = extrudedWalls[index];
                 var start = wall.Start;
@@ -331,10 +361,10 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
                     // get intermediate point
                     var vec = (end - start).Normalized();
-                    var outerWallSplitPoint = start + vec*currentWidthStep;
+                    var outerWallSplitPoint = start + vec * currentWidthStep;
 
                     var ortogonalRight = new Vector2d(-vec.Y, vec.X);
-                    var someFarPointOnOuterWall = outerWallSplitPoint + ortogonalRight*1000;
+                    var someFarPointOnOuterWall = outerWallSplitPoint + ortogonalRight * 1000;
 
                     Vector2d transitWallSplitPoint;
                     int transitWallIndex;
@@ -415,7 +445,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
                             : wall.Start;
 
                         AddOuterWall(floor, apartment, startPoint, wall.End);
-                        index = (index + 1)%extrudedWalls.Count;
+                        index = (index + 1) % extrudedWalls.Count;
                     }
                 }
                 AddOuterWall(floor, apartment, floor.OuterWalls.Last().End, outerWallSplitPoint);
@@ -500,8 +530,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
                     continue;
 
                 var currIntersectPoint = new Vector2d(
-                    Math.Round(p1.X + (r*(p2.X - p1.X))),
-                    Math.Round((p1.Y + (r*(p2.Y - p1.Y)))));
+                    Math.Round(p1.X + (r * (p2.X - p1.X))),
+                    Math.Round((p1.Y + (r * (p2.Y - p1.Y)))));
 
                 // skip intersections of skeleton edges which are connected with footprint
                 var skip = false;
@@ -555,8 +585,8 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
                 var total = outerWallCount + transitWallCount;
 
-                LastOuterWallIndex = (firstOuterWallIndex + outerWallCount - 1)%total;
-                LastTransitWallIndex = (firstTransitWallIndex + transitWallCount - 1)%total;
+                LastOuterWallIndex = (firstOuterWallIndex + outerWallCount - 1) % total;
+                LastTransitWallIndex = (firstTransitWallIndex + transitWallCount - 1) % total;
 
                 OuterWallIndex = -1;
                 TransitWallIndex = -1;
@@ -570,27 +600,29 @@ namespace ActionStreetMap.Core.Scene.InDoor
             public readonly LineLinear2d Line;
 
             public readonly bool IsSkeleton;
+            public readonly double Distance;
             public readonly double Size;
 
-            public double MinDistance;
-            
-            public SkeletonEdge(Vector2d start, Vector2d end, bool isSkeleton, double minDistance)
+            public readonly bool IsOuter;
+
+            public SkeletonEdge(Vector2d start, Vector2d end, bool isSkeleton, double distance,
+                double outerLimit)
             {
                 Start = start;
                 End = end;
                 Line = new LineLinear2d(start, end);
                 IsSkeleton = isSkeleton;
-                MinDistance = minDistance;
+                Distance = distance;
+                IsOuter = distance < outerLimit;
 
                 Size = Start.DistanceTo(End);
             }
 
-            public bool IsOuter { get { return MinDistance == 0; } }
 
             public override string ToString()
             {
-                return string.Format("[({0}, {1}) ({2}, {3})]: {4}",
-                    Start.X, Start.Y, End.X, End.Y, MinDistance);
+                return string.Format("[({0}, {1}) ({2}, {3})]: o:{4} s:{5}",
+                    Start.X, Start.Y, End.X, End.Y, IsOuter, IsSkeleton);
             }
         }
 

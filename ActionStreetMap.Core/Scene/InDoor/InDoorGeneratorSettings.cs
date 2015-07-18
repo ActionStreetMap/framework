@@ -13,9 +13,9 @@ namespace ActionStreetMap.Core.Scene.InDoor
         public double VaaSizeHeight = 2;
         public double VaaSizeWidth = 4; // along skeleton edge
 
-        public readonly double HalfTransitAreaWidth;
-        public readonly double TransitAreaWidth;
-        public readonly double MinimalArea;
+        public double HalfTransitAreaWidth;
+        public double TransitAreaWidth;
+        public double MinimalArea;
 
         public readonly IObjectPool ObjectPool;
         public readonly Clipper Clipper;
@@ -23,10 +23,10 @@ namespace ActionStreetMap.Core.Scene.InDoor
         public Skeleton Skeleton;
         public List<Vector2d> Footprint;
         public List<List<Vector2d>> Holes;
-        public List<KeyValuePair<int, float>> Doors;
+        public List<KeyValuePair<int, double>> Doors;
 
         public InDoorGeneratorSettings(IObjectPool objectPool, Clipper clipper, Skeleton skeleton, 
-            List<Vector2d> footprint, List<List<Vector2d>> holes, List<KeyValuePair<int, float>> doors, 
+            List<Vector2d> footprint, List<List<Vector2d>> holes, List<KeyValuePair<int, double>> doors, 
             double transitAreaWidth)
         {
             ObjectPool = objectPool;

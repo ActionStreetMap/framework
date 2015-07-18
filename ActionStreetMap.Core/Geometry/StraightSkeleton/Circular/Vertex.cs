@@ -17,7 +17,8 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
 
         public bool IsProcessed;
 
-        public Vertex(Vector2d point, double distance, LineParametric2d bisector, Edge previousEdge, Edge nextEdge)
+        public Vertex(Vector2d point, double distance, LineParametric2d bisector, 
+            Edge previousEdge, Edge nextEdge)
         {
             Point = point;
             Distance = distance;
@@ -28,10 +29,11 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
             IsProcessed = false;
         }
 
-        public override String ToString()
+        public override string ToString()
         {
-            return "Vertex [v=" + Point + ", IsProcessed=" + IsProcessed + ", Bisector=" + Bisector
-                   + ", PreviousEdge=" + PreviousEdge + ", NextEdge=" + NextEdge;
+            return "Vertex [v=" + Point + ", IsProcessed=" + IsProcessed + 
+                ", Bisector=" + Bisector + ", PreviousEdge=" + PreviousEdge + 
+                ", NextEdge=" + NextEdge;
         }
     }
 }

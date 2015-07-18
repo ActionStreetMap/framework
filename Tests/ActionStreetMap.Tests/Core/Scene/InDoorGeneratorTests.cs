@@ -50,7 +50,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(500, 400),
                 new Vector2d(500, 200),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() {new KeyValuePair<int, float>(1, 30)};
+            _settings.Doors = new List<KeyValuePair<int, double>>() {new KeyValuePair<int, double>(1, 30)};
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
 
@@ -74,7 +74,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(500, 250),
                 new Vector2d(500, 100),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Doors = new List<KeyValuePair<int, double>>() { new KeyValuePair<int, double>(1, 30) };
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
 
@@ -103,7 +103,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(151, 171),
                 new Vector2d(154, 60),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(2, 30) };
+            _settings.Doors = new List<KeyValuePair<int, double>>() { new KeyValuePair<int, double>(2, 30) };
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
 
@@ -132,7 +132,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(175, 229),
                 new Vector2d(180, 78),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(2, 30) };
+            _settings.Doors = new List<KeyValuePair<int, double>>() { new KeyValuePair<int, double>(2, 30) };
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
 
@@ -158,7 +158,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(435, 40),
                 new Vector2d(290, 7),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(3, 30) };
+            _settings.Doors = new List<KeyValuePair<int, double>>() { new KeyValuePair<int, double>(3, 30) };
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
 
@@ -183,7 +183,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(543, 0),
                 new Vector2d(373, 21),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Doors = new List<KeyValuePair<int, double>>() { new KeyValuePair<int, double>(1, 30) };
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
 
@@ -206,7 +206,7 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(971, 250),
                 new Vector2d(792, 61),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Doors = new List<KeyValuePair<int, double>>() { new KeyValuePair<int, double>(1, 30) };
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
 
@@ -241,9 +241,53 @@ namespace ActionStreetMap.Tests.Core.Scene
                 new Vector2d(480, 600),
                 new Vector2d(103, 601),
             };
-            _settings.Doors = new List<KeyValuePair<int, float>>() { new KeyValuePair<int, float>(1, 30) };
+            _settings.Doors = new List<KeyValuePair<int, double>>() { new KeyValuePair<int, double>(1, 30) };
             _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
             _settings.Holes = new List<List<Vector2d>>();
+
+            // ACT
+            var floor = _generator.Build(_settings);
+
+            // ASSERT
+            AssertFloor(floor);
+        }
+
+        [Test]
+        public void CanGenerateFloorFromFootprint9()
+        {
+            _settings.Footprint = new List<Vector2d>()
+            {
+                new Vector2d(731.436882019043f, 157.344799041748f),
+                new Vector2d(720.060272216797f, 171.514301300049f),
+                new Vector2d(715.286140441895f, 167.680201530457f),
+                new Vector2d(693.210067749023f, 195.130128860474f),
+                new Vector2d(697.916450500488f, 198.964233398438f),
+                new Vector2d(686.742973327637f, 212.911462783813f),
+                new Vector2d(682.002716064453f, 209.132928848267f),
+                new Vector2d(671.777305603027f, 221.8577003479f),
+                new Vector2d(670.152053833008f, 220.635232925415f),
+                new Vector2d(625.593605041504f, 196.241464614868f),
+                new Vector2d(627.455825805664f, 197.019395828247f),
+                new Vector2d(651.055564880371f, 167.569065093994f),
+                new Vector2d(646.958618164063f, 164.512901306152f),
+                new Vector2d(663.955841064453f, 141.786131858826f),
+                new Vector2d(668.79768371582f, 145.397968292236f),
+                new Vector2d(692.363586425781f, 115.947632789612f),
+                new Vector2d(719.112205505371f, 132.450933456421f),
+                new Vector2d(739.867782592773f, 137.007400989532f),
+                new Vector2d(726.628913879395f, 153.510699272156f),
+            };
+            _settings.Doors = null;
+            _settings.Skeleton = SkeletonBuilder.Build(_settings.Footprint);
+            _settings.Holes = new List<List<Vector2d>>();
+
+            _settings.MinimalWidthStep = 1;
+            _settings.PreferedWidthStep = 5;
+            _settings.VaaSizeHeight = 2;
+            _settings.VaaSizeWidth = 4;
+            _settings.TransitAreaWidth = 2;
+            _settings.HalfTransitAreaWidth = 1;
+            _settings.MinimalArea = 4;
 
             // ACT
             var floor = _generator.Build(_settings);

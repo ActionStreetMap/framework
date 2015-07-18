@@ -1,9 +1,11 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Core.Scene.InDoor;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Commands;
@@ -43,6 +45,12 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .RegisterListType<MapPoint>(256)
                 .RegisterListType<LineElement>(32)
                 .RegisterListType<Point>(256)
+
+                .RegisterListType<Vector2d>(32)
+                .RegisterListType<MapLine>(8)
+                .RegisterListType<IntPoint>(32)
+                .RegisterListType<Apartment>(8)
+
                 .RegisterListType<int>(256);
 
             Container.RegisterInstance<IObjectPool>(objectPool);

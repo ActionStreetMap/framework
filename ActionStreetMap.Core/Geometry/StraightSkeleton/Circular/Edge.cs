@@ -22,7 +22,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
             Norm = (end - begin).Normalized(); 
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return "Edge [p1=" + Begin + ", p2=" + End + "]";
         }
