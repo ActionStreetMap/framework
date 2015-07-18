@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Scene.InDoor;
 using ActionStreetMap.Core.Unity;
 
 namespace ActionStreetMap.Core.Scene
 {
-    /// <summary>
-    ///     Represents building. See available OSM properties: http://wiki.openstreetmap.org/wiki/Buildings
+    /// <summary> 
+    ///     Represents building. See available OSM properties:
+    ///     See http://wiki.openstreetmap.org/wiki/Buildings 
     /// </summary>
     public class Building
     {
@@ -19,6 +21,9 @@ namespace ActionStreetMap.Core.Scene
 
         /// <summary> Gets or sets building footprint. </summary>
         public List<MapPoint> Footprint { get; set; }
+
+        /// <summary> Contains floor plans. </summary>
+        public List<Floor> FloorPlans { get; set; }
 
         // NOTE OSM-available info 
 
