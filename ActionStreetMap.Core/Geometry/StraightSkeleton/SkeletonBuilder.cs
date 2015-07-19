@@ -976,7 +976,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 
             // Check should be performed to exclude the case when one of the
             // line segments starting at V is parallel to ei.
-            if (edgesCollide == null)
+            if (edgesCollide == Vector2d.Empty)
                 throw new InvalidOperationException("Ups this should not happen");
 
             var edgesBisectorLine = new LineParametric2d(edgesCollide, edgesBisector).CreateLinearForm();
