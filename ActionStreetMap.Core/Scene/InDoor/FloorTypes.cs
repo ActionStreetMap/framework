@@ -11,19 +11,19 @@ namespace ActionStreetMap.Core.Scene.InDoor
         private readonly IObjectPool _objectPool;
 
         /// <summary> Floor entrances. </summary>
-        public readonly List<MapLine> Entrances;
+        public readonly List<LineSegment2d> Entrances;
 
         /// <summary> List of apartments </summary>
         public readonly List<Apartment> Apartments;
 
         /// <summary> Outer walls. </summary>
-        public readonly List<MapLine> OuterWalls;
+        public readonly List<LineSegment2d> OuterWalls;
 
         /// <summary> Walls which separate apartments. </summary>
-        public readonly List<MapLine> PartitionWalls;
+        public readonly List<LineSegment2d> PartitionWalls;
 
         /// <summary> Transit area walls. </summary>
-        public readonly List<MapLine> TransitWalls;
+        public readonly List<LineSegment2d> TransitWalls;
 
         /// <summary> Stairway or elevator areas. </summary>
         public readonly List<Vector2d> Stairs;
@@ -32,12 +32,12 @@ namespace ActionStreetMap.Core.Scene.InDoor
         {
             _objectPool = objectPool;
 
-            Entrances = objectPool.NewList<MapLine>(1);
+            Entrances = objectPool.NewList<LineSegment2d>(1);
             Apartments = objectPool.NewList<Apartment>(16);
             Stairs = objectPool.NewList<Vector2d>(32);
-            OuterWalls = objectPool.NewList<MapLine>(32);
-            PartitionWalls = objectPool.NewList<MapLine>(32);
-            TransitWalls = objectPool.NewList<MapLine>(32);
+            OuterWalls = objectPool.NewList<LineSegment2d>(32);
+            PartitionWalls = objectPool.NewList<LineSegment2d>(32);
+            TransitWalls = objectPool.NewList<LineSegment2d>(32);
         }
 
         /// <inheritdoc />

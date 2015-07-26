@@ -50,7 +50,7 @@
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
     <Compile Include="AlgorithmException.cs" />
-    <Compile Include="MapLine.cs" />
+    <Compile Include="Geometry\LineSegment2d.cs" />
     <Compile Include="Geometry\Clipping\ClipperExtensions.cs" />
     <Compile Include="Geometry\Clipping\ClipperPool.cs" />
     <Compile Include="Geometry\StraightSkeleton\Circular\CircularList.cs" />

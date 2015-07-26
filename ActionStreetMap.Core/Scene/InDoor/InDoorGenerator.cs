@@ -170,7 +170,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
                 var vec = (end - start).Normalized();
                 var startOfDoor = start + vec * (centerOffset - settings.HalfTransitAreaWidth);
                 var endOfDoor = start + vec * (centerOffset + settings.HalfTransitAreaWidth);
-                floor.Entrances.Add(new MapLine(startOfDoor, endOfDoor));
+                floor.Entrances.Add(new LineSegment2d(startOfDoor, endOfDoor));
 
                 var centerOfDoor = start + vec * centerOffset;
                 vec.Negate();
@@ -396,7 +396,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
                 transitWallSplitPoint, lastTransitIntex);
 
             if (outerWallSplitPoint != Vector2d.Empty)
-                floor.PartitionWalls.Add(new MapLine(outerWallSplitPoint, transitWallSplitPoint));
+                floor.PartitionWalls.Add(new LineSegment2d(outerWallSplitPoint, transitWallSplitPoint));
 
             floor.Apartments.Add(apartment);
 
@@ -454,7 +454,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
         private static void AddOuterWall(Floor floor, Apartment apartment, Vector2d start, Vector2d end)
         {
-            floor.OuterWalls.Add(new MapLine(start, end));
+            floor.OuterWalls.Add(new LineSegment2d(start, end));
             apartment.OuterWalls.Add(floor.OuterWalls.Count - 1);
         }
 
@@ -505,7 +505,7 @@ namespace ActionStreetMap.Core.Scene.InDoor
 
         private static void AddTransitWall(Floor floor, Apartment apartment, Vector2d start, Vector2d end)
         {
-            floor.TransitWalls.Add(new MapLine(start, end));
+            floor.TransitWalls.Add(new LineSegment2d(start, end));
             apartment.TransitWalls.Add(floor.TransitWalls.Count - 1);
         }
 

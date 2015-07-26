@@ -8,6 +8,7 @@
 * Clipper: http://www.angusj.com/delphi/clipper.php
 	Version: 6.4.0
 	Datestamp: 2 Jul 2014
+	Changes: object pool logic
 
 * StraightSkeleton: https://github.com/kendzi/kendzi-math/tree/master/kendzi-straight-skeleton
 	Datestamp: Dec 11, 2014

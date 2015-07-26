@@ -21,7 +21,7 @@ namespace ActionStreetMap.Tests.Core.Scene
         {
             var objectPool = new ObjectPool()
               .RegisterListType<Vector2d>(1)
-              .RegisterListType<MapLine>(1)
+              .RegisterListType<LineSegment2d>(1)
               .RegisterListType<IntPoint>(1)
               .RegisterListType<int>(1)
               .RegisterListType<Apartment>(1);
@@ -319,7 +319,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             Assert.AreNotEqual(0, floor.TransitWalls.Count);
         }
 
-        private void CheckThatPolyLineIsConnected(List<MapLine> polyLine)
+        private void CheckThatPolyLineIsConnected(List<LineSegment2d> polyLine)
         {
             var lastPoint = Vector2d.Empty;
             for (int i = 0; i < polyLine.Count - 1; i++)

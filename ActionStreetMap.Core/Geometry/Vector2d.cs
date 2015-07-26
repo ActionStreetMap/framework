@@ -2,6 +2,7 @@
 
 namespace ActionStreetMap.Core.Geometry
 {
+    /// <summary> Represents point or vector in 2D space. </summary>
     public struct Vector2d
     {
         public static Vector2d Empty = new Vector2d(double.MinValue, double.MinValue);
