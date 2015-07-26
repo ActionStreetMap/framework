@@ -13,13 +13,13 @@ namespace ActionStreetMap.Core.Geometry.Utils
         ///     Checks whether point is located in triangle
         ///     http://stackoverflow.com/questions/13300904/determine-whether-point-lies-inside-triangle
         /// </summary>
-        public static bool IsPointInTriangle(MapPoint p, MapPoint p1, MapPoint p2, MapPoint p3)
+        public static bool IsPointInTriangle(Vector2d p, Vector2d p1, Vector2d p2, Vector2d p3)
         {
-            float alpha = ((p2.Y - p3.Y) * (p.X - p3.X) + (p3.X - p2.X) * (p.Y - p3.Y)) /
+            var alpha = ((p2.Y - p3.Y) * (p.X - p3.X) + (p3.X - p2.X) * (p.Y - p3.Y)) /
                           ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
-            float beta = ((p3.Y - p1.Y) * (p.X - p3.X) + (p1.X - p3.X) * (p.Y - p3.Y)) /
+            var beta = ((p3.Y - p1.Y) * (p.X - p3.X) + (p1.X - p3.X) * (p.Y - p3.Y)) /
                          ((p2.Y - p3.Y) * (p1.X - p3.X) + (p3.X - p2.X) * (p1.Y - p3.Y));
-            float gamma = 1.0f - alpha - beta;
+            var gamma = 1.0f - alpha - beta;
 
             return alpha > 0 && beta > 0 && gamma > 0;
         }
@@ -33,13 +33,13 @@ namespace ActionStreetMap.Core.Geometry.Utils
         /// <param name="pivot">Pivot point.</param>
         /// <param name="choices">List of choice points.</param>
         /// <returns>Sorted list.</returns>
-        public static void SortByAngle(MapPoint original, MapPoint pivot, List<MapPoint> choices)
+        public static void SortByAngle(Vector2d original, Vector2d pivot, List<Vector2d> choices)
         {
             choices.Sort((v1, v2) => GetTurnAngle(original, pivot, v1).CompareTo(GetTurnAngle(original, pivot, v2)));
         }
 
         /// <summary> Gets angle in degrees between sigments created by points. </summary>
-        public static double GetTurnAngle(MapPoint original, MapPoint pivot, MapPoint choice)
+        public static double GetTurnAngle(Vector2d original, Vector2d pivot, Vector2d choice)
         {
             var angle1 = Math.Atan2(original.Y - pivot.Y, original.X - pivot.X);
             var angle2 = Math.Atan2(choice.Y - pivot.Y, choice.X - pivot.X);
@@ -161,36 +161,36 @@ namespace ActionStreetMap.Core.Geometry.Utils
 */
 
         /// <summary> Checks collision between circle and rectangle. </summary>
-        public static bool HasCollision(MapPoint circle, float radius, MapRectangle rectangle)
+        public static bool HasCollision(Vector2d circle, float radius, Rectangle2d rectangle)
         {
-            float closestX = MathUtils.Clamp(circle.X, rectangle.Left, rectangle.Right);
-            float closestY = MathUtils.Clamp(circle.Y, rectangle.Bottom, rectangle.Top);
+            var closestX = MathUtils.Clamp(circle.X, rectangle.Left, rectangle.Right);
+            var closestY = MathUtils.Clamp(circle.Y, rectangle.Bottom, rectangle.Top);
 
             // Calculate the distance between the circle's center and this closest point
-            float distanceX = circle.X - closestX;
-            float distanceY = circle.Y - closestY;
+            var distanceX = circle.X - closestX;
+            var distanceY = circle.Y - closestY;
 
             // If the distance is less than the circle's radius, an intersection occurs
-            float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+            var distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
             return distanceSquared < (radius * radius);
         }
         
         #region Line specific functions
 
-        public static MapPoint GetIntersectionPoint(MapSegment first, MapSegment second, float elevation)
+        public static Vector2d GetIntersectionPoint(LineSegment2d first, LineSegment2d second, float elevation)
         {
-            float a1 = first.End.Y - first.Start.Y;
-            float b1 = first.Start.X - first.End.X;
-            float c1 = a1 * first.Start.X + b1 * first.Start.Y;
+            var a1 = first.End.Y - first.Start.Y;
+            var b1 = first.Start.X - first.End.X;
+            var c1 = a1 * first.Start.X + b1 * first.Start.Y;
 
             // Get A,B,C of second line - points : ps2 to pe2
-            float a2 = second.End.Y - second.Start.Y;
-            float b2 = second.Start.X - second.End.X;
-            float c2 = a2 * second.Start.X + b2 * second.Start.Y;
+            var a2 = second.End.Y - second.Start.Y;
+            var b2 = second.Start.X - second.End.X;
+            var c2 = a2 * second.Start.X + b2 * second.Start.Y;
 
             // Get delta and check if the lines are parallel
-            float delta = a1 * b2 - a2 * b1;
-            if (Math.Abs(delta) < float.Epsilon)
+            var delta = a1 * b2 - a2 * b1;
+            if (Math.Abs(delta) < double.Epsilon)
             {
                 // should share the same point - we will use it
                 if (first.End == second.Start)
@@ -198,57 +198,56 @@ namespace ActionStreetMap.Core.Geometry.Utils
                 throw new ArgumentException("Segments are parallel");
             }
 
-            return new MapPoint(
+            return new Vector2d(
                 (b2 * c1 - b1 * c2) / delta,
-                (a1 * c2 - a2 * c1) / delta,
-                elevation);
+                (a1 * c2 - a2 * c1) / delta);
         }
 
         /// <summary> Gets offset line with given width for needed side. </summary>
-        public static MapSegment GetOffsetLine(MapPoint point1, MapPoint point2, float width, bool isLeft)
+        public static LineSegment2d GetOffsetLine(Vector2d point1, Vector2d point2, float width, bool isLeft)
         {
-            float length = point1.DistanceTo(point2);
-            float dxLi = (point2.X - point1.X) / length * width;
-            float dyLi = (point2.Y - point1.Y) / length * width;
+            var length = point1.DistanceTo(point2);
+            var dxLi = (point2.X - point1.X) / length * width;
+            var dyLi = (point2.Y - point1.Y) / length * width;
 
             if (isLeft)
             {
                 // segment moved to the left
-                float lX1 = point1.X - dyLi;
-                float lY1 = point1.Y + dxLi;
-                float lX2 = point2.X - dyLi;
-                float lY2 = point2.Y + dxLi;
-                return new MapSegment(new MapPoint(lX1, lY1), new MapPoint(lX2, lY2));
+                var lX1 = point1.X - dyLi;
+                var lY1 = point1.Y + dxLi;
+                var lX2 = point2.X - dyLi;
+                var lY2 = point2.Y + dxLi;
+                return new LineSegment2d(new Vector2d(lX1, lY1), new Vector2d(lX2, lY2));
             }
 
             // segment moved to the right
-            float rX1 = point1.X + dyLi;
-            float rY1 = point1.Y - dxLi;
-            float rX2 = point2.X + dyLi;
-            float rY2 = point2.Y - dxLi;
-            
-            return new MapSegment(new MapPoint(rX1, rY1), new MapPoint(rX2, rY2));
+            var rX1 = point1.X + dyLi;
+            var rY1 = point1.Y - dxLi;
+            var rX2 = point2.X + dyLi;
+            var rY2 = point2.Y - dxLi;
+
+            return new LineSegment2d(new Vector2d(rX1, rY1), new Vector2d(rX2, rY2));
         }
 
         /// <summary> Gets T line. </summary>
-        public static MapSegment GetTSegment(List<MapPoint> points, float width, float elevation, bool connectedToEnd)
+        public static LineSegment2d GetTSegment(List<Vector2d> points, float width, float elevation, bool connectedToEnd)
         {
             var point1 = points[connectedToEnd ? 0 : points.Count - 1];
             var point2 = points[connectedToEnd ? points.Count - 1: 0];
 
-            float length = point1.DistanceTo(point2);
-            float dxLi = (point2.X - point1.X) / length * width;
-            float dyLi = (point2.Y - point1.Y) / length * width;
+            var length = point1.DistanceTo(point2);
+            var dxLi = (point2.X - point1.X) / length * width;
+            var dyLi = (point2.Y - point1.Y) / length * width;
 
-            float lX2 = point2.X - dyLi;
-            float lY2 = point2.Y + dxLi;
-            float rX2 = point2.X + dyLi;
-            float rY2 = point2.Y - dxLi;
-            return new MapSegment(new MapPoint(lX2, lY2, elevation), new MapPoint(rX2, rY2, elevation));
+            var lX2 = point2.X - dyLi;
+            var lY2 = point2.Y + dxLi;
+            var rX2 = point2.X + dyLi;
+            var rY2 = point2.Y - dxLi;
+            return new LineSegment2d(new Vector2d(lX2, lY2), new Vector2d(rX2, rY2));
         }
 
         /// <summary> Gets the closest point (perpendicular) on line. </summary>
-        public static MapPoint GetClosestPointOnLine(MapPoint point, MapPoint lineStart, MapPoint lineEnd)
+        public static Vector2d GetClosestPointOnLine(Vector2d point, Vector2d lineStart, Vector2d lineEnd)
         {
             // first convert line to normalized unit vector
             var dx = lineEnd.X - lineStart.X;
@@ -260,23 +259,7 @@ namespace ActionStreetMap.Core.Geometry.Utils
             // translate the point and get the dot product
             var lambda = (dx * (point.X - lineStart.X)) + (dy * (point.Y - lineStart.Y));
 
-            return new MapPoint((dx * lambda) + lineStart.X, (dy * lambda) + lineStart.Y);
-        }
-
-        #endregion
-
-        #region Helper primitives
-
-        internal struct MapSegment
-        {
-            public MapPoint Start;
-            public MapPoint End;
-
-            public MapSegment(MapPoint start, MapPoint end)
-            {
-                Start = start;
-                End = end;
-            }
+            return new Vector2d((dx * lambda) + lineStart.X, (dy * lambda) + lineStart.Y);
         }
 
         #endregion

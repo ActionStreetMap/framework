@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -12,9 +13,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Maps.Data.Elevation
 {
-    /// <summary>
-    ///     Implementation of <see cref="IElevationProvider"/> which uses SRTM data files.
-    /// </summary>
+    /// <summary> Implementation of <see cref="IElevationProvider"/> which uses SRTM data files. </summary>
     public class SrtmElevationProvider : IElevationProvider, IConfigurable
     {
         private const string LogTag = "mapdata.srtm";
@@ -40,9 +39,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
 
         private byte[] _hgtData;
 
-        /// <summary>
-        ///     Creates SRTM specific implementation of <see cref="IElevationProvider"/>
-        /// </summary>
+        /// <summary> Creates SRTM specific implementation of <see cref="IElevationProvider"/>. </summary>
         /// <param name="fileSystemService">File system service.</param>
         /// <param name="trace">Trace.</param>
         [Dependency]
@@ -169,7 +166,7 @@ namespace ActionStreetMap.Maps.Data.Elevation
         }
 
         /// <inheritdoc />
-        public float GetElevation(MapPoint point)
+        public float GetElevation(Vector2d point)
         {
             var geoCoordinate = GeoProjection.ToGeoCoordinate(_relativeNullPoint, point);
             return GetElevation(geoCoordinate);

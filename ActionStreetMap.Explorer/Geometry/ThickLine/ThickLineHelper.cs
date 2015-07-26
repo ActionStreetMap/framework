@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using UnityEngine;
@@ -8,27 +9,27 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
     internal static class ThickLineHelper
     {
-        public static ThickLineSegment GetThickSegment(MapPoint point1, MapPoint point2, float width)
+        public static ThickLineSegment GetThickSegment(Vector2d point1, Vector2d point2, float width)
         {
-            float length = point1.DistanceTo(point2);
+            var length = point1.DistanceTo(point2);
 
-            float dxLi = (point2.X - point1.X) / length * width;
-            float dyLi = (point2.Y - point1.Y) / length * width;
+            var dxLi = (point2.X - point1.X) / length * width;
+            var dyLi = (point2.Y - point1.Y) / length * width;
 
             // segment moved to the left
-            float lX1 = point1.X - dyLi;
-            float lY1 = point1.Y + dxLi;
-            float lX2 = point2.X - dyLi;
-            float lY2 = point2.Y + dxLi;
+            var lX1 = point1.X - dyLi;
+            var lY1 = point1.Y + dxLi;
+            var lX2 = point2.X - dyLi;
+            var lY2 = point2.Y + dxLi;
 
             // segment moved to the right
-            float rX1 = point1.X + dyLi;
-            float rY1 = point1.Y - dxLi;
-            float rX2 = point2.X + dyLi;
-            float rY2 = point2.Y - dxLi;
+            var rX1 = point1.X + dyLi;
+            var rY1 = point1.Y - dxLi;
+            var rX2 = point2.X + dyLi;
+            var rY2 = point2.Y - dxLi;
 
-            var leftSegment = new Segment(new Vector3(lX1, point1.Elevation, lY1), new Vector3(lX2, point2.Elevation, lY2));
-            var rightSegment = new Segment(new Vector3(rX1, point1.Elevation, rY1), new Vector3(rX2, point2.Elevation, rY2));
+            var leftSegment = new LineSegment2d(new Vector2d(lX1, lY1), new Vector2d(lX2, lY2));
+            var rightSegment = new LineSegment2d(new Vector2d(rX1, rY1), new Vector2d(rX2, rY2));
 
             return new ThickLineSegment(leftSegment, rightSegment);
         }

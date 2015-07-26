@@ -1,4 +1,6 @@
-﻿namespace ActionStreetMap.Core.Scene
+﻿using ActionStreetMap.Core.Geometry;
+
+namespace ActionStreetMap.Core.Scene
 {
     /// <summary> Represents a tree. </summary>
     public class Tree
@@ -12,6 +14,6 @@
         public int Type { get; set; }
 
         /// <summary> Gets or sets tree position. </summary>
-        public MapPoint Point { get; set; }
+        public Vector2d Point { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
             return result;
         }
 
-        internal static bool AddPath(this Clipper clipper, List<MapPoint> pg, PolyType polyType, float scale,
+        internal static bool AddPath(this Clipper clipper, List<Vector2d> pg, PolyType polyType, float scale,
             bool closed)
         {
             if (!closed)
@@ -160,7 +160,7 @@ namespace ActionStreetMap.Core.Geometry.Clipping
             return true;
         }
 
-        internal static bool AddPaths(this Clipper clipper, IEnumerable<List<MapPoint>> ppg, PolyType polyType,
+        internal static bool AddPaths(this Clipper clipper, IEnumerable<List<Vector2d>> ppg, PolyType polyType,
             float scale, bool closed)
         {
             bool result = false;

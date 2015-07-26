@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Core.Unity;
+﻿using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Core.Tiling.Models
@@ -10,16 +11,16 @@ namespace ActionStreetMap.Core.Tiling.Models
         public GeoCoordinate RelativeNullPoint { get; private set; }
 
         /// <summary> Stores tile center coordinate in world coordinates. </summary>
-        public MapPoint MapCenter { get; private set; }
+        public Vector2d MapCenter { get; private set; }
 
         /// <summary> Render mode. </summary>
         public RenderMode RenderMode { get; private set; }
 
         /// <summary> Gets width in meters. </summary>
-        public float Width { get; private set; }
+        public double Width { get; private set; }
 
         /// <summary> Gets height in meters. </summary>
-        public float Height { get; private set; }
+        public double Height { get; private set; }
 
         /// <summary> Gets or sets tile canvas. </summary>
         public Canvas Canvas { get; private set; }
@@ -34,7 +35,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         internal TileRegistry Registry { get; private set; }
 
         /// <summary> Gets map rectangle. </summary>
-        public MapRectangle Rectangle { get; private set; }
+        public Rectangle2d Rectangle { get; private set; }
 
         /// <inheritdoc />
         public override bool IsClosed { get { return false; } }
@@ -46,8 +47,8 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <param name="canvas">Map canvas.</param>
         /// <param name="width">Tile width in meters.</param>
         /// <param name="height">Tile height in meters.</param>
-        public Tile(GeoCoordinate relativeNullPoint, MapPoint mapCenter, RenderMode renderMode, 
-            Canvas canvas, float width, float height)
+        public Tile(GeoCoordinate relativeNullPoint, Vector2d mapCenter, RenderMode renderMode,
+            Canvas canvas, double width, double height)
         {
             RelativeNullPoint = relativeNullPoint;
             MapCenter = mapCenter;
@@ -60,7 +61,7 @@ namespace ActionStreetMap.Core.Tiling.Models
             var geoCenter = GeoProjection.ToGeoCoordinate(relativeNullPoint, mapCenter);
             BoundingBox = BoundingBox.Create(geoCenter, width, height);
 
-            Rectangle = new MapRectangle(MapCenter.X - width / 2, MapCenter.Y - height / 2, width, height);
+            Rectangle = new Rectangle2d(MapCenter.X - width / 2, MapCenter.Y - height / 2, width, height);
 
             Registry = new TileRegistry(renderMode);
         }
@@ -69,11 +70,11 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <param name="position">Absolute position in game.</param>
         /// <param name="offset">offset from bounds.</param>
         /// <returns>Tres if position in tile</returns>
-        public bool Contains(MapPoint position, float offset)
+        public bool Contains(Vector2d position, double offset)
         {
             var rectangle = Rectangle;
             return (position.X > rectangle.TopLeft.X + offset) && (position.Y < rectangle.TopLeft.Y - offset) &&
-                         (position.X < rectangle.BottomRight.X - offset) && (position.Y > rectangle.BottomRight.Y + offset);
+                   (position.X < rectangle.BottomRight.X - offset) && (position.Y > rectangle.BottomRight.Y + offset);
         }
 
         /// <inheritdoc />

@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
@@ -21,40 +22,40 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override IGameObject BuildNode(Tile tile, Rule rule, Node node)
         {
-            var mapPoint = GeoProjection.ToMapCoordinate(tile.RelativeNullPoint, node.Point);
-            if (!tile.Contains(mapPoint, 0))
+            var poinr = GeoProjection.ToMapCoordinate(tile.RelativeNullPoint, node.Point);
+            if (!tile.Contains(poinr, 0))
                 return null;
 
             var uvRectStr = rule.Evaluate<string>("rect");
             var width = (int) rule.GetWidth();
             var height = (int)rule.GetHeight();
-            Rect rect = GetUvRect(uvRectStr, new Size(width, height));
+            Rectangle2d rect = GetUvRect(uvRectStr, new Size(width, height));
 
             var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(node));
 
             var minHeight = rule.GetMinHeight();
-            mapPoint.Elevation = ElevationProvider.GetElevation(mapPoint);
 
-            Observable.Start(() => BuildObject(tile, gameObjectWrapper, rule, rect, mapPoint, minHeight),
+            Observable.Start(() => BuildObject(tile, gameObjectWrapper, rule, rect, poinr, minHeight),
                 Scheduler.MainThread);
 
             return gameObjectWrapper;
         }
 
         /// <summary> Process unity specific data. </summary>
-        private void BuildObject(Tile tile, IGameObject gameObjectWrapper, Rule rule, 
-            Rect rect, MapPoint mapPoint, float minHeight)
+        private void BuildObject(Tile tile, IGameObject gameObjectWrapper, Rule rule,
+            Rectangle2d rect, Vector2d point, float minHeight)
         {
             var gameObject = gameObjectWrapper.AddComponent(GameObject.CreatePrimitive(PrimitiveType.Cube));
             var transform = gameObject.transform;
-            transform.position = new Vector3(mapPoint.X, mapPoint.Elevation + minHeight, mapPoint.Y);
+            var elevation = ElevationProvider.GetElevation(point);
+            transform.position = new Vector3((float)point.X, elevation + minHeight, (float)point.Y);
             // TODO define size 
             transform.localScale = new Vector3(2, 2, 2);
 
-            var p0 = rect.LeftBottom;
-            var p1 = new Vector2(rect.RightUpper.x, rect.LeftBottom.y);
-            var p2 = new Vector2(rect.LeftBottom.x, rect.RightUpper.y);
-            var p3 = rect.RightUpper;
+            var p0 = new Vector2((float)rect.Left, (float)rect.Bottom);
+            var p1 = new Vector2((float)rect.Right, (float)rect.Bottom);
+            var p2 = new Vector2((float)rect.Left, (float)rect.Top);
+            var p3 = new Vector2((float)rect.Right, (float)rect.Top);
 
             var mesh = gameObject.GetComponent<MeshFilter>().mesh;
 
@@ -85,12 +86,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             gameObjectWrapper.Parent = tile.GameObject;
         }
 
-        private Rect GetUvRect(string value, Size size)
+        private Rectangle2d GetUvRect(string value, Size size)
         {
-            // expect x,y,width,height and (0,0) is left bottom corner
-            if (value == null)
-                return null;
-
             var values = value.Split('_');
             if (values.Length != 4)
                 throw new InvalidOperationException(String.Format(Strings.InvalidUvMappingDefinition, value));
@@ -102,10 +99,28 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var x = (float)int.Parse(values[0]);
             var y = Math.Abs((offset + height) - size.Height);
 
-            var leftBottom = new Vector2(x / size.Width, y / size.Height);
-            var rightUpper = new Vector2((x + width) / size.Width, (y + height) / size.Height);
+            var leftBottom = new Vector2d(x / size.Width, y / size.Height);
+            var rightUpper = new Vector2d((x + width) / size.Width, (y + height) / size.Height);
 
-            return new Rect(leftBottom, rightUpper);
+            return new Rectangle2d(leftBottom, rightUpper);
+        }
+
+        private class Size
+        {
+            /// <summary> Width. </summary>
+            public int Width;
+
+            /// <summary> Height. </summary>
+            public int Height;
+
+            /// <summary> Creates instance of <see cref="Size"/>. </summary>
+            /// <param name="width">Width.</param>
+            /// <param name="height">Height.</param>
+            public Size(int width, int height)
+            {
+                Width = width;
+                Height = height;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Infrastructure.Config;
 
 namespace ActionStreetMap.Explorer.Infrastructure
@@ -111,11 +112,11 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <summary> Sets rendering mode. </summary>
         /// <param name="renderMode">Render mode.</param>
         /// <param name="viewport"> Viewport in world coordinates (meters).</param>
-        public ConfigBuilder SetRenderOptions(RenderMode renderMode, MapRectangle viewport)
+        public ConfigBuilder SetRenderOptions(RenderMode renderMode, Rectangle2d viewport)
         {
             Add<string>(@"tile/render_mode", renderMode.ToString().ToLower());
-            Add<float>(@"tile/viewport/w", viewport.Width);
-            Add<float>(@"tile/viewport/h", viewport.Height);
+            Add<float>(@"tile/viewport/w", (float) viewport.Width);
+            Add<float>(@"tile/viewport/h", (float)viewport.Height);
             return this;
         }
 
@@ -139,7 +140,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 .SetSandbox(false)
                 .SetTileSettings(tileSize, 80)
                 .SetCellSettings(100, 4)
-                .SetRenderOptions(RenderMode.Scene, new MapRectangle(0, 0, tileSize * 3, tileSize * 3));
+                .SetRenderOptions(RenderMode.Scene, new Rectangle2d(0, 0, tileSize * 3, tileSize * 3));
         }
 
         #endregion

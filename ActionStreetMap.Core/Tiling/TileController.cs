@@ -13,22 +13,22 @@ using ActionStreetMap.Infrastructure.Utilities;
 namespace ActionStreetMap.Core.Tiling
 {
     /// <summary> Controls flow of loading/unloading tiles. </summary>
-    public interface ITileController : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    public interface ITileController : IPositionObserver<Vector2d>, IPositionObserver<GeoCoordinate>
     {
         /// <summary> Gets current tile. </summary>
         Tile CurrentTile { get; }
 
         /// <summary> Gets tile for given point. Null if tile is not loaded. </summary>
-        Tile GetTile(MapPoint point);
+        Tile GetTile(Vector2d point);
         
         /// <summary> Gets or sets current render mode. </summary>
         RenderMode Mode { get; set; }
 
         /// <summary> Gets or sets current viewport. </summary>
-        MapRectangle Viewport { get; set; }
+        Rectangle2d Viewport { get; set; }
 
         /// <summary> Gets tile size. </summary>
-        float TileSize { get; }
+        double TileSize { get; }
     }
 
     /// <summary> This class listens to position changes and manages tile processing. </summary>
@@ -36,20 +36,20 @@ namespace ActionStreetMap.Core.Tiling
     {
         private readonly object _lockObj = new object();
 
-        private float _tileSize;
-        private float _offset;
-        private float _moveSensitivity;
+        private double _tileSize;
+        private double _offset;
+        private double _moveSensitivity;
         private RenderMode _renderMode;
 
         private int _horizontalOverviewTileCount;
         private int _verticalOverviewTileCount;
 
-        private float _thresholdDistance;
-        private MapPoint _lastUpdatePosition;
-        private MapRectangle _viewport;
+        private double _thresholdDistance;
+        private Vector2d _lastUpdatePosition;
+        private Rectangle2d _viewport;
 
         private GeoCoordinate _currentPosition;
-        private MapPoint _currentMapPoint;
+        private Vector2d _currentMapPoint;
 
         private readonly MutableTuple<int, int> _currentTileIndex = new MutableTuple<int, int>(0, 0);
 
@@ -78,7 +78,7 @@ namespace ActionStreetMap.Core.Tiling
         }
 
         /// <inheritdoc />
-        public Tile GetTile(MapPoint point)
+        public Tile GetTile(Vector2d point)
         {
             int i = Convert.ToInt32(point.X / _tileSize);
             int j = Convert.ToInt32(point.Y / _tileSize);
@@ -107,7 +107,7 @@ namespace ActionStreetMap.Core.Tiling
         }
 
         /// <inheritdoc />
-        public MapRectangle Viewport
+        public Rectangle2d Viewport
         {
             get { return _viewport; }
             set
@@ -122,7 +122,7 @@ namespace ActionStreetMap.Core.Tiling
         }
 
         /// <inheritdoc />
-        public float TileSize { get { return _tileSize; } }
+        public double TileSize { get { return _tileSize; } }
 
         #endregion
 
@@ -164,7 +164,7 @@ namespace ActionStreetMap.Core.Tiling
             if (_allSceneTiles.ContainsKey(i, j))
                 return;
 
-            var tileCenter = new MapPoint(i * _tileSize, j * _tileSize);
+            var tileCenter = new Vector2d(i * _tileSize, j * _tileSize);
             var tile = new Tile(RelativeNullPoint, tileCenter, renderMode, new Canvas(_objectPool), _tileSize, _tileSize);
 
             (renderMode == RenderMode.Overview ? _allOverviewTiles : _allSceneTiles).Add(i, j, tile);
@@ -203,12 +203,12 @@ namespace ActionStreetMap.Core.Tiling
 
         #region Preload
 
-        private bool ShouldPreload(Tile tile, MapPoint position)
+        private bool ShouldPreload(Tile tile, Vector2d position)
         {
             return !tile.Contains(position, _offset);
         }
 
-        private void PreloadNextTile(Tile tile, MapPoint position, int i, int j)
+        private void PreloadNextTile(Tile tile, Vector2d position, int i, int j)
         {
             var index = GetNextTileIndex(tile, position, i, j);
             if (_allSceneTiles.ContainsKey(index.Item1, index.Item2))
@@ -217,7 +217,7 @@ namespace ActionStreetMap.Core.Tiling
             Create(index.Item1, index.Item2);
         }
 
-        private void DestroyRemoteTiles(MapPoint position, RenderMode renderMode)
+        private void DestroyRemoteTiles(Vector2d position, RenderMode renderMode)
         {
             var collection = renderMode == RenderMode.Scene ? _allSceneTiles : _allOverviewTiles;
             var threshold = renderMode == RenderMode.Scene ? 
@@ -232,7 +232,7 @@ namespace ActionStreetMap.Core.Tiling
         }
 
         /// <summary> Gets next tile index. </summary>
-        private MutableTuple<int, int> GetNextTileIndex(Tile tile, MapPoint position, int i, int j)
+        private MutableTuple<int, int> GetNextTileIndex(Tile tile, Vector2d position, int i, int j)
         {
             var rectangle = tile.Rectangle;
             // top
@@ -255,9 +255,9 @@ namespace ActionStreetMap.Core.Tiling
 
         #region IObserver<MapPoint> implementation
 
-        MapPoint IPositionObserver<MapPoint>.CurrentPosition { get { return _currentMapPoint; } }
+        Vector2d IPositionObserver<Vector2d>.CurrentPosition { get { return _currentMapPoint; } }
 
-        void IObserver<MapPoint>.OnNext(MapPoint value)
+        void IObserver<Vector2d>.OnNext(Vector2d value)
         {
             var geoPosition = GeoProjection.ToGeoCoordinate(RelativeNullPoint, value);
             lock (_lockObj)
@@ -297,8 +297,8 @@ namespace ActionStreetMap.Core.Tiling
             }
         }
 
-        void IObserver<MapPoint>.OnError(Exception error) { }
-        void IObserver<MapPoint>.OnCompleted() { }
+        void IObserver<Vector2d>.OnError(Exception error) { }
+        void IObserver<Vector2d>.OnCompleted() { }
 
         #endregion
 
@@ -312,7 +312,7 @@ namespace ActionStreetMap.Core.Tiling
                 RelativeNullPoint = value;
             _currentPosition = value;
 
-            (this as IPositionObserver<MapPoint>).OnNext(GeoProjection.ToMapCoordinate(RelativeNullPoint, value));
+            (this as IPositionObserver<Vector2d>).OnNext(GeoProjection.ToMapCoordinate(RelativeNullPoint, value));
         }
 
         void IObserver<GeoCoordinate>.OnError(Exception error) { }
@@ -329,7 +329,7 @@ namespace ActionStreetMap.Core.Tiling
             _verticalOverviewTileCount = GetTileCountFromSide(_viewport.Height);
         }
 
-        private int GetTileCountFromSide(float size)
+        private int GetTileCountFromSide(double size)
         {
             if (Math.Abs(size) < 0.00001f || size < _tileSize) size = 3 * _tileSize;
             return (int) Math.Ceiling((Math.Ceiling(size / _tileSize) - 1) / 2);
@@ -338,7 +338,7 @@ namespace ActionStreetMap.Core.Tiling
         /// <summary> Makes last known position invalid to force execution of tile loading logic. </summary>
         private void InvalidateLastKnownPosition()
         {
-            _lastUpdatePosition = new MapPoint(float.MinValue, float.MinValue);
+            _lastUpdatePosition = new Vector2d(double.MinValue, double.MinValue);
         }
 
         #endregion
@@ -358,11 +358,11 @@ namespace ActionStreetMap.Core.Tiling
             var viewportConfig = configSection.GetSection("viewport");
             var width = viewportConfig != null ? viewportConfig.GetFloat("w", 0) : 0;
             var height =  viewportConfig != null ? viewportConfig.GetFloat("h", 0) : 0;
-            _viewport = new MapRectangle(0, 0, width, height);
+            _viewport = new Rectangle2d(0, 0, width, height);
 
             RecalculateOverviewTileCount();
 
-            _thresholdDistance = (float) Math.Sqrt(2)*_tileSize;
+            _thresholdDistance = Math.Sqrt(2)*_tileSize;
         }
 
         #endregion

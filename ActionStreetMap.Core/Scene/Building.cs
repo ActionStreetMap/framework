@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene.InDoor;
 using ActionStreetMap.Core.Unity;
 
@@ -20,7 +21,7 @@ namespace ActionStreetMap.Core.Scene
         public float Elevation { get; set; }
 
         /// <summary> Gets or sets building footprint. </summary>
-        public List<MapPoint> Footprint { get; set; }
+        public List<Vector2d> Footprint { get; set; }
 
         /// <summary> Contains floor plans. </summary>
         public List<Floor> FloorPlans { get; set; }

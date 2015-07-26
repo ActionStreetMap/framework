@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Explorer.Geometry.Utils
 {
@@ -8,33 +8,28 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
     {
         #region Intermediate points
 
-        public static List<MapPoint> DividePolyline(IElevationProvider elevationProvider,
-            List<MapPoint> original, float maxDistance)
+        public static List<Vector2d> DividePolyline(List<Vector2d> original, float maxDistance)
         {
-            return DividePolyline(elevationProvider, original, maxDistance, 5f);
+            return DividePolyline(original, maxDistance, 5f);
         }
 
-        public static List<MapPoint> DividePolyline(IElevationProvider elevationProvider,
-            List<MapPoint> original, float maxDistance, float threshold)
+        public static List<Vector2d> DividePolyline(List<Vector2d> original, float maxDistance, float threshold)
         {
-            var result = new List<MapPoint>(original.Count);
+            var result = new List<Vector2d>(original.Count);
             for (int i = 1; i < original.Count; i++)
             {
                 var point1 = original[i - 1];
                 var point2 = original[i];
 
-                point1.Elevation = elevationProvider.GetElevation(point1);
                 result.Add(point1);
 
                 var distance = point1.DistanceTo(point2);
                 while (distance > maxDistance)
                 {
                     var ration = maxDistance / distance;
-                    point1 = new MapPoint(
+                    point1 = new Vector2d(
                         point1.X + ration * (point2.X - point1.X),
                         point1.Y + ration * (point2.Y - point1.Y));
-
-                    point1.Elevation = elevationProvider.GetElevation(point1);
 
                     distance = point1.DistanceTo(point2);
                     // we should prevent us to have small distances between points when we have turn
@@ -47,48 +42,40 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
             }
             // add last as we checked previous item in cycle
             var last = original[original.Count - 1];
-            last.Elevation = elevationProvider.GetElevation(last);
             result.Add(last);
             return result;
         }
 
-        public static void DivideLine(IElevationProvider elevationProvider, MapPoint start,
-            MapPoint end, List<MapPoint> result, float maxDistance)
+        public static void DivideLine(Vector2d start, Vector2d end, List<Vector2d> result, float maxDistance)
         {
             var point1 = start;
             var point2 = end;
 
-            point1.Elevation = elevationProvider.GetElevation(point1);
             result.Add(point1);
 
             var distance = point1.DistanceTo(point2);
             while (distance > maxDistance)
             {
                 var ration = maxDistance / distance;
-                point1 = new MapPoint(
-                    point1.X + ration * (point2.X - point1.X),
-                    point1.Y + ration * (point2.Y - point1.Y));
+                point1 = new Vector2d(point1.X + ration*(point2.X - point1.X),
+                    point1.Y + ration*(point2.Y - point1.Y));
 
-                point1.Elevation = elevationProvider.GetElevation(point1);
                 distance = point1.DistanceTo(point2);
                 result.Add(point1);
             }
 
-            end.Elevation = elevationProvider.GetElevation(end);
             result.Add(end);
         }
 
-        public static MapPoint GetNextIntermediatePoint(IElevationProvider elevationProvider, MapPoint point1,
-            MapPoint point2, float maxDistance)
+        public static Vector2d GetNextIntermediatePoint(Vector2d point1, Vector2d point2, float maxDistance)
         {
             var distance = point1.DistanceTo(point2);
             if (distance > maxDistance)
             {
                 var ration = maxDistance / distance;
-                var next = new MapPoint(point1.X + ration * (point2.X - point1.X),
-                            point1.Y + ration * (point2.Y - point1.Y));
+                var next = new Vector2d(point1.X + ration*(point2.X - point1.X),
+                    point1.Y + ration*(point2.Y - point1.Y));
 
-                next.Elevation = elevationProvider.GetElevation(point1);
                 return next;
             }
 
@@ -100,17 +87,17 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         #region Distance
 
         /// <summary> Compute the distance from AB to C if isSegment is true, AB is a segment, not a line. </summary>
-        public static float LineToPointDistance2D(MapPoint pointA, MapPoint pointB, MapPoint pointC,
+        public static double LineToPointDistance2D(Vector2d pointA, Vector2d pointB, Vector2d pointC,
             bool isSegment)
         {
-            float dist = PointUtils.CrossProduct(pointA, pointB, pointC) / pointA.DistanceTo(pointB);
+            var dist = PointUtils.CrossProduct(pointA, pointB, pointC) / pointA.DistanceTo(pointB);
             if (isSegment)
             {
-                float dot1 = PointUtils.DotProduct(pointA, pointB, pointC);
+                var dot1 = PointUtils.DotProduct(pointA, pointB, pointC);
                 if (dot1 > 0)
                     return pointB.DistanceTo(pointC);
 
-                float dot2 = PointUtils.DotProduct(pointB, pointA, pointC);
+                var dot2 = PointUtils.DotProduct(pointB, pointA, pointC);
                 if (dot2 > 0)
                     return pointA.DistanceTo(pointC);
             }

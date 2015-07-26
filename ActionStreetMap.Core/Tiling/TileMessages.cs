@@ -1,4 +1,5 @@
 ﻿
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Tiling.Models;
 
 namespace ActionStreetMap.Core.Tiling
@@ -8,11 +9,11 @@ namespace ActionStreetMap.Core.Tiling
     public sealed class TileLoadStartMessage
     {
         /// <summary> Gets tile center. </summary>
-        public MapPoint TileCenter { get; private set; }
+        public Vector2d TileCenter { get; private set; }
 
         /// <summary> Creates message. </summary>
         /// <param name="tileCenter">center of tile.</param>
-        public TileLoadStartMessage(MapPoint tileCenter) { TileCenter = tileCenter; }
+        public TileLoadStartMessage(Vector2d tileCenter) { TileCenter = tileCenter; }
     }
     /// <summary> Defines "Tile load finish" message. </summary>
     public sealed class TileLoadFinishMessage

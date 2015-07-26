@@ -1,5 +1,4 @@
 ﻿using System;
-using ActionStreetMap.Core;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry
@@ -18,7 +17,7 @@ namespace ActionStreetMap.Explorer.Geometry
         ///     Modify action: first parameter is vertex index, second - distance to center, third -
         ///     direction of force.
         /// </param>
-        void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction);
+        void Query(Vector3 center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction);
     }
 
     /// <summary> Represents mesh index which does nothing. </summary>
@@ -33,7 +32,7 @@ namespace ActionStreetMap.Explorer.Geometry
         }
 
         /// <inheritdoc />
-        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
+        public void Query(Vector3 center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
         {
         }
     }

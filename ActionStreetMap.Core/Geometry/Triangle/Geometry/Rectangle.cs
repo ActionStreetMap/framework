@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     /// <summary> A simple bounding box class. </summary>
-    public class Rectangle
+    internal class Rectangle
     {
         private double _xmin, _ymin, _xmax, _ymax;
 

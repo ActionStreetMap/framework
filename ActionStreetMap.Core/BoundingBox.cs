@@ -63,7 +63,7 @@ namespace ActionStreetMap.Core
         /// <param name="center">Center point.</param>
         /// <param name="width">Width in meters.</param>
         /// <param name="height">Heigh in meters.</param>
-        public static BoundingBox Create(GeoCoordinate center, float width, float height)
+        public static BoundingBox Create(GeoCoordinate center, double width, double height)
         {
             // Bounding box surrounding the point at given coordinates,
             // assuming local approximation of Earth surface as a sphere

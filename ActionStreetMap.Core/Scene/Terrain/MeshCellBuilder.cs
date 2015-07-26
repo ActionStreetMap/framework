@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
@@ -35,7 +36,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         #region Public methods
 
         /// <summary> Builds mesh cell. </summary>
-        public MeshCell Build(MapRectangle rectangle, MeshCanvas content)
+        public MeshCell Build(Rectangle2d rectangle, MeshCanvas content)
         {
             var renderMode = content.RenderMode;
             // NOTE the order of operation is important
@@ -63,7 +64,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         #endregion
 
-        private List<MeshRegion> CreateMeshRegions(MapRectangle rectangle, List<MeshCanvas.Region> regionDatas,
+        private List<MeshRegion> CreateMeshRegions(Rectangle2d rectangle, List<MeshCanvas.Region> regionDatas,
             RenderMode renderMode)
         {
             var meshRegions = new List<MeshRegion>();
@@ -72,7 +73,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(MapRectangle rectangle, MeshCanvas.Region region, RenderMode renderMode,
+        private MeshRegion CreateMeshRegions(Rectangle2d rectangle, MeshCanvas.Region region, RenderMode renderMode,
             bool useContours = false)
         {
             var polygon = new Polygon(256);
@@ -143,7 +144,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return points;
         }
 
-        private VertexPaths GetContour(MapRectangle rect, Path path)
+        private VertexPaths GetContour(Rectangle2d rect, Path path)
         {
             ClipperOffset offset = _objectPool.NewObject<ClipperOffset>();
             offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
@@ -198,7 +199,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     new QualityOptions { MaximumArea = _maximumArea });
         }
 
-        private Paths ClipByRectangle(MapRectangle rect, Paths subjects)
+        private Paths ClipByRectangle(Rectangle2d rect, Paths subjects)
         {
             Clipper clipper = _objectPool.NewObject<Clipper>();
             clipper.AddPath(new Path

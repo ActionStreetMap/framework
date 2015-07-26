@@ -33,7 +33,7 @@ namespace ActionStreetMap.Core.Utils
         }
 
         /// <summary> Clamp function. </summary>
-        public static float Clamp(float value, float min, float max)
+        public static double Clamp(double value, double min, double max)
         {
             return (value < min) ? min : (value > max) ? max : value;
         }

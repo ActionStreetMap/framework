@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Utils;
@@ -91,24 +90,24 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
                 .ToArray().Wait().Where(e => e.Tags.ContainsKey("building")).OfType<Way>()).First();
         }
 
-        private MapRectangle GetMapRectangleFromWay(Way way)
+        private Rectangle2d GetMapRectangleFromWay(Way way)
         {
             var relativeNullPoint = _tileController.CurrentTile.RelativeNullPoint;
             var somePoint = GeoProjection.ToMapCoordinate(relativeNullPoint, way.Coordinates[0]);
             // NOTE change this code if it does matter
-            return new MapRectangle(somePoint.X, somePoint.Y, 10, 10);
+            return new Rectangle2d(somePoint.X, somePoint.Y, 10, 10);
         }
 
         private Building CreateBuilding()
         {
             return new Building()
             {
-                Footprint = new List<MapPoint>()
+                Footprint = new List<Vector2d>()
                 {
-                    new MapPoint(0, 0),
-                    new MapPoint(0, 50),
-                    new MapPoint(50, 50),
-                    new MapPoint(50, 0),
+                    new Vector2d(0, 0),
+                    new Vector2d(0, 50),
+                    new Vector2d(50, 50),
+                    new Vector2d(50, 0),
                 }
             };
         }

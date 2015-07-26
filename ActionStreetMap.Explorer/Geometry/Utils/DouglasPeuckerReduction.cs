@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer.Geometry.Utils
@@ -13,7 +14,7 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         /// <summary>
         ///     Reduces the number of points
         /// </summary>
-        public static void Reduce(List<MapPoint> source, List<MapPoint> destination, Double tolerance, IObjectPool objectPool)
+        public static void Reduce(List<Vector2d> source, List<Vector2d> destination, Double tolerance, IObjectPool objectPool)
         {
             if (source == null || source.Count < 3)
             {
@@ -51,7 +52,7 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         /// <summary>
         ///     Douglases the peucker reduction.
         /// </summary>
-        private static void Reduce(List<MapPoint> source, Int32 firstPoint, Int32 lastPoint, Double tolerance, List<int> pointIndexsToKeep)
+        private static void Reduce(List<Vector2d> source, Int32 firstPoint, Int32 lastPoint, Double tolerance, List<int> pointIndexsToKeep)
         {
             Double maxDistance = 0;
             Int32 indexFarthest = 0;
@@ -82,7 +83,7 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         /// <summary>
         ///     The distance of a point from a line made from point1 and point2.
         /// </summary>
-        public static Double PerpendicularDistance(MapPoint Point1, MapPoint Point2, MapPoint Point)
+        public static Double PerpendicularDistance(Vector2d Point1, Vector2d Point2, Vector2d Point)
         {
             Double area =
                 Math.Abs(.5*

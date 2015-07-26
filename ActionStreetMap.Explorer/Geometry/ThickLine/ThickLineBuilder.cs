@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Utils;
@@ -63,7 +64,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         }
 
         /// <summary> Builds line. </summary>
-        public virtual void Build(MapRectangle rectangle, List<LineElement> elements, Action<MeshData> builder)
+        public virtual void Build(Rectangle2d rectangle, List<LineElement> elements, Action<MeshData> builder)
         {
             //var lineElements = _objectPool.NewList<LineElement>(8);
             /*ThickLineUtils.GetLineElementsInTile(rectangle.BottomLeft,
@@ -145,7 +146,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             {
                 var first = lineSegments[segmentsCount - 1];
 
-                MapPoint secondPoint = LineUtils.GetNextIntermediatePoint(
+                Vector2d secondPoint = LineUtils.GetNextIntermediatePoint(
                     _elevationProvider,
                     _nextElement.Points[0],
                     _nextElement.Points[1], _maxPointDistance);
@@ -219,7 +220,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             Data.AddTriangle(first, invert ? third : second, invert ? second : third, color);
         }
 
-        private void AddTrapezoid(Segment left, Segment right)
+        private void AddTrapezoid(LineSegment2d left, LineSegment2d right)
         {
             AddTrapezoid(right.Start, left.Start, left.End, right.End);
         }

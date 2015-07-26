@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Explorer.Geometry;
 using UnityEngine;
@@ -19,14 +20,14 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private readonly int _columnCount;
         private readonly int _rowCount;
-        private readonly float _xAxisStep;
-        private readonly float _yAxisStep;
-        private readonly float _left;
-        private readonly float _right;
-        private readonly float _top;
-        private readonly float _bottom;
+        private readonly double _xAxisStep;
+        private readonly double _yAxisStep;
+        private readonly double _left;
+        private readonly double _right;
+        private readonly double _top;
+        private readonly double _bottom;
 
-        private readonly MapPoint _bottomLeft;
+        private readonly Vector2d _bottomLeft;
         private readonly Range[] _ranges;
         private readonly int _maxIndex;
 
@@ -38,7 +39,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <param name="rowCount">Row count of given bounding box.</param>
         /// <param name="boundingBox">Bounding box.</param>
         /// <param name="triangles">Triangles</param>
-        public TerrainMeshIndex(int columnCount, int rowCount, MapRectangle boundingBox, List<TerrainMeshTriangle> triangles)
+        public TerrainMeshIndex(int columnCount, int rowCount, Rectangle2d boundingBox, List<TerrainMeshTriangle> triangles)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;
@@ -85,7 +86,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var p0 = triangle.Vertex0;
             var p1 = triangle.Vertex1;
             var p2 = triangle.Vertex2;
-            var centroid = new MapPoint((p0.X + p1.X + p2.X) / 3, (p0.Y + p1.Y + p2.Y) / 3);
+            var centroid = new Vector2d((p0.X + p1.X + p2.X) / 3, (p0.Y + p1.Y + p2.Y) / 3);
             var i = (int)Math.Floor((centroid.X - _left) / _xAxisStep);
             var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
 
@@ -95,28 +96,28 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <inheritdoc />
-        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
+        public void Query(Vector3 center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
         {
             var result = new List<int>(4);
 
-            var x = (int)Math.Floor((center.X - _left) / _xAxisStep);
-            var y = (int)Math.Floor((center.Y - _bottom) / _yAxisStep);
+            var x = (int)Math.Floor((center.x - _left) / _xAxisStep);
+            var y = (int)Math.Floor((center.z - _bottom) / _yAxisStep);
 
+            var center2d = new Vector2d(center.x, center.z);
             for (int j = y - 1; j <= y + 1; j++)
                 for (int i = x - 1; i <= x + 1; i++)
                 {
-                    var rectangle = new MapRectangle(
+                    var rectangle = new Rectangle2d(
                         _bottomLeft.X + i*_xAxisStep,
                         _bottomLeft.Y + j*_yAxisStep,
                         _xAxisStep,
                         _yAxisStep);
 
                     // NOTE enlarge search radius to prevent some issues with adjusted triangles
-                    if (GeometryUtils.HasCollision(center, radius + 10, rectangle))
+                    if (GeometryUtils.HasCollision(center2d, radius + 10, rectangle))
                         AddRange(i, j, result);
                 }
-            ModifyVertices(result, vertices, new Vector3(center.X, center.Elevation, center.Y), 
-                radius, modifyAction);
+            ModifyVertices(result, vertices, center, radius, modifyAction);
 
             // reset statisitcs
             _modifiedCount = 0;

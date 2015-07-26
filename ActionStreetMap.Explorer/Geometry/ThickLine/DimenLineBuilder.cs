@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         }
 
         /// <inheritdoc />
-        public override void Build(MapRectangle rectangle, List<LineElement> elements, Action<MeshData> builder)
+        public override void Build(Rectangle2d rectangle, List<LineElement> elements, Action<MeshData> builder)
         {
             base.Build(rectangle, elements, (data) =>
             {

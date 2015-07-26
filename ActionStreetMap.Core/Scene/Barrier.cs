@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Core.Scene
 {
@@ -15,6 +13,6 @@ namespace ActionStreetMap.Core.Scene
         public float Height;
 
         /// <summary> Gets or sets building footprint. </summary>
-        public List<MapPoint> Footprint;
+        public List<Vector2d> Footprint;
     }
 }

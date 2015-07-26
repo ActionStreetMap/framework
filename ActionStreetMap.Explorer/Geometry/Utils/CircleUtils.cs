@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Infrastructure.Primitives;
 
@@ -16,7 +17,7 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         /// <param name="relativeNullPoint">Relative null point.</param>
         /// <param name="points">Geo coordinates.</param>
         /// <returns>Tuple which represents circle: Item1 is diameter, Item2 is shpere center.</returns>
-        public static MutableTuple<float, MapPoint> GetCircle(GeoCoordinate relativeNullPoint, List<GeoCoordinate> points)
+        public static MutableTuple<double, Vector2d> GetCircle(GeoCoordinate relativeNullPoint, List<GeoCoordinate> points)
         {
             var minLat = points.Min(a => a.Latitude);
             var maxLat = points.Max(a => a.Latitude);
@@ -31,13 +32,13 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
 
             var diameter = (float)((maxLat - minLat) * ConvertionCoefficient);
 
-            return new MutableTuple<float, MapPoint>(diameter, sphereCenter);
+            return new MutableTuple<double, Vector2d>(diameter, sphereCenter);
         }
 
         /// <summary> Gets circle. </summary>
         /// <param name="points">Map points.</param>
         /// <returns>Tuple which represents circle: Item1 is diameter, Item2 is shpere center.</returns>
-        public static MutableTuple<float, MapPoint> GetCircle(List<MapPoint> points)
+        public static MutableTuple<double, Vector2d> GetCircle(List<Vector2d> points)
         {
             var minX = points.Min(a => a.X);
             var maxX = points.Max(a => a.X);
@@ -48,11 +49,11 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
             var centerX = (minX + (maxX - minX) / 2);
             var centerY = (minY + (maxY - minY) / 2);
 
-            var sphereCenter = new MapPoint(centerX, centerY);
+            var sphereCenter = new Vector2d(centerX, centerY);
 
             var diameter = maxX - minX;
 
-            return new MutableTuple<float, MapPoint>(diameter, sphereCenter);
+            return new MutableTuple<double, Vector2d>(diameter, sphereCenter);
         }
     }
 }

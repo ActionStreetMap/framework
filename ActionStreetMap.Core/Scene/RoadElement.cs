@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Core.Scene
 {
@@ -19,7 +20,7 @@ namespace ActionStreetMap.Core.Scene
         public RoadType Type { get; set; }
 
         /// <summary> Gets or sets middle points of road. </summary>
-        public List<MapPoint> Points { get; set; }
+        public List<Vector2d> Points { get; set; }
 
         /// <inheritdoc />
         public override string ToString()

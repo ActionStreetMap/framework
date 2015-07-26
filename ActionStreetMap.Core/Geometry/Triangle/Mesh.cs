@@ -61,9 +61,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle
 
         #region Public properties
 
-        /// <summary> Gets the mesh bounding box. </summary>
-        public Rectangle Bounds { get { return bounds; } }
-
         /// <summary> Gets the mesh vertices. </summary>
         public ICollection<Vertex> Vertices { get { return vertices.Values; } }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Topology;
@@ -103,7 +104,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 for (int i = 0; i < cellColumnCount; i++)
                 {
                     var tileBottomLeft = tile.Rectangle.BottomLeft;
-                    var rectangle = new MapRectangle(
+                    var rectangle = new Rectangle2d(
                         tileBottomLeft.X + i*cellWidth,
                         tileBottomLeft.Y + j*cellHeight,
                         cellWidth,
@@ -118,12 +119,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             return terrainObject;
         }
 
-        private void BuildCell(Canvas canvas, Rule rule, IGameObject terrainObject, MeshCell cell, MapRectangle cellRect, 
-            RenderMode renderMode, string name)
+        private void BuildCell(Canvas canvas, Rule rule, IGameObject terrainObject, MeshCell cell, 
+            Rectangle2d cellRect, RenderMode renderMode, string name)
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
-            var rect = new MapRectangle(cellRect.Left, cellRect.Bottom, cellRect.Width, cellRect.Height);
+            var rect = new Rectangle2d(cellRect.Left, cellRect.Bottom, cellRect.Width, cellRect.Height);
 
             var meshData = new TerrainMeshData(_objectPool);       
             meshData.GameObject = cellGameObject;
@@ -233,17 +234,17 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             const float errorTopFix = 0.02f;
             const float errorBottomFix = 0.1f;
 
-            var pointList = _objectPool.NewList<MapPoint>(64);
+            var pointList = _objectPool.NewList<Vector2d>(64);
             foreach (var contour in region.Contours)
             {
                 var length = contour.Count;
                 for (int i = 0; i < length; i++)
                 {
                     var v2DIndex = i == (length - 1) ? 0 : i + 1;
-                    var start = new MapPoint((float) contour[i].X, (float) contour[i].Y);
-                    var end = new MapPoint((float) contour[v2DIndex].X, (float) contour[v2DIndex].Y);
+                    var start = new Vector2d((float)contour[i].X, (float)contour[i].Y);
+                    var end = new Vector2d((float)contour[v2DIndex].X, (float)contour[v2DIndex].Y);
 
-                    LineUtils.DivideLine(_elevationProvider, start, end, pointList, divideStep);
+                    LineUtils.DivideLine(start, end, pointList, divideStep);
 
                     for (int k = 1; k < pointList.Count; k++)
                     {

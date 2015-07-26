@@ -1,5 +1,4 @@
-﻿
-using ActionStreetMap.Explorer.Geometry.Primitives;
+﻿using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Explorer.Geometry.ThickLine
 {
@@ -7,15 +6,15 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
     public struct ThickLineSegment
     {
         /// <summary> Left parallel segment. </summary>
-        public Segment Left;
+        public LineSegment2d Left;
 
         /// <summary> Right parallel segment. </summary>
-        public Segment Right;
+        public LineSegment2d Right;
 
         /// <summary> Creates ThickLineSegment. </summary>
         /// <param name="left">Left segment.</param>
         /// <param name="right">Right segment.</param>
-        public ThickLineSegment(Segment left, Segment right)
+        public ThickLineSegment(LineSegment2d left, LineSegment2d right)
         {
             Left = left;
             Right = right;

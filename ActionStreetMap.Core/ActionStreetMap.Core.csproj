@@ -119,7 +119,7 @@
     <Compile Include="Infrastructure\IGameObject.cs" />
     <Compile Include="Infrastructure\IGameObjectFactory.cs" />
     <Compile Include="IPositionObserver.cs" />
-    <Compile Include="MapRectangle.cs" />
+    <Compile Include="Geometry\Rectangle2d.cs" />
     <Compile Include="Geometry\Clipping\clipper.cs" />
     <Compile Include="Positioning\Nmea\ActualNmeaValueType.cs" />
     <Compile Include="Positioning\Nmea\Error.cs" />
@@ -166,7 +166,6 @@
     <Compile Include="Scene\Address.cs" />
     <Compile Include="MapCss\Visitors\Eval\ListTreeWalker.cs" />
     <Compile Include="Tiling\IModelBehaviour.cs" />
-    <Compile Include="MapPoint.cs" />
     <Compile Include="Scene\Building.cs" />
     <Compile Include="Tiling\TileRegistry.cs" />
     <Compile Include="Scene\RoadElement.cs" />

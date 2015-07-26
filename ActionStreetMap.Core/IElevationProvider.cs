@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Infrastructure.Reactive;
+﻿using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Infrastructure.Reactive;
 
 namespace ActionStreetMap.Core
 {
@@ -16,7 +17,7 @@ namespace ActionStreetMap.Core
         float GetElevation(GeoCoordinate coordinate);
 
         /// <summary> Gets elevation for given map point. </summary>
-        float GetElevation(MapPoint point);
+        float GetElevation(Vector2d point);
 
         /// <summary> Sets coordinate correspongin for (0,0). </summary>
         void SetNullPoint(GeoCoordinate coordinate);

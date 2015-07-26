@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
@@ -31,17 +32,17 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <summary> Adds building to current scene. </summary>
         void AddBuilding(Building building);
         /// <summary> Deletes building with given id from element source covered by given map rectangle. </summary>
-        void DeleteBuilding(long id, MapRectangle rectangle);
+        void DeleteBuilding(long id, Rectangle2d rectangle);
 
         /// <summary> Adds barrier to current scene. </summary>
         void AddBarrier(Barrier barrier);
         /// <summary> Deletes barrier with given id from element source covered by given map rectangle. </summary>
-        void DeleteBarrier(long id, MapRectangle rectangle);
+        void DeleteBarrier(long id, Rectangle2d rectangle);
 
         /// <summary> Adds building to current scene. </summary>
         void AddTree(Tree tree);
         /// <summary> Deletes tree with given id from element source. </summary>
-        void DeleteTree(long id, MapPoint point);
+        void DeleteTree(long id, Vector2d point);
 
         #endregion
     }
@@ -108,7 +109,7 @@ namespace ActionStreetMap.Explorer.Tiling
         }
 
         /// <inheritdoc />
-        public void DeleteBuilding(long id, MapRectangle rectangle)
+        public void DeleteBuilding(long id, Rectangle2d rectangle)
         {
             DeleteElement(id, rectangle);
         }
@@ -123,7 +124,7 @@ namespace ActionStreetMap.Explorer.Tiling
         }
 
         /// <inheritdoc />
-        public void DeleteBarrier(long id, MapRectangle rectangle)
+        public void DeleteBarrier(long id, Rectangle2d rectangle)
         {
             DeleteElement(id, rectangle);
         }
@@ -138,15 +139,15 @@ namespace ActionStreetMap.Explorer.Tiling
         }
 
         /// <inheritdoc />
-        public void DeleteTree(long id, MapPoint point)
+        public void DeleteTree(long id, Vector2d point)
         {
-            DeleteElement(id, new MapRectangle(point.X, point.Y, 0, 0));
+            DeleteElement(id, new Rectangle2d(point.X, point.Y, 0, 0));
         }
 
         #endregion
 
         /// <summary> Ensures that the corresponding element source is loaded. </summary>
-        private void EnsureElementSource(MapPoint point)
+        private void EnsureElementSource(Vector2d point)
         {
             var boundingBox = _tileController.GetTile(point).BoundingBox;
             var elementSource = _elementSourceProvider.Get(boundingBox)
@@ -172,7 +173,7 @@ namespace ActionStreetMap.Explorer.Tiling
         }
 
         /// <summary> Adds way model to element source and scene. </summary>
-        private void AddWayModel(long id, List<MapPoint> footprint, TagCollection tags)
+        private void AddWayModel(long id, List<Vector2d> footprint, TagCollection tags)
         {
             EnsureElementSource(footprint.First());
             var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
@@ -189,7 +190,7 @@ namespace ActionStreetMap.Explorer.Tiling
         }
 
         /// <summary> Adds node model to to element source and scene. </summary>
-        private void AddNodeModel(long id, MapPoint point, TagCollection tags)
+        private void AddNodeModel(long id, Vector2d point, TagCollection tags)
         {
             EnsureElementSource(point);
             var nullPoint = _tileController.CurrentTile.RelativeNullPoint;
@@ -206,7 +207,7 @@ namespace ActionStreetMap.Explorer.Tiling
         }
 
         /// <summary> Deletes way from element source. </summary>
-        private void DeleteElement(long id, MapRectangle rectangle)
+        private void DeleteElement(long id, Rectangle2d rectangle)
         {
             EnsureElementSource(rectangle.BottomLeft);
 

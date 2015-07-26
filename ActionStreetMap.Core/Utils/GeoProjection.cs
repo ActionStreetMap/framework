@@ -1,4 +1,5 @@
 ﻿using System;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Core.Utils
 {
@@ -17,7 +18,7 @@ namespace ActionStreetMap.Core.Utils
         ///     Calculates map coordinate from geo coordinate
         ///     see http://stackoverflow.com/questions/3024404/transform-longitude-latitude-into-meters?rq=1
         /// </summary>
-        public static MapPoint ToMapCoordinate(GeoCoordinate relativeNullPoint, GeoCoordinate coordinate)
+        public static Vector2d ToMapCoordinate(GeoCoordinate relativeNullPoint, GeoCoordinate coordinate)
         {
             double deltaLatitude = coordinate.Latitude - relativeNullPoint.Latitude;
             double deltaLongitude = coordinate.Longitude - relativeNullPoint.Longitude;
@@ -25,17 +26,17 @@ namespace ActionStreetMap.Core.Utils
             double resultX = deltaLongitude*latitudeCircumference/360;
             double resultY = deltaLatitude*CircleDistance/360;
 
-            return new MapPoint((float) resultX, (float) resultY);
+            return new Vector2d(resultX, resultY);
         }
 
         /// <summary> Calculates geo coordinate from map coordinate. </summary>
-        public static GeoCoordinate ToGeoCoordinate(GeoCoordinate relativeNullPoint, MapPoint mapPoint)
+        public static GeoCoordinate ToGeoCoordinate(GeoCoordinate relativeNullPoint, Vector2d mapPoint)
         {
             return ToGeoCoordinate(relativeNullPoint, mapPoint.X, mapPoint.Y);
         }
 
         /// <summary> Calculates geo coordinate from map coordinate. </summary>
-        public static GeoCoordinate ToGeoCoordinate(GeoCoordinate relativeNullPoint, float x, float y)
+        public static GeoCoordinate ToGeoCoordinate(GeoCoordinate relativeNullPoint, double x, double y)
         {
             double latitudeCircumference = LatitudeEquator*Math.Cos(MathUtils.Deg2Rad(relativeNullPoint.Latitude));
 

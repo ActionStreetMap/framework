@@ -96,11 +96,7 @@
     <Compile Include="Geometry\Utils\DouglasPeuckerReduction.cs" />
     <Compile Include="Geometry\Utils\Triangulator.cs" />
     <Compile Include="Geometry\Utils\PolygonUtils.cs" />
-    <Compile Include="Geometry\Primitives\Polygon.cs" />
-    <Compile Include="Geometry\Primitives\Rect.cs" />
-    <Compile Include="Geometry\Primitives\Segment.cs" />
-    <Compile Include="Geometry\Primitives\Size.cs" />
-    <Compile Include="Geometry\Utils\SegmentUtils.cs" />
+    <Compile Include="Geometry\ThickLine\SegmentUtils.cs" />
     <Compile Include="Geometry\Utils\TriangleUtils.cs" />
     <Compile Include="Scene\Terrain\TerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />

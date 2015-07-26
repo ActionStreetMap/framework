@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Maps.Data.Helpers
@@ -36,9 +37,9 @@ namespace ActionStreetMap.Maps.Data.Helpers
         /// <summary> Gets margin for bounding box of desired size. </summary>
         private static long GetMargin(float size)
         {
-            var start = new MapPoint(0, 0);
+            var start = new Vector2d();
             // (h * cos(45), h * sin(45))
-            var end = new MapPoint((float)(size * 0.52532198881), (float)(size * 0.85090352453)); 
+            var end = new Vector2d((float)(size * 0.52532198881), (float)(size * 0.85090352453)); 
             var geoCenter = new GeoCoordinate(52, 13);
 
             var point1 = GeoProjection.ToGeoCoordinate(geoCenter, start);

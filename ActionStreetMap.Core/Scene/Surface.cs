@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Core.Scene
 {
@@ -9,10 +10,10 @@ namespace ActionStreetMap.Core.Scene
         public string GradientKey { get; set; }
 
         /// <summary> Gets or sets map points for this surcafe. </summary>
-        public List<MapPoint> Points { get; set; }
+        public List<Vector2d> Points { get; set; }
 
         /// <summary> Gets or sets points for holes inside this surcafe. </summary>
-        public List<List<MapPoint>> Holes { get; set; }
+        public List<List<Vector2d>> Holes { get; set; }
 
         /// <summary> Gets or sets elevation noise. </summary>
         internal float ElevationNoise { get; set; }
