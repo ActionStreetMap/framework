@@ -102,9 +102,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 Footprint = points,
             };
 
-            // create floor plans
-            building.FloorPlans = CreateFloorPlans(model.Id, points);
-
             // facade
             var facadeBuilder = _facadeBuilders.Single(f => f.Name == building.FacadeType);
             var facadeMeshData = facadeBuilder.Build(building);
@@ -120,79 +117,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             BuildObject(gameObjectWrapper, roofMeshData, rule, model);
 
             return gameObjectWrapper;
-        }
-
-        private List<Floor> CreateFloorPlans(long id, List<MapPoint> footprint)
-        {
-            const double shift = 0;
-            const double translate = 1;
-            InDoorGeneratorSettings settings = null;
-            var ggg = footprint
-                .Select(p => new Vector2d(translate * p.X + shift, translate * p.Y + shift))
-                .ToList();
-            try
-            {
-                var skeleton = SkeletonBuilder.Build(ggg);
-                var indoorGenerator = new InDoorGenerator();
-                settings = CreateSettings(skeleton, ggg);
-                return new List<Floor>(1)
-                {
-                    indoorGenerator.Build(settings)
-                };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                Trace.Error("floor.generator", ex, "Unable to generate floor plan for {0}", 
-                    id.ToString());
-                lock (this)
-                {
-                    // NOTE test code is there
-                    using (var sw = File.AppendText(@"points.txt"))
-                    {
-                        sw.WriteLine("id:{0}", id);
-                        if (settings != null)
-                        {
-                            var door = settings.Doors[0];
-                            sw.WriteLine("door: {0} {1}", door.Key, door.Value);
-                        }
-                        foreach (var point in footprint)
-                            sw.WriteLine("new PointF({0}f, {1}f),", point.X, point.Y);
-
-                        sw.WriteLine();
-                        sw.WriteLine();
-                        sw.WriteLine();
-                        sw.WriteLine();
-                    }
-                }
-            }
-            return null;
-        }
-
-
-        private InDoorGeneratorSettings CreateSettings(Skeleton skeleton, List<Vector2d> footprint)
-        {
-            var index = 0;
-            var maxDistance = 0d;
-            for (int i = 0; i < footprint.Count; i++)
-            {
-                var start = footprint[i];
-                var end = footprint[i + 1 == footprint.Count ? 0 : i + 1];
-                var distance = start.DistanceTo(end);
-                if (distance > maxDistance)
-                {
-                    index = i;
-                    maxDistance = distance;
-                }
-            }
-
-            var doors = new List<KeyValuePair<int, double>>
-            {
-                new KeyValuePair<int, double>(index, maxDistance/2d)
-            };
-
-            return new InDoorGeneratorSettings(ObjectPool, new Clipper(), skeleton, 
-                footprint, null, doors, 2);
         }
     }
 }
