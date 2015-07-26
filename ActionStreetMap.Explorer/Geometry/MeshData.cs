@@ -1,83 +1,36 @@
-﻿using System.Collections.Generic;
-using ActionStreetMap.Core;
-using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Infrastructure.Utilities;
+﻿using ActionStreetMap.Core.Unity;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Geometry
 {
     public class MeshData
     {
-        private readonly IObjectPool _objectPool;
-
-        /// <summary> Triangles. </summary>
-        public List<MeshTriangle> Triangles;
-
-        /// <summary> Material key. </summary>
         public string MaterialKey;
-
-        /// <summary> Built game object. </summary>
+        public IMeshIndex Index;
         public IGameObject GameObject;
 
-        /// <summary> Mesh index provides way to find affected vertices of given area quickly. </summary>
-        public IMeshIndex Index;
+        public Vector3[] Vertices;
+        public int[] Triangles;
+        public Color[] Colors;
 
-        /// <summary> Creates instance of <see cref="MeshData"/>. </summary>
-        /// <param name="objectPool">Object pool.</param>
-        public MeshData(IObjectPool objectPool)
+        private int _lastIndex;
+
+        /// <summary> Adds triangle to mesh data </summary>
+        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color color)
         {
-            _objectPool = objectPool;
-        }
+            Vertices[_lastIndex] = v0;
+            Vertices[_lastIndex + 1] = v1;
+            Vertices[_lastIndex + 2] = v2;
 
-        public void AddTriangle(MapPoint v0, MapPoint v1, MapPoint v2, Color color)
-        {
-            var triangle = _objectPool.NewObject<MeshTriangle>();
-            triangle.Vertex0 = v0;
-            triangle.Vertex1 = v1;
-            triangle.Vertex2 = v2;
-            triangle.Color0 = color;
-            triangle.Color1 = color;
-            triangle.Color2 = color;
-            triangle.Region = 0;
+            Colors[_lastIndex] = color;
+            Colors[_lastIndex + 1] = color;
+            Colors[_lastIndex + 2] = color;
 
-            Triangles.Add(triangle);
+            Triangles[_lastIndex] = _lastIndex;
+            Triangles[_lastIndex + 1] = _lastIndex + 1;
+            Triangles[_lastIndex + 2] = _lastIndex + 2;
 
-            if(Index != null)
-                Index.AddTriangle(triangle);
-        }
-
-        public void GenerateObjectData(out Vector3[] vertices, out int[] triangles, out Color[] colors)
-        {
-            var trisCount = Triangles.Count;
-            var vertextCount = trisCount * 3;
-
-            vertices = new Vector3[vertextCount];
-            triangles = new int[vertextCount];
-            colors = new Color[vertextCount];
-            for (int i = 0; i < trisCount; i++)
-            {
-                var first = i * 3;
-                var second = first + 1;
-                var third = first + 2;
-                var triangle = Triangles[i];
-                var v0 = triangle.Vertex0;
-                var v1 = triangle.Vertex1;
-                var v2 = triangle.Vertex2;
-
-                vertices[first] = new Vector3(v0.X, v0.Elevation, v0.Y);
-                vertices[second] = new Vector3(v1.X, v1.Elevation, v1.Y);
-                vertices[third] = new Vector3(v2.X, v2.Elevation, v2.Y);
-
-                colors[first] = triangle.Color0;
-                colors[second] = triangle.Color1;
-                colors[third] = triangle.Color2;
-
-                triangles[first] = third;
-                triangles[second] = second;
-                triangles[third] = first;
-
-                _objectPool.StoreObject<MeshTriangle>(triangle);
-            }
+            _lastIndex += 3;
         }
     }
 }

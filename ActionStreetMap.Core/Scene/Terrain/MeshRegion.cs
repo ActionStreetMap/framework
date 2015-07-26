@@ -5,7 +5,7 @@ using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.L
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
-    internal class MeshRegion: IDisposable
+    internal sealed class MeshRegion: IDisposable
     {
         public string GradientKey;
         public float ElevationNoiseFreq;
@@ -20,7 +20,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         /// <inheritdoc />
         public void Dispose()
         {
-            TrianglePool.FreeMesh((Mesh) Mesh);
+            TrianglePool.FreeMesh(Mesh);
         }
     }
 }

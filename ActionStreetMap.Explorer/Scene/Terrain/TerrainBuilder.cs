@@ -40,7 +40,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     }
 
     /// <summary> Default implementation of <see cref="ITerrainBuilder"/>. </summary>
-    internal class MeshTerrainBuilder : ITerrainBuilder, IConfigurable
+    internal class TerrainBuilder : ITerrainBuilder, IConfigurable
     {
         private const string LogTag = "mesh.terrain";
 
@@ -56,9 +56,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private float _maxCellSize = 100;
 
-        /// <summary> Creates instance of <see cref="MeshTerrainBuilder"/>. </summary>
+        /// <summary> Creates instance of <see cref="TerrainBuilder"/>. </summary>
         [Dependency]
-        public MeshTerrainBuilder(BehaviourProvider behaviourProvider,
+        public TerrainBuilder(BehaviourProvider behaviourProvider,
                                   IElevationProvider elevationProvider,
                                   IResourceProvider resourceProvider,
                                   IGameObjectFactory gameObjectFactory,
@@ -125,11 +125,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             var rect = new MapRectangle(cellRect.Left, cellRect.Bottom, cellRect.Width, cellRect.Height);
 
-            var meshData = _objectPool.CreateMeshData();           
+            var meshData = new TerrainMeshData(_objectPool);       
             meshData.GameObject = cellGameObject;
             meshData.Index = renderMode == RenderMode.Scene ?
                 new TerrainMeshIndex(16, 16, rect, meshData.Triangles) :
-                DummyMeshIndex.Default;
+                (IMeshIndex)DummyMeshIndex.Default;
 
             // build canvas
             BuildBackground(rule, meshData, cell.Background, renderMode);
@@ -149,15 +149,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             Color[] colors;
             meshData.GenerateObjectData(out vertices, out triangles, out colors);
 
-            _objectPool.RecycleMeshData(meshData);
-
             Observable.Start(() => BuildObject(cellGameObject, canvas, rule,
                 meshData, vertices, triangles, colors), Scheduler.MainThread);
         }
 
         #region Water layer
 
-        protected void BuildWater(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        protected void BuildWater(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
 
@@ -228,7 +226,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             }
         }
 
-        protected void BuildOffsetShape(Rule rule, MeshData meshData, MeshRegion region, GradientWrapper gradient,
+        protected void BuildOffsetShape(Rule rule, TerrainMeshData meshData, MeshRegion region, GradientWrapper gradient,
             float colorNoiseFreq, float deepLevel)
         {
             const float divideStep = 1f;
@@ -279,7 +277,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
 
-        private void BuildWaterObject(Rule rule, MeshData meshData, Vector3[] vertices, int[] triangles, Color[] colors)
+        private void BuildWaterObject(Rule rule, TerrainMeshData meshData, Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = new GameObject("water");
             gameObject.transform.parent = meshData.GameObject.GetComponent<GameObject>().transform;
@@ -299,7 +297,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Background layer
 
-        protected void BuildBackground(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        protected void BuildBackground(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetBackgroundLayerGradient(_resourceProvider);
@@ -316,7 +314,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Car roads layer
 
-        protected void BuildCarRoads(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        protected void BuildCarRoads(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             float eleNoiseFreq = rule.GetCarLayerEleNoiseFreq();
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetCarLayerColorNoiseFreq(): 0;
@@ -334,7 +332,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Pedestrian roads layer
 
-        protected void BuildPedestrianLayers(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        protected void BuildPedestrianLayers(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetPedestrianLayerGradient(_resourceProvider);
@@ -350,7 +348,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Surface layer
 
-        protected void BuildSurface(Rule rule, MeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        protected void BuildSurface(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
 
@@ -371,7 +369,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Layer builder helper methods
 
-        protected void AddTriangle(Rule rule, MeshData meshData, Triangle triangle, GradientWrapper gradient,
+        protected void AddTriangle(Rule rule, TerrainMeshData meshData, Triangle triangle, GradientWrapper gradient,
             float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
         {
             var useEleNoise = Math.Abs(eleNoiseFreq) > 0.0001;
@@ -400,7 +398,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildObject(IGameObject goWrapper, Canvas canvas, Rule rule, MeshData meshData,
+        private void BuildObject(IGameObject goWrapper, Canvas canvas, Rule rule, TerrainMeshData meshData,
             Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = goWrapper.GetComponent<GameObject>();
@@ -416,6 +414,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshCollider>();
 
             gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
+            meshData.Dispose();
 
             var behaviourTypes = rule.GetModelBehaviours(_behaviourProvider);
             foreach (var behaviourType in behaviourTypes)

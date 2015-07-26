@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
@@ -35,7 +36,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             });
 
             // ASSERT
-            Assert.AreEqual(10, meshData.Triangles.Count);
+            Assert.AreEqual(10, meshData.First().Triangles.Length);
         }
 
         [Test]
@@ -63,7 +64,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(meshData);
-            Assert.AreEqual(6, meshData.Triangles.Count);
+            Assert.AreEqual(6, meshData.First().Triangles.Length);
         }
 
         [Test]

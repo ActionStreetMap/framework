@@ -13,6 +13,7 @@ using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
+using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -34,8 +35,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
 
             // Register object pool and all consumed types as it's necessary by its current implementation
             var objectPool = new ObjectPool()
-                .RegisterObjectType<MeshTriangle>(() => new MeshTriangle())
-                .RegisterListType<MeshTriangle>(32)
+                .RegisterObjectType<TerrainMeshTriangle>(() => new TerrainMeshTriangle())
+                .RegisterListType<TerrainMeshTriangle>(32)
                 .RegisterObjectType<Clipper>(() => new Clipper())
                 .RegisterObjectType<ClipperOffset>(() => new ClipperOffset())
                 .RegisterListType<Tuple<Surface, Action<Mesh>>>(32)

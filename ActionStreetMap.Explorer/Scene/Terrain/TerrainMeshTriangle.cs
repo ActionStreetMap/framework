@@ -1,9 +1,10 @@
 ﻿using ActionStreetMap.Core;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Geometry
+namespace ActionStreetMap.Explorer.Scene.Terrain
 {
-    public class MeshTriangle
+    /// <summary> Represents triagle of terrain mesh. </summary>
+    internal class TerrainMeshTriangle
     {
         public MapPoint Vertex0;
         public MapPoint Vertex1;

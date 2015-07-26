@@ -1,63 +1,56 @@
-﻿using ActionStreetMap.Core.Scene;
+﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Utilities;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Facades
 {
+    /// <summary> Creates facade builder for simple facade. </summary>
     internal class EmptyFacadeBuilder: IFacadeBuilder
     {
         private readonly IResourceProvider _resourceProvider;
-        private readonly IObjectPool _objectPool;
-
+        
+        /// <inheritdoc />
         public string Name { get { return "empty"; } }
 
+        /// <summary> Creates instance of <see cref="EmptyFacadeBuilder"/>. </summary>
         [Dependency]
-        public EmptyFacadeBuilder(IResourceProvider resourceProvider, IObjectPool objectPool)
+        public EmptyFacadeBuilder(IResourceProvider resourceProvider)
         {
             _resourceProvider = resourceProvider;
-            _objectPool = objectPool;
         }
 
-        public MeshData Build(Building building)
+        /// <inheritdoc />
+        public List<MeshData> Build(Building building)
         {
             var random = new System.Random((int)building.Id);
-
             var footprint = building.Footprint;
-            var gradient = _resourceProvider.GetGradient(building.FacadeColor);
-            var meshData = _objectPool.CreateMeshData();
-            var index = new FacadeMeshIndex(building.Footprint.Count, meshData.Triangles);
-            meshData.MaterialKey = building.FacadeMaterial;
-            meshData.Index = index;
-
-            var firstFloorHeight = random.NextFloat(2.2f, 3.2f);
-            firstFloorHeight = building.Height > firstFloorHeight ? firstFloorHeight : building.Height;
             var elevation = building.MinHeight + building.Elevation;
+             var gradient = _resourceProvider.GetGradient(building.FacadeColor);
 
-            var simpleBuilder = new EmptySideBuilder(meshData, building.Height, random)
-                .SetFacadeGradient(gradient)
-                .SetFirstFloorHeight(firstFloorHeight)
-                .SetElevation(elevation)
-                .SetPositionNoise(building.IsPart ? 0f : 0.1f)
-                .SetFloorHeight(random.NextFloat(2.9f, 4.2f))
-                .SetFloorSpan(random.NextFloat(0.7f, 1.2f))
-                .SetFloors(building.Levels)
-                .CalculateFloors();
+            var emptyWallBuilder = new EmptyWallBuilder()
+                .SetGradient(gradient)
+                .SetMinHeight(elevation)
+                .SetStepHeight(random.NextFloat(2.9f, 4.2f))
+                .SetStepWidth(random.NextFloat(3f, 5f))
+                .SetHeight(building.Height);
 
+            var meshDataList = new List<MeshData>(footprint.Count);
             for (int i = 0; i < footprint.Count; i++)
             {
                 var nextIndex = i == (footprint.Count - 1) ? 0 : i + 1;
                 var start = footprint[i];
                 var end = footprint[nextIndex];
-                index.SetSide(start, end, elevation + building.Height);
-                simpleBuilder.Build(start, end);
+
+                meshDataList.Add(emptyWallBuilder.Build(
+                    new Vector3(start.X, elevation, start.Y),
+                    new Vector3(end.X, elevation, end.Y)));
             }
 
-            index.Build();
-
-            return meshData;
+            return meshDataList;
         }
     }
 }

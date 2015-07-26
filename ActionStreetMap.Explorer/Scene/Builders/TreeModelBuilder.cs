@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
@@ -24,7 +25,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var trunkGradientKey = rule.Evaluate<string>("trunk-color");
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
 
-            var meshData = ObjectPool.CreateMeshData();
+            var meshData = new MeshData();
             meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
             meshData.MaterialKey = rule.GetMaterialKey();
             new TreeGenerator(meshData)

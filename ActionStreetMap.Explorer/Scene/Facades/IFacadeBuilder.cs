@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Core.Scene;
+﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
 
 namespace ActionStreetMap.Explorer.Scene.Facades
@@ -12,6 +13,6 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         /// <summary> Builds MeshData which contains information how to construct facade. </summary>
         /// <param name="building">Building.</param>
         /// <returns>MeshData.</returns>
-        MeshData Build(Building building);
+        List<MeshData> Build(Building building);
     }
 }

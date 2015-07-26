@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Explorer.Geometry;
 using UnityEngine;
@@ -14,7 +13,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     ///     to regions of certain size defined by column and row count. Triangle's 
     ///     centroid is used to map triangle to the corresponding region.     
     /// </summary>
-    internal class TerrainMeshIndex: IMeshIndex
+    internal class TerrainMeshIndex : IMeshIndex
     {
         private static readonly TriangleComparer Comparer = new TriangleComparer();
 
@@ -31,7 +30,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private readonly Range[] _ranges;
         private readonly int _maxIndex;
 
-        private List<MeshTriangle> _triangles;
+        private List<TerrainMeshTriangle> _triangles;
         private int _modifiedCount;
 
         /// <summary> Creates instance of <see cref="TerrainMeshIndex"/>. </summary>
@@ -39,7 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <param name="rowCount">Row count of given bounding box.</param>
         /// <param name="boundingBox">Bounding box.</param>
         /// <param name="triangles">Triangles</param>
-        public TerrainMeshIndex(int columnCount, int rowCount, MapRectangle boundingBox, List<MeshTriangle> triangles)
+        public TerrainMeshIndex(int columnCount, int rowCount, MapRectangle boundingBox, List<TerrainMeshTriangle> triangles)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;
@@ -81,7 +80,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <inheritdoc />
-        public void AddTriangle(MeshTriangle triangle)
+        public void AddTriangle(TerrainMeshTriangle triangle)
         {
             var p0 = triangle.Vertex0;
             var p1 = triangle.Vertex1;
@@ -96,7 +95,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <inheritdoc />
-        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector2> modifyAction)
+        public void Query(MapPoint center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
         {
             var result = new List<int>(4);
 
@@ -138,7 +137,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         #region Modification
 
         private void ModifyVertices(List<int> indecies, Vector3[] vertices, Vector3 epicenter, float radius,
-            Action<int, float, Vector2> modifyAction)
+            Action<int, float, Vector3> modifyAction)
         {
             // modify vertices
             for (int j = 0; j < indecies.Count; j++)
@@ -150,7 +149,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     var vertex = vertices[index];
                     var distance = Vector3.Distance(vertex, epicenter);
                     if (distance < radius && IsNotBorderVertex(vertex))
-                        modifyAction(index, distance, new Vector2());
+                        modifyAction(index, distance, new Vector3());
                 }
             }
 
@@ -225,9 +224,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             public int End;
         }
 
-        private class TriangleComparer : IComparer<MeshTriangle>
+        private class TriangleComparer : IComparer<TerrainMeshTriangle>
         {
-            public int Compare(MeshTriangle x, MeshTriangle y)
+            public int Compare(TerrainMeshTriangle x, TerrainMeshTriangle y)
             {
                 return x.Region.CompareTo(y.Region);
             }

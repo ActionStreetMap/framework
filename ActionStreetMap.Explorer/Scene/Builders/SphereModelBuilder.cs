@@ -1,6 +1,7 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
@@ -35,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             int recursionLevel = rule.EvaluateDefault("recursion_level", 2);
 
-            var meshData = ObjectPool.CreateMeshData();
+            var meshData = new MeshData();
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
             meshData.MaterialKey = rule.GetMaterialKey();
 

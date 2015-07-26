@@ -103,19 +103,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <summary> Builds game object from meshData </summary>
         protected void BuildObject(IGameObject parent, MeshData meshData, Rule rule, Model model)
         {
-            Vector3[] vertices;
-            int[] triangles;
-            Color[] colors;
-            meshData.GenerateObjectData(out vertices, out triangles, out colors);
-            ObjectPool.RecycleMeshData(meshData);
-
             Observable.Start(() =>
             {
                 var gameObject = meshData.GameObject.AddComponent(new GameObject());
                 var mesh = new Mesh();
-                mesh.vertices = vertices;
-                mesh.triangles = triangles;
-                mesh.colors = colors;
+                mesh.vertices = meshData.Vertices;
+                mesh.triangles = meshData.Triangles;
+                mesh.colors = meshData.Colors;
                 mesh.RecalculateNormals();
 
                 gameObject.AddComponent<MeshFilter>().mesh = mesh;

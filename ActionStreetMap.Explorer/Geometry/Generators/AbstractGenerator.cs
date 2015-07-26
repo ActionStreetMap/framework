@@ -45,13 +45,13 @@ namespace ActionStreetMap.Explorer.Geometry.Generators
             var useVertNoise = Math.Abs(_vertNoiseFreq) > 0.0001;
 
             var noise = useVertNoise ? (Noise.Perlin3D(v0, _vertNoiseFreq) + 1f) / 2f : 0;
-            var p0 = new MapPoint(v0.x + noise, v0.z + noise, v0.y + noise);
+            var p0 = new Vector3(v0.x + noise, v0.y + noise, v0.z + noise);
 
             noise = useVertNoise ? (Noise.Perlin3D(v1, _vertNoiseFreq) + 1f) / 2f : 0;
-            var p1 = new MapPoint(v1.x + noise, v1.z + noise, v1.y + noise);
+            var p1 = new Vector3(v1.x + noise, v1.y + noise, v1.z + noise);
 
             noise = useVertNoise ? (Noise.Perlin3D(v2, _vertNoiseFreq) + 1f) / 2f : 0;
-            var p2 = new MapPoint(v2.x + noise, v2.z + noise, v2.y + noise);
+            var p2 = new Vector3(v2.x + noise, v2.y + noise, v2.z + noise);
 
             _meshData.AddTriangle(p0, p1, p2, GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq));
         }

@@ -31,17 +31,11 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             var tileConfig = GlobalConfigSection.GetSection(TileKey);
 
             // responsible for choosing of OSM data provider
-            Container.Register(Component
-               .For<IElementSourceProvider>()
-               .Use<ElementSourceProvider>()
-               .Singleton()
-               .SetConfig(mapDataConfig));
+            Container.Register(Component.For<IElementSourceProvider>().Use<ElementSourceProvider>()
+                .Singleton().SetConfig(mapDataConfig));
 
             // responsible for map index maintanence
-            Container.Register(Component
-                .For<MapIndexUtility>()
-                .Use<MapIndexUtility>()
-                .Singleton()
+            Container.Register(Component.For<MapIndexUtility>().Use<MapIndexUtility>().Singleton()
                 .SetConfig(mapDataConfig));
 
             // loads map data for given tile
@@ -51,15 +45,12 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<ITileActivator>().Use<TileActivator>().Singleton());
 
             // provides elevation data.
-            Container.Register(Component.For<IElevationProvider>().Use<SrtmElevationProvider>().Singleton()
-                .SetConfig(GlobalConfigSection.GetSection(ElevationKey)));
+            Container.Register(Component.For<IElevationProvider>().Use<SrtmElevationProvider>()
+                .Singleton().SetConfig(GlobalConfigSection.GetSection(ElevationKey)));
             
             // responsible for listening position changes and loading tiles.
-            Container.Register(Component
-                .For<ITileController>()
-                .Use<TileController>()
-                .SetConfig(tileConfig)
-                .Singleton());
+            Container.Register(Component.For<ITileController>().Use<TileController>().Singleton()
+                .SetConfig(tileConfig));
 
             // provides text search feature.
             Container.Register(Component.For<ISearchEngine>().Use<SearchEngine>().Singleton());
@@ -68,11 +59,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
             Container.Register(Component.For<IGeocoder>().Use<NominatimGeocoder>().Singleton());
 
             // terrain
-            Container.Register(Component
-                .For<ITerrainBuilder>()
-                .Use<MeshTerrainBuilder>()
-                .SetConfig(tileConfig)
-                .Singleton());
+            Container.Register(Component.For<ITerrainBuilder>().Use<TerrainBuilder>().Singleton()
+                .SetConfig(tileConfig));
 
             // editor
             Container.Register(Component.For<IElementSourceEditor>().Use<ElementSourceEditor>().Singleton());

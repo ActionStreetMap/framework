@@ -5,38 +5,32 @@ using System.Linq;
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     /// <summary> A polygon represented as a planar straight line graph. </summary>
-    public class Polygon
+    public sealed class Polygon: IDisposable
     {
-        private readonly List<Vertex> _points;
-        private readonly List<Point> _holes;
-        private readonly List<Edge> _segments;
+        /// <summary> Points of polygon. </summary>
+        public List<Vertex> Points;
 
-        /// <summary> Gets the vertices of the polygon. </summary>
-        public List<Vertex> Points { get { return _points; } }
+        /// <summary> Holes of polygon. </summary>
+        public List<Point> Holes;
 
-        /// <summary> Gets a list of points defining the holes of the polygon. </summary>
-        public List<Point> Holes { get { return _holes; } }
-
-        /// <summary> Gets the segments of the polygon. </summary>
-        public List<Edge> Segments { get { return _segments; } }
-
-        /// <summary> Gets point count. </summary>
-        public int Count { get { return _points.Count; } }
+        /// <summary> Segments of polygon. </summary>
+        public List<Edge> Segments;
 
         /// <summary> Initializes a new instance of the <see cref="Polygon" /> class. </summary>
         /// <param name="capacity">The default capacity for the points list.</param>
         public Polygon(int capacity)
         {
-            _points = new List<Vertex>(capacity);
-            _holes = new List<Point>();
-            _segments = new List<Edge>();
+            Points = new List<Vertex>(capacity);
+            Holes = new List<Point>();
+            Segments = new List<Edge>();
         }
 
         public void AddContour(List<Point> pointList, bool hole = false, bool convex = false)
         {
             if (!pointList.Any())
                 return;
-
+            
+            // TODO list allocation!
             var contour = new List<Vertex>(pointList.Count);
             foreach (var point in pointList)
                 contour.Add(new Vertex(point.X, point.Y));
@@ -46,7 +40,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <summary> Adds a contour to the polygon. </summary>
         public void AddContour(List<Vertex> contour, bool hole = false, bool convex = false)
         {
-            ushort offset = (ushort) _points.Count;
+            ushort offset = (ushort) Points.Count;
             ushort count = (ushort) contour.Count;
 
             // Check if first vertex equals last vertex.
@@ -57,7 +51,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             }
 
             // Add points to polygon.
-            _points.AddRange(contour);
+            Points.AddRange(contour);
 
             var centroid = new Point(0.0, 0.0);
 
@@ -67,7 +61,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                 centroid.Y += contour[i].Y;
 
                 // Add segments to polygon.
-                this._segments.Add(new Edge((ushort)(offset + i), (ushort)(offset + ((i + 1) % count))));
+                Segments.Add(new Edge((ushort)(offset + i), (ushort)(offset + ((i + 1) % count))));
             }
 
             if (hole)
@@ -78,36 +72,15 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                     centroid.X /= count;
                     centroid.Y /= count;
 
-                    this._holes.Add(centroid);
+                    Holes.Add(centroid);
                 }
                 else
                 {
                     Point point;
                     if (FindPointInPolygon(contour, out point))
-                        _holes.Add(point);
+                        Holes.Add(point);
                 }
             }
-        }
-
-        /// <summary> Compute the bounds of the polygon. </summary>
-        public Rectangle Bounds()
-        {
-            var bounds = new Rectangle();
-            bounds.Expand(_points);
-
-            return bounds;
-        }
-
-        /// <summary> Add a vertex to the polygon. </summary>
-        public void Add(Vertex vertex)
-        {
-            _points.Add(vertex);
-        }
-
-        /// <summary> Add a segment to the polygon. </summary>
-        public void Add(Edge edge)
-        {
-            _segments.Add(edge);
         }
 
         private bool FindPointInPolygon(List<Vertex> contour, out Point point)
@@ -195,6 +168,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             }
 
             return inside;
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Points.Clear();
+            Holes.Clear();
+            Segments.Clear();
         }
     }
 }

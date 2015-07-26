@@ -39,8 +39,6 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         {
             _elevationProvider = elevationProvider;
             _objectPool = objectPool;
-
-            Data = objectPool.CreateMeshData();
         }
 
         /// <summary> Sets gradient. </summary>
@@ -218,11 +216,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         protected virtual void AddTriangle(Vector3 first, Vector3 second, Vector3 third, bool invert)
         {
             var color = GradientUtils.GetColor(Gradient, first, _colorNoiseFreq);
-            var v0 = new MapPoint(first.x, first.z, first.y);
-            var v1 = new MapPoint(second.x, second.z, second.y);
-            var v2 = new MapPoint(third.x, third.z, third.y);
-
-            Data.AddTriangle(v0, invert ? v2 : v1, invert ? v1 : v2, color);
+            Data.AddTriangle(first, invert ? third : second, invert ? second : third, color);
         }
 
         private void AddTrapezoid(Segment left, Segment right)
@@ -234,14 +228,8 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
         protected virtual void AddTrapezoid(Vector3 rightStart, Vector3 leftStart, Vector3 leftEnd, Vector3 rightEnd)
         {
             var color = GradientUtils.GetColor(Gradient, rightStart, 0.2f);
-
-            var v0 = new MapPoint(rightStart.x, rightStart.z, rightStart.y);
-            var v1 = new MapPoint(leftStart.x, leftStart.z, leftStart.y);
-            var v2 = new MapPoint(leftEnd.x, leftEnd.z, leftEnd.y);
-            var v3 = new MapPoint(rightEnd.x, rightEnd.z, rightEnd.y);
-
-            Data.AddTriangle(v0, v2, v1, color);
-            Data.AddTriangle(v2, v0, v3, color);
+            Data.AddTriangle(rightStart, leftEnd, leftStart, color);
+            Data.AddTriangle(leftEnd, rightStart, rightEnd, color);
         }
 
         #endregion

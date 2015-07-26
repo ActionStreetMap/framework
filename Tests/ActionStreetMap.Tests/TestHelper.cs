@@ -9,6 +9,7 @@ using ActionStreetMap.Explorer;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
@@ -94,8 +95,8 @@ namespace ActionStreetMap.Tests
         public static IObjectPool GetObjectPool()
         {
             return new ObjectPool()
-                .RegisterObjectType<MeshTriangle>(() => new MeshTriangle())
-                .RegisterListType<MeshTriangle>(32)
+                .RegisterObjectType<TerrainMeshTriangle>(() => new TerrainMeshTriangle())
+                .RegisterListType<TerrainMeshTriangle>(32)
                 .RegisterListType<Point>(32)
                 .RegisterObjectType<Clipper>(() => new Clipper())
                 .RegisterObjectType<ClipperOffset>(() => new ClipperOffset())

@@ -1,6 +1,7 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
@@ -40,9 +41,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             tile.Registry.RegisterGlobal(area.Id);
 
-            var meshData = ObjectPool.CreateMeshData();
-            meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
-            meshData.MaterialKey = rule.GetMaterialKey();
+            var meshData = new MeshData
+            {
+                GameObject = GameObjectFactory.CreateNew(GetName(area)),
+                MaterialKey = rule.GetMaterialKey()
+            };
             new CylinderGenerator(meshData)
                 .SetCenter(new Vector3(cylinderCenter.X, elevation + minHeight, cylinderCenter.Y))
                 .SetHeight(actualHeight)

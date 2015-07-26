@@ -45,14 +45,15 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
 
             // NOTE we have to add the latest face
             // NOTE assume that top side is added the latest
-            var lastTriangle = Data.Triangles[Data.Triangles.Count - 1];
-            var first = lastTriangle.Vertex2;
-            var second = lastTriangle.Vertex0;
-            base.AddTrapezoid(
-                new Vector3(first.X, first.Elevation, first.Y),
-                new Vector3(second.X, second.Elevation, second.Y),
-                new Vector3(second.X, second.Elevation - _height, second.Y),
-                new Vector3(first.X, first.Elevation - _height, first.Y));
+            // TODO migrate
+            //var lastTriangle = Data.Triangles[Data.Triangles.Length - 1];
+            //var first = lastTriangle.Vertex2;
+            //var second = lastTriangle.Vertex0;
+            //base.AddTrapezoid(
+            //    new Vector3(first.X, first.Elevation, first.Y),
+            //    new Vector3(second.X, second.Elevation, second.Y),
+            //    new Vector3(second.X, second.Elevation - _height, second.Y),
+            //    new Vector3(first.X, first.Elevation - _height, first.Y));
         }
 
         /// <inheritdoc />
@@ -65,7 +66,7 @@ namespace ActionStreetMap.Explorer.Geometry.ThickLine
             var newRightEnd = new Vector3(rightEnd.x, rightEnd.y + _height, rightEnd.z);
 
             // front face
-            if (Data.Triangles.Count == 0)
+            if (Data.Triangles.Length == 0)
                 base.AddTrapezoid(leftStart, newLeftStart, newRightStart, rightStart);
 
             // right side

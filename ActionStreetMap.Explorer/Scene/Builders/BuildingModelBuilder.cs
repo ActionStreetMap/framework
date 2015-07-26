@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
-using ActionStreetMap.Core.Geometry.Clipping;
-using ActionStreetMap.Core.Geometry.StraightSkeleton;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Core.Scene.InDoor;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Facades;
@@ -104,18 +99,27 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             // facade
             var facadeBuilder = _facadeBuilders.Single(f => f.Name == building.FacadeType);
-            var facadeMeshData = facadeBuilder.Build(building);
-            facadeMeshData.GameObject = GameObjectFactory.CreateNew("facade");
-            facadeMeshData.MaterialKey = building.FacadeMaterial;
-            BuildObject(gameObjectWrapper, facadeMeshData, rule, model);
+            var facadeMeshDataList = facadeBuilder.Build(building);
+            foreach (var facadeMeshData in facadeMeshDataList)
+            {
+                facadeMeshData.GameObject = GameObjectFactory.CreateNew("wall");
+                facadeMeshData.MaterialKey = building.FacadeMaterial;
+                // TODO implement mesh index for facade
+                facadeMeshData.Index = DummyMeshIndex.Default;
+                BuildObject(gameObjectWrapper, facadeMeshData, rule, model);
+            }
 
             // roof
             var roofBuilder = _roofBuilders.Single(f => f.Name == building.RoofType);
-            var roofMeshData = roofBuilder.Build(building);
-            roofMeshData.GameObject = GameObjectFactory.CreateNew("roof");
-            roofMeshData.MaterialKey = building.RoofMaterial;
-            BuildObject(gameObjectWrapper, roofMeshData, rule, model);
-
+            var roofMeshDataList = roofBuilder.Build(building);
+            foreach (var roofMeshData in roofMeshDataList)
+            {
+                roofMeshData.GameObject = GameObjectFactory.CreateNew("floor");
+                roofMeshData.MaterialKey = building.RoofMaterial;
+                // TODO implement mesh index for floor
+                roofMeshData.Index = DummyMeshIndex.Default;
+                BuildObject(gameObjectWrapper, roofMeshData, rule, model);
+            }
             return gameObjectWrapper;
         }
     }
