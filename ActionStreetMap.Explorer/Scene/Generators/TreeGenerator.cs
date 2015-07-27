@@ -56,6 +56,11 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return this;
         }
 
+        public override int CalculateVertexCount()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override void Build()
         {
             // generate trunk

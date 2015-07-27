@@ -12,7 +12,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         private float _colorNoiseFreq = 0.1f;
         private GradientWrapper _gradient;
 
-
+        public abstract int CalculateVertexCount();
         public abstract void Build();
 
         protected AbstractGenerator(MeshData meshData)
