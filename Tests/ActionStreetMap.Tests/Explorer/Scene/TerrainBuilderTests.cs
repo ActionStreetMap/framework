@@ -1,12 +1,19 @@
-﻿using ActionStreetMap.Core;
+﻿using System.Linq;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
+using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
 using NUnit.Framework;
+using UnityEngine;
+using Canvas = ActionStreetMap.Core.Tiling.Models.Canvas;
+using Component = ActionStreetMap.Infrastructure.Dependencies.Component;
+using RenderMode = ActionStreetMap.Core.RenderMode;
 
 namespace ActionStreetMap.Tests.Explorer.Scene
 {
@@ -15,7 +22,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
     {
         private const double TileSize = 400;
 
-        private TerrainBuilder _terrainBuilder;
+        private TestTerrainBuilder _terrainBuilder;
         private IObjectPool _objectPool;
         private Stylesheet _stylesheet;
 
@@ -23,9 +30,15 @@ namespace ActionStreetMap.Tests.Explorer.Scene
         public void SetUp()
         {
             var container = new Container();
-            TestHelper.GetGameRunner(container);
+            var gameRunner = TestHelper.GetGameRunner(container);
+            container.Register(Component
+                .For<ITerrainBuilder>()
+                .Use<TestTerrainBuilder>()
+                .Singleton());
 
-            _terrainBuilder = container.Resolve<ITerrainBuilder>() as TerrainBuilder;
+            gameRunner.RunGame(TestHelper.BerlinTestFilePoint);
+
+            _terrainBuilder = container.Resolve<ITerrainBuilder>() as TestTerrainBuilder;
             _objectPool = container.Resolve<IObjectPool>();
             _stylesheet = container.Resolve<IStylesheetProvider>().Get();
 
@@ -45,6 +58,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             _terrainBuilder.Build(tile, rule);
 
             // ASSERT
+            AssertTerrainBuilderResults();
         }
 
         [Test]
@@ -58,13 +72,57 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             _terrainBuilder.Build(tile, rule);
 
             // ASSERT
+            AssertTerrainBuilderResults();
         }
 
         private Tile CreateTile(RenderMode renderMode)
         {
-            return new Tile(TestHelper.BerlinInvalidenStr,
+            return new Tile(TestHelper.BerlinTestFilePoint,
                 new Vector2d(0, 0), renderMode,
                 new Canvas(_objectPool), TileSize, TileSize);
         }
+
+        private void AssertTerrainBuilderResults()
+        {
+            Assert.IsNotNull(_terrainBuilder.MeshData);
+            Assert.IsNotNull(_terrainBuilder.MeshData.Triangles);
+
+            var trisCount = _terrainBuilder.MeshData.Triangles.Count;
+
+            Assert.Greater(trisCount, 0);
+
+            Assert.AreEqual(trisCount * 3, _terrainBuilder.Vertices.Length);
+            Assert.AreEqual(trisCount * 3, _terrainBuilder.Triangles.Length);
+            Assert.AreEqual(trisCount * 3, _terrainBuilder.Colors.Length);
+        }
+
+        #region Nested class
+
+        private class TestTerrainBuilder : TerrainBuilder
+        {
+            public TerrainMeshData MeshData;
+            public Vector3[] Vertices;
+            public int[] Triangles;
+            public Color[] Colors;
+
+            [Dependency]
+            public TestTerrainBuilder(BehaviourProvider behaviourProvider, 
+                                      IElevationProvider elevationProvider, 
+                                      IResourceProvider resourceProvider, 
+                                      IGameObjectFactory gameObjectFactory, 
+                                      IObjectPool objectPool) : 
+                base(behaviourProvider, elevationProvider, resourceProvider, gameObjectFactory, objectPool)
+            {
+            }
+
+            protected override void BuildObject(IGameObject cellGameObject, Canvas canvas, Rule rule, 
+                TerrainMeshData meshData)
+            {
+                MeshData = meshData;
+                meshData.GenerateObjectData(out Vertices, out Triangles, out Colors);
+            }
+        }
+
+        #endregion
     }
 }
