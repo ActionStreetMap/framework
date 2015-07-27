@@ -1,7 +1,7 @@
 ﻿using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Geometry.Generators
+namespace ActionStreetMap.Explorer.Scene.Generators
 {
     /// <summary>  Builds tree. </summary>
     internal class TreeGenerator : AbstractGenerator

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Geometry.Generators
+namespace ActionStreetMap.Explorer.Scene.Generators
 {
     /// <summary> Creates cylinder. </summary>
     internal class CylinderGenerator: AbstractGenerator

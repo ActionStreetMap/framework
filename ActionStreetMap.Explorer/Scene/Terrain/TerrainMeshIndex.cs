@@ -4,7 +4,6 @@ using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
-using ActionStreetMap.Explorer.Geometry;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain

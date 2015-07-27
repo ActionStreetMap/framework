@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Geometry.Generators
+namespace ActionStreetMap.Explorer.Scene.Generators
 {
     /// <summary>
     ///     Builds icosphere.

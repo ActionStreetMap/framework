@@ -4,7 +4,6 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.Utils;
-using ActionStreetMap.Explorer.Geometry;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Core.Algorithms

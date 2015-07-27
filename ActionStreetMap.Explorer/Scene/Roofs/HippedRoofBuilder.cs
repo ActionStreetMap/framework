@@ -5,7 +5,6 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.StraightSkeleton;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;

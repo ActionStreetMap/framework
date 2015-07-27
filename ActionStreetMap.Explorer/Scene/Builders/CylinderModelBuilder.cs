@@ -3,9 +3,8 @@ using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
-using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Scene.Generators;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders

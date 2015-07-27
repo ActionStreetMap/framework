@@ -1,5 +1,4 @@
 ﻿using System;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;

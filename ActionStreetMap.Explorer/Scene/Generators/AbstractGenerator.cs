@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Geometry.Generators
+namespace ActionStreetMap.Explorer.Scene.Generators
 {
     internal abstract class AbstractGenerator
     {

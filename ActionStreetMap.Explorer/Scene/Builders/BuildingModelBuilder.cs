@@ -7,7 +7,6 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Facades;
 using ActionStreetMap.Explorer.Scene.Roofs;

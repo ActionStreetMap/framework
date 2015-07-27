@@ -7,7 +7,6 @@ using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;

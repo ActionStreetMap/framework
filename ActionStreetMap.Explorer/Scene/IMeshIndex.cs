@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Geometry
+namespace ActionStreetMap.Explorer.Scene
 {
     /// <summary> Represents index of mesh vertices for quick search. </summary>
     public interface IMeshIndex

@@ -12,7 +12,6 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;

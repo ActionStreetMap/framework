@@ -1,7 +1,7 @@
 ﻿using ActionStreetMap.Core.Unity;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Geometry
+namespace ActionStreetMap.Explorer.Scene
 {
     public class MeshData
     {

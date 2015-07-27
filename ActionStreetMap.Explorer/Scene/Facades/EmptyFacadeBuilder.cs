@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;

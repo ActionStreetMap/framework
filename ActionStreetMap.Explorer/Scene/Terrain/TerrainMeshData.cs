@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 

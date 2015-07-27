@@ -1,4 +1,4 @@
-﻿using ActionStreetMap.Explorer.Geometry;
+﻿using ActionStreetMap.Explorer.Scene;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Interactions
