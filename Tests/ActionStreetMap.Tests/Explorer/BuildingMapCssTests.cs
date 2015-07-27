@@ -32,7 +32,7 @@ namespace ActionStreetMap.Tests.Explorer
             var style = rule.GetFacadeBuilder();
 
             // ASSERT
-            Assert.AreEqual("window", style);
+            Assert.AreEqual("empty", style);
         }
     }
 }
