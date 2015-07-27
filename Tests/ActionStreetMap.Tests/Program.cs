@@ -71,7 +71,7 @@ namespace ActionStreetMap.Tests
             _logger.Start();
 
             var config = ConfigBuilder.GetDefault()
-                //.SetLocalMapData(@"g:\__ASM\__repository\_index\Index_Berlin_copy")
+                .SetLocalMapData(@"g:\__ASM\__repository\_index\Index_Berlin_copy")
                 .Build();
                 
             var componentRoot = TestHelper.GetGameRunner(_container, config);

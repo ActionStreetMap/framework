@@ -31,21 +31,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             Segments = _objectPool.NewList<Edge>();
         }
 
-        public void AddContour(List<Point> pointList, bool hole = false, bool convex = false)
-        {
-            if (!pointList.Any())
-                return;
-            
-            // TODO list allocation!
-            var contour = new List<Vertex>(pointList.Count);
-            foreach (var point in pointList)
-                contour.Add(new Vertex(point.X, point.Y));
-            AddContour(contour, hole, convex);
-        }
-
         /// <summary> Adds a contour to the polygon. </summary>
-        public void AddContour(List<Vertex> contour, bool hole = false, bool convex = false)
+        public void AddContour(List<Point> contour, bool hole = false, bool convex = false)
         {
+            if (!contour.Any())
+                return;
+
             ushort offset = (ushort) Points.Count;
             ushort count = (ushort) contour.Count;
 
@@ -56,8 +47,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
                 contour.RemoveAt(count);
             }
 
-            // Add points to polygon.
-            Points.AddRange(contour);
+            foreach (var point in contour)
+                Points.Add(new Vertex(point.X, point.Y));
 
             var centroid = new Point(0.0, 0.0);
 
@@ -89,7 +80,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
             }
         }
 
-        private bool FindPointInPolygon(List<Vertex> contour, out Point point)
+        private bool FindPointInPolygon<T>(List<T> contour, out Point point) where T: Point
         {
             var bounds = new Rectangle();
             bounds.Expand(contour);
@@ -153,7 +144,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// 
         /// See http://alienryderflex.com/polygon/
         /// </remarks>
-        private bool IsPointInPolygon(Point point, List<Vertex> poly)
+        private bool IsPointInPolygon<T>(Point point, List<T> poly) where T: Point
         {
             bool inside = false;
 

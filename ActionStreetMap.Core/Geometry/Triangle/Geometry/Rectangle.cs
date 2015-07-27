@@ -66,7 +66,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         }
 
         /// <summary> Expand rectangle to include given point. </summary>
-        public void Expand(Point p)
+        public void Expand<T>(T p) where T: Point
         {
             _xmin = Math.Min(_xmin, p.X);
             _ymin = Math.Min(_ymin, p.Y);
@@ -75,14 +75,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         }
 
         /// <summary> Expand rectangle to include a list of points. </summary>
-        public void Expand(IEnumerable<Point> points)
-        {
-            foreach (var p in points)
-                Expand(p);
-        }
-
-        /// <summary> Expand rectangle to include a list of points. </summary>
-        public void Expand(IEnumerable<Vertex> points)
+        public void Expand<T>(List<T> points) where T: Point
         {
             foreach (var p in points)
                 Expand(p);

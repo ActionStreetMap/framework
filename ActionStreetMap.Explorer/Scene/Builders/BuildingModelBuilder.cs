@@ -17,7 +17,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     /// <summary> Provides logic to build buildings. </summary>
     public class BuildingModelBuilder : ModelBuilder
     {
-        private readonly IElevationProvider _elevationProvider;
         private readonly IEnumerable<IFacadeBuilder> _facadeBuilders;
         private readonly IEnumerable<IRoofBuilder> _roofBuilders;
 
@@ -26,12 +25,9 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
         /// <summary> Creates instance of <see cref="BuildingModelBuilder"/>. </summary>
         [Dependency]
-        public BuildingModelBuilder(IElevationProvider elevationProvider,
-                                    IEnumerable<IFacadeBuilder> facadeBuilders, 
+        public BuildingModelBuilder(IEnumerable<IFacadeBuilder> facadeBuilders, 
                                     IEnumerable<IRoofBuilder> roofBuilders)
         {
-            _elevationProvider = elevationProvider;
-
             _facadeBuilders = facadeBuilders.ToArray();
             _roofBuilders = roofBuilders.ToArray();
         }
