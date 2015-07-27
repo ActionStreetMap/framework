@@ -77,7 +77,11 @@
     <Compile Include="Geometry\StraightSkeleton\Path\PathQueueNode.cs" />
     <Compile Include="Geometry\LineLinear2d.cs" />
     <Compile Include="Geometry\LineParametric2d.cs" />
+    <Compile Include="Geometry\Utils\CircleUtils.cs" />
     <Compile Include="Geometry\Utils\ClipperUtils.cs" />
+    <Compile Include="Geometry\Utils\DouglasPeuckerReduction.cs" />
+    <Compile Include="Geometry\Utils\PointUtils.cs" />
+    <Compile Include="Geometry\Utils\TriangleUtils.cs" />
     <Compile Include="Geometry\Vector2d.cs" />
     <Compile Include="Geometry\StraightSkeleton\SkeletonBuilder.cs" />
     <Compile Include="Geometry\StraightSkeleton\Skeleton.cs" />

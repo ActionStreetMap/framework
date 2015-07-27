@@ -80,7 +80,7 @@
     <Compile Include="Explorer\BootstrapperTests.cs" />
     <Compile Include="Infrastructure\Stubs\PropertyClass.cs" />
     <Compile Include="Explorer\Buildings\RoofBuilderTests.cs" />
-    <Compile Include="Explorer\Geometry\PolygonTests.cs" />
+    <Compile Include="Core\Geometry\PolygonTests.cs" />
     <Compile Include="Infrastructure\DiagnosticTest.cs" />
     <Compile Include="Infrastructure\InterceptionTests.cs" />
     <Compile Include="Infrastructure\PrimitiveTypeTests.cs" />

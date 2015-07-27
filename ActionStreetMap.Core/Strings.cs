@@ -14,5 +14,7 @@
         public static string MapCssInvalidSelectorOperation = "Invalid '{0}' selector operation";
         public static string MapCssInvalidExistOperation = "Invalid 'exist' selector operation";
         public static string MapCssUnknownSelectorType = "Unknown selector type: {0}";
+
+        public static string BugInPolygonOrderAlgorithm = "Bug in polygon order algorithm!";
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry;
-using ActionStreetMap.Explorer.Geometry.Utils;
+using ActionStreetMap.Core.Geometry.Utils;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Explorer.Geometry
+namespace ActionStreetMap.Tests.Core.Geometry
 {
     [TestFixture]
     public class PolygonTests

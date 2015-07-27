@@ -1,10 +1,10 @@
 ﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry.Utils;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {

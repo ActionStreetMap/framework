@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 
-namespace ActionStreetMap.Explorer.Geometry.Utils
+namespace ActionStreetMap.Core.Geometry.Utils
 {
     /// <summary> Provides circle helper methods. </summary>
     internal static class CircleUtils

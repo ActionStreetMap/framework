@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Geometry.Utils
+namespace ActionStreetMap.Core.Geometry.Utils
 {
-    /// <summary>
-    ///     Implements the Douglas Peucker algorithim to reduce the number of points
-    /// </summary>
+    /// <summary> Implements the Douglas Peucker algorithim to reduce the number of points. </summary>
     internal class DouglasPeuckerReduction
     {
         /// <summary>

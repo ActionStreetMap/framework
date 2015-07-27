@@ -1,13 +1,13 @@
 ﻿using System;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Generators;
-using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;

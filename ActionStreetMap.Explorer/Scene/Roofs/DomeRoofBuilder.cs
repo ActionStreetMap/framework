@@ -2,7 +2,6 @@
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Generators;
-using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 

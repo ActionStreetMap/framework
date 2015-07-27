@@ -85,11 +85,6 @@
     <Compile Include="Scene\Roofs\RoofBuilder.cs" />
     <Compile Include="Scene\Roofs\MansardRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\PyramidalRoofBuilder.cs" />
-    <Compile Include="Geometry\Utils\CircleUtils.cs" />
-    <Compile Include="Geometry\Utils\PointUtils.cs" />
-    <Compile Include="Geometry\Utils\DouglasPeuckerReduction.cs" />
-    <Compile Include="Geometry\Utils\PolygonUtils.cs" />
-    <Compile Include="Geometry\Utils\TriangleUtils.cs" />
     <Compile Include="Scene\Terrain\TerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />
     <Compile Include="Tiling\TileModelEditor.cs" />

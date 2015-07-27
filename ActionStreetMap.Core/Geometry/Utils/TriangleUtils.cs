@@ -1,11 +1,9 @@
 ﻿using System;
-using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
 
-namespace ActionStreetMap.Explorer.Geometry.Utils
+namespace ActionStreetMap.Core.Geometry.Utils
 {
     /// <summary> Provides some triangle utility functions. </summary>
-    public static class TriangleUtils
+    internal static class TriangleUtils
     {
         /// <summary> Calculates tirangle area. </summary>
         /// <param name="p1">Triangle point one.</param>

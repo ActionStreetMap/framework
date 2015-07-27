@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 
-namespace ActionStreetMap.Explorer.Geometry.Utils
+namespace ActionStreetMap.Core.Geometry.Utils
 {
     /// <summary> Provids some helper methods for points. </summary>
-    public static class PointUtils
+    internal static class PointUtils
     {
         #region Vector operations
 
