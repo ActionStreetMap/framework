@@ -37,7 +37,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 
         public override int CalculateVertexCount()
         {
-            throw new System.NotImplementedException();
+            return ((int) Mathf.Floor(_recursionLevel))*20*4*3;
         }
 
         public override void Build()
@@ -101,9 +101,9 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                 foreach (var tri in faces)
                 {
                     // replace triangle by 4 triangles
-                    int a = GetMiddlePoint(tri.V1, tri.V2, ref vertList, ref middlePointIndexCache, _radius);
-                    int b = GetMiddlePoint(tri.V2, tri.V3, ref vertList, ref middlePointIndexCache, _radius);
-                    int c = GetMiddlePoint(tri.V3, tri.V1, ref vertList, ref middlePointIndexCache, _radius);
+                    int a = GetMiddlePoint(tri.V1, tri.V2, vertList, middlePointIndexCache, _radius);
+                    int b = GetMiddlePoint(tri.V2, tri.V3, vertList, middlePointIndexCache, _radius);
+                    int c = GetMiddlePoint(tri.V3, tri.V1, vertList, middlePointIndexCache, _radius);
 
                     faces2.Add(new TriangleIndices(tri.V1, a, c));
                     faces2.Add(new TriangleIndices(tri.V2, b, a));
@@ -131,7 +131,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         }
 
         // return index of point in the middle of p1 and p2
-        private static int GetMiddlePoint(int p1, int p2, ref List<Vector3> vertices, ref Dictionary<long, int> cache, float radius)
+        private static int GetMiddlePoint(int p1, int p2, List<Vector3> vertices, 
+            Dictionary<long, int> cache, float radius)
         {
             // first check if we have it already
             bool firstIsSmaller = p1 < p2;

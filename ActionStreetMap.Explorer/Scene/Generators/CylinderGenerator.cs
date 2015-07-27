@@ -49,7 +49,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 
         public override int CalculateVertexCount()
         {
-            throw new NotImplementedException();
+            int heightSegments = (int)Math.Ceiling(_height / _maxSegmentHeight);
+            return _radialSegments*6*(heightSegments + 1);
         }
 
         public override void Build()

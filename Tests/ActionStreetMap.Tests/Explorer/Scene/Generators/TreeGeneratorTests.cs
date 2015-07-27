@@ -10,10 +10,10 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Generators
     [TestFixture]
     class TreeGeneratorTests
     {
-        private GradientWrapper _foliageGradient = 
+        private readonly GradientWrapper _foliageGradient = 
             GradientUtils.ParseGradient("gradient(#80c34c, #406126 50%, #101809)");
 
-        private GradientWrapper _trunkGradient =
+        private readonly GradientWrapper _trunkGradient =
             GradientUtils.ParseGradient("gradient(#f4a460, #614126 50%, #302013)");
 
         [Test]
@@ -24,11 +24,14 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Generators
             var position = new Vector3(0, 0, 0);
 
             // ACT
-            new TreeGenerator(meshData)
+            var treeGen = new TreeGenerator(meshData)
                 .SetTrunkGradient(_trunkGradient)
                 .SetFoliageGradient(_foliageGradient)
-                .SetPosition(position)
-                .Build();
+                .SetPosition(position);
+            
+            var vertCount = treeGen.CalculateVertexCount();
+            meshData.Initialize(vertCount);
+            treeGen.Build();
 
             // ASSERT
             Assert.Greater(meshData.Vertices.Length, 0);

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Generators
 {
-    /// <summary>  Builds tree. </summary>
+    /// <summary> Builds tree. </summary>
     internal class TreeGenerator : AbstractGenerator
     {
         private readonly MeshData _meshData;
@@ -13,6 +13,9 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         private float _trunkHeight = 2f;
         private float _trunkRadius = 0.2f;
         private float _foliageRadius = 2.5f;
+
+        private IcoSphereGenerator _foliageGen;
+        private CylinderGenerator _trunkGen;
 
         public TreeGenerator(MeshData meshData)
             : base(meshData)
@@ -58,30 +61,34 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 
         public override int CalculateVertexCount()
         {
-            throw new System.NotImplementedException();
-        }
-
-        public override void Build()
-        {
-            // generate trunk
-            new CylinderGenerator(_meshData)
-                .SetCenter(_position)
+            _trunkGen = new CylinderGenerator(_meshData);
+            var trunkCount =_trunkGen.SetCenter(_position)
                 .SetHeight(_trunkHeight)
                 .SetRadius(_trunkRadius)
                 .SetRadialSegments(7)
                 .SetVertexNoiseFreq(0.4f)
                 .SetGradient(_trunkGradient)
-                .Build();
+                .CalculateVertexCount();
 
-            // generate foliage
-            new IcoSphereGenerator(_meshData)
-                .SetCenter(new Vector3(_position.x, _position.y + _trunkHeight + _foliageRadius * 0.9f, _position.z))
+            _foliageGen = new IcoSphereGenerator(_meshData);
+            var foliageCount = _foliageGen.SetCenter(
+                 new Vector3(_position.x, _position.y + _trunkHeight + _foliageRadius*0.9f,_position.z))
                 .SetRadius(_foliageRadius)
                 .SetRecursionLevel(1)
                 .SetVertexNoiseFreq(2f)
                 .SetGradient(_foliageGradient)
-                .Build();
+                .CalculateVertexCount();
+
+            return trunkCount + foliageCount;
         }
 
+        public override void Build()
+        {
+            // generate trunk
+            _trunkGen.Build();
+
+            // generate foliage
+            _foliageGen.Build();
+        }
     }
 }
