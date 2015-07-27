@@ -104,5 +104,23 @@ namespace ActionStreetMap.Tests
                 .RegisterListType<GeoCoordinate>(256)
                 .RegisterListType<int>(256);
         }
+
+        private static IScheduler _threadPoolScheduler;
+        public static void DisableMultiThreading()
+        {
+            _threadPoolScheduler = Scheduler.ThreadPool;
+            var type = typeof(Scheduler);
+            var field = type.GetField("ThreadPool");
+            field.SetValue(null, Scheduler.CurrentThread);
+        }
+
+        public static void RestoreMultiThreading()
+        {
+            if (_threadPoolScheduler == null)
+                throw new InvalidOperationException("Cannot restore multithreading");
+            var type = typeof(Scheduler);
+            var field = type.GetField("ThreadPool");
+            field.SetValue(null, _threadPoolScheduler);
+        }
     }
 }

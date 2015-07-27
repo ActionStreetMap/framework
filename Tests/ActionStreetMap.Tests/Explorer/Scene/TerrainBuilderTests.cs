@@ -8,6 +8,7 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using NUnit.Framework;
 using UnityEngine;
@@ -30,6 +31,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
         [SetUp]
         public void SetUp()
         {
+            TestHelper.DisableMultiThreading();
             _container = new Container();
             var gameRunner = TestHelper.GetGameRunner(_container);
             _container.Register(Component
@@ -52,6 +54,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
         public void TearDown()
         {
             _container.Dispose();
+            TestHelper.RestoreMultiThreading();
         }
 
         [Test]
