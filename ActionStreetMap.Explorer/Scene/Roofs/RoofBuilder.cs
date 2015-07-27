@@ -86,7 +86,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     vertices[index] = new Vector3((float)p.X, height, (float)p.Y);
 
                     triangles[index] = index;
-                    triangles[vertCount + index] = 2 - i + startIndex;
+                    triangles[vertCount + startIndex + i] = startIndex + (3 - i) % 3;
 
                     colors[index] = color;
                     index++;
