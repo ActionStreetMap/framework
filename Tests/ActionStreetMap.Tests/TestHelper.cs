@@ -3,7 +3,6 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer;
 using ActionStreetMap.Explorer.Infrastructure;
@@ -105,6 +104,8 @@ namespace ActionStreetMap.Tests
                 .RegisterListType<int>(256);
         }
 
+        #region Multi threading
+
         private static IScheduler _threadPoolScheduler;
         public static void DisableMultiThreading()
         {
@@ -122,5 +123,7 @@ namespace ActionStreetMap.Tests
             var field = type.GetField("ThreadPool");
             field.SetValue(null, _threadPoolScheduler);
         }
+
+        #endregion
     }
 }

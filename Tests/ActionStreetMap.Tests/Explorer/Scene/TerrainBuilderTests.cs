@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.MapCss.Domain;
@@ -8,7 +7,6 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using NUnit.Framework;
 using UnityEngine;
