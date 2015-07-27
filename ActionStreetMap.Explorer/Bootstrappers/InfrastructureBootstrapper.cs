@@ -41,6 +41,8 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .RegisterListType<RoadElement>(32)
                 .RegisterListType<Surface>(32)
                 .RegisterListType<GeoCoordinate>(256)
+                .RegisterListType<Edge>(8)
+                .RegisterListType<Vertex>(8)
                 .RegisterListType<Point>(256)
 
                 .RegisterListType<Vector2d>(32)

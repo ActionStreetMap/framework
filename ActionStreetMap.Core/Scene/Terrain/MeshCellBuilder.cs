@@ -73,43 +73,45 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(Rectangle2d rectangle, MeshCanvas.Region region, RenderMode renderMode,
-            bool useContours = false)
+        private MeshRegion CreateMeshRegions(Rectangle2d rectangle, MeshCanvas.Region region, 
+            RenderMode renderMode, bool useContours = false)
         {
-            var polygon = new Polygon(256);
-            var simplifiedPath = ClipByRectangle(rectangle, region.Shape);
-            var contours = useContours ? new VertexPaths(): null;
-            foreach (var path in simplifiedPath)
+            using (var polygon = new Polygon(256, _objectPool))
             {
-                var area = Clipper.Area(path);
-
-                // skip small polygons to prevent triangulation issues
-                if (Math.Abs(area/DoubleScale) < 0.001) continue;
-
-                var vertices = GetVertices(path, renderMode);
-
-                var isHole = area < 0;
-                // sign of area defines polygon orientation
-                polygon.AddContour(vertices, isHole);
-
-                // NOTE I don't like how this is implemented so far
-                if (useContours)
+                var simplifiedPath = ClipByRectangle(rectangle, region.Shape);
+                var contours = useContours ? new VertexPaths() : null;
+                foreach (var path in simplifiedPath)
                 {
-                    var contour = GetContour(rectangle, path);
-                    if (isHole) contour.ForEach(c => c.Reverse());
-                    contours.AddRange(contour);
+                    var area = Clipper.Area(path);
+
+                    // skip small polygons to prevent triangulation issues
+                    if (Math.Abs(area/DoubleScale) < 0.001) continue;
+
+                    var vertices = GetVertices(path, renderMode);
+
+                    var isHole = area < 0;
+                    // sign of area defines polygon orientation
+                    polygon.AddContour(vertices, isHole);
+
+                    // NOTE I don't like how this is implemented so far
+                    if (useContours)
+                    {
+                        var contour = GetContour(rectangle, path);
+                        if (isHole) contour.ForEach(c => c.Reverse());
+                        contours.AddRange(contour);
+                    }
                 }
+                var mesh = polygon.Points.Any() ? GetMesh(polygon, renderMode) : null;
+                return new MeshRegion
+                {
+                    GradientKey = region.GradientKey,
+                    ElevationNoiseFreq = region.ElevationNoiseFreq,
+                    ColorNoiseFreq = region.ColorNoiseFreq,
+                    ModifyMeshAction = region.ModifyMeshAction,
+                    Mesh = mesh,
+                    Contours = contours
+                };
             }
-            var mesh = polygon.Points.Any() ? GetMesh(polygon, renderMode) : null;
-            return new MeshRegion
-            {
-                GradientKey = region.GradientKey,
-                ElevationNoiseFreq = region.ElevationNoiseFreq,
-                ColorNoiseFreq = region.ColorNoiseFreq,
-                ModifyMeshAction = region.ModifyMeshAction,
-                Mesh = mesh,
-                Contours = contours
-            };
         }
 
         private List<Point> GetVertices(Path path, RenderMode renderMode)

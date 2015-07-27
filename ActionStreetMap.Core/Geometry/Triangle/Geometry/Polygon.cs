@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     /// <summary> A polygon represented as a planar straight line graph. </summary>
     public sealed class Polygon: IDisposable
     {
+        private readonly IObjectPool _objectPool;
+
         /// <summary> Points of polygon. </summary>
         public List<Vertex> Points;
 
@@ -18,11 +21,14 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 
         /// <summary> Initializes a new instance of the <see cref="Polygon" /> class. </summary>
         /// <param name="capacity">The default capacity for the points list.</param>
-        public Polygon(int capacity)
+        /// <param name="objectPool">Object pool.</param>
+        public Polygon(int capacity, IObjectPool objectPool)
         {
-            Points = new List<Vertex>(capacity);
-            Holes = new List<Point>();
-            Segments = new List<Edge>();
+            _objectPool = objectPool;
+
+            Points = _objectPool.NewList<Vertex>(capacity);
+            Holes = _objectPool.NewList<Point>();
+            Segments = _objectPool.NewList<Edge>();
         }
 
         public void AddContour(List<Point> pointList, bool hole = false, bool convex = false)
@@ -173,9 +179,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
         /// <inheritdoc />
         public void Dispose()
         {
-            Points.Clear();
-            Holes.Clear();
-            Segments.Clear();
+            _objectPool.StoreList(Points);
+            _objectPool.StoreList(Holes);
+            _objectPool.StoreList(Segments);
         }
     }
 }

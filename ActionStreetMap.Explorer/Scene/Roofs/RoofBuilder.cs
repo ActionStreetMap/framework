@@ -55,22 +55,21 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <summary> Builds flat roof from footprint using provided triangles. </summary>
         protected MeshData BuildFloor(GradientWrapper gradient, List<Vector2d> footprint, float height)
         {
-            var polygon = new Polygon(footprint.Count);
+            ActionStreetMap.Core.Geometry.Triangle.Mesh mesh;
+            using (var polygon = new Polygon(footprint.Count, ObjectPool))
+            {
+                var list = ObjectPool.NewList<Point>(footprint.Count);
+                list.AddRange(footprint.Select(point => new Point(point.X, point.Y)));
+                polygon.AddContour(list);
 
-            var list = ObjectPool.NewList<Point>(footprint.Count);
-            list.AddRange(footprint.Select(point => new Point(point.X, point.Y)));
-            polygon.AddContour(list);
-
-            var mesh = polygon.Triangulate(
-               new ConstraintOptions
-               {
-                   ConformingDelaunay = false,
-                   SegmentSplitting = 0
-               },
-               new QualityOptions
-               {
-                   MaximumArea = 3
-               });
+                mesh = polygon.Triangulate(
+                    new ConstraintOptions
+                    {
+                        ConformingDelaunay = false,
+                        SegmentSplitting = 0
+                    },
+                    new QualityOptions { MaximumArea = 3 });
+            }
 
             var vertCount = mesh.Triangles.Count * 3;
             var vertices = new Vector3[vertCount];
