@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Topology;
+using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Terrain;
 using ActionStreetMap.Core.Tiling;
@@ -60,10 +61,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <summary> Creates instance of <see cref="TerrainBuilder"/>. </summary>
         [Dependency]
         public TerrainBuilder(BehaviourProvider behaviourProvider,
-                                  IElevationProvider elevationProvider,
-                                  IResourceProvider resourceProvider,
-                                  IGameObjectFactory gameObjectFactory,
-                                  IObjectPool objectPool)
+                              IElevationProvider elevationProvider,
+                              IResourceProvider resourceProvider,
+                              IGameObjectFactory gameObjectFactory,
+                              IObjectPool objectPool)
         {
             _behaviourProvider = behaviourProvider;
             _elevationProvider = elevationProvider;
@@ -244,7 +245,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     var start = new Vector2d((float)contour[i].X, (float)contour[i].Y);
                     var end = new Vector2d((float)contour[v2DIndex].X, (float)contour[v2DIndex].Y);
 
-                    LineUtils.DivideLine(start, end, pointList, divideStep);
+                    GeometryUtils.DivideLine(start, end, pointList, divideStep);
 
                     for (int k = 1; k < pointList.Count; k++)
                     {

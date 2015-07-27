@@ -1,11 +1,11 @@
-﻿using ActionStreetMap.Core.MapCss.Domain;
+﻿using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Generators;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
@@ -14,10 +14,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     public class CylinderModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
-        public override string Name
-        {
-            get { return "cylinder"; }
-        }
+        public override string Name { get { return "cylinder"; } }
 
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
@@ -27,11 +24,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             if (tile.Registry.Contains(area.Id))
                 return null;
 
-            var circle = CircleUtils.GetCircle(tile.RelativeNullPoint, area.Points);
-            var diameter = circle.Item1;
-            var cylinderCenter = circle.Item2;
+            double radius;
+            Vector2d center;
+            CircleUtils.GetCircle(tile.RelativeNullPoint, area.Points, out radius, out center);
 
-            var elevation = ElevationProvider.GetElevation(cylinderCenter);
+            var elevation = ElevationProvider.GetElevation(center);
 
             var height = rule.GetHeight();
             var minHeight = rule.GetMinHeight();
@@ -47,11 +44,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 MaterialKey = rule.GetMaterialKey()
             };
             new CylinderGenerator(meshData)
-                .SetCenter(new Vector3((float)cylinderCenter.X, elevation + minHeight, (float)cylinderCenter.Y))
+                .SetCenter(new Vector3((float)center.X, elevation + minHeight, (float)center.Y))
                 .SetHeight(actualHeight)
                 .SetMaxSegmentHeight(5f)
                 .SetRadialSegments(7)
-                .SetRadius((float)diameter / 2)
+                .SetRadius((float)radius)
                 .SetGradient(gradient)
                 .Build();
 

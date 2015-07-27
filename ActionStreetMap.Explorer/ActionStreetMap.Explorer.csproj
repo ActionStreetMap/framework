@@ -58,7 +58,6 @@
     <Compile Include="Geometry\Generators\IcoSphereGenerator.cs" />
     <Compile Include="Geometry\Generators\TreeGenerator.cs" />
     <Compile Include="Geometry\IMeshIndex.cs" />
-    <Compile Include="Geometry\Utils\LineUtils.cs" />
     <Compile Include="Scene\Facades\EmptyFacadeBuilder.cs" />
     <Compile Include="Scene\Facades\EmptyWallBuilder.cs" />
     <Compile Include="Geometry\MeshData.cs" />

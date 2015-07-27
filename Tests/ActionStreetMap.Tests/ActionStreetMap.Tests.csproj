@@ -61,7 +61,6 @@
     <Compile Include="Explorer\Tiles\TileModelEditorExTests.cs" />
     <Compile Include="Explorer\Tiles\TileModelEditorTests.cs" />
     <Compile Include="Explorer\Utils\GradientTests.cs" />
-    <Compile Include="Core\Scene\GeometryUtilsTests.cs" />
     <Compile Include="Core\Tiling\TagCollectionTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
     <Compile Include="Infrastructure\CodeConfigTests.cs" />

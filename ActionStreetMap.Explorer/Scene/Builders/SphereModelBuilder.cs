@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Core.MapCss.Domain;
+﻿using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Geometry;
@@ -25,11 +26,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 return null;
             tile.Registry.RegisterGlobal(area.Id);
 
-            var circle = CircleUtils.GetCircle(tile.RelativeNullPoint, area.Points);
-            var radius = circle.Item1 / 2;
-            var center = circle.Item2;
-            var elevation = ElevationProvider.GetElevation(center);
+            double radius;
+            Vector2d center;
+            CircleUtils.GetCircle(tile.RelativeNullPoint, area.Points, out radius, out center);
 
+            var elevation = ElevationProvider.GetElevation(center);
             var minHeight = rule.GetMinHeight();
             var color = rule.GetFillColor();
             var gradient = ResourceProvider.GetGradient(color);
