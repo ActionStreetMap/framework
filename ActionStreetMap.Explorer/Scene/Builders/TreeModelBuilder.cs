@@ -27,11 +27,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var meshData = new MeshData();
             meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
             meshData.MaterialKey = rule.GetMaterialKey();
-            new TreeGenerator(meshData)
+            var treeGen = new TreeGenerator(meshData)
                 .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
                 .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
-                .SetPosition(new Vector3((float)mapPoint.X, elevation, (float)mapPoint.Y))
-                .Build();
+                .SetPosition(new Vector3((float)mapPoint.X, elevation, (float)mapPoint.Y));
+             meshData.Initialize(treeGen.CalculateVertexCount());
+            treeGen.Build();
 
             BuildObject(tile.GameObject, meshData, rule, node);
 
