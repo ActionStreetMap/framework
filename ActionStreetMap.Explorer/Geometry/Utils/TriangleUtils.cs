@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Explorer.Geometry.Utils
 {
@@ -11,7 +12,7 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         /// <param name="p2">Triangle point two.</param>
         /// <param name="p3">Triangle point three.</param>
         /// <returns>Triangle area.</returns>
-        public static double GetTriangleArea(MapPoint p1, MapPoint p2, MapPoint p3)
+        public static double GetTriangleArea(Vector2d p1, Vector2d p2, Vector2d p3)
         {
             return Math.Abs((p1.X - p3.X)*(p2.Y - p1.Y) - (p1.X - p2.X)*(p3.Y - p1.Y))*0.5;
         }
@@ -23,7 +24,7 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
         /// <param name="a">Random value in [0,1].</param>
         /// <param name="b">Random value in [0,1].</param>
         /// <returns>Point inside triangle.</returns>
-        public static MapPoint GetRandomPoint(MapPoint p1, MapPoint p2, MapPoint p3, double a, double b)
+        public static Vector2d GetRandomPoint(Vector2d p1, Vector2d p2, Vector2d p3, double a, double b)
         {
             // actually, sum of a and b should be less or equal than 1
             if (a + b > 1)
@@ -36,7 +37,7 @@ namespace ActionStreetMap.Explorer.Geometry.Utils
             var vX = (a*p1.X) + (b*p2.X) + (c*p3.X);
             var vY = (a*p1.Y) + (b*p2.Y) + (c*p3.Y);
 
-            return new MapPoint((float) vX, (float) vY);
+            return new Vector2d((float)vX, (float)vY);
         }
     }
 }

@@ -47,11 +47,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 MaterialKey = rule.GetMaterialKey()
             };
             new CylinderGenerator(meshData)
-                .SetCenter(new Vector3(cylinderCenter.X, elevation + minHeight, cylinderCenter.Y))
+                .SetCenter(new Vector3((float)cylinderCenter.X, elevation + minHeight, (float)cylinderCenter.Y))
                 .SetHeight(actualHeight)
                 .SetMaxSegmentHeight(5f)
                 .SetRadialSegments(7)
-                .SetRadius(diameter/2)
+                .SetRadius((float)diameter / 2)
                 .SetGradient(gradient)
                 .Build();
 

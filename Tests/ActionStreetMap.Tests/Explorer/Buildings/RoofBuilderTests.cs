@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
@@ -23,12 +24,12 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ACT
             var meshData = roofBuilder.Build(new Building()
             {
-                Footprint = new List<MapPoint>()
+                Footprint = new List<Vector2d>()
                 {
-                    new MapPoint(0, 0),
-                    new MapPoint(0, 5),
-                    new MapPoint(5, 5),
-                    new MapPoint(5, 0),
+                    new Vector2d(0, 0),
+                    new Vector2d(0, 5),
+                    new Vector2d(5, 5),
+                    new Vector2d(5, 0),
                 },
                 Elevation = 0,
                 Height = 1,
@@ -49,12 +50,12 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ACT
             var meshData = roofBuilder.Build(new Building()
             {
-                Footprint = new List<MapPoint>()
+                Footprint = new List<Vector2d>()
                 {
-                    new MapPoint(0, 0),
-                    new MapPoint(0, 10),
-                    new MapPoint(20, 10),
-                    new MapPoint(20, 0),
+                    new Vector2d(0, 0),
+                    new Vector2d(0, 10),
+                    new Vector2d(20, 10),
+                    new Vector2d(20, 0),
                 },
                 Elevation = 0,
                 Height = 10,
@@ -77,12 +78,12 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ACT
             var meshData = roofBuilder.Build(new Building()
             {
-                Footprint = new List<MapPoint>()
+                Footprint = new List<Vector2d>()
                 {
-                    new MapPoint(0, 0),
-                    new MapPoint(0, 10),
-                    new MapPoint(20, 10),
-                    new MapPoint(20, 0),
+                    new Vector2d(0, 0),
+                    new Vector2d(0, 10),
+                    new Vector2d(20, 10),
+                    new Vector2d(20, 0),
                 },
                 Elevation = 0,
                 Height = 10,

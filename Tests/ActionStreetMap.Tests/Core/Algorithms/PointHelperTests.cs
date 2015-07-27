@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
@@ -34,7 +35,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             var originalOrder = geoCoordinates.Select(g => GeoProjection.ToMapCoordinate(center, g)).ToArray();
 
             // direct order
-            var points = new List<MapPoint>();
+            var points = new List<Vector2d>();
             PointUtils.GetClockwisePolygonPoints(center, geoCoordinates, points);
             Assert.IsTrue(points.SequenceEqual(originalOrder));
 

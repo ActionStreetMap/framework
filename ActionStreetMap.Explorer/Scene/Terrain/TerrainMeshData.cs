@@ -33,7 +33,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             Triangles = _objectPool.NewList<TerrainMeshTriangle>(2048);
         }
 
-        public void AddTriangle(Vector2d v0, Vector2d v1, Vector2d v2, Color color)
+        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color color)
         {
             var triangle = _objectPool.NewObject<TerrainMeshTriangle>();
             triangle.Vertex0 = v0;
@@ -51,8 +51,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 terrainIndex.AddTriangle(triangle);
         }
 
-        public void GenerateObjectData(IElevationProvider elevationProvider,
-                out Vector3[] vertices, out int[] triangles, out Color[] colors)
+        public void GenerateObjectData(out Vector3[] vertices, out int[] triangles, out Color[] colors)
         {
             var trisCount = Triangles.Count;
             var vertextCount = trisCount * 3;
@@ -70,9 +69,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var v1 = triangle.Vertex1;
                 var v2 = triangle.Vertex2;
 
-                vertices[first] = new Vector3((float)v0.X, elevationProvider.GetElevation(v0), (float)v0.Y);
-                vertices[second] = new Vector3((float)v1.X, elevationProvider.GetElevation(v1), (float)v1.Y);
-                vertices[third] = new Vector3((float)v2.X, elevationProvider.GetElevation(v2), (float)v2.Y);
+                vertices[first] = v0;
+                vertices[second] = v1;
+                vertices[third] = v2;
 
                 colors[first] = triangle.Color0;
                 colors[second] = triangle.Color1;

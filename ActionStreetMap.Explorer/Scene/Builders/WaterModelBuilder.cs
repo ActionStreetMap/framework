@@ -1,4 +1,5 @@
 ﻿using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
@@ -18,7 +19,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         {
             base.BuildArea(tile, rule, area);
 
-            var verticies2D = ObjectPool.NewList<MapPoint>();
+            var verticies2D = ObjectPool.NewList<Vector2d>();
 
             // get polygon map points
             PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, verticies2D);

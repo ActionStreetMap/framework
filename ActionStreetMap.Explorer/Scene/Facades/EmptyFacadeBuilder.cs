@@ -46,8 +46,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 var end = footprint[nextIndex];
 
                 meshDataList.Add(emptyWallBuilder.Build(
-                    new Vector3(start.X, elevation, start.Y),
-                    new Vector3(end.X, elevation, end.Y)));
+                    new Vector3((float)start.X, elevation, (float)start.Y),
+                    new Vector3((float)end.X, elevation, (float)end.Y)));
             }
 
             return meshDataList;

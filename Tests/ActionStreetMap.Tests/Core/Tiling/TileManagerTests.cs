@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Infrastructure;
@@ -24,18 +25,18 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             var observer = GetManager();
-            var center = new MapPoint(0, 0);
+            var center = new Vector2d(0, 0);
 
             // ACT & ASSERT
-            (observer as IPositionObserver<MapPoint>).OnNext(center);
+            (observer as IPositionObserver<Vector2d>).OnNext(center);
 
             // left tile
             var tile = CanLoadTile(observer, observer.CurrentTile,
-                new MapPoint(-(Half - Offset - 1), 0),
-                new MapPoint(-(Half - Offset), 0),
-                new MapPoint(-(Half * 2 - Offset - 1), 0), 0);
+                new Vector2d(-(Half - Offset - 1), 0),
+                new Vector2d(-(Half - Offset), 0),
+                new Vector2d(-(Half * 2 - Offset - 1), 0), 0);
 
-            Assert.AreEqual(tile.MapCenter, new MapPoint(-Size, 0));
+            Assert.AreEqual(tile.MapCenter, new Vector2d(-Size, 0));
         }
 
         [Test]
@@ -43,18 +44,18 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             var observer = GetManager();
-            var center = new MapPoint(0, 0);
+            var center = new Vector2d(0, 0);
 
             // ACT & ASSERT
-            (observer as IPositionObserver<MapPoint>).OnNext(center);
+            (observer as IPositionObserver<Vector2d>).OnNext(center);
 
             // right tile
             var tile = CanLoadTile(observer, observer.CurrentTile,
-                new MapPoint(Half - Offset - 1, 0),
-                new MapPoint(Half - Offset, 0),
-                new MapPoint(Half * 2 - Offset - 1, 0), 0);
+                new Vector2d(Half - Offset - 1, 0),
+                new Vector2d(Half - Offset, 0),
+                new Vector2d(Half * 2 - Offset - 1, 0), 0);
 
-            Assert.AreEqual(tile.MapCenter, new MapPoint(Size, 0));
+            Assert.AreEqual(tile.MapCenter, new Vector2d(Size, 0));
         }
 
         [Test]
@@ -62,18 +63,18 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             var observer = GetManager();
-            var center = new MapPoint(0, 0);
+            var center = new Vector2d(0, 0);
 
             // ACT & ASSERT
-            (observer as IPositionObserver<MapPoint>).OnNext(center);
+            (observer as IPositionObserver<Vector2d>).OnNext(center);
 
             // top tile
             var tile = CanLoadTile(observer, observer.CurrentTile,
-                new MapPoint(0, Half - Offset - 1),
-                new MapPoint(0, Half - Offset),
-                new MapPoint(0, Half * 2 - Offset - 1), 0);
+                new Vector2d(0, Half - Offset - 1),
+                new Vector2d(0, Half - Offset),
+                new Vector2d(0, Half * 2 - Offset - 1), 0);
 
-            Assert.AreEqual(tile.MapCenter, new MapPoint(0, Size));
+            Assert.AreEqual(tile.MapCenter, new Vector2d(0, Size));
         }
 
         [Test]
@@ -81,18 +82,18 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             var observer = GetManager();
-            var center = new MapPoint(0, 0);
+            var center = new Vector2d(0, 0);
 
             // ACT & ASSERT
-            (observer as IPositionObserver<MapPoint>).OnNext(center);
+            (observer as IPositionObserver<Vector2d>).OnNext(center);
 
             // bottom tile
             var tile = CanLoadTile(observer, observer.CurrentTile,
-                new MapPoint(0, -(Half - Offset - 1)),
-                new MapPoint(0, -(Half - Offset)),
-                new MapPoint(0, -(Half * 2 - Offset - 1)), 0);
+                new Vector2d(0, -(Half - Offset - 1)),
+                new Vector2d(0, -(Half - Offset)),
+                new Vector2d(0, -(Half * 2 - Offset - 1)), 0);
 
-            Assert.AreEqual(tile.MapCenter, new MapPoint(0, -Size));
+            Assert.AreEqual(tile.MapCenter, new Vector2d(0, -Size));
         }
 
         [Test]
@@ -100,35 +101,35 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             var observer = GetManager();
-            var center = new MapPoint(0, 0);
+            var center = new Vector2d(0, 0);
 
             // ACT & ASSERT
-            (observer as IPositionObserver<MapPoint>).OnNext(center);
+            (observer as IPositionObserver<Vector2d>).OnNext(center);
 
             var tileCenter = observer.CurrentTile;
             // left tile
             CanLoadTile(observer, tileCenter,
-                new MapPoint(-(Half - Offset - 1), 0),
-                new MapPoint(-(Half - Offset), 0),
-                new MapPoint(-(Half*2 - Offset - 1), 0), 0);
+                new Vector2d(-(Half - Offset - 1), 0),
+                new Vector2d(-(Half - Offset), 0),
+                new Vector2d(-(Half*2 - Offset - 1), 0), 0);
 
             // right tile
             CanLoadTile(observer, tileCenter,
-                new MapPoint(Half - Offset - 1, 0),
-                new MapPoint(Half - Offset, 0),
-                new MapPoint(Half*2 - Offset - 1, 0), 1);
+                new Vector2d(Half - Offset - 1, 0),
+                new Vector2d(Half - Offset, 0),
+                new Vector2d(Half*2 - Offset - 1, 0), 1);
 
             // top tile
             CanLoadTile(observer, tileCenter,
-                new MapPoint(0, Half - Offset - 1),
-                new MapPoint(0, Half - Offset),
-                new MapPoint(0, Half*2 - Offset - 1), 2);
+                new Vector2d(0, Half - Offset - 1),
+                new Vector2d(0, Half - Offset),
+                new Vector2d(0, Half*2 - Offset - 1), 2);
 
             // bottom tile
             CanLoadTile(observer, tileCenter,
-                new MapPoint(0, -(Half - Offset - 1)),
-                new MapPoint(0, -(Half - Offset)),
-                new MapPoint(0, -(Half*2 - Offset - 1)), 3);
+                new Vector2d(0, -(Half - Offset - 1)),
+                new Vector2d(0, -(Half - Offset)),
+                new Vector2d(0, -(Half*2 - Offset - 1)), 3);
         }
 
         [Test]
@@ -136,14 +137,14 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             var observer = GetManager();
-            var center = new MapPoint(0, 0);
+            var center = new Vector2d(0, 0);
 
-            (observer as IPositionObserver<MapPoint>).OnNext(center);
+            (observer as IPositionObserver<Vector2d>).OnNext(center);
 
             // ACT & ASSERT
             for (int i = 0; i < 10; i++)
             {
-                (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i * Size + Half - Offset, 0));
+                (observer as IPositionObserver<Vector2d>).OnNext(new Vector2d(i * Size + Half - Offset, 0));
                 Assert.LessOrEqual(GetSceneTileCount(observer), 3);
             }
         }
@@ -159,7 +160,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i, j));
+                    (observer as IPositionObserver<Vector2d>).OnNext(new Vector2d(i, j));
                     Assert.AreEqual(1, GetSceneTileCount(observer));
                 }
             }
@@ -183,13 +184,13 @@ namespace ActionStreetMap.Tests.Core.Tiling
                     if (i == 5)
                     {
                         observer.Mode = RenderMode.Overview;
-                        observer.Viewport = new MapRectangle(0, 0, Size*5, Size*3f);
+                        observer.Viewport = new Rectangle2d(0, 0, Size*5, Size*3f);
 
                         expectedOverviewTileCount = 14;
                     }
 
                     // ACT
-                    (observer as IPositionObserver<MapPoint>).OnNext(new MapPoint(i, j));
+                    (observer as IPositionObserver<Vector2d>).OnNext(new Vector2d(i, j));
 
                     // ASSERT
                     Assert.AreEqual(expectedSceneTileCount, GetSceneTileCount(observer));
@@ -220,9 +221,9 @@ namespace ActionStreetMap.Tests.Core.Tiling
         }
 
         private Tile CanLoadTile(TileController controller, Tile tileCenter,
-            MapPoint first, MapPoint second, MapPoint third, int tileCount)
+            Vector2d first, Vector2d second, Vector2d third, int tileCount)
         {
-            var observer = controller as IPositionObserver<MapPoint>;
+            var observer = controller as IPositionObserver<Vector2d>;
 
             // this shouldn't load new tile
             observer.OnNext(first);

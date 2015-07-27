@@ -19,11 +19,11 @@ namespace ActionStreetMap.Tests.Core.Scene
         public void CanGetAngle(float x, float y, float expectedAngle)
         {
             // ARRANGE
-            var pivot = new MapPoint(0, 0);
-            var bottom = new MapPoint(0, -10);
+            var pivot = new Vector2d(0, 0);
+            var bottom = new Vector2d(0, -10);
 
             // ACT
-            var angle = GeometryUtils.GetTurnAngle(bottom, pivot, new MapPoint(x, y));
+            var angle = GeometryUtils.GetTurnAngle(bottom, pivot, new Vector2d(x, y));
 
             // ASSERT
             Assert.AreEqual(expectedAngle, angle);
@@ -33,14 +33,14 @@ namespace ActionStreetMap.Tests.Core.Scene
         public void CanSortByTurnAngle()
         {
             // ARRANGE
-            var pivot = new MapPoint(0, 0);
-            var bottom = new MapPoint(0, -10);
-            var left = new MapPoint(-10, 0);
-            var right = new MapPoint(10, 0);
-            var top = new MapPoint(0, 10);
-            var sorted1 = new List<MapPoint>() { left, right, top };
-            var sorted2 = new List<MapPoint>() { top, right, left };
-            var sorted3 = new List<MapPoint>() { right, left, top };
+            var pivot = new Vector2d(0, 0);
+            var bottom = new Vector2d(0, -10);
+            var left = new Vector2d(-10, 0);
+            var right = new Vector2d(10, 0);
+            var top = new Vector2d(0, 10);
+            var sorted1 = new List<Vector2d>() { left, right, top };
+            var sorted2 = new List<Vector2d>() { top, right, left };
+            var sorted3 = new List<Vector2d>() { right, left, top };
 
             // ACT
             GeometryUtils.SortByAngle(bottom, pivot, sorted1);
@@ -48,7 +48,7 @@ namespace ActionStreetMap.Tests.Core.Scene
             GeometryUtils.SortByAngle(bottom, pivot, sorted3);
 
             // ASSERT
-            CollectionAssert.AreEqual(new List<MapPoint>() { left, top, right }, sorted2);
+            CollectionAssert.AreEqual(new List<Vector2d>() { left, top, right }, sorted2);
             CollectionAssert.AreEqual(sorted1, sorted2);
             CollectionAssert.AreEqual(sorted1, sorted3);
         }

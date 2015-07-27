@@ -41,8 +41,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             meshData.MaterialKey = rule.GetMaterialKey();
 
             new IcoSphereGenerator(meshData)
-                .SetCenter(new Vector3(center.X, elevation + minHeight, center.Y))
-                .SetRadius(radius)
+                .SetCenter(new Vector3((float)center.X, elevation + minHeight, (float)center.Y))
+                .SetRadius((float)radius)
                 .SetRecursionLevel(recursionLevel)
                 .SetGradient(gradient)
                 .Build();

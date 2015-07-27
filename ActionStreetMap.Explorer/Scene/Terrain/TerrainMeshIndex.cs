@@ -83,10 +83,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public void AddTriangle(TerrainMeshTriangle triangle)
         {
+            // TODO this method is called for offset triangles as well
             var p0 = triangle.Vertex0;
             var p1 = triangle.Vertex1;
             var p2 = triangle.Vertex2;
-            var centroid = new Vector2d((p0.X + p1.X + p2.X) / 3, (p0.Y + p1.Y + p2.Y) / 3);
+            var centroid = new Vector2d((p0.x + p1.x + p2.x) / 3, (p0.z + p1.z + p2.z) / 3);
             var i = (int)Math.Floor((centroid.X - _left) / _xAxisStep);
             var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
 

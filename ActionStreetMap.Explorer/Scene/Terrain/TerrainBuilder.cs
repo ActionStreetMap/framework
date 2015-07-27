@@ -199,9 +199,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var p2 = meshTriangle.Vertex2;
 
                 // reuse just added vertices
-                waterVertices.Add(new Vector3(p0.X, p0.Elevation + elevationOffset, p0.Y));
-                waterVertices.Add(new Vector3(p1.X, p1.Elevation + elevationOffset, p1.Y));
-                waterVertices.Add(new Vector3(p2.X, p2.Elevation + elevationOffset, p2.Y));
+                waterVertices.Add(new Vector3(p0.x, p0.y + elevationOffset, p0.z));
+                waterVertices.Add(new Vector3(p1.x, p1.y + elevationOffset, p1.z));
+                waterVertices.Add(new Vector3(p2.x, p2.y + elevationOffset, p2.z));
 
                 var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[count], colorNoiseFreq);
                 waterColors.Add(color);
@@ -255,19 +255,22 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         var ele1 = _elevationProvider.GetElevation(p1);
                         var ele2 = _elevationProvider.GetElevation(p2);
 
-                        var firstColor = GradientUtils.GetColor(gradient, new Vector3(p1.X, 0, p1.Y), colorNoiseFreq);
-                        var secondColor = GradientUtils.GetColor(gradient, new Vector3(p2.X, 0, p2.Y), colorNoiseFreq);
+                        var firstColor = GradientUtils.GetColor(gradient,
+                            new Vector3((float)p1.X, ele1 + errorTopFix, (float)p1.Y), colorNoiseFreq);
+
+                        var secondColor = GradientUtils.GetColor(gradient,
+                            new Vector3((float)p2.X, ele1 - deepLevel - errorBottomFix, (float)p2.Y), colorNoiseFreq);
 
                         meshData.AddTriangle(
-                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
-                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
-                            new MapPoint(p2.X, p2.Y, ele2 + errorTopFix),
+                            new Vector3((float)p1.X, ele1 + errorTopFix, (float)p1.Y),
+                            new Vector3((float)p2.X, ele2 - deepLevel - errorBottomFix, (float)p2.Y),
+                            new Vector3((float)p2.X, ele2 + errorTopFix, (float)p2.Y),
                             firstColor);
 
                         meshData.AddTriangle(
-                            new MapPoint(p1.X, p1.Y, ele1 - deepLevel - errorBottomFix),
-                            new MapPoint(p2.X, p2.Y, ele2 - deepLevel - errorBottomFix),
-                            new MapPoint(p1.X, p1.Y, ele1 + errorTopFix),
+                            new Vector3((float)p1.X, ele1 - deepLevel - errorBottomFix, (float)p1.Y),
+                            new Vector3((float)p2.X, ele2 - deepLevel - errorBottomFix, (float)p2.Y),
+                            new Vector3((float)p1.X, ele1 + errorTopFix, (float)p1.Y),
                             secondColor);
                     }
 
@@ -379,22 +382,22 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var v1 = GetVertex(triangle.GetVertex(1), eleNoiseFreq, useEleNoise, yOffset);
             var v2 = GetVertex(triangle.GetVertex(2), eleNoiseFreq, useEleNoise, yOffset);
 
-            var triangleColor = GradientUtils.GetColor(gradient, new Vector3(v0.X, v0.Elevation, v0.Y), colorNoiseFreq);
+            var triangleColor = GradientUtils.GetColor(gradient, v0, colorNoiseFreq);
 
             meshData.AddTriangle(v0, v1, v2, triangleColor);
         }
 
-        private MapPoint GetVertex(Vertex v, float eleNoiseFreq, bool useEleNoise, float yOffset)
+        private Vector3 GetVertex(Vertex v, float eleNoiseFreq, bool useEleNoise, float yOffset)
         {
-            var point = new MapPoint(
-                (float)Math.Round(v.X, MathUtils.RoundDigitCount), 
-                (float)Math.Round(v.Y, MathUtils.RoundDigitCount));
+            var point = new Vector2d(
+                Math.Round(v.X, MathUtils.RoundDigitCount),
+                Math.Round(v.Y, MathUtils.RoundDigitCount));
 
             var useEleNoise2 = v.Type == VertexType.FreeVertex && useEleNoise;
             var ele = _elevationProvider.GetElevation(point);
             if (useEleNoise2)
-                ele += Noise.Perlin3D(new Vector3(point.X, ele, point.Y), eleNoiseFreq);
-            return new MapPoint(point.X, point.Y, ele + yOffset);
+                ele += Noise.Perlin3D(new Vector3((float) point.X, ele, (float) point.Y), eleNoiseFreq);
+            return new Vector3((float) point.X, ele + yOffset, (float) point.Y);
         }
 
         #endregion

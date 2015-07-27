@@ -64,7 +64,6 @@
     <Compile Include="Core\Scene\GeometryUtilsTests.cs" />
     <Compile Include="Core\Tiling\TagCollectionTests.cs" />
     <Compile Include="Explorer\CommandLine\TagCommandTests.cs" />
-    <Compile Include="Explorer\Geometry\LineUtilsTests.cs" />
     <Compile Include="Infrastructure\CodeConfigTests.cs" />
     <Compile Include="Maps\Formats\XmlApiReaderTests.cs" />
     <Compile Include="Expiremental\SvgBuilder.cs" />
@@ -76,7 +75,6 @@
     <Compile Include="ConsoleTrace.cs" />
     <Compile Include="Core\Algorithms\PointHelperTests.cs" />
     <Compile Include="Core\Algorithms\ProjectionTests.cs" />
-    <Compile Include="Core\Algorithms\TriangulationTests.cs" />
     <Compile Include="Core\BoundingBoxTests.cs" />
     <Compile Include="Core\Tiling\TileRegistryTests.cs" />
     <Compile Include="DemoTileListener.cs" />
@@ -84,7 +82,6 @@
     <Compile Include="Infrastructure\Stubs\PropertyClass.cs" />
     <Compile Include="Explorer\Buildings\RoofBuilderTests.cs" />
     <Compile Include="Explorer\Geometry\PolygonTests.cs" />
-    <Compile Include="Explorer\Geometry\ThickLineTests.cs" />
     <Compile Include="Infrastructure\DiagnosticTest.cs" />
     <Compile Include="Infrastructure\InterceptionTests.cs" />
     <Compile Include="Infrastructure\PrimitiveTypeTests.cs" />

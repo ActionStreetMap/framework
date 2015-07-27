@@ -3,11 +3,9 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-using ActionStreetMap.Core.Geometry.Triangle.Meshing;
+
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer;
-using ActionStreetMap.Explorer.Geometry;
-using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Config;
@@ -104,8 +102,6 @@ namespace ActionStreetMap.Tests
                 .RegisterListType<RoadElement>(32)
                 .RegisterListType<Surface>(32)
                 .RegisterListType<GeoCoordinate>(256)
-                .RegisterListType<MapPoint>(256)
-                .RegisterListType<LineElement>(32)
                 .RegisterListType<int>(256);
         }
     }

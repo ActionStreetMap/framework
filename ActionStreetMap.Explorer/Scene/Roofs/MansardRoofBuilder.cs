@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
-using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
@@ -31,7 +30,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <inheritdoc />
         public override List<MeshData> Build(Building building)
         {
-            var polygon = new Polygon(building.Footprint);
+            /*var polygon = new Polygon(building.Footprint);
             var offset = 2f; // TODO
 
             if (Math.Abs(building.RoofHeight) < 0.01f)
@@ -39,7 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var random = new System.Random((int) building.Id);
                 building.RoofHeight = (float) random.NextDouble(0.5f, 3);
             }
-            var gradient = ResourceProvider.GetGradient(building.RoofColor);
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);*/
 
             //return CreateMeshDataList(building, polygon, gradient, offset);
             throw new NotImplementedException();

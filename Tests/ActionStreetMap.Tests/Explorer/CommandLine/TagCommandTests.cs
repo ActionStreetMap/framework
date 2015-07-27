@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Commands;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Maps.Data.Search;
 using ActionStreetMap.Maps.Entities;
@@ -27,7 +26,7 @@ namespace ActionStreetMap.Tests.Explorer.CommandLine
         {
             _searchMock = new Mock<ISearchEngine>();
             var coordinate = new GeoCoordinate(52, 13);
-            var tile = new Tile(coordinate, new MapPoint(0, 0), RenderMode.Scene,
+            var tile = new Tile(coordinate, new Vector2d(0, 0), RenderMode.Scene,
                 new Canvas(TestHelper.GetObjectPool()), 500, 500);
             _searchMock.Setup(s => s.SearchByTag("amenity", "bar", tile.BoundingBox)).Returns(Observable.Create<Element>(o =>
             {

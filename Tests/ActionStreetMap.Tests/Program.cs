@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Positioning;
 using ActionStreetMap.Core.Positioning.Nmea;
 using ActionStreetMap.Core.Tiling;
@@ -27,7 +28,7 @@ namespace ActionStreetMap.Tests
         private ITrace _trace;
         private DemoTileListener _tileListener;
         private IPositionObserver<GeoCoordinate> _geoPositionObserver;
-        private IPositionObserver<MapPoint> _mapPositionObserver;
+        private IPositionObserver<Vector2d> _mapPositionObserver;
 
         private readonly ManualResetEvent _waitEvent = new ManualResetEvent(false);
 
@@ -91,7 +92,7 @@ namespace ActionStreetMap.Tests
                 _geoPositionObserver.OnNext(position.Coordinate);
             }).Subscribe();
 
-            _messageBus.AsObservable<MapPoint>().Do(position =>
+            _messageBus.AsObservable<Vector2d>().Do(position =>
             {
                 _trace.Debug(LogTag, "MapPosition: {0}", position.ToString());
                 _mapPositionObserver.OnNext(position);
@@ -127,7 +128,7 @@ namespace ActionStreetMap.Tests
             {
                 float xOffset = (float)(i * speed * Math.Cos(angleInRad));
                 float yOffset = (float)(i * speed * Math.Sin(angleInRad));
-                _messageBus.Send(new MapPoint(xOffset, yOffset));
+                _messageBus.Send(new Vector2d(xOffset, yOffset));
                 Thread.Sleep(1000);
             }
         }

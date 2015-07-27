@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
@@ -24,7 +25,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
         {
-            var points = ObjectPool.NewList<MapPoint>();
+            var points = ObjectPool.NewList<Vector2d>();
             PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, points);
 
             var parent = tile.GameObject;
@@ -60,7 +61,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 var v1 = triangle.GetVertex(1);
                 var v2 = triangle.GetVertex(2);
 
-                var center = new MapPoint((float)(v0.X + v1.X + v2.X) / 3, (float)(v0.Y + v1.Y + v2.Y) / 3);
+                var center = new Vector2d((v0.X + v1.X + v2.X) / 3, (v0.Y + v1.Y + v2.Y) / 3);
                 var elevation = ElevationProvider.GetElevation(center);
                 var meshData = new MeshData();
                 meshData.GameObject = GameObjectFactory.CreateNew("tree");
@@ -68,7 +69,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 new TreeGenerator(meshData)
                     .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
                     .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
-                    .SetPosition(new Vector3(center.X, elevation, center.Y))
+                    .SetPosition(new Vector3((float)center.X, elevation, (float)center.Y))
                     .Build();
 
                 BuildObject(parent, meshData, rule, node);

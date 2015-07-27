@@ -1,5 +1,5 @@
 ﻿using ActionStreetMap.Core;
-
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Tiling.Models;
 using NUnit.Framework;
 
@@ -14,7 +14,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
             // ARRANGE
             int testId = 7;
             int otherId = 5;
-            var tile = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), RenderMode.Scene, null, 100, 100);
+            var tile = new Tile(new GeoCoordinate(0, 0), new Vector2d(0, 0), RenderMode.Scene, null, 100, 100);
 
             // ACT
             tile.Registry.Register(testId);
@@ -30,8 +30,8 @@ namespace ActionStreetMap.Tests.Core.Tiling
             // ARRANGE
             int testId = 7;
             int otherId = 5;
-            var tile1 = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), RenderMode.Scene, null, 100, 100);
-            var tile2 = new Tile(new GeoCoordinate(0, 0), new MapPoint(100, 100), RenderMode.Scene, null, 100, 100);
+            var tile1 = new Tile(new GeoCoordinate(0, 0), new Vector2d(0, 0), RenderMode.Scene, null, 100, 100);
+            var tile2 = new Tile(new GeoCoordinate(0, 0), new Vector2d(100, 100), RenderMode.Scene, null, 100, 100);
 
             // ACT
             tile1.Registry.RegisterGlobal(testId);
@@ -49,7 +49,7 @@ namespace ActionStreetMap.Tests.Core.Tiling
         {
             // ARRANGE
             int testId = 7;
-            var tile = new Tile(new GeoCoordinate(0, 0), new MapPoint(0, 0), RenderMode.Scene, null, 100, 100);
+            var tile = new Tile(new GeoCoordinate(0, 0), new Vector2d(0, 0), RenderMode.Scene, null, 100, 100);
 
             // ACT & ASSERT
             tile.Registry.RegisterGlobal(testId);

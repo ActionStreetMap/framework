@@ -1,15 +1,12 @@
 ﻿using System;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
-using ActionStreetMap.Explorer.Geometry.Primitives;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Infrastructure.Reactive;
 using UnityEngine;
-using Rect = ActionStreetMap.Explorer.Geometry.Primitives.Rect;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -107,15 +104,9 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
         private class Size
         {
-            /// <summary> Width. </summary>
             public int Width;
-
-            /// <summary> Height. </summary>
             public int Height;
 
-            /// <summary> Creates instance of <see cref="Size"/>. </summary>
-            /// <param name="width">Width.</param>
-            /// <param name="height">Height.</param>
             public Size(int width, int height)
             {
                 Width = width;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Geometry;
 using ActionStreetMap.Explorer.Geometry.Utils;
@@ -38,7 +39,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             };
         }
 
-        private MeshData CreateMeshData(Building building, GradientWrapper gradient, MapPoint center)
+        private MeshData CreateMeshData(Building building, GradientWrapper gradient, Vector2d center)
         {
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
             var footprint = building.Footprint;
@@ -56,9 +57,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             {
                 var nextIndex = i == (length - 1) ? 0 : i + 1;
 
-                var v0 = new Vector3(footprint[i].X, roofOffset, footprint[i].Y);
-                var v1 = new Vector3(center.X, roofOffset + roofHeight, center.Y);
-                var v2 = new Vector3(footprint[nextIndex].X, roofOffset, footprint[nextIndex].Y);
+                var v0 = new Vector3((float)footprint[i].X, roofOffset, (float)footprint[i].Y);
+                var v1 = new Vector3((float)center.X, roofOffset + roofHeight, (float)center.Y);
+                var v2 = new Vector3((float)footprint[nextIndex].X, roofOffset, (float)footprint[nextIndex].Y);
 
                 var color = GradientUtils.GetColor(gradient, v0, 0.2f);
 

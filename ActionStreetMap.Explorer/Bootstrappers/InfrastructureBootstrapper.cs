@@ -9,8 +9,6 @@ using ActionStreetMap.Core.Scene.InDoor;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Commands;
-using ActionStreetMap.Explorer.Geometry;
-using ActionStreetMap.Explorer.Geometry.ThickLine;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
 using ActionStreetMap.Explorer.Scene.Terrain;
@@ -43,8 +41,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .RegisterListType<RoadElement>(32)
                 .RegisterListType<Surface>(32)
                 .RegisterListType<GeoCoordinate>(256)
-                .RegisterListType<MapPoint>(256)
-                .RegisterListType<LineElement>(32)
                 .RegisterListType<Point>(256)
 
                 .RegisterListType<Vector2d>(32)

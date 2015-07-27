@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -12,7 +13,7 @@ namespace ActionStreetMap.Explorer.Commands
     internal class LocateCommand : ICommand
     {
         private readonly IPositionObserver<GeoCoordinate> _geoPositionObserver;
-        private readonly IPositionObserver<MapPoint> _mapPositionObserver;
+        private readonly IPositionObserver<Vector2d> _mapPositionObserver;
 
         /// <inheritdoc />
         public string Name { get { return "locate"; } }

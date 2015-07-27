@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Bootstrappers;
@@ -13,11 +14,11 @@ using ActionStreetMap.Unity.IO;
 namespace ActionStreetMap.Explorer
 {
     /// <summary> Represents application component root. Not thread safe. </summary>
-    public sealed class GameRunner : IPositionObserver<MapPoint>, IPositionObserver<GeoCoordinate>
+    public sealed class GameRunner : IPositionObserver<Vector2d>, IPositionObserver<GeoCoordinate>
     {
         private readonly IContainer _container;
 
-        private IPositionObserver<MapPoint> _mapPositionObserver;
+        private IPositionObserver<Vector2d> _mapPositionObserver;
         private IPositionObserver<GeoCoordinate> _geoPositionObserver;
 
         private bool _isInitialized;
@@ -80,13 +81,13 @@ namespace ActionStreetMap.Explorer
 
         #region IObserver<MapPoint> implementation
 
-        MapPoint IPositionObserver<MapPoint>.CurrentPosition { get { return _mapPositionObserver.CurrentPosition; } }
+        Vector2d IPositionObserver<Vector2d>.CurrentPosition { get { return _mapPositionObserver.CurrentPosition; } }
 
-        void IObserver<MapPoint>.OnNext(MapPoint value) { _mapPositionObserver.OnNext(value); }
+        void IObserver<Vector2d>.OnNext(Vector2d value) { _mapPositionObserver.OnNext(value); }
 
-        void IObserver<MapPoint>.OnError(Exception error) { _mapPositionObserver.OnError(error); }
+        void IObserver<Vector2d>.OnError(Exception error) { _mapPositionObserver.OnError(error); }
 
-        void IObserver<MapPoint>.OnCompleted() { _mapPositionObserver.OnCompleted(); }
+        void IObserver<Vector2d>.OnCompleted() { _mapPositionObserver.OnCompleted(); }
 
         #endregion
 

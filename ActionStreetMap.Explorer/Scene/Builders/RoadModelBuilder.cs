@@ -1,5 +1,5 @@
 ﻿using System;
-using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
@@ -18,8 +18,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override IGameObject BuildWay(Tile tile, Rule rule, Way way)
         {
-            var points = ObjectPool.NewList<MapPoint>();
-            PointUtils.FillHeight(ElevationProvider, tile.RelativeNullPoint, way.Points, points);
+            var points = ObjectPool.NewList<Vector2d>(way.Points.Count);
+            PointUtils.GetPolygonPoints(tile.RelativeNullPoint, way.Points, points);
 
             // road should be processed in one place: it's better to collect all 
             // roads and create connected road network

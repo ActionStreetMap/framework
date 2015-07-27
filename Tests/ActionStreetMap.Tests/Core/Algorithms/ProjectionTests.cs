@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 using NUnit.Framework;
 
@@ -29,7 +30,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             // ASSERT
             Assert.AreEqual(-7114, Math.Truncate(mapCoordinate.X));
             Assert.AreEqual(5902, Math.Truncate(mapCoordinate.Y));
-            Assert.AreEqual(9244, Math.Truncate(Distance(new MapPoint(0, 0), mapCoordinate)));
+            Assert.AreEqual(9244, Math.Truncate(Distance(new Vector2d(0, 0), mapCoordinate)));
         }
 
         [Test]
@@ -46,7 +47,7 @@ namespace ActionStreetMap.Tests.Core.Algorithms
             Assert.True(Math.Abs(13.282957 - geoCoordinate.Longitude) < Percision);
         }
 
-        private static double Distance(MapPoint p1, MapPoint p2)
+        private static double Distance(Vector2d p1, Vector2d p2)
         {
             var diffX = p1.X - p2.X;
             var diffY = p1.Y - p2.Y;

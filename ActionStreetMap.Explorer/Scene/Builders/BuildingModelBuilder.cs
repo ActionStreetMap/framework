@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
@@ -45,12 +46,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
         private IGameObject BuildBuilding(Tile tile, Rule rule, Model model, List<GeoCoordinate> footPrint)
         {
-            var points = ObjectPool.NewList<MapPoint>();
-            PointUtils.GetClockwisePolygonPoints(_elevationProvider, tile.RelativeNullPoint, footPrint, points);
+            var points = ObjectPool.NewList<Vector2d>();
+            PointUtils.GetClockwisePolygonPoints(tile.RelativeNullPoint, footPrint, points);
 
             var minHeight = BuildingRuleExtensions.GetMinHeight(rule);
 
-            var elevation = points.Average(p => p.Elevation);
+            // TODO invent better algorithm
+            var elevation = ElevationProvider.GetElevation(points[0]);
 
             if (tile.Registry.Contains(model.Id))
                 return null;
@@ -62,7 +64,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             return gameObject;
         }
 
-        private IGameObject BuildGameObject(Tile tile, Rule rule, Model model, List<MapPoint> points,
+        private IGameObject BuildGameObject(Tile tile, Rule rule, Model model, List<Vector2d> points,
             float elevation, float minHeight)
         {
             tile.Registry.RegisterGlobal(model.Id);

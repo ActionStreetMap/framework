@@ -1,11 +1,7 @@
-﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.MapCss.Domain;
+﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
-using ActionStreetMap.Explorer.Geometry.ThickLine;
-using ActionStreetMap.Explorer.Geometry.Utils;
 using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Scene.Facades;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -32,7 +28,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var height = rule.GetHeight();
             var width = rule.GetWidth();
 
-            var points = ObjectPool.NewList<MapPoint>();
+           /* var points = ObjectPool.NewList<MapPoint>();
             PointUtils.FillHeight(ElevationProvider, tile.RelativeNullPoint, way.Points, points);
 
             var lines = ObjectPool.NewList<LineElement>(1);
@@ -51,7 +47,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 });
 
             ObjectPool.StoreList(lines);
-            ObjectPool.StoreList(points);
+            ObjectPool.StoreList(points);*/
 
             tile.Registry.RegisterGlobal(way.Id);
 

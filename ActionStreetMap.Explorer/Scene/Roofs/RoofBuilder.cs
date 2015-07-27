@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
@@ -53,7 +54,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public IGameObjectFactory GameObjectFactory { get; set; }
 
         /// <summary> Builds flat roof from footprint using provided triangles. </summary>
-        protected MeshData BuildFloor(GradientWrapper gradient, List<MapPoint> footprint, float height)
+        protected MeshData BuildFloor(GradientWrapper gradient, List<Vector2d> footprint, float height)
         {
             var polygon = new Polygon(footprint.Count);
 

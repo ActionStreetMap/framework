@@ -31,7 +31,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             new TreeGenerator(meshData)
                 .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
                 .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
-                .SetPosition(new Vector3(mapPoint.X, elevation, mapPoint.Y))
+                .SetPosition(new Vector3((float)mapPoint.X, elevation, (float)mapPoint.Y))
                 .Build();
 
             BuildObject(tile.GameObject, meshData, rule, node);

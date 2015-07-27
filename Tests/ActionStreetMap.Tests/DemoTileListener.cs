@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Scene.Terrain;
 using ActionStreetMap.Core.Tiling;
@@ -31,7 +32,7 @@ namespace ActionStreetMap.Tests
             Console.WriteLine("Tile destroyed: center:{0}", tile.MapCenter);
         }
 
-        public void OnTileBuildStarted(MapPoint center)
+        public void OnTileBuildStarted(Vector2d center)
         {
             _stopwatch.Start();
             Console.WriteLine("Tile build begin: center:{0}", center);

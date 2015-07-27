@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Tiling.Models;
@@ -104,12 +105,12 @@ namespace ActionStreetMap.Tests.Explorer.Tiles
         {
             return new Building()
             {
-                Footprint = new List<MapPoint>()
+                Footprint = new List<Vector2d>()
                 {
-                    new MapPoint(0, 0),
-                    new MapPoint(0, 50),
-                    new MapPoint(50, 50),
-                    new MapPoint(50, 0),
+                    new Vector2d(0, 0),
+                    new Vector2d(0, 50),
+                    new Vector2d(50, 50),
+                    new Vector2d(50, 0),
                 }
             };
         }

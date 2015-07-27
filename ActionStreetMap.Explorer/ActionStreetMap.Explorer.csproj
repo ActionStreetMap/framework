@@ -58,11 +58,7 @@
     <Compile Include="Geometry\Generators\IcoSphereGenerator.cs" />
     <Compile Include="Geometry\Generators\TreeGenerator.cs" />
     <Compile Include="Geometry\IMeshIndex.cs" />
-    <Compile Include="Geometry\ThickLine\DimenLineBuilder.cs" />
-    <Compile Include="Geometry\ThickLine\LineElement.cs" />
-    <Compile Include="Geometry\ThickLine\ThickLineBuilder.cs" />
-    <Compile Include="Geometry\ThickLine\ThickLineHelper.cs" />
-    <Compile Include="Geometry\ThickLine\ThickLineSegment.cs" />
+    <Compile Include="Geometry\Utils\LineUtils.cs" />
     <Compile Include="Scene\Facades\EmptyFacadeBuilder.cs" />
     <Compile Include="Scene\Facades\EmptyWallBuilder.cs" />
     <Compile Include="Geometry\MeshData.cs" />
@@ -91,12 +87,9 @@
     <Compile Include="Scene\Roofs\MansardRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\PyramidalRoofBuilder.cs" />
     <Compile Include="Geometry\Utils\CircleUtils.cs" />
-    <Compile Include="Geometry\Utils\LineUtils.cs" />
     <Compile Include="Geometry\Utils\PointUtils.cs" />
     <Compile Include="Geometry\Utils\DouglasPeuckerReduction.cs" />
-    <Compile Include="Geometry\Utils\Triangulator.cs" />
     <Compile Include="Geometry\Utils\PolygonUtils.cs" />
-    <Compile Include="Geometry\ThickLine\SegmentUtils.cs" />
     <Compile Include="Geometry\Utils\TriangleUtils.cs" />
     <Compile Include="Scene\Terrain\TerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />
@@ -116,7 +109,6 @@
     <Compile Include="Scene\Builders\CylinderModelBuilder.cs" />
     <Compile Include="Scene\Builders\SphereModelBuilder.cs" />
     <Compile Include="Scene\Builders\WaterModelBuilder.cs" />
-    <Compile Include="Helpers\MapPointExtensions.cs" />
     <Compile Include="Infrastructure\GameObjectFactory.cs" />
     <Compile Include="GameRunner.cs" />
     <Compile Include="Bootstrappers\InfrastructureBootstrapper.cs" />
