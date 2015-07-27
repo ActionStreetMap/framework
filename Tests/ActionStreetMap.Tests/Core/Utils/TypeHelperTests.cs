@@ -1,7 +1,7 @@
 ﻿using ActionStreetMap.Core.Utils;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Core
+namespace ActionStreetMap.Tests.Core.Utils
 {
     [TestFixture]
     public class TypeHelperTests

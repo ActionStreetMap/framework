@@ -6,7 +6,7 @@ using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.Utils;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Core.Algorithms
+namespace ActionStreetMap.Tests.Core.Geometry.Utils
 {
     [TestFixture]
     public class PointHelperTests

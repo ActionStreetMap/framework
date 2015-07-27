@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Utils;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Core.Algorithms
+namespace ActionStreetMap.Tests.Core.Utils
 {
     [TestFixture]
     public class ProjectionTests

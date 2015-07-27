@@ -3,7 +3,7 @@ using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Core.Geometry
+namespace ActionStreetMap.Tests.Core.Geometry.Utils
 {
     [TestFixture]
     public class PolygonTests
