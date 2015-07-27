@@ -55,7 +55,7 @@ area|z19[building=yes],
 area|z19[building:part]                                        { part: true; }    
 
 area|z19[building=residential],
-area|z19[building=residental]                                { facade-builder: window; }
+area|z19[building=residental]                                { facade-builder: empty; }
 
 area|z19[building:shape=sphere]                                { builder: sphere; }
 area|z19[building:shape=cylinder]                            { builder: cylinder; }                    

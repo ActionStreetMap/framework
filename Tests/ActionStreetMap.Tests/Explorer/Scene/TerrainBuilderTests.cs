@@ -22,6 +22,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
     {
         private const double TileSize = 400;
 
+        private IContainer _container;
         private TestTerrainBuilder _terrainBuilder;
         private IObjectPool _objectPool;
         private Stylesheet _stylesheet;
@@ -29,22 +30,28 @@ namespace ActionStreetMap.Tests.Explorer.Scene
         [SetUp]
         public void SetUp()
         {
-            var container = new Container();
-            var gameRunner = TestHelper.GetGameRunner(container);
-            container.Register(Component
+            _container = new Container();
+            var gameRunner = TestHelper.GetGameRunner(_container);
+            _container.Register(Component
                 .For<ITerrainBuilder>()
                 .Use<TestTerrainBuilder>()
                 .Singleton());
 
             gameRunner.RunGame(TestHelper.BerlinTestFilePoint);
 
-            _terrainBuilder = container.Resolve<ITerrainBuilder>() as TestTerrainBuilder;
-            _objectPool = container.Resolve<IObjectPool>();
-            _stylesheet = container.Resolve<IStylesheetProvider>().Get();
+            _terrainBuilder = _container.Resolve<ITerrainBuilder>() as TestTerrainBuilder;
+            _objectPool = _container.Resolve<IObjectPool>();
+            _stylesheet = _container.Resolve<IStylesheetProvider>().Get();
 
             Assert.IsNotNull(_terrainBuilder);
             Assert.IsNotNull(_objectPool);
             Assert.IsNotNull(_stylesheet);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _container.Dispose();
         }
 
         [Test]
