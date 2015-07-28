@@ -26,7 +26,9 @@ namespace ActionStreetMap.Core.Utils
             double resultX = deltaLongitude*latitudeCircumference/360;
             double resultY = deltaLatitude*CircleDistance/360;
 
-            return new Vector2d(resultX, resultY);
+            return new Vector2d(
+                Math.Round(resultX, MathUtils.RoundDigitCount), 
+                Math.Round(resultY, MathUtils.RoundDigitCount));
         }
 
         /// <summary> Calculates geo coordinate from map coordinate. </summary>
