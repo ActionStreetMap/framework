@@ -44,9 +44,21 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 var start = footprint[i];
                 var end = footprint[nextIndex];
 
-                meshDataList.Add(emptyWallBuilder.Build(
-                    new Vector3((float)start.X, elevation, (float)start.Y),
-                    new Vector3((float)end.X, elevation, (float)end.Y)));
+                var startVector = new Vector3((float) start.X, elevation, (float) start.Y);
+                var endVector = new Vector3((float) end.X, elevation, (float) end.Y);
+
+                var vertCount = emptyWallBuilder.CalculateVertexCount(startVector, endVector);
+                var meshData = new MeshData()
+                {
+                    Vertices = new Vector3[vertCount],
+                    Triangles = new int[vertCount*2],
+                    Colors = new Color[vertCount],
+                };
+                emptyWallBuilder
+                    .SetMeshData(meshData)
+                    .Build(startVector, endVector);
+
+                meshDataList.Add(meshData);
             }
 
             return meshDataList;

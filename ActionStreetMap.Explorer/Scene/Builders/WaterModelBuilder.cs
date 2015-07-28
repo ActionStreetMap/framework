@@ -22,7 +22,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var verticies2D = ObjectPool.NewList<Vector2d>();
 
             // get polygon map points
-            PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, verticies2D);
+            PointUtils.SetPolygonPoints(tile.RelativeNullPoint, area.Points, verticies2D);
 
             tile.Canvas.AddWater(new Surface()
             {

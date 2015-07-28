@@ -19,13 +19,13 @@ namespace ActionStreetMap.Explorer.Scene
         private bool _isInitialized;
 
         /// <summary> Initializes mesh data using given size. </summary>
-        public void Initialize(int size)
+        public void Initialize(int size, bool twoSide = false)
         {
             if (_isInitialized)
                 throw new InvalidOperationException(Strings.MultiplyMeshDataInitialization);
 
             Vertices = new Vector3[size];
-            Triangles = new int[size];
+            Triangles = new int[twoSide ? size * 2 : size];
             Colors = new Color[size];
 
             _isInitialized = true;

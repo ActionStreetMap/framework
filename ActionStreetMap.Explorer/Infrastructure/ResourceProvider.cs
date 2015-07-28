@@ -1,9 +1,5 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Explorer.Utils;
-using ActionStreetMap.Infrastructure.Config;
-using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Formats.Json;
-using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 

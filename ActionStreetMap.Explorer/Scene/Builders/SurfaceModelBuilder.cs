@@ -25,7 +25,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
         {
             var points = ObjectPool.NewList<Vector2d>();
-            PointUtils.GetPolygonPoints(tile.RelativeNullPoint, area.Points, points);
+            PointUtils.SetPolygonPoints(tile.RelativeNullPoint, area.Points, points);
 
             var parent = tile.GameObject;
             Action<Mesh> fillAction = null;

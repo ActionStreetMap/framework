@@ -19,6 +19,9 @@ namespace ActionStreetMap.Core
         /// <summary> Gets elevation for given map point. </summary>
         float GetElevation(Vector2d point);
 
+        /// <summary> Gets elevation for given x and y of map point. </summary>
+        float GetElevation(float x, float y);
+
         /// <summary> Sets coordinate correspongin for (0,0). </summary>
         void SetNullPoint(GeoCoordinate coordinate);
     }

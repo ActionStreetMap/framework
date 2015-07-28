@@ -7,6 +7,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal class EmptyWallBuilder
     {
+        private int _vertStartIndex;
         private float _height = 10;
         private float _minHeight = 0;
         private float _minStepWidth = 2f;
@@ -18,6 +19,20 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private Color[] _colors;
 
         #region Setters
+
+        public EmptyWallBuilder SetMeshData(MeshData meshData)
+        {
+            _vertices = meshData.Vertices;
+            _triangles = meshData.Triangles;
+            _colors = meshData.Colors;
+            return this;
+        }
+
+        public EmptyWallBuilder SetStartIndex(int index)
+        {
+            _vertStartIndex = index;
+            return this;
+        }
 
         public EmptyWallBuilder SetHeight(float height)
         {
@@ -51,7 +66,20 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         #endregion
 
-        public MeshData Build(Vector3 start, Vector3 end)
+        public int CalculateVertexCount(Vector3 start, Vector3 end)
+        {
+            var direction = (end - start);
+            direction.Normalize();
+
+            var distance = Vector3.Distance(start, end);
+
+            var xIterCount = (int)Math.Ceiling(distance / _minStepWidth);
+            var yIterCount = (int)Math.Ceiling(_height / _minStepHeight);
+
+            return xIterCount * yIterCount * 12;
+        }
+
+        public void Build(Vector3 start, Vector3 end)
         {
             var direction = (end - start);
             direction.Normalize();
@@ -66,11 +94,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             var vertCount = xIterCount * yIterCount * 12;
 
-            _vertices = new Vector3[vertCount];
-            _triangles = new int[vertCount * 2];
-            _colors = new Color[vertCount];
-
-            for (int j = 0; j < yIterCount; j++)
+            for (int j = _vertStartIndex; j < _vertStartIndex + yIterCount; j++)
             {
                 var yStart = _minHeight + j * yStep;
                 var yEnd = yStart + yStep;
@@ -86,16 +110,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                     BuildPlane(x1, middle, x2, yStart, yEnd, startIndex, vertCount);
                 }
             }
-
-            return new MeshData()
-            {
-                Vertices = _vertices,
-                Triangles = _triangles,
-                Colors = _colors
-            };
         }
 
-        private void BuildPlane(Vector3 x1, Vector3 middle, Vector3 x2, 
+        protected void BuildPlane(Vector3 x1, Vector3 middle, Vector3 x2, 
             float yStart, float yEnd, int startIndex, int vertCount)
         {
             var p0 = new Vector3(x1.x, yStart, x1.z);

@@ -100,7 +100,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         }
 
         /// <summary> Builds game object from meshData </summary>
-        protected void BuildObject(IGameObject parent, MeshData meshData, Rule rule, Model model)
+        protected virtual void BuildObject(IGameObject parent, MeshData meshData, Rule rule, Model model)
         {
             Observable.Start(() =>
             {

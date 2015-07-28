@@ -42,7 +42,7 @@ namespace ActionStreetMap.Core.Geometry.Utils
         /// <param name="center">Map center.</param>
         /// <param name="geoCoordinates">Geo coordinates.</param>
         /// <param name="points">Output points.</param>
-        public static void GetPolygonPoints(GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
+        public static void SetPolygonPoints(GeoCoordinate center, List<GeoCoordinate> geoCoordinates,
             List<Vector2d> points)
         {
             GetPointsNoElevation(center, geoCoordinates, points, false);

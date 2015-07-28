@@ -1,7 +1,14 @@
-﻿using ActionStreetMap.Core.MapCss.Domain;
+﻿using System;
+using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry;
+using ActionStreetMap.Core.Geometry.Utils;
+using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Utils;
+using ActionStreetMap.Unity.Wrappers;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
@@ -20,38 +27,170 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 return null;
             }
 
-            if (tile.Registry.Contains(way.Id)) return null;
+            if (tile.Registry.Contains(way.Id)) 
+                return null;
+            
+            tile.Registry.RegisterGlobal(way.Id);
 
             var gameObjectWrapper = GameObjectFactory.CreateNew(GetName(way));
-            var materialKey = rule.GetMaterialKey();
-            var gradientKey = rule.GetFillColor();
-            var height = rule.GetHeight();
-            var width = rule.GetWidth();
+            var maxWidth = 4f;
 
-           /* var points = ObjectPool.NewList<MapPoint>();
-            PointUtils.FillHeight(ElevationProvider, tile.RelativeNullPoint, way.Points, points);
+            var points = ObjectPool.NewList<Vector2d>(way.Points.Count);
+            PointUtils.SetPolygonPoints(tile.RelativeNullPoint, way.Points, points);
 
-            var lines = ObjectPool.NewList<LineElement>(1);
-            lines.Add(new LineElement(points, width));
+            var meshData = new MeshData();
+            meshData.Initialize(GetVertexCount(points, maxWidth), true);
+            var context = new SegmentBuilderContext()
+            {
+                MeshData = new MeshData(),
+                Gradient = ResourceProvider.GetGradient(rule.GetFillColor()),
+                ColorNoiseFreq = rule.GetColorNoiseFreq(),
+                Height = rule.GetHeight(),
+                MaxWidth = maxWidth,
+            };
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                var p1 = points[i];
+                var p2 = points[i];
 
-            new DimenLineBuilder(ElevationProvider, ObjectPool)
-                .SetHeight(height)
-                .SetColorNoiseFreq(0.2f)
-                .SetGradient(ResourceProvider.GetGradient(gradientKey))
-                .SetMaxDistance(4f)
-                .Build(tile.Rectangle, lines, (data) =>
-                {
-                    data.GameObject = gameObjectWrapper;
-                    data.MaterialKey = materialKey;
-                    BuildObject(tile.GameObject, data, rule, way);
-                });
-
-            ObjectPool.StoreList(lines);
-            ObjectPool.StoreList(points);*/
-
-            tile.Registry.RegisterGlobal(way.Id);
+                var start = new Vector3((float)p1.X, ElevationProvider.GetElevation(p1), (float) p1.Y);
+                var end = new Vector3((float)p2.X, ElevationProvider.GetElevation(p2), (float)p2.Y);
+                BuildBarrierSegment(context, start, end);
+            }
+            ObjectPool.StoreList(points);
+            BuildObject(tile.GameObject, meshData, rule, way);
 
             return gameObjectWrapper;
         }
+
+        private int GetVertexCount(List<Vector2d> points, float maxWidth)
+        {
+            int count = 0;
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                var p1 = points[i];
+                var p2 = points[i];
+
+                var start = new Vector3((float) p1.X, ElevationProvider.GetElevation(p1), (float) p1.Y);
+                var end = new Vector3((float) p2.X, ElevationProvider.GetElevation(p2), (float) p2.Y);
+                var distance = Vector3.Distance(start, end);
+                count += (int) Math.Ceiling(distance / maxWidth);
+            }
+            return count;
+        }
+
+        private void BuildBarrierSegment(SegmentBuilderContext context, Vector3 start, Vector3 end)
+        {
+            var distance = Vector3.Distance(start, end);
+
+            var direction = (end - start);
+            direction.Normalize();
+
+            var count = (int) Math.Ceiling(distance/context.MaxWidth);
+            var width = distance/count;
+
+            var startEle = ElevationProvider.GetElevation(start.x, start.z);
+
+            // read context properties
+            var gradient = context.Gradient;
+            var colorNoiseFreq = context.ColorNoiseFreq;
+            var vertCount = context.MeshData.Vertices.Length;
+            var vertices = context.MeshData.Vertices;
+            var triangles = context.MeshData.Triangles;
+            var colors = context.MeshData.Colors;
+
+            for (int z = 0; z < count - 1; z++)
+            {
+                // get next points
+                end = start + direction * width;
+                var middle = start + direction * (0.5f * width);
+                float endEle = ElevationProvider.GetElevation(end.x, end.z);
+
+                var p0 = new Vector3(start.x, startEle, start.z);
+                var p1 = new Vector3(end.x, endEle, end.z);
+                var p2 = new Vector3(end.x, endEle + context.Height, end.z);
+                var p3 = new Vector3(start.x, startEle + context.Height, start.z);
+                var pc = new Vector3(middle.x, startEle + (endEle - startEle) / 2, middle.z);
+
+                var startIndex = vertices.Length - 1;
+
+                vertices[count] = p3;
+                vertices[++count] = pc;
+                vertices[++count] = p0;
+
+                vertices[++count] = p0;
+                vertices[++count] = pc;
+                vertices[++count] = p1;
+
+                vertices[++count] = p1;
+                vertices[++count] = pc;
+                vertices[++count] = p2;
+
+                vertices[++count] = p2;
+                vertices[++count] = pc;
+                vertices[++count] = p3;
+
+                count = startIndex;
+
+                // triangles for outer part
+                for (int i = startIndex; i < startIndex + 12; i++)
+                    triangles[count++] = i;
+
+                // triangles for inner part
+                count = startIndex + vertCount;
+                for (int j = 0; j < 4; j++)
+                {
+                    var i = startIndex + j * 3 + 2;
+                    triangles[count++] = i;
+                    triangles[count++] = i - 1;
+                    triangles[count++] = i - 2;
+                }
+
+                count = startIndex;
+
+                var color = GetColor(gradient, colorNoiseFreq, p3);
+                colors[count] = color;
+                colors[++count] = color;
+                colors[++count] = color;
+
+                color = GetColor(gradient, colorNoiseFreq, p0);
+                colors[++count] = color;
+                colors[++count] = color;
+                colors[++count] = color;
+
+                color = GetColor(gradient, colorNoiseFreq, p1);
+                colors[++count] = color;
+                colors[++count] = color;
+                colors[++count] = color;
+
+                color = GetColor(gradient, colorNoiseFreq, p2);
+                colors[++count] = color;
+                colors[++count] = color;
+                colors[++count] = color;
+
+                // reuse last
+                start = end;
+                startEle = endEle;
+            }
+        }
+
+        protected Color GetColor(GradientWrapper gradient, float colorNoiseFreq, Vector3 point)
+        {
+            var value = (Noise.Perlin3D(point, colorNoiseFreq) + 1f) / 2f;
+            return gradient.Evaluate(value);
+        }
+
+        #region Nested class
+
+        private class SegmentBuilderContext
+        {
+            public MeshData MeshData;
+            public GradientWrapper Gradient;
+            public float MaxWidth;
+            public float Height;
+            public float ColorNoiseFreq;
+        }
+
+        #endregion
     }
 }

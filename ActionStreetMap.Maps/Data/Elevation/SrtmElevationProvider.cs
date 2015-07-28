@@ -173,6 +173,13 @@ namespace ActionStreetMap.Maps.Data.Elevation
         }
 
         /// <inheritdoc />
+        public float GetElevation(float x, float y)
+        {
+            var geoCoordinate = GeoProjection.ToGeoCoordinate(_relativeNullPoint, x, y);
+            return GetElevation(geoCoordinate);
+        }
+
+        /// <inheritdoc />
         public void SetNullPoint(GeoCoordinate coordinate)
         {
             _relativeNullPoint = coordinate;
