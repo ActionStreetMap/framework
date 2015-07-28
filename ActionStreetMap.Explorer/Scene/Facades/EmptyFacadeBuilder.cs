@@ -33,8 +33,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var emptyWallBuilder = new EmptyWallBuilder()
                 .SetGradient(gradient)
                 .SetMinHeight(elevation)
-                .SetStepHeight(random.NextFloat(2.9f, 4.2f))
-                .SetStepWidth(random.NextFloat(3f, 5f))
+                .SetStepHeight(random.NextFloat(4f, 6f))
+                .SetStepWidth(random.NextFloat(6f, 8f))
                 .SetHeight(building.Height);
 
             var meshDataList = new List<MeshData>(footprint.Count);
