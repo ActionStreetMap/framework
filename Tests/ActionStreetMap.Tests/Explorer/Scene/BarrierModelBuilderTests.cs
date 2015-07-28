@@ -66,12 +66,17 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             _barrierModelBuilder.BuildWay(_tile, rule, CreateWay(points));
 
             // ASSERT
-            Assert.IsNotNull(_barrierModelBuilder.MeshData);
-            Assert.AreEqual(72, _barrierModelBuilder.MeshData.Vertices.Length);
-            Assert.AreEqual(144, _barrierModelBuilder.MeshData.Triangles.Length);
-            Assert.AreEqual(72, _barrierModelBuilder.MeshData.Colors.Length);
+            var meshData = _barrierModelBuilder.MeshData;
+            Assert.IsNotNull(meshData);
+            Assert.IsNotNull(meshData.GameObject);
+            Assert.IsNotNull(meshData.MaterialKey);
+            Assert.IsNotNull(meshData.Index);
 
-            AssertPoints(points[0], _barrierModelBuilder.MeshData.Vertices[0]);
+            Assert.AreEqual(72, meshData.Vertices.Length);
+            Assert.AreEqual(144, meshData.Triangles.Length);
+            Assert.AreEqual(72, meshData.Colors.Length);
+
+            AssertPoints(points[0], meshData.Vertices[0]);
         }
 
         private void AssertPoints(Vector2d p1, Vector3 p2)

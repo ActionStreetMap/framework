@@ -42,17 +42,19 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 GameObject = GameObjectFactory.CreateNew(GetName(area)),
                 MaterialKey = rule.GetMaterialKey()
             };
-            new CylinderGenerator(meshData)
-                .SetCenter(new Vector3((float)center.X, elevation + minHeight, (float)center.Y))
+
+            var cylinderGen = new CylinderGenerator(meshData)
+                .SetCenter(new Vector3((float) center.X, elevation + minHeight, (float) center.Y))
                 .SetHeight(actualHeight)
                 .SetMaxSegmentHeight(5f)
                 .SetRadialSegments(7)
-                .SetRadius((float)radius)
-                .SetGradient(gradient)
-                .Build();
+                .SetRadius((float) radius)
+                .SetGradient(gradient);
+
+            meshData.Initialize(cylinderGen.CalculateVertexCount());
+            cylinderGen.Build();
 
             BuildObject(tile.GameObject, meshData, rule, area);
-
             return meshData.GameObject;
         }
     }
