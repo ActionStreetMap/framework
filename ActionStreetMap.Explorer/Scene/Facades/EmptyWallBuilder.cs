@@ -146,14 +146,12 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             for (int i = startIndex; i < startIndex + 12; i++)
                 _triangles[count++] = i;
 
-            // triangles for inner part
-            count = startIndex + vertCount;
-            for (int j = 0; j < 4; j++)
+            var lastIndex = startIndex + 12;
+            for (int i = startIndex; i < lastIndex; i++)
             {
-                var i = startIndex + j * 3 + 2;
-                _triangles[count++] = i;
-                _triangles[count++] = i - 1;
-                _triangles[count++] = i - 2;
+                _triangles[i] = i;
+                var rest = i % 3;
+                _triangles[vertCount + i] = rest == 0 ? i : (rest == 1 ? i + 1 : i - 1);
             }
 
             count = startIndex;

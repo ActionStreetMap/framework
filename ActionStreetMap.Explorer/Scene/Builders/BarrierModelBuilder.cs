@@ -38,7 +38,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var points = ObjectPool.NewList<Vector2d>(way.Points.Count);
             PointUtils.SetPolygonPoints(tile.RelativeNullPoint, way.Points, points);
 
-            var meshData = new MeshData();
+            var meshData = new MeshData()
+            {
+                MaterialKey = rule.GetMaterialKey(),
+                GameObject = gameObjectWrapper,
+                Index = DummyMeshIndex.Default
+            };
+
             meshData.Initialize(GetVertexCount(points, maxWidth), true);
             var context = new SegmentBuilderContext()
             {
@@ -131,20 +137,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 vertices[++count] = pc;
                 vertices[++count] = p3;
 
-                count = startIndex;
-
                 // triangles for outer part
-                for (int i = startIndex; i < startIndex + 12; i++)
-                    triangles[count++] = i;
-
-                // triangles for inner part
-                count = startIndex + vertCount;
-                for (int j = 0; j < 4; j++)
+                var lastIndex = startIndex + 12;
+                for (int i = startIndex; i < lastIndex; i++)
                 {
-                    var i = startIndex + j * 3 + 2;
-                    triangles[count++] = i;
-                    triangles[count++] = i - 1;
-                    triangles[count++] = i - 2;
+                    triangles[i] = i;
+                    var rest = i%3;
+                    triangles[vertCount + i] = rest == 0 ? i : (rest == 1 ? i + 1 : i - 1);
                 }
 
                 count = startIndex;
@@ -172,7 +171,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 // reuse last
                 start = end;
                 startEle = endEle;
-                startIndex += 12;
+                startIndex = lastIndex;
             }
         }
 
