@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
@@ -101,6 +102,7 @@ namespace ActionStreetMap.Tests
                 .RegisterListType<RoadElement>(32)
                 .RegisterListType<Surface>(32)
                 .RegisterListType<GeoCoordinate>(256)
+                .RegisterListType<Vector2d>(256)
                 .RegisterListType<int>(256);
         }
 

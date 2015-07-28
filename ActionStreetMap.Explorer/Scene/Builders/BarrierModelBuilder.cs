@@ -42,20 +42,22 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             meshData.Initialize(GetVertexCount(points, maxWidth), true);
             var context = new SegmentBuilderContext()
             {
-                MeshData = new MeshData(),
+                MeshData = meshData,
                 Gradient = ResourceProvider.GetGradient(rule.GetFillColor()),
                 ColorNoiseFreq = rule.GetColorNoiseFreq(),
                 Height = rule.GetHeight(),
                 MaxWidth = maxWidth,
             };
+
+            var index = 0;
             for (int i = 0; i < points.Count - 1; i++)
             {
                 var p1 = points[i];
-                var p2 = points[i];
+                var p2 = points[i + 1];
 
                 var start = new Vector3((float)p1.X, ElevationProvider.GetElevation(p1), (float) p1.Y);
                 var end = new Vector3((float)p2.X, ElevationProvider.GetElevation(p2), (float)p2.Y);
-                BuildBarrierSegment(context, start, end);
+                BuildBarrierSegment(context, start, end, ref index);
             }
             ObjectPool.StoreList(points);
             BuildObject(tile.GameObject, meshData, rule, way);
@@ -69,25 +71,24 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             for (int i = 0; i < points.Count - 1; i++)
             {
                 var p1 = points[i];
-                var p2 = points[i];
+                var p2 = points[i + 1];
 
                 var start = new Vector3((float) p1.X, ElevationProvider.GetElevation(p1), (float) p1.Y);
                 var end = new Vector3((float) p2.X, ElevationProvider.GetElevation(p2), (float) p2.Y);
                 var distance = Vector3.Distance(start, end);
-                count += (int) Math.Ceiling(distance / maxWidth);
+                count += (int) Math.Ceiling(distance / maxWidth) * 12;
             }
             return count;
         }
 
-        private void BuildBarrierSegment(SegmentBuilderContext context, Vector3 start, Vector3 end)
+        private void BuildBarrierSegment(SegmentBuilderContext context, Vector3 start, Vector3 end,
+            ref int startIndex)
         {
             var distance = Vector3.Distance(start, end);
+            var direction = (end - start).normalized;
 
-            var direction = (end - start);
-            direction.Normalize();
-
-            var count = (int) Math.Ceiling(distance/context.MaxWidth);
-            var width = distance/count;
+            var stepCount = (int) Math.Ceiling(distance/context.MaxWidth);
+            var width = distance / stepCount;
 
             var startEle = ElevationProvider.GetElevation(start.x, start.z);
 
@@ -99,7 +100,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var triangles = context.MeshData.Triangles;
             var colors = context.MeshData.Colors;
 
-            for (int z = 0; z < count - 1; z++)
+            for (int z = 0; z < stepCount; z++)
             {
                 // get next points
                 end = start + direction * width;
@@ -112,7 +113,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 var p3 = new Vector3(start.x, startEle + context.Height, start.z);
                 var pc = new Vector3(middle.x, startEle + (endEle - startEle) / 2, middle.z);
 
-                var startIndex = vertices.Length - 1;
+                var count = startIndex;
 
                 vertices[count] = p3;
                 vertices[++count] = pc;
@@ -171,6 +172,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 // reuse last
                 start = end;
                 startEle = endEle;
+                startIndex += 12;
             }
         }
 

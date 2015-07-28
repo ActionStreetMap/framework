@@ -6,17 +6,17 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
-using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
-using ActionStreetMap.Explorer.Scene.Roofs;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Tests.Core.MapCss;
-using ActionStreetMap.Unity.Wrappers;
 using Moq;
 using NUnit.Framework;
+using UnityEngine;
+using Canvas = ActionStreetMap.Core.Tiling.Models.Canvas;
+using RenderMode = ActionStreetMap.Core.RenderMode;
 
 namespace ActionStreetMap.Tests.Explorer.Scene
 {
@@ -33,15 +33,17 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             var resourceProvider = new Mock<IResourceProvider>();
             resourceProvider.Setup(r => r.GetGradient(It.IsAny<string>()))
                 .Returns(GradientUtils.ParseGradient("gradient(#f4a460, #614126 50%, #302013)"));
+            var elevationProvider = new Mock<IElevationProvider>();
 
             var objectPoll = TestHelper.GetObjectPool();
             _barrierModelBuilder = new TestableBarrierModelBuilder();
             _barrierModelBuilder.ObjectPool = objectPoll;
             _barrierModelBuilder.GameObjectFactory = new GameObjectFactory();
+            _barrierModelBuilder.ElevationProvider = elevationProvider.Object;
             _barrierModelBuilder.ResourceProvider = resourceProvider.Object;
 
             _tile = new Tile(TestHelper.BerlinTestFilePoint,
-                new Vector2d(0, 0), RenderMode.Overview,
+                new Vector2d(0, 0), RenderMode.Scene,
                 new Canvas(objectPoll), 400, 400);
 
             _stylesheet = MapCssHelper.GetStylesheetFromFile(TestHelper.DefaultMapcssFile);
@@ -65,6 +67,17 @@ namespace ActionStreetMap.Tests.Explorer.Scene
 
             // ASSERT
             Assert.IsNotNull(_barrierModelBuilder.MeshData);
+            Assert.AreEqual(72, _barrierModelBuilder.MeshData.Vertices.Length);
+            Assert.AreEqual(144, _barrierModelBuilder.MeshData.Triangles.Length);
+            Assert.AreEqual(72, _barrierModelBuilder.MeshData.Colors.Length);
+
+            AssertPoints(points[0], _barrierModelBuilder.MeshData.Vertices[0]);
+        }
+
+        private void AssertPoints(Vector2d p1, Vector3 p2)
+        {
+            Assert.AreEqual(p1.X, p2.x);
+            Assert.AreEqual(p1.Y, p2.z);
         }
 
         private Way CreateWay(List<Vector2d> points)
