@@ -15,6 +15,7 @@ using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;

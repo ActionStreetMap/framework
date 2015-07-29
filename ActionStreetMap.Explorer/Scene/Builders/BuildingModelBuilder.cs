@@ -9,6 +9,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Facades;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Scene.Roofs;
 using ActionStreetMap.Infrastructure.Dependencies;
 

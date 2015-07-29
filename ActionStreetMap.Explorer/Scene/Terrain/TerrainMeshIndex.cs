@@ -79,6 +79,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _triangles = null;
         }
 
+        public bool Modify(MeshQuery query)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <inheritdoc />
         public void AddTriangle(TerrainMeshTriangle triangle)
         {

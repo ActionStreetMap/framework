@@ -1,18 +1,8 @@
-﻿using System;
+using System;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Scene
+namespace ActionStreetMap.Explorer.Scene.Indices
 {
-    /// <summary> Represents index of mesh vertices for quick search. </summary>
-    public interface IMeshIndex
-    {
-        /// <summary> Builds index. </summary>
-        void Build();
-
-        /// <summary> Modifies mesh using query provided. </summary>
-        bool Modify(MeshQuery query);
-    }
-
     /// <summary> Mesh index for plane. </summary>
     internal class PlaneMeshIndex : IMeshIndex
     {
@@ -76,25 +66,6 @@ namespace ActionStreetMap.Explorer.Scene
                 }
             }
             return isModified;
-        }
-    }
-
-    /// <summary> Represents mesh index which does nothing. </summary>
-    internal sealed class DummyMeshIndex : IMeshIndex
-    {
-        public static readonly  DummyMeshIndex Default = new DummyMeshIndex();
-        
-        private DummyMeshIndex() { }
-
-        /// <inheritdoc />
-        public void Build()
-        {
-        }
-
-        /// <inheritdoc />
-        public bool Modify(MeshQuery query)
-        {
-            return false;
         }
     }
 }
