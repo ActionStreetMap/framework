@@ -57,11 +57,12 @@
     <Compile Include="Scene\Generators\CylinderGenerator.cs" />
     <Compile Include="Scene\Generators\IcoSphereGenerator.cs" />
     <Compile Include="Scene\Generators\TreeGenerator.cs" />
-    <Compile Include="Scene\IMeshIndex.cs" />
+    <Compile Include="Scene\MeshIndex.cs" />
     <Compile Include="Scene\Facades\EmptyFacadeBuilder.cs" />
     <Compile Include="Scene\Facades\EmptyWallBuilder.cs" />
     <Compile Include="Scene\MeshData.cs" />
     <Compile Include="Scene\Facades\IFacadeBuilder.cs" />
+    <Compile Include="Scene\MeshQuery.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshData.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshTriangle.cs" />
     <Compile Include="Infrastructure\BehaviourProvider.cs" />
@@ -77,7 +78,6 @@
     <Compile Include="Helpers\ModelRuleExtensions.cs" />
     <Compile Include="Helpers\TerrainRuleExtensions.cs" />
     <Compile Include="Infrastructure\UnityGameObject.cs" />
-    <Compile Include="Interactions\NoiseWaveBehavior.cs" />
     <Compile Include="Scene\Roofs\DomeRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\FlatRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\GabledRoofBuilder.cs" />
