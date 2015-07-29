@@ -102,8 +102,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             {
                 facadeMeshData.GameObject = GameObjectFactory.CreateNew("wall");
                 facadeMeshData.MaterialKey = building.FacadeMaterial;
-                // TODO implement mesh index for facade
-                facadeMeshData.Index = DummyMeshIndex.Default;
                 BuildObject(gameObjectWrapper, facadeMeshData, rule, model);
             }
 
@@ -114,7 +112,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             {
                 roofMeshData.GameObject = GameObjectFactory.CreateNew("floor");
                 roofMeshData.MaterialKey = building.RoofMaterial;
-                // TODO implement mesh index for floor
                 roofMeshData.Index = DummyMeshIndex.Default;
                 BuildObject(gameObjectWrapper, roofMeshData, rule, model);
             }

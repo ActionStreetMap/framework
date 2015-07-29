@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using UnityEngine;
@@ -57,6 +58,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 emptyWallBuilder
                     .SetMeshData(meshData)
                     .Build(startVector, endVector);
+
+                meshData.Index = new PlaneMeshIndex(
+                    meshData.Vertices[0],
+                    meshData.Vertices[1],
+                    meshData.Vertices[2]);
 
                 meshDataList.Add(meshData);
             }

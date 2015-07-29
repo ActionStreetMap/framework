@@ -79,6 +79,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _triangles = null;
         }
 
+        /// <inheritdoc />
         public bool Modify(MeshQuery query)
         {
             throw new NotImplementedException();
@@ -100,8 +101,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             triangle.Region = Math.Max(Math.Min(_columnCount * j + i, _maxIndex), 0 );
         }
 
-        /// <inheritdoc />
-        public void Query(Vector3 center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
+        private void Query(Vector3 center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
         {
             var result = new List<int>(4);
 
