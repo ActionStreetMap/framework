@@ -15,8 +15,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     /// </summary>
     internal class TerrainMeshIndex : IMeshIndex
     {
-        private static readonly TriangleComparer Comparer = new TriangleComparer();
-
         private readonly int _columnCount;
         private readonly int _rowCount;
         private readonly double _xAxisStep;
@@ -38,7 +36,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <param name="rowCount">Row count of given bounding box.</param>
         /// <param name="boundingBox">Bounding box.</param>
         /// <param name="triangles">Triangles</param>
-        public TerrainMeshIndex(int columnCount, int rowCount, Rectangle2d boundingBox, List<TerrainMeshTriangle> triangles)
+        public TerrainMeshIndex(int columnCount, int rowCount, Rectangle2d boundingBox, 
+            List<TerrainMeshTriangle> triangles)
         {
             _columnCount = columnCount;
             _rowCount = rowCount;
@@ -60,7 +59,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public void Build()
         {
-            _triangles.Sort(Comparer);
+            _triangles.Sort(new TriangleComparer(_columnCount, _maxIndex, 
+                _left, _bottom, _xAxisStep, _yAxisStep));
 
             var rangeIndex = -1;
             for (int i = 0; i < _triangles.Count; i++)
@@ -83,22 +83,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         public bool Modify(MeshQuery query)
         {
             throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public void AddTriangle(TerrainMeshTriangle triangle)
-        {
-            // TODO this method is called for offset triangles as well
-            var p0 = triangle.Vertex0;
-            var p1 = triangle.Vertex1;
-            var p2 = triangle.Vertex2;
-            var centroid = new Vector2d((p0.x + p1.x + p2.x) / 3, (p0.z + p1.z + p2.z) / 3);
-            var i = (int)Math.Floor((centroid.X - _left) / _xAxisStep);
-            var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
-
-            // NOTE this is workaround: we shoud not have values outside [0, _maxIndex]
-            // TODO investigate why it happens
-            triangle.Region = Math.Max(Math.Min(_columnCount * j + i, _maxIndex), 0 );
         }
 
         private void Query(Vector3 center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
@@ -230,11 +214,52 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             public int End;
         }
 
+        /// <summary> Compares triangles based on their region. </summary>
         private class TriangleComparer : IComparer<TerrainMeshTriangle>
         {
+            private readonly double _left;
+            private readonly double _bottom;
+
+            private readonly double _xAxisStep;
+            private readonly double _yAxisStep;
+
+            private readonly int _columnCount;
+            private readonly int _maxIndex;
+
+            public TriangleComparer(int columnCount,  int maxIndex, double left, double bottom, 
+                double xAxisStep, double yAxisStep)
+            {
+                _columnCount = columnCount;
+                _maxIndex = maxIndex;
+                _left = left;
+                _bottom = bottom;
+                _xAxisStep = xAxisStep;
+                _yAxisStep = yAxisStep;
+            }
+
             public int Compare(TerrainMeshTriangle x, TerrainMeshTriangle y)
             {
+                EnsureRegion(x);
+                EnsureRegion(y);
                 return x.Region.CompareTo(y.Region);
+            }
+
+            private void EnsureRegion(TerrainMeshTriangle triangle)
+            {
+                if (triangle.Region != TerrainMeshTriangle.InvalidRegionIndex)
+                    return;
+
+                // TODO this method is called for offset triangles as well
+                var p0 = triangle.Vertex0;
+                var p1 = triangle.Vertex1;
+                var p2 = triangle.Vertex2;
+                var centroid = new Vector2d((p0.x + p1.x + p2.x) / 3, (p0.z + p1.z + p2.z) / 3);
+                var i = (int)Math.Floor((centroid.X - _left) / _xAxisStep);
+                var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
+
+                // NOTE this is workaround: we shoud not have values outside [0, _maxIndex]
+                // TODO investigate why it happens
+                triangle.Region = Math.Max(Math.Min(_columnCount * j + i, _maxIndex), 0);
             }
         }
 

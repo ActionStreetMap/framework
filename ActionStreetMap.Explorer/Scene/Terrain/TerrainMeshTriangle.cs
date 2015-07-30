@@ -5,6 +5,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     /// <summary> Represents triagle of terrain mesh. </summary>
     internal class TerrainMeshTriangle
     {
+        internal const int InvalidRegionIndex = -1;
+
         public Vector3 Vertex0;
         public Vector3 Vertex1;
         public Vector3 Vertex2;
@@ -13,6 +15,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         public Color Color1;
         public Color Color2;
 
-        internal int Region;
+        internal int Region = InvalidRegionIndex;
     }
 }

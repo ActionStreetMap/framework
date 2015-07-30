@@ -44,10 +44,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             triangle.Region = 0;
 
             Triangles.Add(triangle);
-
-            var terrainIndex = Index as TerrainMeshIndex;
-            if (terrainIndex != null)
-                terrainIndex.AddTriangle(triangle);
         }
 
         public void GenerateObjectData(out Vector3[] vertices, out int[] triangles, out Color[] colors)
