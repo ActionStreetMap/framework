@@ -1,4 +1,7 @@
-﻿namespace ActionStreetMap.Core.Geometry
+﻿using System;
+using System.Linq;
+
+namespace ActionStreetMap.Core.Geometry
 {
     /// <summary> Represents rectangle in 2D space. </summary>
     public struct Rectangle2d
@@ -61,5 +64,11 @@
 
         /// <summary> Gets the height of the bounding box. </summary>
         public double Height { get { return _ymax - _ymin; } }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return String.Format("[{0},{1}]", BottomLeft, TopRight);
+        }
     }
 }

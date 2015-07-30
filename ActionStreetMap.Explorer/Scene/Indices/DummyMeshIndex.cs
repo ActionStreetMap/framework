@@ -13,9 +13,9 @@
         }
 
         /// <inheritdoc />
-        public bool Modify(MeshQuery query)
+        public int Modify(MeshQuery query)
         {
-            return false;
+            return 0;
         }
     }
 }

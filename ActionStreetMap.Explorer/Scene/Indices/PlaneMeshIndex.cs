@@ -31,10 +31,10 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         }
 
         /// <inheritdoc />
-        public bool Modify(MeshQuery query)
+        public int Modify(MeshQuery query)
         {
             var vertices = query.Vertices;
-            bool isModified = false;
+            int modified = 0;
             for (int j = 0; j < vertices.Length; j += 3)
             {
                 // triangle is already collapsed
@@ -47,7 +47,6 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                     var distanceToCollidePoint = Vector3.Distance(v, query.CollidePoint);
                     if (distanceToCollidePoint < query.Radius)
                     {
-                        isModified = true;
                         var distanceToWall = (v.x * N.x + v.y * N.y + v.z * N.z - D) / NormalMagnitude;
                         var forceChange = query.ForcePower * (query.Radius - distanceToCollidePoint) / 2;
 
@@ -59,13 +58,15 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                             var firstVertIndex = i - i % 3;
                             vertices[firstVertIndex + 1] = vertices[firstVertIndex];
                             vertices[firstVertIndex + 2] = vertices[firstVertIndex];
+                            modified += 3;
                             break;
                         }
-                        vertices[i] += forceChange * query.ForceDirection;
+                        vertices[i] = v + forceChange * query.ForceDirection;
+                        modified++;
                     }
                 }
             }
-            return isModified;
+            return modified;
         }
     }
 }

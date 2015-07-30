@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using UnityEngine;
@@ -13,15 +12,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     ///     to regions of certain size defined by column and row count. Triangle's 
     ///     centroid is used to map triangle to the corresponding region.     
     /// </summary>
-    internal class TerrainMeshIndex : IMeshIndex
+    internal sealed class TerrainMeshIndex : IMeshIndex
     {
         private readonly int _columnCount;
         private readonly int _rowCount;
         private readonly double _xAxisStep;
         private readonly double _yAxisStep;
         private readonly double _left;
-        private readonly double _right;
-        private readonly double _top;
         private readonly double _bottom;
 
         private readonly Vector2d _bottomLeft;
@@ -29,7 +26,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private readonly int _maxIndex;
 
         private List<TerrainMeshTriangle> _triangles;
-        private int _modifiedCount;
 
         /// <summary> Creates instance of <see cref="TerrainMeshIndex"/>. </summary>
         /// <param name="columnCount">Column count of given bounding box.</param>
@@ -43,8 +39,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _rowCount = rowCount;
             _triangles = triangles;
             _left = boundingBox.Left;
-            _right = boundingBox.Right;
-            _top = boundingBox.Top;
             _bottom = boundingBox.Bottom;
 
             _bottomLeft = boundingBox.BottomLeft;
@@ -80,20 +74,16 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <inheritdoc />
-        public bool Modify(MeshQuery query)
+        public int Modify(MeshQuery query)
         {
-            throw new NotImplementedException();
-        }
-
-        private void Query(Vector3 center, float radius, Vector3[] vertices, Action<int, float, Vector3> modifyAction)
-        {
-            var result = new List<int>(4);
-
-            var x = (int)Math.Floor((center.x - _left) / _xAxisStep);
-            var y = (int)Math.Floor((center.z - _bottom) / _yAxisStep);
+            var modified = 0;
+            var center = query.Epicenter;
+            var x = (int) Math.Floor((center.x - _left)/_xAxisStep);
+            var y = (int) Math.Floor((center.z - _bottom)/_yAxisStep);
 
             var center2d = new Vector2d(center.x, center.z);
             for (int j = y - 1; j <= y + 1; j++)
+            {
                 for (int i = x - 1; i <= x + 1; i++)
                 {
                     var rectangle = new Rectangle2d(
@@ -102,113 +92,57 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         _xAxisStep,
                         _yAxisStep);
 
-                    // NOTE enlarge search radius to prevent some issues with adjusted triangles
-                    if (GeometryUtils.HasCollision(center2d, radius + 10, rectangle))
-                        AddRange(i, j, result);
+                    if (GeometryUtils.HasCollision(center2d, query.Radius, rectangle))
+                        modified += ModifyRange(query, i, j);
                 }
-            ModifyVertices(result, vertices, center, radius, modifyAction);
-
-            // reset statisitcs
-            _modifiedCount = 0;
+            }
+            return modified;
         }
 
-        private void AddRange(int i, int j, List<int> result)
+        private int ModifyRange(MeshQuery query, int i, int j)
         {
-            var index = _columnCount*j + i;
-            if (index >= _ranges.Length || 
-                index < 0 ||
+            var rangeIndex = _columnCount*j + i;
+            if (rangeIndex >= _ranges.Length ||
+                rangeIndex < 0 ||
                 i >= _columnCount || 
-                j >= _rowCount) return;
+                j >= _rowCount) return 0;
 
-            var range = _ranges[index];
-            result.AddRange(Enumerable.Range(range.Start, range.End - range.Start + 1));
-        }
-
-        #region Modification
-
-        private void ModifyVertices(List<int> indecies, Vector3[] vertices, Vector3 epicenter, float radius,
-            Action<int, float, Vector3> modifyAction)
-        {
-            // modify vertices
-            for (int j = 0; j < indecies.Count; j++)
+            var modified = 0;
+            var range = _ranges[rangeIndex];
+            var vertices = query.Vertices;
+            // go through all potentially affected triangles
+            foreach (var triIndex in Enumerable.Range(range.Start, range.End - range.Start + 1))
             {
-                int outerIndex = indecies[j] * 3;
-                for (var k = 0; k < 3; k++)
+                int outerIndex = triIndex * 3;
+                // calculate triangle centroid
+                float x = 0, y = 0, z = 0;
+                for (var k = outerIndex; k < outerIndex + 3; k++)
                 {
-                    var index = outerIndex + k;
-                    var vertex = vertices[index];
-                    var distance = Vector3.Distance(vertex, epicenter);
-                    if (distance < radius && IsNotBorderVertex(vertex))
-                        modifyAction(index, distance, new Vector3());
+                    x += vertices[k].x;
+                    y += vertices[k].y;
+                    z += vertices[k].z;
                 }
-            }
-
-            // search and adjust vertices on triangle sides
-            for (int j = 0; j < indecies.Count; j++)
-            {
-                int outerIndex = indecies[j] * 3;
-               
-                for (var i = 0; i < indecies.Count; i++)
+                var centroid = new Vector3(x/3, y/3, z/3);
+                // if epicenter is close to centroid then modify all triangle vertices
+                // based on their distance to epicenter
+                if (Vector3.Distance(centroid, query.Epicenter) < query.Radius)
                 {
-                    if (i == j) continue;
-
-                    int innerIndex = indecies[i] * 3;
-
-                    for (int k = 0; k < 3; k++)
+                    for (var k = outerIndex; k < outerIndex + 3; k++)
                     {
-                        int vertIndex = innerIndex + k;
-                        if (ModifyVertextOnSegment(vertices, vertIndex, outerIndex + 0, outerIndex + 1) ||
-                            ModifyVertextOnSegment(vertices, vertIndex, outerIndex + 1, outerIndex + 2) ||
-                            ModifyVertextOnSegment(vertices, vertIndex, outerIndex + 2, outerIndex + 0))
-                            _modifiedCount++;
+                        var vertex = vertices[k];
+                        var distanceToCollidePoint = Vector3.Distance(vertex, query.Epicenter);
+                        var forceChange = query.ForcePower*(query.Radius - distanceToCollidePoint)/2;
+                        vertices[k] = vertex + forceChange*query.ForceDirection;
                     }
+                    modified += 3;
                 }
             }
+            return modified;
         }
-
-        private bool IsNotBorderVertex(Vector3 vertex)
-        {
-            return Math.Abs(vertex.x - _left) > float.Epsilon &&
-                   Math.Abs(vertex.x - _right) > float.Epsilon &&
-                   Math.Abs(vertex.z - _top) > float.Epsilon &&
-                   Math.Abs(vertex.z - _bottom) > float.Epsilon;
-        }
-
-        private bool IsVertextOnSegment(Vector3 p, Vector3 a, Vector3 b)
-        {
-            var vert2D = new Vector2(p.x, p.z);
-            var a2D = new Vector2(a.x, a.z);
-            var b2D = new Vector2(b.x, b.z);
-
-            if (vert2D == a2D || vert2D == b2D) return false;
-            return Math.Abs(Vector2.Distance(vert2D, a2D) + Vector2.Distance(vert2D, b2D) - Vector2.Distance(a2D, b2D)) < 0.01f;
-        }
-
-        private bool ModifyVertextOnSegment(Vector3[] vertices, int vIndex, int aIndex, int bIndex)
-        {
-            var p = vertices[vIndex];
-            var a = vertices[aIndex];
-            var b = vertices[bIndex];
-
-            if (!IsVertextOnSegment(p, a, b))
-                return false;
-
-            var ray = b - a; // find direction from p1 to p2
-            var rel = p - a; // find position relative to p1
-            var n = ray.normalized; // create ray normal
-            var l = Vector3.Dot(n, rel); // calculate dot
-            var result = a + n * l; // convert back into world space
-
-            vertices[vIndex] = result;
-
-            return true;
-        }
-
-        #endregion
 
         #region Nested classes
 
-        private struct Range
+        internal struct Range
         {
             public int Start;
             public int End;
