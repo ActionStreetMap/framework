@@ -12,7 +12,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     ///     to regions of certain size defined by column and row count. Triangle's 
     ///     centroid is used to map triangle to the corresponding region.     
     /// </summary>
-    internal sealed class TerrainMeshIndex : IMeshIndex
+    internal class TerrainMeshIndex : IMeshIndex
     {
         private readonly int _columnCount;
         private readonly int _rowCount;
@@ -24,7 +24,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private readonly Vector2d _bottomLeft;
         private readonly Range[] _ranges;
         
-        internal int CheckedTriangles;
+        internal int ScannedTriangles;
 
         private List<TerrainMeshTriangle> _triangles;
 
@@ -33,7 +33,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <param name="rowCount">Row count of given bounding box.</param>
         /// <param name="boundingBox">Bounding box.</param>
         /// <param name="triangles">Triangles</param>
-        public TerrainMeshIndex(int columnCount, int rowCount, Rectangle2d boundingBox, 
+        public TerrainMeshIndex(int columnCount, int rowCount, Rectangle2d boundingBox,
             List<TerrainMeshTriangle> triangles)
         {
             _columnCount = columnCount;
@@ -44,8 +44,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             _bottomLeft = boundingBox.BottomLeft;
 
-            _xAxisStep = boundingBox.Width/columnCount;
-            _yAxisStep = boundingBox.Height/rowCount;
+            _xAxisStep = boundingBox.Width / columnCount;
+            _yAxisStep = boundingBox.Height / rowCount;
 
             _ranges = new Range[rowCount * columnCount];
         }
@@ -53,8 +53,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public void Build()
         {
-            _triangles.Sort(new TriangleComparer(
-                _columnCount, _left, _bottom, _xAxisStep, _yAxisStep));
+            _triangles.Sort(new TriangleComparer(_columnCount,
+                _left, _bottom, _xAxisStep, _yAxisStep));
 
             var rangeIndex = -1;
             for (int i = 0; i < _triangles.Count; i++)
@@ -76,74 +76,125 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public int Modify(MeshQuery query)
         {
-            // NOTE not thread safe, but it's used for unit testing only
-            CheckedTriangles = 0;
-            var modified = 0;
+            var result = new List<int>(4);
             var center = query.Epicenter;
-            var x = (int) Math.Floor((center.x - _left)/_xAxisStep);
-            var y = (int) Math.Floor((center.z - _bottom)/_yAxisStep);
+            var x = (int)Math.Floor((center.x - _left) / _xAxisStep);
+            var y = (int)Math.Floor((center.z - _bottom) / _yAxisStep);
 
-            // NOTE Actually, this is not correct in case of epicenter is 
-            // above or below terrain surface
-            var center2D = new Vector2d(center.x, center.z);
+            var center2d = new Vector2d(center.x, center.z);
             for (int j = y - 1; j <= y + 1; j++)
-            {
                 for (int i = x - 1; i <= x + 1; i++)
                 {
                     var rectangle = new Rectangle2d(
-                        _bottomLeft.X + i*_xAxisStep,
-                        _bottomLeft.Y + j*_yAxisStep,
+                        _bottomLeft.X + i * _xAxisStep,
+                        _bottomLeft.Y + j * _yAxisStep,
                         _xAxisStep,
                         _yAxisStep);
 
-                    if (GeometryUtils.HasCollision(center2D, query.Radius, rectangle))
-                        modified += ModifyRange(query, i, j);
+                    // NOTE enlarge search radius to prevent some issues with adjusted triangles
+                    // as their position in index defined by their centroid
+                    // actually, additional size depends on terrain triangle area
+                    if (GeometryUtils.HasCollision(center2d, query.Radius + 6, rectangle))
+                        AddRange(i, j, result);
                 }
-            }
-            return modified;
+
+            return ModifyVertices(query, result);
         }
 
-        private int ModifyRange(MeshQuery query, int i, int j)
+        private void AddRange(int i, int j, List<int> result)
         {
-            var rangeIndex = _columnCount*j + i;
-            if (rangeIndex >= _ranges.Length ||
-                rangeIndex < 0 ||
-                i >= _columnCount || 
-                j >= _rowCount) return 0;
+            var index = _columnCount * j + i;
+            if (index >= _ranges.Length || index < 0 ||
+                i >= _columnCount ||
+                j >= _rowCount) return;
 
+            var range = _ranges[index];
+            result.AddRange(Enumerable.Range(range.Start, range.End - range.Start + 1));
+        }
+
+        #region Modification
+
+        private int ModifyVertices(MeshQuery query, List<int> indecies)
+        {
+            var upMode = query.ForceDirection.y > 0;
             var modified = 0;
-            var range = _ranges[rangeIndex];
-            var vertices = query.Vertices;
-            // go through all potentially affected triangles
-            foreach (var triIndex in Enumerable.Range(range.Start, range.End - range.Start + 1))
+            ScannedTriangles = 0;
+
+            // modify vertices
+            for (int j = 0; j < indecies.Count; j++)
             {
-                CheckedTriangles++;
-                int outerIndex = triIndex * 3;
-                // calculate triangle centroid
-                float x = 0, y = 0, z = 0;
-                for (var k = outerIndex; k < outerIndex + 3; k++)
+                int outerIndex = indecies[j] * 3;
+                for (var k = 0; k < 3; k++)
                 {
-                    x += vertices[k].x;
-                    y += vertices[k].y;
-                    z += vertices[k].z;
-                }
-                var centroid = new Vector3(x/3, y/3, z/3);
-                // if epicenter is close to centroid then modify all triangle vertices
-                // based on their distance to epicenter
-                if (Vector3.Distance(centroid, query.Epicenter) < query.Radius)
-                {
-                    for (var k = outerIndex; k < outerIndex + 3; k++)
+                    var index = outerIndex + k;
+                    var vertex = query.Vertices[index];
+                    var distance = Vector3.Distance(vertex, query.Epicenter);
+                    if (distance < query.Radius)
                     {
-                        var vertex = vertices[k];
-                        var distanceToCollidePoint = Vector3.Distance(vertex, query.Epicenter);
-                        var forceChange = query.ForcePower*(query.Radius - distanceToCollidePoint)/2;
-                        vertices[k] = vertex + forceChange*query.ForceDirection;
+                        float heightDiff = (distance - query.Radius) * query.ForcePower;
+                        query.Vertices[index] = new Vector3(
+                            vertex.x,
+                            vertex.y + (upMode ? -heightDiff : heightDiff),
+                            vertex.z);
+                        modified++;
                     }
-                    modified += 3;
+                }
+                ScannedTriangles++;
+            }
+
+            // search and adjust vertices on triangle sides
+            for (int j = 0; j < indecies.Count; j++)
+            {
+                int outerIndex = indecies[j] * 3;
+
+                for (var i = 0; i < indecies.Count; i++)
+                {
+                    if (i == j) continue;
+                    int innerIndex = indecies[i] * 3;
+                    for (int k = 0; k < 3; k++)
+                    {
+                        int vertIndex = innerIndex + k;
+                        if (ModifyVertextOnSegment(query.Vertices, vertIndex, outerIndex + 0, outerIndex + 1) ||
+                            ModifyVertextOnSegment(query.Vertices, vertIndex, outerIndex + 1, outerIndex + 2) ||
+                            ModifyVertextOnSegment(query.Vertices, vertIndex, outerIndex + 2, outerIndex + 0))
+                            modified++;
+                    }
                 }
             }
             return modified;
         }
+
+        private bool IsVertextOnSegment(Vector3 p, Vector3 a, Vector3 b)
+        {
+            var vert2D = new Vector2(p.x, p.z);
+            var a2D = new Vector2(a.x, a.z);
+            var b2D = new Vector2(b.x, b.z);
+
+            if (vert2D == a2D || vert2D == b2D) return false;
+            return Math.Abs(
+                Vector2.Distance(vert2D, a2D) + 
+                Vector2.Distance(vert2D, b2D) - 
+                Vector2.Distance(a2D, b2D)) < 0.01f;
+        }
+
+        private bool ModifyVertextOnSegment(Vector3[] vertices, int vIndex, int aIndex, int bIndex)
+        {
+            var p = vertices[vIndex];
+            var a = vertices[aIndex];
+            var b = vertices[bIndex];
+
+            if (!IsVertextOnSegment(p, a, b))
+                return false;
+
+            var ray = b - a; // find direction from p1 to p2
+            var rel = p - a; // find position relative to p1
+            var n = ray.normalized; // create ray normal
+            var l = Vector3.Dot(n, rel); // calculate dot
+            vertices[vIndex] = a + n * l;
+            return true;
+        }
+
+        #endregion
 
         #region Nested classes
 
@@ -164,7 +215,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             private readonly int _columnCount;
 
-            public TriangleComparer(int columnCount, double left, double bottom, 
+            public TriangleComparer(int columnCount, double left, double bottom,
                 double xAxisStep, double yAxisStep)
             {
                 _columnCount = columnCount;

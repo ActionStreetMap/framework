@@ -62,14 +62,14 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             SetUpSimpleCell();
             _meshIndex.Build();
             FillVertices();
-            var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 5);
+            var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 15);
 
             // ACT
             var modifiedCount = _meshIndex.Modify(query);
 
             // ASSERT
-            Assert.AreEqual(6, modifiedCount);
-            Assert.Less(_meshIndex.CheckedTriangles, 4);
+            Assert.AreEqual(24, modifiedCount);
+            Assert.AreEqual(18, _meshIndex.ScannedTriangles);
         }
 
         private void SetupSimpleTestData()
@@ -133,7 +133,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 
             // ASSERT
             Assert.Greater(modifiedCount, 0);
-            Assert.Less(_meshIndex.CheckedTriangles, 100);
+            Assert.Less(_meshIndex.ScannedTriangles, 150);
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 
             // ASSERT
             Assert.Greater(modifiedCount, 0);
-            Assert.Less(_meshIndex.CheckedTriangles, 100);
+            Assert.Less(_meshIndex.ScannedTriangles, 150);
         }
 
         public void SetUpOriginalCell()
