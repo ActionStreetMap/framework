@@ -32,7 +32,7 @@ namespace ActionStreetMap.Core.Tiling
     }
 
     /// <summary> This class listens to position changes and manages tile processing. </summary>
-    public class TileController : ITileController, IConfigurable
+    internal sealed class TileController : ITileController, IConfigurable
     {
         private readonly object _lockObj = new object();
 
