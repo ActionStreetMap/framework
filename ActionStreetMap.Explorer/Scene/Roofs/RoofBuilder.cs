@@ -8,6 +8,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -97,7 +98,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             {
                 Vertices = vertices,
                 Triangles = triangles,
-                Colors = colors
+                Colors = colors,
+                Index = new PlaneMeshIndex(vertices[0], vertices[1], vertices[2])
             };
         }
 

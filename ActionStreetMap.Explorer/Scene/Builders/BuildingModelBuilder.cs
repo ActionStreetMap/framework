@@ -112,7 +112,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             {
                 roofMeshData.GameObject = GameObjectFactory.CreateNew("floor");
                 roofMeshData.MaterialKey = building.RoofMaterial;
-                roofMeshData.Index = DummyMeshIndex.Default;
                 BuildObject(gameObjectWrapper, roofMeshData, rule, model);
             }
             return gameObjectWrapper;
