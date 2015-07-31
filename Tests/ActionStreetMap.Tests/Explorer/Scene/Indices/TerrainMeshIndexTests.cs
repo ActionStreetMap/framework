@@ -60,8 +60,9 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
         {
             // ARRANGE 
             SetUpSimpleCell();
-            var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 5);
             _meshIndex.Build();
+            FillVertices();
+            var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 5);
 
             // ACT
             var modifiedCount = _meshIndex.Modify(query);
@@ -73,34 +74,23 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
         private void SetupSimpleTestData()
         {
             _triangles = new List<TerrainMeshTriangle>(TriangleCount);
-            _vertices = new Vector3[TriangleCount * 3];
-            var count = 0;
             for (int j = 0; j < CellCount; j++)
             {
                 var y = Step*j;
                 for (int i = 0; i < CellCount; i++)
                 {
                     var x = Step*i;
-                    var startIndex = count;
-
-                    _vertices[count++] = new Vector3(x, 0, y);
-                    _vertices[count++] = new Vector3(x, 0, y + Step);
-                    _vertices[count++] = new Vector3(x + Step, 0, y + Step);
-                    _vertices[count++] = new Vector3(x, 0, y);
-                    _vertices[count++] = new Vector3(x + Step, 0, y);
-                    _vertices[count++] = new Vector3(x + Step, 0, y + Step);
-
                     _triangles.Add(new TerrainMeshTriangle()
                     {
-                        Vertex0 = _vertices[startIndex++],
-                        Vertex1 = _vertices[startIndex++],
-                        Vertex2 = _vertices[startIndex++]
+                        Vertex0 = new Vector3(x, 0, y),
+                        Vertex1 = new Vector3(x, 0, y + Step),
+                        Vertex2 = new Vector3(x + Step, 0, y + Step)
                     });
                     _triangles.Add(new TerrainMeshTriangle()
                     {
-                        Vertex0 = _vertices[startIndex++],
-                        Vertex1 = _vertices[startIndex++],
-                        Vertex2 = _vertices[startIndex]
+                        Vertex0 = new Vector3(x, 0, y),
+                        Vertex1 = new Vector3(x + Step, 0, y),
+                        Vertex2 = new Vector3(x + Step, 0, y + Step)
                     });
                 }
             }
@@ -133,8 +123,9 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
         {
             // ARRANGE 
             SetUpOriginalCell();
-            var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 5);
             _meshIndex.Build();
+            FillVertices();
+            var query = GetQuery(new Vector3(50, 33, 50), new Vector3(50, 33, 50), 5);
 
             // ACT
             var modifiedCount = _meshIndex.Modify(query);
@@ -156,7 +147,6 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             {
                 var count = int.Parse(reader.ReadLine());
                 _triangles = new List<TerrainMeshTriangle>(count);
-                _vertices = new Vector3[count * 3];
                 for (int i = 0; i < count; i++)
                 {
                     var triangle = new TerrainMeshTriangle()
@@ -165,9 +155,6 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
                         Vertex1 = ReadVector3FromString(reader.ReadLine()),
                         Vertex2 = ReadVector3FromString(reader.ReadLine())
                     };
-                    _vertices[i * 3] = triangle.Vertex0;
-                    _vertices[i * 3 + 1] = triangle.Vertex1;
-                    _vertices[i * 3 + 2] = triangle.Vertex2;
                     _triangles.Add(triangle);
                 }
             }
@@ -201,6 +188,18 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
         private TerrainMeshIndex.Range[] GetRanges()
         {
             return ReflectionUtils.GetFieldValue<TerrainMeshIndex.Range[]>(_meshIndex, "_ranges");
+        }
+
+        private void FillVertices()
+        {
+            _vertices = new Vector3[_triangles.Count * 3];
+            for (int i = 0; i < _triangles.Count; i++)
+            {
+                var triangle = _triangles[i];
+                _vertices[i] = triangle.Vertex0;
+                _vertices[i + 1] = triangle.Vertex0;
+                _vertices[i + 2] = triangle.Vertex0;
+            }
         }
     }
 }
