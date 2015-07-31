@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Explorer.Scene;
@@ -58,8 +59,8 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
         public void CanPerformQueryInCenterSimple()
         {
             // ARRANGE 
+            SetUpSimpleCell();
             var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 5);
-            SetUpSimpleCell(); 
             _meshIndex.Build();
 
             // ACT
@@ -71,7 +72,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 
         private void SetupSimpleTestData()
         {
-            _triangles = new List<TerrainMeshTriangle>();
+            _triangles = new List<TerrainMeshTriangle>(TriangleCount);
             _vertices = new Vector3[TriangleCount * 3];
             var count = 0;
             for (int j = 0; j < CellCount; j++)
@@ -104,6 +105,81 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
                 }
             }
             Assert.AreEqual(TriangleCount, _triangles.Count);
+        }
+
+        #endregion
+
+        #region Original terrain cell
+
+        [Test]
+        public void CanBuildIndexOriginal()
+        {
+            // ARRANGE
+            SetUpOriginalCell();
+
+            // ACT
+            _meshIndex.Build();
+
+            // ASSERT
+            Assert.AreEqual(4738, _triangles.Count);
+
+            var ranges = GetRanges();
+            Assert.AreEqual(16 * 16, ranges.Length);
+            Assert.AreEqual(16 * 16, ranges.Distinct().Count(), "All ranges are different");
+        }
+
+        [Test]
+        public void CanPerformQueryInCenterOriginal()
+        {
+            // ARRANGE 
+            SetUpOriginalCell();
+            var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 5);
+            _meshIndex.Build();
+
+            // ACT
+            var modifiedCount = _meshIndex.Modify(query);
+
+            // ASSERT
+            Assert.Greater(modifiedCount, 0);
+        }
+
+        public void SetUpOriginalCell()
+        {
+            SetUpOriginalTestData();
+            _meshIndex = new TerrainMeshIndex(16, 16, new Rectangle2d(0, 0, 100, 100), _triangles);
+        }
+
+        private void SetUpOriginalTestData()
+        {
+            var testMeshFilePath = TestHelper.TestAssetsFolder + @"\Mesh\terrain_cell_triangles.txt";
+            using (var reader = new StreamReader(File.Open(testMeshFilePath, FileMode.Open)))
+            {
+                var count = int.Parse(reader.ReadLine());
+                _triangles = new List<TerrainMeshTriangle>(count);
+                _vertices = new Vector3[count * 3];
+                for (int i = 0; i < count; i++)
+                {
+                    var triangle = new TerrainMeshTriangle()
+                    {
+                        Vertex0 = ReadVector3FromString(reader.ReadLine()),
+                        Vertex1 = ReadVector3FromString(reader.ReadLine()),
+                        Vertex2 = ReadVector3FromString(reader.ReadLine())
+                    };
+                    _vertices[i * 3] = triangle.Vertex0;
+                    _vertices[i * 3 + 1] = triangle.Vertex1;
+                    _vertices[i * 3 + 2] = triangle.Vertex2;
+                    _triangles.Add(triangle);
+                }
+            }
+        }
+
+        private Vector3 ReadVector3FromString(string str)
+        {
+            var data = str.Split(' ');
+            return new Vector3(
+                float.Parse(data[0]), 
+                float.Parse(data[1]), 
+                float.Parse(data[2]));
         }
 
         #endregion
