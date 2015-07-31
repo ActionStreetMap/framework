@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Scene.Indices;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
@@ -8,8 +9,8 @@ namespace ActionStreetMap.Explorer.Scene
     public class MeshData
     {
         public string MaterialKey;
-        public IMeshIndex Index;
         public IGameObject GameObject;
+        public IMeshIndex Index = DummyMeshIndex.Default;
 
         public Vector3[] Vertices;
         public int[] Triangles;
