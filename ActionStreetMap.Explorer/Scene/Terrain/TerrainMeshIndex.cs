@@ -23,7 +23,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private readonly Vector2d _bottomLeft;
         private readonly Range[] _ranges;
-        private readonly int _maxIndex;
+        
+        internal int CheckedTriangles;
 
         private List<TerrainMeshTriangle> _triangles;
 
@@ -47,14 +48,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             _yAxisStep = boundingBox.Height/rowCount;
 
             _ranges = new Range[rowCount * columnCount];
-            _maxIndex = _ranges.Length - 1;
         }
 
         /// <inheritdoc />
         public void Build()
         {
-            _triangles.Sort(new TriangleComparer(_columnCount, _maxIndex, 
-                _left, _bottom, _xAxisStep, _yAxisStep));
+            _triangles.Sort(new TriangleComparer(
+                _columnCount, _left, _bottom, _xAxisStep, _yAxisStep));
 
             var rangeIndex = -1;
             for (int i = 0; i < _triangles.Count; i++)
@@ -76,12 +76,16 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         /// <inheritdoc />
         public int Modify(MeshQuery query)
         {
+            // NOTE not thread safe, but it's used for unit testing only
+            CheckedTriangles = 0;
             var modified = 0;
             var center = query.Epicenter;
             var x = (int) Math.Floor((center.x - _left)/_xAxisStep);
             var y = (int) Math.Floor((center.z - _bottom)/_yAxisStep);
 
-            var center2d = new Vector2d(center.x, center.z);
+            // NOTE Actually, this is not correct in case of epicenter is 
+            // above or below terrain surface
+            var center2D = new Vector2d(center.x, center.z);
             for (int j = y - 1; j <= y + 1; j++)
             {
                 for (int i = x - 1; i <= x + 1; i++)
@@ -92,7 +96,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         _xAxisStep,
                         _yAxisStep);
 
-                    if (GeometryUtils.HasCollision(center2d, query.Radius, rectangle))
+                    if (GeometryUtils.HasCollision(center2D, query.Radius, rectangle))
                         modified += ModifyRange(query, i, j);
                 }
             }
@@ -113,6 +117,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             // go through all potentially affected triangles
             foreach (var triIndex in Enumerable.Range(range.Start, range.End - range.Start + 1))
             {
+                CheckedTriangles++;
                 int outerIndex = triIndex * 3;
                 // calculate triangle centroid
                 float x = 0, y = 0, z = 0;
@@ -158,13 +163,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             private readonly double _yAxisStep;
 
             private readonly int _columnCount;
-            private readonly int _maxIndex;
 
-            public TriangleComparer(int columnCount,  int maxIndex, double left, double bottom, 
+            public TriangleComparer(int columnCount, double left, double bottom, 
                 double xAxisStep, double yAxisStep)
             {
                 _columnCount = columnCount;
-                _maxIndex = maxIndex;
                 _left = left;
                 _bottom = bottom;
                 _xAxisStep = xAxisStep;
@@ -190,9 +193,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var centroid = new Vector2d((p0.x + p1.x + p2.x) / 3, (p0.z + p1.z + p2.z) / 3);
                 var i = (int)Math.Floor((centroid.X - _left) / _xAxisStep);
                 var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
-
-                // NOTE this is workaround: we shoud not have values outside [0, _maxIndex]
-                //Math.Max(Math.Min(_columnCount * j + i, _maxIndex), 0);
 
                 triangle.Region = _columnCount*j + i;
             }
