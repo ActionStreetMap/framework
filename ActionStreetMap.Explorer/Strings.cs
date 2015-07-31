@@ -24,6 +24,8 @@
 
         public static string NotInitializedMeshDataUsage = "Attempt to use uninitialized mesh data";
 
+        public static string InconsistentTriangleType = "Attempt to add incosistent triangle type.";
+
         #region Commands
 
         public static string SearchCommand = "Searches for OSM objects.";

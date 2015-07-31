@@ -17,25 +17,31 @@ namespace ActionStreetMap.Explorer.Scene
 
         private int _lastIndex;
         private bool _isInitialized;
+        private bool _isTwoSided;
 
         /// <summary> Initializes mesh data using given size. </summary>
-        public void Initialize(int size, bool twoSide = false)
+        public void Initialize(int size, bool isTwoSided = false)
         {
             if (_isInitialized)
                 throw new InvalidOperationException(Strings.MultiplyMeshDataInitialization);
 
+            _isTwoSided = isTwoSided;
+
             Vertices = new Vector3[size];
-            Triangles = new int[twoSide ? size * 2 : size];
+            Triangles = new int[isTwoSided ? size * 2 : size];
             Colors = new Color[size];
 
             _isInitialized = true;
         }
 
-        /// <summary> Adds triangle to mesh data </summary>
+        /// <summary> Adds one sided triangle to mesh data </summary>
         public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color color)
         {
             if (!_isInitialized)
                 throw new InvalidOperationException(Strings.NotInitializedMeshDataUsage);
+
+            if (_isTwoSided)
+                throw new InvalidOperationException(Strings.InconsistentTriangleType);
 
             Vertices[_lastIndex] = v0;
             Vertices[_lastIndex + 1] = v1;
