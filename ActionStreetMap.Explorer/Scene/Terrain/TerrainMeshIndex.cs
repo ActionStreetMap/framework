@@ -192,8 +192,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var j = (int)Math.Floor((centroid.Y - _bottom) / _yAxisStep);
 
                 // NOTE this is workaround: we shoud not have values outside [0, _maxIndex]
-                // TODO investigate why it happens
-                triangle.Region = Math.Max(Math.Min(_columnCount * j + i, _maxIndex), 0);
+                //Math.Max(Math.Min(_columnCount * j + i, _maxIndex), 0);
+
+                triangle.Region = _columnCount*j + i;
             }
         }
 

@@ -196,9 +196,10 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             for (int i = 0; i < _triangles.Count; i++)
             {
                 var triangle = _triangles[i];
-                _vertices[i] = triangle.Vertex0;
-                _vertices[i + 1] = triangle.Vertex0;
-                _vertices[i + 2] = triangle.Vertex0;
+                var index = i*3;
+                _vertices[index] = triangle.Vertex0;
+                _vertices[index + 1] = triangle.Vertex1;
+                _vertices[index + 2] = triangle.Vertex2;
             }
         }
     }
