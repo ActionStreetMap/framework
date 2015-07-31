@@ -12,7 +12,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     ///     to regions of certain size defined by column and row count. Triangle's 
     ///     centroid is used to map triangle to the corresponding region.     
     /// </summary>
-    internal class TerrainMeshIndex : IMeshIndex
+    internal sealed class TerrainMeshIndex : IMeshIndex
     {
         private readonly int _columnCount;
         private readonly int _rowCount;
