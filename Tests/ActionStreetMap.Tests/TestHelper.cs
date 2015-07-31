@@ -35,18 +35,19 @@ namespace ActionStreetMap.Tests
         public static readonly GeoCoordinate TestMaxPoint = new GeoCoordinate(52.552, 13.354);
 
         public const string ConfigTestRootFile = "test.json";
-        public const string ConfigAppRootFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\settings.json";
+        public const string TestAssetsFolder = @"..\..\..\..\Tests\TestAssets";
+        public const string ConfigAppRootFile = TestAssetsFolder + @"\DemoResources\Config\settings.json";
 
-        public const string TestNmeaFilePath = @"..\..\..\..\Tests\TestAssets\Nmea\berlin_seestr_speed_increasing.nme";
-        public const string TestIndexSettingsPath = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\index.json";
+        public const string TestNmeaFilePath = TestAssetsFolder + @"\Nmea\berlin_seestr_speed_increasing.nme";
+        public const string TestIndexSettingsPath = TestAssetsFolder + @"\DemoResources\Config\index.json";
 
         public const string MapDataPath = @"Maps\osm";
 
-        public const string TestThemeFile = @"..\..\..\..\Tests\TestAssets\Themes\theme.json";
-        public const string TestBaseMapcssFile = @"..\..\..\..\Tests\TestAssets\Mapcss\base.mapcss";
-        public const string DefaultMapcssFile = @"..\..\..\..\Tests\TestAssets\DemoResources\Config\default.mapcss";
+        public const string TestThemeFile = TestAssetsFolder + @"\Themes\theme.json";
+        public const string TestBaseMapcssFile =  TestAssetsFolder + @"\Mapcss\base.mapcss";
+        public const string DefaultMapcssFile = TestAssetsFolder + @"\DemoResources\Config\default.mapcss";
 
-        public const string BerlinXmlData = @"..\..\..\..\Tests\TestAssets\Osm\berlin_xml_api.osm";
+        public const string BerlinXmlData = TestAssetsFolder + @"\\Osm\berlin_xml_api.osm";
 
         public static GameRunner GetGameRunner(bool bootstrap = true)
         {
