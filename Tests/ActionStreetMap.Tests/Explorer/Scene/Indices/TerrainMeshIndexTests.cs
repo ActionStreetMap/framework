@@ -11,29 +11,33 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
     [TestFixture]
     class TerrainMeshIndexTests
     {
-        private const int CellCount = 5;
-        private const int GridSize = 100;
-        private const int TriangleCount = CellCount*CellCount*2;
-        private const int RangeCount = CellCount*CellCount;
-
-        private const int Step = GridSize/CellCount;
-
         private TerrainMeshIndex _meshIndex;
         private List<TerrainMeshTriangle> _triangles;
         private Vector3[] _vertices;
 
-        [SetUp]
-        public void SetUp()
+        #region Simple terrain cell
+
+        private const int CellCount = 5;
+        private const int GridSize = 100;
+        private const int TriangleCount = CellCount * CellCount * 2;
+        private const int RangeCount = CellCount * CellCount;
+
+        private const int Step = GridSize / CellCount;
+
+        public void SetUpSimpleCell()
         {
-            SetupTestData();
+            SetupSimpleTestData();
             _meshIndex = new TerrainMeshIndex(CellCount, CellCount,
                 new Rectangle2d(0, 0, GridSize, GridSize), _triangles);
         }
 
         [Test]
-        public void CanBuildIndex()
+        public void CanBuildIndexSimple()
         {
-            // ARRANGE & ACT
+            // ARRANGE
+            SetUpSimpleCell(); 
+
+            // ACT
             _meshIndex.Build();
 
             // ASSERT
@@ -51,10 +55,11 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
         }
 
         [Test]
-        public void CanPerformQueryInCenter()
+        public void CanPerformQueryInCenterSimple()
         {
             // ARRANGE 
             var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 5);
+            SetUpSimpleCell(); 
             _meshIndex.Build();
 
             // ACT
@@ -64,28 +69,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             Assert.AreEqual(6, modifiedCount);
         }
 
-        #region Helpers
-
-        private MeshQuery GetQuery(Vector3 epicenter, Vector3 collidePoint, float radius)
-        {
-            return new MeshQuery()
-            {
-                Epicenter = epicenter,
-                ForceDirection = new Vector3(0, 1, 0),
-                ForcePower = 1,
-                Vertices = _vertices,
-                CollidePoint = collidePoint,
-                OffsetThreshold = 1,
-                Radius = radius
-            };
-        }
-
-        private TerrainMeshIndex.Range[] GetRanges()
-        {
-            return ReflectionUtils.GetFieldValue<TerrainMeshIndex.Range[]>(_meshIndex, "_ranges");
-        }
-
-        private void SetupTestData()
+        private void SetupSimpleTestData()
         {
             _triangles = new List<TerrainMeshTriangle>();
             _vertices = new Vector3[TriangleCount * 3];
@@ -123,5 +107,24 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
         }
 
         #endregion
+
+        private MeshQuery GetQuery(Vector3 epicenter, Vector3 collidePoint, float radius)
+        {
+            return new MeshQuery()
+            {
+                Epicenter = epicenter,
+                ForceDirection = new Vector3(0, 1, 0),
+                ForcePower = 1,
+                Vertices = _vertices,
+                CollidePoint = collidePoint,
+                OffsetThreshold = 1,
+                Radius = radius
+            };
+        }
+
+        private TerrainMeshIndex.Range[] GetRanges()
+        {
+            return ReflectionUtils.GetFieldValue<TerrainMeshIndex.Range[]>(_meshIndex, "_ranges");
+        }
     }
 }
