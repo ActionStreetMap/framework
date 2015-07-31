@@ -41,7 +41,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             triangle.Color0 = color;
             triangle.Color1 = color;
             triangle.Color2 = color;
-            triangle.Region = 0;
+            triangle.Region = TerrainMeshTriangle.InvalidRegionIndex;
 
             Triangles.Add(triangle);
         }
