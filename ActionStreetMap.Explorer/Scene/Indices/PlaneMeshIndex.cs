@@ -35,6 +35,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         {
             var vertices = query.Vertices;
             int modified = 0;
+            var destroyed = 0;
             for (int j = 0; j < vertices.Length; j += 3)
             {
                 // triangle is already collapsed
@@ -58,7 +59,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                             var firstVertIndex = i - i % 3;
                             vertices[firstVertIndex + 1] = vertices[firstVertIndex];
                             vertices[firstVertIndex + 2] = vertices[firstVertIndex];
-                            modified += 3;
+                            destroyed += 3;                           
                             break;
                         }
                         vertices[i] = v + forceChange * query.ForceDirection;
@@ -68,6 +69,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
             }
             return new MeshQuery.Result(query.Vertices)
             {
+                DestroyedVertices = destroyed,
                 ModifiedVertices = modified,
                 ScannedTriangles = -1
             };

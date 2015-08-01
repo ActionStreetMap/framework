@@ -29,8 +29,11 @@ namespace ActionStreetMap.Explorer.Scene
         /// <summary> DTO for mesh query operation results. </summary>
         public class Result
         {
-            /// <summary> Amound of modifide vertices. </summary>
+            /// <summary> Amound of modified vertices. </summary>
             public int ModifiedVertices;
+
+            /// <summary> Amount of destroyed vertices. </summary>
+            public int DestroyedVertices;
 
             /// <summary> Amount of scanned triangles. </summary>
             public int ScannedTriangles;
@@ -38,8 +41,8 @@ namespace ActionStreetMap.Explorer.Scene
             /// <summary> Result vertices. </summary>
             public readonly Vector3[] Vertices;
 
-            /// <summary> True if any of vertices is modified. </summary>
-            public bool IsModified { get { return ModifiedVertices > 0; } }
+            /// <summary> True if any of vertices is modified or destroyed. </summary>
+            public bool IsModified { get { return ModifiedVertices > 0 || DestroyedVertices > 0; } }
 
             /// <summary> True if mesh is marked as destroyed. </summary>
             public bool IsDestroyed { get; set; }
