@@ -17,10 +17,7 @@ namespace ActionStreetMap.Tests
             Scheduler.MainThread = new TestScheduler();
 
             Container.RegisterInstance(new BehaviourProvider()
-                .Register("terrain_modify", typeof(TestModelBehaviour))
-                .Register("terrain_draw", typeof(TestModelBehaviour))
-                .Register("building_modify_facade", typeof(TestModelBehaviour))
-                .Register("mesh_destroy", typeof(TestModelBehaviour)));
+                .Register("terrain_draw", typeof(TestModelBehaviour)));
 
             return true;
         }

@@ -25,5 +25,30 @@ namespace ActionStreetMap.Explorer.Scene
 
         /// <summary> Mesh vertices. </summary>
         public Vector3[] Vertices;
+
+        /// <summary> DTO for mesh query operation results. </summary>
+        public class Result
+        {
+            /// <summary> Amound of modifide vertices. </summary>
+            public int ModifiedVertices;
+
+            /// <summary> Amount of scanned triangles. </summary>
+            public int ScannedTriangles;
+
+            /// <summary> Result vertices. </summary>
+            public readonly Vector3[] Vertices;
+
+            /// <summary> True if any of vertices is modified. </summary>
+            public bool IsModified { get { return ModifiedVertices > 0; } }
+
+            /// <summary> True if mesh is marked as destroyed. </summary>
+            public bool IsDestroyed { get; set; }
+
+            /// <summary> Creates instance of <see cref="Result"/>. </summary>
+            public Result(Vector3[] vertices)
+            {
+                Vertices = vertices;
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@
     /// <summary> Represents mesh index which does nothing. </summary>
     internal sealed class DummyMeshIndex : IMeshIndex
     {
-        public static readonly  DummyMeshIndex Default = new DummyMeshIndex();
+        public static readonly DummyMeshIndex Default = new DummyMeshIndex();
         
         private DummyMeshIndex() { }
 
@@ -13,9 +13,9 @@
         }
 
         /// <inheritdoc />
-        public int Modify(MeshQuery query)
+        public MeshQuery.Result Modify(MeshQuery query)
         {
-            return 0;
+            return new MeshQuery.Result(query.Vertices);
         }
     }
 }

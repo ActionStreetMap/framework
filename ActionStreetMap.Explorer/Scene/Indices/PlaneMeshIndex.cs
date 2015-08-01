@@ -31,7 +31,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         }
 
         /// <inheritdoc />
-        public int Modify(MeshQuery query)
+        public MeshQuery.Result Modify(MeshQuery query)
         {
             var vertices = query.Vertices;
             int modified = 0;
@@ -66,7 +66,11 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                     }
                 }
             }
-            return modified;
+            return new MeshQuery.Result(query.Vertices)
+            {
+                ModifiedVertices = modified,
+                ScannedTriangles = -1
+            };
         }
     }
 }

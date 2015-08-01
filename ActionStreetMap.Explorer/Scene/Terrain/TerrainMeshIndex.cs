@@ -24,8 +24,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private readonly Vector2d _bottomLeft;
         private readonly Range[] _ranges;
         
-        internal int ScannedTriangles;
-
         private List<TerrainMeshTriangle> _triangles;
 
         /// <summary> Creates instance of <see cref="TerrainMeshIndex"/>. </summary>
@@ -74,7 +72,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         }
 
         /// <inheritdoc />
-        public int Modify(MeshQuery query)
+        public MeshQuery.Result Modify(MeshQuery query)
         {
             var result = new List<int>(4);
             var center = query.Epicenter;
@@ -114,11 +112,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Modification
 
-        private int ModifyVertices(MeshQuery query, List<int> indecies)
+        private MeshQuery.Result ModifyVertices(MeshQuery query, List<int> indecies)
         {
             var upMode = query.ForceDirection.y > 0;
             var modified = 0;
-            ScannedTriangles = 0;
+            var scannedTriangles = 0;
 
             // modify vertices
             for (int j = 0; j < indecies.Count; j++)
@@ -139,7 +137,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         modified++;
                     }
                 }
-                ScannedTriangles++;
+                scannedTriangles++;
             }
 
             // search and adjust vertices on triangle sides
@@ -161,7 +159,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     }
                 }
             }
-            return modified;
+            return new MeshQuery.Result(query.Vertices)
+            {
+                ModifiedVertices = modified,
+                ScannedTriangles = scannedTriangles
+            };
         }
 
         private bool IsVertextOnSegment(Vector3 p, Vector3 a, Vector3 b)

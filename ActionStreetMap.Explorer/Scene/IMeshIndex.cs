@@ -7,7 +7,6 @@
         void Build();
 
         /// <summary> Modifies mesh using query provided. </summary>
-        /// <returns> Amount of modified vertices. </returns>
-        int Modify(MeshQuery query);
+        MeshQuery.Result Modify(MeshQuery query);
     }
 }

@@ -4,6 +4,7 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Generators;
+using ActionStreetMap.Explorer.Scene.Indices;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
@@ -26,6 +27,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var meshData = new MeshData();
             meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
             meshData.MaterialKey = rule.GetMaterialKey();
+            meshData.Index = MeshDestroyIndex.Default;
             var treeGen = new TreeGenerator(meshData)
                 .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
                 .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
