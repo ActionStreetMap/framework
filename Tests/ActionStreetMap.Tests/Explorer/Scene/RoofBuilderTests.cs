@@ -48,20 +48,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             roofBuilder.ResourceProvider = new UnityResourceProvider();
             roofBuilder.ObjectPool = TestHelper.GetObjectPool();
             // ACT
-            var meshData = roofBuilder.Build(new Building()
-            {
-                Footprint = new List<Vector2d>()
-                {
-                    new Vector2d(0, 0),
-                    new Vector2d(0, 10),
-                    new Vector2d(20, 10),
-                    new Vector2d(20, 0),
-                },
-                Elevation = 0,
-                Height = 10,
-                RoofHeight = 2,
-                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
-            });
+            var meshData = roofBuilder.Build(CreateTestBuilding());
 
             // ASSERT
             Assert.IsNotNull(meshData);
@@ -76,7 +63,29 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             roofBuilder.ObjectPool = TestHelper.GetObjectPool();
             roofBuilder.ResourceProvider = new UnityResourceProvider();
             // ACT
-            var meshData = roofBuilder.Build(new Building()
+            var meshData = roofBuilder.Build(CreateTestBuilding());
+
+            // ASSERT
+            Assert.IsNotNull(meshData);
+        }
+
+        [Test]
+        public void CanBuildDome()
+        {
+            // ARRANGE
+            var roofBuilder = new DomeRoofBuilder();
+            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
+            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            // ACT
+            var meshData = roofBuilder.Build(CreateTestBuilding());
+
+            // ASSERT
+            Assert.IsNotNull(meshData);
+        }
+
+        private Building CreateTestBuilding()
+        {
+            return new Building()
             {
                 Footprint = new List<Vector2d>()
                 {
@@ -89,10 +98,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 Height = 10,
                 RoofHeight = 2,
                 RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
-            });
-
-            // ASSERT
-            Assert.IsNotNull(meshData);
+            };
         }
     }
 }
