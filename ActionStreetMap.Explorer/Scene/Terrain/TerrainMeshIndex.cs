@@ -129,10 +129,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     var distance = Vector3.Distance(vertex, query.Epicenter);
                     if (distance < query.Radius)
                     {
-                        float heightDiff = (distance - query.Radius) * query.ForcePower;
+                        float heightDiff = query.GetForceChange(distance);
                         query.Vertices[index] = new Vector3(
                             vertex.x,
-                            vertex.y + (upMode ? -heightDiff : heightDiff),
+                            vertex.y + (upMode ? heightDiff : -heightDiff),
                             vertex.z);
                         modified++;
                     }
@@ -159,24 +159,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     }
                 }
             }
+
             return new MeshQuery.Result(query.Vertices)
             {
                 ModifiedVertices = modified,
                 ScannedTriangles = scannedTriangles
             };
-        }
-
-        private bool IsVertextOnSegment(Vector3 p, Vector3 a, Vector3 b)
-        {
-            var vert2D = new Vector2(p.x, p.z);
-            var a2D = new Vector2(a.x, a.z);
-            var b2D = new Vector2(b.x, b.z);
-
-            if (vert2D == a2D || vert2D == b2D) return false;
-            return Math.Abs(
-                Vector2.Distance(vert2D, a2D) + 
-                Vector2.Distance(vert2D, b2D) - 
-                Vector2.Distance(a2D, b2D)) < 0.01f;
         }
 
         private bool ModifyVertextOnSegment(Vector3[] vertices, int vIndex, int aIndex, int bIndex)
@@ -185,8 +173,14 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var a = vertices[aIndex];
             var b = vertices[bIndex];
 
-            if (!IsVertextOnSegment(p, a, b))
-                return false;
+            var vert2D = new Vector2(p.x, p.z);
+            var a2D = new Vector2(a.x, a.z);
+            var b2D = new Vector2(b.x, b.z);
+
+            // check whether vertex is on segment
+            if (vert2D == a2D || vert2D == b2D || (Vector2.Distance(vert2D, a2D) +  
+                Vector2.Distance(vert2D, b2D) - Vector2.Distance(a2D, b2D)) > 0.01f) 
+                return false;     
 
             var ray = b - a; // find direction from p1 to p2
             var rel = p - a; // find position relative to p1

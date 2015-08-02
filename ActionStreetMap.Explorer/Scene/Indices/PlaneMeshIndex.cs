@@ -45,12 +45,11 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                 for (int i = j; i < j + 3; i++)
                 {
                     var v = vertices[i];
-                    var distanceToCollidePoint = Vector3.Distance(v, query.CollidePoint);
-                    if (distanceToCollidePoint < query.Radius)
+                    var distance = Vector3.Distance(v, query.Epicenter);
+                    if (distance < query.Radius)
                     {
                         var distanceToWall = (v.x * N.x + v.y * N.y + v.z * N.z - D) / NormalMagnitude;
-                        var forceChange = query.ForcePower * (query.Radius - distanceToCollidePoint) / 2;
-
+                        var forceChange = query.GetForceChange(distance);
                         // NOTE whole traingle should be removed as one of the vertices is 
                         // moved more than threshold allows
                         if (Math.Abs(distanceToWall + forceChange) > query.OffsetThreshold)

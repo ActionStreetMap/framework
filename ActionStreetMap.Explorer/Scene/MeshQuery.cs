@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
 {
@@ -14,17 +15,14 @@ namespace ActionStreetMap.Explorer.Scene
         /// <summary> Offset threshold used to destroy triangles. </summary>
         public float OffsetThreshold;
 
-        /// <summary> Force power. </summary>
-        public float ForcePower;
-
         /// <summary> Force direction. </summary>
         public Vector3 ForceDirection;
 
-        /// <summary> Collide point on mesh </summary>
-        public Vector3 CollidePoint;
-
         /// <summary> Mesh vertices. </summary>
         public Vector3[] Vertices;
+
+        /// <summary> Calculates force change based on distance to epicenter. </summary>
+        public Func<float, float> GetForceChange;
 
         /// <summary> DTO for mesh query operation results. </summary>
         public class Result
