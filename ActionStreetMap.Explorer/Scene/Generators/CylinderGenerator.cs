@@ -93,8 +93,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                     var v2 = new Vector3(second.x, topHeight, second.y);
                     var v3 = new Vector3(first.x, topHeight, first.y);
 
-                    AddTriangle(v0, v1, v2);
-                    AddTriangle(v3, v0, v2);
+                    AddTriangle(v0, v2, v1);
+                    AddTriangle(v3, v2, v0);
                 }
             }
         }
