@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Generators
@@ -37,7 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 
         public override int CalculateVertexCount()
         {
-            return ((int) Mathf.Floor(_recursionLevel))*20*4*3;
+            return ((int)Math.Pow(4, Mathf.Floor(_recursionLevel)))*20 * 3;
         }
 
         public override void Build()
@@ -97,7 +98,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             // refine triangles
             for (int i = 0; i < _recursionLevel; i++)
             {
-               var faces2 = new List<TriangleIndices>();
+                var faces2 = new List<TriangleIndices>();
                 foreach (var tri in faces)
                 {
                     // replace triangle by 4 triangles

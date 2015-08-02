@@ -77,10 +77,12 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             roofBuilder.ObjectPool = TestHelper.GetObjectPool();
             roofBuilder.ResourceProvider = new UnityResourceProvider();
             // ACT
-            var meshData = roofBuilder.Build(CreateTestBuilding());
+            var meshDataList = roofBuilder.Build(CreateTestBuilding());
 
             // ASSERT
-            Assert.IsNotNull(meshData);
+            Assert.IsNotNull(meshDataList);
+            Assert.AreEqual(1, meshDataList.Count);
+            Assert.AreEqual(960, meshDataList[0].Vertices.Length);
         }
 
         private Building CreateTestBuilding()

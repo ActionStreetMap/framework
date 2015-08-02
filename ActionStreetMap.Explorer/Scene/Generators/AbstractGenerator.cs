@@ -51,7 +51,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             noise = useVertNoise ? (Noise.Perlin3D(v2, _vertNoiseFreq) + 1f) / 2f : 0;
             var p2 = new Vector3(v2.x + noise, v2.y + noise, v2.z + noise);
 
-            _meshData.AddTriangle(p0, p2, p1, GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq));
+            _meshData.AddTriangle(p0, p1, p2, GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq));
         }
     }
 }
