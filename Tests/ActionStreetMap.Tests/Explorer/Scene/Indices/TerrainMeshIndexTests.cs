@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ActionStreetMap.Core.Geometry;
@@ -62,7 +63,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             SetUpSimpleCell();
             _meshIndex.Build();
             FillVertices();
-            var query = GetQuery(new Vector3(50, 0, 50), new Vector3(50, 0, 50), 15);
+            var query = GetQuery(new Vector3(50, 0, 50), 15);
 
             // ACT
             var result = _meshIndex.Modify(query);
@@ -126,7 +127,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             SetUpOriginalCell();
             _meshIndex.Build();
             FillVertices();
-            var query = GetQuery(new Vector3(50, 33, 50), new Vector3(50, 33, 50), 2);
+            var query = GetQuery(new Vector3(50, 33, 50), 2);
 
             // ACT
             var result = _meshIndex.Modify(query);
@@ -144,7 +145,6 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             _meshIndex.Build();
             FillVertices();
             var query = GetQuery(
-                new Vector3(1.0f, 34.2f, 1.1f), 
                 new Vector3(1.0f, 34.2f, 1.1f), 2);
 
             // ACT
@@ -192,17 +192,16 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 
         #endregion
 
-        private MeshQuery GetQuery(Vector3 epicenter, Vector3 collidePoint, float radius)
+        private MeshQuery GetQuery(Vector3 epicenter, float radius)
         {
             return new MeshQuery()
             {
                 Epicenter = epicenter,
                 ForceDirection = new Vector3(0, 1, 0),
-                ForcePower = 1,
                 Vertices = _vertices,
-                CollidePoint = collidePoint,
                 OffsetThreshold = 1,
-                Radius = radius
+                Radius = radius,
+                GetForceChange = distance => 2 / ((float) Math.Pow(distance + 1, 1.67))
             };
         }
 
