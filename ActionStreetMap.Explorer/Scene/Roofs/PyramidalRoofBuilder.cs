@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
@@ -13,7 +11,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
     ///     Builds Pyramidal roof.
     ///     See http://wiki.openstreetmap.org/wiki/Key:roof:shape#Roof
     /// </summary>
-    internal class PyramidalRoofBuilder: RoofBuilder
+    internal class PyramidalRoofBuilder : RoofBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "pyramidal"; } }
@@ -34,7 +32,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshData = CreateMeshData(building, gradient, center);
             return new List<MeshData>(1)
             {
-                meshData
+                meshData,
+                BuildFloor(gradient, building.Footprint, building.Elevation)
             };
         }
 
@@ -45,13 +44,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var roofHeight = building.RoofHeight;
 
             var length = footprint.Count;
-            var meshData = new MeshData()
-            {
-                Vertices = new Vector3[length*3],
-                Triangles = new int[length*3],
-                Colors = new Color[length*3],
-            };
-
+            var meshData = new MeshData();
+            meshData.Initialize(12 * length, true);
             for (int i = 0; i < length; i++)
             {
                 var nextIndex = i == (length - 1) ? 0 : i + 1;
@@ -60,12 +54,23 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var v1 = new Vector3((float)center.X, roofOffset + roofHeight, (float)center.Y);
                 var v2 = new Vector3((float)footprint[nextIndex].X, roofOffset, (float)footprint[nextIndex].Y);
 
-                var color = GradientUtils.GetColor(gradient, v0, 0.2f);
+                var v01 = GetIntermediatePoint(v0, v1);
+                var v12 = GetIntermediatePoint(v1, v2);
+                var v02 = GetIntermediatePoint(v0, v2);
 
-                meshData.AddTriangle(v0, v1, v2, color);
+                meshData.AddTriangle(v0, v01, v02, GetColor(gradient, v0));
+                meshData.AddTriangle(v02, v01, v12, GetColor(gradient, v02));
+                meshData.AddTriangle(v2, v02, v12, GetColor(gradient, v2));
+                meshData.AddTriangle(v01, v1, v12, GetColor(gradient, v01));
             }
 
             return meshData;
+        }
+
+        private Vector3 GetIntermediatePoint(Vector3 v0, Vector3 v1)
+        {
+            var distance01 = Vector3.Distance(v0, v1);
+           return v0 + (v1 - v0).normalized * distance01 / 2;
         }
     }
 }

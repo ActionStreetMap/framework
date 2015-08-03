@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Roofs;
 using NUnit.Framework;
@@ -81,8 +79,24 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(meshDataList);
-            Assert.AreEqual(1, meshDataList.Count);
+            Assert.AreEqual(2, meshDataList.Count);
             Assert.AreEqual(960, meshDataList[0].Vertices.Length);
+        }
+
+        [Test]
+        public void CanBuildPyramidal()
+        {
+            // ARRANGE
+            var roofBuilder = new PyramidalRoofBuilder();
+            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
+            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            // ACT
+            var meshDataList = roofBuilder.Build(CreateTestBuilding());
+
+            // ASSERT
+            Assert.IsNotNull(meshDataList);
+            Assert.AreEqual(2, meshDataList.Count);
+            Assert.AreEqual(48, meshDataList[0].Vertices.Length);
         }
 
         private Building CreateTestBuilding()

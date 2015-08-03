@@ -97,6 +97,8 @@ namespace ActionStreetMap.Tests
                 .RegisterObjectType<TerrainMeshTriangle>(() => new TerrainMeshTriangle())
                 .RegisterListType<TerrainMeshTriangle>(32)
                 .RegisterListType<Point>(32)
+                .RegisterListType<Vertex>(1)
+                .RegisterListType<Edge>(1)
                 .RegisterObjectType<Clipper>(() => new Clipper())
                 .RegisterObjectType<ClipperOffset>(() => new ClipperOffset())
                 .RegisterListType<Tuple<Surface, Action<Mesh>>>(32)

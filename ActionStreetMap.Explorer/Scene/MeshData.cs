@@ -41,9 +41,6 @@ namespace ActionStreetMap.Explorer.Scene
             if (!_isInitialized)
                 throw new InvalidOperationException(Strings.NotInitializedMeshDataUsage);
 
-            if (_isTwoSided)
-                throw new InvalidOperationException(Strings.InconsistentTriangleType);
-
             Vertices[_lastIndex] = v0;
             Vertices[_lastIndex + 1] = v1;
             Vertices[_lastIndex + 2] = v2;
@@ -55,6 +52,14 @@ namespace ActionStreetMap.Explorer.Scene
             Triangles[_lastIndex] = _lastIndex;
             Triangles[_lastIndex + 1] = _lastIndex + 1;
             Triangles[_lastIndex + 2] = _lastIndex + 2;
+
+            if (_isTwoSided)
+            {
+                var startIndex = Vertices.Length + _lastIndex;
+                Triangles[startIndex] = _lastIndex;
+                Triangles[startIndex + 1] = _lastIndex + 2;
+                Triangles[startIndex + 2] = _lastIndex + 1;
+            }
 
             _lastIndex += 3;
         }
