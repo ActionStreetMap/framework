@@ -3,7 +3,9 @@ using System.Linq;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Scene.Roofs;
+using ActionStreetMap.Tests.Explorer.Scene.Indices;
 using NUnit.Framework;
 
 namespace ActionStreetMap.Tests.Explorer.Buildings
@@ -81,6 +83,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(2, meshDataList.Count);
             Assert.AreEqual(960, meshDataList[0].Vertices.Length);
+            Assert.IsAssignableFrom(typeof(SphereMeshIndex), meshDataList[0].Index);
         }
 
         [Test]
@@ -97,6 +100,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(2, meshDataList.Count);
             Assert.AreEqual(48, meshDataList[0].Vertices.Length);
+            Assert.IsAssignableFrom(typeof(MultiplyPlaneMeshIndex), meshDataList[0].Index);
         }
 
         private Building CreateTestBuilding()

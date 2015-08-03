@@ -60,6 +60,7 @@
     <Compile Include="Core\Scene\InDoorGeneratorTests.cs" />
     <Compile Include="Explorer\Scene\BarrierModelBuilderTests.cs" />
     <Compile Include="Explorer\Scene\Generators\TreeGeneratorTests.cs" />
+    <Compile Include="Explorer\Scene\Indices\MultiplyPlaneMeshIndexTests.cs" />
     <Compile Include="Explorer\Scene\Indices\SphereMeshIndexTests.cs" />
     <Compile Include="Explorer\Scene\Indices\TerrainMeshIndexTests.cs" />
     <Compile Include="Explorer\Scene\TerrainBuilderTests.cs" />

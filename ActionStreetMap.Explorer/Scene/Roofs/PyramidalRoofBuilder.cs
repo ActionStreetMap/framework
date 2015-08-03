@@ -2,6 +2,7 @@
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
@@ -44,8 +45,13 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var roofHeight = building.RoofHeight;
 
             var length = footprint.Count;
+
             var meshData = new MeshData();
             meshData.Initialize(12 * length, true);
+
+            var meshIndex = new MultiplyPlaneMeshIndex();
+            meshIndex.Init(length, meshData.Vertices.Length);
+            meshData.Index = meshIndex;
             for (int i = 0; i < length; i++)
             {
                 var nextIndex = i == (length - 1) ? 0 : i + 1;
@@ -62,6 +68,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 meshData.AddTriangle(v02, v01, v12, GetColor(gradient, v02));
                 meshData.AddTriangle(v2, v02, v12, GetColor(gradient, v2));
                 meshData.AddTriangle(v01, v1, v12, GetColor(gradient, v01));
+
+                meshIndex.AddPlane(v0, v1, v2, i * 12);
             }
 
             return meshData;

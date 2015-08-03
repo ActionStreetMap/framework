@@ -7,36 +7,56 @@ namespace ActionStreetMap.Explorer.Scene.Indices
     internal class PlaneMeshIndex : IMeshIndex
     {
         /// <summary> Normal vector to plane. </summary>
-        protected readonly Vector3 N;
+        private readonly Vector3 _n;
 
         /// <summary> Magnitude of normal vector. </summary>
-        protected readonly float NormalMagnitude;
+        private readonly float _normalMagnitude;
 
         /// <summary> Coefficient from plane equation. </summary>
-        protected readonly float D;
+        private readonly float _d;
+
+        /// <summary> Creates instance of <see cref="PlaneMeshIndex"/>. </summary>
+        protected PlaneMeshIndex()
+        {
+            
+        }
 
         /// <summary> Initializes index using three points on the plane. </summary>
         public PlaneMeshIndex(Vector3 p1, Vector3 p2, Vector3 p3)
         {
-            N = Vector3.Cross(p2 - p1, p3 - p1);
-            NormalMagnitude = N.magnitude;
-            D = p1.x*N.x + p1.y*N.y + p1.z*N.z;
+            CalculateParams(p1, p2, p3, out _n, out _normalMagnitude, out _d);
         }
 
         /// <inheritdoc />
-        public void Build()
+        public virtual void Build()
         {
             // TODO try to create some index internally to avoid iteration
             // over whole collection of vertices
         }
 
         /// <inheritdoc />
-        public MeshQuery.Result Modify(MeshQuery query)
+        public virtual MeshQuery.Result Modify(MeshQuery query)
+        {
+            return Modify(query, 0, query.Vertices.Length, _n, _normalMagnitude, _d);
+        }
+
+        /// <summary> Calcualtes plane equation parameter based on three points. </summary>
+        protected void CalculateParams(Vector3 p1, Vector3 p2, Vector3 p3,
+            out Vector3 n, out float magnitude, out float d)
+        {
+            n = Vector3.Cross(p2 - p1, p3 - p1);
+            magnitude = n.magnitude;
+            d = p1.x * n.x + p1.y * n.y + p1.z * n.z;
+        }
+
+        /// <summary> Modifies mesh plane based on it's equation parameters. </summary>
+        protected MeshQuery.Result Modify(MeshQuery query, int startIndex, int endIndex,
+            Vector3 n, float magnitude, float d)
         {
             var vertices = query.Vertices;
             int modified = 0;
             var destroyed = 0;
-            for (int j = 0; j < vertices.Length; j += 3)
+            for (int j = startIndex; j < endIndex; j += 3)
             {
                 // triangle is already collapsed
                 if (vertices[j] == vertices[j + 1])
@@ -48,7 +68,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                     var distance = Vector3.Distance(v, query.Epicenter);
                     if (distance < query.Radius)
                     {
-                        var distanceToWall = (v.x * N.x + v.y * N.y + v.z * N.z - D) / NormalMagnitude;
+                        var distanceToWall = (v.x * n.x + v.y * n.y + v.z * n.z - d) / magnitude;
                         var forceChange = query.GetForceChange(distance);
                         // NOTE whole traingle should be removed as one of the vertices is 
                         // moved more than threshold allows
@@ -58,7 +78,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                             var firstVertIndex = i - i % 3;
                             vertices[firstVertIndex + 1] = vertices[firstVertIndex];
                             vertices[firstVertIndex + 2] = vertices[firstVertIndex];
-                            destroyed += 3;                           
+                            destroyed += 3;
                             break;
                         }
                         vertices[i] = v + forceChange * query.ForceDirection;
