@@ -37,10 +37,12 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var elevation = building.Elevation + building.MinHeight + building.Height + offset;
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
+            var center3d = new Vector3((float)center.X, elevation, (float)center.Y);
+
             var meshData = new MeshData();
-            meshData.Index = DummyMeshIndex.Default;
+            meshData.Index = new SphereMeshIndex((float)radius, center3d);
             var sphereGen = new IcoSphereGenerator(meshData)
-                .SetCenter(new Vector3((float)center.X, elevation, (float)center.Y))
+                .SetCenter(center3d)
                 .SetRadius((float)radius)
                 .SetRecursionLevel(2)
                 .SetGradient(gradient);
