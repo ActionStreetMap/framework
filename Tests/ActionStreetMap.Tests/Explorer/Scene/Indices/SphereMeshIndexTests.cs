@@ -35,6 +35,8 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 
             // ASSERT
             Assert.IsNotNull(result);
+            Assert.Greater(result.ModifiedVertices, 0);
+            Assert.Greater(result.DestroyedVertices, 0);
         }
 
         private Vector3[] GetVertices()
