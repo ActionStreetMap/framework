@@ -47,7 +47,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var vertexCount = GetVertexCount(points, maxWidth);
             meshData.Initialize(vertexCount, true);
-            var meshIndex = new MultiplyPlaneMeshIndex(points.Count - 1, vertexCount);
+            var meshIndex = new MultiPlaneMeshIndex(points.Count - 1, vertexCount);
             meshData.Index = meshIndex;
             var context = new SegmentBuilderContext()
             {

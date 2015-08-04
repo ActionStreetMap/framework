@@ -3,7 +3,7 @@
 namespace ActionStreetMap.Explorer.Scene.Indices
 {
     /// <summary> Mesh index for multiply planes in single mesh. </summary>
-    internal sealed class MultiplyPlaneMeshIndex : PlaneMeshIndex
+    internal sealed class MultiPlaneMeshIndex : PlaneMeshIndex
     {
         private Vector3[] _normals;
         private float[] _magnitudes;
@@ -13,7 +13,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         private int _vertexCount;
         private int _currentPlaneIndex;
 
-        public MultiplyPlaneMeshIndex(int planeCount, int vertexCount)
+        public MultiPlaneMeshIndex(int planeCount, int vertexCount)
         {
             _normals = new Vector3[planeCount];
             _magnitudes = new float[planeCount];

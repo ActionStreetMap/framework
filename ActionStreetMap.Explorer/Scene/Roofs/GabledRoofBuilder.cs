@@ -58,7 +58,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var vertexCount = (building.Footprint.Count - 1)*2*12;
             var meshData = new MeshData()
             {
-                Index = new MultiplyPlaneMeshIndex(building.Footprint.Count, vertexCount)
+                Index = new MultiPlaneMeshIndex(building.Footprint.Count, vertexCount)
             };
             meshData.Initialize(vertexCount, true);
 
@@ -128,7 +128,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         private void FillMeshData(MeshData meshData, GradientWrapper gradient, float roofOffset, float roofHeight,
             List<Vector2d> footprint, Vector2d first, int firstIndex, Vector2d second, int secondIndex)
         {
-            var meshIndex = (MultiplyPlaneMeshIndex) meshData.Index;
+            var meshIndex = (MultiPlaneMeshIndex) meshData.Index;
             var count = footprint.Count;
             int i = secondIndex;
             Vector2d startRidgePoint = default(Vector2d);

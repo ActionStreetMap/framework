@@ -100,7 +100,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(2, meshDataList.Count);
             Assert.AreEqual(48, meshDataList[0].Vertices.Length);
-            Assert.IsAssignableFrom(typeof(MultiplyPlaneMeshIndex), meshDataList[0].Index);
+            Assert.IsAssignableFrom(typeof(MultiPlaneMeshIndex), meshDataList[0].Index);
         }
 
         private Building CreateTestBuilding()

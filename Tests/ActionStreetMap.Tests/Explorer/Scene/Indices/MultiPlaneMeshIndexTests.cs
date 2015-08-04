@@ -7,7 +7,7 @@ using UnityEngine;
 namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 {
     [TestFixture]
-    class MultiplyPlaneMeshIndexTests
+    class MultiPlaneMeshIndexTests
     {
         [Test]
         public void CanBuild()
@@ -45,7 +45,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             Assert.Greater(result.DestroyedVertices, 0);
         }
 
-        private MultiplyPlaneMeshIndex GetMeshIndex(out Vector3[] vertices)
+        private MultiPlaneMeshIndex GetMeshIndex(out Vector3[] vertices)
         {
             var plane = new List<Vector3>()
             {
@@ -56,7 +56,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             };
             var center = new Vector3(5, 5, 5);
             vertices = new Vector3[plane.Count * 3];
-            var meshIndex = new MultiplyPlaneMeshIndex(plane.Count, vertices.Length);
+            var meshIndex = new MultiPlaneMeshIndex(plane.Count, vertices.Length);
             for (int i = 0; i < plane.Count; i++)
             {
                 var start = plane[i];
