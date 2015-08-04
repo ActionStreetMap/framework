@@ -13,6 +13,15 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         private int _vertexCount;
         private int _currentPlaneIndex;
 
+        public MultiplyPlaneMeshIndex(int planeCount, int vertexCount)
+        {
+            _normals = new Vector3[planeCount];
+            _magnitudes = new float[planeCount];
+            _coeffDs = new float[planeCount];
+            _planeIndices = new int[planeCount];
+            _vertexCount = vertexCount;
+        }
+
         /// <inheritdoc />
         public override MeshQuery.Result Modify(MeshQuery query)
         {
@@ -35,16 +44,6 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                 ModifiedVertices = modified,
                 DestroyedVertices = destroyed
             };
-        }
-
-        public MultiplyPlaneMeshIndex Init(int planeCount, int vertexCount)
-        {
-            _normals = new Vector3[planeCount];
-            _magnitudes = new float[planeCount];
-            _coeffDs = new float[planeCount];
-            _planeIndices = new int[planeCount];
-            _vertexCount = vertexCount;
-            return this;
         }
 
         public void AddPlane(Vector3 v0, Vector3 v1, Vector3 v2, int startIndex)

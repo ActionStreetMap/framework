@@ -56,8 +56,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             };
             var center = new Vector3(5, 5, 5);
             vertices = new Vector3[plane.Count * 3];
-            var meshIndex = new MultiplyPlaneMeshIndex();
-            meshIndex.Init(plane.Count, vertices.Length);
+            var meshIndex = new MultiplyPlaneMeshIndex(plane.Count, vertices.Length);
             for (int i = 0; i < plane.Count; i++)
             {
                 var start = plane[i];

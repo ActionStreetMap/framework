@@ -50,8 +50,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshData = new MeshData();
             meshData.Initialize(12 * length, true);
 
-            var meshIndex = new MultiplyPlaneMeshIndex()
-                .Init(length, meshData.Vertices.Length);
+            var meshIndex = new MultiplyPlaneMeshIndex(length, meshData.Vertices.Length);
             meshData.Index = meshIndex;
             for (int i = 0; i < length; i++)
             {
