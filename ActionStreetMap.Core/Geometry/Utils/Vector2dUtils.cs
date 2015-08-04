@@ -39,6 +39,17 @@ namespace ActionStreetMap.Core.Geometry.Utils
                 Math.Round((start.Y + (r*(end.Y - start.Y)))));
         }
 
+        /// <summary>
+        ///     Gets point on line. 
+        ///     See http://stackoverflow.com/questions/5227373/minimal-perpendicular-vector-between-a-point-and-a-line
+        /// </summary>
+        public static Vector2d GetPointOnLine(Vector2d a, Vector2d b, Vector2d p)
+        {
+            var d = (a - b).Normalized();
+            var x = a + d * (p - a).Dot(d);
+            return x;
+        }
+
         /// <summary> Checks whether point is on segment. Works for point which is on that line. </summary>
         public static bool IsPointOnSegment(Vector2d start, Vector2d end, Vector2d middlePoint)
         {

@@ -53,7 +53,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             return new List<MeshData>()
             {
                 meshData,
-                BuildFloor(gradient, building.Footprint, building.Elevation)
+                BuildFloor(gradient, building.Footprint, building.Elevation + building.MinHeight)
             };
         }
     }

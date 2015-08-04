@@ -52,7 +52,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(meshData);
-            Assert.AreEqual(6, meshData.First().Triangles.Length);
+            Assert.AreEqual(18, meshData.First().Triangles.Length);
         }
 
         [Test]
