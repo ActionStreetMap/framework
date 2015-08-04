@@ -43,10 +43,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             {
                 MaterialKey = rule.GetMaterialKey(),
                 GameObject = gameObjectWrapper,
-                Index = DummyMeshIndex.Default
             };
 
-            meshData.Initialize(GetVertexCount(points, maxWidth), true);
+            var vertexCount = GetVertexCount(points, maxWidth);
+            meshData.Initialize(vertexCount, true);
+            var meshIndex = new MultiplyPlaneMeshIndex().Init(points.Count - 1, vertexCount);
+            meshData.Index = meshIndex;
             var context = new SegmentBuilderContext()
             {
                 MeshData = meshData,
@@ -64,6 +66,9 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 var start = new Vector3((float)p1.X, ElevationProvider.GetElevation(p1), (float) p1.Y);
                 var end = new Vector3((float)p2.X, ElevationProvider.GetElevation(p2), (float)p2.Y);
+                
+                meshIndex.AddPlane(new Vector3((float)p1.X, 0, (float)p1.Y), start, end, meshData.NextIndex);
+                
                 BuildBarrierSegment(context, start, end, ref index);
             }
             ObjectPool.StoreList(points);
