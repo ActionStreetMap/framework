@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Scene.Indices;
+using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 
 namespace ActionStreetMap.Explorer.Scene.Roofs
 {
@@ -14,6 +16,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <param name="building"> Building. </param>
         /// <returns> Always true. </returns>
         public override bool CanBuild(Building building) { return true; }
+
+        [Dependency]
+        public ITrace Trace { get; set; }
 
         /// <inheritdoc />
         public override List<MeshData> Build(Building building)

@@ -1,5 +1,6 @@
 using System;
 using ActionStreetMap.Core.Geometry.StraightSkeleton.Path;
+using ActionStreetMap.Core.Utils;
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
 {
@@ -21,7 +22,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
             Edge previousEdge, Edge nextEdge)
         {
             Point = point;
-            Distance = distance;
+            Distance = Math.Round(distance, MathUtils.RoundDigitCount);
             Bisector = bisector;
             PreviousEdge = previousEdge;
             NextEdge = nextEdge;

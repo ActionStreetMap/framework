@@ -15,7 +15,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
     ///     Builds gabled roof.
     ///     See http://wiki.openstreetmap.org/wiki/Key:roof:shape#Roof
     /// </summary>
-    internal class GabledRoofBuilder : RoofBuilder
+    internal class GabledRoofBuilder : FlatRoofBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "gabled"; } }
@@ -53,7 +53,10 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             DetectIntersectSegments(building.Footprint, new Vector2d(p1.x, p1.z), new Vector2d(p2.x, p2.z),
                 out first, out firstIndex, out second, out secondIndex);
             if (firstIndex == -1 || secondIndex == -1)
-                throw new AlgorithmException(String.Format(Strings.GabledRoofGenFailed, building.Id));
+            {
+                Trace.Warn("building.roof", Strings.GabledRoofGenFailed, building.Id.ToString());
+                return base.Build(building);
+            }
 
             var vertexCount = (building.Footprint.Count - 1)*2*12;
             var meshData = new MeshData()
