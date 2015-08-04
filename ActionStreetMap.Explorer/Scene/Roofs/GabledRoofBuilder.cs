@@ -161,8 +161,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 {
                     var v0 = new Vector3((float)p1.X, roofOffset, (float)p1.Y);
                     var v1 = new Vector3((float)p2.X, roofOffset, (float)p2.Y);
-                    var v2 = new Vector3((float)endRidgePoint.X, roofOffset, (float)endRidgePoint.Y);
-                    var v3 = new Vector3((float)startRidgePoint.X, roofOffset, (float)startRidgePoint.Y);
+                    var v2 = new Vector3((float)endRidgePoint.X, roofHeight, (float)endRidgePoint.Y);
+                    var v3 = new Vector3((float)startRidgePoint.X, roofHeight, (float)startRidgePoint.Y);
                     
                     meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
                     AddTriangle(meshData, gradient, v0, v2, v1);
