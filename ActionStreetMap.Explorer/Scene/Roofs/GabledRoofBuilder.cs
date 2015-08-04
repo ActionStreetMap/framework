@@ -21,7 +21,10 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public override string Name { get { return "gabled"; } }
 
         /// <inheritdoc />
-        public override bool CanBuild(Building building) { return true; }
+        public override bool CanBuild(Building building)
+        {
+            return PolygonUtils.IsConvex(building.Footprint);
+        }
 
         public override List<MeshData> Build(Building building)
         {

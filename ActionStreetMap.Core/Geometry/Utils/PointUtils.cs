@@ -72,31 +72,6 @@ namespace ActionStreetMap.Core.Geometry.Utils
 
         #endregion
 
-        /// <summary> Tests whether points represent convex polygon. </summary>
-        /// <param name="points">Polygon points.</param>
-        /// <returns>True if polygon is convex.</returns>
-        public static bool IsConvex(List<Vector2d> points)
-        {
-            int count = points.Count;
-            if (count < 4)
-                return true;
-            bool sign = false;
-            for (int i = 0; i < count; i++)
-            {
-                double dx1 = points[(i + 2)%count].X - points[(i + 1)%count].X;
-                double dy1 = points[(i + 2)%count].Y - points[(i + 1)%count].Y;
-                double dx2 = points[i].X - points[(i + 1)%count].X;
-                double dy2 = points[i].Y - points[(i + 1)%count].Y;
-                double crossProduct = dx1*dy2 - dy1*dx2;
-                if (i == 0)
-                    sign = crossProduct > 0;
-                else if (sign != (crossProduct > 0))
-                    return false;
-
-            }
-            return true;
-        }
-
         /// <summary> Sorts verticies in clockwise order. </summary>
         private static void SortVertices(List<Vector2d> verticies)
         {
