@@ -37,13 +37,14 @@ namespace ActionStreetMap.Explorer.Scene.Indices
             };
         }
 
-        public void Init(int planeCount, int vertexCount)
+        public MultiplyPlaneMeshIndex Init(int planeCount, int vertexCount)
         {
             _normals = new Vector3[planeCount];
             _magnitudes = new float[planeCount];
             _coeffDs = new float[planeCount];
             _planeIndices = new int[planeCount];
             _vertexCount = vertexCount;
+            return this;
         }
 
         public void AddPlane(Vector3 v0, Vector3 v1, Vector3 v2, int startIndex)

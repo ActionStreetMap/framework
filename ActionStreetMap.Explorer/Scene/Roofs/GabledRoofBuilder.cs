@@ -4,7 +4,8 @@ using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Utils;
+using ActionStreetMap.Explorer.Scene.Indices;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
@@ -54,8 +55,13 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             if (firstIndex == -1 || secondIndex == -1)
                 throw new AlgorithmException(String.Format(Strings.GabledRoofGenFailed, building.Id));
 
-            var meshData = new MeshData();
-            meshData.Initialize((building.Footprint.Count - 1) * 6, true);
+            var vertexCount = (building.Footprint.Count - 1)*2*12;
+            var meshData = new MeshData()
+            {
+                Index = new MultiplyPlaneMeshIndex()
+                    .Init(building.Footprint.Count, vertexCount)
+            };
+            meshData.Initialize(vertexCount, true);
 
             // 6. process all segments and create vertices
             FillMeshData(meshData, gradient, roofOffset, roofHeight, building.Footprint,
@@ -123,6 +129,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         private void FillMeshData(MeshData meshData, GradientWrapper gradient, float roofOffset, float roofHeight,
             List<Vector2d> footprint, Vector2d first, int firstIndex, Vector2d second, int secondIndex)
         {
+            var meshIndex = (MultiplyPlaneMeshIndex) meshData.Index;
             var count = footprint.Count;
             int i = secondIndex;
             Vector2d startRidgePoint = default(Vector2d);
@@ -139,8 +146,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     var v0 = new Vector3((float) p1.X, roofOffset, (float) p1.Y);
                     var v1 = new Vector3((float)startRidgePoint.X, roofHeight, (float)startRidgePoint.Y);
                     var v2 = new Vector3((float)p2.X, roofOffset, (float)p2.Y);
-                    var color = GradientUtils.GetColor(gradient, v0, 0.2f);
-                    meshData.AddTriangle(v0, v1, v2, color);
+                    meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
+                    AddTriangle(meshData, gradient, v0, v1, v2);
                     i = nextIndex;
                     continue;
                 }
@@ -157,16 +164,26 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     var v1 = new Vector3((float)p2.X, roofOffset, (float)p2.Y);
                     var v2 = new Vector3((float)endRidgePoint.X, roofOffset, (float)endRidgePoint.Y);
                     var v3 = new Vector3((float)startRidgePoint.X, roofOffset, (float)startRidgePoint.Y);
-
-                    var color1 = GradientUtils.GetColor(gradient, v0, 0.2f);
-                    var color2 = GradientUtils.GetColor(gradient, v2, 0.2f);
-
-                    meshData.AddTriangle(v0, v2, v1, color1);
-                    meshData.AddTriangle(v2, v0, v3, color2);
+                    
+                    meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
+                    AddTriangle(meshData, gradient, v0, v2, v1);
+                    AddTriangle(meshData, gradient, v2, v0, v3);
                 }
                 startRidgePoint = endRidgePoint;
                 i = nextIndex;
             } while (i != secondIndex);
+        }
+
+        private void AddTriangle(MeshData meshData, GradientWrapper gradient, Vector3 v0, Vector3 v1, Vector3 v2)
+        {
+            var v01 = Vector3Utils.GetIntermediatePoint(v0, v1);
+            var v12 = Vector3Utils.GetIntermediatePoint(v1, v2);
+            var v02 = Vector3Utils.GetIntermediatePoint(v0, v2);
+
+            meshData.AddTriangle(v0, v01, v02, GetColor(gradient, v0));
+            meshData.AddTriangle(v02, v01, v12, GetColor(gradient, v02));
+            meshData.AddTriangle(v2, v02, v12, GetColor(gradient, v2));
+            meshData.AddTriangle(v01, v1, v12, GetColor(gradient, v01));
         }
     }
 }

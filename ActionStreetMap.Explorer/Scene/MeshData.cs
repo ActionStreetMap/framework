@@ -16,9 +16,12 @@ namespace ActionStreetMap.Explorer.Scene
         public int[] Triangles;
         public Color[] Colors;
 
-        private int _lastIndex;
+        private int _nextIndex;
         private bool _isInitialized;
         private bool _isTwoSided;
+
+        /// <summary> Next vertex index. </summary>
+        public int NextIndex { get { return _nextIndex; } }
 
         /// <summary> Initializes mesh data using given size. </summary>
         public void Initialize(int size, bool isTwoSided = false)
@@ -41,27 +44,27 @@ namespace ActionStreetMap.Explorer.Scene
             if (!_isInitialized)
                 throw new InvalidOperationException(Strings.NotInitializedMeshDataUsage);
 
-            Vertices[_lastIndex] = v0;
-            Vertices[_lastIndex + 1] = v1;
-            Vertices[_lastIndex + 2] = v2;
+            Vertices[_nextIndex] = v0;
+            Vertices[_nextIndex + 1] = v1;
+            Vertices[_nextIndex + 2] = v2;
 
-            Colors[_lastIndex] = color;
-            Colors[_lastIndex + 1] = color;
-            Colors[_lastIndex + 2] = color;
+            Colors[_nextIndex] = color;
+            Colors[_nextIndex + 1] = color;
+            Colors[_nextIndex + 2] = color;
 
-            Triangles[_lastIndex] = _lastIndex;
-            Triangles[_lastIndex + 1] = _lastIndex + 1;
-            Triangles[_lastIndex + 2] = _lastIndex + 2;
+            Triangles[_nextIndex] = _nextIndex;
+            Triangles[_nextIndex + 1] = _nextIndex + 1;
+            Triangles[_nextIndex + 2] = _nextIndex + 2;
 
             if (_isTwoSided)
             {
-                var startIndex = Vertices.Length + _lastIndex;
-                Triangles[startIndex] = _lastIndex;
-                Triangles[startIndex + 1] = _lastIndex + 2;
-                Triangles[startIndex + 2] = _lastIndex + 1;
+                var startIndex = Vertices.Length + _nextIndex;
+                Triangles[startIndex] = _nextIndex;
+                Triangles[startIndex + 1] = _nextIndex + 2;
+                Triangles[startIndex + 2] = _nextIndex + 1;
             }
 
-            _lastIndex += 3;
+            _nextIndex += 3;
         }
     }
 }
