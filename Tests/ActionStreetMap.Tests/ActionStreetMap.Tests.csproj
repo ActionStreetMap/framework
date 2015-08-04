@@ -57,6 +57,7 @@
     <Compile Include="Core\Geometry\StraightSkeleton\SkeletonLevelEventsTest.cs" />
     <Compile Include="Core\Geometry\StraightSkeleton\SkeletonTest.cs" />
     <Compile Include="Core\Geometry\StraightSkeleton\SkeletonTestUtil.cs" />
+    <Compile Include="Core\Geometry\Utils\Vector2dUtilsTests.cs" />
     <Compile Include="Core\Scene\InDoorGeneratorTests.cs" />
     <Compile Include="Explorer\Scene\BarrierModelBuilderTests.cs" />
     <Compile Include="Explorer\Scene\Generators\TreeGeneratorTests.cs" />

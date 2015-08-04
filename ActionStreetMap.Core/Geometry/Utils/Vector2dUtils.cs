@@ -4,6 +4,12 @@ namespace ActionStreetMap.Core.Geometry.Utils
 {
     internal class Vector2dUtils
     {
+        public static bool LineIntersects(Vector2d start1, Vector2d end1, Vector2d start2, Vector2d end2)
+        {
+            double d;
+            return LineIntersects(start1, end1, start2, end2, out d);
+        }
+
         public static bool LineIntersects(Vector2d start1, Vector2d end1, Vector2d start2, Vector2d end2, out double r)
         {
             r = 0;
@@ -24,6 +30,13 @@ namespace ActionStreetMap.Core.Geometry.Utils
             if ((r < 0 || r > 1) || (s < 0 || s > 1))
                 return false;
             return true;
+        }
+
+        public static Vector2d GetPointAlongLine(Vector2d start, Vector2d end, double r)
+        {
+            return new Vector2d(
+                Math.Round(start.X + (r*(end.X - start.X))),
+                Math.Round((start.Y + (r*(end.Y - start.Y)))));
         }
 
         /// <summary> Checks whether point is on segment. Works for point which is on that line. </summary>
