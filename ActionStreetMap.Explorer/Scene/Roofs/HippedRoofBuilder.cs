@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry.StraightSkeleton;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Utils;
+using ActionStreetMap.Explorer.Scene.Indices;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
@@ -23,48 +20,61 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <inheritdoc />
         public override List<MeshData> Build(Building building)
         {
-            throw new NotImplementedException();
+            var roofHeight = building.RoofHeight;
+            var roofOffset = building.Elevation + building.MinHeight + building.Height;
+            var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
-            //var roofOffset = building.Elevation + building.MinHeight + building.Height;
-            //var meshData = ObjectPool.CreateMeshData();
-            //meshData.MaterialKey = building.RoofMaterial;
-            //var gradient = ResourceProvider.GetGradient(building.RoofColor);
+            var skeleton = SkeletonBuilder.Build(building.Footprint);
+            var vertexCount = 0;
+            foreach (var edgeResult in skeleton.Edges)
+                vertexCount += (edgeResult.Polygon.Count - 2)*12;
+            
+            var meshIndex = new MultiPlaneMeshIndex(skeleton.Edges.Count, vertexCount);
+            var meshData = new MeshData();
+            meshData.Initialize(vertexCount, true);
+            meshData.Index = meshIndex;
 
-            //// TODO Use common primitive type here
-            //var skeleton = SkeletonBuilder.Build(building.Footprint
-            //    .Select(p => new Vector2d(p.X, p.Y)).ToList());
+            var distances = skeleton.Distances;
+            foreach (var edgeResult in skeleton.Edges)
+            {
+                var polygon = edgeResult.Polygon;
+                var triCount = polygon.Count - 2;
+                for (int i = 0; i < triCount; i++)
+                {
+                    var p0 = polygon[i];
+                    var p1 = polygon[i + 1];
+                    var p2 = polygon[i + 2 == polygon.Count ? 0 : i + 2];
 
-            //var distances = skeleton.Distances;
-            //foreach (var edgeResult in skeleton.Edges)
-            //{
-            //    var polygon = edgeResult.Polygon;
-            //    if (polygon.Count == 3)
-            //        AddPolygonAsTriangle(skeleton, polygon, building.RoofHeight, roofOffset, 
-            //            meshData, gradient);
-            //    // TODO
-            //}
+                    var v0 = new Vector3((float) p0.X, distances[p0] > 0 ? roofHeight + roofOffset : roofOffset,
+                        (float) p0.Y);
+                    var v1 = new Vector3((float) p1.X, distances[p1] > 0 ? roofHeight + roofOffset : roofOffset,
+                        (float) p1.Y);
+                    var v2 = new Vector3((float) p2.X, distances[p2] > 0 ? roofHeight + roofOffset : roofOffset,
+                        (float) p2.Y);
 
-            //return meshData;
+                    if (i == 0)
+                        meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
+                    AddTriangle(meshData, gradient, v0, v1, v2);
+                }
+            }
+
+            return new List<MeshData>()
+            {
+                meshData,
+                BuildFloor(gradient, building.Footprint, building.Elevation + building.MinHeight)
+            };
         }
 
-        //private void AddPolygonAsTriangle(Skeleton skeleton, List<Vector2d> polygon, 
-        //    float roofHeight, float roofOffset, MeshData meshData, GradientWrapper gradient)
-        //{
-        //    var distances = skeleton.Distances;
+        private void AddTriangle(MeshData meshData, GradientWrapper gradient, Vector3 v0, Vector3 v1, Vector3 v2)
+        {
+            var v01 = Vector3Utils.GetIntermediatePoint(v0, v1);
+            var v12 = Vector3Utils.GetIntermediatePoint(v1, v2);
+            var v02 = Vector3Utils.GetIntermediatePoint(v0, v2);
 
-        //    var p0 = polygon[0];
-        //    var v0 = new MapPoint((float)p0.X, (float)p0.Y,
-        //        distances[p0] > 0 ? roofHeight + roofOffset : roofOffset);
-
-        //    var p1 = polygon[1];
-        //    var v1 = new MapPoint((float)p1.X, (float)p1.Y,
-        //        distances[p1] > 0 ? roofHeight + roofOffset : roofOffset);
-
-        //    var p2 = polygon[2];
-        //    var v2 = new MapPoint((float)p2.X, (float)p2.Y,
-        //        distances[p2] > 0 ? roofHeight + roofOffset : roofOffset);
-
-        //    meshData.AddTriangle(v0, v2, v1, GradientUtils.GetColor(gradient, v0, 0.2f));
-        //}
+            meshData.AddTriangle(v0, v01, v02, GetColor(gradient, v0));
+            meshData.AddTriangle(v02, v01, v12, GetColor(gradient, v02));
+            meshData.AddTriangle(v2, v02, v12, GetColor(gradient, v2));
+            meshData.AddTriangle(v01, v1, v12, GetColor(gradient, v01));
+        }
     }
 }
