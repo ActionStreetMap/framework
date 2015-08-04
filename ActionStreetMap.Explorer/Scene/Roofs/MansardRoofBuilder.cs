@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
@@ -11,23 +13,44 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
     /// <summary> Builds mansard roof. </summary>
     internal class MansardRoofBuilder : RoofBuilder
     {
+        private const int Scale = 1000;
+        private const int AttemptCount = 2;
+        private const float Offset = 2;
+
         /// <inheritdoc />
         public override string Name { get { return "mansard"; } }
 
         /// <inheritdoc />
         public override bool CanBuild(Building building)
         {
-            // TODO improve checking of non standard buildings which 
-            // cannot be used with mansard roof building
-
-            // left condition: forced to use this builder from mapcss
-            // right condition: in random scenario, prevent mansard to be used for buildings with many points in footprint
-            return building.RoofType == Name || building.Footprint.Count < 8;
+            return building.RoofType == Name;
         }
 
         /// <inheritdoc />
         public override List<MeshData> Build(Building building)
         {
+            var offset = new ClipperOffset();
+            offset.AddPath(building.Footprint.Select(p => 
+                new IntPoint(p.X * Scale, p.Y * Scale)).ToList(),
+                JoinType.jtMiter, EndType.etClosedLine);
+
+            var result = new List<List<IntPoint>>();
+            double OffsetSize = Offset * Scale;
+            int attempts = 0;
+            for (; attempts < AttemptCount; attempts++)
+            {
+                offset.Execute(ref result, OffsetSize);
+                if (result.Count != 1 && result[0].Count != building.Footprint.Count)
+                    OffsetSize -= (Offset/AttemptCount)*Scale;
+                else
+                    break;
+
+            }
+
+            if (attempts > AttemptCount)
+                throw new AlgorithmException("Unable to do offset for mansard");
+
+
             /*var polygon = new Polygon(building.Footprint);
             var offset = 2f; // TODO
 
