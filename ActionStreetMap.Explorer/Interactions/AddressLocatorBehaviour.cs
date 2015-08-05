@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Interactions
 {
-    public class AddressLocatorBehaviour: MonoBehaviour
+    public sealed class AddressLocatorBehaviour: MonoBehaviour, IDisposable
     {
         private const string CommandName = "search";
         private readonly Subject<Address> _subject = new Subject<Address>();
@@ -78,6 +78,12 @@ namespace ActionStreetMap.Explorer.Interactions
                     GeoProjection.Distance(geoCoordinate, _position));
                 return (element as Relation).Members.Min(member => GetDistance(member.Member));
             }
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            _subject.Dispose();
         }
     }
 }

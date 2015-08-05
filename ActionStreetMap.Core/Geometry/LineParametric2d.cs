@@ -7,7 +7,7 @@ namespace ActionStreetMap.Core.Geometry
     ///     x = x_A + t * u_x;
     ///     y = y_A + t * u_y;
     ///     where t in R
-    ///     <see cref="http://en.wikipedia.org/wiki/Linear_equation" />
+    ///     <see href="http://en.wikipedia.org/wiki/Linear_equation" />
     /// </summary>
     public struct LineParametric2d
     {

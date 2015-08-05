@@ -76,7 +76,7 @@ namespace ActionStreetMap.Core.Geometry.Utils
         }
 
         /// <summary>
-        ///     <see cref="http://en.wikipedia.org/wiki/Vector_projection" />
+        ///     <see href="http://en.wikipedia.org/wiki/Vector_projection" />
         /// </summary>
         public static Vector2d OrthogonalProjection(Vector2d unitVector, Vector2d vectorToProject)
         {

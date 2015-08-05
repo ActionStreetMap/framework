@@ -46,7 +46,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 }
 
             }
-            catch (Exception ex)
+            catch
             {
                 // NOTE straight skeleton may fail on some footprints.
                 Trace.Warn("building.roof", Strings.RoofGenFailed, Name, building.Id.ToString());

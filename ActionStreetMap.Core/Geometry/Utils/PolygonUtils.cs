@@ -63,9 +63,9 @@ namespace ActionStreetMap.Core.Geometry.Utils
 
         /// <summary>
         ///     Test if point is inside polygon.
-        ///     <see cref="http://en.wikipedia.org/wiki/Point_in_polygon" />
-        ///     <see cref="http://en.wikipedia.org/wiki/Even-odd_rule" />
-        ///     <see cref="http://paulbourke.net/geometry/insidepoly/" />
+        ///     <see href="http://en.wikipedia.org/wiki/Point_in_polygon" />
+        ///     <see href="http://en.wikipedia.org/wiki/Even-odd_rule" />
+        ///     <see href="http://paulbourke.net/geometry/insidepoly/" />
         /// </summary>
         public static bool IsPointInsidePolygon(Vector2d point, List<Vector2d> points)
         {

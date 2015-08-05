@@ -33,8 +33,8 @@ namespace ActionStreetMap.Core.Geometry.Utils
         /// <summary>
         ///     Calculate intersection points for rays. It can return more then one
         ///     intersection point when rays overlaps.
-        ///     <see cref="http://geomalgorithms.com/a05-_intersect-1.html" />
-        ///     <see cref="http://softsurfer.com/Archive/algorithm_0102/algorithm_0102.htm" />
+        ///     <see href="http://geomalgorithms.com/a05-_intersect-1.html" />
+        ///     <see href="http://softsurfer.com/Archive/algorithm_0102/algorithm_0102.htm" />
         /// </summary>
         /// <returns>class with intersection points. It never return null.</returns>
         public static IntersectPoints IntersectRays2D(LineParametric2d r1, LineParametric2d r2)

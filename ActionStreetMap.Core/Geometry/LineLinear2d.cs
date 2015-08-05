@@ -3,7 +3,7 @@
     /// <summary>
     ///     Geometry line in linear form. General form:
     ///     Ax + By + C = 0;
-    ///     <see cref="http://en.wikipedia.org/wiki/Linear_equation"/>
+    ///     <see href="http://en.wikipedia.org/wiki/Linear_equation"/>
     /// </summary>
     public struct LineLinear2d
     {
