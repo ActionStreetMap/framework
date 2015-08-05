@@ -39,6 +39,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(96, result[0].Vertices.Length);
         }
 
         [Test]
