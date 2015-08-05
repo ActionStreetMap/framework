@@ -16,7 +16,7 @@ namespace ActionStreetMap.Tests
 {
     internal class Program
     {
-        public static readonly GeoCoordinate StartGeoCoordinate = new GeoCoordinate(52.53192, 13.38736);
+        public static readonly GeoCoordinate StartGeoCoordinate = TestHelper.BerlinTestFilePoint;
 
         public static readonly Container _container = new Container();
 
@@ -71,7 +71,6 @@ namespace ActionStreetMap.Tests
             _logger.Start();
 
             var config = ConfigBuilder.GetDefault()
-                .SetLocalMapData(@"g:\__ASM\__repository\_index\Index_Berlin_copy")
                 .Build();
                 
             var componentRoot = TestHelper.GetGameRunner(_container, config);
