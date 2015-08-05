@@ -79,9 +79,13 @@ namespace ActionStreetMap.Core.MapCss
 
             var styleSheet = parser.stylesheet();
             var tree = styleSheet.Tree as Antlr.Runtime.Tree.CommonTree;
+            
             // NOTE we cannot use expression trees on some platforms (e.g. web player)
             var visitor = new MapCssVisitor(isExprTreeAllowed);
-            return visitor.Visit(tree);
+            var stylesheet = visitor.Visit(tree);
+            // NOTE this prevents memory leak inside Antlr library
+            tokens.TokenSource = null;
+            return stylesheet;
         }
 
         /// <inheritdoc />
