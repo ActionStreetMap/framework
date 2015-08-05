@@ -110,7 +110,6 @@
     <Compile Include="Geometry\Triangle\Meshing\ITriangulator.cs" />
     <Compile Include="Geometry\Triangle\Meshing\QualityMesher.cs" />
     <Compile Include="Geometry\Triangle\Meshing\QualityOptions.cs" />
-    <Compile Include="Geometry\Triangle\NewLocation.cs" />
     <Compile Include="Geometry\Triangle\RobustPredicates.cs" />
     <Compile Include="Geometry\Triangle\Sampler.cs" />
     <Compile Include="Geometry\Triangle\Topology\Osub.cs" />

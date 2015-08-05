@@ -14,8 +14,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
         private readonly Mesh mesh;
         private readonly Behavior behavior;
 
-        private readonly NewLocation newLocation;
-
         public QualityMesher(Mesh mesh)
         {
             badsubsegs = new Queue<BadSubseg>();
@@ -23,8 +21,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             this.mesh = mesh;
             behavior = mesh.behavior;
-
-            newLocation = new NewLocation(mesh);
         }
 
         /// <summary> Add a bad subsegment to the queue. </summary>
@@ -638,15 +634,8 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 // for mesh refinement.
                 // TODO: NewLocation doesn't work for refinement. Why? Maybe 
                 // reset VertexType?
-                if (behavior.fixedArea || behavior.VarArea)
-                {
-                    newloc = RobustPredicates.FindCircumcenter(borg, bdest, bapex, ref xi, ref eta, behavior.offconstant);
-                }
-                else
-                {
-                    newloc = newLocation.FindLocation(borg, bdest, bapex, ref xi, ref eta, true, badotri);
-                }
-
+                newloc = RobustPredicates.FindCircumcenter(borg, bdest, bapex, ref xi, ref eta, behavior.offconstant);
+                
                 // Check whether the new vertex lies on a triangle vertex.
                 if (((newloc.X == borg.X) && (newloc.Y == borg.Y)) ||
                     ((newloc.X == bdest.X) && (newloc.Y == bdest.Y)) ||
@@ -654,7 +643,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
                 {
                    
                    //errorflag = true;
-                    
                 }
                 else
                 {
@@ -777,7 +765,6 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 
             badsubsegs.Clear();
             queue.Reset();
-            newLocation.Reset();
         }
     }
 }
