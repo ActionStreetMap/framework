@@ -24,10 +24,10 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var trunkGradientKey = rule.Evaluate<string>("trunk-color");
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
 
-            var meshData = new MeshData();
+            var meshData = new MeshData(MeshDestroyIndex.Default);
             meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
             meshData.MaterialKey = rule.GetMaterialKey();
-            meshData.Index = MeshDestroyIndex.Default;
+
             var treeGen = new TreeGenerator(meshData)
                 .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
                 .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))

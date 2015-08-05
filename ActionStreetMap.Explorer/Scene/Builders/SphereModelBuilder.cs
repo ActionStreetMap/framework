@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Generators;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
@@ -36,12 +37,14 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             int recursionLevel = rule.EvaluateDefault("recursion_level", 2);
 
-            var meshData = new MeshData();
+            var center3d = new Vector3((float) center.X, elevation + minHeight, (float) center.Y);
+
+            var meshData = new MeshData(new SphereMeshIndex((float) radius, center3d));
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
             meshData.MaterialKey = rule.GetMaterialKey();
 
             var sphereGen = new IcoSphereGenerator(meshData)
-                .SetCenter(new Vector3((float)center.X, elevation + minHeight, (float)center.Y))
+                .SetCenter(center3d)
                 .SetRadius((float)radius)
                 .SetRecursionLevel(recursionLevel)
                 .SetGradient(gradient);

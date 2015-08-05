@@ -41,7 +41,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 
         private Vector3[] GetVertices()
         {
-            var meshData = new MeshData();
+            var meshData = new MeshData(DummyMeshIndex.Default);
             var sphereGen = new IcoSphereGenerator(meshData)
                 .SetCenter(Center)
                 .SetRadius(Radius)

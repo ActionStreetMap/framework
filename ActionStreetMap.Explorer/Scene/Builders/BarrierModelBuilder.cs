@@ -39,15 +39,15 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var points = ObjectPool.NewList<Vector2d>(way.Points.Count);
             PointUtils.SetPolygonPoints(tile.RelativeNullPoint, way.Points, points);
 
-            var meshData = new MeshData()
+            var vertexCount = GetVertexCount(points, maxWidth);
+            var meshIndex = new MultiPlaneMeshIndex(points.Count - 1, vertexCount);
+            var meshData = new MeshData(meshIndex)
             {
                 MaterialKey = rule.GetMaterialKey(),
                 GameObject = gameObjectWrapper,
             };
-
-            var vertexCount = GetVertexCount(points, maxWidth);
             meshData.Initialize(vertexCount, true);
-            var meshIndex = new MultiPlaneMeshIndex(points.Count - 1, vertexCount);
+            
             meshData.Index = meshIndex;
             var context = new SegmentBuilderContext()
             {

@@ -33,13 +33,11 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             foreach (var edgeResult in skeleton.Edges)
                 vertexCount += (edgeResult.Polygon.Count - 2)*12;
 
-            MeshData meshData = new MeshData();
+            var meshIndex = new MultiPlaneMeshIndex(skeleton.Edges.Count, vertexCount);
+            MeshData meshData = new MeshData(meshIndex);
             try
-            {
-                var meshIndex = new MultiPlaneMeshIndex(skeleton.Edges.Count, vertexCount);
+            {              
                 meshData.Initialize(vertexCount, true);
-                meshData.Index = meshIndex;
-
                 foreach (var edge in skeleton.Edges)
                 {
                     if (edge.Polygon.Count < 5)

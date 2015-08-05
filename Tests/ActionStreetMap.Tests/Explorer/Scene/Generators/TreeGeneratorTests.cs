@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Generators;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using NUnit.Framework;
@@ -20,7 +21,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Generators
         public void CanGenerateSimpleTree()
         {
             // ARRANGE
-            var meshData = new MeshData();
+            var meshData = new MeshData(DummyMeshIndex.Default);
             var position = new Vector3(0, 0, 0);
 
             // ACT

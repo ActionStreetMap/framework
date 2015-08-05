@@ -8,6 +8,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Generators;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 using Mesh = ActionStreetMap.Core.Geometry.Triangle.Mesh;
@@ -62,7 +63,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 var center = new Vector2d((v0.X + v1.X + v2.X) / 3, (v0.Y + v1.Y + v2.Y) / 3);
                 var elevation = ElevationProvider.GetElevation(center);
-                var meshData = new MeshData();
+                var meshData = new MeshData(MeshDestroyIndex.Default);
                 meshData.GameObject = GameObjectFactory.CreateNew("tree");
                 meshData.MaterialKey = rule.GetMaterialKey();
                 new TreeGenerator(meshData)

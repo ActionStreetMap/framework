@@ -95,18 +95,17 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 }
             }
 
-            return new MeshData()
+            return new MeshData(new PlaneMeshIndex(vertices[0], vertices[1], vertices[2]))
             {
                 Vertices = vertices,
                 Triangles = triangles,
                 Colors = colors,
-                Index = new PlaneMeshIndex(vertices[0], vertices[1], vertices[2])
             };
         }
 
         protected MeshData CopyMeshData(MeshData meshData, float newHeight)
         {
-            var meshDataCopy = new MeshData()
+            var meshDataCopy = new MeshData(meshData.Index)
             {
                 Vertices = new Vector3[meshData.Vertices.Length],
                 Triangles = new int[meshData.Triangles.Length],

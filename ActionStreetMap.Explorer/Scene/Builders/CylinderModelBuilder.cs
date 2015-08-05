@@ -5,6 +5,7 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Generators;
+using ActionStreetMap.Explorer.Scene.Indices;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
@@ -37,7 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             tile.Registry.RegisterGlobal(area.Id);
 
-            var meshData = new MeshData
+            var meshData = new MeshData(MeshDestroyIndex.Default)
             {
                 GameObject = GameObjectFactory.CreateNew(GetName(area)),
                 MaterialKey = rule.GetMaterialKey()

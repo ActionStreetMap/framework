@@ -47,22 +47,18 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
                 var startVector = new Vector3((float) start.X, elevation, (float) start.Y);
                 var endVector = new Vector3((float) end.X, elevation, (float) end.Y);
+                var somePointOnPlane = new Vector3((float) end.X, elevation + 10, (float) end.Y);
 
                 var vertCount = emptyWallBuilder.CalculateVertexCount(startVector, endVector);
-                var meshData = new MeshData()
+                var meshIdex = new PlaneMeshIndex(startVector, endVector, somePointOnPlane);
+
+                var meshData = new MeshData(meshIdex)
                 {
                     Vertices = new Vector3[vertCount],
                     Triangles = new int[vertCount*2],
                     Colors = new Color[vertCount],
                 };
-                emptyWallBuilder
-                    .SetMeshData(meshData)
-                    .Build(startVector, endVector);
-
-                meshData.Index = new PlaneMeshIndex(
-                    meshData.Vertices[0],
-                    meshData.Vertices[1],
-                    meshData.Vertices[2]);
+                emptyWallBuilder.SetMeshData(meshData).Build(startVector, endVector);
 
                 meshDataList.Add(meshData);
             }
