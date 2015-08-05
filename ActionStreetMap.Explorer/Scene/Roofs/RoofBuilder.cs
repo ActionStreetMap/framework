@@ -9,6 +9,7 @@ using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Indices;
+using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -124,6 +125,19 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             Array.Copy(meshData.Colors, meshDataCopy.Colors, meshData.Colors.Length);
 
             return meshDataCopy;
+        }
+
+
+        protected void AddTriangle(MeshData meshData, GradientWrapper gradient, Vector3 v0, Vector3 v1, Vector3 v2)
+        {
+            var v01 = Vector3Utils.GetIntermediatePoint(v0, v1);
+            var v12 = Vector3Utils.GetIntermediatePoint(v1, v2);
+            var v02 = Vector3Utils.GetIntermediatePoint(v0, v2);
+
+            meshData.AddTriangle(v0, v01, v02, GetColor(gradient, v0));
+            meshData.AddTriangle(v02, v01, v12, GetColor(gradient, v02));
+            meshData.AddTriangle(v2, v02, v12, GetColor(gradient, v2));
+            meshData.AddTriangle(v01, v1, v12, GetColor(gradient, v01));
         }
 
         protected Color GetColor(GradientWrapper gradient, Vector3 point)

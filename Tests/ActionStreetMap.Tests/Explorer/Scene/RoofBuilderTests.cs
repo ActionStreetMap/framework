@@ -22,7 +22,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             roofBuilder.ResourceProvider = new UnityResourceProvider();
 
             // ACT
-            var meshData = roofBuilder.Build(new Building()
+            var result = roofBuilder.Build(new Building()
             {
                 Footprint = new List<Vector2d>()
                 {
@@ -37,7 +37,8 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             });
 
             // ASSERT
-            Assert.IsNotNull(meshData);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(3, result.Count);
         }
 
         [Test]
@@ -71,7 +72,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         }
 
         [Test]
-        public void CanHippedFallback()
+        public void CanBuildHippedFallback()
         {
             // ARRANGE
             var roofBuilder = new HippedRoofBuilder();

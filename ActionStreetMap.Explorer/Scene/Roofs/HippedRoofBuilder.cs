@@ -126,17 +126,5 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 }
             }
         }
-
-        private void AddTriangle(MeshData meshData, GradientWrapper gradient, Vector3 v0, Vector3 v1, Vector3 v2)
-        {
-            var v01 = Vector3Utils.GetIntermediatePoint(v0, v1);
-            var v12 = Vector3Utils.GetIntermediatePoint(v1, v2);
-            var v02 = Vector3Utils.GetIntermediatePoint(v0, v2);
-
-            meshData.AddTriangle(v0, v01, v02, GetColor(gradient, v0));
-            meshData.AddTriangle(v02, v01, v12, GetColor(gradient, v02));
-            meshData.AddTriangle(v2, v02, v12, GetColor(gradient, v2));
-            meshData.AddTriangle(v01, v1, v12, GetColor(gradient, v01));
-        }
     }
 }
