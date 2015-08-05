@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Scene.Indices;
+using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Roofs
@@ -13,7 +13,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
     internal class MansardRoofBuilder : FlatRoofBuilder
     {
         private const int Scale = 1000;
-        private const float Offset = 2 * Scale;
 
         /// <inheritdoc />
         public override string Name { get { return "mansard"; } }
@@ -27,6 +26,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <inheritdoc />
         public override List<MeshData> Build(Building building)
         {
+            var random = new System.Random((int)building.Id);
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
             var footprint = building.Footprint;
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
@@ -37,11 +37,11 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 JoinType.jtMiter, EndType.etClosedPolygon);
 
             var result = new List<List<IntPoint>>();
-            offset.Execute(ref result, Offset);
+            offset.Execute(ref result, random.NextFloat(1, 3) * -Scale);
 
             if (result.Count != 1 || result[0].Count != footprint.Count)
             {
-                Trace.Warn("building.roof", Strings.MansardRoofGenFailed, building.Id.ToString());
+                Trace.Warn("building.roof", Strings.RoofGenFailed, Name, building.Id.ToString());
                 return base.Build(building);
             }
             var topVertices = ObjectPool.NewList<Vector2d>(footprint.Count);
@@ -49,7 +49,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             foreach (var intPoint in result[0])
                 topVertices.Add(new Vector2d(intPoint.X / scale, intPoint.Y / scale));
 
-            var toppart = BuildFloor(gradient, topVertices, roofOffset);
+            var toppart = BuildFloor(gradient, topVertices, roofHeight);
 
             var vertexCount = footprint.Count * 2 * 12;
             var meshIndex = new MultiPlaneMeshIndex(footprint.Count, vertexCount);
@@ -73,6 +73,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 AddTriangle(meshData, gradient, v0, v2, v1);
                 AddTriangle(meshData, gradient, v2, v0, v3);
             }
+
+            ObjectPool.StoreList(topVertices);
 
             return new List<MeshData>()
             {

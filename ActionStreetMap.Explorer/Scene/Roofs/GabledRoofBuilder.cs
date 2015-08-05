@@ -57,7 +57,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 out first, out firstIndex, out second, out secondIndex);
             if (firstIndex == -1 || secondIndex == -1)
             {
-                Trace.Warn("building.roof", Strings.GabledRoofGenFailed, building.Id.ToString());
+                Trace.Warn("building.roof", Strings.RoofGenFailed, Name, building.Id.ToString());
                 return base.Build(building);
             }
 

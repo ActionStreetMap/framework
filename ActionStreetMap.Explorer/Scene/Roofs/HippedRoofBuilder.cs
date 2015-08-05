@@ -50,8 +50,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             catch (Exception ex)
             {
                 // NOTE straight skeleton may fail on some footprints.
-                // Will fallback to base implementation (flat)
-                Trace.Error("building.roof", ex, Strings.HippedRoofGenFailed);
+                Trace.Warn("building.roof", Strings.RoofGenFailed, Name, building.Id.ToString());
                 return base.Build(building);
             }
 
