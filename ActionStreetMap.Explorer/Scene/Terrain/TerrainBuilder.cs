@@ -172,7 +172,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 bottomGradient = waterSurfaceGradient;
 
             int index = 0;
-            var vertexCount = meshRegion.Mesh.Triangles.Count;
+            var vertexCount = meshRegion.Mesh.Triangles.Count * 3;
             var waterVertices = new Vector3[vertexCount];
             var waterTriangles = new int[vertexCount];
             var waterColors = new Color[vertexCount];

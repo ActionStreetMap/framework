@@ -66,11 +66,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 var meshData = new MeshData(MeshDestroyIndex.Default);
                 meshData.GameObject = GameObjectFactory.CreateNew("tree");
                 meshData.MaterialKey = rule.GetMaterialKey();
-                new TreeGenerator(meshData)
-                    .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
-                    .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
-                    .SetPosition(new Vector3((float)center.X, elevation, (float)center.Y))
-                    .Build();
+
+                var treeGen = new TreeGenerator(meshData)
+                   .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
+                   .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
+                   .SetPosition(new Vector3((float)center.X, elevation, (float)center.Y));
+                    meshData.Initialize(treeGen.CalculateVertexCount());
+                treeGen.Build();
 
                 BuildObject(parent, meshData, rule, node);
             }
