@@ -6,7 +6,6 @@ using ActionStreetMap.Core.Geometry.StraightSkeleton;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Scene.Indices;
-using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 

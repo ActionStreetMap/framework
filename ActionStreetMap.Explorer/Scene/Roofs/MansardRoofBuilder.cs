@@ -44,10 +44,14 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 Trace.Warn("building.roof", Strings.RoofGenFailed, Name, building.Id.ToString());
                 return base.Build(building);
             }
+
             var topVertices = ObjectPool.NewList<Vector2d>(footprint.Count);
             double scale = Scale;
+            
             foreach (var intPoint in result[0])
                 topVertices.Add(new Vector2d(intPoint.X / scale, intPoint.Y / scale));
+            // NOTE need reverse vertices
+            topVertices.Reverse();
 
             var toppart = BuildFloor(gradient, topVertices, roofHeight);
 
@@ -56,7 +60,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshData = new MeshData(meshIndex);
             meshData.Initialize(vertexCount, true);
 
-            int index = FindStartIndex(topVertices[0],footprint);
+            int index = FindStartIndex(topVertices[0], footprint);
             for (int i = 0; i < topVertices.Count; i++)
             {
                 var top = topVertices[i];
@@ -70,8 +74,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var v3 = new Vector3((float)top.X, roofHeight, (float)top.Y);
 
                 meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
-                AddTriangle(meshData, gradient, v0, v2, v1);
-                AddTriangle(meshData, gradient, v2, v0, v3);
+                AddTriangle(meshData, gradient, v0, v2, v3);
+                AddTriangle(meshData, gradient, v2, v0, v1);
             }
 
             ObjectPool.StoreList(topVertices);
@@ -88,7 +92,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         {
             int index = 0;
             double minDistance = int.MaxValue;
-            for (int i = 0; i < footprint.Count - 1; i++)
+            for (int i = 0; i < footprint.Count; i++)
             {
                 var point = footprint[i];
                 var distance = firstPoint.DistanceTo(point);

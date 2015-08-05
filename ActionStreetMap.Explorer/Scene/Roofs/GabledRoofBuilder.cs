@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using ActionStreetMap.Core;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Scene.Indices;
-using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
