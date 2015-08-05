@@ -157,11 +157,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetWaterLayerColorNoiseFreq() : 0;
             float eleNoiseFreq = rule.GetWaterLayerEleNoiseFreq();
 
-            // TODO allocate from pool with some size
-            var waterVertices = new List<Vector3>();
-            var waterTriangles = new List<int>();
-            var waterColors = new List<Color>();
-
             var meshTriangles = meshData.Triangles;
 
             var bottomGradient = rule.GetBackgroundLayerGradient(_resourceProvider);
@@ -176,7 +171,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             if (renderMode == RenderMode.Overview)
                 bottomGradient = waterSurfaceGradient;
 
-            int count = 0;
+            int index = 0;
+            var vertexCount = meshRegion.Mesh.Triangles.Count;
+            var waterVertices = new Vector3[vertexCount];
+            var waterTriangles = new int[vertexCount];
+            var waterColors = new Color[vertexCount];
             foreach (var triangle in meshRegion.Mesh.Triangles)
             {
                 // bottom surface
@@ -193,19 +192,19 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var p2 = meshTriangle.Vertex2;
 
                 // reuse just added vertices
-                waterVertices.Add(new Vector3(p0.x, p0.y + elevationOffset, p0.z));
-                waterVertices.Add(new Vector3(p1.x, p1.y + elevationOffset, p1.z));
-                waterVertices.Add(new Vector3(p2.x, p2.y + elevationOffset, p2.z));
+                waterVertices[index] = new Vector3(p0.x, p0.y + elevationOffset, p0.z);
+                waterVertices[index + 1] = new Vector3(p1.x, p1.y + elevationOffset, p1.z);
+                waterVertices[index + 2] = new Vector3(p2.x, p2.y + elevationOffset, p2.z);
 
-                var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[count], colorNoiseFreq);
-                waterColors.Add(color);
-                waterColors.Add(color);
-                waterColors.Add(color);
+                var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[index], colorNoiseFreq);
+                waterColors[index] = color;
+                waterColors[index + 1] = color;
+                waterColors[index + 2] =color;
 
-                waterTriangles.Add(count);
-                waterTriangles.Add(count + 2);
-                waterTriangles.Add(count + 1);
-                count += 3;
+                waterTriangles[index] = index;
+                waterTriangles[index + 1] = index + 2;
+                waterTriangles[index + 2] = index + 1;
+                index += 3;
             }
 
             // finalizing offset shape
@@ -214,10 +213,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 BuildOffsetShape(rule, meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
                     colorNoiseFreq, waterBottomLevelOffset);
 
-                var vs = waterVertices.ToArray();
-                var ts = waterTriangles.ToArray();
-                var cs = waterColors.ToArray();
-                Observable.Start(() => BuildWaterObject(rule, meshData, vs, ts, cs), Scheduler.MainThread);
+                Observable.Start(() => BuildWaterObject(rule, meshData, 
+                    waterVertices, waterTriangles, waterColors), Scheduler.MainThread);
             }
         }
 
