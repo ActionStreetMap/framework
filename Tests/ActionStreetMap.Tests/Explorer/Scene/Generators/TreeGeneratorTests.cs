@@ -31,8 +31,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Generators
             
             var vertCount = treeGen.CalculateVertexCount();
             var meshData = new MeshData(DummyMeshIndex.Default, vertCount);
-            treeGen.SetMeshData(meshData);
-            treeGen.Build();
+            treeGen.Build(meshData);
 
             // ASSERT
             Assert.Greater(meshData.Vertices.Length, 0);

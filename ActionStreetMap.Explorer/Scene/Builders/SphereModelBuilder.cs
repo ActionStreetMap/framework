@@ -51,7 +51,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
             meshData.MaterialKey = rule.GetMaterialKey();
 
-            sphereGen.Build();
+            sphereGen.Build(meshData);
 
             BuildObject(tile.GameObject, meshData, rule, area);
 

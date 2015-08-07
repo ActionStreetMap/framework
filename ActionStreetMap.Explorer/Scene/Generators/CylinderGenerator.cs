@@ -48,7 +48,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return _radialSegments*6*(heightSegments + 1);
         }
 
-        public override void Build()
+        public override void Build(MeshData meshData)
         {
             int heightSegments = (int)Math.Ceiling(_height / _maxSegmentHeight);
 
@@ -69,12 +69,14 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                     _radius*Mathf.Sin(secondAngle) + _center.z);
 
                 // bottom cap
-                AddTriangle(_center,
+                AddTriangle(meshData, 
+                    _center,
                     new Vector3(second.x, _center.y, second.y),
                     new Vector3(first.x, _center.y, first.y));
 
                 // top cap
-                AddTriangle(new Vector3(_center.x, _center.y + _height, _center.z),
+                AddTriangle(meshData, 
+                    new Vector3(_center.x, _center.y + _height, _center.z),
                     new Vector3(first.x, _center.y + _height, first.y),
                     new Vector3(second.x, _center.y + _height, second.y));
 
@@ -88,8 +90,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                     var v2 = new Vector3(second.x, topHeight, second.y);
                     var v3 = new Vector3(first.x, topHeight, first.y);
 
-                    AddTriangle(v0, v2, v1);
-                    AddTriangle(v3, v2, v0);
+                    AddTriangle(meshData, v0, v2, v1);
+                    AddTriangle(meshData, v3, v2, v0);
                 }
             }
         }

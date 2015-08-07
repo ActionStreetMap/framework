@@ -51,7 +51,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 GameObject = GameObjectFactory.CreateNew(GetName(area)),
                 MaterialKey = rule.GetMaterialKey()
             };
-            cylinderGen.Build();
+            cylinderGen.Build(meshData);
 
             BuildObject(tile.GameObject, meshData, rule, area);
             return meshData.GameObject;

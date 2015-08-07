@@ -33,7 +33,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
             meshData.MaterialKey = rule.GetMaterialKey();
 
-            treeGen.SetMeshData(meshData).Build();
+            treeGen.Build(meshData);
 
             BuildObject(tile.GameObject, meshData, rule, node);
 

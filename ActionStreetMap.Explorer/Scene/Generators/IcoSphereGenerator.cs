@@ -37,7 +37,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return ((int)Math.Pow(4, Mathf.Floor(_recursionLevel)))*20 * 3;
         }
 
-        public override void Build()
+        public override void Build(MeshData meshData)
         {
             var vertList = new List<Vector3>();
             var middlePointIndexCache = new Dictionary<long, int>();
@@ -109,11 +109,11 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                 }
                 faces = faces2;
             }
-            GenerateMeshData(faces, vertList);
+            GenerateMeshData(meshData, faces, vertList);
         }
 
         /// <summary> Generates mesh data in flat shading style. </summary>
-        private void GenerateMeshData(List<TriangleIndices> faces, List<Vector3> vertList)
+        private void GenerateMeshData(MeshData meshData, List<TriangleIndices> faces, List<Vector3> vertList)
         {
             for (int i = 0; i < faces.Count; i++)
             {
@@ -123,7 +123,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                 var v1 = vertList[face.V2] + _center;
                 var v2 = vertList[face.V3] + _center;
 
-                AddTriangle(v0, v1, v2);
+                AddTriangle(meshData, v0, v1, v2);
             }
         }
 

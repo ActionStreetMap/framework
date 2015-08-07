@@ -76,13 +76,13 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return trunkCount + foliageCount;
         }
 
-        public override void Build()
+        public override void Build(MeshData meshData)
         {
             // generate trunk
-            _trunkGen.SetMeshData(MeshData).Build();
+            _trunkGen.Build(meshData);
 
             // generate foliage
-            _foliageGen.SetMeshData(MeshData).Build();
+            _foliageGen.Build(meshData);
         }
     }
 }

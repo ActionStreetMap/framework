@@ -48,7 +48,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
                 .SetGradient(GradientUtils.ParseGradient("gradient(#808080, #606060 50%, #505050)"));
 
             var meshData = new MeshData(DummyMeshIndex.Default, sphereGen.CalculateVertexCount());
-            sphereGen.SetMeshData(meshData).Build();
+            sphereGen.Build(meshData);
 
             return meshData.Vertices;
         }

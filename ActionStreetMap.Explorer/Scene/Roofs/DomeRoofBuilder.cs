@@ -48,9 +48,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshData = new MeshData(new SphereMeshIndex((float)radius, center3d), 
                 sphereGen.CalculateVertexCount());
 
-            sphereGen
-                .SetMeshData(meshData)
-                .Build();
+            sphereGen.Build(meshData);
 
             return new List<MeshData>()
             {
