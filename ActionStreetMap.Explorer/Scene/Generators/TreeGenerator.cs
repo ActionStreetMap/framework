@@ -6,7 +6,6 @@ namespace ActionStreetMap.Explorer.Scene.Generators
     /// <summary> Builds tree. </summary>
     internal class TreeGenerator : AbstractGenerator
     {
-        private readonly MeshData _meshData;
         private Vector3 _position;
         private GradientWrapper _trunkGradient;
         private GradientWrapper _foliageGradient;
@@ -17,11 +16,6 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         private IcoSphereGenerator _foliageGen;
         private CylinderGenerator _trunkGen;
 
-        public TreeGenerator(MeshData meshData)
-            : base(meshData)
-        {
-            _meshData = meshData;
-        }
 
         public TreeGenerator SetPosition(Vector3 position)
         {
@@ -61,8 +55,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 
         public override int CalculateVertexCount()
         {
-            _trunkGen = new CylinderGenerator(_meshData);
-            var trunkCount =_trunkGen.SetCenter(_position)
+            _trunkGen = new CylinderGenerator();
+            var trunkCount = _trunkGen.SetCenter(_position)
                 .SetHeight(_trunkHeight)
                 .SetRadius(_trunkRadius)
                 .SetRadialSegments(7)
@@ -70,9 +64,9 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                 .SetGradient(_trunkGradient)
                 .CalculateVertexCount();
 
-            _foliageGen = new IcoSphereGenerator(_meshData);
+            _foliageGen = new IcoSphereGenerator();
             var foliageCount = _foliageGen.SetCenter(
-                 new Vector3(_position.x, _position.y + _trunkHeight + _foliageRadius*0.9f,_position.z))
+                 new Vector3(_position.x, _position.y + _trunkHeight + _foliageRadius * 0.9f, _position.z))
                 .SetRadius(_foliageRadius)
                 .SetRecursionLevel(1)
                 .SetVertexNoiseFreq(2f)
@@ -85,10 +79,10 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         public override void Build()
         {
             // generate trunk
-            _trunkGen.Build();
+            _trunkGen.SetMeshData(MeshData).Build();
 
             // generate foliage
-            _foliageGen.Build();
+            _foliageGen.SetMeshData(MeshData).Build();
         }
     }
 }

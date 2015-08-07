@@ -24,16 +24,16 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var trunkGradientKey = rule.Evaluate<string>("trunk-color");
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
 
-            var meshData = new MeshData(MeshDestroyIndex.Default);
+            var treeGen = new TreeGenerator()
+                .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
+                .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
+                .SetPosition(new Vector3((float) mapPoint.X, elevation, (float) mapPoint.Y));
+
+            var meshData = new MeshData(MeshDestroyIndex.Default, treeGen.CalculateVertexCount());
             meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
             meshData.MaterialKey = rule.GetMaterialKey();
 
-            var treeGen = new TreeGenerator(meshData)
-                .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
-                .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
-                .SetPosition(new Vector3((float)mapPoint.X, elevation, (float)mapPoint.Y));
-             meshData.Initialize(treeGen.CalculateVertexCount());
-            treeGen.Build();
+            treeGen.SetMeshData(meshData).Build();
 
             BuildObject(tile.GameObject, meshData, rule, node);
 

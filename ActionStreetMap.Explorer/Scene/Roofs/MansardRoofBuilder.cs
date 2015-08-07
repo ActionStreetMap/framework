@@ -57,8 +57,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
             var vertexCount = footprint.Count * 2 * 12;
             var meshIndex = new MultiPlaneMeshIndex(footprint.Count, vertexCount);
-            var meshData = new MeshData(meshIndex);
-            meshData.Initialize(vertexCount, true);
+            var meshData = new MeshData(meshIndex, vertexCount);
 
             int index = FindStartIndex(topVertices[0], footprint);
             for (int i = 0; i < topVertices.Count; i++)

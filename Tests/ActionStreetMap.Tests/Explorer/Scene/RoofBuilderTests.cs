@@ -39,7 +39,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.Count);
-            Assert.AreEqual(96, result[0].Vertices.Length);
+            Assert.AreEqual(192, result[0].Vertices.Length);
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(meshData);
-            Assert.AreEqual(72, meshData.First().Vertices.Length);
+            Assert.AreEqual(144, meshData.First().Vertices.Length);
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(meshData);
-            Assert.AreEqual(72, meshData.First().Vertices.Length);
+            Assert.AreEqual(144, meshData.First().Vertices.Length);
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(2, meshDataList.Count);
-            Assert.AreEqual(960, meshDataList[0].Vertices.Length);
+            Assert.AreEqual(1920, meshDataList[0].Vertices.Length);
             Assert.IsAssignableFrom(typeof(SphereMeshIndex), meshDataList[0].Index);
         }
 
@@ -155,7 +155,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(2, meshDataList.Count);
-            Assert.AreEqual(48, meshDataList[0].Vertices.Length);
+            Assert.AreEqual(96, meshDataList[0].Vertices.Length);
             Assert.IsAssignableFrom(typeof(MultiPlaneMeshIndex), meshDataList[0].Index);
         }
 

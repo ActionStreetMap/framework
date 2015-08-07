@@ -41,15 +41,14 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
 
         private Vector3[] GetVertices()
         {
-            var meshData = new MeshData(DummyMeshIndex.Default);
-            var sphereGen = new IcoSphereGenerator(meshData)
+            var sphereGen = new IcoSphereGenerator()
                 .SetCenter(Center)
                 .SetRadius(Radius)
                 .SetRecursionLevel(2)
                 .SetGradient(GradientUtils.ParseGradient("gradient(#808080, #606060 50%, #505050)"));
 
-            meshData.Initialize(sphereGen.CalculateVertexCount());
-            sphereGen.Build();
+            var meshData = new MeshData(DummyMeshIndex.Default, sphereGen.CalculateVertexCount());
+            sphereGen.SetMeshData(meshData).Build();
 
             return meshData.Vertices;
         }

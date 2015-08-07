@@ -38,13 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             tile.Registry.RegisterGlobal(area.Id);
 
-            var meshData = new MeshData(MeshDestroyIndex.Default)
-            {
-                GameObject = GameObjectFactory.CreateNew(GetName(area)),
-                MaterialKey = rule.GetMaterialKey()
-            };
-
-            var cylinderGen = new CylinderGenerator(meshData)
+            var cylinderGen = new CylinderGenerator()
                 .SetCenter(new Vector3((float) center.X, elevation + minHeight, (float) center.Y))
                 .SetHeight(actualHeight)
                 .SetMaxSegmentHeight(5f)
@@ -52,7 +46,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetRadius((float) radius)
                 .SetGradient(gradient);
 
-            meshData.Initialize(cylinderGen.CalculateVertexCount());
+            var meshData = new MeshData(MeshDestroyIndex.Default, cylinderGen.CalculateVertexCount())
+            {
+                GameObject = GameObjectFactory.CreateNew(GetName(area)),
+                MaterialKey = rule.GetMaterialKey()
+            };
             cylinderGen.Build();
 
             BuildObject(tile.GameObject, meshData, rule, area);

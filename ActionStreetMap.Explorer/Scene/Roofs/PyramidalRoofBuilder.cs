@@ -49,8 +49,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var vertexCount = 12*length;
 
             var meshIndex = new MultiPlaneMeshIndex(length, vertexCount);
-            var meshData = new MeshData(meshIndex);
-            meshData.Initialize(vertexCount, true);
+            var meshData = new MeshData(meshIndex, vertexCount);
 
             for (int i = 0; i < length; i++)
             {
@@ -66,10 +65,17 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
                 meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
 
-                meshData.AddTriangle(v0, v01, v02, GetColor(gradient, v0));
-                meshData.AddTriangle(v02, v01, v12, GetColor(gradient, v02));
-                meshData.AddTriangle(v2, v02, v12, GetColor(gradient, v2));
-                meshData.AddTriangle(v01, v1, v12, GetColor(gradient, v01));
+                var color = GetColor(gradient, v0);
+                meshData.AddTriangle(v0, v01, v02, color, color);
+
+                color = GetColor(gradient, v01);
+                meshData.AddTriangle(v02, v01, v12, color, color);
+
+                color = GetColor(gradient, v02);
+                meshData.AddTriangle(v2, v02, v12, color, color);
+
+                color = GetColor(gradient, v01);
+                meshData.AddTriangle(v01, v1, v12, color, color);
             }
 
             return meshData;

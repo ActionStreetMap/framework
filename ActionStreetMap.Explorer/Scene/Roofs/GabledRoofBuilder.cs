@@ -59,8 +59,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             }
 
             var vertexCount = (building.Footprint.Count - 1)*2*12;
-            var meshData = new MeshData(new MultiPlaneMeshIndex(building.Footprint.Count, vertexCount));
-            meshData.Initialize(vertexCount, true);
+            var meshData = new MeshData(new MultiPlaneMeshIndex(
+                building.Footprint.Count, vertexCount), vertexCount);
 
             // 6. process all segments and create vertices
             FillMeshData(meshData, gradient, roofOffset, roofHeight, building.Footprint,

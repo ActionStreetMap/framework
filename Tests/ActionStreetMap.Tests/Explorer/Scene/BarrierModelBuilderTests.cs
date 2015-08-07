@@ -72,9 +72,9 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             Assert.IsNotNull(meshData.MaterialKey);
             Assert.IsNotNull(meshData.Index);
 
-            Assert.AreEqual(72, meshData.Vertices.Length);
+            Assert.AreEqual(144, meshData.Vertices.Length);
             Assert.AreEqual(144, meshData.Triangles.Length);
-            Assert.AreEqual(72, meshData.Colors.Length);
+            Assert.AreEqual(144, meshData.Colors.Length);
 
             AssertPoints(points[0], meshData.Vertices[0]);
         }

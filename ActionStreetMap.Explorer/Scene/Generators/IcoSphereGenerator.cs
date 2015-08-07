@@ -14,10 +14,6 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         private float _radius;
         private float _recursionLevel;
 
-        public IcoSphereGenerator(MeshData meshData) : base(meshData)
-        {
-        }
-
         public IcoSphereGenerator SetCenter(Vector3 center)
         {
             _center = center;

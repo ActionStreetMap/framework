@@ -112,9 +112,12 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             }
         }
 
-        protected void BuildPlane(Vector3 x1, Vector3 middle, Vector3 x2, 
+        protected void BuildPlane(Vector3 x1, Vector3 middle, Vector3 x2,
             float yStart, float yEnd, int startIndex, int vertCount)
         {
+            // NOTE taking into account performance, don't want to split
+            // this huge function into smaller ones
+
             var p0 = new Vector3(x1.x, yStart, x1.z);
             var p1 = new Vector3(x2.x, yStart, x2.z);
             var p2 = new Vector3(x2.x, yEnd, x2.z);
@@ -124,73 +127,83 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             var count = startIndex;
 
+            #region Vertices
             _vertices[count] = p3;
-            _vertices[++count] = pc;
+            _vertices[count + vertCount] = p3;
             _vertices[++count] = p0;
+            _vertices[count + vertCount] = p0;
+            _vertices[++count] = pc;
+            _vertices[count + vertCount] = pc;
 
             _vertices[++count] = p0;
-            _vertices[++count] = pc;
+            _vertices[count + vertCount] = p0;
             _vertices[++count] = p1;
+            _vertices[count + vertCount] = p1;
+            _vertices[++count] = pc;
+            _vertices[count + vertCount] = pc;
 
             _vertices[++count] = p1;
-            _vertices[++count] = pc;
+            _vertices[count + vertCount] = p1;
             _vertices[++count] = p2;
+            _vertices[count + vertCount] = p2;
+            _vertices[++count] = pc;
+            _vertices[count + vertCount] = pc;
 
             _vertices[++count] = p2;
-            _vertices[++count] = pc;
+            _vertices[count + vertCount] = p2;
             _vertices[++count] = p3;
+            _vertices[count + vertCount] = p3;
+            _vertices[++count] = pc;
+            _vertices[count + vertCount] = pc;
+            #endregion
 
-            count = startIndex;
-
+            #region Triangles
             // triangles for outer part
             for (int i = startIndex; i < startIndex + 12; i++)
-                _triangles[count++] = i;
-
-            var lastIndex = startIndex + 12;
-            for (int i = startIndex; i < lastIndex; i++)
-            {
                 _triangles[i] = i;
+
+            var lastIndex = startIndex + vertCount + 12;
+            for (int i = startIndex + vertCount; i < lastIndex; i++)
+            {
                 var rest = i % 3;
-                _triangles[vertCount + i] = rest == 0 ? i : (rest == 1 ? i + 1 : i - 1);
+                _triangles[i] = rest == 0 ? i : (rest == 1 ? i + 1 : i - 1);
             }
+            #endregion
 
+            #region Colors
             count = startIndex;
-
             var color = GetColor(p3);
             _colors[count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
 
             color = GetColor(p0);
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
 
             color = GetColor(p1);
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
 
             color = GetColor(p2);
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
+            _colors[count + vertCount] = color;
             _colors[++count] = color;
-
-            /*_colors[count] = GetColor(p3);
-            _colors[++count] = GetColor(pc);
-            _colors[++count] = GetColor(p0);
-
-            _colors[++count] = GetColor(p0);
-            _colors[++count] = GetColor(pc);
-            _colors[++count] = GetColor(p1);
-
-            _colors[++count] = GetColor(p1);
-            _colors[++count] = GetColor(pc);
-            _colors[++count] = GetColor(p2);
-
-            _colors[++count] = GetColor(p2);
-            _colors[++count] = GetColor(pc);
-            _colors[++count] = GetColor(p3);   */
+            _colors[count + vertCount] = color;
+            #endregion
         }
 
         protected Color GetColor(Vector3 point)

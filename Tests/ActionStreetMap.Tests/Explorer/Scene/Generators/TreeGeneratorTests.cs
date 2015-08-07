@@ -21,17 +21,17 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Generators
         public void CanGenerateSimpleTree()
         {
             // ARRANGE
-            var meshData = new MeshData(DummyMeshIndex.Default);
             var position = new Vector3(0, 0, 0);
 
             // ACT
-            var treeGen = new TreeGenerator(meshData)
+            var treeGen = new TreeGenerator()
                 .SetTrunkGradient(_trunkGradient)
                 .SetFoliageGradient(_foliageGradient)
                 .SetPosition(position);
             
             var vertCount = treeGen.CalculateVertexCount();
-            meshData.Initialize(vertCount);
+            var meshData = new MeshData(DummyMeshIndex.Default, vertCount);
+            treeGen.SetMeshData(meshData);
             treeGen.Build();
 
             // ASSERT

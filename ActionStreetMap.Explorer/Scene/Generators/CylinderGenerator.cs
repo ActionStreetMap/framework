@@ -12,11 +12,6 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         private int _radialSegments = 5;
         private Vector3 _center;
 
-        public CylinderGenerator(MeshData meshData)
-            : base(meshData)
-        {
-        }
-
         public CylinderGenerator SetCenter(Vector3 center)
         {
             _center = center;

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 
@@ -28,18 +27,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var roofBottomOffset = building.Elevation + building.MinHeight;
             var roofTopOffset = roofBottomOffset + building.Height;
 
-            var groundFloor = BuildFloor(gradient, footprint, roofBottomOffset);
-            var top = CopyMeshData(groundFloor, roofTopOffset);
-
-            groundFloor.Index = new PlaneMeshIndex(
-                groundFloor.Vertices[0],
-                groundFloor.Vertices[1],
-                groundFloor.Vertices[2]);
-
-            top.Index = new PlaneMeshIndex(
-               top.Vertices[0],
-               top.Vertices[1],
-               top.Vertices[2]);
+            var top = BuildFloor(gradient, footprint, roofTopOffset);
+            var groundFloor = ReuseMeshData(gradient, footprint, top, roofBottomOffset);
 
             return new List<MeshData>(2)
             {

@@ -52,12 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 var vertCount = emptyWallBuilder.CalculateVertexCount(startVector, endVector);
                 var meshIdex = new PlaneMeshIndex(startVector, endVector, somePointOnPlane);
 
-                var meshData = new MeshData(meshIdex)
-                {
-                    Vertices = new Vector3[vertCount],
-                    Triangles = new int[vertCount*2],
-                    Colors = new Color[vertCount],
-                };
+                var meshData = new MeshData(meshIdex, vertCount);
                 emptyWallBuilder.SetMeshData(meshData).Build(startVector, endVector);
 
                 meshDataList.Add(meshData);

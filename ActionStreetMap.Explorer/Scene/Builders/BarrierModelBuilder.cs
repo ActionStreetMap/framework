@@ -41,12 +41,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var vertexCount = GetVertexCount(points, maxWidth);
             var meshIndex = new MultiPlaneMeshIndex(points.Count - 1, vertexCount);
-            var meshData = new MeshData(meshIndex)
+            var meshData = new MeshData(meshIndex, vertexCount)
             {
                 MaterialKey = rule.GetMaterialKey(),
                 GameObject = gameObjectWrapper,
             };
-            meshData.Initialize(vertexCount, true);
             
             meshData.Index = meshIndex;
             var context = new SegmentBuilderContext()
@@ -107,7 +106,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             // read context properties
             var gradient = context.Gradient;
             var colorNoiseFreq = context.ColorNoiseFreq;
-            var vertCount = context.MeshData.Vertices.Length;
+            var vertCount = context.MeshData.Vertices.Length / 2;
             var vertices = context.MeshData.Vertices;
             var triangles = context.MeshData.Triangles;
             var colors = context.MeshData.Colors;
@@ -177,7 +176,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 // reuse last
                 start = end;
                 startEle = endEle;
-                startIndex = lastIndex;
+                startIndex += 12;
             }
         }
 

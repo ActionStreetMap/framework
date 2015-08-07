@@ -39,15 +39,18 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
             var center3d = new Vector3((float)center.X, elevation, (float)center.Y);
 
-            var meshData = new MeshData(new SphereMeshIndex((float)radius, center3d));
-            var sphereGen = new IcoSphereGenerator(meshData)
+            var sphereGen = new IcoSphereGenerator()
                 .SetCenter(center3d)
                 .SetRadius((float)radius)
                 .SetRecursionLevel(2)
                 .SetGradient(gradient);
 
-            meshData.Initialize(sphereGen.CalculateVertexCount());
-            sphereGen.Build();
+            var meshData = new MeshData(new SphereMeshIndex((float)radius, center3d), 
+                sphereGen.CalculateVertexCount());
+
+            sphereGen
+                .SetMeshData(meshData)
+                .Build();
 
             return new List<MeshData>()
             {

@@ -20,10 +20,6 @@
 
         public static string MapIndexBuildOutputDirectoryMismatch = "Output directory is different than expected map path.";
 
-        public static string MultiplyMeshDataInitialization = "Attempt to initialize mesh data multiply times";
-
-        public static string NotInitializedMeshDataUsage = "Attempt to use uninitialized mesh data";
-
         #region Commands
 
         public static string SearchCommand = "Searches for OSM objects.";

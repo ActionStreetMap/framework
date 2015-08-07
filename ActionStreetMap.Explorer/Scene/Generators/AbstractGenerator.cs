@@ -7,7 +7,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 {
     internal abstract class AbstractGenerator
     {
-        private readonly MeshData _meshData;
+        protected MeshData MeshData;
+
         private float _vertNoiseFreq = 0.05f;
         private float _colorNoiseFreq = 0.1f;
         private GradientWrapper _gradient;
@@ -15,9 +16,10 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         public abstract int CalculateVertexCount();
         public abstract void Build();
 
-        protected AbstractGenerator(MeshData meshData)
+        public AbstractGenerator SetMeshData(MeshData meshData)
         {
-            _meshData = meshData;
+            MeshData = meshData;
+            return this;
         }
 
         public AbstractGenerator SetVertexNoiseFreq(float vertNoiseFreq)
@@ -51,7 +53,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             noise = useVertNoise ? (Noise.Perlin3D(v2, _vertNoiseFreq) + 1f) / 2f : 0;
             var p2 = new Vector3(v2.x + noise, v2.y + noise, v2.z + noise);
 
-            _meshData.AddTriangle(p0, p1, p2, GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq));
+            var color = GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq);
+            MeshData.AddTriangle(p0, p1, p2, color, color);
         }
     }
 }

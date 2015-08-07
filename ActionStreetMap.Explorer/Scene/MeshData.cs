@@ -1,5 +1,4 @@
-﻿using System;
-using ActionStreetMap.Core.Unity;
+﻿using ActionStreetMap.Core.Unity;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene
@@ -11,64 +10,76 @@ namespace ActionStreetMap.Explorer.Scene
         public IGameObject GameObject;
         public IMeshIndex Index;
 
-        public Vector3[] Vertices;
-        public int[] Triangles;
-        public Color[] Colors;
+        public readonly Vector3[] Vertices;
+        public readonly int[] Triangles;
+        public readonly Color[] Colors;
 
         private int _nextIndex;
-        private bool _isInitialized;
-        private bool _isTwoSided;
+        private int _size;
 
         /// <summary> Next vertex index. </summary>
         public int NextIndex { get { return _nextIndex; } }
 
-        public MeshData(IMeshIndex meshIndex)
+        /// <summary> Creates instance of <see cref="MeshData"/>. </summary>
+        public MeshData(IMeshIndex meshIndex, Vector3[] vertices, int[] triangles,
+            Color[] colors)
         {
             Index = meshIndex;
+
+            Vertices = vertices;
+            Triangles = triangles;
+            Colors = colors;
+
+            _size = vertices.Length / 2;
         }
 
-        /// <summary> Initializes mesh data using given size. </summary>
-        public void Initialize(int size, bool isTwoSided = false)
+        /// <summary> Creates instance of <see cref="MeshData"/>. </summary>
+        public MeshData(IMeshIndex meshIndex, int size)
         {
-            if (_isInitialized)
-                throw new InvalidOperationException(Strings.MultiplyMeshDataInitialization);
+            Index = meshIndex;
 
-            _isTwoSided = isTwoSided;
+            var fullVertCount = size * 2;
 
-            Vertices = new Vector3[size];
-            Triangles = new int[isTwoSided ? size * 2 : size];
-            Colors = new Color[size];
+            Vertices = new Vector3[fullVertCount];
+            Triangles = new int[fullVertCount];
+            Colors = new Color[fullVertCount];
 
-            _isInitialized = true;
+            _size = size;
         }
 
-        /// <summary> Adds one sided triangle to mesh data </summary>
-        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color color)
+        /// <summary> Adds two sided triangle to mesh data. </summary>
+        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2,
+            Color frontColor, Color backColor)
         {
-            if (!_isInitialized)
-                throw new InvalidOperationException(Strings.NotInitializedMeshDataUsage);
+            var startIndex = _size + _nextIndex;
 
+            // front side
             Vertices[_nextIndex] = v0;
-            Vertices[_nextIndex + 1] = v1;
-            Vertices[_nextIndex + 2] = v2;
-
-            Colors[_nextIndex] = color;
-            Colors[_nextIndex + 1] = color;
-            Colors[_nextIndex + 2] = color;
-
+            Colors[_nextIndex] = frontColor;
             Triangles[_nextIndex] = _nextIndex;
-            Triangles[_nextIndex + 1] = _nextIndex + 1;
-            Triangles[_nextIndex + 2] = _nextIndex + 2;
 
-            if (_isTwoSided)
-            {
-                var startIndex = Vertices.Length + _nextIndex;
-                Triangles[startIndex] = _nextIndex;
-                Triangles[startIndex + 1] = _nextIndex + 2;
-                Triangles[startIndex + 2] = _nextIndex + 1;
-            }
+            Vertices[++_nextIndex] = v1;
+            Colors[_nextIndex] = frontColor;
+            Triangles[_nextIndex] = _nextIndex;
 
-            _nextIndex += 3;
+            Vertices[++_nextIndex] = v2;
+            Colors[_nextIndex] = frontColor;
+            Triangles[_nextIndex] = _nextIndex;
+
+            _nextIndex++;
+
+            // back side
+            Vertices[startIndex] = v0;
+            Colors[startIndex] = backColor;
+            Triangles[startIndex] = startIndex + 2;
+
+            Vertices[++startIndex] = v1;
+            Colors[startIndex] = backColor;
+            Triangles[startIndex] = startIndex;
+
+            Vertices[++startIndex] = v2;
+            Colors[startIndex] = backColor;
+            Triangles[startIndex] = startIndex - 2;
         }
     }
 }
