@@ -18,6 +18,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private int[] _triangles;
         private Color[] _colors;
 
+        private MeshData _meshData;
+
         #region Setters
 
         public EmptyWallBuilder SetMeshData(MeshData meshData)
@@ -25,6 +27,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             _vertices = meshData.Vertices;
             _triangles = meshData.Triangles;
             _colors = meshData.Colors;
+
+            _meshData = meshData;
+
             return this;
         }
 
@@ -92,28 +97,28 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var yIterCount = (int)Math.Ceiling(_height / _minStepHeight);
             float yStep = _height / yIterCount;
 
-            var vertCount = xIterCount * yIterCount * 12;
+            var halfVertCount = _meshData.Vertices.Length / 2;
 
-            for (int j = _vertStartIndex; j < _vertStartIndex + yIterCount; j++)
+            for (int j = 0; j < yIterCount; j++)
             {
                 var yStart = _minHeight + j * yStep;
                 var yEnd = yStart + yStep;
 
                 for (int i = 0; i < xIterCount; i++)
                 {
-                    var startIndex = (12 * xIterCount) * j + i * 12;
+                    var startIndex = _vertStartIndex + (12 * xIterCount) * j + i * 12;
 
                     var x1 = start + direction * (i * xStep);
                     var middle = x1 + direction * (0.5f * xStep);
                     var x2 = x1 + direction * xStep;
 
-                    BuildPlane(x1, middle, x2, yStart, yEnd, startIndex, vertCount);
+                    BuildPlane(x1, middle, x2, yStart, yEnd, startIndex, halfVertCount);
                 }
             }
         }
 
         protected void BuildPlane(Vector3 x1, Vector3 middle, Vector3 x2,
-            float yStart, float yEnd, int startIndex, int vertCount)
+            float yStart, float yEnd, int startIndex, int halfVertCount)
         {
             // NOTE taking into account performance, don't want to split
             // this huge function into smaller ones
@@ -129,32 +134,32 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             #region Vertices
             _vertices[count] = p3;
-            _vertices[count + vertCount] = p3;
+            _vertices[count + halfVertCount] = p3;
             _vertices[++count] = p0;
-            _vertices[count + vertCount] = p0;
+            _vertices[count + halfVertCount] = p0;
             _vertices[++count] = pc;
-            _vertices[count + vertCount] = pc;
+            _vertices[count + halfVertCount] = pc;
 
             _vertices[++count] = p0;
-            _vertices[count + vertCount] = p0;
+            _vertices[count + halfVertCount] = p0;
             _vertices[++count] = p1;
-            _vertices[count + vertCount] = p1;
+            _vertices[count + halfVertCount] = p1;
             _vertices[++count] = pc;
-            _vertices[count + vertCount] = pc;
+            _vertices[count + halfVertCount] = pc;
 
             _vertices[++count] = p1;
-            _vertices[count + vertCount] = p1;
+            _vertices[count + halfVertCount] = p1;
             _vertices[++count] = p2;
-            _vertices[count + vertCount] = p2;
+            _vertices[count + halfVertCount] = p2;
             _vertices[++count] = pc;
-            _vertices[count + vertCount] = pc;
+            _vertices[count + halfVertCount] = pc;
 
             _vertices[++count] = p2;
-            _vertices[count + vertCount] = p2;
+            _vertices[count + halfVertCount] = p2;
             _vertices[++count] = p3;
-            _vertices[count + vertCount] = p3;
+            _vertices[count + halfVertCount] = p3;
             _vertices[++count] = pc;
-            _vertices[count + vertCount] = pc;
+            _vertices[count + halfVertCount] = pc;
             #endregion
 
             #region Triangles
@@ -162,8 +167,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             for (int i = startIndex; i < startIndex + 12; i++)
                 _triangles[i] = i;
 
-            var lastIndex = startIndex + vertCount + 12;
-            for (int i = startIndex + vertCount; i < lastIndex; i++)
+            var lastIndex = startIndex + halfVertCount + 12;
+            for (int i = startIndex + halfVertCount; i < lastIndex; i++)
             {
                 var rest = i % 3;
                 _triangles[i] = rest == 0 ? i : (rest == 1 ? i + 1 : i - 1);
@@ -174,36 +179,38 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             count = startIndex;
             var color = GetColor(p3);
             _colors[count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
 
             color = GetColor(p0);
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
 
             color = GetColor(p1);
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
 
             color = GetColor(p2);
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             _colors[++count] = color;
-            _colors[count + vertCount] = color;
+            _colors[count + halfVertCount] = color;
             #endregion
+
+            _meshData.NextIndex += 12;
         }
 
         protected Color GetColor(Vector3 point)

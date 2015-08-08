@@ -55,8 +55,9 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
                 new Vector3(0, 0, 10)
             };
             var center = new Vector3(5, 5, 5);
-            vertices = new Vector3[plane.Count * 3];
-            var meshIndex = new MultiPlaneMeshIndex(plane.Count, vertices.Length);
+            vertices = new Vector3[plane.Count*2*3];
+            var halfVertCount = vertices.Length/2;
+            var meshIndex = new MultiPlaneMeshIndex(plane.Count, halfVertCount);
             for (int i = 0; i < plane.Count; i++)
             {
                 var start = plane[i];
@@ -65,6 +66,10 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
                 vertices[i*3] = start;
                 vertices[i*3 + 1] = end;
                 vertices[i*3 + 2] = center;
+
+                vertices[halfVertCount + i * 3] = start;
+                vertices[halfVertCount + i * 3 + 1] = end;
+                vertices[halfVertCount + i * 3 + 2] = center;
             }
             return meshIndex;
         }

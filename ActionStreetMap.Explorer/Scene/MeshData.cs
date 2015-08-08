@@ -17,8 +17,12 @@ namespace ActionStreetMap.Explorer.Scene
         private int _nextIndex;
         private int _size;
 
-        /// <summary> Next vertex index. </summary>
-        public int NextIndex { get { return _nextIndex; } }
+        /// <summary> Gets or sets next vertex index. </summary>
+        public int NextIndex
+        {
+            get { return _nextIndex; }
+            internal set { _nextIndex = value; }
+        }
 
         /// <summary> Creates instance of <see cref="MeshData"/>. </summary>
         public MeshData(IMeshIndex meshIndex, Vector3[] vertices, int[] triangles,

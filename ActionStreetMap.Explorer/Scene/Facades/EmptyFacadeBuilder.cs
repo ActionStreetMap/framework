@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Indices;
@@ -9,10 +10,10 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Facades
 {
     /// <summary> Creates facade builder for simple facade. </summary>
-    internal class EmptyFacadeBuilder: IFacadeBuilder
+    internal class EmptyFacadeBuilder : IFacadeBuilder
     {
         private readonly IResourceProvider _resourceProvider;
-        
+
         /// <inheritdoc />
         public string Name { get { return "empty"; } }
 
@@ -29,7 +30,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var random = new System.Random((int)building.Id);
             var footprint = building.Footprint;
             var elevation = building.MinHeight + building.Elevation;
-             var gradient = _resourceProvider.GetGradient(building.FacadeColor);
+            var gradient = _resourceProvider.GetGradient(building.FacadeColor);
 
             var emptyWallBuilder = new EmptyWallBuilder()
                 .SetGradient(gradient)
@@ -38,27 +39,50 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 .SetStepWidth(random.NextFloat(3f, 4f))
                 .SetHeight(building.Height);
 
-            var meshDataList = new List<MeshData>(footprint.Count);
+            var vertCount = CalculateVertexCount(emptyWallBuilder, building.Footprint, elevation);
+            // TODO if vertCount * 2 exceedes Unity vertex limit, 
+            // then produce split to multiply mesh data
+
+            var meshIndex = new MultiPlaneMeshIndex(footprint.Count, vertCount);
+            var meshData = new MeshData(meshIndex, vertCount);
+            emptyWallBuilder.SetMeshData(meshData);
+
             for (int i = 0; i < footprint.Count; i++)
             {
                 var nextIndex = i == (footprint.Count - 1) ? 0 : i + 1;
                 var start = footprint[i];
                 var end = footprint[nextIndex];
 
-                var startVector = new Vector3((float) start.X, elevation, (float) start.Y);
-                var endVector = new Vector3((float) end.X, elevation, (float) end.Y);
-                var somePointOnPlane = new Vector3((float) end.X, elevation + 10, (float) end.Y);
+                var startVector = new Vector3((float)start.X, elevation, (float)start.Y);
+                var endVector = new Vector3((float)end.X, elevation, (float)end.Y);
+                var somePointOnPlane = new Vector3((float)end.X, elevation + 10, (float)end.Y);
 
-                var vertCount = emptyWallBuilder.CalculateVertexCount(startVector, endVector);
-                var meshIdex = new PlaneMeshIndex(startVector, endVector, somePointOnPlane);
-
-                var meshData = new MeshData(meshIdex, vertCount);
-                emptyWallBuilder.SetMeshData(meshData).Build(startVector, endVector);
-
-                meshDataList.Add(meshData);
+                meshIndex.AddPlane(startVector, endVector, somePointOnPlane, meshData.NextIndex);
+                emptyWallBuilder
+                    .SetStartIndex(meshData.NextIndex)
+                    .Build(startVector, endVector);
             }
 
-            return meshDataList;
+            return new List<MeshData>(1) { meshData };
+        }
+
+        private int CalculateVertexCount(EmptyWallBuilder emptyWallBuilder,
+            List<Vector2d> footprint, float elevation)
+        {
+            var count = 0;
+            for (int i = 0; i < footprint.Count; i++)
+            {
+                var nextIndex = i == (footprint.Count - 1) ? 0 : i + 1;
+                var start = footprint[i];
+                var end = footprint[nextIndex];
+
+                var startVector = new Vector3((float)start.X, elevation, (float)start.Y);
+                var endVector = new Vector3((float)end.X, elevation, (float)end.Y);
+
+                count += emptyWallBuilder.CalculateVertexCount(startVector, endVector);
+            }
+
+            return count;
         }
     }
 }
