@@ -37,6 +37,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                 var result = base.Modify(query, startIndex, endIndex, n, magnitude, d);
                 destroyed += result.DestroyedVertices;
                 modified += result.ModifiedVertices;
+                startIndex = endIndex;
             }
 
             return new MeshQuery.Result(query.Vertices)

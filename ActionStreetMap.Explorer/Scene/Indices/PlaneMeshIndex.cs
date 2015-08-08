@@ -18,7 +18,6 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         /// <summary> Creates instance of <see cref="PlaneMeshIndex"/>. </summary>
         protected PlaneMeshIndex()
         {
-            
         }
 
         /// <summary> Initializes index using three points on the plane. </summary>
@@ -37,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         /// <inheritdoc />
         public virtual MeshQuery.Result Modify(MeshQuery query)
         {
-            return Modify(query, 0, query.Vertices.Length, _n, _normalMagnitude, _d);
+            return Modify(query, 0, query.Vertices.Length / 2, _n, _normalMagnitude, _d);
         }
 
         /// <summary> Calcualtes plane equation parameter based on three points. </summary>
@@ -53,6 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Indices
         protected MeshQuery.Result Modify(MeshQuery query, int startIndex, int endIndex,
             Vector3 n, float magnitude, float d)
         {
+            var halfVertexCount = query.Vertices.Length / 2;
             var vertices = query.Vertices;
             int modified = 0;
             var destroyed = 0;
@@ -78,10 +78,15 @@ namespace ActionStreetMap.Explorer.Scene.Indices
                             var firstVertIndex = i - i % 3;
                             vertices[firstVertIndex + 1] = vertices[firstVertIndex];
                             vertices[firstVertIndex + 2] = vertices[firstVertIndex];
+
+                            var backSideIndex = halfVertexCount + firstVertIndex;
+                            vertices[backSideIndex + 1] = vertices[backSideIndex];
+                            vertices[backSideIndex + 2] = vertices[backSideIndex];
                             destroyed += 3;
                             break;
                         }
                         vertices[i] = v + forceChange * query.ForceDirection;
+                        vertices[halfVertexCount + i] = vertices[i];
                         modified++;
                     }
                 }

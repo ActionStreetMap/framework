@@ -34,7 +34,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
                 Vertices = vertices,
                 Epicenter = new Vector3(0, 0, 5),
                 ForceDirection = new Vector3(0.5f, 0, 0.5f),
-                GetForceChange = f => 1,
+                GetForceChange = f => 1f,
                 OffsetThreshold = 1,
                 Radius = 6
             });
@@ -42,7 +42,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Indices
             // ASSERT
             Assert.IsNotNull(result);
             Assert.Greater(result.ModifiedVertices, 0);
-            Assert.Greater(result.DestroyedVertices, 0);
+            Assert.AreEqual(0, result.DestroyedVertices);
         }
 
         private MultiPlaneMeshIndex GetMeshIndex(out Vector3[] vertices)
