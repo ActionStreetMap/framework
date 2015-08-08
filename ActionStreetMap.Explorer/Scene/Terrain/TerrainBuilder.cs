@@ -410,6 +410,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             Vector3[] vertices, int[] triangles, Color[] colors)
         {
             var gameObject = goWrapper.GetComponent<GameObject>();
+            gameObject.isStatic = true;
 
             var mesh = new Mesh();
             mesh.vertices = vertices;
