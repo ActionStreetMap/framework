@@ -34,10 +34,11 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             if (building.RoofHeight > 0)
                 offset = building.RoofHeight - (float)radius;
 
-            var elevation = building.Elevation + building.MinHeight + building.Height + offset;
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
-            var center3d = new Vector3((float)center.X, elevation, (float)center.Y);
+            var center3d = new Vector3((float)center.X,
+                building.Elevation + building.MinHeight + building.Height + offset,
+                (float)center.Y);
 
             var sphereGen = new IcoSphereGenerator()
                 .SetCenter(center3d)
@@ -45,16 +46,38 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 .SetRecursionLevel(2)
                 .SetGradient(gradient);
 
-            var meshData = new MeshData(new SphereMeshIndex((float)radius, center3d), 
-                sphereGen.CalculateVertexCount());
+            var mesh = CreateMesh(building.Footprint);
 
+            var floorCount = building.Levels;
+            var floorVertexCount = mesh.Triangles.Count*3*2*floorCount;
+            var floorMeshIndex = new MultiPlaneMeshIndex(building.Levels, floorVertexCount);
+
+            var vertexCount = sphereGen.CalculateVertexCount() + floorVertexCount;
+
+            var meshIndex = new CompositeMeshIndex(floorCount + 1)
+                .AddMeshIndex(new SphereMeshIndex((float) radius, center3d))
+                .AddMeshIndex(floorMeshIndex);
+            var meshData = new MeshData(meshIndex, vertexCount);
+
+            // attach roof
             sphereGen.Build(meshData);
-
-            return new List<MeshData>()
+            // attach floors
+            AttachFloors(new RoofContext()
             {
-                meshData,
-                BuildFloor(gradient, building.Footprint, building.Elevation + building.MinHeight)
-            };
+                Mesh = mesh,
+                MeshData = meshData,
+                MeshIndex = floorMeshIndex,
+
+                Bottom = building.Elevation + building.MinHeight,
+                FloorCount = floorCount,
+                FloorHeight = building.Height / floorCount,
+                FloorFrontGradient = gradient,
+                FloorBackGradient = gradient,
+
+                IsLastRoof = false
+            });
+
+            return new List<MeshData>(1) { meshData };
         }
     }
 }

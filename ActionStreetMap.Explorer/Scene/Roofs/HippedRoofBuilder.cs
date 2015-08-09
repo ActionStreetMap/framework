@@ -28,11 +28,17 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
             var skeleton = SkeletonBuilder.Build(building.Footprint);
-            var vertexCount = 0;
+            var roofVertexCount = 0;
             foreach (var edgeResult in skeleton.Edges)
-                vertexCount += (edgeResult.Polygon.Count - 2)*12;
+                roofVertexCount += (edgeResult.Polygon.Count - 2) * 12;
 
-            var meshIndex = new MultiPlaneMeshIndex(skeleton.Edges.Count, vertexCount);
+            var mesh = CreateMesh(building.Footprint);
+            var floorCount = building.Levels;
+            var floorVertexCount = mesh.Triangles.Count * 3 * 2 * floorCount;
+
+            var vertexCount = roofVertexCount + floorVertexCount;
+
+            var meshIndex = new MultiPlaneMeshIndex(skeleton.Edges.Count + floorCount, vertexCount);
             MeshData meshData = new MeshData(meshIndex, vertexCount);
             try
             {              
@@ -44,6 +50,21 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         HandleComplexCase(meshData, meshIndex, gradient, skeleton, edge, roofOffset, roofHeight);
                 }
 
+                // attach floors
+                AttachFloors(new RoofContext()
+                {
+                    Mesh = mesh,
+                    MeshData = meshData,
+                    MeshIndex = meshIndex,
+
+                    Bottom = building.Elevation + building.MinHeight,
+                    FloorCount = floorCount,
+                    FloorHeight = building.Height / floorCount,
+                    FloorFrontGradient = gradient,
+                    FloorBackGradient = gradient,
+
+                    IsLastRoof = false
+                });
             }
             catch
             {
@@ -52,11 +73,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 return base.Build(building);
             }
 
-            return new List<MeshData>()
-            {
-                meshData,
-                BuildFloor(gradient, building.Footprint, building.Elevation + building.MinHeight)
-            };
+            return new List<MeshData>(1) { meshData };
         }
 
         private void HandleSimpleCase(MeshData meshData, MultiPlaneMeshIndex meshIndex, GradientWrapper gradient,

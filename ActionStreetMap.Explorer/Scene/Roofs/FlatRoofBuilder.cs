@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 
@@ -23,18 +24,34 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public override List<MeshData> Build(Building building)
         {
             var gradient = ResourceProvider.GetGradient(building.RoofColor);
-            var footprint = building.Footprint;
-            var roofBottomOffset = building.Elevation + building.MinHeight;
-            var roofTopOffset = roofBottomOffset + building.Height;
 
-            var top = BuildFloor(gradient, footprint, roofTopOffset);
-            var groundFloor = ReuseMeshData(gradient, footprint, top, roofBottomOffset);
+            var mesh = CreateMesh(building.Footprint);
 
-            return new List<MeshData>(2)
+            // NOTE the last floor plane will be flat roof
+            var floorCount = building.Levels + 1;
+
+            var vertexCount = mesh.Triangles.Count * 3 * 2 * floorCount;
+            var meshIndex = new MultiPlaneMeshIndex(floorCount, vertexCount);
+            var meshData = new MeshData(meshIndex, vertexCount);
+
+            AttachFloors(new RoofContext()
             {
-                groundFloor,
-                top
-            };
+                Mesh = mesh,
+                MeshData = meshData,
+                MeshIndex = meshIndex,
+                
+                Bottom = building.Elevation + building.MinHeight,
+                FloorCount = floorCount,
+                FloorHeight = building.Height / (floorCount - 1),
+                FloorFrontGradient = gradient,
+                FloorBackGradient = gradient,
+
+                IsLastRoof = true,
+                RoofFrontGradient = gradient,
+                RoofBackGradient = gradient,
+            });
+                
+            return new List<MeshData>(1) { meshData };
         }
     }
 }

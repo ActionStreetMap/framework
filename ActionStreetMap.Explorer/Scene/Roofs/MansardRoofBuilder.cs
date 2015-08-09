@@ -53,10 +53,16 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             // NOTE need reverse vertices
             topVertices.Reverse();
 
-            var toppart = BuildFloor(gradient, topVertices, roofHeight);
+            var floorCount = building.Levels;
+            var topMesh = CreateMesh(topVertices);
+            var floorMesh = CreateMesh(footprint);
 
-            var vertexCount = footprint.Count * 2 * 12;
-            var meshIndex = new MultiPlaneMeshIndex(footprint.Count, vertexCount);
+            var vertexCount =
+                topMesh.Triangles.Count*3*2 +
+                floorMesh.Triangles.Count*3*2*floorCount +
+                footprint.Count*2*12;
+
+            var meshIndex = new MultiPlaneMeshIndex(footprint.Count + floorCount + 1, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
             int index = FindStartIndex(topVertices[0], footprint);
@@ -76,15 +82,32 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 AddTriangle(meshData, gradient, v0, v2, v3);
                 AddTriangle(meshData, gradient, v2, v0, v1);
             }
-
             ObjectPool.StoreList(topVertices);
 
-            return new List<MeshData>()
+            // Attach floors
+            var context = new RoofContext()
             {
-                meshData,
-                toppart,
-                BuildFloor(gradient, building.Footprint, building.Elevation + building.MinHeight)
+                Mesh = floorMesh,
+                MeshData = meshData,
+                MeshIndex = meshIndex,
+
+                Bottom = building.Elevation + building.MinHeight,
+                FloorCount = floorCount,
+                FloorHeight = building.Height / floorCount,
+                FloorFrontGradient = gradient,
+                FloorBackGradient = gradient,
+
+                IsLastRoof = false,
             };
+            AttachFloors(context);
+
+            // Attach top
+            context.Mesh = topMesh;
+            context.Bottom = roofHeight;
+            context.FloorCount = 1;
+            AttachFloors(context);
+
+            return new List<MeshData>(1) { meshData };
         }
 
         private int FindStartIndex(Vector2d firstPoint, List<Vector2d> footprint)

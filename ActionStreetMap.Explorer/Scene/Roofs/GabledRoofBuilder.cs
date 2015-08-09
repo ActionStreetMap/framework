@@ -58,19 +58,36 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 return base.Build(building);
             }
 
-            var vertexCount = (building.Footprint.Count - 1)*2*12;
-            var meshData = new MeshData(new MultiPlaneMeshIndex(
-                building.Footprint.Count, vertexCount), vertexCount);
+            // prepare mesh and its index
+            var mesh = CreateMesh(building.Footprint);
+            var floorCount = building.Levels;
+            var floorVertexCount = mesh.Triangles.Count * 3 * 2 * floorCount;
+
+            var vertexCount = (building.Footprint.Count - 1) * 2 * 12 + floorVertexCount;
+            var meshIndex = new MultiPlaneMeshIndex(building.Footprint.Count + floorCount, vertexCount);
+            var meshData = new MeshData(meshIndex, vertexCount);
 
             // 6. process all segments and create vertices
             FillMeshData(meshData, gradient, roofOffset, roofHeight, building.Footprint,
                 first, firstIndex, second, secondIndex);
 
-            return new List<MeshData>()
+            // attach floors
+            AttachFloors(new RoofContext()
             {
-                meshData,
-                BuildFloor(gradient, building.Footprint, building.Elevation + building.MinHeight),
-            };
+                Mesh = mesh,
+                MeshData = meshData,
+                MeshIndex = meshIndex,
+
+                Bottom = building.Elevation + building.MinHeight,
+                FloorCount = floorCount,
+                FloorHeight = building.Height / floorCount,
+                FloorFrontGradient = gradient,
+                FloorBackGradient = gradient,
+
+                IsLastRoof = false
+            });
+
+            return new List<MeshData>(1) { meshData };
         }
 
         private void GetLongestSegment(List<Vector2d> footprint, out float maxLength,

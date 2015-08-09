@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle;
@@ -54,17 +53,15 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
 
-        /// <summary> Builds flat roof from footprint using provided triangles. </summary>
-        protected MeshData BuildFloor(GradientWrapper gradient, List<Vector2d> footprint, float height)
+        protected Core.Geometry.Triangle.Mesh CreateMesh(List<Vector2d> footprint)
         {
-            ActionStreetMap.Core.Geometry.Triangle.Mesh mesh;
             using (var polygon = new Polygon(footprint.Count, ObjectPool))
             {
                 var list = ObjectPool.NewList<Point>(footprint.Count);
                 list.AddRange(footprint.Select(point => new Point(point.X, point.Y)));
                 polygon.AddContour(list);
 
-                mesh = polygon.Triangulate(
+                return polygon.Triangulate(
                     new ConstraintOptions
                     {
                         ConformingDelaunay = false,
@@ -72,85 +69,55 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     },
                     new QualityOptions { MaximumArea = 9 });
             }
+        }
 
-            var halfVertCount = mesh.Triangles.Count * 3;
-            var vertCount = halfVertCount * 2;
+        /// <summary> Builds floor </summary>
+        protected void AttachFloors(RoofContext context)
+        {
+            var triCount = context.Mesh.Triangles.Count;
+            var vertPerFloor = triCount*3;
+            var halfVertCount = context.MeshData.Vertices.Length / 2;
 
-            var vertices = new Vector3[vertCount];
-            var triangles = new int[vertCount];
-            var colors = new Color[vertCount];
+            var vertices = context.MeshData.Vertices;
+            var triangles = context.MeshData.Triangles;
+            var colors = context.MeshData.Colors;
+
+            var startIndex = context.MeshData.NextIndex;
             int index = 0;
-            foreach (var triangle in mesh.Triangles)
+            foreach (var triangle in context.Mesh.Triangles)
             {
-                var startIndex = index;
+                var backSideIndex = index;
                 for (int i = 0; i < 3; i++)
                 {
                     var p = triangle.GetVertex(2 - i);
-                    var v = new Vector3((float)p.X, height, (float)p.Y);
+                    var v = new Vector3((float) p.X, 0, (float) p.Y);
 
                     float eleNoise = p.Type == VertexType.FreeVertex
                         ? Noise.Perlin3D(v, 0.1f)
                         : 0f;
 
-                    var frontColor = GetColor(gradient, v);
-                    v = new Vector3(v.x, v.y + eleNoise, v.z);
+                    var frontColor = GetColor(context.FloorFrontGradient, v);
+                    var backColor = GetColor(context.FloorBackGradient, v);
+                    // iterate over floors and set up the corresponding vertex
+                    for (int k = 0; k < context.FloorCount; k++)
+                    {
+                        var floorOffsetIndex = startIndex + vertPerFloor*k;
+                        var currentIndex = floorOffsetIndex + index;
+                        v = new Vector3(v.x, context.Bottom + context.FloorHeight * k + eleNoise, v.z);
 
-                    vertices[index] = v;
-                    triangles[index] = index;
-                    colors[index] = frontColor;
+                        vertices[currentIndex] = v;
+                        triangles[currentIndex] = currentIndex;
+                        colors[currentIndex] = frontColor;
 
-                    vertices[halfVertCount + index] = v;
-                    triangles[halfVertCount + index] = halfVertCount + startIndex + 2 - i;
-                    colors[halfVertCount + index] = frontColor;
-
+                        vertices[halfVertCount + currentIndex] = v;
+                        triangles[halfVertCount + currentIndex] = halfVertCount + floorOffsetIndex + backSideIndex + 2 - i;
+                        colors[halfVertCount + currentIndex] = backColor;
+                    }
                     index++;
                 }
             }
-
-            var p0 = footprint[0];
-            var p1 = footprint[1];
-            var p2 = footprint[2];
-
-            var meshIndex = new PlaneMeshIndex(
-                new Vector3((float)p0.X, height, (float)p0.Y),
-                new Vector3((float)p1.X, height, (float)p1.Y),
-                new Vector3((float)p2.X, height, (float)p2.Y));
-
-            return new MeshData(meshIndex, vertices, triangles, colors);
+            context.MeshData.NextIndex += vertPerFloor * context.FloorCount * 2;
         }
-
-        protected MeshData ReuseMeshData(GradientWrapper gradient, List<Vector2d> footprint, 
-            MeshData meshData, float newHeight)
-        {
-            var p0 = footprint[0];
-            var p1 = footprint[1];
-            var p2 = footprint[2];
-
-            var meshIndex = new PlaneMeshIndex(
-                new Vector3((float)p0.X, newHeight, (float)p0.Y),
-                new Vector3((float)p1.X, newHeight, (float)p1.Y),
-                new Vector3((float)p2.X, newHeight, (float)p2.Y));
-
-            var meshDataCopy = new MeshData(meshIndex,
-                new Vector3[meshData.Vertices.Length],
-                new int[meshData.Triangles.Length],
-                new Color[meshData.Colors.Length]);
-
-            var srcVertices = meshData.Vertices;
-            var destVertices = meshDataCopy.Vertices;
-            for (int i = 0; i < destVertices.Length; i++)
-            {
-                var v = srcVertices[i];
-                var eleNoise = Noise.Perlin3D(v, 0.1f);
-                destVertices[i] = new Vector3(v.x, newHeight + eleNoise, v.z);
-            }
-
-            Array.Copy(meshData.Triangles, meshDataCopy.Triangles, meshData.Triangles.Length);
-            Array.Copy(meshData.Colors, meshDataCopy.Colors, meshData.Colors.Length);
-
-            return meshDataCopy;
-        }
-
 
         protected void AddTriangle(MeshData meshData, GradientWrapper gradient,
             Vector3 v0, Vector3 v1, Vector3 v2)
@@ -177,5 +144,30 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var value = (Noise.Perlin3D(point, .3f) + 1f) / 2f;
             return gradient.Evaluate(value);
         }
+
+        #region Nested classes
+
+        /// <summary> Context for roof builer. </summary>
+        public class RoofContext
+        {
+            // General mesh specific
+            public Core.Geometry.Triangle.Mesh Mesh;
+            public MeshData MeshData;
+            public MultiPlaneMeshIndex MeshIndex;
+
+            // Floor specific
+            public int FloorCount;
+            public float FloorHeight;
+            public float Bottom;
+            public GradientWrapper FloorFrontGradient;
+            public GradientWrapper FloorBackGradient;
+
+            // Consider last floor as specific
+            public bool IsLastRoof;
+            public GradientWrapper RoofFrontGradient;
+            public GradientWrapper RoofBackGradient;
+        }
+
+        #endregion
     }
 }
