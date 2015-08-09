@@ -27,10 +27,11 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 Footprint = new List<Vector2d>()
                 {
                     new Vector2d(0, 0),
-                    new Vector2d(0, 50),
-                    new Vector2d(50, 50),
-                    new Vector2d(50, 0),
+                    new Vector2d(0, 10),
+                    new Vector2d(10, 10),
+                    new Vector2d(10, 0),
                 },
+                Levels = 1,
                 Elevation = 0,
                 Height = 1,
                 RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
@@ -38,8 +39,8 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count);
-            Assert.AreEqual(192, result[0].Vertices.Length);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(192 + 252, result[0].Vertices.Length);
         }
 
         [Test]
@@ -132,14 +133,17 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             var roofBuilder = new DomeRoofBuilder();
             roofBuilder.ObjectPool = TestHelper.GetObjectPool();
             roofBuilder.ResourceProvider = new UnityResourceProvider();
+            var building = CreateTestBuilding();
+            building.Levels = 1;
+
             // ACT
-            var meshDataList = roofBuilder.Build(CreateTestBuilding());
+            var meshDataList = roofBuilder.Build(building);
 
             // ASSERT
             Assert.IsNotNull(meshDataList);
-            Assert.AreEqual(2, meshDataList.Count);
-            Assert.AreEqual(1920, meshDataList[0].Vertices.Length);
-            Assert.IsAssignableFrom(typeof(SphereMeshIndex), meshDataList[0].Index);
+            Assert.AreEqual(1, meshDataList.Count);
+            Assert.AreEqual(1920 + 432, meshDataList[0].Vertices.Length);
+            Assert.IsAssignableFrom(typeof(CompositeMeshIndex), meshDataList[0].Index);
         }
 
         [Test]
@@ -154,7 +158,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
 
             // ASSERT
             Assert.IsNotNull(meshDataList);
-            Assert.AreEqual(2, meshDataList.Count);
+            Assert.AreEqual(1, meshDataList.Count);
             Assert.AreEqual(96, meshDataList[0].Vertices.Length);
             Assert.IsAssignableFrom(typeof(MultiPlaneMeshIndex), meshDataList[0].Index);
         }
@@ -170,6 +174,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                     new Vector2d(20, 10),
                     new Vector2d(20, 0),
                 },
+                Levels = 0,
                 Elevation = 0,
                 Height = 10,
                 RoofHeight = 2,
