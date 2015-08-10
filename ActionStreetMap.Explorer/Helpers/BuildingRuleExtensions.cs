@@ -47,15 +47,31 @@ namespace ActionStreetMap.Explorer.Helpers
 
         #endregion
 
+        #region Floor
+
+        public static string GetFloorFrontColor(this Rule rule)
+        {
+            return rule.Evaluate<string>("floor-front-color");
+        }
+
+        public static string GetFloorBackColor(this Rule rule)
+        {
+            return rule.Evaluate<string>("floor-back-color");
+        }
+
+        public static int GetLevels(this Rule rule, int @default = 0)
+        {
+            return (int)rule.EvaluateDefault("levels", (float)@default);
+        }
+
+        #endregion
+
         public static float GetMinHeight(this Rule rule, float defaultValue = 0)
         {
             return rule.EvaluateDefault<float>("min_height", defaultValue);
         }
 
-        public static int GetLevels(this Rule rule, int @default = 0)
-        {
-            return (int) rule.EvaluateDefault("levels", (float) @default);
-        }
+       
 
         public static bool IsPart(this Rule rule)
         {

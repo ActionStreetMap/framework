@@ -70,6 +70,12 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Gets or sets roof height (see OSM roof types). </summary>
         public float RoofHeight { get; set; }
 
+        /// <summary> Gets or sets front floor color. </summary>
+        public string FloorFrontColor { get; set; }
+
+        /// <summary> Gets or sets back floor color. </summary>
+        public string FloorBackColor { get; set; }
+
         #endregion
 
         #region Characteristics

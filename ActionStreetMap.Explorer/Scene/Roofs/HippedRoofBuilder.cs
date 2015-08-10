@@ -25,7 +25,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         {
             var roofHeight = building.RoofHeight;
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
-            var gradient = ResourceProvider.GetGradient(building.RoofColor);
 
             var skeleton = SkeletonBuilder.Build(building.Footprint);
             var roofVertexCount = 0;
@@ -41,13 +40,14 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshIndex = new MultiPlaneMeshIndex(skeleton.Edges.Count + floorCount, vertexCount);
             MeshData meshData = new MeshData(meshIndex, vertexCount);
             try
-            {              
+            {
+                var roofGradient = ResourceProvider.GetGradient(building.RoofColor);
                 foreach (var edge in skeleton.Edges)
                 {
                     if (edge.Polygon.Count < 5)
-                        HandleSimpleCase(meshData, meshIndex, gradient, skeleton, edge, roofOffset, roofHeight);
+                        HandleSimpleCase(meshData, meshIndex, roofGradient, skeleton, edge, roofOffset, roofHeight);
                     else
-                        HandleComplexCase(meshData, meshIndex, gradient, skeleton, edge, roofOffset, roofHeight);
+                        HandleComplexCase(meshData, meshIndex, roofGradient, skeleton, edge, roofOffset, roofHeight);
                 }
 
                 // attach floors
@@ -60,8 +60,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     Bottom = building.Elevation + building.MinHeight,
                     FloorCount = floorCount,
                     FloorHeight = building.Height / floorCount,
-                    FloorFrontGradient = gradient,
-                    FloorBackGradient = gradient,
+                    FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                    FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
                     IsLastRoof = false
                 });

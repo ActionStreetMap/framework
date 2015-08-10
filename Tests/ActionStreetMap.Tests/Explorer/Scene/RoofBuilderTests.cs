@@ -34,13 +34,15 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 Levels = 1,
                 Elevation = 0,
                 Height = 1,
-                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
+                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)",
+                FloorFrontColor = "gradient(#f3e2c7, #c19e67 50%, #b68d4c 51%, #e9d4b3)",
+                FloorBackColor = "gradient(#feffff, #d2ebf9)",
             });
 
             // ASSERT
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(192 + 252, result[0].Vertices.Length);
+            Assert.AreEqual(192 + 228, result[0].Vertices.Length);
         }
 
         [Test]
@@ -142,7 +144,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(1, meshDataList.Count);
-            Assert.AreEqual(1920 + 432, meshDataList[0].Vertices.Length);
+            Assert.AreEqual(1920 + 324, meshDataList[0].Vertices.Length);
             Assert.IsAssignableFrom(typeof(CompositeMeshIndex), meshDataList[0].Index);
         }
 
@@ -178,7 +180,9 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 Elevation = 0,
                 Height = 10,
                 RoofHeight = 2,
-                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)"
+                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)",
+                FloorFrontColor = "gradient(#f3e2c7, #c19e67 50%, #b68d4c 51%, #e9d4b3)",
+                FloorBackColor = "gradient(#feffff, #d2ebf9)",
             };
         }
     }

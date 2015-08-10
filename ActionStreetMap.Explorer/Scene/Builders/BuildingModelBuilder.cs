@@ -91,6 +91,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 RoofColor = rule.GetRoofColor(),
                 RoofMaterial = rule.GetRoofMaterial(),
                 RoofHeight = rule.GetRoofHeight(),
+                FloorFrontColor = rule.GetFloorFrontColor(),
+                FloorBackColor = rule.GetFloorBackColor(),
                 Elevation = elevation,
                 Footprint = points,
             };

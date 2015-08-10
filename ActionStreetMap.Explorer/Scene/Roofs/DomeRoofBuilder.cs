@@ -34,8 +34,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             if (building.RoofHeight > 0)
                 offset = building.RoofHeight - (float)radius;
 
-            var gradient = ResourceProvider.GetGradient(building.RoofColor);
-
             var center3d = new Vector3((float)center.X,
                 building.Elevation + building.MinHeight + building.Height + offset,
                 (float)center.Y);
@@ -44,7 +42,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 .SetCenter(center3d)
                 .SetRadius((float)radius)
                 .SetRecursionLevel(2)
-                .SetGradient(gradient);
+                .SetGradient(ResourceProvider.GetGradient(building.RoofColor));
 
             var mesh = CreateMesh(building.Footprint);
 
@@ -71,8 +69,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 Bottom = building.Elevation + building.MinHeight,
                 FloorCount = floorCount,
                 FloorHeight = building.Height / floorCount,
-                FloorFrontGradient = gradient,
-                FloorBackGradient = gradient,
+                FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
                 IsLastRoof = false
             });

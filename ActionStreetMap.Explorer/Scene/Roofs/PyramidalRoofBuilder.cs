@@ -27,7 +27,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public override List<MeshData> Build(Building building)
         {
             var center = PolygonUtils.GetCentroid(building.Footprint);
-            var gradient = ResourceProvider.GetGradient(building.RoofColor);
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
             var footprint = building.Footprint;
             var roofHeight = building.RoofHeight;
@@ -42,6 +41,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshIndex = new MultiPlaneMeshIndex(length + floorCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
+            var roofGradient = ResourceProvider.GetGradient(building.RoofColor);
             for (int i = 0; i < length; i++)
             {
                 var nextIndex = i == (length - 1) ? 0 : i + 1;
@@ -56,16 +56,16 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
                 meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
 
-                var color = GetColor(gradient, v0);
+                var color = GetColor(roofGradient, v0);
                 meshData.AddTriangle(v0, v01, v02, color, color);
 
-                color = GetColor(gradient, v01);
+                color = GetColor(roofGradient, v01);
                 meshData.AddTriangle(v02, v01, v12, color, color);
 
-                color = GetColor(gradient, v02);
+                color = GetColor(roofGradient, v02);
                 meshData.AddTriangle(v2, v02, v12, color, color);
 
-                color = GetColor(gradient, v01);
+                color = GetColor(roofGradient, v01);
                 meshData.AddTriangle(v01, v1, v12, color, color);
             }
 
@@ -78,8 +78,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 Bottom = building.Elevation + building.MinHeight,
                 FloorCount = floorCount,
                 FloorHeight = building.Height / floorCount,
-                FloorFrontGradient = gradient,
-                FloorBackGradient = gradient,
+                FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
                 IsLastRoof = false,
             });

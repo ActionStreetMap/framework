@@ -27,7 +27,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         public override List<MeshData> Build(Building building)
         {
             var random = new System.Random((int)building.Id);
-            var gradient = ResourceProvider.GetGradient(building.RoofColor);
             var footprint = building.Footprint;
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
             var roofHeight = roofOffset + building.RoofHeight;
@@ -65,6 +64,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshIndex = new MultiPlaneMeshIndex(footprint.Count + floorCount + 1, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
+            var roofGradient = ResourceProvider.GetGradient(building.RoofColor);
             int index = FindStartIndex(topVertices[0], footprint);
             for (int i = 0; i < topVertices.Count; i++)
             {
@@ -79,8 +79,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var v3 = new Vector3((float)top.X, roofHeight, (float)top.Y);
 
                 meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
-                AddTriangle(meshData, gradient, v0, v2, v3);
-                AddTriangle(meshData, gradient, v2, v0, v1);
+                AddTriangle(meshData, roofGradient, v0, v2, v3);
+                AddTriangle(meshData, roofGradient, v2, v0, v1);
             }
             ObjectPool.StoreList(topVertices);
 
@@ -94,17 +94,20 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 Bottom = building.Elevation + building.MinHeight,
                 FloorCount = floorCount,
                 FloorHeight = building.Height / floorCount,
-                FloorFrontGradient = gradient,
-                FloorBackGradient = gradient,
+                FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
                 IsLastRoof = false,
             };
             AttachFloors(context);
 
-            // Attach top
+            // Attach top reusing roof context object
             context.Mesh = topMesh;
             context.Bottom = roofHeight;
             context.FloorCount = 1;
+            context.IsLastRoof = true;
+            context.RoofFrontGradient = roofGradient;
+            context.RoofBackGradient = roofGradient;
             AttachFloors(context);
 
             return new List<MeshData>(1) { meshData };

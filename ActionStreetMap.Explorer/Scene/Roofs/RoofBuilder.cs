@@ -33,6 +33,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         List<MeshData> Build(Building building);
     }
 
+    /// <summary> Provides useful methods for different types of roof builders. </summary>
     internal abstract class RoofBuilder : IRoofBuilder
     {
         /// <inheritdoc />
@@ -67,11 +68,11 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         ConformingDelaunay = false,
                         SegmentSplitting = 0
                     },
-                    new QualityOptions { MaximumArea = 9 });
+                    new QualityOptions { MaximumArea = 12 });
             }
         }
 
-        /// <summary> Builds floor </summary>
+        /// <summary> Builds floor. </summary>
         protected void AttachFloors(RoofContext context)
         {
             var triCount = context.Mesh.Triangles.Count;
@@ -82,6 +83,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var triangles = context.MeshData.Triangles;
             var colors = context.MeshData.Colors;
 
+            int lastFloorIndex = context.IsLastRoof ? context.FloorCount - 1 : -1;
             var startIndex = context.MeshData.NextIndex;
             int index = 0;
             foreach (var triangle in context.Mesh.Triangles)
@@ -92,7 +94,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     var p = triangle.GetVertex(2 - i);
                     var v = new Vector3((float) p.X, 0, (float) p.Y);
 
-                    var eleNoise = p.Type == VertexType.FreeVertex ? Noise.Perlin3D(v, 0.1f) : 0f;
+                    float eleNoise = p.Type == VertexType.FreeVertex ? Noise.Perlin3D(v, 0.1f) : 0f;
 
                     var frontColor = GetColor(context.FloorFrontGradient, v);
                     var backColor = GetColor(context.FloorBackGradient, v);
@@ -103,12 +105,19 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         var currentIndex = floorOffsetIndex + index;
                         v = new Vector3(v.x, context.Bottom + context.FloorHeight * k + eleNoise, v.z);
 
+                        if (k == lastFloorIndex)
+                        {
+                            frontColor = GetColor(context.RoofFrontGradient, v);
+                            backColor = GetColor(context.RoofBackGradient, v);
+                        }
+
                         vertices[currentIndex] = v;
                         triangles[currentIndex] = currentIndex;
                         colors[currentIndex] = frontColor;
 
                         vertices[halfVertCount + currentIndex] = v;
-                        triangles[halfVertCount + currentIndex] = halfVertCount + floorOffsetIndex + backSideIndex + 2 - i;
+                        triangles[halfVertCount + currentIndex] = halfVertCount + floorOffsetIndex
+                            + backSideIndex + 2 - i;
                         colors[halfVertCount + currentIndex] = backColor;
                     }
                     index++;
@@ -116,9 +125,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             }
 
             // setup mesh index
-            for (int i = 0; i < context.FloorCount; i++)
+            for (int i=0; i < context.FloorCount; i++)
             {
-                var triIndex = startIndex + vertPerFloor * i;
+                var triIndex = startIndex + vertPerFloor*i;
                 var v0 = vertices[triIndex];
                 var v1 = vertices[triIndex + 1];
                 var v2 = vertices[triIndex + 2];

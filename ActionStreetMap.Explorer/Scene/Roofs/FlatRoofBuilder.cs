@@ -23,8 +23,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <inheritdoc />
         public override List<MeshData> Build(Building building)
         {
-            var gradient = ResourceProvider.GetGradient(building.RoofColor);
-
             var mesh = CreateMesh(building.Footprint);
 
             // NOTE the last floor plane will be flat roof
@@ -43,12 +41,12 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 Bottom = building.Elevation + building.MinHeight,
                 FloorCount = floorCount,
                 FloorHeight = building.Height / (floorCount - 1),
-                FloorFrontGradient = gradient,
-                FloorBackGradient = gradient,
+                FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
                 IsLastRoof = true,
-                RoofFrontGradient = gradient,
-                RoofBackGradient = gradient,
+                RoofFrontGradient = ResourceProvider.GetGradient(building.RoofColor),
+                RoofBackGradient = ResourceProvider.GetGradient(building.RoofColor),
             });
                 
             return new List<MeshData>(1) { meshData };
