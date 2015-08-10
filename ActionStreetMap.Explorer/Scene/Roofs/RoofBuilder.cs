@@ -92,9 +92,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     var p = triangle.GetVertex(2 - i);
                     var v = new Vector3((float) p.X, 0, (float) p.Y);
 
-                    float eleNoise = p.Type == VertexType.FreeVertex
-                        ? Noise.Perlin3D(v, 0.1f)
-                        : 0f;
+                    var eleNoise = p.Type == VertexType.FreeVertex ? Noise.Perlin3D(v, 0.1f) : 0f;
 
                     var frontColor = GetColor(context.FloorFrontGradient, v);
                     var backColor = GetColor(context.FloorBackGradient, v);
@@ -116,6 +114,17 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     index++;
                 }
             }
+
+            // setup mesh index
+            for (int i = 0; i < context.FloorCount; i++)
+            {
+                var triIndex = startIndex + vertPerFloor * i;
+                var v0 = vertices[triIndex];
+                var v1 = vertices[triIndex + 1];
+                var v2 = vertices[triIndex + 2];
+                context.MeshIndex.AddPlane(v0, v1, v2, triIndex);
+            }
+
             context.MeshData.NextIndex += vertPerFloor * context.FloorCount * 2;
         }
 

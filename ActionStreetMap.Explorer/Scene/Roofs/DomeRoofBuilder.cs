@@ -54,7 +54,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
             var vertexCount = sphereGen.CalculateVertexCount() + floorVertexCount;
 
-            var meshIndex = new CompositeMeshIndex(floorCount + 1)
+            var meshIndex = new CompositeMeshIndex(2)
                 .AddMeshIndex(new SphereMeshIndex((float) radius, center3d))
                 .AddMeshIndex(floorMeshIndex);
             var meshData = new MeshData(meshIndex, vertexCount);
