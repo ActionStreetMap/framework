@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
@@ -11,6 +12,7 @@ using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
@@ -36,6 +38,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
     /// <summary> Provides useful methods for different types of roof builders. </summary>
     internal abstract class RoofBuilder : IRoofBuilder
     {
+        protected const string LogCategory = "building.roof";
+
         /// <inheritdoc />
         public abstract string Name { get; }
 
@@ -53,6 +57,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
+
+        [Dependency]
+        public ITrace Trace { get; set; }
 
         protected Core.Geometry.Triangle.Mesh CreateMesh(List<Vector2d> footprint)
         {

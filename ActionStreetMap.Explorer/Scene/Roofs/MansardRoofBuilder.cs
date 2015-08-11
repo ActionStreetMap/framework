@@ -40,7 +40,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
             if (result.Count != 1 || result[0].Count != footprint.Count)
             {
-                Trace.Warn("building.roof", Strings.RoofGenFailed, Name, building.Id.ToString());
+                Trace.Warn(LogCategory, Strings.RoofGenFailed, Name, building.Id.ToString());
                 return base.Build(building);
             }
 

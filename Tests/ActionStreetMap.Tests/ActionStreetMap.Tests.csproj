@@ -60,6 +60,7 @@
     <Compile Include="Core\Geometry\Utils\Vector2dUtilsTests.cs" />
     <Compile Include="Core\Scene\InDoorGeneratorTests.cs" />
     <Compile Include="Explorer\Scene\BarrierModelBuilderTests.cs" />
+    <Compile Include="Explorer\Scene\FlatRoofBuilderTests.cs" />
     <Compile Include="Explorer\Scene\Generators\TreeGeneratorTests.cs" />
     <Compile Include="Explorer\Scene\Indices\MultiPlaneMeshIndexTests.cs" />
     <Compile Include="Explorer\Scene\Indices\SphereMeshIndexTests.cs" />
