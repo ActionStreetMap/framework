@@ -35,8 +35,17 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var floorVertexCount = mesh.Triangles.Count * 3 * 2 * floorCount;
 
             var vertexCount = roofVertexCount + floorVertexCount;
+            var planeCount = skeleton.Edges.Count + floorCount;
 
-            var meshIndex = new MultiPlaneMeshIndex(skeleton.Edges.Count + floorCount, vertexCount);
+            bool limitIsReached = false;
+            if (vertexCount * 2 > Consts.MaxMeshSize)
+            {
+                vertexCount = roofVertexCount;
+                planeCount = building.Footprint.Count;
+                limitIsReached = true;
+            }
+
+            var meshIndex = new MultiPlaneMeshIndex(planeCount + floorCount, vertexCount);
             MeshData meshData = new MeshData(meshIndex, vertexCount);
             try
             {
@@ -49,21 +58,28 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         HandleComplexCase(meshData, meshIndex, roofGradient, skeleton, edge, roofOffset, roofHeight);
                 }
 
-                // attach floors
-                AttachFloors(new RoofContext()
+                if (!limitIsReached)
                 {
-                    Mesh = mesh,
-                    MeshData = meshData,
-                    MeshIndex = meshIndex,
+                    // attach floors
+                    AttachFloors(new RoofContext()
+                    {
+                        Mesh = mesh,
+                        MeshData = meshData,
+                        MeshIndex = meshIndex,
 
-                    Bottom = building.Elevation + building.MinHeight,
-                    FloorCount = floorCount,
-                    FloorHeight = building.Height / floorCount,
-                    FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                    FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                        Bottom = building.Elevation + building.MinHeight,
+                        FloorCount = floorCount,
+                        FloorHeight = building.Height/floorCount,
+                        FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                        FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
-                    IsLastRoof = false
-                });
+                        IsLastRoof = false
+                    });
+                    return new List<MeshData>(1) { meshData };
+                }
+                var meshDataList = BuildFloors(building, building.Levels, false);
+                meshDataList.Add(meshData);
+                return meshDataList;
             }
             catch
             {
@@ -71,8 +87,6 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 Trace.Warn("building.roof", Strings.RoofGenFailed, Name, building.Id.ToString());
                 return base.Build(building);
             }
-
-            return new List<MeshData>(1) { meshData };
         }
 
         private void HandleSimpleCase(MeshData meshData, MultiPlaneMeshIndex meshIndex, GradientWrapper gradient,

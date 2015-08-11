@@ -26,7 +26,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <inheritdoc />
         public override List<MeshData> Build(Building building)
         {
-            var random = new System.Random((int)building.Id);
+            var random = new System.Random((int) building.Id);
             var footprint = building.Footprint;
             var roofOffset = building.Elevation + building.MinHeight + building.Height;
             var roofHeight = roofOffset + building.RoofHeight;
@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 JoinType.jtMiter, EndType.etClosedPolygon);
 
             var result = new List<List<IntPoint>>();
-            offset.Execute(ref result, random.NextFloat(1, 3) * -Scale);
+            offset.Execute(ref result, random.NextFloat(1, 3)*-Scale);
 
             if (result.Count != 1 || result[0].Count != footprint.Count)
             {
@@ -46,9 +46,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
             var topVertices = ObjectPool.NewList<Vector2d>(footprint.Count);
             double scale = Scale;
-            
+
             foreach (var intPoint in result[0])
-                topVertices.Add(new Vector2d(intPoint.X / scale, intPoint.Y / scale));
+                topVertices.Add(new Vector2d(intPoint.X/scale, intPoint.Y/scale));
             // NOTE need reverse vertices
             topVertices.Reverse();
 
@@ -56,12 +56,22 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var topMesh = CreateMesh(topVertices);
             var floorMesh = CreateMesh(footprint);
 
-            var vertexCount =
-                topMesh.Triangles.Count*3*2 +
-                floorMesh.Triangles.Count*3*2*floorCount +
-                footprint.Count*2*12;
+            var roofVertexCount = topMesh.Triangles.Count*3*2 + footprint.Count*2*12;
+            var floorVertexCount = floorMesh.Triangles.Count*3*2*floorCount;
 
-            var meshIndex = new MultiPlaneMeshIndex(footprint.Count + floorCount + 1, vertexCount);
+            var vertexCount = roofVertexCount + floorVertexCount;
+
+            var planeCount = footprint.Count + floorCount + 1;
+
+            bool limitIsReached = false;
+            if (vertexCount*2 > Consts.MaxMeshSize)
+            {
+                vertexCount = roofVertexCount;
+                planeCount = building.Footprint.Count + 1;
+                limitIsReached = true;
+            }
+
+            var meshIndex = new MultiPlaneMeshIndex(planeCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
             var roofGradient = ResourceProvider.GetGradient(building.RoofColor);
@@ -69,14 +79,14 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             for (int i = 0; i < topVertices.Count; i++)
             {
                 var top = topVertices[i];
-                var bottom = footprint[(index + i) % footprint.Count];
+                var bottom = footprint[(index + i)%footprint.Count];
                 var nextTop = topVertices[(i + 1)%topVertices.Count];
-                var nextBottom = footprint[(index + i + 1) % footprint.Count];
+                var nextBottom = footprint[(index + i + 1)%footprint.Count];
 
-                var v0 = new Vector3((float)bottom.X, roofOffset, (float)bottom.Y);
-                var v1 = new Vector3((float)nextBottom.X, roofOffset, (float)nextBottom.Y);
-                var v2 = new Vector3((float)nextTop.X, roofHeight, (float)nextTop.Y);
-                var v3 = new Vector3((float)top.X, roofHeight, (float)top.Y);
+                var v0 = new Vector3((float) bottom.X, roofOffset, (float) bottom.Y);
+                var v1 = new Vector3((float) nextBottom.X, roofOffset, (float) nextBottom.Y);
+                var v2 = new Vector3((float) nextTop.X, roofHeight, (float) nextTop.Y);
+                var v3 = new Vector3((float) top.X, roofHeight, (float) top.Y);
 
                 meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
                 AddTriangle(meshData, roofGradient, v0, v2, v3);
@@ -84,33 +94,39 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             }
             ObjectPool.StoreList(topVertices);
 
-            // Attach floors
+            // Attach top reusing roof context object
             var context = new RoofContext()
             {
-                Mesh = floorMesh,
+                Mesh = topMesh,
                 MeshData = meshData,
                 MeshIndex = meshIndex,
 
-                Bottom = building.Elevation + building.MinHeight,
-                FloorCount = floorCount,
-                FloorHeight = building.Height / floorCount,
+                Bottom = roofHeight,
+                FloorCount = 1,
+                FloorHeight = building.Height/floorCount,
                 FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
                 FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
-                IsLastRoof = false,
+                IsLastRoof = true,
+                RoofFrontGradient = roofGradient,
+                RoofBackGradient = roofGradient
             };
             AttachFloors(context);
 
-            // Attach top reusing roof context object
-            context.Mesh = topMesh;
-            context.Bottom = roofHeight;
-            context.FloorCount = 1;
-            context.IsLastRoof = true;
-            context.RoofFrontGradient = roofGradient;
-            context.RoofBackGradient = roofGradient;
-            AttachFloors(context);
+            if (!limitIsReached)
+            {
+                context.Mesh = floorMesh;
+                context.MeshData = meshData;
+                context.Bottom = building.Elevation + building.MinHeight;
+                context.FloorCount = floorCount;
+                context.IsLastRoof = false;
+                AttachFloors(context);
+                return new List<MeshData>(1) {meshData};
+            }
 
-            return new List<MeshData>(1) { meshData };
+            var meshDataList = BuildFloors(building, building.Levels, false);
+            meshDataList.Add(meshData);
+            return meshDataList;
         }
 
         private int FindStartIndex(Vector2d firstPoint, List<Vector2d> footprint)

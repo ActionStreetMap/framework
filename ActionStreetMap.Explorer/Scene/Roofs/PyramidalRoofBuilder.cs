@@ -32,13 +32,23 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var roofHeight = building.RoofHeight;
             var floorCount = building.Levels;
 
+            var length = footprint.Count;
             var mesh = CreateMesh(footprint);
+            var roofVertexCount = 12*length;
             var floorVertexCount = mesh.Triangles.Count * 3 * 2 * floorCount;
 
-            var length = footprint.Count;
-            var vertexCount = 12 * length + floorVertexCount;
+            var vertexCount = roofVertexCount + floorVertexCount;
+            var planeCount = building.Footprint.Count + floorCount;
 
-            var meshIndex = new MultiPlaneMeshIndex(length + floorCount, vertexCount);
+            bool limitIsReached = false;
+            if (vertexCount * 2 > Consts.MaxMeshSize)
+            {
+                vertexCount = roofVertexCount;
+                planeCount = building.Footprint.Count;
+                limitIsReached = true;
+            }
+
+            var meshIndex = new MultiPlaneMeshIndex(planeCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
             var roofGradient = ResourceProvider.GetGradient(building.RoofColor);
@@ -69,22 +79,29 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 meshData.AddTriangle(v01, v1, v12, color, color);
             }
 
-            AttachFloors(new RoofContext()
+            if (!limitIsReached)
             {
-                Mesh = mesh,
-                MeshData = meshData,
-                MeshIndex = meshIndex,
+                AttachFloors(new RoofContext()
+                {
+                    Mesh = mesh,
+                    MeshData = meshData,
+                    MeshIndex = meshIndex,
 
-                Bottom = building.Elevation + building.MinHeight,
-                FloorCount = floorCount,
-                FloorHeight = building.Height / floorCount,
-                FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                    Bottom = building.Elevation + building.MinHeight,
+                    FloorCount = floorCount,
+                    FloorHeight = building.Height/floorCount,
+                    FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                    FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
-                IsLastRoof = false,
-            });
+                    IsLastRoof = false,
+                });
 
-            return new List<MeshData>(1) { meshData };
+                return new List<MeshData>(1) {meshData};
+            }
+
+            var meshDataList = BuildFloors(building, building.Levels, false);
+            meshDataList.Add(meshData);
+            return meshDataList;
         }
     }
 }

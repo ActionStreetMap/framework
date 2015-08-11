@@ -60,33 +60,50 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             // prepare mesh and its index
             var mesh = CreateMesh(building.Footprint);
             var floorCount = building.Levels;
-            var floorVertexCount = mesh.Triangles.Count * 3 * 2 * floorCount;
+            var floorVertexCount = mesh.Triangles.Count*3*2*floorCount;
+            var roofVertexCount = (building.Footprint.Count - 1)*2*12;
 
-            var vertexCount = (building.Footprint.Count - 1) * 2 * 12 + floorVertexCount;
-            var meshIndex = new MultiPlaneMeshIndex(building.Footprint.Count + floorCount, vertexCount);
+            var vertexCount = roofVertexCount + floorVertexCount;
+            var planeCount = building.Footprint.Count + floorCount;
+
+            bool limitIsReached = false;
+            if (vertexCount * 2 > Consts.MaxMeshSize)
+            {
+                vertexCount = roofVertexCount;
+                planeCount = building.Footprint.Count;
+                limitIsReached = true;
+            }
+
+            var meshIndex = new MultiPlaneMeshIndex(planeCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
             // 6. process all segments and create vertices
-            FillMeshData(meshData, ResourceProvider.GetGradient(building.RoofColor), roofOffset, 
+            FillMeshData(meshData, ResourceProvider.GetGradient(building.RoofColor), roofOffset,
                 roofHeight, building.Footprint, first, firstIndex, second, secondIndex);
 
-            // attach floors
-            AttachFloors(new RoofContext()
+            if (!limitIsReached)
             {
-                Mesh = mesh,
-                MeshData = meshData,
-                MeshIndex = meshIndex,
+                AttachFloors(new RoofContext()
+                {
+                    Mesh = mesh,
+                    MeshData = meshData,
+                    MeshIndex = meshIndex,
 
-                Bottom = building.Elevation + building.MinHeight,
-                FloorCount = floorCount,
-                FloorHeight = building.Height / floorCount,
-                FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                    Bottom = building.Elevation + building.MinHeight,
+                    FloorCount = floorCount,
+                    FloorHeight = building.Height/floorCount,
+                    FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
+                    FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
 
-                IsLastRoof = false
-            });
+                    IsLastRoof = false
+                });
 
-            return new List<MeshData>(1) { meshData };
+                return new List<MeshData>(1) {meshData};
+            }
+
+            var meshDataList = BuildFloors(building, building.Levels, false);
+            meshDataList.Add(meshData);
+            return meshDataList;
         }
 
         private void GetLongestSegment(List<Vector2d> footprint, out float maxLength,
