@@ -20,7 +20,7 @@
 
         public static string MapIndexBuildOutputDirectoryMismatch = "Output directory is different than expected map path.";
 
-        public static string MeshHasMaxVertexLimit = "Result mesh {0} has {1} vertices and will be split.";
+        public static string MeshHasMaxVertexLimit = "{0} mesh has {1} vertices and will be split.";
 
         #region Commands
 

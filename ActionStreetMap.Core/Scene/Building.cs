@@ -86,7 +86,7 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Describes what the building is used for, for example: school, theatre, bank. </summary>
         public string Amenity { get; set; }
 
-        /// <summary>  Ruins of buildings. </summary>
+        /// <summary> Ruins of buildings. </summary>
         public string Ruins { get; set; }
 
         /// <summary> For a building which has been abandoned by its owner and is no longer maintained. </summary>

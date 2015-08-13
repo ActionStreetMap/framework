@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Scene.Indices;
 
 namespace ActionStreetMap.Explorer.Scene.Roofs
 {
