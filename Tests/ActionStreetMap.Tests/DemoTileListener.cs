@@ -41,7 +41,8 @@ namespace ActionStreetMap.Tests
         public void OnTileBuildFinished(Tile tile)
         {
             _stopwatch.Stop();
-            Console.WriteLine("Tile build end: {0}x{1} size is loaded in {2} ms", tile.Width, tile.Height, _stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("Tile build end: {0}x{1} size is loaded in {2} ms", 
+                tile.Rectangle.Width, tile.Rectangle.Height, _stopwatch.ElapsedMilliseconds);
             _logger.Report("DemoTileListener.OnTileBuildFinished: before GC");
             GC.Collect();
             _logger.Report("DemoTileListener.OnTileBuildFinished: after GC");

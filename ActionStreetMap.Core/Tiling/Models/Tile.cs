@@ -16,12 +16,6 @@ namespace ActionStreetMap.Core.Tiling.Models
         /// <summary> Render mode. </summary>
         public RenderMode RenderMode { get; private set; }
 
-        /// <summary> Gets width in meters. </summary>
-        public double Width { get; private set; }
-
-        /// <summary> Gets height in meters. </summary>
-        public double Height { get; private set; }
-
         /// <summary> Gets or sets tile canvas. </summary>
         public Canvas Canvas { get; private set; }
 
@@ -54,9 +48,6 @@ namespace ActionStreetMap.Core.Tiling.Models
             MapCenter = mapCenter;
             RenderMode = renderMode;
             Canvas = canvas;
-
-            Width = width;
-            Height = height;
 
             var geoCenter = GeoProjection.ToGeoCoordinate(relativeNullPoint, mapCenter);
             BoundingBox = BoundingBox.Create(geoCenter, width, height);

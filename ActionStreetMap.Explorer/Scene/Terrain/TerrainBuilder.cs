@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle;
@@ -84,13 +83,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             // NOTE detect grid parameters for scene mode. For overview use 1x1 grid
             var cellRowCount = renderMode == RenderMode.Scene ?
-                (int) Math.Ceiling(tile.Height/_maxCellSize) : 1;
+                (int)Math.Ceiling(tile.Rectangle.Height / _maxCellSize) : 1;
 
             var cellColumnCount = renderMode == RenderMode.Scene ?
-                (int) Math.Ceiling(tile.Width/_maxCellSize) : 1;
+                (int)Math.Ceiling(tile.Rectangle.Width / _maxCellSize) : 1;
 
-            var cellHeight = tile.Height/cellRowCount;
-            var cellWidth = tile.Width/cellColumnCount;
+            var cellHeight = tile.Rectangle.Height / cellRowCount;
+            var cellWidth = tile.Rectangle.Width / cellColumnCount;
 
             Trace.Debug(LogTag, "Building mesh canvas..");
             var meshCanvas = new MeshCanvasBuilder(_objectPool)
