@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry.Triangle;
-using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;

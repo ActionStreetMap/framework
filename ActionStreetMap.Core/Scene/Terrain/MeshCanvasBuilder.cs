@@ -17,7 +17,6 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private readonly ClipperOffset _offset;
 
         private Tile _tile;
-        private Rectangle2d _tileRect;
         private float _scale;
 
         private MeshCanvas.Region _background;
@@ -42,12 +41,6 @@ namespace ActionStreetMap.Core.Scene.Terrain
         public MeshCanvasBuilder SetTile(Tile tile)
         {
             _tile = tile;
-            var bottomLeft = tile.Rectangle.BottomLeft;
-            _tileRect = new Rectangle2d(
-                bottomLeft.X,
-                bottomLeft.Y,
-                tile.Width,
-                tile.Height);
             return this;
         }
 
@@ -65,7 +58,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return new MeshCanvas
             {
                 RenderMode = mode,
-                Rect = _tileRect,
+                Rect = _tile.Rectangle,
                 Background = _background,
                 Water = _water,
                 CarRoads = _carRoads,
@@ -86,7 +79,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         private Paths ClipByTile(Paths subjects)
         {
-            return ClipByRectangle(_tileRect, subjects);
+            return ClipByRectangle(_tile.Rectangle, subjects);
         }
 
         private Paths ClipByRectangle(Rectangle2d rect, Paths subjects)
