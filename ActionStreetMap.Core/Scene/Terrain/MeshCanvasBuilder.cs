@@ -110,7 +110,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private void BuildBackground()
         {
             // TODO convert and reuse rect
-            var rect = _tileRect;
+            var rect = _tile.Rectangle;
             _clipper.AddPath(new Path
             {
                 new IntPoint(rect.Left*_scale, rect.Bottom*_scale),
