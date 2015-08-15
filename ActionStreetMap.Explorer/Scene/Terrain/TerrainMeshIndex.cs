@@ -140,54 +140,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 scannedTriangles++;
             }
 
-            // search and adjust vertices on triangle sides
-            for (int j = 0; j < indecies.Count; j++)
-            {
-                int outerIndex = indecies[j] * 3;
-
-                for (var i = 0; i < indecies.Count; i++)
-                {
-                    if (i == j) continue;
-                    int innerIndex = indecies[i] * 3;
-                    for (int k = 0; k < 3; k++)
-                    {
-                        int vertIndex = innerIndex + k;
-                        if (ModifyVertextOnSegment(query.Vertices, vertIndex, outerIndex + 0, outerIndex + 1) ||
-                            ModifyVertextOnSegment(query.Vertices, vertIndex, outerIndex + 1, outerIndex + 2) ||
-                            ModifyVertextOnSegment(query.Vertices, vertIndex, outerIndex + 2, outerIndex + 0))
-                            modified++;
-                    }
-                }
-            }
-
             return new MeshQuery.Result(query.Vertices)
             {
                 ModifiedVertices = modified,
                 ScannedTriangles = scannedTriangles
             };
-        }
-
-        private bool ModifyVertextOnSegment(Vector3[] vertices, int vIndex, int aIndex, int bIndex)
-        {
-            var p = vertices[vIndex];
-            var a = vertices[aIndex];
-            var b = vertices[bIndex];
-
-            var vert2D = new Vector2(p.x, p.z);
-            var a2D = new Vector2(a.x, a.z);
-            var b2D = new Vector2(b.x, b.z);
-
-            // check whether vertex is on segment
-            if (vert2D == a2D || vert2D == b2D || (Vector2.Distance(vert2D, a2D) +  
-                Vector2.Distance(vert2D, b2D) - Vector2.Distance(a2D, b2D)) > 0.01f) 
-                return false;     
-
-            var ray = b - a; // find direction from p1 to p2
-            var rel = p - a; // find position relative to p1
-            var n = ray.normalized; // create ray normal
-            var l = Vector3.Dot(n, rel); // calculate dot
-            vertices[vIndex] = a + n * l;
-            return true;
         }
 
         #endregion

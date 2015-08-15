@@ -8,15 +8,13 @@ namespace ActionStreetMap.Tests.Core.Geometry.Triangle
     [TestFixture]
     class LineGridSplitterTests
     {
-        private int _cellSize = 1;
-
         [Test]
         public void CanSplitHorizontal()
         {
             // ARRANGE
             var start = new Point(0, 0);
             var end = new Point(10, 0);
-            var splitter = new LineGridSplitter(_cellSize);
+            var splitter = new LineGridSplitter();
             var result = new List<Point>();
 
             // ACT
@@ -33,7 +31,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.Triangle
             // ARRANGE
             var start = new Point(0, 0);
             var end = new Point(0, 10);
-            var splitter = new LineGridSplitter(_cellSize);
+            var splitter = new LineGridSplitter();
             var result = new List<Point>();
 
             // ACT
@@ -50,7 +48,7 @@ namespace ActionStreetMap.Tests.Core.Geometry.Triangle
             // ARRANGE
             var start = new Point(0, 0);
             var end = new Point(-10, 10);
-            var splitter = new LineGridSplitter(_cellSize);
+            var splitter = new LineGridSplitter();
             var result = new List<Point>();
 
             // ACT

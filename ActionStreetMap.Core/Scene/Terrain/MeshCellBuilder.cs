@@ -23,8 +23,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
         internal const float Scale = 1000f;
         internal const float DoubleScale = Scale*Scale;
 
-        private int _gridCellSize = 1;
         private float _maximumArea = 6;
+
+        private LineGridSplitter _lineGridSplitter = new LineGridSplitter();
 
         /// <summary> Creates instance of <see cref="MeshCellBuilder"/>. </summary>
         /// <param name="objectPool"></param>
@@ -128,14 +129,13 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
             // split path for scene mode
             var lastItemIndex =  path.Count - 1;
-            var lineGridSplitter = new LineGridSplitter(_gridCellSize);
-            
+           
             for (int i = 0; i <= lastItemIndex; i++)
             {
                 var start = path[i];
                 var end = path[i == lastItemIndex ? 0 : i + 1];
 
-                lineGridSplitter.Split(
+                _lineGridSplitter.Split(
                     new Point(Math.Round(start.X / Scale, MathUtils.RoundDigitCount),
                               Math.Round(start.Y / Scale, MathUtils.RoundDigitCount)),
                     new Point(Math.Round(end.X / Scale, MathUtils.RoundDigitCount),
@@ -196,7 +196,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     new ConstraintOptions 
                     {
                         ConformingDelaunay = false, 
-                        SegmentSplitting = 0
+                        SegmentSplitting = 1
                     },
                     new QualityOptions { MaximumArea = _maximumArea });
         }

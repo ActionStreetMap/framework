@@ -8,25 +8,15 @@ using ActionStreetMap.Infrastructure.Utilities;
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
     /// <summary> Splits line to segments according to axis alignet grid. </summary>
-    internal struct LineGridSplitter
+    internal class LineGridSplitter
     {
-        //private readonly float _minDistance;
-        private readonly int _cellSize;
-        private readonly float _minDistance;
+        private const int CellSize = 1;
 
         private static readonly Comparison<Point> SortX = (a, b) => a.X.CompareTo(b.X);
         private static readonly Comparison<Point> ReverseSortX = (a, b) => -1 * a.X.CompareTo(b.X);
 
         private static readonly Comparison<Point> SortY = (a, b) => a.Y.CompareTo(b.Y);
         private static readonly Comparison<Point> ReverseSortY = (a, b) => -1 * a.Y.CompareTo(b.Y);
-
-        /// <summary> Creates instance of <see cref="LineGridSplitter"/>. </summary>
-        /// <param name="cellSize">Grid cell size.</param>
-        public LineGridSplitter(int cellSize)
-        {
-            _cellSize = cellSize;
-            _minDistance = cellSize/3f;
-        }
 
         /// <summary> Splits line to segments. </summary>
         public void Split(Point s, Point e, IObjectPool objectPool, List<Point> result)
@@ -37,7 +27,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
             var points = objectPool.NewList<Point>();
             points.Add(s);
 
-            double slope = (e.Y - s.Y) * 1.0 / (e.X - s.X);
+            double slope = (e.Y - s.Y) / (e.X - s.X);
 
             if (double.IsInfinity(slope) || Math.Abs(slope) < double.Epsilon)
                 ZeroSlope(s, e, points);
@@ -45,15 +35,17 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 NormalCase(start, end, slope, points);
 
             MergeResults(points, result);
+
             objectPool.StoreList(points);
         }
 
         private void NormalCase(Point start, Point end, double slope, List<Point> points)
         {
             var isLeftRight = start.X < end.X;
-            var isBottomTop = start.Y < end.Y;
 
             double inverseSlope = 1 / slope;
+
+            var b = start.Y - slope * start.X;
 
             if (!isLeftRight)
             {
@@ -62,10 +54,12 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 end = tmp;
             }
 
-            var xStart = (int)Math.Ceiling(start.X / _cellSize) * _cellSize;
-            var xEnd = (int)Math.Floor(end.X / _cellSize) * _cellSize;
-            for (int x = xStart; x <= xEnd; x += _cellSize)
-                points.Add(new Point(x, Math.Round((slope * (x - start.X) + start.Y), MathUtils.RoundDigitCount)));
+            var xStart = (int)Math.Ceiling(start.X);
+            var xEnd = (int)Math.Floor(end.X);
+            for (int x = xStart; x <= xEnd; x += CellSize)
+                points.Add(new Point(x, Math.Round(slope * x + b, MathUtils.RoundDigitCount)));
+
+            var isBottomTop = start.Y < end.Y;
 
             if (!isBottomTop)
             {
@@ -74,10 +68,10 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 end = tmp;
             }
 
-            var yStart = (int)Math.Ceiling(start.Y / _cellSize) * _cellSize;
-            var yEnd = (int)Math.Floor(end.Y / _cellSize) * _cellSize;
-            for (int y = yStart; y <= yEnd; y += _cellSize)
-                points.Add(new Point(Math.Round((inverseSlope * (y - start.Y) + start.X), MathUtils.RoundDigitCount), y));
+            var yStart = (int)Math.Ceiling(start.Y);
+            var yEnd = (int)Math.Floor(end.Y);
+            for (int y = yStart; y <= yEnd; y += CellSize)
+                points.Add(new Point(Math.Round((y - b) * inverseSlope, MathUtils.RoundDigitCount), y));
 
             points.Sort(isLeftRight ? SortX : ReverseSortX);
         }
@@ -94,9 +88,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     end = tmp;
                 }
 
-                var yStart = (int)Math.Ceiling(start.Y / _cellSize) * _cellSize;
-                var yEnd = (int)Math.Floor(end.Y / _cellSize) * _cellSize;
-                for (int y = yStart; y <= yEnd; y += _cellSize)
+                var yStart = (int)Math.Ceiling(start.Y);
+                var yEnd = (int)Math.Floor(end.Y);
+                for (int y = yStart; y <= yEnd; y += CellSize)
                     points.Add(new Point(start.X, y));
 
                 points.Sort(isBottomTop ? SortY : ReverseSortY);
@@ -111,9 +105,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                     end = tmp;
                 }
 
-                var xStart = (int)Math.Ceiling(start.X / _cellSize) * _cellSize;
-                var xEnd = (int)Math.Floor(end.X / _cellSize) * _cellSize;
-                for (int x = xStart; x <= xEnd; x += _cellSize)
+                var xStart = (int)Math.Ceiling(start.X);
+                var xEnd = (int)Math.Floor(end.X);
+                for (int x = xStart; x <= xEnd; x += CellSize)
                     points.Add(new Point(x, start.Y));
 
                 points.Sort(isLeftRight ? SortX : ReverseSortX);
@@ -128,10 +122,9 @@ namespace ActionStreetMap.Core.Geometry.Triangle
                 if (result.Any())
                 {
                     var last = result[result.Count - 1];
-                    var distance = Math.Sqrt((last.X - candidate.X)*(last.X - candidate.X) +
-                                             (last.Y - candidate.Y)*(last.Y - candidate.Y));
-                    if ((i == 0 && Math.Abs(distance) < MathUtils.Epsion) || 
-                        (i != 0 && distance < _minDistance))
+                    var distance = Math.Sqrt((last.X - candidate.X) * (last.X - candidate.X) +
+                                             (last.Y - candidate.Y) * (last.Y - candidate.Y));
+                    if ((Math.Abs(distance) < MathUtils.Epsion))
                         continue;
                 }
 
