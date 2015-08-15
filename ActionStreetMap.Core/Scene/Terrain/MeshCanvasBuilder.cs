@@ -234,12 +234,10 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 var path = new Path(roadElement.Points.Count);
                 var width = roadElement.Width*_scale/2;
                 path.AddRange(roadElement.Points.Select(p => new IntPoint(p.X*_scale, p.Y*_scale)));
-                lock (roadMap)
-                {
-                    if (!roadMap.ContainsKey(width))
-                        roadMap.Add(width, new Paths());
-                    roadMap[width].Add(path);
-                }
+                
+                if (!roadMap.ContainsKey(width))
+                    roadMap.Add(width, new Paths());
+                roadMap[width].Add(path);               
             }
             return roadMap;
         }
