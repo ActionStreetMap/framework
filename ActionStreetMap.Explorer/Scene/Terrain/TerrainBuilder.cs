@@ -4,7 +4,6 @@ using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Topology;
-using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene.Terrain;
 using ActionStreetMap.Core.Tiling;
@@ -92,11 +91,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var cellWidth = tile.Rectangle.Width / cellColumnCount;
 
             Trace.Debug(LogTag, "Building mesh canvas..");
+            
             var meshCanvas = new MeshCanvasBuilder(_objectPool)
                 .SetTile(tile)
                 .SetScale(MeshCellBuilder.Scale)
                 .Build(renderMode);
-
+ 
             Trace.Debug(LogTag, "Building mesh cells..");
             // NOTE keeping this code single threaded dramatically reduces memory presure
             for (int j = 0; j < cellRowCount; j++)
@@ -104,39 +104,37 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 {
                     var tileBottomLeft = tile.Rectangle.BottomLeft;
                     var rectangle = new Rectangle2d(
-                        tileBottomLeft.X + i*cellWidth,
-                        tileBottomLeft.Y + j*cellHeight,
+                        tileBottomLeft.X + i * cellWidth,
+                        tileBottomLeft.Y + j * cellHeight,
                         cellWidth,
                         cellHeight);
                     var name = String.Format("cell {0}_{1}", i, j);
-                    var cell = _meshCellBuilder.Build(rectangle, meshCanvas);
-                    BuildCell(tile.Canvas, rule, terrainObject, cell, rectangle, renderMode, name);
+                    var cell = _meshCellBuilder.Build(meshCanvas, rectangle);
+                    BuildCell(tile.Canvas, rule, terrainObject, cell, renderMode, name);
                 }
             terrainObject.IsBehaviourAttached = true;
+
             sw.Stop();
             Trace.Debug(LogTag, "Terrain is build in {0}ms", sw.ElapsedMilliseconds.ToString());         
             return terrainObject;
         }
 
-        private void BuildCell(Canvas canvas, Rule rule, IGameObject terrainObject, MeshCell cell, 
-            Rectangle2d cellRect, RenderMode renderMode, string name)
+        private void BuildCell(Canvas canvas, Rule rule, IGameObject terrainObject, MeshCell cell,
+            RenderMode renderMode, string name)
         {
             var cellGameObject = _gameObjectFactory.CreateNew(name, terrainObject);
 
-            var rect = new Rectangle2d(cellRect.Left, cellRect.Bottom, cellRect.Width, cellRect.Height);
-
-            var meshData = new TerrainMeshData(_objectPool);       
+            var meshData = new TerrainMeshData(_objectPool);
             meshData.GameObject = cellGameObject;
-            meshData.Index = renderMode == RenderMode.Scene ?
-                new TerrainMeshIndex(16, 16, rect, meshData.Triangles) :
-                (IMeshIndex)DummyMeshIndex.Default;
+            meshData.Index = renderMode == RenderMode.Scene
+                ? new TerrainMeshIndex(16, 16, cell.Rectangle, meshData.Triangles)
+                : (IMeshIndex)DummyMeshIndex.Default;
 
-            // build canvas
+            // build canvas and extra layers
             BuildBackground(rule, meshData, cell.Background, renderMode);
-            // build extra layers
-            BuildWater(rule, meshData, cell.Water, renderMode);
-            BuildCarRoads(rule, meshData, cell.CarRoads, renderMode);
-            BuildPedestrianLayers(rule, meshData, cell.WalkRoads, renderMode);
+            BuildWater(rule, meshData, cell, renderMode);
+            BuildCarRoads(rule, meshData, cell, renderMode);
+            BuildPedestrianLayers(rule, meshData, cell, renderMode);
             foreach (var surfaceRegion in cell.Surfaces)
                 BuildSurface(rule, meshData, surfaceRegion, renderMode);
 
@@ -149,11 +147,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Water layer
 
-        private void BuildWater(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        private void BuildWater(Rule rule, TerrainMeshData meshData, MeshCell cell, RenderMode renderMode)
         {
+            var meshRegion = cell.Water;
             if (meshRegion.Mesh == null) return;
 
-            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetWaterLayerColorNoiseFreq() : 0;
+            float colorNoiseFreq = renderMode == RenderMode.Scene
+                ? rule.GetWaterLayerColorNoiseFreq() : 0;
             float eleNoiseFreq = rule.GetWaterLayerEleNoiseFreq();
 
             var meshTriangles = meshData.Triangles;
@@ -198,7 +198,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[index], colorNoiseFreq);
                 waterColors[index] = color;
                 waterColors[index + 1] = color;
-                waterColors[index + 2] =color;
+                waterColors[index + 2] = color;
 
                 waterTriangles[index] = index;
                 waterTriangles[index + 1] = index + 2;
@@ -209,67 +209,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             // finalizing offset shape
             if (renderMode == RenderMode.Scene)
             {
-                BuildOffsetShape(rule, meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
-                    colorNoiseFreq, waterBottomLevelOffset);
+                BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
+                    cell.Rectangle, colorNoiseFreq, waterBottomLevelOffset);
 
-                Observable.Start(() => BuildWaterObject(rule, meshData, 
+                Observable.Start(() => BuildWaterObject(rule, meshData,
                     waterVertices, waterTriangles, waterColors), Scheduler.MainThread);
             }
         }
-
-        protected void BuildOffsetShape(Rule rule, TerrainMeshData meshData, MeshRegion region, GradientWrapper gradient,
-            float colorNoiseFreq, float deepLevel)
-        {
-            const float divideStep = 1f;
-            const float errorTopFix = 0.02f;
-            const float errorBottomFix = 0.1f;
-
-            var pointList = _objectPool.NewList<Vector2d>(64);
-            foreach (var contour in region.Contours)
-            {
-                var length = contour.Count;
-                for (int i = 0; i < length; i++)
-                {
-                    var v2DIndex = i == (length - 1) ? 0 : i + 1;
-                    var start = new Vector2d((float)contour[i].X, (float)contour[i].Y);
-                    var end = new Vector2d((float)contour[v2DIndex].X, (float)contour[v2DIndex].Y);
-
-                    GeometryUtils.DivideLine(start, end, pointList, divideStep);
-
-                    for (int k = 1; k < pointList.Count; k++)
-                    {
-                        var p1 = pointList[k - 1];
-                        var p2 = pointList[k];
-
-                        // vertices
-                        var ele1 = _elevationProvider.GetElevation(p1);
-                        var ele2 = _elevationProvider.GetElevation(p2);
-
-                        var firstColor = GradientUtils.GetColor(gradient,
-                            new Vector3((float)p1.X, ele1 + errorTopFix, (float)p1.Y), colorNoiseFreq);
-
-                        var secondColor = GradientUtils.GetColor(gradient,
-                            new Vector3((float)p2.X, ele1 - deepLevel - errorBottomFix, (float)p2.Y), colorNoiseFreq);
-
-                        meshData.AddTriangle(
-                            new Vector3((float)p1.X, ele1 + errorTopFix, (float)p1.Y),
-                            new Vector3((float)p2.X, ele2 - deepLevel - errorBottomFix, (float)p2.Y),
-                            new Vector3((float)p2.X, ele2 + errorTopFix, (float)p2.Y),
-                            firstColor);
-
-                        meshData.AddTriangle(
-                            new Vector3((float)p1.X, ele1 - deepLevel - errorBottomFix, (float)p1.Y),
-                            new Vector3((float)p2.X, ele2 - deepLevel - errorBottomFix, (float)p2.Y),
-                            new Vector3((float)p1.X, ele1 + errorTopFix, (float)p1.Y),
-                            secondColor);
-                    }
-
-                    pointList.Clear();
-                }
-            }
-            _objectPool.StoreList(pointList);
-        }
-
 
         private void BuildWaterObject(Rule rule, TerrainMeshData meshData, Vector3[] vertices, int[] triangles, Color[] colors)
         {
@@ -281,9 +227,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             mesh.colors = colors;
             mesh.RecalculateNormals();
 
-            // NOTE this script is too expensive to run!
-            //gameObject.AddComponent<NoiseWaveBehavior>();
-            gameObject.AddComponent<MeshRenderer>().material = rule.GetMaterial("material_water", _resourceProvider);
+            gameObject.AddComponent<MeshRenderer>().material = 
+                rule.GetMaterial("material_water", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
         }
 
@@ -300,7 +245,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetBackgroundLayerColorNoiseFreq() : 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
-            
+
             meshRegion.Dispose();
         }
 
@@ -308,16 +253,25 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Car roads layer
 
-        private void BuildCarRoads(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        private void BuildCarRoads(Rule rule, TerrainMeshData meshData, MeshCell cell, RenderMode renderMode)
         {
+            var meshRegion = cell.CarRoads;
+            var isScene = renderMode == RenderMode.Scene;
             float eleNoiseFreq = rule.GetCarLayerEleNoiseFreq();
-            float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetCarLayerColorNoiseFreq(): 0;
+            float colorNoiseFreq = isScene ? rule.GetCarLayerColorNoiseFreq() : 0;
+            float roadOffset = isScene ? 0.3f : 0;
 
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetCarLayerGradient(_resourceProvider);
 
             foreach (var triangle in meshRegion.Mesh.Triangles)
-                AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq, 0);
+                AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq, -roadOffset);
+
+            if (isScene)
+            {
+                BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
+                    cell.Rectangle, colorNoiseFreq, roadOffset);
+            }
 
             meshRegion.Dispose();
         }
@@ -326,8 +280,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #region Pedestrian roads layer
 
-        private void BuildPedestrianLayers(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
+        private void BuildPedestrianLayers(Rule rule, TerrainMeshData meshData, MeshCell cell, RenderMode renderMode)
         {
+            var meshRegion = cell.WalkRoads;
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetPedestrianLayerGradient(_resourceProvider);
             float eleNoiseFreq = rule.GetPedestrianLayerEleNoiseFreq();
@@ -347,7 +302,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             if (meshRegion.Mesh == null) return;
 
             float colorNoiseFreq = renderMode == RenderMode.Scene ? meshRegion.ColorNoiseFreq : 0;
-            float eleNoiseFreq = renderMode == RenderMode.Scene ? meshRegion.ElevationNoiseFreq: 0;
+            float eleNoiseFreq = renderMode == RenderMode.Scene ? meshRegion.ElevationNoiseFreq : 0;
             var gradient = _resourceProvider.GetGradient(meshRegion.GradientKey);
 
             if (meshRegion.ModifyMeshAction != null)
@@ -386,14 +341,68 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var useEleNoise2 = v.Type == VertexType.FreeVertex && useEleNoise;
             var ele = _elevationProvider.GetElevation(point);
             if (useEleNoise2)
-                ele += Noise.Perlin3D(new Vector3((float) point.X, ele, (float) point.Y), eleNoiseFreq);
-            return new Vector3((float) point.X, ele + yOffset, (float) point.Y);
+                ele += Noise.Perlin3D(new Vector3((float)point.X, ele, (float)point.Y), eleNoiseFreq);
+            return new Vector3((float)point.X, ele + yOffset, (float)point.Y);
         }
 
         #endregion
 
+        private void BuildOffsetShape(TerrainMeshData meshData, MeshRegion region, GradientWrapper gradient,
+          Rectangle2d rect, float colorNoiseFreq, float deepLevel)
+        {
+            var left = new LineLinear2d(rect.BottomLeft, rect.TopLeft);
+            var right = new LineLinear2d(rect.BottomRight, rect.TopRight);
+            var bottom = new LineLinear2d(rect.BottomLeft, rect.BottomRight);
+            var top = new LineLinear2d(rect.TopLeft, rect.TopRight);
+
+            foreach (var contour in region.Contours)
+            {
+                var length = contour.Count;
+                for (int i = 0; i < length; i++)
+                {
+                    var v2DIndex = i == (length - 1) ? 0 : i + 1;
+                    var p1 = new Vector2d((float)contour[i].X, (float)contour[i].Y);
+                    var p2 = new Vector2d((float)contour[v2DIndex].X, (float)contour[v2DIndex].Y);
+
+                    // check whether two points are on cell rect
+                    if (IsOnBorder(ref left, ref right, ref bottom, ref top, ref p1) &&
+                        IsOnBorder(ref left, ref right, ref bottom, ref top, ref p2))
+                        continue;
+
+                    var ele1 = _elevationProvider.GetElevation(p1);
+                    var ele2 = _elevationProvider.GetElevation(p2);
+
+                    var firstColor = GradientUtils.GetColor(gradient,
+                        new Vector3((float)p1.X, ele1, (float)p1.Y), colorNoiseFreq);
+
+                    var secondColor = GradientUtils.GetColor(gradient,
+                        new Vector3((float)p2.X, ele1 - deepLevel, (float)p2.Y), colorNoiseFreq);
+
+                    meshData.AddTriangle(
+                        new Vector3((float)p1.X, ele1, (float)p1.Y),
+                        new Vector3((float)p2.X, ele2 - deepLevel, (float)p2.Y),
+                        new Vector3((float)p2.X, ele2, (float)p2.Y),
+                        firstColor);
+
+                    meshData.AddTriangle(
+                        new Vector3((float)p1.X, ele1 - deepLevel, (float)p1.Y),
+                        new Vector3((float)p2.X, ele2 - deepLevel, (float)p2.Y),
+                        new Vector3((float)p1.X, ele1, (float)p1.Y),
+                        secondColor);
+                }
+            }
+        }
+
+        /// <summary> Checks whether point is located on border of rectangle. </summary>
+        private bool IsOnBorder(ref LineLinear2d left, ref LineLinear2d right,
+            ref LineLinear2d bottom, ref LineLinear2d top, ref Vector2d point)
+        {
+            return left.Contains(point) || right.Contains(point) ||
+                   bottom.Contains(point) || top.Contains(point);
+        }
+
         /// <summary> Builds real game object. </summary>
-        protected virtual void BuildObject(IGameObject cellGameObject, Canvas canvas, Rule rule, 
+        protected virtual void BuildObject(IGameObject cellGameObject, Canvas canvas, Rule rule,
             TerrainMeshData meshData)
         {
             Vector3[] vertices;

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
@@ -76,7 +74,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 triangles[second] = second;
                 triangles[third] = first;
 
-                _objectPool.StoreObject<TerrainMeshTriangle>(triangle);
+                _objectPool.StoreObject(triangle);
             }
         }
 

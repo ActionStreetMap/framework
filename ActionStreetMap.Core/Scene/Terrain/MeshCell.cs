@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
@@ -9,5 +10,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
         public MeshRegion WalkRoads;
         public List<MeshRegion> Surfaces;
         public MeshRegion Background;
+
+        public Rectangle2d Rectangle;
     }
 }

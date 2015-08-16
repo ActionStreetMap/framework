@@ -21,11 +21,10 @@ namespace ActionStreetMap.Core.Scene.Terrain
         private readonly IObjectPool _objectPool;
 
         internal const float Scale = 1000f;
-        internal const float DoubleScale = Scale*Scale;
+        internal const float DoubleScale = Scale * Scale;
 
+        private readonly LineGridSplitter _lineGridSplitter = new LineGridSplitter();
         private float _maximumArea = 6;
-
-        private LineGridSplitter _lineGridSplitter = new LineGridSplitter();
 
         /// <summary> Creates instance of <see cref="MeshCellBuilder"/>. </summary>
         /// <param name="objectPool"></param>
@@ -37,15 +36,26 @@ namespace ActionStreetMap.Core.Scene.Terrain
         #region Public methods
 
         /// <summary> Builds mesh cell. </summary>
-        public MeshCell Build(Rectangle2d rectangle, MeshCanvas content)
+        public MeshCell Build(MeshCanvas content, Rectangle2d rectangle)
         {
             var renderMode = content.RenderMode;
+
+            var clipRect = new Path
+            {
+                new IntPoint(rectangle.Left*Scale, rectangle.Bottom*Scale),
+                new IntPoint(rectangle.Right*Scale, rectangle.Bottom*Scale),
+                new IntPoint(rectangle.Right*Scale, rectangle.Top*Scale),
+                new IntPoint(rectangle.Left*Scale, rectangle.Top*Scale)
+            };
+
+            var useContours = renderMode == RenderMode.Scene;
+
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(rectangle, content.Water, renderMode, renderMode == RenderMode.Scene);
-            var resultCarRoads = CreateMeshRegions(rectangle, content.CarRoads, renderMode);
-            var resultWalkRoads = CreateMeshRegions(rectangle, content.WalkRoads, renderMode);
-            var resultSurface = CreateMeshRegions(rectangle, content.Surfaces, renderMode);
-            var background = CreateMeshRegions(rectangle, content.Background, renderMode);
+            var water = CreateMeshRegions(clipRect, content.Water, renderMode, useContours);
+            var resultCarRoads = CreateMeshRegions(clipRect, content.CarRoads, renderMode, useContours);
+            var resultWalkRoads = CreateMeshRegions(clipRect, content.WalkRoads, renderMode);
+            var resultSurface = CreateMeshRegions(clipRect, content.Surfaces, renderMode);
+            var background = CreateMeshRegions(clipRect, content.Background, renderMode);
 
             return new MeshCell
             {
@@ -53,7 +63,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 CarRoads = resultCarRoads,
                 WalkRoads = resultWalkRoads,
                 Surfaces = resultSurface,
-                Background = background
+                Background = background,
+                Rectangle = rectangle
             };
         }
 
@@ -65,43 +76,40 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         #endregion
 
-        private List<MeshRegion> CreateMeshRegions(Rectangle2d rectangle, List<MeshCanvas.Region> regionDatas,
+        private List<MeshRegion> CreateMeshRegions(Path clipRect, List<MeshCanvas.Region> regionDatas,
             RenderMode renderMode)
         {
             var meshRegions = new List<MeshRegion>();
             foreach (var regionData in regionDatas)
-                meshRegions.Add(CreateMeshRegions(rectangle, regionData, renderMode));
+                meshRegions.Add(CreateMeshRegions(clipRect, regionData, renderMode));
             return meshRegions;
         }
 
-        private MeshRegion CreateMeshRegions(Rectangle2d rectangle, MeshCanvas.Region region, 
+        private MeshRegion CreateMeshRegions(Path clipRect, MeshCanvas.Region region,
             RenderMode renderMode, bool useContours = false)
         {
             using (var polygon = new Polygon(256, _objectPool))
             {
-                var simplifiedPath = ClipByRectangle(rectangle, region.Shape);
-                var contours = useContours ? new VertexPaths() : null;
+                var simplifiedPath = ClipByRectangle(clipRect, region.Shape);
+                var contours = new List<List<Point>>(useContours ? simplifiedPath.Count : 0);
                 foreach (var path in simplifiedPath)
                 {
                     var area = Clipper.Area(path);
 
                     // skip small polygons to prevent triangulation issues
-                    if (Math.Abs(area/DoubleScale) < 0.001) continue;
+                    if (Math.Abs(area / DoubleScale) < 0.001) continue;
 
                     var vertices = GetVertices(path, renderMode);
 
-                    var isHole = area < 0;
                     // sign of area defines polygon orientation
-                    polygon.AddContour(vertices, isHole);
+                    polygon.AddContour(vertices, area < 0);
 
-                    // NOTE I don't like how this is implemented so far
                     if (useContours)
-                    {
-                        var contour = GetContour(rectangle, path);
-                        if (isHole) contour.ForEach(c => c.Reverse());
-                        contours.AddRange(contour);
-                    }
+                        contours.Add(vertices);
                 }
+
+                contours.ForEach(c => c.Reverse());
+
                 var mesh = polygon.Points.Any() ? GetMesh(polygon, renderMode) : null;
                 return new MeshRegion
                 {
@@ -128,8 +136,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
             }
 
             // split path for scene mode
-            var lastItemIndex =  path.Count - 1;
-           
+            var lastItemIndex = path.Count - 1;
+
             for (int i = 0; i <= lastItemIndex; i++)
             {
                 var start = path[i];
@@ -146,75 +154,27 @@ namespace ActionStreetMap.Core.Scene.Terrain
             return points;
         }
 
-        private VertexPaths GetContour(Rectangle2d rect, Path path)
-        {
-            ClipperOffset offset = _objectPool.NewObject<ClipperOffset>();
-            offset.AddPath(path, JoinType.jtMiter, EndType.etClosedLine);
-            var offsetPath = new Paths();
-            offset.Execute(ref offsetPath, 10);
-
-            var intRect = new Path
-            {
-                new IntPoint(rect.Left*Scale, rect.Bottom*Scale),
-                new IntPoint(rect.Right*Scale, rect.Bottom*Scale),
-                new IntPoint(rect.Right*Scale, rect.Top*Scale),
-                new IntPoint(rect.Left*Scale, rect.Top*Scale)
-            };
-
-            offset.Clear();
-            offset.AddPath(intRect, JoinType.jtMiter, EndType.etClosedLine);
-            var offsetRect = new Paths();
-            offset.Execute(ref offsetRect, 10);
-            offset.Clear();
-            _objectPool.StoreObject(offset);
-
-            var clipper = _objectPool.NewObject<Clipper>();
-            clipper.AddPaths(offsetPath, PolyType.ptSubject, true);
-            clipper.AddPaths(offsetRect, PolyType.ptClip, true);
-            var diffSolution = new Paths();
-            clipper.Execute(ClipType.ctDifference, diffSolution, PolyFillType.pftPositive, PolyFillType.pftEvenOdd);
-
-            clipper.Clear();
-            clipper.AddPaths(diffSolution, PolyType.ptSubject, true);
-            clipper.AddPath(intRect, PolyType.ptClip, true);
-
-            var solution = new Paths();
-            clipper.Execute(ClipType.ctIntersection, solution);
-            clipper.Clear();
-            _objectPool.StoreObject(clipper);
-
-            return solution.Select(c => c.Select(p =>
-                new Vertex(Math.Round(p.X / Scale, MathUtils.RoundDigitCount),
-                           Math.Round(p.Y / Scale, MathUtils.RoundDigitCount))).ToList()).ToList();
-        }
-
         private Mesh GetMesh(Polygon polygon, RenderMode renderMode)
         {
             return renderMode == RenderMode.Overview
                 ? polygon.Triangulate()
                 : polygon.Triangulate(
-                    new ConstraintOptions 
+                    new ConstraintOptions
                     {
-                        ConformingDelaunay = false, 
+                        ConformingDelaunay = false,
                         SegmentSplitting = 1
                     },
                     new QualityOptions { MaximumArea = _maximumArea });
         }
 
-        private Paths ClipByRectangle(Rectangle2d rect, Paths subjects)
+        private Paths ClipByRectangle(Path clipRect, Paths subjects)
         {
             Clipper clipper = _objectPool.NewObject<Clipper>();
-            clipper.AddPath(new Path
-            {
-                new IntPoint(rect.Left*Scale, rect.Bottom*Scale),
-                new IntPoint(rect.Right*Scale, rect.Bottom*Scale),
-                new IntPoint(rect.Right*Scale, rect.Top*Scale),
-                new IntPoint(rect.Left*Scale, rect.Top*Scale)
-            }, PolyType.ptClip, true);
+            clipper.AddPath(clipRect, PolyType.ptClip, true);
             clipper.AddPaths(subjects, PolyType.ptSubject, true);
             var solution = new Paths();
             clipper.Execute(ClipType.ctIntersection, solution);
-            
+
             clipper.Clear();
             _objectPool.StoreObject(clipper);
             return solution;

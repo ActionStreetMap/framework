@@ -1,4 +1,6 @@
-﻿namespace ActionStreetMap.Core.Geometry
+﻿using System;
+
+namespace ActionStreetMap.Core.Geometry
 {
     /// <summary>
     ///     Geometry line in linear form. General form:
@@ -49,6 +51,12 @@
             var WCA = C1*A2 - C2*A1;
 
             return WAB == 0 ? Vector2d.Empty : new Vector2d(WBC / WAB, WCA / WAB);
+        }
+
+        /// <summary> Check whether point belongs to line. </summary>
+        public bool Contains(Vector2d point)
+        {
+            return Math.Abs((point.X * A + point.Y * B + C)) < double.Epsilon;
         }
     }
 }

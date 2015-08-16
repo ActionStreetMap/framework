@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry.Triangle;
-using ActionStreetMap.Core.Geometry.Triangle.Meshing;
-using VertexPaths = System.Collections.Generic.List<System.Collections.Generic.List<ActionStreetMap.Core.Geometry.Triangle.Geometry.Vertex>>;
+using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 
 namespace ActionStreetMap.Core.Scene.Terrain
 {
@@ -14,8 +14,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         public Mesh Mesh;
 
-        // TODO should be refactored: this looks like workaround
-        public VertexPaths Contours;
+        public List<List<Point>> Contours;
 
         /// <inheritdoc />
         public void Dispose()
