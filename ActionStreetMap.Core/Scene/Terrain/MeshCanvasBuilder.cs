@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -48,10 +47,19 @@ namespace ActionStreetMap.Core.Scene.Terrain
         {
             CheckState();
 
-            BuildWater();
-            BuildRoads();
-            BuildSurfaces();
-            BuildBackground();
+            var rect = _tile.Rectangle;
+            var clipRect = new Path
+            {
+                new IntPoint(rect.Left*_scale, rect.Bottom*_scale),
+                new IntPoint(rect.Right*_scale, rect.Bottom*_scale),
+                new IntPoint(rect.Right*_scale, rect.Top*_scale),
+                new IntPoint(rect.Left*_scale, rect.Top*_scale)
+            };
+
+            BuildWater(clipRect);
+            BuildRoads(clipRect);
+            BuildSurfaces(clipRect);
+            BuildBackground(clipRect);
 
             Cleanup();
 
@@ -67,57 +75,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
             };
         }
 
-        private void CheckState()
-        {
-            if (_tile == null)
-                throw new InvalidOperationException("Tile is not set");
-            if (_scale == 0)
-                throw new InvalidOperationException("Scale is not set");
-        }
-
-        #region Common clipper helpers
-
-        private Paths ClipByTile(Paths subjects)
-        {
-            return ClipByRectangle(_tile.Rectangle, subjects);
-        }
-
-        private Paths ClipByRectangle(Rectangle2d rect, Paths subjects)
-        {
-            _clipper.AddPaths(subjects, PolyType.ptSubject, true);
-            return ClipByRectangle(rect);
-        }
-
-        private Paths ClipByRectangle(Rectangle2d rect)
-        {
-            _clipper.AddPath(new Path
-            {
-                new IntPoint(rect.Left*_scale, rect.Bottom*_scale),
-                new IntPoint(rect.Right*_scale, rect.Bottom*_scale),
-                new IntPoint(rect.Right*_scale, rect.Top*_scale),
-                new IntPoint(rect.Left*_scale, rect.Top*_scale)
-            }, PolyType.ptClip, true);
-            var solution = new Paths();
-            _clipper.Execute(ClipType.ctIntersection, solution);
-            _clipper.Clear();
-            return solution;
-        }
-
-        #endregion
-
         #region Background
 
-        private void BuildBackground()
+        private void BuildBackground(Path clipRect)
         {
-            // TODO convert and reuse rect
-            var rect = _tile.Rectangle;
-            _clipper.AddPath(new Path
-            {
-                new IntPoint(rect.Left*_scale, rect.Bottom*_scale),
-                new IntPoint(rect.Right*_scale, rect.Bottom*_scale),
-                new IntPoint(rect.Right*_scale, rect.Top*_scale),
-                new IntPoint(rect.Left*_scale, rect.Top*_scale)
-            }, PolyType.ptSubject, true);
+            _clipper.AddPath(clipRect, PolyType.ptSubject, true);
 
             _clipper.AddPaths(_carRoads.Shape, PolyType.ptClip, true);
             _clipper.AddPaths(_walkRoads.Shape, PolyType.ptClip, true);
@@ -128,34 +90,28 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 PolyFillType.pftPositive);
             _clipper.Clear();
 
-            _background = new MeshCanvas.Region()
-            {
-                Shape = solution
-            };
+            _background = new MeshCanvas.Region() { Shape = solution };
         }
 
         #endregion
 
         #region Water
 
-        private void BuildWater()
+        private void BuildWater(Path clipRect)
         {
             _clipper.AddPaths(_tile.Canvas.Water.Select(a => a.Points),
                 PolyType.ptSubject, _scale, true);
             var solution = new Paths();
             _clipper.Execute(ClipType.ctUnion, solution);
             _clipper.Clear();
-            _water = new MeshCanvas.Region
-            {
-                Shape = ClipByTile(solution)
-            };
+            _water = new MeshCanvas.Region { Shape = ClipByRectangle(clipRect, solution) };
         }
 
         #endregion
 
         #region Surfaces
 
-        private void BuildSurfaces()
+        private void BuildSurfaces(Path clipRect)
         {
             var regions = new List<MeshCanvas.Region>();
             foreach (var group in _tile.Canvas.Surfaces.GroupBy(s => s.Item1.GradientKey))
@@ -177,7 +133,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     PolyFillType.pftPositive);
                 _clipper.Clear();
 
-                // TODO this is workaround: we use values from first item of group
+                // NOTE we use values from first item of group
                 var first = group.First();
 
                 regions.Add(new MeshCanvas.Region
@@ -187,7 +143,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     ColorNoiseFreq = first.Item1.ColorNoise,
                     ModifyMeshAction = first.Item2,
 
-                    Shape = ClipByTile(surfacesResult)
+                    Shape = ClipByRectangle(clipRect, surfacesResult)
                 });
             }
             _surfaces = regions;
@@ -197,47 +153,45 @@ namespace ActionStreetMap.Core.Scene.Terrain
 
         #region Roads
 
-        private void BuildRoads()
+        private void BuildRoads(Path clipRect)
         {
-            var carRoadPaths = GetOffsetSolution(BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadElement.RoadType.Car)));
-            var walkRoadsPaths =
-                GetOffsetSolution(BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadElement.RoadType.Pedestrian)));
+            var carRoadPaths = GetOffsetSolution(
+                BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadElement.RoadType.Car)));
+
+            var walkRoadsPaths = GetOffsetSolution(
+                BuildRoadMap(_tile.Canvas.Roads.Where(r => r.Type == RoadElement.RoadType.Pedestrian)));
 
             _clipper.AddPaths(carRoadPaths, PolyType.ptClip, true);
             _clipper.AddPaths(walkRoadsPaths, PolyType.ptSubject, true);
             var extrudedWalkRoads = new Paths();
             _clipper.Execute(ClipType.ctDifference, extrudedWalkRoads);
             _clipper.Clear();
-            _carRoads = CreateRoadRegionData(carRoadPaths);
-            _walkRoads = CreateRoadRegionData(extrudedWalkRoads);
+            _carRoads = CreateRoadRegionData(clipRect, carRoadPaths);
+            _walkRoads = CreateRoadRegionData(clipRect, extrudedWalkRoads);
         }
 
-        private MeshCanvas.Region CreateRoadRegionData(Paths subject)
+        private MeshCanvas.Region CreateRoadRegionData(Path clipRect, Paths subject)
         {
             var resultRoads = new Paths();
             _clipper.AddPaths(_water.Shape, PolyType.ptClip, true);
             _clipper.AddPaths(subject, PolyType.ptSubject, true);
-            _clipper.Execute(ClipType.ctDifference, resultRoads, PolyFillType.pftPositive, PolyFillType.pftPositive);
+            _clipper.Execute(ClipType.ctDifference, resultRoads, PolyFillType.pftPositive,
+                PolyFillType.pftPositive);
             _clipper.Clear();
-            return new MeshCanvas.Region
-            {
-                Shape = ClipByTile(resultRoads)
-            };
+            return new MeshCanvas.Region { Shape = ClipByRectangle(clipRect, resultRoads) };
         }
 
         private Dictionary<float, Paths> BuildRoadMap(IEnumerable<RoadElement> elements)
         {
-            // TODO optimize that
             var roadMap = new Dictionary<float, Paths>();
             foreach (var roadElement in elements)
             {
                 var path = new Path(roadElement.Points.Count);
-                var width = roadElement.Width*_scale/2;
-                path.AddRange(roadElement.Points.Select(p => new IntPoint(p.X*_scale, p.Y*_scale)));
-                
+                var width = roadElement.Width * _scale;
+                path.AddRange(roadElement.Points.Select(p => new IntPoint(p.X * _scale, p.Y * _scale)));
                 if (!roadMap.ContainsKey(width))
                     roadMap.Add(width, new Paths());
-                roadMap[width].Add(path);               
+                roadMap[width].Add(path);
             }
             return roadMap;
         }
@@ -259,6 +213,24 @@ namespace ActionStreetMap.Core.Scene.Terrain
         }
 
         #endregion
+
+        private void CheckState()
+        {
+            if (_tile == null)
+                throw new InvalidOperationException("Tile is not set");
+            if (_scale == 0)
+                throw new InvalidOperationException("Scale is not set");
+        }
+
+        private Paths ClipByRectangle(Path clipRect, Paths subjects)
+        {
+            _clipper.AddPaths(subjects, PolyType.ptSubject, true);
+            _clipper.AddPath(clipRect, PolyType.ptClip, true);
+            var solution = new Paths();
+            _clipper.Execute(ClipType.ctIntersection, solution);
+            _clipper.Clear();
+            return solution;
+        }
 
         private void Cleanup()
         {
