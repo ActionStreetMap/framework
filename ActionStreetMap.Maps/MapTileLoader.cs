@@ -59,6 +59,7 @@ namespace ActionStreetMap.Maps
                 .Get(tile.BoundingBox)
                 .SelectMany(e => e.Get(boundingBox, zoomLevel))
                 .ObserveOn(Scheduler.ThreadPool)
+                .SubscribeOn(Scheduler.ThreadPool)
                 .Subscribe(element => element.Accept(filterElementVisitor),
                     () =>
                     {
