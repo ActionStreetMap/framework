@@ -7,27 +7,21 @@ namespace ActionStreetMap.Explorer.Helpers
 {
     internal static class ModelRuleExtensions
     {
+        public static string GetMaterialKey(this Rule rule, string path = "material")
+        {
+            return @"Materials/" + rule.Evaluate<string>(path);
+        }
+
         public static Material GetMaterial(this Rule rule, IResourceProvider resourceProvider)
         {
-            var path = rule.Evaluate<string>("material");
-            return resourceProvider.GetMaterial(@"Materials/" + path);
+            var path = rule.GetMaterialKey();
+            return resourceProvider.GetMaterial(path);
         }
 
         public static Material GetMaterial(this Rule rule, string path, IResourceProvider resourceProvider)
         {
-            var materialPath = rule.Evaluate<string>(path);
-            return resourceProvider.GetMaterial(@"Materials/" + materialPath);
-        }
-
-        public static string GetMaterialKey(this Rule rule)
-        {
-            return rule.Evaluate<string>("material");
-        }
-
-        public static Texture GetTexture(this Rule rule, IResourceProvider resourceProvider)
-        {
-            var path = rule.Evaluate<string>("material");
-            return resourceProvider.GetTexture(@"Textures/" + path);
+            var materialPath = rule.GetMaterialKey(path);
+            return resourceProvider.GetMaterial(materialPath);
         }
 
         public static Color32 GetFillUnityColor(this Rule rule)

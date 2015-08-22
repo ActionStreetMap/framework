@@ -7,7 +7,6 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
-using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -136,12 +135,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <returns>Name of game object.</returns>
         protected string GetName(Model model)
         {
-            // NOTE this is performance optimization for release mode only
-#if DEBUG
             return String.Format("{0} {1}", Name, model);
-#else
-            return null;
-#endif
         }
     }
 }

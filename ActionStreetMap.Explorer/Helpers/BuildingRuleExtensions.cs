@@ -16,9 +16,9 @@ namespace ActionStreetMap.Explorer.Helpers
             return rule.Evaluate<string>("fill-color");
         }
 
-        public static string GetFacadeMaterial(this Rule rule, string @default = null)
+        public static string GetFacadeMaterial(this Rule rule)
         {
-            return rule.EvaluateDefault<string>("material", @default);
+            return rule.GetMaterialKey();
         }
 
         #endregion
@@ -42,7 +42,7 @@ namespace ActionStreetMap.Explorer.Helpers
 
         public static string GetRoofMaterial(this Rule rule, string @default = null)
         {
-            return rule.EvaluateDefault<string>("roof-material", @default);
+            return rule.GetMaterialKey("roof-material");
         }
 
         #endregion
@@ -69,9 +69,7 @@ namespace ActionStreetMap.Explorer.Helpers
         public static float GetMinHeight(this Rule rule, float defaultValue = 0)
         {
             return rule.EvaluateDefault<float>("min_height", defaultValue);
-        }
-
-       
+        }      
 
         public static bool IsPart(this Rule rule)
         {

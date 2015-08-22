@@ -122,56 +122,87 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 var p1 = new Vector3(end.x, endEle, end.z);
                 var p2 = new Vector3(end.x, endEle + context.Height, end.z);
                 var p3 = new Vector3(start.x, startEle + context.Height, start.z);
-                var pc = new Vector3(middle.x, startEle + (endEle - startEle) / 2, middle.z);
+                var pc = new Vector3(middle.x, startEle + context.Height / 2, middle.z);
 
                 var count = startIndex;
 
+                #region Vertices
                 vertices[count] = p3;
-                vertices[++count] = pc;
+                vertices[count + vertCount] = p3;
                 vertices[++count] = p0;
+                vertices[count + vertCount] = p0;
+                vertices[++count] = pc;
+                vertices[count + vertCount] = pc;
 
                 vertices[++count] = p0;
-                vertices[++count] = pc;
+                vertices[count + vertCount] = p0;
                 vertices[++count] = p1;
+                vertices[count + vertCount] = p1;
+                vertices[++count] = pc;
+                vertices[count + vertCount] = pc;
 
                 vertices[++count] = p1;
-                vertices[++count] = pc;
+                vertices[count + vertCount] = p1;
                 vertices[++count] = p2;
+                vertices[count + vertCount] = p2;
+                vertices[++count] = pc;
+                vertices[count + vertCount] = pc;
 
                 vertices[++count] = p2;
-                vertices[++count] = pc;
+                vertices[count + vertCount] = p2;
                 vertices[++count] = p3;
+                vertices[count + vertCount] = p3;
+                vertices[++count] = pc;
+                vertices[count + vertCount] = pc;
+                #endregion
 
+                #region Triangles
                 // triangles for outer part
-                var lastIndex = startIndex + 12;
-                for (int i = startIndex; i < lastIndex; i++)
-                {
+                for (int i = startIndex; i < startIndex + 12; i++)
                     triangles[i] = i;
-                    var rest = i%3;
-                    triangles[vertCount + i] = rest == 0 ? i : (rest == 1 ? i + 1 : i - 1);
+
+                var lastIndex = startIndex + vertCount + 12;
+                for (int i = startIndex + vertCount; i < lastIndex; i++)
+                {
+                    var rest = i % 3;
+                    triangles[i] = rest == 0 ? i : (rest == 1 ? i + 1 : i - 1);
                 }
+                #endregion
 
+                #region Colors
                 count = startIndex;
-
                 var color = GetColor(gradient, colorNoiseFreq, p3);
                 colors[count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
 
                 color = GetColor(gradient, colorNoiseFreq, p0);
                 colors[++count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
 
                 color = GetColor(gradient, colorNoiseFreq, p1);
                 colors[++count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
 
                 color = GetColor(gradient, colorNoiseFreq, p2);
                 colors[++count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
                 colors[++count] = color;
+                colors[count + vertCount] = color;
+                #endregion
 
                 // reuse last
                 start = end;

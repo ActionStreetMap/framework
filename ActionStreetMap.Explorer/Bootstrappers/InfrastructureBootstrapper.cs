@@ -48,7 +48,6 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .RegisterListType<Vector2d>(32)
                 .RegisterListType<LineSegment2d>(8)
                 .RegisterListType<IntPoint>(32)
-                .RegisterListType<Apartment>(8)
 
                 .RegisterListType<int>(256);
 

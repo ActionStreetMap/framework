@@ -7,6 +7,7 @@ using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Formats.Json;
 using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Maps.Data.Import;
 
 namespace ActionStreetMap.Explorer.Infrastructure
@@ -15,19 +16,22 @@ namespace ActionStreetMap.Explorer.Infrastructure
     public class MapIndexUtility: IConfigurable
     {
         private readonly IFileSystemService _fileSystemService;
-        private readonly ITrace _trace;
+        private readonly IObjectPool _objectPool;
 
         private string _indexSettingsPath;
         private string _indexRootFolder;
 
+        [Dependency]
+        public ITrace Trace { get; set; }
+
         /// <summary> Creates instance of <see cref="MapIndexUtility"/>. </summary>
         /// <param name="fileSystemService">File system service.</param>
-        /// <param name="trace">Trace.</param>
+        /// <param name="objectPool"></param>
         [Dependency]
-        public MapIndexUtility(IFileSystemService fileSystemService, ITrace trace)
+        public MapIndexUtility(IFileSystemService fileSystemService, IObjectPool objectPool)
         {
             _fileSystemService = fileSystemService;
-            _trace = trace;
+            _objectPool = objectPool;
         }
 
         #region Public methods
@@ -38,7 +42,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         public void BuildIndex(string filePath, string outputDirectory)
         {
             if (!outputDirectory.StartsWith(_indexRootFolder))
-                _trace.Warn("index.mngr", Strings.MapIndexBuildOutputDirectoryMismatch);
+                Trace.Warn("index.mngr", Strings.MapIndexBuildOutputDirectoryMismatch);
 
             // create directory for output files
             _fileSystemService.CreateDirectory(outputDirectory);
@@ -52,7 +56,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
 
             // create builder from given parameters
             var builder = new PersistentIndexBuilder(filePath, outputDirectory,
-                _fileSystemService, settings, new ObjectPool(), _trace);
+                _fileSystemService, settings, _objectPool, Trace);
 
             // build
             builder.Build();

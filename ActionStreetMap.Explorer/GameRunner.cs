@@ -2,14 +2,11 @@
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Tiling;
-using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Explorer.Bootstrappers;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.IO;
 using ActionStreetMap.Infrastructure.Reactive;
-using ActionStreetMap.Unity.IO;
 
 namespace ActionStreetMap.Explorer
 {
@@ -61,8 +58,6 @@ namespace ActionStreetMap.Explorer
 
             // notify about geo coordinate change
             _geoPositionObserver.OnNext(coordinate);
-
-            messageBus.Send(new GameStartedMessage(tilePositionObserver.CurrentTile));
         }
 
         /// <summary> Runs bootstrapping process. </summary>
@@ -102,18 +97,5 @@ namespace ActionStreetMap.Explorer
         void IObserver<GeoCoordinate>.OnCompleted() { _geoPositionObserver.OnCompleted(); }
 
         #endregion
-
-        /// <summary> This message is sent once RunGame is completed.  </summary>
-        public class GameStartedMessage
-        {
-            /// <summary> Current active tile. </summary>
-            public readonly Tile Tile;
-
-            /// <summary> Creates instabce of <see cref="GameStartedMessage"/>. </summary>
-            internal GameStartedMessage(Tile tile)
-            {
-                Tile = tile;
-            }
-        }
     }
 }
