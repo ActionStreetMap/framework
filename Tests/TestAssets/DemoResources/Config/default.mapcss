@@ -245,34 +245,34 @@ way[waterway],
 way[waterway][name]                                        { fill-color: gradient(#1a9fa4, #0a3c3e 50%, #000000); builder: water; }
 
 /* roads */
-way[highway]                                            { builder:road; width:3; type:pedestrian; }
+way[highway]                                            { builder:road; width:2; type:pedestrian; }
 
 way[highway=tertiary],
 way[highway=residential],
 way[highway=service],
 way[highway=unclassified],
-way[highway=road]                                        { fill-color: gradient(#0fffff, #0bbbbb 50%, #055555); width:12; type:car; }
-way[highway=living_street]                                { fill-color: gradient(#666666, #000000 50%, #000000); width:10.5; type:car; }
+way[highway=road]                                        { fill-color: gradient(#0fffff, #0bbbbb 50%, #055555); width:9; type:car; }
+way[highway=living_street]                                { fill-color: gradient(#666666, #000000 50%, #000000); width:8; type:car; }
 
 way[highway=trunk],
 way[highway=trunk_link],
 way[highway=primary],
 way[highway=primary_link],
 way[highway=motorway],
-way[highway=motorway_link]                                { fill-color: gradient(#18d2f9, #0e7c93 50%, #04262d); width:11; type:car; }
+way[highway=motorway_link]                                { fill-color: gradient(#18d2f9, #0e7c93 50%, #04262d); width:8; type:car; }
 
 
 
 way[highway=secondary],
-way[highway=secondary_link]                                { fill-color: gradient(#0e4eff, #0a37b4 50%, #04184e); width:9; type:car; }
+way[highway=secondary_link]                                { fill-color: gradient(#0e4eff, #0a37b4 50%, #04184e); width:7; type:car; }
 
 way[highway=tertiary],
-way[highway=tertiary_link]                                { fill-color: gradient(#18d2f9, #0e7c93 50%, #04262d); width:11; type:car; }
+way[highway=tertiary_link]                                { fill-color: gradient(#18d2f9, #0e7c93 50%, #04262d); width:8; type:car; }
 
 
-way[highway=path][foot=designated]                        { fill-color: gradient(#17ff0b, #0fa807 50%, #064203); width:3.5; type:pedestrian; }
+way[highway=path][foot=designated]                        { fill-color: gradient(#17ff0b, #0fa807 50%, #064203); width:2; type:pedestrian; }
 
-way[highway=service]                                    { fill-color: gradient(#0fffff, #0fffff 50%, #099999); width:3; type:pedestrian; }
+way[highway=service]                                    { fill-color: gradient(#0fffff, #0fffff 50%, #099999); width:1.5; type:pedestrian; }
 
 way[highway=footway]                                     { width:2; type:pedestrian; }
 

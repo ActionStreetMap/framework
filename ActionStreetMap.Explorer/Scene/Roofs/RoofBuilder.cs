@@ -76,7 +76,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         ConformingDelaunay = false,
                         SegmentSplitting = 0
                     },
-                    new QualityOptions { MaximumArea = 12 });
+                    new QualityOptions { MaximumArea = 20 });
             }
         }
 
