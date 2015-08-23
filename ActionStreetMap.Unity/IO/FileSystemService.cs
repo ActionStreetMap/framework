@@ -37,7 +37,8 @@ namespace ActionStreetMap.Unity.IO
 #if UNITY_WEBPLAYER
             return new MemoryStream(GetBytesSync(resolvedPath));
 #else
-            return File.Open(resolvedPath, FileMode.Open);
+            return File.Open(resolvedPath, FileMode.Open, 
+                FileAccess.Read, FileShare.Read);
 #endif
         }
 
