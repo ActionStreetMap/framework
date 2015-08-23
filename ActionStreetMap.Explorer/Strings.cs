@@ -22,6 +22,8 @@
 
         public static string MeshHasMaxVertexLimit = "{0} mesh has {1} vertices and will be split.";
 
+        public static string UnableToLoadModel = "Unable to load model: {0}";
+
         #region Commands
 
         public static string SearchCommand = "Searches for OSM objects.";

@@ -11,6 +11,7 @@ using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
+using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Maps.Data.Helpers;
@@ -21,6 +22,8 @@ namespace ActionStreetMap.Explorer.Tiling
     /// <summary> Represents class responsible to process all models for tile. </summary>
     public class TileModelLoader : IModelLoader
     {
+        private const string LogCategory = "model.loader";
+
         private readonly ITerrainBuilder _terrainBuilder;
         private readonly BehaviourProvider _behaviourProvider;
         private readonly IObjectPool _objectPool;
@@ -28,6 +31,9 @@ namespace ActionStreetMap.Explorer.Tiling
         private readonly IGameObjectFactory _gameObjectFactory;
 
         private readonly Stylesheet _stylesheet;
+
+        [Dependency]
+        public ITrace Trace { get; set; }
 
         /// <summary> Creates <see cref="TileModelLoader"/>. </summary>
         [Dependency]
@@ -99,11 +105,18 @@ namespace ActionStreetMap.Explorer.Tiling
             var rule = _stylesheet.GetModelRule(model, zoomLevel);
             if (rule.IsApplicable && ShouldUseBuilder(tile, rule, model))
             {
-                var modelBuilder = rule.GetModelBuilder(_builders);
-                if (modelBuilder != null)
+                try
                 {
-                    var gameObject = func(rule, modelBuilder);
-                    AttachBehaviours(gameObject, rule, model);
+                    var modelBuilder = rule.GetModelBuilder(_builders);
+                    if (modelBuilder != null)
+                    {
+                        var gameObject = func(rule, modelBuilder);
+                        AttachBehaviours(gameObject, rule, model);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.Error(LogCategory, ex, Strings.UnableToLoadModel, model.ToString());
                 }
             }
         }
