@@ -215,7 +215,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         protected Color GetColor(Vector3 point)
         {
-            var value = (Noise.Perlin3D(point, .3f) + 1f) / 2f;
+            var value = (Noise.Perlin3D(point, .05f) + 1f) / 2f;
             return _gradient.Evaluate(value);
         }
     }

@@ -109,13 +109,16 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         private void GetLongestSegment(List<Vector2d> footprint, out float maxLength,
             out Vector2d start, out Vector2d end)
         {
+            var result = ObjectPool.NewList<Vector2d>();
+            PolygonUtils.Simplify(footprint, result, 1, ObjectPool);
+
             maxLength = 0;
             start = default(Vector2d);
             end = default(Vector2d);
-            for (int i = 0; i < footprint.Count; i++)
+            for (int i = 0; i < result.Count; i++)
             {
-                var s = footprint[i];
-                var e = footprint[i == footprint.Count - 1 ? 0 : i + 1];
+                var s = result[i];
+                var e = result[i == result.Count - 1 ? 0 : i + 1];
 
                 var distance = s.DistanceTo(e);
                 if (distance > maxLength)
@@ -125,6 +128,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     maxLength = (float) distance;
                 }
             }
+
+            ObjectPool.StoreList(result);
         }
 
         private void DetectIntersectSegments(List<Vector2d> footprint, Vector2d start, Vector2d end,
