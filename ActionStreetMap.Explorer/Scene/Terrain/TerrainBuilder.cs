@@ -227,7 +227,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             mesh.colors = colors;
             mesh.RecalculateNormals();
 
-            gameObject.AddComponent<MeshRenderer>().material = 
+            gameObject.AddComponent<MeshRenderer>().sharedMaterial = 
                 rule.GetMaterial("material_water", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
         }
@@ -426,7 +426,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             mesh.colors = colors;
             mesh.RecalculateNormals();
 
-            gameObject.AddComponent<MeshRenderer>().material = rule
+            gameObject.AddComponent<MeshRenderer>().sharedMaterial = rule
                 .GetMaterial("material_background", _resourceProvider);
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
             gameObject.AddComponent<MeshCollider>();

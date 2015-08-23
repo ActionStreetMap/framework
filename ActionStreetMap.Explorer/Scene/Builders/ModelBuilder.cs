@@ -112,7 +112,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 gameObject.AddComponent<MeshFilter>().mesh = mesh;
                 gameObject.AddComponent<MeshCollider>();
-                gameObject.AddComponent<MeshRenderer>().material = ResourceProvider
+                gameObject.AddComponent<MeshRenderer>().sharedMaterial = ResourceProvider
                     .GetMaterial(meshData.MaterialKey);
 
                 // attach behaviours
