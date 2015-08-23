@@ -42,6 +42,9 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
         private IGameObject BuildBuilding(Tile tile, Rule rule, Model model, List<GeoCoordinate> footPrint)
         {
+            if (tile.Registry.Contains(model.Id))
+                return null;
+
             var points = ObjectPool.NewList<Vector2d>();
             PointUtils.GetClockwisePolygonPoints(tile.RelativeNullPoint, footPrint, points);
 
@@ -49,9 +52,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             // TODO invent better algorithm
             var elevation = ElevationProvider.GetElevation(points[0]);
-
-            if (tile.Registry.Contains(model.Id))
-                return null;
 
             var gameObject = BuildGameObject(tile, rule, model, points, elevation, minHeight);
 
