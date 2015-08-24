@@ -24,9 +24,9 @@ namespace ActionStreetMap.Tests.Explorer.Scene
                 Footprint = new List<Vector2d>()
                 {
                     new Vector2d(0, 0),
-                    new Vector2d(100, 0),
-                    new Vector2d(100, 100),
-                    new Vector2d(0, 100),
+                    new Vector2d(500, 0),
+                    new Vector2d(500, 500),
+                    new Vector2d(0, 500),
                 },
                 FacadeColor = "gradient(#0eff94, #0deb88 50%, #07854d)",
                 Height = 100

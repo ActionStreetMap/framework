@@ -42,7 +42,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(192 + 228, result[0].Vertices.Length);
+            Assert.AreEqual(192 + 120, result[0].Vertices.Length);
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(1, meshDataList.Count);
-            Assert.AreEqual(1920 + 324, meshDataList[0].Vertices.Length);
+            Assert.AreEqual(1920 + 180, meshDataList[0].Vertices.Length);
             Assert.IsAssignableFrom(typeof(CompositeMeshIndex), meshDataList[0].Index);
         }
 

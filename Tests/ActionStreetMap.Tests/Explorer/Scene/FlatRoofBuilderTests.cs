@@ -58,7 +58,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             };
             var building = CreateBuilding();
             building.Footprint = footprint;
-            building.Levels = 7;
+            building.Levels = 20;
 
             // ACT
             var meshDataList = roofBuilder.Build(building);
