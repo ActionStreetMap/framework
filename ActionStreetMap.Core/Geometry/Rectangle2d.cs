@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace ActionStreetMap.Core.Geometry
 {
@@ -10,6 +9,11 @@ namespace ActionStreetMap.Core.Geometry
         private readonly double _ymin;
         private readonly double _xmax;
         private readonly double _ymax;
+
+        private readonly LineLinear2d _left;
+        private readonly LineLinear2d _right;
+        private readonly LineLinear2d _bottom;
+        private readonly LineLinear2d _top;
 
         /// <summary> Initializes a new instance of the <see cref="Rectangle2d"/> class with predefined bounds. </summary>
         /// <param name="x"> Minimum x value (left). </param>
@@ -22,17 +26,19 @@ namespace ActionStreetMap.Core.Geometry
             _ymin = y;
             _xmax = x + width;
             _ymax = y + height;
+
+            _left = new LineLinear2d(new Vector2d(_xmin, _ymin), new Vector2d(_xmin, _ymax));
+            _right = new LineLinear2d(new Vector2d(_xmax, _ymin), new Vector2d(_xmax, _ymax));
+            _bottom = new LineLinear2d(new Vector2d(_xmin, _ymin), new Vector2d(_xmax, _ymin));
+            _top = new LineLinear2d(new Vector2d(_xmin, _ymax), new Vector2d(_xmax, _ymax));
         }
 
         /// <summary> Initializes a new instance of the <see cref="Rectangle2d"/> class with predefined bounds. </summary>
         /// <param name="leftBottom">Left bottom corner.</param>
         /// <param name="rightUpper">Right upper corner.</param>
         public Rectangle2d(Vector2d leftBottom, Vector2d rightUpper)
+            : this(leftBottom.X, leftBottom.Y, rightUpper.X - leftBottom.X, rightUpper.Y - leftBottom.Y)
         {
-            _xmin = leftBottom.X;
-            _ymin = leftBottom.Y;
-            _xmax = rightUpper.X;
-            _ymax = rightUpper.Y;
         }
 
         /// <summary> Gets left. </summary>
@@ -64,6 +70,13 @@ namespace ActionStreetMap.Core.Geometry
 
         /// <summary> Gets the height of the bounding box. </summary>
         public double Height { get { return _ymax - _ymin; } }
+
+        /// <summary> Checks whether point is on border of rectangle. </summary>
+        public bool IsOnBorder(Vector2d point)
+        {
+            return _left.Contains(point) || _right.Contains(point) ||
+                  _bottom.Contains(point) || _top.Contains(point);
+        }
 
         /// <inheritdoc />
         public override string ToString()

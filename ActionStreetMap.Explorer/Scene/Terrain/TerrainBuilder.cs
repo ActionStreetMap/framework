@@ -259,7 +259,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var isScene = renderMode == RenderMode.Scene;
             float eleNoiseFreq = rule.GetCarLayerEleNoiseFreq();
             float colorNoiseFreq = isScene ? rule.GetCarLayerColorNoiseFreq() : 0;
-            float roadOffset = isScene ? 0.3f : 0;
+            float roadOffset = 0.3f;
 
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetCarLayerGradient(_resourceProvider);
@@ -350,11 +350,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private void BuildOffsetShape(TerrainMeshData meshData, MeshRegion region, GradientWrapper gradient,
           Rectangle2d rect, float colorNoiseFreq, float deepLevel)
         {
-            var left = new LineLinear2d(rect.BottomLeft, rect.TopLeft);
-            var right = new LineLinear2d(rect.BottomRight, rect.TopRight);
-            var bottom = new LineLinear2d(rect.BottomLeft, rect.BottomRight);
-            var top = new LineLinear2d(rect.TopLeft, rect.TopRight);
-
             foreach (var contour in region.Contours)
             {
                 var length = contour.Count;
@@ -365,8 +360,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                     var p2 = new Vector2d((float)contour[v2DIndex].X, (float)contour[v2DIndex].Y);
 
                     // check whether two points are on cell rect
-                    if (IsOnBorder(ref left, ref right, ref bottom, ref top, ref p1) &&
-                        IsOnBorder(ref left, ref right, ref bottom, ref top, ref p2))
+                    if (rect.IsOnBorder(p1) && rect.IsOnBorder(p2))
                         continue;
 
                     var ele1 = _elevationProvider.GetElevation(p1);
@@ -391,14 +385,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         secondColor);
                 }
             }
-        }
-
-        /// <summary> Checks whether point is located on border of rectangle. </summary>
-        private bool IsOnBorder(ref LineLinear2d left, ref LineLinear2d right,
-            ref LineLinear2d bottom, ref LineLinear2d top, ref Vector2d point)
-        {
-            return left.Contains(point) || right.Contains(point) ||
-                   bottom.Contains(point) || top.Contains(point);
         }
 
         /// <summary> Builds real game object. </summary>

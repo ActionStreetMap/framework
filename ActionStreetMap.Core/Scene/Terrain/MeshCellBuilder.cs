@@ -51,11 +51,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
             var useContours = renderMode == RenderMode.Scene;
 
             // NOTE the order of operation is important
-            var water = CreateMeshRegions(clipRect, content.Water, renderMode, useContours);
-            var resultCarRoads = CreateMeshRegions(clipRect, content.CarRoads, renderMode, useContours);
-            var resultWalkRoads = CreateMeshRegions(clipRect, content.WalkRoads, renderMode);
-            var resultSurface = CreateMeshRegions(clipRect, content.Surfaces, renderMode);
-            var background = CreateMeshRegions(clipRect, content.Background, renderMode);
+            var water = CreateMeshRegions(clipRect, content.Water, renderMode, ref rectangle, useContours);
+            var resultCarRoads = CreateMeshRegions(clipRect, content.CarRoads, renderMode, ref rectangle, useContours);
+            var resultWalkRoads = CreateMeshRegions(clipRect, content.WalkRoads, renderMode, ref rectangle);
+            var resultSurface = CreateMeshRegions(clipRect, content.Surfaces, renderMode, ref rectangle);
+            var background = CreateMeshRegions(clipRect, content.Background, renderMode, ref rectangle);
 
             return new MeshCell
             {
@@ -77,16 +77,16 @@ namespace ActionStreetMap.Core.Scene.Terrain
         #endregion
 
         private List<MeshRegion> CreateMeshRegions(Path clipRect, List<MeshCanvas.Region> regionDatas,
-            RenderMode renderMode)
+            RenderMode renderMode, ref Rectangle2d rect)
         {
             var meshRegions = new List<MeshRegion>();
             foreach (var regionData in regionDatas)
-                meshRegions.Add(CreateMeshRegions(clipRect, regionData, renderMode));
+                meshRegions.Add(CreateMeshRegions(clipRect, regionData, renderMode, ref rect));
             return meshRegions;
         }
 
         private MeshRegion CreateMeshRegions(Path clipRect, MeshCanvas.Region region,
-            RenderMode renderMode, bool useContours = false)
+            RenderMode renderMode, ref Rectangle2d rect, bool useContours = false)
         {
             using (var polygon = new Polygon(256, _objectPool))
             {
@@ -99,7 +99,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                     // skip small polygons to prevent triangulation issues
                     if (Math.Abs(area / DoubleScale) < 0.001) continue;
 
-                    var vertices = GetVertices(path, renderMode);
+                    var vertices = GetVertices(path, renderMode, ref rect);
 
                     // sign of area defines polygon orientation
                     polygon.AddContour(vertices, area < 0);
@@ -123,17 +123,11 @@ namespace ActionStreetMap.Core.Scene.Terrain
             }
         }
 
-        private List<Point> GetVertices(Path path, RenderMode renderMode)
+        private List<Point> GetVertices(Path path, RenderMode renderMode, ref Rectangle2d rect)
         {
             // do not split path for overview mode
             var points = _objectPool.NewList<Point>(path.Count);
-            if (renderMode == RenderMode.Overview)
-            {
-                path.ForEach(p => points.Add(new Point(
-                    Math.Round(p.X / Scale, MathUtils.RoundDigitCount),
-                    Math.Round(p.Y / Scale, MathUtils.RoundDigitCount))));
-                return points;
-            }
+            bool isOverview = renderMode == RenderMode.Overview;
 
             // split path for scene mode
             var lastItemIndex = path.Count - 1;
@@ -143,12 +137,21 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 var start = path[i];
                 var end = path[i == lastItemIndex ? 0 : i + 1];
 
-                _lineGridSplitter.Split(
-                    new Point(Math.Round(start.X / Scale, MathUtils.RoundDigitCount),
-                              Math.Round(start.Y / Scale, MathUtils.RoundDigitCount)),
-                    new Point(Math.Round(end.X / Scale, MathUtils.RoundDigitCount),
-                              Math.Round(end.Y / Scale, MathUtils.RoundDigitCount)),
-                    _objectPool, points);
+                var p1 = new Point(Math.Round(start.X/Scale, MathUtils.RoundDigitCount),
+                    Math.Round(start.Y/Scale, MathUtils.RoundDigitCount));
+
+                var p2 = new Point(Math.Round(end.X/Scale, MathUtils.RoundDigitCount),
+                    Math.Round(end.Y/Scale, MathUtils.RoundDigitCount));
+
+                if (isOverview && 
+                    (!rect.IsOnBorder(new Vector2d(p1.X, p1.Y)) || 
+                    !rect.IsOnBorder(new Vector2d(p2.X, p2.Y))))
+                {
+                    points.Add(p1);
+                    continue;
+                }
+
+                _lineGridSplitter.Split(p1, p2, _objectPool, points);
             }
 
             return points;
