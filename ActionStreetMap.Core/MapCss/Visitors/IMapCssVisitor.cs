@@ -4,7 +4,7 @@ using Antlr.Runtime.Tree;
 namespace ActionStreetMap.Core.MapCss.Visitors
 {
     /// <summary> Visitor for MapCSS parser result. </summary>
-    public interface IMapCssVisitor
+    internal interface IMapCssVisitor
     {
         /// <summary> Visits tree. </summary>
         /// <param name="tree"></param>
