@@ -3,7 +3,7 @@
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 {
     /// <summary> Represents skeleton algorithm results. </summary>
-    public class Skeleton
+    internal class Skeleton
     {
         /// <summary> Result of skeleton algorithm for edge. </summary>
         public readonly List<EdgeResult> Edges;

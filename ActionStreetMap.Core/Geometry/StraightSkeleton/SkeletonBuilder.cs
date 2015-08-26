@@ -18,7 +18,7 @@ namespace ActionStreetMap.Core.Geometry.StraightSkeleton
     ///     This is port of java implementation from kendzi-straight-skeleton library
     ///     with numerous code style changes. 
     /// </remarks>
-    public class SkeletonBuilder
+    internal class SkeletonBuilder
     {
         // Error epsilon.
         private const double SplitEpsilon = 1E-10;

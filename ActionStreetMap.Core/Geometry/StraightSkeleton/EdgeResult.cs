@@ -3,7 +3,7 @@ using ActionStreetMap.Core.Geometry.StraightSkeleton.Circular;
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton
 {
-    public class EdgeResult
+    internal class EdgeResult
     {
         public readonly Edge Edge;
         public readonly List<Vector2d> Polygon;
