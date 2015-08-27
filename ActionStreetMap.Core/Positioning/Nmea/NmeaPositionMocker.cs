@@ -19,9 +19,7 @@ namespace ActionStreetMap.Core.Positioning.Nmea
 
         private const NmeaMessageType CycleStartMsgType = NmeaMessageType.GGA;
 
-        /// <summary>
-        ///     Fired once mocking is done or stopped.
-        /// </summary>
+        /// <summary> Fired once mocking is done or stopped. </summary>
         public event EventHandler OnDone;
 
         private void FireDone()
@@ -31,9 +29,7 @@ namespace ActionStreetMap.Core.Positioning.Nmea
                 tmp(this, new EventArgs());
         }
 
-        /// <summary>
-        ///     Creates NmeaPositionMocker.
-        /// </summary>
+        /// <summary> Creates NmeaPositionMocker. </summary>
         /// <param name="stream">Nmea stream.</param>
         /// <param name="messageBus">MessageBus.</param>
         public NmeaPositionMocker(Stream stream, IMessageBus messageBus)
@@ -75,20 +71,11 @@ namespace ActionStreetMap.Core.Positioning.Nmea
             FireDone();
         }
 
-        /// <summary>
-        ///     Gets mocker state.
-        /// </summary>
-        public bool IsRunning
-        {
-            get
-            {
-                return _isStarted;
-            }
+        /// <summary> Gets mocker state. </summary>
+        public bool IsRunning { get { return _isStarted; }
         }
 
-        /// <summary>
-        ///     Stops mocker.
-        /// </summary>
+        /// <summary> Stops mocker.</summary>
         public void Stop()
         {
             _isStarted = false;

@@ -1,7 +1,7 @@
 ﻿namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     /// <summary> Represents a straight line segment in 2D space. </summary>
-    public struct Edge
+    internal struct Edge
     {
         /// <summary> Gets the first endpoints index. </summary>
         public ushort P0;

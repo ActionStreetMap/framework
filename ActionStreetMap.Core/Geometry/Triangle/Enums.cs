@@ -1,7 +1,7 @@
 ﻿namespace ActionStreetMap.Core.Geometry.Triangle
 {
     /// <summary> The type of the mesh vertex. </summary>
-    public enum VertexType { InputVertex, SegmentVertex, FreeVertex, DeadVertex, UndeadVertex };
+    internal enum VertexType { InputVertex, SegmentVertex, FreeVertex, DeadVertex, UndeadVertex };
 
     /// <summary> Node renumbering algorithms. </summary>
     internal enum NodeNumbering { None, Linear, CuthillMcKee };
@@ -11,7 +11,7 @@
     ///     The result of a search indicates that the point falls in the 
     ///     interior of a triangle, on an edge, on a vertex, or outside the mesh.
     /// </remarks>
-    enum LocateResult { InTriangle, OnEdge, OnVertex, Outside };
+    internal enum LocateResult { InTriangle, OnEdge, OnVertex, Outside };
 
     /// <summary> Labels that signify the result of vertex insertion. </summary>
     /// <remarks>
@@ -20,12 +20,12 @@
     ///     because it lies on a segment, or was not inserted because another vertex 
     ///     occupies the same location.
     /// </remarks>
-    public enum InsertVertexResult { Successful, Encroaching, Violating, Duplicate };
+    internal enum InsertVertexResult { Successful, Encroaching, Violating, Duplicate };
 
     /// <summary> Labels that signify the result of direction finding. </summary>
     /// <remarks>The result indicates that a segment connecting the two query 
     /// points falls within the direction triangle, along the left edge of the 
     /// direction triangle, or along the right edge of the direction triangle.
     /// </remarks>
-    enum FindDirectionResult { Within, Leftcollinear, Rightcollinear };
+    internal enum FindDirectionResult { Within, Leftcollinear, Rightcollinear };
 }
