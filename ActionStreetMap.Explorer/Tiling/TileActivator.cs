@@ -9,11 +9,12 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Tiling
 {
     /// <summary> Represents default tile activator. </summary>
-    public class TileActivator: ITileActivator
+    internal class TileActivator: ITileActivator
     {
         private const string LogTag = "tile";
 
         /// <summary> Trace. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 

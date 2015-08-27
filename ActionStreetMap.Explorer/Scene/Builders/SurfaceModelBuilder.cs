@@ -1,5 +1,4 @@
 ﻿using System;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.MapCss.Domain;
@@ -9,7 +8,6 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Generators;
 using ActionStreetMap.Explorer.Scene.Indices;
-using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 using Mesh = ActionStreetMap.Core.Geometry.Triangle.Mesh;
 using RenderMode = ActionStreetMap.Core.RenderMode;
@@ -17,7 +15,7 @@ using RenderMode = ActionStreetMap.Core.RenderMode;
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides the way to process surfaces. </summary>
-    public class SurfaceModelBuilder : ModelBuilder
+    internal class SurfaceModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "surface"; } }

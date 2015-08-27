@@ -1,5 +1,4 @@
-﻿using ActionStreetMap.Core;
-using ActionStreetMap.Core.Geometry;
+﻿using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Utils;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
@@ -9,7 +8,7 @@ using ActionStreetMap.Core.Unity;
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary>  Provides logic to build water. </summary>
-    public class WaterModelBuilder : ModelBuilder
+    internal class WaterModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "water"; } }

@@ -11,7 +11,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides logic to build cylinders. </summary>
-    public class CylinderModelBuilder : ModelBuilder
+    internal class CylinderModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "cylinder"; } }

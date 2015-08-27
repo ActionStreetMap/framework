@@ -6,13 +6,12 @@ using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Generators;
 using ActionStreetMap.Explorer.Scene.Indices;
-using ActionStreetMap.Explorer.Utils;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides logic to build spheres. </summary>
-    public class SphereModelBuilder : ModelBuilder
+    internal class SphereModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "sphere"; } }

@@ -50,15 +50,19 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         /// <inheritdoc />
         public abstract List<MeshData> Build(Building building);
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public IObjectPool ObjectPool { get; set; }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public IResourceProvider ResourceProvider { get; set; }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 

@@ -20,7 +20,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Tiling
 {
     /// <summary> Represents class responsible to process all models for tile. </summary>
-    public class TileModelLoader : IModelLoader
+    internal class TileModelLoader : IModelLoader
     {
         private const string LogCategory = "model.loader";
 
@@ -32,6 +32,7 @@ namespace ActionStreetMap.Explorer.Tiling
 
         private readonly Stylesheet _stylesheet;
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 

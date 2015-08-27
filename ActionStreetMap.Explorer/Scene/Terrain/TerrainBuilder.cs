@@ -50,6 +50,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private readonly IObjectPool _objectPool;
         private readonly MeshCellBuilder _meshCellBuilder;
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 

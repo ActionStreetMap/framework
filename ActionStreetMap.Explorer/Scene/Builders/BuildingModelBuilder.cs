@@ -9,14 +9,13 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Scene.Facades;
-using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Scene.Roofs;
 using ActionStreetMap.Infrastructure.Dependencies;
 
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides logic to build buildings. </summary>
-    public class BuildingModelBuilder : ModelBuilder
+    internal class BuildingModelBuilder : ModelBuilder
     {
         private readonly IEnumerable<IFacadeBuilder> _facadeBuilders;
         private readonly IEnumerable<IRoofBuilder> _roofBuilders;

@@ -61,6 +61,7 @@ namespace ActionStreetMap.Explorer.Tiling
         private IElementSource _currentElementSource;
 
         /// <summary> Gets or sets trace. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 

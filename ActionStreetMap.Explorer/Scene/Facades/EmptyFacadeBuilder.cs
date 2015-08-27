@@ -20,6 +20,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         /// <inheritdoc />
         public string Name { get { return "empty"; } }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 

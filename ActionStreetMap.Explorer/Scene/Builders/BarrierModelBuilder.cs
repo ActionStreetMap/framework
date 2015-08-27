@@ -14,7 +14,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides logic to build various barriers. </summary>
-    public class BarrierModelBuilder: ModelBuilder
+    internal class BarrierModelBuilder: ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "barrier"; } }

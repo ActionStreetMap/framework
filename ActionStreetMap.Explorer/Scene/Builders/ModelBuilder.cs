@@ -44,7 +44,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
     }
 
     /// <summary> Defines base class for model builders which provides helper logic. </summary>
-    public abstract class ModelBuilder : IModelBuilder
+    internal abstract class ModelBuilder : IModelBuilder
     {
         /// <inheritdoc />
         public abstract string Name { get; }
@@ -52,26 +52,32 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         #region Properties. These properties are public due to Reflection limitations on some platform
 
         /// <summary> Gets trace. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 
         /// <summary> Gets behaviour provider. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public BehaviourProvider BehaviourProvider { get; set; }
 
         /// <summary> Gets elevation provider. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public IElevationProvider ElevationProvider { get; set; }
 
         /// <summary> Game object factory. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
 
         /// <summary> Gets resource provider. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public IResourceProvider ResourceProvider { get; set; }
 
         /// <summary> Gets object pool. </summary>
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public IObjectPool ObjectPool { get; set; }
 

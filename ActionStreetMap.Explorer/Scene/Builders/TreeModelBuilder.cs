@@ -10,7 +10,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides the way to process trees. </summary>
-    public class TreeModelBuilder : ModelBuilder
+    internal class TreeModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "tree"; } }

@@ -47,6 +47,7 @@ namespace ActionStreetMap.Maps.Data
         private RTree<TreeNode> _tree;
 
         /// <summary> Trace. </summary>
+        [global::System.Reflection.Obfuscation(Exclude=true, Feature="renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 

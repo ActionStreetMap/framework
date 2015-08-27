@@ -11,7 +11,7 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides logic to build info models. </summary>
-    public class InfoModelBuilder: ModelBuilder
+    internal class InfoModelBuilder : ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "info"; } }

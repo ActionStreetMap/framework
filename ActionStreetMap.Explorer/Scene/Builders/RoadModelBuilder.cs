@@ -10,7 +10,7 @@ using ActionStreetMap.Explorer.Helpers;
 namespace ActionStreetMap.Explorer.Scene.Builders
 {
     /// <summary> Provides the way to process roads. </summary>
-    public class RoadModelBuilder: ModelBuilder
+    internal class RoadModelBuilder: ModelBuilder
     {
         /// <inheritdoc />
         public override string Name { get { return "road"; } }
