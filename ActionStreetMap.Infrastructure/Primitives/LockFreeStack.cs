@@ -5,7 +5,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
 {
     /// <summary> Lock free stack based on CAS pattern. </summary>
     /// <typeparam name="T"></typeparam>
-    public class LockFreeStack<T>
+    internal class LockFreeStack<T>
     {
         private volatile Node _head;
     

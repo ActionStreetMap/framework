@@ -6,7 +6,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
 {
     /// <summary> A polygon represented as a planar straight line graph. </summary>
-    public sealed class Polygon: IDisposable
+    internal sealed class Polygon : IDisposable
     {
         private readonly IObjectPool _objectPool;
 

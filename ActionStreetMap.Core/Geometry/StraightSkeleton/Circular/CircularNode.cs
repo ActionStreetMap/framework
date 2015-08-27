@@ -1,6 +1,6 @@
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
 {
-    public class CircularNode
+    internal class CircularNode
     {
         internal ICircularList List;
 

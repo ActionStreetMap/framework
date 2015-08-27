@@ -1,6 +1,6 @@
 ﻿namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Events.Chains
 {
-    public enum ChainType
+    internal enum ChainType
     {
         Edge,
         ClosedEdge,

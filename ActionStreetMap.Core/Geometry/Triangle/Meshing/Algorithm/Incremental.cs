@@ -5,7 +5,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Topology;
 namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
 {
     /// <summary>  Builds a delaunay triangulation using the incremental algorithm. </summary>
-    public class Incremental : ITriangulator
+    internal class Incremental : ITriangulator
     {
         private Mesh mesh;
 

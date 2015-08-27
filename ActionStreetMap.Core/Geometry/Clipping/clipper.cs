@@ -440,17 +440,17 @@ namespace ActionStreetMap.Core.Geometry.Clipping
         }
     }
 
-    public enum ClipType { ctIntersection, ctUnion, ctDifference, ctXor };
-    public enum PolyType { ptSubject, ptClip };
+    internal enum ClipType { ctIntersection, ctUnion, ctDifference, ctXor };
+    internal enum PolyType { ptSubject, ptClip };
 
     //By far the most widely used winding rules for polygon filling are
     //EvenOdd & NonZero (GDI, GDI+, XLib, OpenGL, Cairo, AGG, Quartz, SVG, Gr32)
     //Others rules include Positive, Negative and ABS_GTR_EQ_TWO (only in OpenGL)
     //see http://glprogramming.com/red/chapter11.html
-    public enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
+    internal enum PolyFillType { pftEvenOdd, pftNonZero, pftPositive, pftNegative };
 
-    public enum JoinType { jtSquare, jtRound, jtMiter };
-    public enum EndType { etClosedPolygon, etClosedLine, etOpenButt, etOpenSquare, etOpenRound };
+    internal enum JoinType { jtSquare, jtRound, jtMiter };
+    internal enum EndType { etClosedPolygon, etClosedLine, etOpenButt, etOpenSquare, etOpenRound };
 
     internal enum EdgeSide { esLeft, esRight };
     internal enum Direction { dRightToLeft, dLeftToRight };

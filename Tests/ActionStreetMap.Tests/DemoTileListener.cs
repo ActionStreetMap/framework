@@ -53,7 +53,7 @@ namespace ActionStreetMap.Tests
 
         private void ProcessTile(Tile tile)
         {
-            var clipper = new Clipper();
+            /*var clipper = new Clipper();
             clipper.AddPaths(tile.Canvas.Water
                .Select(a => a.Points.Select(p => new IntPoint(p.X * MeshCellBuilder.Scale, p.Y * MeshCellBuilder.Scale)).ToList()).ToList(),
                PolyType.ptSubject, true);
@@ -61,7 +61,7 @@ namespace ActionStreetMap.Tests
             clipper.Execute(ClipType.ctUnion, solution);
             clipper.Clear();
 
-            SVGBuilder.SaveToFile(solution, "water.svg", 0.001);
+            SVGBuilder.SaveToFile(solution, "water.svg", 0.001);*/
         }
     }
 }

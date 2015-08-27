@@ -6,7 +6,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     using System;
     
     /// <summary> The vertex data structure. </summary>
-    public class Vertex : Point
+    internal class Vertex : Point
     {
         internal VertexType type;
         internal Otri tri;

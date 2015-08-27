@@ -12,7 +12,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
     ///     See http://noocyte.wordpress.com/2008/02/18/double-key-dictionary/
     ///     A Remove method was added.
     /// </remarks>
-    public class DoubleKeyDictionary<K, T, V> : IEnumerable<DoubleKeyPairValue<K, T, V>>,
+    internal class DoubleKeyDictionary<K, T, V> : IEnumerable<DoubleKeyPairValue<K, T, V>>,
         IEquatable<DoubleKeyDictionary<K, T, V>>
     {
         private readonly object _lockObj = new object();

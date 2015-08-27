@@ -1,7 +1,7 @@
 ﻿namespace ActionStreetMap.Core.Geometry.Triangle.Meshing
 {
     /// <summary> Mesh constraint options for polygon triangulation. </summary>
-    public class ConstraintOptions
+    internal class ConstraintOptions
     {
         /// <summary> Gets or sets a value indicating whether to use regions. </summary>
         public bool UseRegions { get; set; }

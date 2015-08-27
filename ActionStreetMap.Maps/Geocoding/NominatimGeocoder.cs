@@ -11,7 +11,7 @@ using ActionStreetMap.Maps.GeoCoding;
 namespace ActionStreetMap.Maps.Geocoding
 {
     /// <summary> Geocoder which uses osm nominatim. </summary>
-    public class NominatimGeocoder: IGeocoder, IConfigurable
+    internal class NominatimGeocoder: IGeocoder, IConfigurable
     {
         private const string DefaultServer = @"http://nominatim.openstreetmap.org/search?";
         private string _searchPath = DefaultServer;

@@ -5,7 +5,7 @@ using ActionStreetMap.Core.Unity;
 namespace ActionStreetMap.Core.Utils
 {
     /// <summary> Provides helper method to work with colors. </summary>
-    public static class ColorUtils
+    internal static class ColorUtils
     {
         // TODO replace before release with different color
         private const string DefaultColor = "red";

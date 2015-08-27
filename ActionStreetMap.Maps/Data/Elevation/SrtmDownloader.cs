@@ -8,7 +8,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 namespace ActionStreetMap.Maps.Data.Elevation
 {
     /// <summary> Downloads SRTM data from NASA server. </summary>
-    public class SrtmDownloader
+    internal class SrtmDownloader
     {
         private const string LogTag = "mapdata.srtm";
         private readonly IFileSystemService _fileSystemService;

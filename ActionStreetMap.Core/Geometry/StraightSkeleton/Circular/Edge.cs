@@ -2,7 +2,7 @@
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Circular
 {
-    public class Edge : CircularNode
+    internal class Edge : CircularNode
     {
         public readonly Vector2d Begin;
         public readonly Vector2d End;

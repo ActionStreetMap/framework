@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ActionStreetMap.Infrastructure.Primitives
 {
     /// <summary> Synchronized hashset. </summary>
-    public class SafeHashSet<T>: IEnumerable<T>
+    internal class SafeHashSet<T> : IEnumerable<T>
     {
         private readonly object _lockObj = new object();
         private readonly HashSet<T> _hashSet = new HashSet<T>();

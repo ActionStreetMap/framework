@@ -14,7 +14,7 @@ using ActionStreetMap.Infrastructure.Reactive;
 namespace ActionStreetMap.Maps.Data.Elevation
 {
     /// <summary> Implementation of <see cref="IElevationProvider"/> which uses SRTM data files. </summary>
-    public class SrtmElevationProvider : IElevationProvider, IConfigurable
+    internal class SrtmElevationProvider : IElevationProvider, IConfigurable
     {
         private const string LogTag = "mapdata.srtm";
 

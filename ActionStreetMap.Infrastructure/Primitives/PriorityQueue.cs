@@ -16,7 +16,7 @@ namespace ActionStreetMap.Infrastructure.Primitives
     /// the child nodes of node N. The tree is balanced and left-aligned so there
     /// are no 'holes' in this list.
     /// <typeparam name="T">Type T, should implement IComparable[T];</typeparam>
-    public class PriorityQueue<T>
+    internal class PriorityQueue<T>
     {
         private readonly IComparer<T> _comparer;
         private readonly List<T> _heap;

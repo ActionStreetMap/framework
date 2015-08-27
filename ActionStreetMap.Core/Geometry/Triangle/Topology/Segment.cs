@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 namespace ActionStreetMap.Core.Geometry.Triangle.Topology
 {
     /// <summary> The subsegment data structure. </summary>
-    public class Segment
+    internal class Segment
     {
         // Hash for dictionary. Will be set by mesh instance.
         internal int hash;

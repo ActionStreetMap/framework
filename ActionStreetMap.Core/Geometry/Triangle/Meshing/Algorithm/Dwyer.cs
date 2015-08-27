@@ -36,7 +36,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Meshing.Algorithm
     /// The bounding box also makes it easy to traverse the convex hull, as the
     /// divide-and-conquer algorithm needs to do.
     /// </remarks>
-    public class Dwyer : ITriangulator
+    internal class Dwyer : ITriangulator
     {
         static Random rand = new Random(1000);
 

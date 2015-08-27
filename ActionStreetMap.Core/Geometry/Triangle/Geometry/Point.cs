@@ -4,7 +4,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle.Geometry
     using System;
 
     /// <summary> Represents a 2D point. </summary>
-    public class Point : IComparable<Point>, IEquatable<Point>
+    internal class Point : IComparable<Point>, IEquatable<Point>
     {
         internal ushort Id;
         internal double X;

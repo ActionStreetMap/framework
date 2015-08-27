@@ -8,7 +8,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Topology;
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
     /// <summary> Mesh data structure. </summary>
-    public sealed class Mesh: IDisposable
+    internal sealed class Mesh : IDisposable
     {
         #region Variables
 
@@ -83,7 +83,7 @@ namespace ActionStreetMap.Core.Geometry.Triangle
         public bool IsPolygon { get { return insegments > 0; } }
 
         /// <summary> Gets the current node numbering. </summary>
-        public NodeNumbering CurrentNumbering { get { return numbering; } }
+        internal NodeNumbering CurrentNumbering { get { return numbering; } }
 
         #endregion
 

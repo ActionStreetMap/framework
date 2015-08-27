@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Path
 {
-    public class PathQueue<T> where T : PathQueueNode<T>
+    internal class PathQueue<T> where T : PathQueueNode<T>
     {
         public int Size { get; private set; }
         public PathQueueNode<T> First { get; private set; }

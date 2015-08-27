@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 namespace ActionStreetMap.Core.Geometry.Triangle.Topology
 {
     /// <summary> The triangle data structure. </summary>
-    public class Triangle
+    internal class Triangle
     {
         // The ID is only used for mesh output.
         internal int Id;

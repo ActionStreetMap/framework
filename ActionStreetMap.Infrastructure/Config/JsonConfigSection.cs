@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Infrastructure.Formats.Json;
-using ActionStreetMap.Infrastructure.IO;
 
 namespace ActionStreetMap.Infrastructure.Config
 {

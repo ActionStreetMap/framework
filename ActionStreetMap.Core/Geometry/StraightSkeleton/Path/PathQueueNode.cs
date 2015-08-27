@@ -1,6 +1,6 @@
 ﻿namespace ActionStreetMap.Core.Geometry.StraightSkeleton.Path
 {
-    public class PathQueueNode<T> where T : PathQueueNode<T>
+    internal class PathQueueNode<T> where T : PathQueueNode<T>
     {
         public PathQueue<T> List;
         public PathQueueNode<T> Next;
