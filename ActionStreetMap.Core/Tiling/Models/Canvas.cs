@@ -24,9 +24,9 @@ namespace ActionStreetMap.Core.Tiling.Models
         public Canvas(IObjectPool objectPool)
         {
             _objectPool = objectPool;
-            Surfaces = objectPool.NewList<Tuple<Surface, Action<Mesh>>>(32);
-            Roads = objectPool.NewList<RoadElement>(32);
-            Water = objectPool.NewList<Surface>(32);
+            Surfaces = new List<Tuple<Surface, Action<Mesh>>>(8);
+            Roads = new List<RoadElement>(8);
+            Water = new List<Surface>(8);
         }
 
         /// <inheritdoc />
@@ -58,7 +58,7 @@ namespace ActionStreetMap.Core.Tiling.Models
         public void AddSurface(Surface surface)
         {
             // TODO Mesh is internal and should be as it is.
-            throw new NotImplementedException("Not implemented yet");
+            throw new NotImplementedException("Not implemented yet.");
         }
 
         /// <summary> Adds water. </summary>

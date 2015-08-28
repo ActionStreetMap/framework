@@ -95,17 +95,15 @@ namespace ActionStreetMap.Tests
         {
             return new ObjectPool()
                 .RegisterObjectType<TerrainMeshTriangle>(() => new TerrainMeshTriangle())
-                .RegisterListType<TerrainMeshTriangle>(32)
+                .RegisterListType<TerrainMeshTriangle>(1024)
                 .RegisterListType<Point>(32)
                 .RegisterListType<Vertex>(1)
                 .RegisterListType<Edge>(1)
                 .RegisterObjectType<Clipper>(() => new Clipper())
                 .RegisterObjectType<ClipperOffset>(() => new ClipperOffset())
-                .RegisterListType<Tuple<Surface, Action<Mesh>>>(32)
-                .RegisterListType<RoadElement>(32)
-                .RegisterListType<Surface>(32)
                 .RegisterListType<GeoCoordinate>(256)
                 .RegisterListType<Vector2d>(256)
+                .RegisterListType<LineSegment2d>(8)
                 .RegisterListType<int>(256);
         }
 
