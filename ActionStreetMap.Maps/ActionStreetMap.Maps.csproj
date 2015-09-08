@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="Data\ElementSourceEditor.cs" />
     <Compile Include="Data\Helpers\ZoomHelper.cs" />
+    <Compile Include="Data\Storage\StringStore.cs" />
     <Compile Include="Entities\Node.cs" />
     <Compile Include="Entities\Element.cs" />
     <Compile Include="Formats\IReader.cs" />

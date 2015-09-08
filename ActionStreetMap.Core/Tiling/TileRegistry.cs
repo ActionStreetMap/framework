@@ -31,7 +31,7 @@ namespace ActionStreetMap.Core.Tiling
         public void Register(long id)
         {
             if (_renderMode == RenderMode.Scene)
-                _localIds.TryAdd(id);
+                _localIds.Add(id);
         }
 
         /// <summary>
@@ -42,8 +42,8 @@ namespace ActionStreetMap.Core.Tiling
         {
             if (_renderMode == RenderMode.Scene)
             {
-                _localIds.TryAdd(id);
-                GlobalIds.TryAdd(id);
+                _localIds.Add(id);
+                GlobalIds.Add(id);
             }
         }
 
@@ -72,10 +72,7 @@ namespace ActionStreetMap.Core.Tiling
             {
                 // remove all registered ids from global list if they are in current registry
                 foreach (var id in _localIds)
-                {
-                    if (GlobalIds.Contains(id))
-                        GlobalIds.TryRemove(id);
-                }
+                    GlobalIds.Remove(id);
 
                 _localIds.Clear();
             }

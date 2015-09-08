@@ -1,48 +1,100 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace ActionStreetMap.Infrastructure.Primitives
 {
     /// <summary> Synchronized hashset. </summary>
     internal class SafeHashSet<T> : IEnumerable<T>
     {
-        private readonly object _lockObj = new object();
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly HashSet<T> _hashSet = new HashSet<T>();
 
-        public bool Contains(T item)
+        public bool Add(T item)
         {
-            lock (_lockObj)
+            try
             {
-                return _hashSet.Contains(item);
+                _lock.EnterWriteLock();
+                return _hashSet.Add(item);
             }
-        }
-
-        public bool TryAdd(T item)
-        {
-            lock (_lockObj)
+            finally
             {
-                if (_hashSet.Contains(item))
-                    return false;
-                _hashSet.Add(item);
-                return true;
-            }
-        }
-
-        public bool TryRemove(T item)
-        {
-            lock (_lockObj)
-            {
-                if (!_hashSet.Contains(item))
-                    return false;
-                _hashSet.Remove(item);
-                return true;
+                if (_lock.IsWriteLockHeld) _lock.ExitWriteLock();
             }
         }
 
         public void Clear()
         {
-            _hashSet.Clear();
+            try
+            {
+                _lock.EnterWriteLock();
+                _hashSet.Clear();
+            }
+            finally
+            {
+                if (_lock.IsWriteLockHeld) _lock.ExitWriteLock();
+            }
         }
+
+        public bool Contains(T item)
+        {
+            try
+            {
+                _lock.EnterReadLock();
+                return _hashSet.Contains(item);
+            }
+            finally
+            {
+                if (_lock.IsReadLockHeld) _lock.ExitReadLock();
+            }
+        }
+
+        public bool Remove(T item)
+        {
+            try
+            {
+                _lock.EnterWriteLock();
+                return _hashSet.Remove(item);
+            }
+            finally
+            {
+                if (_lock.IsWriteLockHeld) _lock.ExitWriteLock();
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                try
+                {
+                    _lock.EnterReadLock();
+                    return _hashSet.Count;
+                }
+                finally
+                {
+                    if (_lock.IsReadLockHeld) _lock.ExitReadLock();
+                }
+            }
+        }
+
+        #region Dispose
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                if (_lock != null)
+                    _lock.Dispose();
+        }
+
+        #endregion
 
         public IEnumerator<T> GetEnumerator()
         {
