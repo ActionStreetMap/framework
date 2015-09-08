@@ -20,7 +20,7 @@ namespace ActionStreetMap.Maps.Data.Import
 {
     internal abstract class IndexBuilder : IDisposable
     {
-        protected const string LogTag = "index.exec";
+        protected const string CategoryKey = "index.exec";
 
         private SortedList<long, ScaledGeoCoordinate> _nodes = new SortedList<long, ScaledGeoCoordinate>();
         private SortedList<long, Way> _ways = new SortedList<long, Way>(10240);
@@ -79,7 +79,7 @@ namespace ActionStreetMap.Maps.Data.Import
 
             if (tagCount > 0)
             {
-                if (node.Tags.Any( tag => Settings.Spatial.Include.Nodes.Contains(tag.Key)))
+                if (node.Tags.Any(tag => Settings.Spatial.Include.Nodes.Contains(tag.Key)))
                 {
                     var offset = Store.Insert(node);
                     Tree.Insert(offset, new PointEnvelop(node.Coordinate));

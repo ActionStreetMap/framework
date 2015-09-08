@@ -73,7 +73,7 @@ namespace ActionStreetMap.Maps.Data.Import
             Store.Dispose();
             
             sw.Stop();
-            Trace.Debug(LogTag, Strings.IndexBuildInMs, sw.ElapsedMilliseconds.ToString());
+            Trace.Debug(CategoryKey, Strings.IndexBuildInMs, sw.ElapsedMilliseconds.ToString());
         }
 
         public override void ProcessBoundingBox(BoundingBox bbox)
