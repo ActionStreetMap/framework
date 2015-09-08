@@ -332,6 +332,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void Awake()
         {
             if (instance == null)
@@ -393,6 +394,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void OnDestroy()
         {
             if (instance == this)
@@ -415,11 +417,13 @@ namespace ActionStreetMap.Infrastructure.Reactive
             }
         }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void Update()
         {
             queueWorker.ExecuteAll(unhandledExceptionCallback);
         }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void OnLevelWasLoaded(int level)
         {
             // TODO clear queueWorker?
@@ -430,6 +434,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
         Subject<bool> onApplicationFocus;
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void OnApplicationFocus(bool focus)
         {
             if (onApplicationFocus != null) onApplicationFocus.OnNext(focus);
@@ -442,6 +447,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
         Subject<bool> onApplicationPause;
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void OnApplicationPause(bool pause)
         {
             if (onApplicationPause != null) onApplicationPause.OnNext(pause);
@@ -454,6 +460,7 @@ namespace ActionStreetMap.Infrastructure.Reactive
 
         Subject<Unit> onApplicationQuit;
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void OnApplicationQuit()
         {
             if (onApplicationQuit != null) onApplicationQuit.OnNext(Unit.Default);
