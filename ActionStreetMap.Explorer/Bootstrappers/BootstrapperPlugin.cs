@@ -27,9 +27,9 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         public ITrace Trace { get; set; }
 
         /// <summary> Gets extension provider. </summary>
-        public BehaviourProvider Provider
+        public ModelExtensionProvider ExtensionProvider
         {
-            get { return Container.Resolve<BehaviourProvider>(); }
+            get { return Container.Resolve<ModelExtensionProvider>(); }
         }
 
         /// <inheritdoc />

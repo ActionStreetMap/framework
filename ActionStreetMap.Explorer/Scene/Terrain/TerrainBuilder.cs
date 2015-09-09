@@ -43,7 +43,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     {
         private const string LogTag = "mesh.terrain";
 
-        private readonly BehaviourProvider _behaviourProvider;
+        private readonly ModelExtensionProvider _modelExtensionProvider;
         private readonly IElevationProvider _elevationProvider;
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
@@ -58,13 +58,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         /// <summary> Creates instance of <see cref="TerrainBuilder"/>. </summary>
         [Dependency]
-        public TerrainBuilder(BehaviourProvider behaviourProvider,
+        public TerrainBuilder(ModelExtensionProvider modelExtensionProvider,
                               IElevationProvider elevationProvider,
                               IResourceProvider resourceProvider,
                               IGameObjectFactory gameObjectFactory,
                               IObjectPool objectPool)
         {
-            _behaviourProvider = behaviourProvider;
+            _modelExtensionProvider = modelExtensionProvider;
             _elevationProvider = elevationProvider;
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
@@ -421,7 +421,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
             meshData.Dispose();
 
-            var behaviourTypes = rule.GetModelBehaviours(_behaviourProvider);
+            var behaviourTypes = rule.GetModelBehaviours(_modelExtensionProvider);
             foreach (var behaviourType in behaviourTypes)
             {
                 var behaviour = gameObject.AddComponent(behaviourType) as IModelBehaviour;

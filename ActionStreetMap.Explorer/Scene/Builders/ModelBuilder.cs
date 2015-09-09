@@ -59,7 +59,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <summary> Gets behaviour provider. </summary>
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
-        public BehaviourProvider BehaviourProvider { get; set; }
+        public ModelExtensionProvider ModelExtensionProvider { get; set; }
 
         /// <summary> Gets elevation provider. </summary>
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
@@ -123,7 +123,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 // attach behaviours
                 gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
-                var behaviourTypes = rule.GetModelBehaviours(BehaviourProvider);
+                var behaviourTypes = rule.GetModelBehaviours(ModelExtensionProvider);
                 foreach (var behaviourType in behaviourTypes)
                 {
                     var behaviour = gameObject.AddComponent(behaviourType) as IModelBehaviour;

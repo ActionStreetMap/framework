@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .Singleton());
 
             // register model processing extensions.
-            Container.RegisterInstance(new BehaviourProvider(Container)
+            Container.RegisterInstance(new ModelExtensionProvider(Container)
                 .RegisterBuilder("building", typeof (BuildingModelBuilder))
                 .RegisterBuilder("sphere", typeof (SphereModelBuilder))
                 .RegisterBuilder("cylinder", typeof (CylinderModelBuilder))

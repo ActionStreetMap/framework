@@ -27,7 +27,7 @@ namespace ActionStreetMap.Tests.Explorer.Helpers
             testBulder2.SetupGet(b => b.Name).Returns("test2");
             var testBulder3 = new Mock<IModelBuilder>();
             testBulder3.SetupGet(b => b.Name).Returns("test2");
-            var provider = new BehaviourProvider(new Container())
+            var provider = new ModelExtensionProvider(new Container())
                 .RegisterBuilder(testBulder1.Object)
                 .RegisterBuilder(testBulder2.Object);
             var rule = stylesheet.GetModelRule(way, ZoomHelper.GetZoomLevel(RenderMode.Scene));

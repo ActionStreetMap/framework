@@ -24,7 +24,7 @@ namespace ActionStreetMap.Explorer.Tiling
         private const string LogCategory = "model.loader";
 
         private readonly ITerrainBuilder _terrainBuilder;
-        private readonly BehaviourProvider _behaviourProvider;
+        private readonly ModelExtensionProvider _modelExtensionProvider;
         private readonly IObjectPool _objectPool;
         private readonly IGameObjectFactory _gameObjectFactory;
 
@@ -38,10 +38,10 @@ namespace ActionStreetMap.Explorer.Tiling
         [Dependency]
         public TileModelLoader(IGameObjectFactory gameObjectFactory,
             ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
-            BehaviourProvider behaviourProvider, IObjectPool objectPool)
+            ModelExtensionProvider modelExtensionProvider, IObjectPool objectPool)
         {
             _terrainBuilder = terrainBuilder;
-            _behaviourProvider = behaviourProvider;
+            _modelExtensionProvider = modelExtensionProvider;
 
             _objectPool = objectPool;
 
@@ -104,7 +104,7 @@ namespace ActionStreetMap.Explorer.Tiling
             {
                 try
                 {
-                    foreach (var modelBuilder in rule.GetModelBuilders(_behaviourProvider))
+                    foreach (var modelBuilder in rule.GetModelBuilders(_modelExtensionProvider))
                     {
                         var gameObject = func(rule, modelBuilder);
                         AttachBehaviours(gameObject, rule, model);
@@ -133,7 +133,7 @@ namespace ActionStreetMap.Explorer.Tiling
 
         private void AttachBehaviours(IGameObject gameObject, Rule rule, Model model)
         {
-            var behaviourTypes = rule.GetModelBehaviours(_behaviourProvider);
+            var behaviourTypes = rule.GetModelBehaviours(_modelExtensionProvider);
             if (gameObject != null && !gameObject.IsBehaviourAttached && behaviourTypes.Any())
                 Observable.Start(() =>
                 {

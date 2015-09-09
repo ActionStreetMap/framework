@@ -114,12 +114,12 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             public Color[] Colors;
 
             [Dependency]
-            public TestTerrainBuilder(BehaviourProvider behaviourProvider, 
+            public TestTerrainBuilder(ModelExtensionProvider modelExtensionProvider, 
                                       IElevationProvider elevationProvider, 
                                       IResourceProvider resourceProvider, 
                                       IGameObjectFactory gameObjectFactory, 
                                       IObjectPool objectPool) : 
-                base(behaviourProvider, elevationProvider, resourceProvider, gameObjectFactory, objectPool)
+                base(modelExtensionProvider, elevationProvider, resourceProvider, gameObjectFactory, objectPool)
             {
             }
 

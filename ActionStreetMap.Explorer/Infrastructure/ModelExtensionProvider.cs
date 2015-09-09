@@ -8,19 +8,19 @@ using ActionStreetMap.Infrastructure.Utilities;
 namespace ActionStreetMap.Explorer.Infrastructure
 {
     /// <summary> Maintains list of global behaviours. </summary>
-    public sealed class BehaviourProvider
+    public sealed class ModelExtensionProvider
     {
         private readonly IContainer _container;
         private readonly Dictionary<string, Type> _modelBehaviours = new Dictionary<string, Type>(4);
 
-        /// <summary> Creates instance of <see cref="BehaviourProvider"/>. </summary>
-        internal BehaviourProvider(IContainer container)
+        /// <summary> Creates instance of <see cref="ModelExtensionProvider"/>. </summary>
+        internal ModelExtensionProvider(IContainer container)
         {
             _container = container;
         }
 
         /// <summary> Registers model behaviour type. </summary>
-        public BehaviourProvider RegisterBehaviour(string name, Type modelBehaviourType)
+        public ModelExtensionProvider RegisterBehaviour(string name, Type modelBehaviourType)
         {
             Guard.IsAssignableFrom(typeof(IModelBehaviour), modelBehaviourType);
 
@@ -29,7 +29,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <summary> Registers model builder type. </summary>
-        public BehaviourProvider RegisterBuilder(string name, Type modelBuilderType)
+        public ModelExtensionProvider RegisterBuilder(string name, Type modelBuilderType)
         {
             Guard.IsAssignableFrom(typeof(IModelBuilder), modelBuilderType);
 
@@ -42,7 +42,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <summary> Registers model builder instance. </summary>
-        public BehaviourProvider RegisterBuilder(IModelBuilder builder)
+        public ModelExtensionProvider RegisterBuilder(IModelBuilder builder)
         {
             _container.RegisterInstance(builder, builder.Name);
             return this;

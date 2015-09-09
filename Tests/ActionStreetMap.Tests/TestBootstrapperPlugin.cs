@@ -17,7 +17,7 @@ namespace ActionStreetMap.Tests
         {
             Scheduler.MainThread = new TestScheduler();
 
-            Provider
+            ExtensionProvider
                 .RegisterBehaviour("terrain_draw", typeof(TestModelBehaviour));
 
             return true;
