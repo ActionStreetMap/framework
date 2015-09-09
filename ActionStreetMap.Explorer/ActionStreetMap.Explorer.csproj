@@ -54,6 +54,7 @@
     <Compile Include="Commands\LocateCommand.cs" />
     <Compile Include="Commands\SearchCommand.cs" />
     <Compile Include="Consts.cs" />
+    <Compile Include="Bootstrappers\BootstrapperPlugin.cs" />
     <Compile Include="Scene\Indices\CompositeMeshIndex.cs" />
     <Compile Include="Scene\Indices\MultiPlaneMeshIndex.cs" />
     <Compile Include="Scene\Indices\SphereMeshIndex.cs" />

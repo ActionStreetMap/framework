@@ -44,7 +44,6 @@
     <Compile Include="..\AssemblyInfoBase.cs">
       <Link>Properties\AssemblyInfoBase.cs</Link>
     </Compile>
-    <Compile Include="Bootstrap\BootstrapperPlugin.cs" />
     <Compile Include="Bootstrap\BootstrapperService.cs" />
     <Compile Include="Bootstrap\IBootsrtrapperService.cs" />
     <Compile Include="Bootstrap\IBootstrapperPlugin.cs" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.MapCss.Domain;
@@ -27,7 +26,6 @@ namespace ActionStreetMap.Explorer.Tiling
         private readonly ITerrainBuilder _terrainBuilder;
         private readonly BehaviourProvider _behaviourProvider;
         private readonly IObjectPool _objectPool;
-        private readonly IModelBuilder[] _builders;
         private readonly IGameObjectFactory _gameObjectFactory;
 
         private readonly Stylesheet _stylesheet;
@@ -40,14 +38,12 @@ namespace ActionStreetMap.Explorer.Tiling
         [Dependency]
         public TileModelLoader(IGameObjectFactory gameObjectFactory,
             ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
-            IEnumerable<IModelBuilder> builders, BehaviourProvider behaviourProvider,
-            IObjectPool objectPool)
+            BehaviourProvider behaviourProvider, IObjectPool objectPool)
         {
             _terrainBuilder = terrainBuilder;
             _behaviourProvider = behaviourProvider;
 
             _objectPool = objectPool;
-            _builders = builders.ToArray();
 
             _gameObjectFactory = gameObjectFactory;
             _stylesheet = stylesheetProvider.Get();
@@ -108,8 +104,7 @@ namespace ActionStreetMap.Explorer.Tiling
             {
                 try
                 {
-                    var modelBuilder = rule.GetModelBuilder(_builders);
-                    if (modelBuilder != null)
+                    foreach (var modelBuilder in rule.GetModelBuilders(_behaviourProvider))
                     {
                         var gameObject = func(rule, modelBuilder);
                         AttachBehaviours(gameObject, rule, model);

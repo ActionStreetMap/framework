@@ -60,6 +60,7 @@
     <Compile Include="Core\Geometry\Triangle\LineGridSplitterTests.cs" />
     <Compile Include="Core\Geometry\Utils\Vector2dUtilsTests.cs" />
     <Compile Include="Core\Scene\InDoorGeneratorTests.cs" />
+    <Compile Include="Explorer\Helpers\CommonRuleExtensionsTests.cs" />
     <Compile Include="Explorer\Scene\BarrierModelBuilderTests.cs" />
     <Compile Include="Explorer\Scene\EmptyFacadeBuilderTests.cs" />
     <Compile Include="Explorer\Scene\FlatRoofBuilderTests.cs" />
@@ -100,7 +101,7 @@
     <Compile Include="Core\Utils\TypeHelperTests.cs" />
     <Compile Include="Core\MapCss\StylesheetTests.cs" />
     <Compile Include="Core\MapCss\RuleEvalTests.cs" />
-    <Compile Include="Explorer\BuildingMapCssTests.cs" />
+    <Compile Include="Explorer\Helpers\BuildingRuleExtensionsTests.cs" />
     <Compile Include="Maps\Index\ElementSourceProviderTests.cs" />
     <Compile Include="Maps\Index\ElementSourceTests.cs" />
     <Compile Include="Maps\Index\ElementStoreTests.cs" />

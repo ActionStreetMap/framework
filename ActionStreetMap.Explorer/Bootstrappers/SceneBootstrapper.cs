@@ -3,7 +3,6 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Tiling;
-using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Explorer.Scene.Facades;
 using ActionStreetMap.Explorer.Scene.Roofs;
@@ -36,20 +35,18 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .SetConfig(GlobalConfigSection)
                 .Singleton());
 
-            // register model builders
-            Container.Register(Component.For<IModelBuilder>().Use<BuildingModelBuilder>().Named("building").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<SphereModelBuilder>().Named("sphere").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<CylinderModelBuilder>().Named("cylinder").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<WaterModelBuilder>().Named("water").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<BarrierModelBuilder>().Named("barrier").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<InfoModelBuilder>().Named("info").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<TreeModelBuilder>().Named("tree").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<RoadModelBuilder>().Named("road").Singleton());
-            Container.Register(Component.For<IModelBuilder>().Use<SurfaceModelBuilder>().Named("surface").Singleton());
+            // register model processing extensions.
+            Container.RegisterInstance(new BehaviourProvider(Container)
+                .RegisterBuilder("building", typeof (BuildingModelBuilder))
+                .RegisterBuilder("sphere", typeof (SphereModelBuilder))
+                .RegisterBuilder("cylinder", typeof (CylinderModelBuilder))
+                .RegisterBuilder("water", typeof (WaterModelBuilder))
+                .RegisterBuilder("barrier", typeof (BarrierModelBuilder))
+                .RegisterBuilder("info", typeof (InfoModelBuilder))
+                .RegisterBuilder("tree", typeof (TreeModelBuilder))
+                .RegisterBuilder("road", typeof (RoadModelBuilder))
+                .RegisterBuilder("surface", typeof (SurfaceModelBuilder)));
            
-            // register core behaviours
-            // NOTE no standard behaviours so far
-
             // facades
             Container.Register(Component.For<IFacadeBuilder>().Use<EmptyFacadeBuilder>().Named("empty").Singleton());
             

@@ -1,6 +1,7 @@
 ﻿using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Bootstrappers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Reactive;
@@ -16,8 +17,8 @@ namespace ActionStreetMap.Tests
         {
             Scheduler.MainThread = new TestScheduler();
 
-            Container.RegisterInstance(new BehaviourProvider()
-                .Register("terrain_draw", typeof(TestModelBehaviour)));
+            Provider
+                .RegisterBehaviour("terrain_draw", typeof(TestModelBehaviour));
 
             return true;
         }

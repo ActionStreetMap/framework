@@ -36,6 +36,8 @@ namespace ActionStreetMap.Infrastructure.Dependencies
 
         #endregion
 
+        private static readonly Type[] EmptyTypeArray = new Type[0];
+
         internal Component(Type interfaceType, Type proxyType)
         {
             InterfaceType = interfaceType;
@@ -93,9 +95,15 @@ namespace ActionStreetMap.Infrastructure.Dependencies
         }
 
         /// <summary> Empty args registration. </summary>
+        public Component Use(Type t)
+        {
+            return Use(t, EmptyTypeArray);
+        }
+
+        /// <summary> Empty args registration. </summary>
         public Component Use<T>()
         {
-            return Use(typeof (T), new Type[] {});
+            return Use(typeof(T), EmptyTypeArray);
         }
 
         /// <summary> Stores component using name. </summary>

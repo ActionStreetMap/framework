@@ -6,10 +6,10 @@ using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Maps.Data;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Explorer
+namespace ActionStreetMap.Tests.Explorer.Helpers
 {
     [TestFixture]
-    public class BuildingMapCssTests
+    public class BuildingRuleExtensionsTests
     {
         [Test]
         public void CanGetBuildingStyle()

@@ -3,7 +3,6 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Explorer.Tiling;
-using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Maps;
 using ActionStreetMap.Maps.Data;

@@ -1,9 +1,11 @@
-﻿using ActionStreetMap.Infrastructure.Config;
+﻿using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Infrastructure.Bootstrap;
+using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
 using ActionStreetMap.Infrastructure.IO;
 
-namespace ActionStreetMap.Infrastructure.Bootstrap
+namespace ActionStreetMap.Explorer.Bootstrappers
 {
     /// <summary> Represents a bootstrapper plugin. </summary>
     public abstract class BootstrapperPlugin: IBootstrapperPlugin
@@ -23,6 +25,12 @@ namespace ActionStreetMap.Infrastructure.Bootstrap
         /// <summary> Gets or sets trace. </summary>
         [Dependency]
         public ITrace Trace { get; set; }
+
+        /// <summary> Gets extension provider. </summary>
+        public BehaviourProvider Provider
+        {
+            get { return Container.Resolve<BehaviourProvider>(); }
+        }
 
         /// <inheritdoc />
         public abstract string Name { get; }

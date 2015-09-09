@@ -1,20 +1,14 @@
-﻿using System;
-using ActionStreetMap.Core;
+﻿using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Clipping;
-using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
-using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Core.Scene.InDoor;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Commands;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
 using ActionStreetMap.Explorer.Scene.Terrain;
-using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Dependencies;
-using ActionStreetMap.Infrastructure.Reactive;
 using ActionStreetMap.Infrastructure.Utilities;
 using ActionStreetMap.Unity.Utils;
 

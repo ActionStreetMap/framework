@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace ActionStreetMap.Infrastructure.Primitives
 {
     /// <summary> Synchronized hashset. </summary>
-    internal class SafeHashSet<T> : IEnumerable<T>
+    public sealed class SafeHashSet<T> : IEnumerable<T>
     {
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly HashSet<T> _hashSet = new HashSet<T>();
@@ -79,28 +78,20 @@ namespace ActionStreetMap.Infrastructure.Primitives
             }
         }
 
-        #region Dispose
-
+        /// <inheritdoc />
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if (_lock != null)
+                _lock.Dispose();
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-                if (_lock != null)
-                    _lock.Dispose();
-        }
-
-        #endregion
-
+        /// <inheritdoc />
         public IEnumerator<T> GetEnumerator()
         {
             return _hashSet.GetEnumerator();
         }
 
+        /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

@@ -14,26 +14,18 @@ namespace ActionStreetMap.Explorer.Helpers
         {
             return rule.EvaluateDefault("height", defaultValue);
         }
- 
-        public static IModelBuilder GetModelBuilder(this Rule rule, IModelBuilder[] builders)
+
+        public static IEnumerable<IModelBuilder> GetModelBuilders(this Rule rule, BehaviourProvider provider)
         {
-            var builderName = rule.EvaluateDefault<string>("builder", null);
-            if (builderName == null)
-                return null;
-            // NOTE use for to avoid allocations
-            for (int i = 0; i < builders.Length; i++)
-                if (builders[i].Name == builderName)
-                    return builders[i];
-            return null;
+            foreach (var name in rule.EvaluateList<string>("builders"))
+                yield return provider.GetBuilder(name);
         }
 
         /// <summary> Gets list of behaviours for the rule. </summary>
-        public static IEnumerable<Type> GetModelBehaviours(this Rule rule, 
-            BehaviourProvider provider)
+        public static IEnumerable<Type> GetModelBehaviours(this Rule rule, BehaviourProvider provider)
         {
             // TODO check performance impact
-            var names = rule.EvaluateList<string>("behaviours");
-            foreach (var name in names)
+            foreach (var name in rule.EvaluateList<string>("behaviours"))
                 yield return provider.GetBehaviour(name);
         }
 
