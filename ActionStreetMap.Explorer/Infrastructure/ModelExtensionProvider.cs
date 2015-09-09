@@ -10,8 +10,11 @@ namespace ActionStreetMap.Explorer.Infrastructure
     /// <summary> Maintains list of global behaviours. </summary>
     public sealed class ModelExtensionProvider
     {
-        private readonly IContainer _container;
+        private readonly Object _lockObj = new object();
+
+        private IContainer _container;
         private readonly Dictionary<string, Type> _modelBehaviours = new Dictionary<string, Type>(4);
+        private Dictionary<string, IModelBuilder> _modelBuilders;
 
         /// <summary> Creates instance of <see cref="ModelExtensionProvider"/>. </summary>
         internal ModelExtensionProvider(IContainer container)
@@ -19,10 +22,12 @@ namespace ActionStreetMap.Explorer.Infrastructure
             _container = container;
         }
 
+        #region Registration
+
         /// <summary> Registers model behaviour type. </summary>
         public ModelExtensionProvider RegisterBehaviour(string name, Type modelBehaviourType)
         {
-            Guard.IsAssignableFrom(typeof(IModelBehaviour), modelBehaviourType);
+            Guard.IsAssignableFrom(typeof (IModelBehaviour), modelBehaviourType);
 
             _modelBehaviours.Add(name, modelBehaviourType);
             return this;
@@ -31,7 +36,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <summary> Registers model builder type. </summary>
         public ModelExtensionProvider RegisterBuilder(string name, Type modelBuilderType)
         {
-            Guard.IsAssignableFrom(typeof(IModelBuilder), modelBuilderType);
+            Guard.IsAssignableFrom(typeof (IModelBuilder), modelBuilderType);
 
             _container.Register(Component
                 .For<IModelBuilder>()
@@ -48,6 +53,8 @@ namespace ActionStreetMap.Explorer.Infrastructure
             return this;
         }
 
+        #endregion
+
         /// <summary> Gets behaviour type by its name. </summary>
         public Type GetBehaviour(string name)
         {
@@ -57,7 +64,20 @@ namespace ActionStreetMap.Explorer.Infrastructure
         /// <summary> Gets model builder by its name. </summary>
         public IModelBuilder GetBuilder(string name)
         {
-            return _container.Resolve<IModelBuilder>(name);
+            if (_modelBuilders == null)
+            {
+                lock (_lockObj)
+                {
+                    if (_modelBuilders == null)
+                    {
+                        _modelBuilders = new Dictionary<string, IModelBuilder>(8);
+                        foreach (var modelBuilder in _container.ResolveAll<IModelBuilder>())
+                            _modelBuilders.Add(modelBuilder.Name, modelBuilder);
+                        _container = null;
+                    }
+                }
+            }
+            return _modelBuilders[name];
         }
     }
 }
