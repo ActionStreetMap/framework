@@ -70,10 +70,12 @@ namespace ActionStreetMap.Explorer.Infrastructure
                 {
                     if (_modelBuilders == null)
                     {
-                        _modelBuilders = new Dictionary<string, IModelBuilder>(8);
+                        var modelBuilders = new Dictionary<string, IModelBuilder>(8);
                         foreach (var modelBuilder in _container.ResolveAll<IModelBuilder>())
-                            _modelBuilders.Add(modelBuilder.Name, modelBuilder);
+                            modelBuilders.Add(modelBuilder.Name, modelBuilder);
+
                         _container = null;
+                        _modelBuilders = modelBuilders;
                     }
                 }
             }
