@@ -12,6 +12,7 @@ namespace ActionStreetMap.Explorer.Interactions
         /// <summary> Returns mesh index. </summary>
         public IMeshIndex Index { get; internal set; }
 
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         void Update()
         {
             if (IsMeshModified)

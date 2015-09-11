@@ -34,7 +34,8 @@ namespace ActionStreetMap.Explorer.Interactions
             return _subject;
         }
 
-        private void Start()
+        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
+        void Start()
         {
             Observable
                 .Interval(TimeSpan.FromSeconds(Interval))
