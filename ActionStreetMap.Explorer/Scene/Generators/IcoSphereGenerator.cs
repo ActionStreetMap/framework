@@ -16,7 +16,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 
         public IcoSphereGenerator SetCenter(Vector3 center)
         {
-            _center = center;
+            _center = new Vector3(center.x - 0.5f, center.y - 0.5f, center.z - 0.5f);
             return this;
         }
 
@@ -112,7 +112,6 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             GenerateMeshData(meshData, faces, vertList);
         }
 
-        /// <summary> Generates mesh data in flat shading style. </summary>
         private void GenerateMeshData(MeshData meshData, List<TriangleIndices> faces, List<Vector3> vertList)
         {
             for (int i = 0; i < faces.Count; i++)
@@ -127,7 +126,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             }
         }
 
-        // return index of point in the middle of p1 and p2
+        /// <summary> Returns index of point in the middle of p1 and p2. </summary>
         private static int GetMiddlePoint(int p1, int p2, List<Vector3> vertices, 
             Dictionary<long, int> cache, float radius)
         {

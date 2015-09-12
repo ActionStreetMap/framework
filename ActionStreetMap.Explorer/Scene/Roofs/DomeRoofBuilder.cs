@@ -29,13 +29,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             double radius;
             CircleUtils.GetCircle(building.Footprint, out radius, out center);
 
-            // if offset is zero, than we will use hemisphere
-            float offset = 0;
-            if (building.RoofHeight > 0)
-                offset = building.RoofHeight - (float)radius;
-
             var center3d = new Vector3((float)center.X,
-                building.Elevation + building.MinHeight + building.Height + offset,
+                building.Elevation + building.MinHeight + building.Height, 
                 (float)center.Y);
 
             var sphereGen = new IcoSphereGenerator()
