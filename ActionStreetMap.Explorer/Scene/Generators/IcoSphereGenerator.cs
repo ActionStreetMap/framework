@@ -13,6 +13,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         private Vector3 _center;
         private float _radius;
         private float _recursionLevel;
+        private bool _isSemiphere;
 
         public IcoSphereGenerator SetCenter(Vector3 center)
         {
@@ -32,9 +33,16 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return this;
         }
 
+        public IcoSphereGenerator IsSemiphere(bool value)
+        {
+            _isSemiphere = value;
+            return this;
+        }
+
         public override int CalculateVertexCount()
         {
-            return ((int)Math.Pow(4, Mathf.Floor(_recursionLevel)))*20 * 3;
+            return ((int)Math.Pow(4, Mathf.Floor(_recursionLevel)))*
+                (_isSemiphere ? 12 : 20) * 3;
         }
 
         public override void Build(MeshData meshData)
@@ -73,21 +81,28 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             // 5 adjacent faces 
             faces.Add(new TriangleIndices(1, 5, 9));
             faces.Add(new TriangleIndices(5, 11, 4));
-            faces.Add(new TriangleIndices(11, 10, 2));
+            if (!_isSemiphere)
+                faces.Add(new TriangleIndices(11, 10, 2));
             faces.Add(new TriangleIndices(10, 7, 6));
             faces.Add(new TriangleIndices(7, 1, 8));
 
             // 5 faces around point 3
-            faces.Add(new TriangleIndices(3, 9, 4));
-            faces.Add(new TriangleIndices(3, 4, 2));
-            faces.Add(new TriangleIndices(3, 2, 6));
-            faces.Add(new TriangleIndices(3, 6, 8));
-            faces.Add(new TriangleIndices(3, 8, 9));
+            if (!_isSemiphere)
+            {
+                faces.Add(new TriangleIndices(3, 9, 4));
+                faces.Add(new TriangleIndices(3, 4, 2));
+                faces.Add(new TriangleIndices(3, 2, 6));
+                faces.Add(new TriangleIndices(3, 6, 8));
+                faces.Add(new TriangleIndices(3, 8, 9));
+            }
 
             // 5 adjacent faces 
             faces.Add(new TriangleIndices(4, 9, 5));
-            faces.Add(new TriangleIndices(2, 4, 11));
-            faces.Add(new TriangleIndices(6, 2, 10));
+            if (!_isSemiphere)
+            {
+                faces.Add(new TriangleIndices(2, 4, 11));
+                faces.Add(new TriangleIndices(6, 2, 10));
+            }
             faces.Add(new TriangleIndices(8, 6, 7));
             faces.Add(new TriangleIndices(9, 8, 1));
 

@@ -37,6 +37,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 .SetCenter(center3d)
                 .SetRadius((float)radius)
                 .SetRecursionLevel(2)
+                .IsSemiphere(true)
                 .SetGradient(ResourceProvider.GetGradient(building.RoofColor));
 
             var mesh = CreateMesh(building.Footprint);
