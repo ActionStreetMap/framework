@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ActionStreetMap.Core;
@@ -137,8 +136,10 @@ namespace ActionStreetMap.Maps.Data
         private IObservable<IElementSource> GetRemoteElementSource(string path, BoundingBox query)
         {
             // make online query
-            var queryString = String.Format(_mapDataServerQuery, query.MinPoint.Longitude, query.MinPoint.Latitude,
-                query.MaxPoint.Longitude, query.MaxPoint.Latitude);
+            var queryString = String.Format(_mapDataServerQuery,
+                query.MinPoint.Latitude, query.MinPoint.Longitude,
+                query.MaxPoint.Latitude, query.MaxPoint.Longitude);
+
             var uri = String.Format("{0}{1}", _mapDataServerUri, Uri.EscapeDataString(queryString));
             Trace.Warn(Category, Strings.NoPresistentElementSourceFound, query.ToString(), uri);
             return ObservableWWW.GetAndGetBytes(uri)
@@ -219,9 +220,7 @@ namespace ActionStreetMap.Maps.Data
         /// <inheritdoc />
         public void Configure(IConfigSection configSection)
         {
-            // @"http://api.openstreetmap.org/api/0.6/map?bbox="
             _mapDataServerUri = configSection.GetString(@"remote.server", null);
-            //api/0.6/map?bbox=left,bottom,right,top
             _mapDataServerQuery = configSection.GetString(@"remote.query", null);
             _mapDataFormat = configSection.GetString(@"remote.format", "xml");
             _indexSettingsPath = configSection.GetString(@"index.settings", null);

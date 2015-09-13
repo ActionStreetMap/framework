@@ -132,7 +132,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
             return new ConfigBuilder()
                 .SetLocalMapData("Maps/osm")
                 .SetIndexSettings("Config/index.json")
-                .SetRemoteMapData("http://api.openstreetmap.org/api/0.6/map?bbox=", "{0},{1},{2},{3}", "xml")
+                .SetRemoteMapData("http://api.openstreetmap.org/api/0.6/map?bbox=", "{1},{0},{3},{2}", "xml")
                 .SetLocalElevationData("Maps/elevation")
                 .SetRemoteElevationData("http://dds.cr.usgs.gov/srtm/version2_1/SRTM3", "Config/srtm.schema.txt")
                 .SetMapCss("Config/default.mapcss")
