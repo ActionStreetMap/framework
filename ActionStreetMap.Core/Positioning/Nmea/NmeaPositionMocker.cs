@@ -72,7 +72,7 @@ namespace ActionStreetMap.Core.Positioning.Nmea
         }
 
         /// <summary> Gets mocker state. </summary>
-        public bool IsRunning { get { return _isStarted; }
+        public bool IsStarted { get { return _isStarted; }
         }
 
         /// <summary> Stops mocker.</summary>

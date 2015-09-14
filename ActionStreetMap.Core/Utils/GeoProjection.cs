@@ -4,7 +4,7 @@ using ActionStreetMap.Core.Geometry;
 namespace ActionStreetMap.Core.Utils
 {
     /// <summary> Provides the methods to convert geo coordinates to map coordinates and vice versa. </summary>
-    internal static class GeoProjection
+    public static class GeoProjection
     {
         #region Coordinate convertion
 
