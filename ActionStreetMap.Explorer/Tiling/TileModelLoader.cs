@@ -71,23 +71,15 @@ namespace ActionStreetMap.Explorer.Tiling
         /// <inheritdoc />
         public void LoadArea(Tile tile, Area area)
         {
-            LoadModel(tile, area, (rule, modelBuilder) =>
-            {
-                var result = modelBuilder.BuildArea(tile, rule, area);
-                _objectPool.StoreList(area.Points);
-                return result;
-            });
+            LoadModel(tile, area, (rule, modelBuilder) => modelBuilder.BuildArea(tile, rule, area));
+            _objectPool.StoreList(area.Points);
         }
 
         /// <inheritdoc />
         public void LoadWay(Tile tile, Way way)
         {
-            LoadModel(tile, way, (rule, modelBuilder) =>
-            {
-                var result = modelBuilder.BuildWay(tile, rule, way);
-                _objectPool.StoreList(way.Points);
-                return result;
-            });
+            LoadModel(tile, way, (rule, modelBuilder) => modelBuilder.BuildWay(tile, rule, way));
+            _objectPool.StoreList(way.Points);
         }
 
         /// <inheritdoc />

@@ -7,6 +7,7 @@ using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Reactive;
+using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Explorer
 {
@@ -36,12 +37,19 @@ namespace ActionStreetMap.Explorer
         }
 
         /// <summary> Registers specific bootstrapper plugin. </summary>
-        /// <returns> Current GameRunner.</returns>
         public GameRunner RegisterPlugin<T>(string name, params object[] args) where T: IBootstrapperPlugin
         {
-            if (_isInitialized) 
+            return RegisterPlugin(name, typeof(T), args);
+        }
+
+        /// <summary> Registers specific bootstrapper plugin. </summary>
+        public GameRunner RegisterPlugin(string name, Type type, params object[] args)
+        {
+            Guard.IsAssignableFrom(typeof(IBootstrapperPlugin), type);
+
+            if (_isInitialized)
                 throw new InvalidOperationException(Strings.CannotRegisterPluginForCompletedBootstrapping);
-            _container.Register(Component.For<IBootstrapperPlugin>().Use(typeof(T), args).Named(name).Singleton());
+            _container.Register(Component.For<IBootstrapperPlugin>().Use(type, args).Named(name).Singleton());
             return this;
         }
 
