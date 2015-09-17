@@ -39,10 +39,14 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var elevation = building.MinHeight + building.Elevation;
             var gradient = _resourceProvider.GetGradient(building.FacadeColor);
 
+            float height = building.Levels > 1
+                ? building.Height / building.Levels
+                : random.NextFloat(5f, 6f);
+
             var emptyWallBuilder = new EmptyWallBuilder()
                 .SetGradient(gradient)
                 .SetMinHeight(elevation)
-                .SetStepHeight(random.NextFloat(5f, 6f))
+                .SetStepHeight(height)
                 .SetStepWidth(random.NextFloat(10f, 12f))
                 .SetHeight(building.Height);
 
