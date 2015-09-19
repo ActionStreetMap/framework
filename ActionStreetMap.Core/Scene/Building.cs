@@ -26,10 +26,10 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Contains floor plans. </summary>
         public List<Floor> FloorPlans { get; set; }
 
-        // NOTE OSM-available info 
+        /// <summary> True if building has windows. </summary>
+        public bool HasWindows { get; set; }
 
-        /// <summary> Gets or sets type of building. </summary>
-        public string Type { get; set; }
+        // NOTE OSM-available info 
 
         /// <summary> Gets or sets part flag. </summary>
         public bool IsPart { get; set; }

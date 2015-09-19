@@ -40,18 +40,21 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var gradient = _resourceProvider.GetGradient(building.FacadeColor);
 
             float height = building.Levels > 1
-                ? building.Height / building.Levels
+                ? building.Height / building.Levels + 0.01f // fix for rounding issue inside WallBuilder
                 : random.NextFloat(5f, 6f);
 
-            var emptyWallBuilder = new EmptyWallBuilder()
+            WallBuilder wallBuilder = building.HasWindows
+                ? new WindowWallBuilder().SetStepWidth(random.NextFloat(3, 4))
+                : new EmptyWallBuilder().SetStepWidth(random.NextFloat(10f, 12f));
+
+            wallBuilder
                 .SetGradient(gradient)
                 .SetMinHeight(elevation)
                 .SetStepHeight(height)
-                .SetStepWidth(random.NextFloat(10f, 12f))
                 .SetHeight(building.Height);
 
             int limitIndex;
-            var vertCount = CalculateVertexCount(emptyWallBuilder, building.Footprint,
+            var vertCount = CalculateVertexCount(wallBuilder, building.Footprint,
                 elevation, 0, out limitIndex);
             var twoSizedMeshCount = vertCount*2;
             if (limitIndex != building.Footprint.Count)
@@ -62,24 +65,24 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 int startIndex = 0;
                 while (startIndex != footprint.Count)
                 {
-                    meshDataList.Add(BuildMeshData(emptyWallBuilder, footprint, vertCount,
+                    meshDataList.Add(BuildMeshData(wallBuilder, footprint, vertCount,
                         elevation, startIndex, limitIndex));
 
                     startIndex = limitIndex;
-                    vertCount = CalculateVertexCount(emptyWallBuilder, building.Footprint,
+                    vertCount = CalculateVertexCount(wallBuilder, building.Footprint,
                         elevation, limitIndex, out limitIndex);
                 }
 
                 return meshDataList;
             }
 
-            var meshData = BuildMeshData(emptyWallBuilder, footprint, vertCount, 
+            var meshData = BuildMeshData(wallBuilder, footprint, vertCount, 
                 elevation, 0, footprint.Count);
 
             return new List<MeshData>(1) {meshData};
         }
 
-        private int CalculateVertexCount(EmptyWallBuilder emptyWallBuilder, List<Vector2d> footprint,
+        private int CalculateVertexCount(WallBuilder emptyWallBuilder, List<Vector2d> footprint,
             float elevation, int startIndex, out int limitIndex)
         {
             var count = 0;
@@ -106,7 +109,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return count;
         }
 
-        private MeshData BuildMeshData(EmptyWallBuilder emptyWallBuilder, List<Vector2d> footprint, 
+        private MeshData BuildMeshData(WallBuilder emptyWallBuilder, List<Vector2d> footprint, 
             int vertCount, float elevation, int startIndex, int endIndex)
         {
             var meshIndex = new MultiPlaneMeshIndex(footprint.Count, vertCount);

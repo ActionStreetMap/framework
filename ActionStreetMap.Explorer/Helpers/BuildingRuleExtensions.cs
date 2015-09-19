@@ -75,5 +75,10 @@ namespace ActionStreetMap.Explorer.Helpers
         {
             return rule.EvaluateDefault("part", false);
         }
+
+        public static bool HasWindows(this Rule rule)
+        {
+            return rule.EvaluateDefault("windowed", false);
+        }
     }
 }

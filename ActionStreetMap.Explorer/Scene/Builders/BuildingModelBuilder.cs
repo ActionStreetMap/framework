@@ -82,7 +82,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 Height = height,
                 Levels = rule.GetLevels(),
                 MinHeight = minHeight,
-                Type = rule.GetFacadeBuilder(),
+                HasWindows = rule.HasWindows(),
                 FacadeType = rule.GetFacadeBuilder(),
                 FacadeColor = rule.GetFacadeColor(),
                 FacadeMaterial = rule.GetFacadeMaterial(),

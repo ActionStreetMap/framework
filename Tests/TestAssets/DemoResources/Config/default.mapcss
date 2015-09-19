@@ -49,14 +49,14 @@ area|z19[height]                                                { height: eval(n
 area|z19[building:height]                                    { height: eval(num(tag('building:height'))); }
 area|z19[building:height][roof:height]                        { height: eval(num(tag('building:height')) - num(tag('roof:height'))); }
 
-area|z19[building:min_height]                                { min_height: eval(num(tag('building:min_height'))); }
-area|z19[min_height]                                            { min_height: eval(num(tag('min_height'))); }
+area|z19[building=residential],
+area|z19[building=residental]                                { windowed: true;}
+
+area|z19[building:min_height]                                { min_height: eval(num(tag('building:min_height'))); windowed: false;}
+area|z19[min_height]                                            { min_height: eval(num(tag('min_height'))); windowed: false;}
 
 area|z19[building=yes],
-area|z19[building:part]                                        { part: true; }
-
-area|z19[building=residential],
-area|z19[building=residental]                                { facade-builder:default;}
+area|z19[building:part]                                        { part: true;}
 
 area|z19[building:shape=sphere]                              { builders: sphere; }
 area|z19[building:shape=cylinder]                            { builders: cylinder; }
