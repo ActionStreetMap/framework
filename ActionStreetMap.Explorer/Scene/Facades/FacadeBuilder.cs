@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer.Infrastructure;
@@ -39,13 +40,19 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var elevation = building.MinHeight + building.Elevation;
             var gradient = _resourceProvider.GetGradient(building.FacadeColor);
 
-            float height = building.Levels > 1
-                ? building.Height / building.Levels + 0.01f // fix for rounding issue inside WallBuilder
+            var hasLevels = building.Levels > 1;
+
+            float height = hasLevels
+                ? building.Height / building.Levels + 0.01f // fix for rounding issue
                 : random.NextFloat(5f, 6f);
 
             WallBuilder wallBuilder = building.HasWindows
                 ? new WindowWallBuilder().SetStepWidth(random.NextFloat(3, 4))
                 : new EmptyWallBuilder().SetStepWidth(random.NextFloat(10f, 12f));
+
+            // if windows are built, we want to have levels built too
+            if (building.HasWindows && !hasLevels)
+                building.Levels = (int) Math.Ceiling(building.Height/height);
 
             wallBuilder
                 .SetGradient(gradient)
