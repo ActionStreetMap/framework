@@ -11,22 +11,22 @@ using UnityEngine;
 namespace ActionStreetMap.Explorer.Scene.Facades
 {
     /// <summary> Creates facade builder for simple facade. </summary>
-    internal class EmptyFacadeBuilder : IFacadeBuilder
+    internal class FacadeBuilder : IFacadeBuilder
     {
         protected const string LogCategory = "building.facade";
 
         private readonly IResourceProvider _resourceProvider;
 
         /// <inheritdoc />
-        public string Name { get { return "empty"; } }
+        public string Name { get { return "default"; } }
 
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
         public ITrace Trace { get; set; }
 
-        /// <summary> Creates instance of <see cref="EmptyFacadeBuilder"/>. </summary>
+        /// <summary> Creates instance of <see cref="FacadeBuilder"/>. </summary>
         [Dependency]
-        public EmptyFacadeBuilder(IResourceProvider resourceProvider)
+        public FacadeBuilder(IResourceProvider resourceProvider)
         {
             _resourceProvider = resourceProvider;
         }

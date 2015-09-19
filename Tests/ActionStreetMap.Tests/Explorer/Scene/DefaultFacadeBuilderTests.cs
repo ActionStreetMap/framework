@@ -9,13 +9,13 @@ using NUnit.Framework;
 namespace ActionStreetMap.Tests.Explorer.Scene
 {
     [TestFixture]
-    class EmptyFacadeBuilderTests
+    class DefaultFacadeBuilderTests
     {
         [Test]
         public void CanHandleVertexLimit()
         {
             // ARRANGE
-            var builder = new EmptyFacadeBuilder(new UnityResourceProvider())
+            var builder = new FacadeBuilder(new UnityResourceProvider())
             {
                 Trace = new ConsoleTrace()
             };
