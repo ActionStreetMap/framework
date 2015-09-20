@@ -19,6 +19,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         protected Vector3[] Vertices;
         protected int[] Triangles;
         protected Color[] Colors;
+        protected Vector2[] UVs;
 
         protected int HalfVertCount;
         protected MeshData MeshData;
@@ -84,7 +85,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         /// <summary> Returns color for given vertex. </summary>
         protected Color GetColor(Vector3 point)
         {
-            var value = (Noise.Perlin3D(point, .3f) + 1f) / 2f;
+            var value = (Noise.Perlin3D(point, 0.0f) + 1f) / 2f;
             return Gradient.Evaluate(value);
         }
 
@@ -95,10 +96,10 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             Vertices = meshData.Vertices;
             Triangles = meshData.Triangles;
             Colors = meshData.Colors;
+            UVs = meshData.UVs;
 
             MeshData = meshData;
-
-            HalfVertCount = Vertices.Length/2;
+            HalfVertCount = Vertices.Length / 2;
 
             return this;
         }

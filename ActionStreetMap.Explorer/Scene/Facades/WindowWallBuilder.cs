@@ -14,8 +14,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private float _emptySpaceHeight;
 
         private int _windowSkipIndex;
-
         private int _vertexPerFloor;
+
+        private Vector2[] _uvs = new Vector2[14];
 
         public override int CalculateVertexCount(Vector3 start, Vector3 end)
         {
@@ -46,6 +47,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             _vertexPerFloor = (XIterCount * VertexStepCount -
                 GetVertexEmptyDelta(_windowSkipIndex, XIterCount));
+
+            InitializeUVMapping();
         }
 
         protected override void BuildSegment(int i, int j, float yStart)
@@ -82,6 +85,28 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return windowSkipIndex != xIterCount - 1 ? 18 : 0;
         }
 
+        private void InitializeUVMapping()
+        {
+            var xStep = _windowWidthRatio / 2;
+            var yStep = _windowHeightRatio / 2;
+
+            _uvs[0] = new Vector2(0, 0);
+            _uvs[1] = new Vector2(xStep, 0);
+            _uvs[2] = new Vector2(1 - xStep, 0);
+            _uvs[3] = new Vector2(1, 0);
+            _uvs[4] = new Vector2(xStep, yStep);
+            _uvs[5] = new Vector2(1 - xStep, yStep);
+            _uvs[6] = new Vector2(xStep, 1 - yStep);
+            _uvs[7] = new Vector2(1 - xStep, 1 - yStep);
+            _uvs[8] = new Vector2(0, 1);
+            _uvs[9] = new Vector2(xStep, 1);
+            _uvs[10] = new Vector2(1 - xStep, 1);
+            _uvs[11] = new Vector2(1, 1);
+
+            _uvs[12] = new Vector2(0, 1 - yStep);
+            _uvs[13] = new Vector2(1, 1 - yStep);
+        }
+
         private void BuildWindow(int i, int j, float yStart, int startIndex)
         {
             var x1 = new Vector3(Start.x, yStart, Start.z) + Direction * (i * XStep);
@@ -91,20 +116,20 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             BuildPlane(x1, q1,
                new Vector3(q1.x, q1.y + YStep, q1.z),
-               new Vector3(x1.x, x1.y + YStep, x1.z), startIndex);
+               new Vector3(x1.x, x1.y + YStep, x1.z), startIndex, 0, 1, 9, 8);
 
             BuildPlane(q1, q2,
                 new Vector3(q2.x, q2.y + _emptySpaceHeight, q2.z),
-                new Vector3(q1.x, q1.y + _emptySpaceHeight, q1.z), startIndex + 6);
+                new Vector3(q1.x, q1.y + _emptySpaceHeight, q1.z), startIndex + 6, 1, 2, 5, 4);
 
             BuildPlane(new Vector3(q1.x, q1.y + YStep - _emptySpaceHeight, q1.z),
                        new Vector3(q2.x, q2.y + YStep - _emptySpaceHeight, q2.z),
                        new Vector3(q2.x, q2.y + YStep, q2.z),
-                       new Vector3(q1.x, q1.y + YStep, q1.z), startIndex + 12);
+                       new Vector3(q1.x, q1.y + YStep, q1.z), startIndex + 12, 6, 7, 10, 9);
 
             BuildPlane(q2, x2,
                new Vector3(x2.x, x2.y + YStep, x2.z),
-               new Vector3(q2.x, q2.y + YStep, q2.z), startIndex + 18);
+               new Vector3(q2.x, q2.y + YStep, q2.z), startIndex + 18, 2, 3, 11, 10);
         }
 
         private void BuildEmptySpace(int i, int j, float yStart, int startIndex)
@@ -114,7 +139,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             BuildPlane(x1, x2,
                 new Vector3(x2.x, x2.y + YStep, x2.z),
-                new Vector3(x1.x, x1.y + YStep, x1.z), startIndex);
+                new Vector3(x1.x, x1.y + YStep, x1.z), startIndex, 0, 3, 11, 8);
         }
 
         public void BuildEntrance(int i, int j, float yStart, int startIndex)
@@ -128,10 +153,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var x3 = new Vector3(x2.x, yEnd, x2.z);
             var x4 = new Vector3(x1.x, yEnd, x1.z);
 
-            BuildPlane(x1, x2, x3, x4, startIndex);
+            BuildPlane(x1, x2, x3, x4, startIndex, 12, 13, 11, 8);
         }
 
-        private void BuildPlane(Vector3 x1, Vector3 x2, Vector3 x3, Vector3 x4, int startIndex)
+        private void BuildPlane(Vector3 x1, Vector3 x2, Vector3 x3, Vector3 x4, int startIndex,
+            int uv1, int uv2, int uv3, int uv4)
         {
             var count = startIndex;
 
@@ -180,6 +206,23 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             Colors[count + HalfVertCount] = color;
             Colors[++count] = color;
             Colors[count + HalfVertCount] = color;
+            #endregion
+
+            #region UVs
+            count = startIndex;
+            UVs[count] = _uvs[uv1];
+            UVs[count + HalfVertCount] = _uvs[uv1];
+            UVs[++count] = _uvs[uv4];
+            UVs[count + HalfVertCount] = _uvs[uv4];
+            UVs[++count] = _uvs[uv3];
+            UVs[count + HalfVertCount] = _uvs[uv3];
+
+            UVs[++count] = _uvs[uv2];
+            UVs[count + HalfVertCount] = _uvs[uv2];
+            UVs[++count] = _uvs[uv1];
+            UVs[count + HalfVertCount] = _uvs[uv1];
+            UVs[++count] = _uvs[uv3];
+            UVs[count + HalfVertCount] = _uvs[uv3];
             #endregion
 
             MeshData.NextIndex += 6;

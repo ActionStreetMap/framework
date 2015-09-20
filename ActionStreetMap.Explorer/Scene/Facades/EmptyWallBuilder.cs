@@ -5,6 +5,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 {
     internal class EmptyWallBuilder : WallBuilder
     {
+        private Vector2[] _uvs = new Vector2[5];
+
         /// <inheritdoc />
         public override int CalculateVertexCount(Vector3 start, Vector3 end)
         {
@@ -29,6 +31,20 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var x2 = x1 + Direction * XStep;
 
             BuildPlane(x1, middle, x2, yStart, startIndex);
+        }
+
+        protected override void OnParametersCalculated()
+        {
+            InitializeUVMapping();
+        }
+
+        private void InitializeUVMapping()
+        {
+            _uvs[0] = new Vector2(0, 0);
+            _uvs[1] = new Vector2(1, 0);
+            _uvs[2] = new Vector2(1, 1);
+            _uvs[3] = new Vector2(0, 1);
+            _uvs[4] = new Vector2(0.5f, 0.5f);
         }
 
         private void BuildPlane(Vector3 x1, Vector3 middle, Vector3 x2,
@@ -120,6 +136,39 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             Colors[count + HalfVertCount] = color;
             Colors[++count] = color;
             Colors[count + HalfVertCount] = color;
+            #endregion
+
+            #region UVs
+            count = startIndex;
+
+            UVs[count] = _uvs[3];
+            UVs[count + HalfVertCount] = _uvs[3];
+            UVs[++count] = _uvs[0];
+            UVs[count + HalfVertCount] = _uvs[0];
+            UVs[++count] = _uvs[4];
+            UVs[count + HalfVertCount] = _uvs[4];
+
+            UVs[++count] = _uvs[0];
+            UVs[count + HalfVertCount] = _uvs[0];
+            UVs[++count] = _uvs[1];
+            UVs[count + HalfVertCount] = _uvs[1];
+            UVs[++count] = _uvs[4];
+            UVs[count + HalfVertCount] = _uvs[4];
+
+            UVs[++count] = _uvs[1];
+            UVs[count + HalfVertCount] = _uvs[1];
+            UVs[++count] = _uvs[2];
+            UVs[count + HalfVertCount] = _uvs[2];
+            UVs[++count] = _uvs[4];
+            UVs[count + HalfVertCount] = _uvs[4];
+
+            UVs[++count] = _uvs[2];
+            UVs[count + HalfVertCount] = _uvs[2];
+            UVs[++count] = _uvs[3];
+            UVs[count + HalfVertCount] = _uvs[3];
+            UVs[++count] = _uvs[4];
+            UVs[count + HalfVertCount] = _uvs[4];
+
             #endregion
 
             MeshData.NextIndex += 12;

@@ -13,6 +13,7 @@ namespace ActionStreetMap.Explorer.Scene
         public readonly Vector3[] Vertices;
         public readonly int[] Triangles;
         public readonly Color[] Colors;
+        public readonly Vector2[] UVs;
 
         private int _nextIndex;
         private int _size;
@@ -25,19 +26,6 @@ namespace ActionStreetMap.Explorer.Scene
         }
 
         /// <summary> Creates instance of <see cref="MeshData"/>. </summary>
-        public MeshData(IMeshIndex meshIndex, Vector3[] vertices, int[] triangles,
-            Color[] colors)
-        {
-            Index = meshIndex;
-
-            Vertices = vertices;
-            Triangles = triangles;
-            Colors = colors;
-
-            _size = vertices.Length / 2;
-        }
-
-        /// <summary> Creates instance of <see cref="MeshData"/>. </summary>
         public MeshData(IMeshIndex meshIndex, int size)
         {
             Index = meshIndex;
@@ -47,6 +35,7 @@ namespace ActionStreetMap.Explorer.Scene
             Vertices = new Vector3[fullVertCount];
             Triangles = new int[fullVertCount];
             Colors = new Color[fullVertCount];
+            UVs = new Vector2[fullVertCount];
 
             _size = size;
         }
