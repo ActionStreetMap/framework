@@ -28,7 +28,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             if (distance < MinWallWidth)
                 return base.CalculateVertexCount(start, end);
 
-            return xIterCount * yIterCount * VertexStepCount;
+            return (xIterCount - 1) * yIterCount * VertexStepCount + 6 * yIterCount;
         }
 
         protected override void OnParametersCalculated()
@@ -36,7 +36,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             _emptySpaceWidth = XStep * (1 - _windowWidthRatio) / 2;
             _emptySpaceHeight = YStep * (1 - _windowHeightRatio) / 2;
 
-            _windowSkipIndex = XIterCount/2;
+            _windowSkipIndex = XIterCount / 2;
         }
 
         protected override void BuildSegment(int i, int j, float yStart)
@@ -47,7 +47,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 return;
             }
 
-            var startIndex = VertStartIndex + (VertexStepCount * XIterCount) * j + i * VertexStepCount;
+            var startIndex = VertStartIndex + (VertexStepCount * (XIterCount - 1) + 6) * j
+                + i * VertexStepCount - (i > _windowSkipIndex ? 18 : 0);
 
             if (IsNonWindowSegment(i))
             {
@@ -60,11 +61,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 BuildWindow(i, j, yStart, startIndex);
         }
 
-        private float MinWallWidth { get { return MinStepWidth* 1.5f; } }
+        private float MinWallWidth { get { return MinStepWidth * 1.5f; } }
 
         private bool IsNonWindowSegment(int i)
         {
-            return i != 0 && i != XIterCount - 1 && i%_windowSkipIndex == 0;
+            return i != 0 && i != XIterCount - 1 && i % _windowSkipIndex == 0;
         }
 
         private void BuildWindow(int i, int j, float yStart, int startIndex)
@@ -74,9 +75,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var x2 = x1 + Direction * XStep;
             var q2 = x2 - Direction * _emptySpaceWidth;
 
-             BuildPlane(x1, q1, 
-                new Vector3(q1.x, q1.y + YStep, q1.z),
-                new Vector3(x1.x, x1.y + YStep, x1.z), startIndex);
+            BuildPlane(x1, q1,
+               new Vector3(q1.x, q1.y + YStep, q1.z),
+               new Vector3(x1.x, x1.y + YStep, x1.z), startIndex);
 
             BuildPlane(q1, q2,
                 new Vector3(q2.x, q2.y + _emptySpaceHeight, q2.z),
@@ -94,28 +95,12 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         private void BuildEmptySpace(int i, int j, float yStart, int startIndex)
         {
-            var stepVector = XStep/4 * Direction;
             var x1 = new Vector3(Start.x, yStart, Start.z) + Direction * (i * XStep);
-            var q1 = x1 + stepVector;
-            var q2 = q1 + stepVector;
-            var q3 = q2 + stepVector;
             var x2 = x1 + Direction * XStep;
 
-            BuildPlane(x1, q1,
-                new Vector3(q1.x, q1.y + YStep, q1.z),
-                new Vector3(x1.x, x1.y + YStep, x1.z), startIndex);
-
-            BuildPlane(q1, q2,
-                new Vector3(q2.x, q2.y + YStep, q2.z),
-                new Vector3(q1.x, q1.y + YStep, q1.z), startIndex + 6);
-
-            BuildPlane(q2, q3,
-                new Vector3(q3.x, q3.y + YStep, q3.z),
-                new Vector3(q2.x, q2.y + YStep, q2.z), startIndex + 12);
-
-            BuildPlane(q3, x2,
+            BuildPlane(x1, x2,
                 new Vector3(x2.x, x2.y + YStep, x2.z),
-                new Vector3(q3.x, q3.y + YStep, q3.z), startIndex + 18);
+                new Vector3(x1.x, x1.y + YStep, x1.z), startIndex);
         }
 
         public void BuildEntrance(int i, int j, float yStart, int startIndex)
@@ -130,8 +115,6 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var x4 = new Vector3(x1.x, yEnd, x1.z);
 
             BuildPlane(x1, x2, x3, x4, startIndex);
-            // NOTE skip vertices
-            MeshData.NextIndex += 18;
         }
 
         private void BuildPlane(Vector3 x1, Vector3 x2, Vector3 x3, Vector3 x4, int startIndex)
@@ -175,7 +158,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             Colors[count + HalfVertCount] = color;
             Colors[++count] = color;
             Colors[count + HalfVertCount] = color;
-            
+
             color = GetColor(x2);
             Colors[++count] = color;
             Colors[count + HalfVertCount] = color;
