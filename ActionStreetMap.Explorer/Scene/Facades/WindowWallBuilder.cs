@@ -15,6 +15,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         private int _windowSkipIndex;
 
+        private int _vertexPerFloor;
+
         public override int CalculateVertexCount(Vector3 start, Vector3 end)
         {
             var direction = (end - start);
@@ -28,7 +30,10 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             if (distance < MinWallWidth)
                 return base.CalculateVertexCount(start, end);
 
-            return (xIterCount - 1) * yIterCount * VertexStepCount + 6 * yIterCount;
+            var windowSkipIndex = (int)Math.Ceiling(xIterCount / 2f);
+
+            return yIterCount * (xIterCount * VertexStepCount -
+                GetVertexEmptyDelta(windowSkipIndex, xIterCount));
         }
 
         protected override void OnParametersCalculated()
@@ -36,7 +41,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             _emptySpaceWidth = XStep * (1 - _windowWidthRatio) / 2;
             _emptySpaceHeight = YStep * (1 - _windowHeightRatio) / 2;
 
-            _windowSkipIndex = XIterCount / 2;
+            // NOTE assume that only one entrance per wall is used
+            _windowSkipIndex = (int)Math.Ceiling(XIterCount / 2f);
+
+            _vertexPerFloor = (XIterCount * VertexStepCount -
+                GetVertexEmptyDelta(_windowSkipIndex, XIterCount));
         }
 
         protected override void BuildSegment(int i, int j, float yStart)
@@ -47,8 +56,8 @@ namespace ActionStreetMap.Explorer.Scene.Facades
                 return;
             }
 
-            var startIndex = VertStartIndex + (VertexStepCount * (XIterCount - 1) + 6) * j
-                + i * VertexStepCount - (i > _windowSkipIndex ? 18 : 0);
+            var startIndex = VertStartIndex + j * _vertexPerFloor + i * VertexStepCount -
+                (i > _windowSkipIndex ? GetVertexEmptyDelta(_windowSkipIndex, XIterCount) : 0);
 
             if (IsNonWindowSegment(i))
             {
@@ -66,6 +75,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         private bool IsNonWindowSegment(int i)
         {
             return i != 0 && i != XIterCount - 1 && i % _windowSkipIndex == 0;
+        }
+
+        private int GetVertexEmptyDelta(int windowSkipIndex, int xIterCount)
+        {
+            return windowSkipIndex != xIterCount - 1 ? 18 : 0;
         }
 
         private void BuildWindow(int i, int j, float yStart, int startIndex)
