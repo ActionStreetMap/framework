@@ -60,6 +60,7 @@
     <Compile Include="Core\Geometry\Triangle\LineGridSplitterTests.cs" />
     <Compile Include="Core\Geometry\Utils\Vector2dUtilsTests.cs" />
     <Compile Include="Core\Scene\InDoorGeneratorTests.cs" />
+    <Compile Include="Explorer\Customization\TexturePackTests.cs" />
     <Compile Include="Explorer\Helpers\CommonRuleExtensionsTests.cs" />
     <Compile Include="Explorer\Scene\BarrierModelBuilderTests.cs" />
     <Compile Include="Explorer\Scene\DefaultFacadeBuilderTests.cs" />

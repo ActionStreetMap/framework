@@ -98,6 +98,8 @@
     <Compile Include="Scene\Terrain\TerrainBuilder.cs" />
     <Compile Include="Infrastructure\CoreExtensions.cs" />
     <Compile Include="Scene\Utils\Vector3Utils.cs" />
+    <Compile Include="Customization\TextureAtlas.cs" />
+    <Compile Include="Customization\TexturePack.cs" />
     <Compile Include="Tiling\TileModelEditor.cs" />
     <Compile Include="Utils\GradientUtils.cs" />
     <Compile Include="Utils\RandomHelper.cs" />
