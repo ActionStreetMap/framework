@@ -2,7 +2,7 @@
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
-using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Scene.Generators;
 using ActionStreetMap.Explorer.Scene.Indices;
 using UnityEngine;

@@ -2,11 +2,11 @@
 using ActionStreetMap.Core;
 using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling.Models;
-using ActionStreetMap.Explorer.Helpers;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Maps.Data;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Explorer.Helpers
+namespace ActionStreetMap.Tests.Explorer.Customization
 {
     [TestFixture]
     public class BuildingRuleExtensionsTests

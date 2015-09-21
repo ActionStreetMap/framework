@@ -1,6 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 
-namespace ActionStreetMap.Explorer.Helpers
+namespace ActionStreetMap.Explorer.Customization
 {
     internal static class BuildingRuleExtensions
     {

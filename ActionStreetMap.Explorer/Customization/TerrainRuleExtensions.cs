@@ -1,9 +1,7 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
-using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Unity.Wrappers;
 
-namespace ActionStreetMap.Explorer.Helpers
+namespace ActionStreetMap.Explorer.Customization
 {
     internal static class TerrainRuleExtensions
     {

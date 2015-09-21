@@ -1,10 +1,8 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Utils;
-using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Infrastructure;
 using UnityEngine;
 
-namespace ActionStreetMap.Explorer.Helpers
+namespace ActionStreetMap.Explorer.Customization
 {
     internal static class ModelRuleExtensions
     {

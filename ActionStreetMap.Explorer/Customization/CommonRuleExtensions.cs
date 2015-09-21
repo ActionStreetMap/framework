@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 
-namespace ActionStreetMap.Explorer.Helpers
+namespace ActionStreetMap.Explorer.Customization
 {
     /// <summary> Provides methods for basic mapcss properties receiving. </summary>
     internal static class CommonRuleExtensions

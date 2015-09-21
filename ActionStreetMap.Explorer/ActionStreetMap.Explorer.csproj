@@ -83,10 +83,10 @@
     <Compile Include="Interactions\DummyBehaviour.cs" />
     <Compile Include="Interactions\MeshIndexBehaviour.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshIndex.cs" />
-    <Compile Include="Helpers\BuildingRuleExtensions.cs" />
-    <Compile Include="Helpers\DetailRuleExtensions.cs" />
-    <Compile Include="Helpers\ModelRuleExtensions.cs" />
-    <Compile Include="Helpers\TerrainRuleExtensions.cs" />
+    <Compile Include="Customization\BuildingRuleExtensions.cs" />
+    <Compile Include="Customization\DetailRuleExtensions.cs" />
+    <Compile Include="Customization\ModelRuleExtensions.cs" />
+    <Compile Include="Customization\TerrainRuleExtensions.cs" />
     <Compile Include="Infrastructure\UnityGameObject.cs" />
     <Compile Include="Scene\Roofs\DomeRoofBuilder.cs" />
     <Compile Include="Scene\Roofs\FlatRoofBuilder.cs" />
@@ -119,7 +119,7 @@
     <Compile Include="GameRunner.cs" />
     <Compile Include="Bootstrappers\InfrastructureBootstrapper.cs" />
     <Compile Include="Bootstrappers\SceneBootstrapper.cs" />
-    <Compile Include="Helpers\CommonRuleExtensions.cs" />
+    <Compile Include="Customization\CommonRuleExtensions.cs" />
     <Compile Include="Interactions\CompositeModelBehaviour.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\UnityConsoleTrace.cs" />

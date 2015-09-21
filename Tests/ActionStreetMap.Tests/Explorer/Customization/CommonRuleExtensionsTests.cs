@@ -2,8 +2,6 @@
 using System.Linq;
 using ActionStreetMap.Core;
 using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Helpers;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Maps.Data.Helpers;
@@ -11,7 +9,7 @@ using ActionStreetMap.Tests.Core.MapCss;
 using Moq;
 using NUnit.Framework;
 
-namespace ActionStreetMap.Tests.Explorer.Helpers
+namespace ActionStreetMap.Tests.Explorer.Customization
 {
     [TestFixture]
     class CommonRuleExtensionsTests
