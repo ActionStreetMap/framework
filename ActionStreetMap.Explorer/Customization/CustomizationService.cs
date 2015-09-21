@@ -8,21 +8,25 @@ using ActionStreetMap.Infrastructure.Utilities;
 namespace ActionStreetMap.Explorer.Customization
 {
     /// <summary> Maintains list of global behaviours. </summary>
+    /// <remarks> Registration is not thread safe. </remarks>
     public sealed class CustomizationService
     {
         private readonly Object _lockObj = new object();
 
         private IContainer _container;
-        private readonly Dictionary<string, Type> _modelBehaviours = new Dictionary<string, Type>(4);
+        private readonly Dictionary<string, Type> _modelBehaviours;
         private Dictionary<string, IModelBuilder> _modelBuilders;
+        private Dictionary<string, TextureAtlas> _textureAtlases;
 
         /// <summary> Creates instance of <see cref="CustomizationService"/>. </summary>
         internal CustomizationService(IContainer container)
         {
             _container = container;
+            _modelBehaviours = new Dictionary<string, Type>(4);
+            _textureAtlases = new Dictionary<string, TextureAtlas>(2);
         }
 
-        #region Registration
+        #region Model Behaviours
 
         /// <summary> Registers model behaviour type. </summary>
         public CustomizationService RegisterBehaviour(string name, Type modelBehaviourType)
@@ -32,6 +36,16 @@ namespace ActionStreetMap.Explorer.Customization
             _modelBehaviours.Add(name, modelBehaviourType);
             return this;
         }
+
+        /// <summary> Gets behaviour type by its name. </summary>
+        public Type GetBehaviour(string name)
+        {
+            return _modelBehaviours[name];
+        }
+
+        #endregion
+
+        #region Model Builders
 
         /// <summary> Registers model builder type. </summary>
         public CustomizationService RegisterBuilder(string name, Type modelBuilderType)
@@ -51,14 +65,6 @@ namespace ActionStreetMap.Explorer.Customization
         {
             _container.RegisterInstance(builder, builder.Name);
             return this;
-        }
-
-        #endregion
-
-        /// <summary> Gets behaviour type by its name. </summary>
-        public Type GetBehaviour(string name)
-        {
-            return _modelBehaviours[name];
         }
 
         /// <summary> Gets model builder by its name. </summary>
@@ -81,5 +87,24 @@ namespace ActionStreetMap.Explorer.Customization
             }
             return _modelBuilders[name];
         }
+
+        #endregion
+
+        #region Texture Atlases
+
+        /// <summary> Registers atals using name provided. </summary>
+        public CustomizationService RegisterAtlas(string name, TextureAtlas atlas)
+        {
+            _textureAtlases.Add(name, atlas);
+            return this;
+        }
+
+        /// <summary> Gets texture atlas by name. </summary>
+        public TextureAtlas GetAtlas(string name)
+        {
+            return _textureAtlases[name];
+        }
+
+        #endregion
     }
 }

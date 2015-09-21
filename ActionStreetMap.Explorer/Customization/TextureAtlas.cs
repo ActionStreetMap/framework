@@ -2,24 +2,26 @@
 
 namespace ActionStreetMap.Explorer.Customization
 {
+    /// <summary> Represents texture atlas. </summary>
     public sealed class TextureAtlas
     {
         private readonly Dictionary<string, TexturePack> _texturePackMap;
 
-        public string Name { get; private set; }
-
-        public TextureAtlas(string name)
+        /// <summary> Creates instance of <see cref="TextureAtlas"/>. </summary>
+        /// <param name="capacity"></param>
+        public TextureAtlas(int capacity = 4)
         {
-            Name = name;
-            _texturePackMap = new Dictionary<string, TexturePack>(2);
+            _texturePackMap = new Dictionary<string, TexturePack>(capacity);
         }
 
-        public TextureAtlas Register(TexturePack pack)
+        /// <summary> Registers texture pack by name. </summary>
+        public TextureAtlas Register(string name, TexturePack pack)
         {
-            _texturePackMap.Add(pack.Name, pack);
+            _texturePackMap.Add(name, pack);
             return this;
         }
 
+        /// <summary> Gets texture pack by name. </summary>
         public TexturePack Get(string name)
         {
             return _texturePackMap[name];
