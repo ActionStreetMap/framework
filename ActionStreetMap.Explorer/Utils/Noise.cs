@@ -2,17 +2,17 @@
 
 namespace ActionStreetMap.Explorer.Utils
 {
-    // NOTE used appraoch found here: http://catlikecoding.com/unity/tutorials/noise/
+    // NOTE used approach found here: http://catlikecoding.com/unity/tutorials/noise/
 
-    public delegate float NoiseMethod(Vector3 point, float frequency);
+    internal delegate float NoiseMethod(Vector3 point, float frequency);
 
-    public enum NoiseMethodType
+    internal enum NoiseMethodType
     {
         Value,
         Perlin
     }
 
-    public static class Noise
+    internal static class Noise
     {
         public static NoiseMethod[] ValueMethods = { Value1D, Value2D, Value3D };
         public static NoiseMethod[] PerlinMethods = { Perlin1D, Perlin2D, Perlin3D };
