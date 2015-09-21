@@ -144,7 +144,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ASSERT
             Assert.IsNotNull(meshDataList);
             Assert.AreEqual(1, meshDataList.Count);
-            Assert.AreEqual(1920 + 180, meshDataList[0].Vertices.Length);
+            Assert.AreEqual(1152 + 180, meshDataList[0].Vertices.Length);
             Assert.IsAssignableFrom(typeof(CompositeMeshIndex), meshDataList[0].Index);
         }
 
