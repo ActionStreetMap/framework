@@ -34,6 +34,16 @@ namespace ActionStreetMap.Explorer.Customization
             return rule.Evaluate<string>("fill-color");
         }
 
+        public static string GetTextureAtlas(this Rule rule)
+        {
+            return rule.Evaluate<string>("texture-atlas");
+        }
+
+        public static string GetTexture(this Rule rule)
+        {
+            return rule.Evaluate<string>("texture");
+        }
+
         public static bool IsSkipped(this Rule rule)
         {
             return rule.EvaluateDefault("skip", false);

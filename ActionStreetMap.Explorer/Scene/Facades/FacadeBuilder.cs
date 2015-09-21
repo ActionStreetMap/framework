@@ -39,6 +39,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var footprint = building.Footprint;
             var elevation = building.MinHeight + building.Elevation;
             var gradient = _customizationService.GetGradient(building.FacadeColor);
+            var texture = _customizationService
+                .GetAtlas(building.TextureAtlas)
+                .Get(building.FacadeTexture)
+                .Get((int) building.Id);
+
 
             var hasLevels = building.Levels > 1;
 
@@ -56,6 +61,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             wallBuilder
                 .SetGradient(gradient)
+                .SetTexture(texture)
                 .SetMinHeight(elevation)
                 .SetStepHeight(height)
                 .SetHeight(building.Height);

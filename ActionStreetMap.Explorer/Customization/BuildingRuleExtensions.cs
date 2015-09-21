@@ -21,6 +21,11 @@ namespace ActionStreetMap.Explorer.Customization
             return rule.GetMaterialKey();
         }
 
+        public static string GetFacadeTexture(this Rule rule)
+        {
+            return rule.Evaluate<string>("facade-texture");
+        }
+
         #endregion
 
         #region Roof
@@ -43,6 +48,11 @@ namespace ActionStreetMap.Explorer.Customization
         public static string GetRoofMaterial(this Rule rule, string @default = null)
         {
             return rule.GetMaterialKey("roof-material");
+        }
+
+        public static string GetRoofTexture(this Rule rule)
+        {
+            return rule.Evaluate<string>("roof-texture");
         }
 
         #endregion

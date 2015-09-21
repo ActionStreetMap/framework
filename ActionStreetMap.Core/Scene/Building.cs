@@ -49,6 +49,9 @@ namespace ActionStreetMap.Core.Scene
 
         #region Appearance
 
+        /// <summary> Gets or sets texture atlas. </summary>
+        public string TextureAtlas { get; set; }
+
         /// <summary> Gets or sets facade color. </summary>
         public string FacadeColor { get; set; }
 
