@@ -55,6 +55,9 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Gets or sets facade material. </summary>
         public string FacadeMaterial { get; set; }
 
+        /// <summary> Gets or sets facade texture. </summary>
+        public string FacadeTexture { get; set; }
+
         /// <summary> Gets or ses facade type </summary>
         public string FacadeType { get; set; }
 
@@ -63,6 +66,9 @@ namespace ActionStreetMap.Core.Scene
 
         /// <summary> Gets or sets roof material. </summary>
         public string RoofMaterial { get; set; }
+
+        /// <summary> Gets or sets roof texture. </summary>
+        public string RoofTexture { get; set; }
 
         /// <summary> Gets or sets roof type (see OSM roof types). </summary>
         public string RoofType { get; set; }

@@ -3,19 +3,19 @@ using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Customization
 {
-    /// <summary> Represents texture pack. </summary>
+    /// <summary> Represents texture group. </summary>
     /// <remarks> Not thread safe. </remarks>
-    public sealed class TexturePack
+    public sealed class TextureGroup
     {
         private readonly float _xRatio;
         private readonly float _yRatio;
         private readonly List<Texture> _textures;
 
-        /// <summary> Creates instance of <see cref="TexturePack"/>. </summary>
+        /// <summary> Creates instance of <see cref="TextureGroup"/>. </summary>
         /// <param name="width"> Texture width. </param>
         /// <param name="height"> Texture height. </param>
         /// <param name="capacity"> Internal dictionary capacity. </param>
-        public TexturePack(int width, int height, int capacity = 1)
+        public TextureGroup(int width, int height, int capacity = 1)
         {
             _xRatio = 1 / (float) width;
             _yRatio = 1 / (float) height;
@@ -23,7 +23,7 @@ namespace ActionStreetMap.Explorer.Customization
         }
 
         /// <summary> Stores texture in atlas. </summary>
-        public TexturePack Add(int x, int y, int width, int height)
+        public TextureGroup Add(int x, int y, int width, int height)
         {
             _textures.Add(new Texture(x * _xRatio, y * _yRatio,
                 width * _xRatio, height * _yRatio));

@@ -16,7 +16,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         protected float MinStepWidth = 2f;
         protected float MinStepHeight = 2;
         protected GradientWrapper Gradient;
-        protected TexturePack.Texture Texture;
+        protected TextureGroup.Texture Texture;
 
         protected Vector3[] Vertices;
         protected int[] Triangles;
@@ -142,7 +142,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             return this;
         }
 
-        public WallBuilder SetTexture(TexturePack.Texture texture)
+        public WallBuilder SetTexture(TextureGroup.Texture texture)
         {
             Texture = texture;
             return this;

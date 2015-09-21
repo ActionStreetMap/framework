@@ -14,7 +14,7 @@ namespace ActionStreetMap.Tests.Explorer.Customization
         public void CanMapSquare()
         {
             // ARRANGE
-            var texturePack = new TexturePack(1000, 1000);
+            var texturePack = new TextureGroup(1000, 1000);
             var region = texturePack
                .Add(500, 500, 100, 100)
                .Get(1);
@@ -30,7 +30,7 @@ namespace ActionStreetMap.Tests.Explorer.Customization
         public void CanMapRectangle()
         {
             // ARRANGE
-            var texturePack = new TexturePack(2000, 1000);
+            var texturePack = new TextureGroup(2000, 1000);
             var region = texturePack
                .Add(500, 500, 100, 100)
                .Get(1);
