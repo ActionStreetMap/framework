@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Infrastructure;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -14,9 +14,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
     /// <summary> Creates facade builder for simple facade. </summary>
     internal class FacadeBuilder : IFacadeBuilder
     {
-        protected const string LogCategory = "building.facade";
+        private const string LogCategory = "building.facade";
 
-        private readonly IResourceProvider _resourceProvider;
+        private readonly CustomizationService _customizationService;
 
         /// <inheritdoc />
         public string Name { get { return "default"; } }
@@ -27,9 +27,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         /// <summary> Creates instance of <see cref="FacadeBuilder"/>. </summary>
         [Dependency]
-        public FacadeBuilder(IResourceProvider resourceProvider)
+        public FacadeBuilder(CustomizationService customizationService)
         {
-            _resourceProvider = resourceProvider;
+            _customizationService = customizationService;
         }
 
         /// <inheritdoc />
@@ -38,7 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var random = new System.Random((int)building.Id);
             var footprint = building.Footprint;
             var elevation = building.MinHeight + building.Elevation;
-            var gradient = _resourceProvider.GetGradient(building.FacadeColor);
+            var gradient = _customizationService.GetGradient(building.FacadeColor);
 
             var hasLevels = building.Levels > 1;
 

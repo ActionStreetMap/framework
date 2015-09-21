@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Scene;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Facades;
 using NUnit.Framework;
 
@@ -15,7 +13,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
         public void CanHandleVertexLimit()
         {
             // ARRANGE
-            var builder = new FacadeBuilder(new UnityResourceProvider())
+            var builder = new FacadeBuilder(TestHelper.GetCustomizationService())
             {
                 Trace = new ConsoleTrace()
             };

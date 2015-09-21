@@ -18,8 +18,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new MansardRoofBuilder();
-            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
-            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            InitializeRoofBuilder(roofBuilder);
 
             // ACT
             var result = roofBuilder.Build(new Building()
@@ -50,8 +49,8 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new GabledRoofBuilder();
-            roofBuilder.ResourceProvider = new UnityResourceProvider();
-            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
+            InitializeRoofBuilder(roofBuilder);
+
             // ACT
             var meshData = roofBuilder.Build(CreateTestBuilding());
 
@@ -65,8 +64,8 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new HippedRoofBuilder();
-            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
-            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            InitializeRoofBuilder(roofBuilder);
+
             // ACT
             var meshData = roofBuilder.Build(CreateTestBuilding());
 
@@ -80,9 +79,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new HippedRoofBuilder();
-            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
-            roofBuilder.ResourceProvider = new UnityResourceProvider();
-            roofBuilder.Trace = new DefaultTrace();
+            InitializeRoofBuilder(roofBuilder);
             var building = CreateTestBuilding();
             building.Footprint = new List<Vector2d>()
             {
@@ -133,8 +130,7 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new DomeRoofBuilder();
-            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
-            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            InitializeRoofBuilder(roofBuilder);
             var building = CreateTestBuilding();
             building.Levels = 1;
 
@@ -153,8 +149,8 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
         {
             // ARRANGE
             var roofBuilder = new PyramidalRoofBuilder();
-            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
-            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            InitializeRoofBuilder(roofBuilder);
+
             // ACT
             var meshDataList = roofBuilder.Build(CreateTestBuilding());
 
@@ -184,6 +180,13 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 FloorFrontColor = "gradient(#f3e2c7, #c19e67 50%, #b68d4c 51%, #e9d4b3)",
                 FloorBackColor = "gradient(#feffff, #d2ebf9)",
             };
+        }
+
+        private void InitializeRoofBuilder(RoofBuilder roofBuilder)
+        {
+            roofBuilder.ObjectPool = TestHelper.GetObjectPool();
+            roofBuilder.CustomizationService = TestHelper.GetCustomizationService();
+            roofBuilder.Trace = new DefaultTrace();
         }
     }
 }

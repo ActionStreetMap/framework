@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Utils;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Infrastructure;
 using UnityEngine;
 
@@ -12,16 +13,16 @@ namespace ActionStreetMap.Explorer.Helpers
             return @"Materials/" + rule.Evaluate<string>(path);
         }
 
-        public static Material GetMaterial(this Rule rule, IResourceProvider resourceProvider)
+        public static Material GetMaterial(this Rule rule, CustomizationService customizationService)
         {
             var path = rule.GetMaterialKey();
-            return resourceProvider.GetMaterial(path);
+            return customizationService.GetMaterial(path);
         }
 
-        public static Material GetMaterial(this Rule rule, string path, IResourceProvider resourceProvider)
+        public static Material GetMaterial(this Rule rule, string path, CustomizationService customizationService)
         {
             var materialPath = rule.GetMaterialKey(path);
-            return resourceProvider.GetMaterial(materialPath);
+            return customizationService.GetMaterial(materialPath);
         }
 
         public static Color32 GetFillUnityColor(this Rule rule)

@@ -38,7 +38,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 .SetRadius((float)radius)
                 .SetRecursionLevel(2)
                 .IsSemiphere(true)
-                .SetGradient(ResourceProvider.GetGradient(building.RoofColor));
+                .SetGradient(CustomizationService.GetGradient(building.RoofColor));
 
             var mesh = CreateMesh(building.Footprint);
 
@@ -78,8 +78,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     Bottom = building.Elevation + building.MinHeight,
                     FloorCount = floorCount,
                     FloorHeight = building.Height/floorCount,
-                    FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                    FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                    FloorFrontGradient = CustomizationService.GetGradient(building.FloorFrontColor),
+                    FloorBackGradient = CustomizationService.GetGradient(building.FloorBackColor),
 
                     IsLastRoof = false
                 });

@@ -46,7 +46,6 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         private readonly CustomizationService _customizationService;
         private readonly IElevationProvider _elevationProvider;
-        private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
         private readonly IObjectPool _objectPool;
         private readonly MeshCellBuilder _meshCellBuilder;
@@ -61,13 +60,11 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         [Dependency]
         public TerrainBuilder(CustomizationService customizationService,
                               IElevationProvider elevationProvider,
-                              IResourceProvider resourceProvider,
                               IGameObjectFactory gameObjectFactory,
                               IObjectPool objectPool)
         {
             _customizationService = customizationService;
             _elevationProvider = elevationProvider;
-            _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
             _objectPool = objectPool;
             _meshCellBuilder = new MeshCellBuilder(_objectPool);
@@ -160,8 +157,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             var meshTriangles = meshData.Triangles;
 
-            var bottomGradient = rule.GetBackgroundLayerGradient(_resourceProvider);
-            var waterSurfaceGradient = rule.GetWaterLayerGradient(_resourceProvider);
+            var bottomGradient = rule.GetBackgroundLayerGradient(_customizationService);
+            var waterSurfaceGradient = rule.GetWaterLayerGradient(_customizationService);
             var waterBottomLevelOffset = rule.GetWaterLayerBottomLevel();
             var waterSurfaceLevelOffset = rule.GetWaterLayerSurfaceLevel();
 
@@ -211,7 +208,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             // finalizing offset shape
             if (renderMode == RenderMode.Scene)
             {
-                BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
+                BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_customizationService),
                     cell.Rectangle, colorNoiseFreq, waterBottomLevelOffset);
 
                 Observable.Start(() => BuildWaterObject(rule, meshData,
@@ -229,8 +226,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             mesh.colors = colors;
             mesh.RecalculateNormals();
 
-            gameObject.AddComponent<MeshRenderer>().sharedMaterial = 
-                rule.GetMaterial("material_water", _resourceProvider);
+            gameObject.AddComponent<MeshRenderer>().sharedMaterial =
+                rule.GetMaterial("material_water", _customizationService);
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
         }
 
@@ -241,7 +238,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         private void BuildBackground(Rule rule, TerrainMeshData meshData, MeshRegion meshRegion, RenderMode renderMode)
         {
             if (meshRegion.Mesh == null) return;
-            var gradient = rule.GetBackgroundLayerGradient(_resourceProvider);
+            var gradient = rule.GetBackgroundLayerGradient(_customizationService);
 
             float eleNoiseFreq = rule.GetBackgroundLayerEleNoiseFreq();
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetBackgroundLayerColorNoiseFreq() : 0;
@@ -264,14 +261,14 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             float roadOffset = 0.3f;
 
             if (meshRegion.Mesh == null) return;
-            var gradient = rule.GetCarLayerGradient(_resourceProvider);
+            var gradient = rule.GetCarLayerGradient(_customizationService);
 
             foreach (var triangle in meshRegion.Mesh.Triangles)
                 AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq, -roadOffset);
 
             if (isScene)
             {
-                BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_resourceProvider),
+                BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_customizationService),
                     cell.Rectangle, colorNoiseFreq, roadOffset);
             }
 
@@ -286,7 +283,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             var meshRegion = cell.WalkRoads;
             if (meshRegion.Mesh == null) return;
-            var gradient = rule.GetPedestrianLayerGradient(_resourceProvider);
+            var gradient = rule.GetPedestrianLayerGradient(_customizationService);
             float eleNoiseFreq = rule.GetPedestrianLayerEleNoiseFreq();
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetPedestrianLayerColorNoiseFreq() : 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
@@ -305,7 +302,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             float colorNoiseFreq = renderMode == RenderMode.Scene ? meshRegion.ColorNoiseFreq : 0;
             float eleNoiseFreq = renderMode == RenderMode.Scene ? meshRegion.ElevationNoiseFreq : 0;
-            var gradient = _resourceProvider.GetGradient(meshRegion.GradientKey);
+            var gradient = _customizationService.GetGradient(meshRegion.GradientKey);
 
             if (meshRegion.ModifyMeshAction != null)
                 meshRegion.ModifyMeshAction(meshRegion.Mesh);
@@ -415,7 +412,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             mesh.RecalculateNormals();
 
             gameObject.AddComponent<MeshRenderer>().sharedMaterial = rule
-                .GetMaterial("material_background", _resourceProvider);
+                .GetMaterial("material_background", _customizationService);
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
             gameObject.AddComponent<MeshCollider>();
 

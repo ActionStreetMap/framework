@@ -78,7 +78,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshData = new MeshData(meshIndex, vertexCount);
 
             // 6. process all segments and create vertices
-            FillMeshData(meshData, ResourceProvider.GetGradient(building.RoofColor), roofOffset,
+            FillMeshData(meshData, CustomizationService.GetGradient(building.RoofColor), roofOffset,
                 roofHeight, building.Footprint, first, firstIndex, second, secondIndex);
 
             if (!limitIsReached)
@@ -92,8 +92,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     Bottom = building.Elevation + building.MinHeight,
                     FloorCount = floorCount,
                     FloorHeight = building.Height/floorCount,
-                    FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                    FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                    FloorFrontGradient = CustomizationService.GetGradient(building.FloorFrontColor),
+                    FloorBackGradient = CustomizationService.GetGradient(building.FloorBackColor),
 
                     IsLastRoof = false
                 });

@@ -63,8 +63,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 var elevation = ElevationProvider.GetElevation(center);
 
                 var treeGen = new TreeGenerator()
-                   .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
-                   .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
+                   .SetTrunkGradient(CustomizationService.GetGradient(trunkGradientKey))
+                   .SetFoliageGradient(CustomizationService.GetGradient(foliageGradientKey))
                    .SetPosition(new Vector3((float)center.X, elevation, (float)center.Y));
                 
                 var meshData = new MeshData(MeshDestroyIndex.Default, treeGen.CalculateVertexCount());

@@ -117,10 +117,9 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             [Dependency]
             public TestTerrainBuilder(CustomizationService customizationService, 
                                       IElevationProvider elevationProvider, 
-                                      IResourceProvider resourceProvider, 
                                       IGameObjectFactory gameObjectFactory, 
                                       IObjectPool objectPool) : 
-                base(customizationService, elevationProvider, resourceProvider, gameObjectFactory, objectPool)
+                base(customizationService, elevationProvider, gameObjectFactory, objectPool)
             {
             }
 

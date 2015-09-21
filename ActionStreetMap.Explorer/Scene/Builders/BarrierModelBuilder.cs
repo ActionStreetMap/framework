@@ -51,7 +51,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var context = new SegmentBuilderContext()
             {
                 MeshData = meshData,
-                Gradient = ResourceProvider.GetGradient(rule.GetFillColor()),
+                Gradient = CustomizationService.GetGradient(rule.GetFillColor()),
                 ColorNoiseFreq = rule.GetColorNoiseFreq(),
                 Height = rule.GetHeight(),
                 MaxWidth = maxWidth,

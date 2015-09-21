@@ -74,7 +74,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshIndex = new MultiPlaneMeshIndex(planeCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
-            var roofGradient = ResourceProvider.GetGradient(building.RoofColor);
+            var roofGradient = CustomizationService.GetGradient(building.RoofColor);
             int index = FindStartIndex(topVertices[0], footprint);
             for (int i = 0; i < topVertices.Count; i++)
             {
@@ -104,8 +104,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 Bottom = roofHeight,
                 FloorCount = 1,
                 FloorHeight = building.Height/floorCount,
-                FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                FloorFrontGradient = CustomizationService.GetGradient(building.FloorFrontColor),
+                FloorBackGradient = CustomizationService.GetGradient(building.FloorBackColor),
 
                 IsLastRoof = true,
                 RoofFrontGradient = roofGradient,

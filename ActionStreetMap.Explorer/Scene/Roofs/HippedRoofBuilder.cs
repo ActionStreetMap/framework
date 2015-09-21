@@ -49,7 +49,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             MeshData meshData = new MeshData(meshIndex, vertexCount);
             try
             {
-                var roofGradient = ResourceProvider.GetGradient(building.RoofColor);
+                var roofGradient = CustomizationService.GetGradient(building.RoofColor);
                 foreach (var edge in skeleton.Edges)
                 {
                     if (edge.Polygon.Count < 5)
@@ -70,8 +70,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         Bottom = building.Elevation + building.MinHeight,
                         FloorCount = floorCount,
                         FloorHeight = building.Height/floorCount,
-                        FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                        FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                        FloorFrontGradient = CustomizationService.GetGradient(building.FloorFrontColor),
+                        FloorBackGradient = CustomizationService.GetGradient(building.FloorBackColor),
 
                         IsLastRoof = false
                     });

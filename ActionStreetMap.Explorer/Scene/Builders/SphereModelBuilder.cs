@@ -32,7 +32,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var elevation = ElevationProvider.GetElevation(center);
             var minHeight = rule.GetMinHeight();
             var color = rule.GetFillColor();
-            var gradient = ResourceProvider.GetGradient(color);
+            var gradient = CustomizationService.GetGradient(color);
 
             int recursionLevel = rule.EvaluateDefault("recursion_level", 2);
 

@@ -25,8 +25,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var foliageGradientKey = rule.Evaluate<string>("foliage-color");
 
             var treeGen = new TreeGenerator()
-                .SetTrunkGradient(ResourceProvider.GetGradient(trunkGradientKey))
-                .SetFoliageGradient(ResourceProvider.GetGradient(foliageGradientKey))
+                .SetTrunkGradient(CustomizationService.GetGradient(trunkGradientKey))
+                .SetFoliageGradient(CustomizationService.GetGradient(foliageGradientKey))
                 .SetPosition(new Vector3((float) mapPoint.X, elevation, (float) mapPoint.Y));
 
             var meshData = new MeshData(MeshDestroyIndex.Default, treeGen.CalculateVertexCount());

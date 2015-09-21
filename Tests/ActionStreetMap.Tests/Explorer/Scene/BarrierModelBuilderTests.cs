@@ -9,7 +9,6 @@ using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Builders;
-using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Maps.Data.Helpers;
 using ActionStreetMap.Tests.Core.MapCss;
 using Moq;
@@ -30,17 +29,12 @@ namespace ActionStreetMap.Tests.Explorer.Scene
         [SetUp]
         public void SetUp()
         {
-            var resourceProvider = new Mock<IResourceProvider>();
-            resourceProvider.Setup(r => r.GetGradient(It.IsAny<string>()))
-                .Returns(GradientUtils.ParseGradient("gradient(#f4a460, #614126 50%, #302013)"));
-            var elevationProvider = new Mock<IElevationProvider>();
-
             var objectPoll = TestHelper.GetObjectPool();
             _barrierModelBuilder = new TestableBarrierModelBuilder();
             _barrierModelBuilder.ObjectPool = objectPoll;
             _barrierModelBuilder.GameObjectFactory = new GameObjectFactory();
-            _barrierModelBuilder.ElevationProvider = elevationProvider.Object;
-            _barrierModelBuilder.ResourceProvider = resourceProvider.Object;
+            _barrierModelBuilder.ElevationProvider = new Mock<IElevationProvider>().Object;
+            _barrierModelBuilder.CustomizationService = TestHelper.GetCustomizationService();
 
             _tile = new Tile(TestHelper.BerlinTestFilePoint,
                 new Vector2d(0, 0), RenderMode.Scene,

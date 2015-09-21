@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var minHeight = rule.GetMinHeight();
             var actualHeight = (height - minHeight);
             var color = rule.GetFillColor();
-            var gradient = ResourceProvider.GetGradient(color);
+            var gradient = CustomizationService.GetGradient(color);
 
             tile.Registry.RegisterGlobal(area.Id);
 

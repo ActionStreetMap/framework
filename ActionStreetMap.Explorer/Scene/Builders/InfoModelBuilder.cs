@@ -78,7 +78,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 p0, p3, p1, p2
             };
 
-            gameObject.GetComponent<MeshRenderer>().sharedMaterial = rule.GetMaterial(ResourceProvider);
+            gameObject.GetComponent<MeshRenderer>().sharedMaterial = rule.GetMaterial(CustomizationService);
             
             gameObjectWrapper.Parent = tile.GameObject;
         }

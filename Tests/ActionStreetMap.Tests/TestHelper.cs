@@ -6,6 +6,7 @@ using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Explorer;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Config;
@@ -89,6 +90,11 @@ namespace ActionStreetMap.Tests
         public static IFileSystemService GetFileSystemService()
         {
             return new FileSystemService(new TestPathResolver(), new ConsoleTrace());
+        }
+
+        public static CustomizationService GetCustomizationService()
+        {
+            return new CustomizationService(new Container());
         }
 
         public static IObjectPool GetObjectPool()

@@ -8,6 +8,7 @@ using ActionStreetMap.Core.Geometry.Triangle.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Scene.Utils;
@@ -56,7 +57,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
-        public IResourceProvider ResourceProvider { get; set; }
+        public CustomizationService CustomizationService { get; set; }
 
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
@@ -195,12 +196,12 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     Bottom = stepBottomOffset,
                     FloorCount = stepFloorCount,
                     FloorHeight = floorHeight,
-                    FloorFrontGradient = ResourceProvider.GetGradient(building.FloorFrontColor),
-                    FloorBackGradient = ResourceProvider.GetGradient(building.FloorBackColor),
+                    FloorFrontGradient = CustomizationService.GetGradient(building.FloorFrontColor),
+                    FloorBackGradient = CustomizationService.GetGradient(building.FloorBackColor),
 
                     IsLastRoof = i == meshCount - 1 && lastFloorIsRoof,
-                    RoofFrontGradient = ResourceProvider.GetGradient(building.RoofColor),
-                    RoofBackGradient = ResourceProvider.GetGradient(building.RoofColor),
+                    RoofFrontGradient = CustomizationService.GetGradient(building.RoofColor),
+                    RoofBackGradient = CustomizationService.GetGradient(building.RoofColor),
                 });
 
                 meshDataList.Add(meshData);

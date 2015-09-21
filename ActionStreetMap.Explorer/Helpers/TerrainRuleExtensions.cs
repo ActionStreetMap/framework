@@ -1,4 +1,5 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Unity.Wrappers;
 
@@ -8,10 +9,10 @@ namespace ActionStreetMap.Explorer.Helpers
     {
         #region Background layer
 
-        public static GradientWrapper GetBackgroundLayerGradient(this Rule rule, IResourceProvider resourceProvider)
+        public static GradientWrapper GetBackgroundLayerGradient(this Rule rule, CustomizationService customizationService)
         {
             var gradientKey = rule.Evaluate<string>("background_gradient");
-            return resourceProvider.GetGradient(gradientKey);
+            return customizationService.GetGradient(gradientKey);
         }
 
         public static float GetBackgroundLayerColorNoiseFreq(this Rule rule)
@@ -28,10 +29,10 @@ namespace ActionStreetMap.Explorer.Helpers
 
         #region Water layer
 
-        public static GradientWrapper GetWaterLayerGradient(this Rule rule, IResourceProvider resourceProvider)
+        public static GradientWrapper GetWaterLayerGradient(this Rule rule, CustomizationService customizationService)
         {
             var gradientKey = rule.Evaluate<string>("water_gradient");
-            return resourceProvider.GetGradient(gradientKey);
+            return customizationService.GetGradient(gradientKey);
         }
 
         public static float GetWaterLayerColorNoiseFreq(this Rule rule)
@@ -58,10 +59,10 @@ namespace ActionStreetMap.Explorer.Helpers
 
         #region Car layer
 
-        public static GradientWrapper GetCarLayerGradient(this Rule rule, IResourceProvider resourceProvider)
+        public static GradientWrapper GetCarLayerGradient(this Rule rule, CustomizationService customizationService)
         {
             var gradientKey = rule.Evaluate<string>("car_gradient");
-            return resourceProvider.GetGradient(gradientKey);
+            return customizationService.GetGradient(gradientKey);
         }
 
         public static float GetCarLayerColorNoiseFreq(this Rule rule)
@@ -78,10 +79,10 @@ namespace ActionStreetMap.Explorer.Helpers
 
         #region Pedestrian layer
 
-        public static GradientWrapper GetPedestrianLayerGradient(this Rule rule, IResourceProvider resourceProvider)
+        public static GradientWrapper GetPedestrianLayerGradient(this Rule rule, CustomizationService customizationService)
         {
             var gradientKey = rule.Evaluate<string>("pedestrian_gradient");
-            return resourceProvider.GetGradient(gradientKey);
+            return customizationService.GetGradient(gradientKey);
         }
 
         public static float GetPedestrianLayerColorNoiseFreq(this Rule rule)

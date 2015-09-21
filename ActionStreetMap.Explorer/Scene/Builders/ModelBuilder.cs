@@ -72,11 +72,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         [Dependency]
         public IGameObjectFactory GameObjectFactory { get; set; }
 
-        /// <summary> Gets resource provider. </summary>
-        [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
-        [Dependency]
-        public IResourceProvider ResourceProvider { get; set; }
-
         /// <summary> Gets object pool. </summary>
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
@@ -119,7 +114,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 gameObject.AddComponent<MeshFilter>().mesh = mesh;
                 gameObject.AddComponent<MeshCollider>();
-                gameObject.AddComponent<MeshRenderer>().sharedMaterial = ResourceProvider
+                gameObject.AddComponent<MeshRenderer>().sharedMaterial = CustomizationService
                     .GetMaterial(meshData.MaterialKey);
 
                 // attach behaviours

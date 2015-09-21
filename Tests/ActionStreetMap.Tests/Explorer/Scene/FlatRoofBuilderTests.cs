@@ -18,7 +18,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             // ARRANGE
             FlatRoofBuilder roofBuilder = new FlatRoofBuilder();
             roofBuilder.ObjectPool = TestHelper.GetObjectPool();
-            roofBuilder.ResourceProvider = new UnityResourceProvider();
+            roofBuilder.CustomizationService = TestHelper.GetCustomizationService();
             roofBuilder.Trace = new ConsoleTrace();
 
             var footprint = new List<Vector2d>()

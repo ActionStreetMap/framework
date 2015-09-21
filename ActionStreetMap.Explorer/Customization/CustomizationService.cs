@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Explorer.Scene.Builders;
+using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
+using ActionStreetMap.Unity.Wrappers;
+using UnityEngine;
+using Component = ActionStreetMap.Infrastructure.Dependencies.Component;
+using Object = System.Object;
 
 namespace ActionStreetMap.Explorer.Customization
 {
-    /// <summary> Maintains list of global behaviours. </summary>
+    /// <summary> Maintains list of customization properties. </summary>
     /// <remarks> Registration is not thread safe. </remarks>
     public sealed class CustomizationService
     {
@@ -16,7 +21,9 @@ namespace ActionStreetMap.Explorer.Customization
         private IContainer _container;
         private readonly Dictionary<string, Type> _modelBehaviours;
         private Dictionary<string, IModelBuilder> _modelBuilders;
-        private Dictionary<string, TextureAtlas> _textureAtlases;
+        private readonly Dictionary<string, TextureAtlas> _textureAtlases;
+        private readonly Dictionary<string, Material> _materials;
+        private readonly Dictionary<string, GradientWrapper> _gradients;
 
         /// <summary> Creates instance of <see cref="CustomizationService"/>. </summary>
         internal CustomizationService(IContainer container)
@@ -24,6 +31,8 @@ namespace ActionStreetMap.Explorer.Customization
             _container = container;
             _modelBehaviours = new Dictionary<string, Type>(4);
             _textureAtlases = new Dictionary<string, TextureAtlas>(2);
+            _materials = new Dictionary<string, Material>();
+            _gradients = new Dictionary<string, GradientWrapper>(16);
         }
 
         #region Model Behaviours
@@ -103,6 +112,41 @@ namespace ActionStreetMap.Explorer.Customization
         public TextureAtlas GetAtlas(string name)
         {
             return _textureAtlases[name];
+        }
+
+        #endregion
+
+        #region Gradients
+
+        /// <summary> Gets gradient from string. </summary>
+        public GradientWrapper GetGradient(string gradientString)
+        {
+            if (!_gradients.ContainsKey(gradientString))
+            {
+                lock (_gradients)
+                {
+                    if (!_gradients.ContainsKey(gradientString))
+                    {
+                        var value = GradientUtils.ParseGradient(gradientString);
+                        _gradients.Add(gradientString, value);
+                        return value;
+                    }
+                }
+            }
+            return _gradients[gradientString];
+        }
+
+        #endregion
+
+        #region Materials
+
+        /// <summary> Gets material by key. </summary>
+        public Material GetMaterial(string key)
+        {
+            if (!_materials.ContainsKey(key))
+                _materials[key] = Resources.Load<Material>(key);
+
+            return _materials[key];
         }
 
         #endregion
