@@ -5,10 +5,10 @@ using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
 
-namespace ActionStreetMap.Explorer.Infrastructure
+namespace ActionStreetMap.Explorer.Customization
 {
     /// <summary> Maintains list of global behaviours. </summary>
-    public sealed class ModelExtensionProvider
+    public sealed class CustomizationService
     {
         private readonly Object _lockObj = new object();
 
@@ -16,8 +16,8 @@ namespace ActionStreetMap.Explorer.Infrastructure
         private readonly Dictionary<string, Type> _modelBehaviours = new Dictionary<string, Type>(4);
         private Dictionary<string, IModelBuilder> _modelBuilders;
 
-        /// <summary> Creates instance of <see cref="ModelExtensionProvider"/>. </summary>
-        internal ModelExtensionProvider(IContainer container)
+        /// <summary> Creates instance of <see cref="CustomizationService"/>. </summary>
+        internal CustomizationService(IContainer container)
         {
             _container = container;
         }
@@ -25,7 +25,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         #region Registration
 
         /// <summary> Registers model behaviour type. </summary>
-        public ModelExtensionProvider RegisterBehaviour(string name, Type modelBehaviourType)
+        public CustomizationService RegisterBehaviour(string name, Type modelBehaviourType)
         {
             Guard.IsAssignableFrom(typeof (IModelBehaviour), modelBehaviourType);
 
@@ -34,7 +34,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <summary> Registers model builder type. </summary>
-        public ModelExtensionProvider RegisterBuilder(string name, Type modelBuilderType)
+        public CustomizationService RegisterBuilder(string name, Type modelBuilderType)
         {
             Guard.IsAssignableFrom(typeof (IModelBuilder), modelBuilderType);
 
@@ -47,7 +47,7 @@ namespace ActionStreetMap.Explorer.Infrastructure
         }
 
         /// <summary> Registers model builder instance. </summary>
-        public ModelExtensionProvider RegisterBuilder(IModelBuilder builder)
+        public CustomizationService RegisterBuilder(IModelBuilder builder)
         {
             _container.RegisterInstance(builder, builder.Name);
             return this;

@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.Tiling;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 using ActionStreetMap.Explorer.Tiling;
@@ -36,7 +37,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
                 .Singleton());
 
             // register model processing extensions.
-            Container.RegisterInstance(new ModelExtensionProvider(Container)
+            Container.RegisterInstance(new CustomizationService(Container)
                 .RegisterBuilder("building", typeof (BuildingModelBuilder))
                 .RegisterBuilder("sphere", typeof (SphereModelBuilder))
                 .RegisterBuilder("cylinder", typeof (CylinderModelBuilder))

@@ -5,6 +5,7 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
@@ -24,7 +25,7 @@ namespace ActionStreetMap.Explorer.Tiling
         private const string LogCategory = "model.loader";
 
         private readonly ITerrainBuilder _terrainBuilder;
-        private readonly ModelExtensionProvider _modelExtensionProvider;
+        private readonly CustomizationService _customizationService;
         private readonly IObjectPool _objectPool;
         private readonly IGameObjectFactory _gameObjectFactory;
 
@@ -38,10 +39,10 @@ namespace ActionStreetMap.Explorer.Tiling
         [Dependency]
         public TileModelLoader(IGameObjectFactory gameObjectFactory,
             ITerrainBuilder terrainBuilder, IStylesheetProvider stylesheetProvider,
-            ModelExtensionProvider modelExtensionProvider, IObjectPool objectPool)
+            CustomizationService customizationService, IObjectPool objectPool)
         {
             _terrainBuilder = terrainBuilder;
-            _modelExtensionProvider = modelExtensionProvider;
+            _customizationService = customizationService;
 
             _objectPool = objectPool;
 
@@ -96,7 +97,7 @@ namespace ActionStreetMap.Explorer.Tiling
             {
                 try
                 {
-                    foreach (var modelBuilder in rule.GetModelBuilders(_modelExtensionProvider))
+                    foreach (var modelBuilder in rule.GetModelBuilders(_customizationService))
                     {
                         var gameObject = func(rule, modelBuilder);
                         AttachBehaviours(gameObject, rule, model);
@@ -125,7 +126,7 @@ namespace ActionStreetMap.Explorer.Tiling
 
         private void AttachBehaviours(IGameObject gameObject, Rule rule, Model model)
         {
-            var behaviourTypes = rule.GetModelBehaviours(_modelExtensionProvider);
+            var behaviourTypes = rule.GetModelBehaviours(_customizationService);
             if (gameObject != null && !gameObject.IsBehaviourAttached && behaviourTypes.Any())
                 Observable.Start(() =>
                 {

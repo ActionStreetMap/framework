@@ -10,6 +10,7 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
@@ -43,7 +44,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     {
         private const string LogTag = "mesh.terrain";
 
-        private readonly ModelExtensionProvider _modelExtensionProvider;
+        private readonly CustomizationService _customizationService;
         private readonly IElevationProvider _elevationProvider;
         private readonly IResourceProvider _resourceProvider;
         private readonly IGameObjectFactory _gameObjectFactory;
@@ -58,13 +59,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         /// <summary> Creates instance of <see cref="TerrainBuilder"/>. </summary>
         [Dependency]
-        public TerrainBuilder(ModelExtensionProvider modelExtensionProvider,
+        public TerrainBuilder(CustomizationService customizationService,
                               IElevationProvider elevationProvider,
                               IResourceProvider resourceProvider,
                               IGameObjectFactory gameObjectFactory,
                               IObjectPool objectPool)
         {
-            _modelExtensionProvider = modelExtensionProvider;
+            _customizationService = customizationService;
             _elevationProvider = elevationProvider;
             _resourceProvider = resourceProvider;
             _gameObjectFactory = gameObjectFactory;
@@ -421,7 +422,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
             meshData.Dispose();
 
-            var behaviourTypes = rule.GetModelBehaviours(_modelExtensionProvider);
+            var behaviourTypes = rule.GetModelBehaviours(_customizationService);
             foreach (var behaviourType in behaviourTypes)
             {
                 var behaviour = gameObject.AddComponent(behaviourType) as IModelBehaviour;

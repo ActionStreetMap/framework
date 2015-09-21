@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Explorer.Infrastructure;
+﻿using ActionStreetMap.Explorer.Customization;
+using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Infrastructure.Bootstrap;
 using ActionStreetMap.Infrastructure.Config;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -27,9 +28,9 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         public ITrace Trace { get; set; }
 
         /// <summary> Gets extension provider. </summary>
-        public ModelExtensionProvider ExtensionProvider
+        public CustomizationService ExtensionProvider
         {
-            get { return Container.Resolve<ModelExtensionProvider>(); }
+            get { return Container.Resolve<CustomizationService>(); }
         }
 
         /// <inheritdoc />

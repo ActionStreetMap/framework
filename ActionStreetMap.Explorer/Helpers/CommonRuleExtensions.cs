@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Scene;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
 
@@ -15,14 +16,14 @@ namespace ActionStreetMap.Explorer.Helpers
             return rule.EvaluateDefault("height", defaultValue);
         }
 
-        public static IEnumerable<IModelBuilder> GetModelBuilders(this Rule rule, ModelExtensionProvider provider)
+        public static IEnumerable<IModelBuilder> GetModelBuilders(this Rule rule, CustomizationService provider)
         {
             foreach (var name in rule.EvaluateList<string>("builders"))
                 yield return provider.GetBuilder(name);
         }
 
         /// <summary> Gets list of behaviours for the rule. </summary>
-        public static IEnumerable<Type> GetModelBehaviours(this Rule rule, ModelExtensionProvider provider)
+        public static IEnumerable<Type> GetModelBehaviours(this Rule rule, CustomizationService provider)
         {
             // TODO check performance impact
             foreach (var name in rule.EvaluateList<string>("behaviours"))

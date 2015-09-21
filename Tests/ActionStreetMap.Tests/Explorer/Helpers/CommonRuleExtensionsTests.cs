@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionStreetMap.Core;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Builders;
@@ -27,7 +28,7 @@ namespace ActionStreetMap.Tests.Explorer.Helpers
             testBulder2.SetupGet(b => b.Name).Returns("test2");
             var testBulder3 = new Mock<IModelBuilder>();
             testBulder3.SetupGet(b => b.Name).Returns("test2");
-            var provider = new ModelExtensionProvider(new Container())
+            var provider = new CustomizationService(new Container())
                 .RegisterBuilder(testBulder1.Object)
                 .RegisterBuilder(testBulder2.Object);
             var rule = stylesheet.GetModelRule(way, ZoomHelper.GetZoomLevel(RenderMode.Scene));

@@ -4,6 +4,7 @@ using ActionStreetMap.Core.MapCss;
 using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
@@ -114,12 +115,12 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             public Color[] Colors;
 
             [Dependency]
-            public TestTerrainBuilder(ModelExtensionProvider modelExtensionProvider, 
+            public TestTerrainBuilder(CustomizationService customizationService, 
                                       IElevationProvider elevationProvider, 
                                       IResourceProvider resourceProvider, 
                                       IGameObjectFactory gameObjectFactory, 
                                       IObjectPool objectPool) : 
-                base(modelExtensionProvider, elevationProvider, resourceProvider, gameObjectFactory, objectPool)
+                base(customizationService, elevationProvider, resourceProvider, gameObjectFactory, objectPool)
             {
             }
 

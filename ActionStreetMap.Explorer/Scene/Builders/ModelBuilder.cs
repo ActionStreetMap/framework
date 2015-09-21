@@ -4,6 +4,7 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Helpers;
 using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
@@ -59,7 +60,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <summary> Gets behaviour provider. </summary>
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
         [Dependency]
-        public ModelExtensionProvider ModelExtensionProvider { get; set; }
+        public CustomizationService CustomizationService { get; set; }
 
         /// <summary> Gets elevation provider. </summary>
         [global::System.Reflection.Obfuscation(Exclude = true, Feature = "renaming")]
@@ -123,7 +124,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 // attach behaviours
                 gameObject.AddComponent<MeshIndexBehaviour>().Index = meshData.Index;
-                var behaviourTypes = rule.GetModelBehaviours(ModelExtensionProvider);
+                var behaviourTypes = rule.GetModelBehaviours(CustomizationService);
                 foreach (var behaviourType in behaviourTypes)
                 {
                     var behaviour = gameObject.AddComponent(behaviourType) as IModelBehaviour;

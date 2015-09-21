@@ -75,7 +75,7 @@
     <Compile Include="Scene\Indices\PlaneMeshIndex.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshData.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshTriangle.cs" />
-    <Compile Include="Infrastructure\ModelExtensionProvider.cs" />
+    <Compile Include="Customization\CustomizationService.cs" />
     <Compile Include="Infrastructure\ConfigBuilder.cs" />
     <Compile Include="Infrastructure\DefaultPathResolver.cs" />
     <Compile Include="Infrastructure\MapIndexUtility.cs" />
