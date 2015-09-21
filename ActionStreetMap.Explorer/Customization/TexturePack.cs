@@ -9,7 +9,7 @@ namespace ActionStreetMap.Explorer.Customization
     {
         private readonly float _xRatio;
         private readonly float _yRatio;
-        private readonly List<TextureRegion> _textures;
+        private readonly List<Texture> _textures;
 
         /// <summary> Creates instance of <see cref="TexturePack"/>. </summary>
         /// <param name="width"> Texture width. </param>
@@ -19,44 +19,44 @@ namespace ActionStreetMap.Explorer.Customization
         {
             _xRatio = 1 / (float) width;
             _yRatio = 1 / (float) height;
-            _textures = new List<TextureRegion>(capacity);
+            _textures = new List<Texture>(capacity);
         }
 
-        /// <summary> Stores texture region with given parameters. </summary>
+        /// <summary> Stores texture in atlas. </summary>
         public TexturePack Add(int x, int y, int width, int height)
         {
-            _textures.Add(new TextureRegion(x * _xRatio, y * _yRatio,
+            _textures.Add(new Texture(x * _xRatio, y * _yRatio,
                 width * _xRatio, height * _yRatio));
             return this;
         }
 
         /// <summary> Gets texture region using seed provided.  </summary>
-        public TextureRegion Get(int seed)
+        public Texture Get(int seed)
         {
             return _textures[seed % _textures.Count];
         }
 
-        /// <summary> Represents texture region. </summary>
-        public sealed class TextureRegion
+        /// <summary> Represents texture in atlas. </summary>
+        public sealed class Texture
         {
-            public readonly float X;
-            public readonly float Y;
+            private readonly float _x;
+            private readonly float _y;
 
-            public readonly float Width;
-            public readonly float Height;
+            private readonly float _width;
+            private readonly float _height;
 
-            internal TextureRegion(float x, float y, float width, float height)
+            internal Texture(float x, float y, float width, float height)
             {
-                X = x;
-                Y = y;
-                Width = width;
-                Height = height;
+                _x = x;
+                _y = y;
+                _width = width;
+                _height = height;
             }
 
-            /// <summary> Maps relative uv coordinate to match texture atlas. </summary>
+            /// <summary> Maps relative uv coordinate to absolute in atlas. </summary>
             public Vector2 Map(Vector2 relative)
             {
-                return new Vector2(X + Width * relative.x, Y + Height * relative.y);
+                return new Vector2(_x + _width * relative.x, _y + _height * relative.y);
             }
         }
     }

@@ -40,11 +40,11 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         private void InitializeUVMapping()
         {
-            _uvs[0] = new Vector2(0, 0);
-            _uvs[1] = new Vector2(1, 0);
-            _uvs[2] = new Vector2(1, 1);
-            _uvs[3] = new Vector2(0, 1);
-            _uvs[4] = new Vector2(0.5f, 0.5f);
+            _uvs[0] = Texture.Map(new Vector2(0, 0));
+            _uvs[1] = Texture.Map(new Vector2(1, 0));
+            _uvs[2] = Texture.Map(new Vector2(1, 1));
+            _uvs[3] = Texture.Map(new Vector2(0, 1));
+            _uvs[4] = Texture.Map(new Vector2(0.5f, 0.5f));
         }
 
         private void BuildPlane(Vector3 x1, Vector3 middle, Vector3 x2,

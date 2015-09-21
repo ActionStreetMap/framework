@@ -1,4 +1,5 @@
 ﻿using System;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         protected float MinStepWidth = 2f;
         protected float MinStepHeight = 2;
         protected GradientWrapper Gradient;
+        protected TexturePack.Texture Texture;
 
         protected Vector3[] Vertices;
         protected int[] Triangles;
@@ -137,6 +139,12 @@ namespace ActionStreetMap.Explorer.Scene.Facades
         public WallBuilder SetGradient(GradientWrapper gradient)
         {
             Gradient = gradient;
+            return this;
+        }
+
+        public WallBuilder SetTexture(TexturePack.Texture texture)
+        {
+            Texture = texture;
             return this;
         }
 

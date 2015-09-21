@@ -90,21 +90,21 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var xStep = _windowWidthRatio / 2;
             var yStep = _windowHeightRatio / 2;
 
-            _uvs[0] = new Vector2(0, 0);
-            _uvs[1] = new Vector2(xStep, 0);
-            _uvs[2] = new Vector2(1 - xStep, 0);
-            _uvs[3] = new Vector2(1, 0);
-            _uvs[4] = new Vector2(xStep, yStep);
-            _uvs[5] = new Vector2(1 - xStep, yStep);
-            _uvs[6] = new Vector2(xStep, 1 - yStep);
-            _uvs[7] = new Vector2(1 - xStep, 1 - yStep);
-            _uvs[8] = new Vector2(0, 1);
-            _uvs[9] = new Vector2(xStep, 1);
-            _uvs[10] = new Vector2(1 - xStep, 1);
-            _uvs[11] = new Vector2(1, 1);
+            _uvs[0] = Texture.Map(new Vector2(0, 0));
+            _uvs[1] = Texture.Map(new Vector2(xStep, 0));
+            _uvs[2] = Texture.Map(new Vector2(1 - xStep, 0));
+            _uvs[3] = Texture.Map(new Vector2(1, 0));
+            _uvs[4] = Texture.Map(new Vector2(xStep, yStep));
+            _uvs[5] = Texture.Map(new Vector2(1 - xStep, yStep));
+            _uvs[6] = Texture.Map(new Vector2(xStep, 1 - yStep));
+            _uvs[7] = Texture.Map(new Vector2(1 - xStep, 1 - yStep));
+            _uvs[8] = Texture.Map(new Vector2(0, 1));
+            _uvs[9] = Texture.Map(new Vector2(xStep, 1));
+            _uvs[10] = Texture.Map(new Vector2(1 - xStep, 1));
+            _uvs[11] = Texture.Map(new Vector2(1, 1));
 
-            _uvs[12] = new Vector2(0, 1 - yStep);
-            _uvs[13] = new Vector2(1, 1 - yStep);
+            _uvs[12] = Texture.Map(new Vector2(0, 1 - yStep));
+            _uvs[13] = Texture.Map(new Vector2(1, 1 - yStep));
         }
 
         private void BuildWindow(int i, int j, float yStart, int startIndex)
