@@ -14,14 +14,14 @@ namespace ActionStreetMap.Explorer.Customization
             _textureGroupMap = new Dictionary<string, TextureGroup>(capacity);
         }
 
-        /// <summary> Registers texture @group by name. </summary>
-        public TextureAtlas Register(string name, TextureGroup @group)
+        /// <summary> Adds texture group by name. </summary>
+        public TextureAtlas Add(string name, TextureGroup @group)
         {
             _textureGroupMap.Add(name, @group);
             return this;
         }
 
-        /// <summary> Gets texture @group by name. </summary>
+        /// <summary> Gets texture group by name. </summary>
         public TextureGroup Get(string name)
         {
             return _textureGroupMap[name];

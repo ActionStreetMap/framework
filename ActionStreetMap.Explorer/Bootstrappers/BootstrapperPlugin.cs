@@ -28,7 +28,7 @@ namespace ActionStreetMap.Explorer.Bootstrappers
         public ITrace Trace { get; set; }
 
         /// <summary> Gets extension provider. </summary>
-        public CustomizationService ExtensionProvider
+        public CustomizationService CustomizationService
         {
             get { return Container.Resolve<CustomizationService>(); }
         }

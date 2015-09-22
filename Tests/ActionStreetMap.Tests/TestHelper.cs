@@ -94,7 +94,10 @@ namespace ActionStreetMap.Tests
 
         public static CustomizationService GetCustomizationService()
         {
-            return new CustomizationService(new Container());
+            return new CustomizationService(new Container())
+                .RegisterAtlas("main", new TextureAtlas()
+                    .Add("pattern", new TextureGroup(100, 100)
+                        .Add(50, 50, 10, 10)));
         }
 
         public static IObjectPool GetObjectPool()
