@@ -11,95 +11,95 @@ namespace ActionStreetMap.Core.Scene
     /// </summary>
     public class Building
     {
-        /// <summary> Gets or sets Id. </summary>
-        public long Id { get; set; }
+        /// <summary> Id. </summary>
+        public long Id;
 
-        /// <summary> Gets or sets game object wrapper which holds game engine specific classes. </summary>
-        public IGameObject GameObject { get; set; }
+        /// <summary> Game object wrapper which holds game engine specific classes. </summary>
+        public IGameObject GameObject;
 
-        /// <summary> Gets or sets elevation. </summary>
-        public float Elevation { get; set; }
+        /// <summary> Elevation. </summary>
+        public float Elevation;
 
-        /// <summary> Gets or sets building footprint. </summary>
-        public List<Vector2d> Footprint { get; set; }
+        /// <summary> Building footprint. </summary>
+        public List<Vector2d> Footprint;
 
         /// <summary> Contains floor plans. </summary>
-        public List<Floor> FloorPlans { get; set; }
+        public List<Floor> FloorPlans;
 
         /// <summary> True if building has windows. </summary>
-        public bool HasWindows { get; set; }
+        public bool HasWindows;
 
         // NOTE OSM-available info 
 
-        /// <summary> Gets or sets part flag. </summary>
-        public bool IsPart { get; set; }
+        /// <summary> Part flag. </summary>
+        public bool IsPart;
 
         #region Height specific
 
-        /// <summary> Gets or sets height of building. </summary>
-        public float Height { get; set; }
+        /// <summary> Height of building. </summary>
+        public float Height;
 
-        /// <summary> Gets or sets gap between ground and terrain. </summary>
-        public float MinHeight { get; set; }
+        /// <summary> Gap between terrain and building. </summary>
+        public float MinHeight;
 
-        /// <summary> Gets or sets floor count. </summary>
-        public int Levels { get; set; }
+        /// <summary> Floor count. </summary>
+        public int Levels;
 
         #endregion
 
         #region Appearance
 
-        /// <summary> Gets or sets texture atlas. </summary>
-        public string TextureAtlas { get; set; }
+        /// <summary> Texture atlas. </summary>
+        public string TextureAtlas;
 
-        /// <summary> Gets or sets facade color. </summary>
-        public string FacadeColor { get; set; }
+        /// <summary> Facade color. </summary>
+        public string FacadeColor;
 
-        /// <summary> Gets or sets facade material. </summary>
-        public string FacadeMaterial { get; set; }
+        /// <summary> Facade material. </summary>
+        public string FacadeMaterial;
 
-        /// <summary> Gets or sets facade texture. </summary>
-        public string FacadeTexture { get; set; }
+        /// <summary> Facade texture. </summary>
+        public string FacadeTexture;
 
-        /// <summary> Gets or ses facade type </summary>
-        public string FacadeType { get; set; }
+        /// <summary> Facade type </summary>
+        public string FacadeType;
 
-        /// <summary> Gets or sets roof color. </summary>
-        public string RoofColor { get; set; }
+        /// <summary> Roof color. </summary>
+        public string RoofColor;
 
-        /// <summary> Gets or sets roof material. </summary>
-        public string RoofMaterial { get; set; }
+        /// <summary> Roof material. </summary>
+        public string RoofMaterial;
 
-        /// <summary> Gets or sets roof texture. </summary>
-        public string RoofTexture { get; set; }
+        /// <summary> Roof texture. </summary>
+        public string RoofTexture;
 
-        /// <summary> Gets or sets roof type (see OSM roof types). </summary>
-        public string RoofType { get; set; }
+        /// <summary> Roof type (see OSM roof types). </summary>
+        public string RoofType;
 
-        /// <summary> Gets or sets roof height (see OSM roof types). </summary>
-        public float RoofHeight { get; set; }
+        /// <summary> Toof height (see OSM roof types). </summary>
+        public float RoofHeight;
 
-        /// <summary> Gets or sets front floor color. </summary>
-        public string FloorFrontColor { get; set; }
+        /// <summary> Front floor color. </summary>
+        public string FloorFrontColor;
 
-        /// <summary> Gets or sets back floor color. </summary>
-        public string FloorBackColor { get; set; }
+        /// <summary> Back floor color. </summary>
+        public string FloorBackColor;
 
         #endregion
 
         #region Characteristics
 
         /// <summary> Indicates that the building is used as a specific shop. </summary>
-        public string Shop { get; set; }
+        public string Shop;
 
         /// <summary> Describes what the building is used for, for example: school, theatre, bank. </summary>
-        public string Amenity { get; set; }
+        public string Amenity;
 
         /// <summary> Ruins of buildings. </summary>
-        public string Ruins { get; set; }
+        public string Ruins;
 
         /// <summary> For a building which has been abandoned by its owner and is no longer maintained. </summary>
-        public string Abandoned { get; set; }
+        public string Abandoned;
 
         #endregion
     }

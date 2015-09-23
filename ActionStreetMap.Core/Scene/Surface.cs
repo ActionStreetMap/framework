@@ -3,22 +3,28 @@ using ActionStreetMap.Core.Geometry;
 
 namespace ActionStreetMap.Core.Scene
 {
-    /// <summary> Represents surface. </summary>
+    /// <summary> Represents terrain surface. </summary>
     public class Surface
     {
-        /// <summary> Gets or sets gradient key. </summary>
-        public string GradientKey { get; set; }
+        /// <summary> Gradient key. </summary>
+        public string GradientKey;
 
-        /// <summary> Gets or sets map points for this surcafe. </summary>
-        public List<Vector2d> Points { get; set; }
+        /// <summary> Texture atlas. </summary>
+        public string TextureAtlas;
 
-        /// <summary> Gets or sets points for holes inside this surcafe. </summary>
-        public List<List<Vector2d>> Holes { get; set; }
+        /// <summary> Texture key in atlas. </summary>
+        public string TextureKey;
 
-        /// <summary> Gets or sets elevation noise. </summary>
-        internal float ElevationNoise { get; set; }
+        /// <summary> Map points for this surcafe. </summary>
+        public List<Vector2d> Points;
 
-        /// <summary> Gets or sets color noise.  </summary>
-        internal float ColorNoise { get; set; }
+        /// <summary> Points for holes inside this surcafe. </summary>
+        public List<List<Vector2d>> Holes;
+
+        /// <summary> Elevation noise. </summary>
+        internal float ElevationNoise;
+
+        /// <summary> Color noise.  </summary>
+        internal float ColorNoise;
     }
 }

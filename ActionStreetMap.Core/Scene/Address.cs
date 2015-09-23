@@ -5,16 +5,16 @@ namespace ActionStreetMap.Core.Scene
     /// <summary> Provides location information about the object. </summary>
     public class Address
     {
-        /// <summary> Gets name, e.g. house number or road name. </summary>
-        public string Name { get; set; }
+        /// <summary> Name, e.g. house number or road name. </summary>
+        public string Name;
 
-        /// <summary> Gets street name. </summary>
-        public string Street { get; set; }
+        /// <summary> Street name. </summary>
+        public string Street;
 
-        /// <summary> Gets code, e.g. post code. </summary>
-        public string Code { get; set; }
+        /// <summary> Code, e.g. post code. </summary>
+        public string Code;
 
-        /// <summary> Converts to string. </summary>
+        /// <inheritdoc />
         public override string ToString()
         {
             return String.Format("{0} {1} {2}", Name, Street, Code);

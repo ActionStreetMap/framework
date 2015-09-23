@@ -7,20 +7,20 @@ namespace ActionStreetMap.Core.Scene
     /// <summary> Represents certain part of road. </summary>
     public class RoadElement
     {
-        /// <summary> Gets or sets original road element id. </summary>
-        public long Id { get; set; }
+        /// <summary> Original road element id. </summary>
+        public long Id;
 
-        /// <summary> Gets or sets lane count. </summary>
-        public int Lanes { get; set; }
+        /// <summary> Lane count. </summary>
+        public int Lanes;
 
-        /// <summary> Gets or sets road width. </summary>
-        public float Width { get; set; }
+        /// <summary> Road width. </summary>
+        public float Width;
 
-        /// <summary> Gets or sets actual type of road element. </summary>
-        public RoadType Type { get; set; }
+        /// <summary> Actual type of road element. </summary>
+        public RoadType Type;
 
-        /// <summary> Gets or sets middle points of road. </summary>
-        public List<Vector2d> Points { get; set; }
+        /// <summary> Middle points of road. </summary>
+        public List<Vector2d> Points;
 
         /// <inheritdoc />
         public override string ToString()
