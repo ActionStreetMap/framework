@@ -111,6 +111,9 @@ namespace ActionStreetMap.Explorer.Customization
         /// <summary> Gets texture atlas by name. </summary>
         public TextureAtlas GetAtlas(string name)
         {
+            if (!_textureAtlases.ContainsKey(name))
+                throw new ArgumentException(String.Format(Strings.TextureAtlasIsNotRegistered, name), "name");
+
             return _textureAtlases[name];
         }
 

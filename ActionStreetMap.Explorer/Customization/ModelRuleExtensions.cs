@@ -39,9 +39,9 @@ namespace ActionStreetMap.Explorer.Customization
             return rule.Evaluate<string>("texture-atlas");
         }
 
-        public static string GetTexture(this Rule rule)
+        public static string GetTextureKey(this Rule rule)
         {
-            return rule.Evaluate<string>("texture");
+            return rule.Evaluate<string>("texture-key");
         }
 
         public static bool IsSkipped(this Rule rule)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ActionStreetMap.Explorer.Customization;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain
 {
@@ -11,9 +12,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         public Vector3 Vertex1;
         public Vector3 Vertex2;
 
-        public Color Color0;
-        public Color Color1;
-        public Color Color2;
+        public Color Color;
+        public TextureGroup.Texture Texture;
 
         internal int Region = InvalidRegionIndex;
     }

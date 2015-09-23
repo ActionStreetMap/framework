@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ActionStreetMap.Explorer.Customization
 {
@@ -24,6 +25,9 @@ namespace ActionStreetMap.Explorer.Customization
         /// <summary> Gets texture group by name. </summary>
         public TextureGroup Get(string name)
         {
+            if (!_textureGroupMap.ContainsKey(name))
+                throw new ArgumentException(String.Format(Strings.TextureGroupIsNotRegistered, name), "name");
+
             return _textureGroupMap[name];
         }
     }

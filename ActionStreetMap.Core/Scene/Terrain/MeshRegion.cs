@@ -8,6 +8,9 @@ namespace ActionStreetMap.Core.Scene.Terrain
     internal sealed class MeshRegion: IDisposable
     {
         public string GradientKey;
+        public string TextureAtlas;
+        public string TextureKey;
+
         public float ElevationNoiseFreq;
         public float ColorNoiseFreq;
         public Action<Mesh> ModifyMeshAction;

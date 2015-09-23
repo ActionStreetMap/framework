@@ -11,7 +11,6 @@ using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Core.Utils;
 using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
 using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
@@ -32,9 +31,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
     public interface ITerrainBuilder
     {
         /// <summary> Builds terrain from tile. </summary>
-        /// <param name="tile">Tile.</param>
-        /// <param name="rule">Rule.</param>
-        /// <returns>Game object.</returns>
+        /// <param name="tile"> Tile. </param>
+        /// <param name="rule"> Rule. </param>
+        /// <returns> Terrain game object (parent). </returns>
         IGameObject Build(Tile tile, Rule rule);
     }
 
@@ -128,7 +127,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 ? new TerrainMeshIndex(16, 16, cell.Rectangle, meshData.Triangles)
                 : (IMeshIndex)DummyMeshIndex.Default;
 
-            // build canvas and extra layers
+            // build background canvas and extra layers
             BuildBackground(rule, meshData, cell.Background, renderMode);
             BuildWater(rule, meshData, cell, renderMode);
             BuildCarRoads(rule, meshData, cell, renderMode);
@@ -156,27 +155,31 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             var meshTriangles = meshData.Triangles;
 
+            var waterTexture = rule.GetWaterLayerTexture(0, _customizationService);
             var bottomGradient = rule.GetBackgroundLayerGradient(_customizationService);
-            var waterSurfaceGradient = rule.GetWaterLayerGradient(_customizationService);
-            var waterBottomLevelOffset = rule.GetWaterLayerBottomLevel();
-            var waterSurfaceLevelOffset = rule.GetWaterLayerSurfaceLevel();
+            var surfaceGradient = rule.GetWaterLayerGradient(_customizationService);
+            var bottomLevelOffset = rule.GetWaterLayerBottomLevel();
+            var surfaceLevelOffset = rule.GetWaterLayerSurfaceLevel();
 
-            var elevationOffset = waterBottomLevelOffset - waterSurfaceLevelOffset;
-            var surfaceOffset = renderMode == RenderMode.Scene ? -waterBottomLevelOffset : 0;
+            var elevationOffset = bottomLevelOffset - surfaceLevelOffset;
+            var surfaceOffset = renderMode == RenderMode.Scene ? -bottomLevelOffset : 0;
 
             // NOTE: substitute gradient in overview mode
             if (renderMode == RenderMode.Overview)
-                bottomGradient = waterSurfaceGradient;
+                bottomGradient = surfaceGradient;
 
             int index = 0;
             var vertexCount = meshRegion.Mesh.Triangles.Count * 3;
-            var waterVertices = new Vector3[vertexCount];
-            var waterTriangles = new int[vertexCount];
-            var waterColors = new Color[vertexCount];
+            var vertices = new Vector3[vertexCount];
+            var triangles = new int[vertexCount];
+            var colors = new Color[vertexCount];
+            var uvs = new Vector2[vertexCount];
+
             foreach (var triangle in meshRegion.Mesh.Triangles)
             {
                 // bottom surface
-                AddTriangle(rule, meshData, triangle, bottomGradient, eleNoiseFreq, colorNoiseFreq, surfaceOffset);
+                AddTriangle(rule, meshData, triangle, bottomGradient, waterTexture, 
+                    eleNoiseFreq, colorNoiseFreq, surfaceOffset);
 
                 // NOTE: build offset shape only in case of Scene mode
                 if (renderMode == RenderMode.Overview)
@@ -189,33 +192,40 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 var p2 = meshTriangle.Vertex2;
 
                 // reuse just added vertices
-                waterVertices[index] = new Vector3(p0.x, p0.y + elevationOffset, p0.z);
-                waterVertices[index + 1] = new Vector3(p1.x, p1.y + elevationOffset, p1.z);
-                waterVertices[index + 2] = new Vector3(p2.x, p2.y + elevationOffset, p2.z);
+                vertices[index] = new Vector3(p0.x, p0.y + elevationOffset, p0.z);
+                vertices[index + 1] = new Vector3(p1.x, p1.y + elevationOffset, p1.z);
+                vertices[index + 2] = new Vector3(p2.x, p2.y + elevationOffset, p2.z);
 
-                var color = GradientUtils.GetColor(waterSurfaceGradient, waterVertices[index], colorNoiseFreq);
-                waterColors[index] = color;
-                waterColors[index + 1] = color;
-                waterColors[index + 2] = color;
+                var color = GradientUtils.GetColor(surfaceGradient, vertices[index], colorNoiseFreq);
+                colors[index] = color;
+                colors[index + 1] = color;
+                colors[index + 2] = color;
 
-                waterTriangles[index] = index;
-                waterTriangles[index + 1] = index + 2;
-                waterTriangles[index + 2] = index + 1;
+                triangles[index] = index;
+                triangles[index + 1] = index + 2;
+                triangles[index + 2] = index + 1;
+
+                uvs[index] = new Vector2(0, 0);
+                uvs[index + 1] = new Vector2(.5f, .5f);
+                uvs[index + 2] = new Vector2(1, 0);
+
                 index += 3;
             }
 
             // finalizing offset shape
             if (renderMode == RenderMode.Scene)
             {
-                BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_customizationService),
-                    cell.Rectangle, colorNoiseFreq, waterBottomLevelOffset);
+                BuildOffsetShape(meshData, meshRegion, bottomGradient, 
+                    rule.GetBackgroundLayerTexture(0, _customizationService),
+                    cell.Rectangle, colorNoiseFreq, bottomLevelOffset);
 
-                Observable.Start(() => BuildWaterObject(rule, meshData,
-                    waterVertices, waterTriangles, waterColors), Scheduler.MainThread);
+                Observable.Start(() => BuildWaterObject(rule, meshData, vertices, triangles, 
+                    colors, uvs), Scheduler.MainThread);
             }
         }
 
-        private void BuildWaterObject(Rule rule, TerrainMeshData meshData, Vector3[] vertices, int[] triangles, Color[] colors)
+        private void BuildWaterObject(Rule rule, TerrainMeshData meshData, Vector3[] vertices, 
+            int[] triangles, Color[] colors, Vector2[] uvs)
         {
             var gameObject = new GameObject("water");
             gameObject.transform.parent = meshData.GameObject.GetComponent<GameObject>().transform;
@@ -223,10 +233,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.colors = colors;
+            mesh.uv = uvs;
             mesh.RecalculateNormals();
 
-            gameObject.AddComponent<MeshRenderer>().sharedMaterial =
-                rule.GetMaterial("material_water", _customizationService);
+            gameObject.AddComponent<MeshRenderer>().sharedMaterial = rule.GetWaterMaterial(_customizationService);
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
         }
 
@@ -238,11 +248,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         {
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetBackgroundLayerGradient(_customizationService);
+            var texture = rule.GetBackgroundLayerTexture(0, _customizationService);
 
             float eleNoiseFreq = rule.GetBackgroundLayerEleNoiseFreq();
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetBackgroundLayerColorNoiseFreq() : 0;
             foreach (var triangle in meshRegion.Mesh.Triangles)
-                AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
+                AddTriangle(rule, meshData, triangle, gradient, texture, eleNoiseFreq, colorNoiseFreq);
 
             meshRegion.Dispose();
         }
@@ -261,13 +272,15 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetCarLayerGradient(_customizationService);
+            var texture = rule.CarLayerTexture(0, _customizationService);
 
             foreach (var triangle in meshRegion.Mesh.Triangles)
-                AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq, -roadOffset);
+                AddTriangle(rule, meshData, triangle, gradient, texture, eleNoiseFreq, colorNoiseFreq, -roadOffset);
 
             if (isScene)
             {
                 BuildOffsetShape(meshData, meshRegion, rule.GetBackgroundLayerGradient(_customizationService),
+                    rule.GetBackgroundLayerTexture(0, _customizationService),
                     cell.Rectangle, colorNoiseFreq, roadOffset);
             }
 
@@ -283,10 +296,12 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var meshRegion = cell.WalkRoads;
             if (meshRegion.Mesh == null) return;
             var gradient = rule.GetPedestrianLayerGradient(_customizationService);
+            var texture = rule.GetPedestrianLayerTexture(0, _customizationService);
             float eleNoiseFreq = rule.GetPedestrianLayerEleNoiseFreq();
             float colorNoiseFreq = renderMode == RenderMode.Scene ? rule.GetPedestrianLayerColorNoiseFreq() : 0;
+
             foreach (var triangle in meshRegion.Mesh.Triangles)
-                AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
+                AddTriangle(rule, meshData, triangle, gradient, texture, eleNoiseFreq, colorNoiseFreq);
 
             meshRegion.Dispose();
         }
@@ -306,8 +321,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             if (meshRegion.ModifyMeshAction != null)
                 meshRegion.ModifyMeshAction(meshRegion.Mesh);
 
+            var texture = _customizationService
+                .GetAtlas(meshRegion.TextureAtlas)
+                .Get(meshRegion.TextureKey)
+                .Get(0); // NOTE: always the same texture is returned
+
             foreach (var triangle in meshRegion.Mesh.Triangles)
-                AddTriangle(rule, meshData, triangle, gradient, eleNoiseFreq, colorNoiseFreq);
+                AddTriangle(rule, meshData, triangle, gradient, texture, eleNoiseFreq, colorNoiseFreq);
 
             meshRegion.Dispose();
         }
@@ -317,7 +337,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         #region Layer builder helper methods
 
         private void AddTriangle(Rule rule, TerrainMeshData meshData, Triangle triangle, GradientWrapper gradient,
-            float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
+            TextureGroup.Texture texture, float eleNoiseFreq, float colorNoiseFreq, float yOffset = 0)
         {
             var useEleNoise = Math.Abs(eleNoiseFreq) > 0.0001;
 
@@ -325,9 +345,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var v1 = GetVertex(triangle.GetVertex(1), eleNoiseFreq, useEleNoise, yOffset);
             var v2 = GetVertex(triangle.GetVertex(2), eleNoiseFreq, useEleNoise, yOffset);
 
-            var triangleColor = GradientUtils.GetColor(gradient, v0, colorNoiseFreq);
+            var color = GradientUtils.GetColor(gradient, v0, colorNoiseFreq);
 
-            meshData.AddTriangle(v0, v1, v2, triangleColor);
+            meshData.AddTriangle(v0, v1, v2, color, texture);
         }
 
         private Vector3 GetVertex(Vertex v, float eleNoiseFreq, bool useEleNoise, float yOffset)
@@ -345,8 +365,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
         #endregion
 
-        private void BuildOffsetShape(TerrainMeshData meshData, MeshRegion region, GradientWrapper gradient,
-          Rectangle2d rect, float colorNoiseFreq, float deepLevel)
+        private void BuildOffsetShape(TerrainMeshData meshData, MeshRegion region, GradientWrapper gradient, 
+            TextureGroup.Texture texture, Rectangle2d rect, float colorNoiseFreq, float deepLevel)
         {
             foreach (var contour in region.Contours)
             {
@@ -374,13 +394,13 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                         new Vector3((float)p1.X, ele1, (float)p1.Y),
                         new Vector3((float)p2.X, ele2 - deepLevel, (float)p2.Y),
                         new Vector3((float)p2.X, ele2, (float)p2.Y),
-                        firstColor);
+                        firstColor, texture);
 
                     meshData.AddTriangle(
                         new Vector3((float)p1.X, ele1 - deepLevel, (float)p1.Y),
                         new Vector3((float)p2.X, ele2 - deepLevel, (float)p2.Y),
                         new Vector3((float)p1.X, ele1, (float)p1.Y),
-                        secondColor);
+                        secondColor, texture);
                 }
             }
         }
@@ -392,14 +412,15 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             Vector3[] vertices;
             int[] triangles;
             Color[] colors;
-            meshData.GenerateObjectData(out vertices, out triangles, out colors);
+            Vector2[] uvs;
+            meshData.GenerateObjectData(out vertices, out triangles, out colors, out uvs);
 
             Observable.Start(() => BuildObject(cellGameObject, canvas, rule,
-                meshData, vertices, triangles, colors), Scheduler.MainThread);
+                meshData, vertices, triangles, colors, uvs), Scheduler.MainThread);
         }
 
         private void BuildObject(IGameObject goWrapper, Canvas canvas, Rule rule, TerrainMeshData meshData,
-            Vector3[] vertices, int[] triangles, Color[] colors)
+            Vector3[] vertices, int[] triangles, Color[] colors, Vector2[] uvs)
         {
             var gameObject = goWrapper.GetComponent<GameObject>();
             gameObject.isStatic = true;
@@ -408,6 +429,8 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.colors = colors;
+            mesh.uv = uvs;
+
             mesh.RecalculateNormals();
 
             gameObject.AddComponent<MeshRenderer>().sharedMaterial = rule

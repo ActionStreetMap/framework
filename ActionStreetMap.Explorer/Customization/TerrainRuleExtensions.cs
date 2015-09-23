@@ -1,5 +1,6 @@
 ﻿using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Unity.Wrappers;
+using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Customization
 {
@@ -7,10 +8,19 @@ namespace ActionStreetMap.Explorer.Customization
     {
         #region Background layer
 
-        public static GradientWrapper GetBackgroundLayerGradient(this Rule rule, CustomizationService customizationService)
+        public static GradientWrapper GetBackgroundLayerGradient(this Rule rule, 
+            CustomizationService customizationService)
         {
-            var gradientKey = rule.Evaluate<string>("background_gradient");
-            return customizationService.GetGradient(gradientKey);
+            return customizationService.GetGradient(rule.Evaluate<string>("background_gradient"));
+        }
+
+        public static TextureGroup.Texture GetBackgroundLayerTexture(this Rule rule, int seed,
+            CustomizationService customizationService)
+        {
+            return customizationService
+                .GetAtlas(rule.Evaluate<string>("material"))
+                .Get("background_texture")
+                .Get(seed);
         }
 
         public static float GetBackgroundLayerColorNoiseFreq(this Rule rule)
@@ -27,10 +37,19 @@ namespace ActionStreetMap.Explorer.Customization
 
         #region Water layer
 
-        public static GradientWrapper GetWaterLayerGradient(this Rule rule, CustomizationService customizationService)
+        public static GradientWrapper GetWaterLayerGradient(this Rule rule, 
+            CustomizationService customizationService)
         {
-            var gradientKey = rule.Evaluate<string>("water_gradient");
-            return customizationService.GetGradient(gradientKey);
+            return customizationService.GetGradient(rule.Evaluate<string>("water_gradient"));
+        }
+
+        public static TextureGroup.Texture GetWaterLayerTexture(this Rule rule, int seed,
+            CustomizationService customizationService)
+        {
+            return customizationService
+                .GetAtlas(rule.Evaluate<string>("water_material"))
+                .Get("water_texture")
+                .Get(seed);
         }
 
         public static float GetWaterLayerColorNoiseFreq(this Rule rule)
@@ -53,14 +72,27 @@ namespace ActionStreetMap.Explorer.Customization
             return rule.Evaluate<float>("water_surface_level");
         }
 
+        public static Material GetWaterMaterial(this Rule rule, CustomizationService customizationService)
+        {
+            return rule.GetMaterial("water_material", customizationService);
+        }
+
         #endregion
 
         #region Car layer
 
         public static GradientWrapper GetCarLayerGradient(this Rule rule, CustomizationService customizationService)
         {
-            var gradientKey = rule.Evaluate<string>("car_gradient");
-            return customizationService.GetGradient(gradientKey);
+            return customizationService.GetGradient(rule.Evaluate<string>("car_gradient"));
+        }
+
+        public static TextureGroup.Texture CarLayerTexture(this Rule rule, int seed,
+            CustomizationService customizationService)
+        {
+            return customizationService
+                .GetAtlas(rule.Evaluate<string>("material"))
+                .Get("car_texture")
+                .Get(seed);
         }
 
         public static float GetCarLayerColorNoiseFreq(this Rule rule)
@@ -77,10 +109,19 @@ namespace ActionStreetMap.Explorer.Customization
 
         #region Pedestrian layer
 
-        public static GradientWrapper GetPedestrianLayerGradient(this Rule rule, CustomizationService customizationService)
+        public static GradientWrapper GetPedestrianLayerGradient(this Rule rule, 
+            CustomizationService customizationService)
         {
-            var gradientKey = rule.Evaluate<string>("pedestrian_gradient");
-            return customizationService.GetGradient(gradientKey);
+            return customizationService.GetGradient(rule.Evaluate<string>("pedestrian_gradient"));
+        }
+
+        public static TextureGroup.Texture GetPedestrianLayerTexture(this Rule rule, int seed, 
+            CustomizationService customizationService)
+        {
+            return customizationService
+                .GetAtlas(rule.Evaluate<string>("material"))
+                .Get("pedestrian_texture")
+                .Get(seed);
         }
 
         public static float GetPedestrianLayerColorNoiseFreq(this Rule rule)

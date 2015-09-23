@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActionStreetMap.Core.Unity;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Infrastructure.Utilities;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Terrain
 {
+    /// <summary> Provides the way to construct terrain mesh from triangles. </summary>
     internal sealed class TerrainMeshData: IDisposable
     {
         private readonly IObjectPool _objectPool;
@@ -17,34 +19,37 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
         public IGameObject GameObject;
 
         /// <summary> Mesh index provides way to find affected vertices of given area quickly. </summary>
-        internal IMeshIndex Index;
+        public IMeshIndex Index;
 
         /// <summary> Triangles. </summary>
-        internal List<TerrainMeshTriangle> Triangles;
+        public List<TerrainMeshTriangle> Triangles;
 
         /// <summary> Creates instance of <see cref="TerrainMeshData"/>. </summary>
-        /// <param name="objectPool">Object pool.</param>
         public TerrainMeshData(IObjectPool objectPool)
         {
             _objectPool = objectPool;
             Triangles = _objectPool.NewList<TerrainMeshTriangle>(2048);
         }
 
-        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color color)
+        /// <summary> Adds triangle with given parameters. </summary>
+        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color color, 
+            TextureGroup.Texture texture)
         {
             var triangle = _objectPool.NewObject<TerrainMeshTriangle>();
             triangle.Vertex0 = v0;
             triangle.Vertex1 = v1;
             triangle.Vertex2 = v2;
-            triangle.Color0 = color;
-            triangle.Color1 = color;
-            triangle.Color2 = color;
+            triangle.Color = color;
+            triangle.Texture = texture;
+
             triangle.Region = TerrainMeshTriangle.InvalidRegionIndex;
 
             Triangles.Add(triangle);
         }
 
-        public void GenerateObjectData(out Vector3[] vertices, out int[] triangles, out Color[] colors)
+        /// <summary> Generates arrays for mesh. </summary>
+        public void GenerateObjectData(out Vector3[] vertices, out int[] triangles, 
+            out Color[] colors, out Vector2[] uvs)
         {
             var trisCount = Triangles.Count;
             var vertextCount = trisCount * 3;
@@ -52,6 +57,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             vertices = new Vector3[vertextCount];
             triangles = new int[vertextCount];
             colors = new Color[vertextCount];
+            uvs = new Vector2[vertextCount];
             for (int i = 0; i < trisCount; i++)
             {
                 var first = i * 3;
@@ -66,18 +72,23 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 vertices[second] = v1;
                 vertices[third] = v2;
 
-                colors[first] = triangle.Color0;
-                colors[second] = triangle.Color1;
-                colors[third] = triangle.Color2;
+                colors[first] = triangle.Color;
+                colors[second] = triangle.Color;
+                colors[third] = triangle.Color;
 
                 triangles[first] = third;
                 triangles[second] = second;
                 triangles[third] = first;
 
+                uvs[first] = triangle.Texture.Map(new Vector2(0, 0));
+                uvs[second] = triangle.Texture.Map(new Vector2(.5f, .5f));
+                uvs[third] = triangle.Texture.Map(new Vector2(1, 0));
+
                 _objectPool.StoreObject(triangle);
             }
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _objectPool.StoreList(Triangles);

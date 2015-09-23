@@ -5,7 +5,6 @@ using ActionStreetMap.Core.MapCss.Domain;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Terrain;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Utilities;
@@ -103,6 +102,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             Assert.AreEqual(trisCount * 3, _terrainBuilder.Vertices.Length);
             Assert.AreEqual(trisCount * 3, _terrainBuilder.Triangles.Length);
             Assert.AreEqual(trisCount * 3, _terrainBuilder.Colors.Length);
+            Assert.AreEqual(trisCount * 3, _terrainBuilder.Uvs.Length);
         }
 
         #region Nested class
@@ -113,6 +113,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
             public Vector3[] Vertices;
             public int[] Triangles;
             public Color[] Colors;
+            public Vector2[] Uvs;
 
             [Dependency]
             public TestTerrainBuilder(CustomizationService customizationService, 
@@ -127,7 +128,7 @@ namespace ActionStreetMap.Tests.Explorer.Scene
                 TerrainMeshData meshData)
             {
                 MeshData = meshData;
-                meshData.GenerateObjectData(out Vertices, out Triangles, out Colors);
+                meshData.GenerateObjectData(out Vertices, out Triangles, out Colors, out Uvs);
             }
         }
 

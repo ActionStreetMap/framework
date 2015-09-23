@@ -1,30 +1,33 @@
 /* canvas (terrain) rules */
 canvas {
     behaviours: terrain_draw;
+    material: vertex_colored;
+    water_material: vertex_colored;
     
     /* background layer. */
-    material_background: vertex_colored;
     background_color_noise_freq: 0.1;
     background_ele_noise_freq: 0.05;
     background_gradient: gradient(#dcdcdc 0%, #c0c0c0 10%, #a9a9a9 50%, #808080);
     
     /* water layer. */
-    material_water: vertex_colored;
     water_color_noise_freq: 0.1;
-    water_ele_noise_freq: 0.15;
     water_gradient: gradient(#87cefa, #1e90ff);
+    water_texture: water;
+    water_ele_noise_freq: 0.15;
     water_surface_level: 1;
     water_bottom_level: 3;
-    
+
     /* car road layer. */
     car_color_noise_freq: 0.1;
     car_ele_noise_freq: 0.0;
     car_gradient: gradient(#4d4d4d, #404040);
+    car_texture: road_car;
     
     /* pedestrian road layer. */
     pedestrian_color_noise_freq: 0.1;
     pedestrian_ele_noise_freq: 0.1;
     pedestrian_gradient: gradient(#636363, #4d4d4d);
+    pedestrian_texture: road_pedestrian;
 }
 
 /* flat areas, general rules */
