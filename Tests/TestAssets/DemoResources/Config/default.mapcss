@@ -1,26 +1,33 @@
 /* canvas (terrain) rules */
-
 canvas {
     behaviours: terrain_draw;
+    
+    /* background layer. */
     material_background: vertex_colored;
-    material_water: vertex_colored;
     background_color_noise_freq: 0.1;
     background_ele_noise_freq: 0.05;
     background_gradient: gradient(#dcdcdc 0%, #c0c0c0 10%, #a9a9a9 50%, #808080);
+    
+    /* water layer. */
+    material_water: vertex_colored;
     water_color_noise_freq: 0.1;
     water_ele_noise_freq: 0.15;
     water_gradient: gradient(#87cefa, #1e90ff);
     water_surface_level: 1;
     water_bottom_level: 3;
+    
+    /* car road layer. */
     car_color_noise_freq: 0.1;
     car_ele_noise_freq: 0.0;
     car_gradient: gradient(#4d4d4d, #404040);
+    
+    /* pedestrian road layer. */
     pedestrian_color_noise_freq: 0.1;
     pedestrian_ele_noise_freq: 0.1;
     pedestrian_gradient: gradient(#636363, #4d4d4d);
 }
-/* flat areas, general rules */
 
+/* flat areas, general rules */
 area[amenity],
 area[natural],
 area[historic=memorial],
@@ -28,8 +35,7 @@ area[landuse] {
     builders: surface;
     fill-color: gradient(#10ff00, #0ff000 50%, #098a00);
 }
-/* buildings. */
-
+/* general rules for buildings. */
 area|z19[amenity=shelter][shelter_type=public_transport],
 area|z19[man_made=bridge],
 area|z19[man_made=tower],
@@ -38,20 +44,26 @@ area|z19[building:shape],
 area|z19[building:part],
 area|z19[building] {
     builders: building;
+    texture-atlas: main;
     height: 12;
     min_height: 0;
     levels: 1;
-    fill-color: gradient(#c0c0c0, #a9a9a9 50%, #808080);
+    
+    /* facade. */
     facade-builder: default;
     material: vertex_colored;
-    roof-color: gradient(#808080, #606060 50%, #505050);
+    fill-color: gradient(#c0c0c0, #a9a9a9 50%, #808080);
+    facade-texture: pattern;
+
+    /* roof. */
     roof-builder: flat;
+    roof-color: gradient(#808080, #606060 50%, #505050);
+    roof-texture: pattern;
     roof-material: vertex_colored;
+    
+    /* floors. */
     floor-front-color: gradient(#f3e2c7, #c19e67 50%, #b68d4c 51%, #e9d4b3);
     floor-back-color: gradient(#feffff, #d2ebf9));
-    texture-atlas: main;
-    facade-texture: pattern;
-    roof-texture: pattern;
 }
 area|z19[amenity=shelter][shelter_type=public_transport] {
     height: 3;

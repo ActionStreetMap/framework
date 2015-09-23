@@ -22,7 +22,7 @@ namespace ActionStreetMap.Explorer.Customization
             _textures = new List<Texture>(capacity);
         }
 
-        /// <summary> Stores texture in atlas. </summary>
+        /// <summary> Adds texture with given parameters to group. </summary>
         public TextureGroup Add(int x, int y, int width, int height)
         {
             _textures.Add(new Texture(x * _xRatio, y * _yRatio,
@@ -30,7 +30,7 @@ namespace ActionStreetMap.Explorer.Customization
             return this;
         }
 
-        /// <summary> Gets texture region using seed provided.  </summary>
+        /// <summary> Gets texture using seed provided.  </summary>
         public Texture Get(int seed)
         {
             return _textures[seed % _textures.Count];
