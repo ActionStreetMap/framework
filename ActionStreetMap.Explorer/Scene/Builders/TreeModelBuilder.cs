@@ -29,9 +29,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetFoliageGradient(CustomizationService.GetGradient(foliageGradientKey))
                 .SetPosition(new Vector3((float) mapPoint.X, elevation, (float) mapPoint.Y));
 
-            var meshData = new MeshData(MeshDestroyIndex.Default, treeGen.CalculateVertexCount());
-            meshData.GameObject = GameObjectFactory.CreateNew("tree " + node.Id);
-            meshData.MaterialKey = rule.GetMaterialKey();
+            var meshData = new MeshData(MeshDestroyIndex.Default, treeGen.CalculateVertexCount())
+            {
+                GameObject = GameObjectFactory.CreateNew("tree " + node.Id),
+                MaterialKey = rule.GetMaterialKey()
+            };
 
             treeGen.Build(meshData);
 

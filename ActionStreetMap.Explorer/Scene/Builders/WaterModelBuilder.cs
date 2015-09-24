@@ -16,17 +16,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
         {
-            base.BuildArea(tile, rule, area);
-
             var verticies2D = ObjectPool.NewList<Vector2d>();
 
             // get polygon map points
             PointUtils.SetPolygonPoints(tile.RelativeNullPoint, area.Points, verticies2D);
 
-            tile.Canvas.AddWater(new Surface()
-            {
-                Points = verticies2D,
-            });
+            tile.Canvas.AddWater(new Surface { Points = verticies2D });
 
             return null;
         }

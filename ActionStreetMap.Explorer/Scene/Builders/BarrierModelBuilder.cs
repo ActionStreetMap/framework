@@ -48,11 +48,17 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             };
             
             meshData.Index = meshIndex;
+            var texture = rule.GetTexture((int) way.Id, CustomizationService);
             var context = new SegmentBuilderContext()
             {
                 MeshData = meshData,
                 Gradient = CustomizationService.GetGradient(rule.GetFillColor()),
                 ColorNoiseFreq = rule.GetColorNoiseFreq(),
+                V0 = texture.Map(new Vector2(0, 0)),
+                V1 = texture.Map(new Vector2(1, 0)),
+                V2 = texture.Map(new Vector2(1, 1)),
+                V3 = texture.Map(new Vector2(0, 1)),
+                Vc = texture.Map(new Vector2(.5f, .5f)),
                 Height = rule.GetHeight(),
                 MaxWidth = maxWidth,
             };
@@ -110,6 +116,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var vertices = context.MeshData.Vertices;
             var triangles = context.MeshData.Triangles;
             var colors = context.MeshData.Colors;
+            var uvs = context.MeshData.UVs;
 
             for (int z = 0; z < stepCount; z++)
             {
@@ -204,6 +211,39 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 colors[count + vertCount] = color;
                 #endregion
 
+                #region UVs
+                count = startIndex;
+
+                uvs[count] = context.V3;
+                uvs[count + vertCount] = context.V3;
+                uvs[++count] = context.V0;
+                uvs[count + vertCount] = context.V0;
+                uvs[++count] = context.Vc;
+                uvs[count + vertCount] = context.Vc;
+
+                uvs[++count] = context.V0;
+                uvs[count + vertCount] = context.V0;
+                uvs[++count] = context.V1;
+                uvs[count + vertCount] = context.V1;
+                uvs[++count] = context.Vc;
+                uvs[count + vertCount] = context.Vc;
+
+                uvs[++count] = context.V1;
+                uvs[count + vertCount] = context.V1;
+                uvs[++count] = context.V2;
+                uvs[count + vertCount] = context.V2;
+                uvs[++count] = context.Vc;
+                uvs[count + vertCount] = context.Vc;
+
+                uvs[++count] = context.V2;
+                uvs[count + vertCount] = context.V2;
+                uvs[++count] = context.V3;
+                uvs[count + vertCount] = context.V3;
+                uvs[++count] = context.Vc;
+                uvs[count + vertCount] = context.Vc;
+
+                #endregion
+
                 // reuse last
                 start = end;
                 startEle = endEle;
@@ -223,6 +263,14 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         {
             public MeshData MeshData;
             public GradientWrapper Gradient;
+            
+            // NOTE: optimization: UV mapping
+            public Vector2 V0;
+            public Vector2 V1;
+            public Vector2 V2;
+            public Vector2 V3;
+            public Vector2 Vc;
+
             public float MaxWidth;
             public float Height;
             public float ColorNoiseFreq;

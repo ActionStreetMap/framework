@@ -13,14 +13,12 @@ namespace ActionStreetMap.Explorer.Customization
 
         public static Material GetMaterial(this Rule rule, CustomizationService customizationService)
         {
-            var path = rule.GetMaterialKey();
-            return customizationService.GetMaterial(path);
+            return customizationService.GetMaterial(rule.GetMaterialKey());
         }
 
         public static Material GetMaterial(this Rule rule, string path, CustomizationService customizationService)
         {
-            var materialPath = rule.GetMaterialKey(path);
-            return customizationService.GetMaterial(materialPath);
+            return customizationService.GetMaterial(rule.GetMaterialKey(path));
         }
 
         public static Color32 GetFillUnityColor(this Rule rule)
@@ -36,12 +34,21 @@ namespace ActionStreetMap.Explorer.Customization
 
         public static string GetTextureAtlas(this Rule rule)
         {
-            return rule.Evaluate<string>("texture-atlas");
+            return rule.Evaluate<string>("material");
         }
 
         public static string GetTextureKey(this Rule rule)
         {
             return rule.Evaluate<string>("texture-key");
+        }
+
+        public static TextureGroup.Texture GetTexture(this Rule rule, int seed, 
+            CustomizationService customizationService)
+        {
+            return customizationService
+                .GetAtlas(rule.GetTextureAtlas())
+                .Get(rule.GetTextureKey())
+                .Get(seed); 
         }
 
         public static bool IsSkipped(this Rule rule)

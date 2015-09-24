@@ -5,7 +5,6 @@ using ActionStreetMap.Core.Tiling;
 using ActionStreetMap.Core.Tiling.Models;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Interactions;
 using ActionStreetMap.Infrastructure.Dependencies;
 using ActionStreetMap.Infrastructure.Diagnostic;
@@ -22,24 +21,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         string Name { get; }
 
         /// <summary> Builds model from area. </summary>
-        /// <param name="tile">Tile.</param>
-        /// <param name="rule">Rule.</param>
-        /// <param name="area">Area.</param>
-        /// <returns>Game object wrapper.</returns>
         IGameObject BuildArea(Tile tile, Rule rule, Area area);
 
         /// <summary> Builds model from way. </summary>
-        /// <param name="tile">Tile.</param>
-        /// <param name="rule">Rule.</param>
-        /// <param name="way">Way.</param>
-        /// <returns>Game object wrapper.</returns>
         IGameObject BuildWay(Tile tile, Rule rule, Way way);
 
         /// <summary> Builds model from node. </summary>
-        /// <param name="tile">Tile.</param>
-        /// <param name="rule">Rule.</param>
-        /// <param name="node">Node.</param>
-        /// <returns>Game object wrapper.</returns>
         IGameObject BuildNode(Tile tile, Rule rule, Node node);
     }
 
@@ -81,21 +68,18 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public virtual IGameObject BuildArea(Tile tile, Rule rule, Area area)
         {
-            //Trace.Debug("model.builder","{0}: building area {1}", Name, area.Id);
             return null;
         }
 
         /// <inheritdoc />
         public virtual IGameObject BuildWay(Tile tile, Rule rule, Way way)
         {
-            //Trace.Debug("model.builder", "{0}: building way {1}", Name, way.Id);
             return null;
         }
 
         /// <inheritdoc />
         public virtual IGameObject BuildNode(Tile tile, Rule rule, Node node)
         {
-            //Trace.Debug("model.builder", "{0}: building node {1}", Name, node.Id);
             return null;
         }
 
@@ -109,6 +93,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 mesh.vertices = meshData.Vertices;
                 mesh.triangles = meshData.Triangles;
                 mesh.colors = meshData.Colors;
+                mesh.uv = meshData.UVs;
                 mesh.RecalculateNormals();
 
                 gameObject.AddComponent<MeshFilter>().mesh = mesh;
@@ -132,8 +117,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         }
 
         /// <summary> Returns name of game object. </summary>
-        /// <param name="model">Model.</param>
-        /// <returns>Name of game object.</returns>
+        /// <param name="model"> Model. </param>
+        /// <returns> Name of game object. </returns>
         protected string GetName(Model model)
         {
             return String.Format("{0} {1}", Name, model);

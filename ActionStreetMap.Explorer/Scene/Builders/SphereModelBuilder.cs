@@ -19,8 +19,6 @@ namespace ActionStreetMap.Explorer.Scene.Builders
         /// <inheritdoc />
         public override IGameObject BuildArea(Tile tile, Rule rule, Area area)
         {
-            base.BuildArea(tile, rule, area);
-
             if (tile.Registry.Contains(area.Id))
                 return null;
             tile.Registry.RegisterGlobal(area.Id);
