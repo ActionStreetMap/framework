@@ -40,7 +40,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetCenter(center3d)
                 .SetRadius((float)radius)
                 .SetRecursionLevel(recursionLevel)
-                .SetGradient(gradient);
+                .SetGradient(gradient)
+                .SetTexture(rule.GetTexture((int) area.Id, CustomizationService));
 
             var meshData = new MeshData(new SphereMeshIndex((float)radius, center3d),
                 sphereGen.CalculateVertexCount());

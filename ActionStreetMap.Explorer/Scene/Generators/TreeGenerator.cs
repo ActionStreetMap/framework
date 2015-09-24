@@ -1,4 +1,6 @@
-﻿using ActionStreetMap.Unity.Wrappers;
+﻿using System;
+using ActionStreetMap.Explorer.Customization;
+using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Scene.Generators
@@ -15,7 +17,8 @@ namespace ActionStreetMap.Explorer.Scene.Generators
 
         private IcoSphereGenerator _foliageGen;
         private CylinderGenerator _trunkGen;
-
+        private TextureGroup.Texture _trunkTexture;
+        private TextureGroup.Texture _foliageTexture;
 
         public TreeGenerator SetPosition(Vector3 position)
         {
@@ -29,9 +32,21 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return this;
         }
 
+        public TreeGenerator SetTrunkTexture(TextureGroup.Texture texture)
+        {
+            _trunkTexture = texture;
+            return this;
+        }
+
         public TreeGenerator SetFoliageGradient(GradientWrapper gradient)
         {
             _foliageGradient = gradient;
+            return this;
+        }
+
+        public TreeGenerator SetFoliageTexture(TextureGroup.Texture texture)
+        {
+            _foliageTexture = texture;
             return this;
         }
 
@@ -53,6 +68,16 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return this;
         }
 
+        public override AbstractGenerator SetGradient(GradientWrapper gradient)
+        {
+            throw new InvalidOperationException();
+        }
+
+        public override AbstractGenerator SetTexture(TextureGroup.Texture texture)
+        {
+            throw new InvalidOperationException();
+        }
+
         public override int CalculateVertexCount()
         {
             _trunkGen = new CylinderGenerator();
@@ -62,6 +87,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                 .SetRadialSegments(7)
                 .SetVertexNoiseFreq(0.4f)
                 .SetGradient(_trunkGradient)
+                .SetTexture(_trunkTexture)
                 .CalculateVertexCount();
 
             _foliageGen = new IcoSphereGenerator();
@@ -71,6 +97,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
                 .SetRecursionLevel(1)
                 .SetVertexNoiseFreq(2f)
                 .SetGradient(_foliageGradient)
+                .SetTexture(_foliageTexture)
                 .CalculateVertexCount();
 
             return trunkCount + foliageCount;

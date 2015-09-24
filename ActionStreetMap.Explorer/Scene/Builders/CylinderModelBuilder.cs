@@ -42,7 +42,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetMaxSegmentHeight(5f)
                 .SetRadialSegments(7)
                 .SetRadius((float) radius)
-                .SetGradient(gradient);
+                .SetGradient(gradient)
+                .SetTexture(rule.GetTexture((int)area.Id, CustomizationService));
 
             var meshData = new MeshData(MeshDestroyIndex.Default, cylinderGen.CalculateVertexCount())
             {

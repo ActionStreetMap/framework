@@ -40,10 +40,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
             var elevation = building.MinHeight + building.Elevation;
             var gradient = _customizationService.GetGradient(building.FacadeColor);
             var texture = _customizationService
-                .GetAtlas(building.TextureAtlas)
+                .GetAtlas(building.FacadeMaterial)
                 .Get(building.FacadeTexture)
                 .Get((int) building.Id);
-
 
             var hasLevels = building.Levels > 1;
 

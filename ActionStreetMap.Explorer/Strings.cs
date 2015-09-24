@@ -24,7 +24,7 @@
 
         public static string UnableToLoadModel = "Unable to load model: {0}";
 
-        public static string TextureAtlasIsNotRegistered = "Attempt to use unregistered texture atlas: {0}";
+        public static string TextureMaterialIsNotRegistered = "Attempt to use unregistered material: {0}";
         public static string TextureGroupIsNotRegistered = "Attempt to use unregistered texture group: {0}";
 
         #region Commands

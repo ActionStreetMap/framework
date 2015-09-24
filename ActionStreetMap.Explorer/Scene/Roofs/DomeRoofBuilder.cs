@@ -35,10 +35,14 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
             var sphereGen = new IcoSphereGenerator()
                 .SetCenter(center3d)
-                .SetRadius((float)radius)
+                .SetRadius((float) radius)
                 .SetRecursionLevel(2)
                 .IsSemiphere(true)
-                .SetGradient(CustomizationService.GetGradient(building.RoofColor));
+                .SetGradient(CustomizationService.GetGradient(building.RoofColor))
+                .SetTexture(CustomizationService
+                    .GetAtlas(building.RoofMaterial)
+                    .Get(building.RoofTexture)
+                    .Get((int) building.Id));
 
             var mesh = CreateMesh(building.Footprint);
 

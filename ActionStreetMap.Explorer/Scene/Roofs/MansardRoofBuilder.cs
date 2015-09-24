@@ -74,6 +74,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshIndex = new MultiPlaneMeshIndex(planeCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
+            Vector2 uv0, uv1, uv2;
+            GetUV(building, out uv0, out uv1, out uv2);
+
             var roofGradient = CustomizationService.GetGradient(building.RoofColor);
             int index = FindStartIndex(topVertices[0], footprint);
             for (int i = 0; i < topVertices.Count; i++)
@@ -89,8 +92,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var v3 = new Vector3((float) top.X, roofHeight, (float) top.Y);
 
                 meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
-                AddTriangle(meshData, roofGradient, v0, v2, v3);
-                AddTriangle(meshData, roofGradient, v2, v0, v1);
+                AddTriangle(meshData, v0, v2, v3, roofGradient, uv0, uv1, uv2);
+                AddTriangle(meshData, v2, v0, v1, roofGradient, uv0, uv1, uv2);
             }
             ObjectPool.StoreList(topVertices);
 

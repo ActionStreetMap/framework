@@ -6,8 +6,7 @@ namespace ActionStreetMap.Explorer.Scene.Utils
     {
         public static Vector3 GetIntermediatePoint(Vector3 v0, Vector3 v1)
         {
-            var distance01 = Vector3.Distance(v0, v1);
-            return v0 + (v1 - v0).normalized * distance01 / 2;
+            return v0 + (v1 - v0).normalized * Vector3.Distance(v0, v1) / 2;
         }
     }
 }

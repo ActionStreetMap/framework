@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ActionStreetMap.Core;
 using ActionStreetMap.Core.Geometry;
 using ActionStreetMap.Core.Geometry.Triangle;
 using ActionStreetMap.Core.Geometry.Triangle.Geometry;
@@ -9,7 +8,6 @@ using ActionStreetMap.Core.Geometry.Triangle.Meshing;
 using ActionStreetMap.Core.Scene;
 using ActionStreetMap.Core.Unity;
 using ActionStreetMap.Explorer.Customization;
-using ActionStreetMap.Explorer.Infrastructure;
 using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Scene.Utils;
 using ActionStreetMap.Explorer.Utils;
@@ -28,12 +26,12 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         string Name { get; }
 
         /// <summary> Checks whether this builder can build roof of given building. </summary>
-        /// <param name="building"> Building.</param>
-        /// <returns> True if can build.</returns>
+        /// <param name="building"> Building. </param>
+        /// <returns> True if bulder can build roof. </returns>
         bool CanBuild(Building building);
 
         /// <summary> Builds MeshData which contains information how to construct roof. </summary>
-        /// <param name="building"> Building.</param>
+        /// <param name="building"> Building. </param>
         List<MeshData> Build(Building building);
     }
 
@@ -67,6 +65,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         [Dependency]
         public ITrace Trace { get; set; }
 
+        /// <summary> Creates a mesh from given footprint using delaunay triangulation. </summary>
         protected Core.Geometry.Triangle.Mesh CreateMesh(List<Vector2d> footprint)
         {
             using (var polygon = new Polygon(footprint.Count, ObjectPool))
@@ -210,30 +209,44 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             return meshDataList;
         }
 
-        protected void AddTriangle(MeshData meshData, GradientWrapper gradient,
-            Vector3 v0, Vector3 v1, Vector3 v2)
+        protected void AddTriangle(MeshData meshData, Vector3 v0, Vector3 v1, Vector3 v2,
+            GradientWrapper gradient, Vector2 uv0, Vector2 uv1, Vector2 uv2)
         {
             var v01 = Vector3Utils.GetIntermediatePoint(v0, v1);
             var v12 = Vector3Utils.GetIntermediatePoint(v1, v2);
             var v02 = Vector3Utils.GetIntermediatePoint(v0, v2);
 
             var color = GetColor(gradient, v0);
-            meshData.AddTriangle(v0, v01, v02, color, color);
+            meshData.AddTriangle(v0, v01, v02, color, color, uv0, uv1, uv2);
 
             color = GetColor(gradient, v01);
-            meshData.AddTriangle(v02, v01, v12, color, color);
+            meshData.AddTriangle(v02, v01, v12, color, color, uv0, uv1, uv2);
 
             color = GetColor(gradient, v02);
-            meshData.AddTriangle(v2, v02, v12, color, color);
+            meshData.AddTriangle(v2, v02, v12, color, color, uv0, uv1, uv2);
 
             color = GetColor(gradient, v01);
-            meshData.AddTriangle(v01, v1, v12, color, color);
+            meshData.AddTriangle(v01, v1, v12, color, color, uv0, uv1, uv2);
         }
 
+        /// <summary> Gets color value from gradient for given point. </summary>
         protected Color GetColor(GradientWrapper gradient, Vector3 point)
         {
             var value = (Noise.Perlin3D(point, .3f) + 1f) / 2f;
             return gradient.Evaluate(value);
+        }
+
+        /// <summary> Gets texture coordinates for given building. </summary>
+        protected void GetUV(Building building, out Vector2 uv0, out Vector2 uv1, out Vector2 uv2)
+        {
+            var texture = CustomizationService
+                .GetAtlas(building.RoofMaterial)
+                .Get(building.RoofTexture)
+                .Get((int) building.Id);
+
+            uv0 = texture.Map(new Vector2(0, 0));
+            uv1 = texture.Map(new Vector2(1, 0));
+            uv2 = texture.Map(new Vector2(.5f, .5f));
         }
 
         #region Nested classes

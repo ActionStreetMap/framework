@@ -77,9 +77,12 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshIndex = new MultiPlaneMeshIndex(planeCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
+            Vector2 uv0, uv1, uv2;
+            GetUV(building, out uv0, out uv1, out uv2);
+
             // 6. process all segments and create vertices
-            FillMeshData(meshData, CustomizationService.GetGradient(building.RoofColor), roofOffset,
-                roofHeight, building.Footprint, first, firstIndex, second, secondIndex);
+            FillMeshData(meshData, CustomizationService.GetGradient(building.RoofColor), uv0, uv1, uv2,
+                roofOffset, roofHeight, building.Footprint, first, firstIndex, second, secondIndex);
 
             if (!limitIsReached)
             {
@@ -98,7 +101,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     IsLastRoof = false
                 });
 
-                return new List<MeshData>(1) {meshData};
+                return new List<MeshData>(1) { meshData };
             }
 
             var meshDataList = BuildFloors(building, building.Levels, false);
@@ -163,8 +166,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             }
         }
 
-        private void FillMeshData(MeshData meshData, GradientWrapper gradient, float roofOffset, float roofHeight,
-            List<Vector2d> footprint, Vector2d first, int firstIndex, Vector2d second, int secondIndex)
+        private void FillMeshData(MeshData meshData, GradientWrapper gradient, Vector2 uv0, Vector2 uv1, Vector2 uv2,
+            float roofOffset, float roofHeight, List<Vector2d> footprint, Vector2d first, int firstIndex, Vector2d second, int secondIndex)
         {
             var meshIndex = (MultiPlaneMeshIndex) meshData.Index;
             var count = footprint.Count;
@@ -184,7 +187,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     var v1 = new Vector3((float)startRidgePoint.X, roofHeight, (float)startRidgePoint.Y);
                     var v2 = new Vector3((float)p2.X, roofOffset, (float)p2.Y);
                     meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
-                    AddTriangle(meshData, gradient, v0, v1, v2);
+                    AddTriangle(meshData, v0, v1, v2, gradient, uv0, uv1, uv2);
                     i = nextIndex;
                     continue;
                 }
@@ -203,8 +206,8 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                     var v3 = new Vector3((float)startRidgePoint.X, roofHeight, (float)startRidgePoint.Y);
                     
                     meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
-                    AddTriangle(meshData, gradient, v0, v2, v1);
-                    AddTriangle(meshData, gradient, v2, v0, v3);
+                    AddTriangle(meshData, v0, v2, v1, gradient, uv0, uv1, uv2);
+                    AddTriangle(meshData, v2, v0, v3, gradient, uv0, uv1, uv2);
                 }
                 startRidgePoint = endRidgePoint;
                 i = nextIndex;

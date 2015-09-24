@@ -78,23 +78,27 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             {
                 Id = model.Id,
                 GameObject = gameObjectWrapper,
+
                 IsPart = isPart,
                 Height = height,
                 Levels = rule.GetLevels(),
                 MinHeight = minHeight,
                 HasWindows = rule.HasWindows(),
-                TextureAtlas = rule.GetTextureAtlas(),
+
                 FacadeType = rule.GetFacadeBuilder(),
                 FacadeColor = rule.GetFacadeColor(),
                 FacadeMaterial = rule.GetFacadeMaterial(),
                 FacadeTexture = rule.GetFacadeTexture(),
+
                 RoofType = rule.GetRoofBuilder(),
                 RoofColor = rule.GetRoofColor(),
                 RoofMaterial = rule.GetRoofMaterial(),
                 RoofTexture = rule.GetRoofTexture(),
                 RoofHeight = rule.GetRoofHeight(),
+
                 FloorFrontColor = rule.GetFloorFrontColor(),
                 FloorBackColor = rule.GetFloorBackColor(),
+
                 Elevation = elevation,
                 Footprint = points,
             };

@@ -1,4 +1,5 @@
 ﻿using System;
+using ActionStreetMap.Explorer.Customization;
 using ActionStreetMap.Explorer.Utils;
 using ActionStreetMap.Unity.Wrappers;
 using UnityEngine;
@@ -10,6 +11,10 @@ namespace ActionStreetMap.Explorer.Scene.Generators
         private float _vertNoiseFreq = 0.05f;
         private float _colorNoiseFreq = 0.1f;
         private GradientWrapper _gradient;
+
+        private Vector2 _uv0;
+        private Vector2 _uv1;
+        private Vector2 _uv2;
 
         public abstract int CalculateVertexCount();
         public abstract void Build(MeshData meshData);
@@ -26,9 +31,17 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             return this;
         }
 
-        public AbstractGenerator SetGradient(GradientWrapper gradient)
+        public virtual AbstractGenerator SetGradient(GradientWrapper gradient)
         {
             _gradient = gradient;
+            return this;
+        }
+
+        public virtual AbstractGenerator SetTexture(TextureGroup.Texture texture)
+        {
+            _uv0 = texture.Map(new Vector2(0, 0));
+            _uv1 = texture.Map(new Vector2(1, 0));
+            _uv2 = texture.Map(new Vector2(.5f, .5f));
             return this;
         }
 
@@ -46,7 +59,7 @@ namespace ActionStreetMap.Explorer.Scene.Generators
             var p2 = new Vector3(v2.x + noise, v2.y + noise, v2.z + noise);
 
             var color = GradientUtils.GetColor(_gradient, v1, _colorNoiseFreq);
-            meshData.AddTriangle(p0, p1, p2, color, color);
+            meshData.AddTriangle(p0, p1, p2, color, color, _uv0, _uv1, _uv2);
         }
     }
 }

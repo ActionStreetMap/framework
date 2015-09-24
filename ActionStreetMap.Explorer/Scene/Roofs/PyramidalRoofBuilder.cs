@@ -51,6 +51,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
             var meshIndex = new MultiPlaneMeshIndex(planeCount, vertexCount);
             var meshData = new MeshData(meshIndex, vertexCount);
 
+            Vector2 uv0, uv1, uv2;
+            GetUV(building, out uv0, out uv1, out uv2);
+
             var roofGradient = CustomizationService.GetGradient(building.RoofColor);
             for (int i = 0; i < length; i++)
             {
@@ -67,16 +70,16 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
 
                 var color = GetColor(roofGradient, v0);
-                meshData.AddTriangle(v0, v01, v02, color, color);
+                meshData.AddTriangle(v0, v01, v02, color, color, uv0, uv1, uv2);
 
                 color = GetColor(roofGradient, v01);
-                meshData.AddTriangle(v02, v01, v12, color, color);
+                meshData.AddTriangle(v02, v01, v12, color, color, uv0, uv1, uv2);
 
                 color = GetColor(roofGradient, v02);
-                meshData.AddTriangle(v2, v02, v12, color, color);
+                meshData.AddTriangle(v2, v02, v12, color, color, uv0, uv1, uv2);
 
                 color = GetColor(roofGradient, v01);
-                meshData.AddTriangle(v01, v1, v12, color, color);
+                meshData.AddTriangle(v01, v1, v12, color, color, uv0, uv1, uv2);
             }
 
             if (!limitIsReached)

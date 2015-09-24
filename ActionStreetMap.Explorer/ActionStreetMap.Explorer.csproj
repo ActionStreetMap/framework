@@ -55,6 +55,7 @@
     <Compile Include="Commands\SearchCommand.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="Bootstrappers\BootstrapperPlugin.cs" />
+    <Compile Include="Customization\TreeRuleExtensions.cs" />
     <Compile Include="Scene\Facades\WallBuilder.cs" />
     <Compile Include="Scene\Facades\WindowWallBuilder.cs" />
     <Compile Include="Scene\Indices\CompositeMeshIndex.cs" />

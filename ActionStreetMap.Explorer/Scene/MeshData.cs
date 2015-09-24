@@ -41,8 +41,8 @@ namespace ActionStreetMap.Explorer.Scene
         }
 
         /// <summary> Adds two sided triangle to mesh data. </summary>
-        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2,
-            Color frontColor, Color backColor)
+        public void AddTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color frontColor, 
+            Color backColor, Vector2 uv0, Vector2 uv1, Vector2 uv2)
         {
             var startIndex = _size + _nextIndex;
 
@@ -50,14 +50,17 @@ namespace ActionStreetMap.Explorer.Scene
             Vertices[_nextIndex] = v0;
             Colors[_nextIndex] = frontColor;
             Triangles[_nextIndex] = _nextIndex;
+            UVs[_nextIndex] = uv0;
 
             Vertices[++_nextIndex] = v1;
             Colors[_nextIndex] = frontColor;
             Triangles[_nextIndex] = _nextIndex;
+            UVs[_nextIndex] = uv1;
 
             Vertices[++_nextIndex] = v2;
             Colors[_nextIndex] = frontColor;
             Triangles[_nextIndex] = _nextIndex;
+            UVs[_nextIndex] = uv2;
 
             _nextIndex++;
 
@@ -65,14 +68,17 @@ namespace ActionStreetMap.Explorer.Scene
             Vertices[startIndex] = v0;
             Colors[startIndex] = backColor;
             Triangles[startIndex] = startIndex + 2;
+            UVs[startIndex] = uv0;
 
             Vertices[++startIndex] = v1;
             Colors[startIndex] = backColor;
             Triangles[startIndex] = startIndex;
+            UVs[startIndex] = uv1;
 
             Vertices[++startIndex] = v2;
             Colors[startIndex] = backColor;
             Triangles[startIndex] = startIndex - 2;
+            UVs[startIndex] = uv2;
         }
     }
 }

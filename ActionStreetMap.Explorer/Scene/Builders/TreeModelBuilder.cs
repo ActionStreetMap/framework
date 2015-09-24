@@ -21,12 +21,11 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var mapPoint = GeoProjection.ToMapCoordinate(tile.RelativeNullPoint, node.Point);
             var elevation = ElevationProvider.GetElevation(mapPoint);
 
-            var trunkGradientKey = rule.Evaluate<string>("trunk-color");
-            var foliageGradientKey = rule.Evaluate<string>("foliage-color");
-
             var treeGen = new TreeGenerator()
-                .SetTrunkGradient(CustomizationService.GetGradient(trunkGradientKey))
-                .SetFoliageGradient(CustomizationService.GetGradient(foliageGradientKey))
+                .SetTrunkGradient(rule.GetTrunkGradient(CustomizationService))
+                .SetFoliageGradient(rule.GetFoliageGradient(CustomizationService))
+                .SetTrunkTexture(rule.GetTrunkTexture((int) node.Id, CustomizationService))
+                .SetFoliageTexture(rule.GetFoliageTexture((int) node.Id, CustomizationService))
                 .SetPosition(new Vector3((float) mapPoint.X, elevation, (float) mapPoint.Y));
 
             var meshData = new MeshData(MeshDestroyIndex.Default, treeGen.CalculateVertexCount())

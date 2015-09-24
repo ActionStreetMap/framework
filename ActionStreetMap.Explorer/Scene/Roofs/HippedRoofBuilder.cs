@@ -47,15 +47,21 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
             var meshIndex = new MultiPlaneMeshIndex(planeCount + floorCount, vertexCount);
             MeshData meshData = new MeshData(meshIndex, vertexCount);
+
+            Vector2 uv0, uv1, uv2;
+            GetUV(building, out uv0, out uv1, out uv2);
+
             try
             {
                 var roofGradient = CustomizationService.GetGradient(building.RoofColor);
                 foreach (var edge in skeleton.Edges)
                 {
                     if (edge.Polygon.Count < 5)
-                        HandleSimpleCase(meshData, meshIndex, roofGradient, skeleton, edge, roofOffset, roofHeight);
+                        HandleSimpleCase(meshData, meshIndex, roofGradient, uv0, uv1, uv2,
+                            skeleton, edge, roofOffset, roofHeight);
                     else
-                        HandleComplexCase(meshData, meshIndex, roofGradient, skeleton, edge, roofOffset, roofHeight);
+                        HandleComplexCase(meshData, meshIndex, roofGradient, uv0, uv1, uv2,
+                            skeleton, edge, roofOffset, roofHeight);
                 }
 
                 if (!limitIsReached)
@@ -90,7 +96,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         }
 
         private void HandleSimpleCase(MeshData meshData, MultiPlaneMeshIndex meshIndex, GradientWrapper gradient,
-            Skeleton skeleton, EdgeResult edge, float roofOffset, float roofHeight)
+            Vector2 uv0, Vector2 uv1, Vector2 uv2, Skeleton skeleton, EdgeResult edge, float roofOffset, float roofHeight)
         {
             var polygon = edge.Polygon;
             var distances = skeleton.Distances;
@@ -109,12 +115,12 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
 
                 if (i == 0)
                     meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
-                AddTriangle(meshData, gradient, v0, v1, v2);
+                AddTriangle(meshData, v0, v1, v2, gradient, uv0, uv1, uv2);
             }
         }
 
         private void HandleComplexCase(MeshData meshData, MultiPlaneMeshIndex meshIndex, GradientWrapper gradient,
-            Skeleton skeleton, EdgeResult edge, float roofOffset, float roofHeight)
+            Vector2 uv0, Vector2 uv1, Vector2 uv2, Skeleton skeleton, EdgeResult edge, float roofOffset, float roofHeight)
         {
             var polygon = edge.Polygon;
             var distances = skeleton.Distances;
@@ -147,7 +153,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         meshIndex.AddPlane(v0, v1, v2, meshData.NextIndex);
                         planeIsAdded = true;
                     }
-                    AddTriangle(meshData, gradient, v0, v1, v2);
+                    AddTriangle(meshData, v0, v1, v2, gradient, uv0, uv1, uv2);
                 }
             }
         }

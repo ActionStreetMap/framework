@@ -108,13 +108,14 @@ namespace ActionStreetMap.Explorer.Customization
             return this;
         }
 
-        /// <summary> Gets texture atlas by name. </summary>
-        public TextureAtlas GetAtlas(string name)
+        /// <summary> Gets texture atlas by name material name. </summary>
+        public TextureAtlas GetAtlas(string materialName)
         {
-            if (!_textureAtlases.ContainsKey(name))
-                throw new ArgumentException(String.Format(Strings.TextureAtlasIsNotRegistered, name), "name");
+            if (!_textureAtlases.ContainsKey(materialName))
+                throw new ArgumentException(String.Format(
+                    Strings.TextureMaterialIsNotRegistered, materialName), "materialName");
 
-            return _textureAtlases[name];
+            return _textureAtlases[materialName];
         }
 
         #endregion
