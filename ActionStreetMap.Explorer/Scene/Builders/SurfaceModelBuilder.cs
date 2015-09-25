@@ -33,7 +33,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             tile.Canvas.AddSurface(new Surface()
             {
-                GradientKey = rule.GetFillColor(),
+                GradientKey = rule.GetColor(),
                 TextureAtlas = rule.GetTextureAtlas(),
                 TextureKey = rule.GetTextureKey(),
                 ElevationNoise = rule.GetEleNoiseFreq(),
@@ -67,6 +67,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 var treeGen = new TreeGenerator()
                    .SetTrunkGradient(CustomizationService.GetGradient(trunkGradientKey))
                    .SetFoliageGradient(CustomizationService.GetGradient(foliageGradientKey))
+                   .SetTrunkTexture(rule.GetTrunkTexture(triangle.Id, CustomizationService))
+                   .SetFoliageTexture(rule.GetFoliageTexture(triangle.Id, CustomizationService))
                    .SetPosition(new Vector3((float)center.X, elevation, (float)center.Y));
                 
                 var meshData = new MeshData(MeshDestroyIndex.Default, treeGen.CalculateVertexCount());

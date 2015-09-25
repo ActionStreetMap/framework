@@ -68,7 +68,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
 
             Assert.AreEqual("sphere", rule.Evaluate<string>("builder"), "Unable to merge declarations!");
             Assert.AreEqual(100, rule.Evaluate<float>("min_height"), "Unable to eval min_height from tag!");
-            Assert.AreEqual(new Color32(250, 128, 114, 255), rule.GetFillUnityColor(), "Unable to merge declarations!");
+            Assert.AreEqual(new Color32(250, 128, 114, 255), rule.GetUnityColor(), "Unable to merge declarations!");
             Assert.AreEqual("solid", rule.Evaluate<string>("behaviour"), "First rule isn't applied!");
             Assert.AreEqual("Concrete_Patterned", rule.Evaluate<string>("material"), "First rule isn't applied!");
             Assert.AreEqual(15, rule.Evaluate<float>("height"), "Unable to eval height from building:levels!");
@@ -279,7 +279,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
 
             // ASSERT
             Assert.AreEqual(ColorUtils.FromName("red"),
-                GetOriginalColorTypeObject(rule.GetFillUnityColor()));
+                GetOriginalColorTypeObject(rule.GetUnityColor()));
         }
 
         [TestCase(TestHelper.TestBaseMapcssFile, true)]
@@ -304,7 +304,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
 
             // ASSERT
             Assert.AreEqual(ColorUtils.FromName("salmon"),
-                GetOriginalColorTypeObject(rule.GetFillUnityColor()));
+                GetOriginalColorTypeObject(rule.GetUnityColor()));
         }
 
         [TestCase(TestHelper.TestBaseMapcssFile, true)]
@@ -330,7 +330,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
 
             // ASSERT
             Assert.AreEqual(ColorUtils.FromUnknown("#cfc6b5"),
-                GetOriginalColorTypeObject(rule.GetFillUnityColor()));
+                GetOriginalColorTypeObject(rule.GetUnityColor()));
         }
 
         [TestCase(true)]

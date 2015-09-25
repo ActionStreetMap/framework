@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ActionStreetMap.Explorer.Customization
@@ -7,6 +8,8 @@ namespace ActionStreetMap.Explorer.Customization
     /// <remarks> Not thread safe. </remarks>
     public sealed class TextureGroup
     {
+        private static readonly NullTexture EmptyTexture = new NullTexture();
+
         private readonly float _xRatio;
         private readonly float _yRatio;
         private readonly List<Texture> _textures;
@@ -33,11 +36,11 @@ namespace ActionStreetMap.Explorer.Customization
         /// <summary> Gets texture using seed provided.  </summary>
         public Texture Get(int seed)
         {
-            return _textures[seed % _textures.Count];
+            return _textures.Any() ? _textures[seed%_textures.Count] : EmptyTexture;
         }
 
         /// <summary> Represents texture in atlas. </summary>
-        public sealed class Texture
+        public class Texture
         {
             private readonly float _x;
             private readonly float _y;
@@ -54,9 +57,23 @@ namespace ActionStreetMap.Explorer.Customization
             }
 
             /// <summary> Maps relative uv coordinate to absolute in atlas. </summary>
-            public Vector2 Map(Vector2 relative)
+            public virtual Vector2 Map(Vector2 relative)
             {
                 return new Vector2(_x + _width * relative.x, _y + _height * relative.y);
+            }
+        }
+
+        /// <summary> Represents empty texture in atlas. </summary>
+        internal class NullTexture : Texture
+        {
+            internal NullTexture()
+                : base(0, 0, 0, 0)
+            {
+            }
+
+            public override Vector2 Map(Vector2 relative)
+            {
+                return new Vector2(0, 0);
             }
         }
     }

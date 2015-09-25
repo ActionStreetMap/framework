@@ -13,12 +13,12 @@ namespace ActionStreetMap.Explorer.Customization
 
         public static string GetFacadeColor(this Rule rule)
         {
-            return rule.Evaluate<string>("fill-color");
+            return rule.Evaluate<string>("facade-color");
         }
 
         public static string GetFacadeMaterial(this Rule rule)
         {
-            return rule.GetMaterialKey();
+            return rule.Evaluate<string>("roof-material");
         }
 
         public static string GetFacadeTexture(this Rule rule)
@@ -47,7 +47,7 @@ namespace ActionStreetMap.Explorer.Customization
 
         public static string GetRoofMaterial(this Rule rule, string @default = null)
         {
-            return rule.GetMaterialKey("roof-material");
+            return rule.Evaluate<string>("roof-material");
         }
 
         public static string GetRoofTexture(this Rule rule)
@@ -64,9 +64,19 @@ namespace ActionStreetMap.Explorer.Customization
             return rule.Evaluate<string>("floor-front-color");
         }
 
+        public static string GetFloorFrontTexture(this Rule rule)
+        {
+            return rule.Evaluate<string>("floor-front-texture");
+        }
+
         public static string GetFloorBackColor(this Rule rule)
         {
             return rule.Evaluate<string>("floor-back-color");
+        }
+
+        public static string GetFloorBackTexture(this Rule rule)
+        {
+            return rule.Evaluate<string>("floor-back-texture");
         }
 
         public static int GetLevels(this Rule rule, int @default = 0)
@@ -78,7 +88,7 @@ namespace ActionStreetMap.Explorer.Customization
 
         public static float GetMinHeight(this Rule rule, float defaultValue = 0)
         {
-            return rule.EvaluateDefault<float>("min_height", defaultValue);
+            return rule.EvaluateDefault<float>("min-height", defaultValue);
         }      
 
         public static bool IsPart(this Rule rule)

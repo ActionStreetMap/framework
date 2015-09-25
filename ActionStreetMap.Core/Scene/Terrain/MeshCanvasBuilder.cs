@@ -139,6 +139,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 regions.Add(new MeshCanvas.Region
                 {
                     GradientKey = group.Key,
+                    TextureAtlas = first.Item1.TextureAtlas,
+                    TextureKey = first.Item1.TextureKey,
                     ElevationNoiseFreq = first.Item1.ElevationNoise,
                     ColorNoiseFreq = first.Item1.ColorNoise,
                     ModifyMeshAction = first.Item2,

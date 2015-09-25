@@ -79,8 +79,14 @@ namespace ActionStreetMap.Core.Scene
         /// <summary> Front floor color. </summary>
         public string FloorFrontColor;
 
+        /// <summary> Front floor texture. </summary>
+        public string FloorFrontTexture;
+
         /// <summary> Back floor color. </summary>
         public string FloorBackColor;
+
+        /// <summary> Back floor texture. </summary>
+        public string FloorBackTexture;
 
         #endregion
 

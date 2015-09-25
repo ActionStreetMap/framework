@@ -21,15 +21,15 @@ namespace ActionStreetMap.Explorer.Customization
             return customizationService.GetMaterial(rule.GetMaterialKey(path));
         }
 
-        public static Color32 GetFillUnityColor(this Rule rule)
+        public static Color32 GetUnityColor(this Rule rule)
         {
-            var coreColor = rule.Evaluate<Core.Unity.Color32>("fill-color", ColorUtils.FromUnknown);
+            var coreColor = rule.Evaluate<Core.Unity.Color32>("color", ColorUtils.FromUnknown);
             return new Color32(coreColor.R, coreColor.G, coreColor.B, coreColor.A);
         }
 
-        public static string GetFillColor(this Rule rule)
+        public static string GetColor(this Rule rule)
         {
-            return rule.Evaluate<string>("fill-color");
+            return rule.Evaluate<string>("color");
         }
 
         public static string GetTextureAtlas(this Rule rule)
@@ -39,7 +39,7 @@ namespace ActionStreetMap.Explorer.Customization
 
         public static string GetTextureKey(this Rule rule)
         {
-            return rule.Evaluate<string>("texture-key");
+            return rule.Evaluate<string>("texture");
         }
 
         public static TextureGroup.Texture GetTexture(this Rule rule, int seed, 

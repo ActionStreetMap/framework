@@ -18,11 +18,34 @@ namespace ActionStreetMap.Tests
 
             CustomizationService
                 .RegisterBehaviour("terrain_draw", typeof (TestModelBehaviour))
-                .RegisterAtlas("main", new TextureAtlas()
-                    .Add("pattern", new TextureGroup(100, 100)
-                        .Add(50, 50, 10, 10)
-                        .Add(10, 10, 5, 5)));
-
+                .RegisterAtlas("main",
+                    new TextureAtlas()
+                        .Add("background", new TextureGroup(1, 1))
+                        .Add("water", new TextureGroup(1, 1))
+                        .Add("road_car", new TextureGroup(1, 1))
+                        .Add("road_pedestrian", new TextureGroup(1, 1))
+                        .Add("brick", new TextureGroup(1, 1))
+                        .Add("bronze", new TextureGroup(1, 1))
+                        .Add("canvas", new TextureGroup(1, 1))
+                        .Add("concrete", new TextureGroup(1, 1))
+                        .Add("copper", new TextureGroup(1, 1))
+                        .Add("glass", new TextureGroup(1, 1))
+                        .Add("gold", new TextureGroup(1, 1))
+                        .Add("plants", new TextureGroup(1, 1))
+                        .Add("metal", new TextureGroup(1, 1))
+                        .Add("panel", new TextureGroup(1, 1))
+                        .Add("plaster", new TextureGroup(1, 1))
+                        .Add("roof_tiles", new TextureGroup(1, 1))
+                        .Add("silver", new TextureGroup(1, 1))
+                        .Add("slate", new TextureGroup(1, 1))
+                        .Add("stone", new TextureGroup(1, 1))
+                        .Add("tar_paper", new TextureGroup(1, 1))
+                        .Add("wood", new TextureGroup(1, 1))
+                        .Add("ground", new TextureGroup(1, 1))
+                        .Add("grass", new TextureGroup(1, 1))
+                        .Add("asphalt", new TextureGroup(1, 1))
+                        .Add("sand", new TextureGroup(1, 1))
+                        .Add("barrier", new TextureGroup(1, 1)));
             return true;
         }
 

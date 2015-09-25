@@ -8,13 +8,13 @@ namespace ActionStreetMap.Explorer.Customization
         public static GradientWrapper GetTrunkGradient(this Rule rule,
            CustomizationService customizationService)
         {
-            return customizationService.GetGradient(rule.Evaluate<string>("trunk-gradient"));
+            return customizationService.GetGradient(rule.Evaluate<string>("trunk-color"));
         }
 
         public static GradientWrapper GetFoliageGradient(this Rule rule,
            CustomizationService customizationService)
         {
-            return customizationService.GetGradient(rule.Evaluate<string>("foliage-gradient"));
+            return customizationService.GetGradient(rule.Evaluate<string>("foliage-color"));
         }
 
         public static TextureGroup.Texture GetTrunkTexture(this Rule rule, int seed,
@@ -22,7 +22,7 @@ namespace ActionStreetMap.Explorer.Customization
         {
             return customizationService
                 .GetAtlas(rule.Evaluate<string>("material"))
-                .Get("trunk-texture")
+                .Get(rule.Evaluate<string>("trunk-texture"))
                 .Get(seed);
         }
 
@@ -31,7 +31,7 @@ namespace ActionStreetMap.Explorer.Customization
         {
             return customizationService
                 .GetAtlas(rule.Evaluate<string>("material"))
-                .Get("foliage-texture")
+                .Get(rule.Evaluate<string>("foliage-texture"))
                 .Get(seed);
         }
     }

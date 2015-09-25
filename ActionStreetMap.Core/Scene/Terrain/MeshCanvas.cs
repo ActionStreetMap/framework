@@ -20,6 +20,8 @@ namespace ActionStreetMap.Core.Scene.Terrain
         internal class Region
         {
             public string GradientKey;
+            public string TextureAtlas;
+            public string TextureKey;
             public float ElevationNoiseFreq;
             public float ColorNoiseFreq;
             public Action<Mesh> ModifyMeshAction;

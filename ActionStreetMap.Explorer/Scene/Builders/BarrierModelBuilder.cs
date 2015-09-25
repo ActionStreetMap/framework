@@ -52,7 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var context = new SegmentBuilderContext()
             {
                 MeshData = meshData,
-                Gradient = CustomizationService.GetGradient(rule.GetFillColor()),
+                Gradient = CustomizationService.GetGradient(rule.GetColor()),
                 ColorNoiseFreq = rule.GetColorNoiseFreq(),
                 V0 = texture.Map(new Vector2(0, 0)),
                 V1 = texture.Map(new Vector2(1, 0)),

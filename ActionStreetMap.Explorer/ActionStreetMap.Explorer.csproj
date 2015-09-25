@@ -85,7 +85,6 @@
     <Compile Include="Interactions\MeshIndexBehaviour.cs" />
     <Compile Include="Scene\Terrain\TerrainMeshIndex.cs" />
     <Compile Include="Customization\BuildingRuleExtensions.cs" />
-    <Compile Include="Customization\DetailRuleExtensions.cs" />
     <Compile Include="Customization\ModelRuleExtensions.cs" />
     <Compile Include="Customization\TerrainRuleExtensions.cs" />
     <Compile Include="Infrastructure\UnityGameObject.cs" />

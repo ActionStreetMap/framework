@@ -98,6 +98,8 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
                 FloorFrontColor = rule.GetFloorFrontColor(),
                 FloorBackColor = rule.GetFloorBackColor(),
+                FloorFrontTexture = rule.GetFloorFrontTexture(),
+                FloorBackTexture = rule.GetFloorBackTexture(),
 
                 Elevation = elevation,
                 Footprint = points,
