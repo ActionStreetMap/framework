@@ -26,6 +26,7 @@
 
         public static string TextureMaterialIsNotRegistered = "Attempt to use unregistered material: {0}";
         public static string TextureGroupIsNotRegistered = "Attempt to use unregistered texture group: {0}";
+        public static string CannotAddTexture = "Cannot add texture to null texture group. You should use different constructor.";
 
         #region Commands
 
