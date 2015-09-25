@@ -96,8 +96,8 @@ namespace ActionStreetMap.Tests
         {
             return new CustomizationService(new Container())
                 .RegisterAtlas("main", new TextureAtlas()
-                    .Add("pattern", new TextureGroup(100, 100)
-                        .Add(50, 50, 10, 10)));
+                    .Add("concrete", new TextureGroup())
+                    .Add("barrier", new TextureGroup()));
         }
 
         public static IObjectPool GetObjectPool()

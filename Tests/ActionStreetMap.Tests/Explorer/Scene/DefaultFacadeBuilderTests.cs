@@ -27,8 +27,13 @@ namespace ActionStreetMap.Tests.Explorer.Scene
                     new Vector2d(0, 500),
                 },
                 FacadeColor = "gradient(#0eff94, #0deb88 50%, #07854d)",
+                RoofMaterial = "main",
                 FacadeMaterial = "main",
-                FacadeTexture = "pattern",
+                FacadeTexture = "concrete",
+                RoofTexture = "concrete",
+                FloorFrontTexture = "concrete",
+                FloorBackTexture = "concrete",
+
                 Height = 100
             };
 

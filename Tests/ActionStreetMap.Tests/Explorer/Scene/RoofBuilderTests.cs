@@ -19,24 +19,19 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
             // ARRANGE
             var roofBuilder = new MansardRoofBuilder();
             InitializeRoofBuilder(roofBuilder);
+            var building = CreateTestBuilding();
+            building.Levels = 1;
+            building.Height = 1;
+            building.Footprint = new List<Vector2d>()
+            {
+                new Vector2d(0, 0),
+                new Vector2d(0, 10),
+                new Vector2d(10, 10),
+                new Vector2d(10, 0),
+            };
 
             // ACT
-            var result = roofBuilder.Build(new Building()
-            {
-                Footprint = new List<Vector2d>()
-                {
-                    new Vector2d(0, 0),
-                    new Vector2d(0, 10),
-                    new Vector2d(10, 10),
-                    new Vector2d(10, 0),
-                },
-                Levels = 1,
-                Elevation = 0,
-                Height = 1,
-                RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)",
-                FloorFrontColor = "gradient(#f3e2c7, #c19e67 50%, #b68d4c 51%, #e9d4b3)",
-                FloorBackColor = "gradient(#feffff, #d2ebf9)",
-            });
+            var result = roofBuilder.Build(building);
 
             // ASSERT
             Assert.IsNotNull(result);
@@ -179,6 +174,12 @@ namespace ActionStreetMap.Tests.Explorer.Buildings
                 RoofColor = "gradient(#0eff94, #0deb88 50%, #07854d)",
                 FloorFrontColor = "gradient(#f3e2c7, #c19e67 50%, #b68d4c 51%, #e9d4b3)",
                 FloorBackColor = "gradient(#feffff, #d2ebf9)",
+                RoofMaterial = "main",
+                FacadeMaterial = "main",
+                FacadeTexture = "concrete",
+                RoofTexture = "concrete",
+                FloorFrontTexture = "concrete",
+                FloorBackTexture = "concrete"
             };
         }
 

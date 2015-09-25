@@ -67,10 +67,10 @@ namespace ActionStreetMap.Tests.Core.MapCss
             Assert.IsTrue(rule.IsApplicable, "Unable to get declarations!");
 
             Assert.AreEqual("sphere", rule.Evaluate<string>("builder"), "Unable to merge declarations!");
-            Assert.AreEqual(100, rule.Evaluate<float>("min_height"), "Unable to eval min_height from tag!");
+            Assert.AreEqual(100, rule.Evaluate<float>("min-height"), "Unable to eval min_height from tag!");
             Assert.AreEqual(new Color32(250, 128, 114, 255), rule.GetUnityColor(), "Unable to merge declarations!");
             Assert.AreEqual("solid", rule.Evaluate<string>("behaviour"), "First rule isn't applied!");
-            Assert.AreEqual("Concrete_Patterned", rule.Evaluate<string>("material"), "First rule isn't applied!");
+            Assert.AreEqual("main", rule.Evaluate<string>("material"), "First rule isn't applied!");
             Assert.AreEqual(15, rule.Evaluate<float>("height"), "Unable to eval height from building:levels!");
         }
 
@@ -312,7 +312,7 @@ namespace ActionStreetMap.Tests.Core.MapCss
         public void CanApplyColorByRGB(string path, bool canUseExprTree)
         {
             // ARRANGE
-            var stylesheet = MapCssHelper.GetStylesheetFromContent("area[building:color] { fill-color:eval(color(tag('building:color')));}", canUseExprTree);
+            var stylesheet = MapCssHelper.GetStylesheetFromContent("area[building:color] { color:eval(color(tag('building:color')));}", canUseExprTree);
 
             var buildingWithColorCode = new Area
             {

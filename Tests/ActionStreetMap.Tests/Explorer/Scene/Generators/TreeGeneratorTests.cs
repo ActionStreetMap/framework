@@ -1,4 +1,5 @@
-﻿using ActionStreetMap.Explorer.Scene;
+﻿using ActionStreetMap.Explorer.Customization;
+using ActionStreetMap.Explorer.Scene;
 using ActionStreetMap.Explorer.Scene.Generators;
 using ActionStreetMap.Explorer.Scene.Indices;
 using ActionStreetMap.Explorer.Utils;
@@ -27,6 +28,8 @@ namespace ActionStreetMap.Tests.Explorer.Scene.Generators
             var treeGen = new TreeGenerator()
                 .SetTrunkGradient(_trunkGradient)
                 .SetFoliageGradient(_foliageGradient)
+                .SetFoliageTexture(new TextureGroup.NullTexture())
+                .SetTrunkTexture(new TextureGroup.NullTexture())
                 .SetPosition(position);
             
             var vertCount = treeGen.CalculateVertexCount();
