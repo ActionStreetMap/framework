@@ -22,13 +22,13 @@ canvas {
     car-color-noise-freq: 0.1;
     car-ele-noise-freq: 0.0;
     car-gradient: gradient(#4d4d4d, #404040);
-    car-texture: road_car;
+    car-texture: asphalt;
     
     /* pedestrian road layer. */
     pedestrian-color-noise-freq: 0.1;
     pedestrian-ele-noise-freq: 0.1;
     pedestrian-gradient: gradient(#636363, #4d4d4d);
-    pedestrian-texture: road_pedestrian;
+    pedestrian-texture: road_brick;
 }
 
 /* flat areas, general rules */
@@ -61,12 +61,12 @@ area|z19[building] {
     facade-color: gradient(#c0c0c0, #a9a9a9 50%, #808080);
 
     roof-material: main;
-    roof-texture: concrete;
+    roof-texture: metal;
     roof-builder: flat;
     roof-color: gradient(#808080, #606060 50%, #505050);
     
     floor-front-color: gradient(#f3e2c7, #c19e67 50%, #b68d4c 51%, #e9d4b3);
-    floor-front-texture: concrete;
+    floor-front-texture: floor;
     floor-back-color: gradient(#feffff, #d2ebf9));
     floor-back-texture: concrete;
 }
@@ -126,12 +126,12 @@ area|z19[building:material=bronze],
 area|z19[building:facade:material=bronze],
 area|z19[building:cladding=bronze] {
     facade-color: gradient(#0fffed, #0ffeec 50%, #09988d);
-    facade-texture: bronze;
+    facade-texture: metal;
 }
 area|z19[building:roof:material=bronze],
 area|z19[roof:material=bronze] {
     roof-color: gradient(#0fffed, #0ffeec 50%, #09988d);
-    roof-texture: bronze;
+    roof-texture: metal;
 }
 area|z19[building:material=canvas],
 area|z19[building:facade:material=canvas],
@@ -159,12 +159,12 @@ area|z19[building:material=copper],
 area|z19[building:facade:material=copper],
 area|z19[building:cladding=copper] {
     facade-color: gradient(#53746c, #0a0e0d 50%, #000000);
-    facade-texture: copper;
+    facade-texture: metal;
 }
 area|z19[building:roof:material=copper],
 area|z19[roof:material=copper] {
     roof-color: gradient(#53746c, #0a0e0d 50%, #000000);
-    roof-texture: copper;
+    roof-texture: metal;
 }
 area|z19[building:material=glass],
 area|z19[building:facade:material=glass],
@@ -181,23 +181,23 @@ area|z19[building:material=gold],
 area|z19[building:facade:material=gold],
 area|z19[building:cladding=gold] {
     facade-color: gradient(#0fffc2, #0ffcc0 50%, #099672);
-    facade-texture: gold;
+    facade-texture: metal;
 }
 area|z19[building:roof:material=gold],
 area|z19[roof:material=gold] {
     roof-color: gradient(#0fffc2, #0ffcc0 50%, #099672);
-    roof-texture: gold;
+    roof-texture: metal;
 }
 area|z19[building:material=plants],
 area|z19[building:facade:material=plants],
 area|z19[building:cladding=plants] {
     facade-color: gradient(#000ff9, #000993 50%, #00032d);
-    facade-texture: plants;
+    facade-texture: grass;
 }
 area|z19[building:roof:material=plants],
 area|z19[roof:material=plants] {
     roof-color: gradient(#000ff9, #000993 50%, #00032d);
-    roof-texture: plants;
+    roof-texture: grass;
 }
 area|z19[building:material=metal],
 area|z19[building:facade:material=metal],
@@ -225,12 +225,12 @@ area|z19[building:material=plaster],
 area|z19[building:facade:material=plaster],
 area|z19[building:cladding=plaster] {
     facade-color: gradient(#0fffff, #099999 50%, #033333);
-    facade-texture: plaster;
+    facade-texture: concrete;
 }
 area|z19[building:roof:material=plaster],
 area|z19[roof:material=plaster] {
     roof-color: gradient(#0fffff, #099999 50%, #033333);
-    roof-texture: plaster;
+    roof-texture: concrete;
 }
 area|z19[building:material=roof_tiles],
 area|z19[building:facade:material=roof_tiles],
@@ -247,23 +247,23 @@ area|z19[building:material=silver],
 area|z19[building:facade:material=silver],
 area|z19[building:cladding=silver] {
     facade-color: gradient(#0fffff, #0ccccc 50%, #066666);
-    facade-texture: silver;
+    facade-texture: metal;
 }
 area|z19[building:roof:material=silver],
 area|z19[roof:material=silver] {
     roof-color: gradient(#0fffff, #0ccccc 50%, #066666);
-    roof-texture: silver;
+    roof-texture: metal;
 }
 area|z19[building:material=slate],
 area|z19[building:facade:material=slate],
 area|z19[building:cladding=slate] {
     facade-color: gradient(#0ccccc, #066666 50%, #000000);
-    facade-texture: slate;
+    facade-texture: concrete;
 }
 area|z19[building:roof:material=slate],
 area|z19[roof:material=slate] {
     roof-color: gradient(#0ccccc, #066666 50%, #000000);
-    roof-texture: slate;
+    roof-texture: concrete;
 }
 area|z19[building:material=stone],
 area|z19[building:facade:material=stone],
@@ -280,12 +280,12 @@ area|z19[building:material=tar_paper],
 area|z19[building:facade:material=tar_paper],
 area|z19[building:cladding=tar_paper] {
     facade-color: gradient(#099999, #033333 50%, #000000);
-    facade-texture: tar_paper;
+    facade-texture: concrete;
 }
 area|z19[building:roof:material=tar_paper],
 area|z19[roof:material=tar_paper] {
     roof-color: gradient(#099999, #033333 50%, #000000);
-    roof-texture: tar_paper;
+    roof-texture: concrete;
 }
 area|z19[building:material=wood],
 area|z19[building:facade:material=wood],
@@ -403,7 +403,7 @@ area[landuse=forest] {
     foliage-color: gradient(#80c34c, #406126 50%, #101809);
     foliage-texture: grass;
     trunk-color: gradient(#f4a460, #614126 50%, #302013);
-    trunk-texture: ground;   
+    trunk-texture: bark;   
     tree-freq: 0.05;
     texture: grass;
 }
@@ -520,7 +520,7 @@ node|z19[natural=tree]                                        {
     foliage-color: gradient(#80c34c, #406126 50%, #101809);
     foliage-texture: grass;
     trunk-color: gradient(#f4a460, #614126 50%, #302013);
-    trunk-texture: ground;   
+    trunk-texture: bark;   
 }
 
 /* Info */
