@@ -433,8 +433,7 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
 
             mesh.RecalculateNormals();
 
-            gameObject.AddComponent<MeshRenderer>().sharedMaterial = rule
-                .GetMaterial("material_background", _customizationService);
+            gameObject.AddComponent<MeshRenderer>().sharedMaterial = rule.GetMaterial(_customizationService);
             gameObject.AddComponent<MeshFilter>().mesh = mesh;
             gameObject.AddComponent<MeshCollider>();
 
