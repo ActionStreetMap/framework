@@ -111,7 +111,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             foreach (var facadeMeshData in facadeMeshDataList)
             {
                 facadeMeshData.GameObject = GameObjectFactory.CreateNew("wall");
-                facadeMeshData.MaterialKey = building.FacadeMaterial;
+                facadeMeshData.MaterialKey = rule.GetMaterialKey(building.FacadeMaterial, false);
                 BuildObject(gameObjectWrapper, facadeMeshData, rule, model);
             }
 
@@ -121,7 +121,7 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             foreach (var roofMeshData in roofMeshDataList)
             {
                 roofMeshData.GameObject = GameObjectFactory.CreateNew("floor");
-                roofMeshData.MaterialKey = building.RoofMaterial;
+                roofMeshData.MaterialKey = rule.GetMaterialKey(building.RoofMaterial, false);
                 BuildObject(gameObjectWrapper, roofMeshData, rule, model);
             }
             return gameObjectWrapper;

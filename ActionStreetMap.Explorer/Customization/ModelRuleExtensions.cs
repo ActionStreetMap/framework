@@ -6,9 +6,9 @@ namespace ActionStreetMap.Explorer.Customization
 {
     internal static class ModelRuleExtensions
     {
-        public static string GetMaterialKey(this Rule rule, string path = "material")
+        public static string GetMaterialKey(this Rule rule, string path = "material", bool evaluate = true)
         {
-            return @"Materials/" + rule.Evaluate<string>(path);
+            return @"Materials/" + (evaluate ? rule.Evaluate<string>(path) : path);
         }
 
         public static Material GetMaterial(this Rule rule, CustomizationService customizationService)
