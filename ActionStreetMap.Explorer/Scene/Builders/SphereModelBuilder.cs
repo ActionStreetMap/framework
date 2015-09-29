@@ -29,8 +29,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
 
             var elevation = ElevationProvider.GetElevation(center);
             var minHeight = rule.GetMinHeight();
-            var color = rule.GetColor();
-            var gradient = CustomizationService.GetGradient(color);
+
+            var materialKey = rule.GetFacadeMaterial();
+            var gradient = CustomizationService.GetGradient(rule.GetFacadeColor());
+            var texture = CustomizationService
+                           .GetAtlas(materialKey)
+                           .Get(rule.GetFacadeTexture())
+                           .Get((int)area.Id);
 
             int recursionLevel = rule.EvaluateDefault("recursion_level", 2);
 
@@ -41,13 +46,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetRadius((float)radius)
                 .SetRecursionLevel(recursionLevel)
                 .SetGradient(gradient)
-                .SetTexture(rule.GetTexture((int) area.Id, CustomizationService));
+                .SetTexture(texture);
 
             var meshData = new MeshData(new SphereMeshIndex((float)radius, center3d),
                 sphereGen.CalculateVertexCount());
 
             meshData.GameObject = GameObjectFactory.CreateNew(GetName(area));
-            meshData.MaterialKey = rule.GetMaterialKey();
+            meshData.MaterialKey = rule.GetMaterialKey(materialKey, false);
 
             sphereGen.Build(meshData);
 

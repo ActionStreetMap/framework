@@ -18,7 +18,7 @@ namespace ActionStreetMap.Explorer.Customization
 
         public static string GetFacadeMaterial(this Rule rule)
         {
-            return rule.Evaluate<string>("roof-material");
+            return rule.Evaluate<string>("facade-material");
         }
 
         public static string GetFacadeTexture(this Rule rule)

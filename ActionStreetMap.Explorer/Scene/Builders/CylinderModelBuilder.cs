@@ -31,8 +31,13 @@ namespace ActionStreetMap.Explorer.Scene.Builders
             var height = rule.GetHeight();
             var minHeight = rule.GetMinHeight();
             var actualHeight = (height - minHeight);
-            var color = rule.GetColor();
-            var gradient = CustomizationService.GetGradient(color);
+
+            var materialKey = rule.GetFacadeMaterial();
+            var gradient = CustomizationService.GetGradient(rule.GetFacadeColor());
+            var texture = CustomizationService
+                            .GetAtlas(materialKey)
+                            .Get(rule.GetFacadeTexture())
+                            .Get((int) area.Id);
 
             tile.Registry.RegisterGlobal(area.Id);
 
@@ -43,12 +48,12 @@ namespace ActionStreetMap.Explorer.Scene.Builders
                 .SetRadialSegments(7)
                 .SetRadius((float) radius)
                 .SetGradient(gradient)
-                .SetTexture(rule.GetTexture((int)area.Id, CustomizationService));
+                .SetTexture(texture);
 
             var meshData = new MeshData(MeshDestroyIndex.Default, cylinderGen.CalculateVertexCount())
             {
                 GameObject = GameObjectFactory.CreateNew(GetName(area)),
-                MaterialKey = rule.GetMaterialKey()
+                MaterialKey = rule.GetMaterialKey(materialKey, false)
             };
             cylinderGen.Build(meshData);
 
