@@ -114,7 +114,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 RoofFrontGradient = roofGradient,
                 RoofBackGradient = roofGradient
             };
-            AttachFloors(context);
+            AttachFloors(building, context);
 
             if (!limitIsReached)
             {
@@ -123,7 +123,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 context.Bottom = building.Elevation + building.MinHeight;
                 context.FloorCount = floorCount;
                 context.IsLastRoof = false;
-                AttachFloors(context);
+                AttachFloors(building, context);
                 return new List<MeshData>(1) {meshData};
             }
 

@@ -39,6 +39,9 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
         protected override void OnParametersCalculated()
         {
+            // NOTE uv mapping of base class may be used for small segments
+            base.OnParametersCalculated();
+
             _emptySpaceWidth = XStep * (1 - _windowWidthRatio) / 2;
             _emptySpaceHeight = YStep * (1 - _windowHeightRatio) / 2;
 

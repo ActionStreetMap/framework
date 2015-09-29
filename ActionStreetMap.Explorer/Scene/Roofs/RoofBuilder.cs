@@ -85,15 +85,19 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
         }
 
         /// <summary> Builds floor. </summary>
-        protected void AttachFloors(RoofContext context)
+        protected void AttachFloors(Building building, RoofContext context)
         {
             var triCount = context.Mesh.Triangles.Count;
             var vertPerFloor = triCount*3;
             var halfVertCount = context.MeshData.Vertices.Length / 2;
 
+            Vector2 uv0, uv1, uv2;
+            GetUV(building, out uv0, out uv1, out uv2);
+
             var vertices = context.MeshData.Vertices;
             var triangles = context.MeshData.Triangles;
             var colors = context.MeshData.Colors;
+            var uvs = context.MeshData.UVs;
 
             int lastFloorIndex = context.IsLastRoof ? context.FloorCount - 1 : -1;
             var startIndex = context.MeshData.NextIndex;
@@ -131,6 +135,9 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                         triangles[halfVertCount + currentIndex] = halfVertCount + floorOffsetIndex
                             + backSideIndex + 2 - i;
                         colors[halfVertCount + currentIndex] = backColor;
+
+                        uvs[currentIndex] = uvs[currentIndex + halfVertCount] =
+                            i == 0 ? uv0 : i == 1 ? uv1 : uv2;
                     }
                     index++;
                 }
@@ -186,7 +193,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 var meshIndex = new MultiPlaneMeshIndex(stepFloorCount, stepVertexCount);
                 var meshData = new MeshData(meshIndex, stepVertexCount);
 
-                AttachFloors(new RoofContext()
+                AttachFloors(building, new RoofContext()
                 {
                     Mesh = mesh,
                     MeshData = meshData,

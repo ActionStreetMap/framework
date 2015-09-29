@@ -67,7 +67,7 @@ namespace ActionStreetMap.Explorer.Scene.Roofs
                 if (!limitIsReached)
                 {
                     // attach floors
-                    AttachFloors(new RoofContext()
+                    AttachFloors(building, new RoofContext()
                     {
                         Mesh = mesh,
                         MeshData = meshData,

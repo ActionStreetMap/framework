@@ -52,7 +52,7 @@ namespace ActionStreetMap.Explorer.Scene.Facades
 
             WallBuilder wallBuilder = building.HasWindows
                 ? new WindowWallBuilder().SetStepWidth(random.NextFloat(3, 4))
-                : new EmptyWallBuilder().SetStepWidth(random.NextFloat(10f, 12f));
+                : new EmptyWallBuilder().SetStepWidth(random.NextFloat(7f, 9f));
 
             // if windows are built, we want to have levels built too
             if (building.HasWindows && !hasLevels)
