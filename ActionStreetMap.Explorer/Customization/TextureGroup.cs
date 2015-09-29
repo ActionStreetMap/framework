@@ -49,7 +49,7 @@ namespace ActionStreetMap.Explorer.Customization
         /// <summary> Gets texture using seed provided.  </summary>
         public Texture Get(int seed)
         {
-            return !_isEmpty ? _textures[seed%_textures.Count] : EmptyTexture;
+            return !_isEmpty ? _textures[Math.Abs(seed%_textures.Count)] : EmptyTexture;
         }
 
         /// <summary> Represents texture in atlas. </summary>
