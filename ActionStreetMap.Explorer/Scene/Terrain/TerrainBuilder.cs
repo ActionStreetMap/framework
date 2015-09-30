@@ -175,6 +175,10 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
             var colors = new Color[vertexCount];
             var uvs = new Vector2[vertexCount];
 
+            Vector2 uv0 = waterTexture.Map(new Vector2(0, 0));
+            Vector2 uv1 = waterTexture.Map(new Vector2(.5f, .5f));
+            Vector2 uv2 = waterTexture.Map(new Vector2(1, 1));
+
             foreach (var triangle in meshRegion.Mesh.Triangles)
             {
                 // bottom surface
@@ -205,9 +209,9 @@ namespace ActionStreetMap.Explorer.Scene.Terrain
                 triangles[index + 1] = index + 2;
                 triangles[index + 2] = index + 1;
 
-                uvs[index] = new Vector2(0, 0);
-                uvs[index + 1] = new Vector2(.5f, .5f);
-                uvs[index + 2] = new Vector2(1, 0);
+                uvs[index] = uv0;
+                uvs[index + 1] = uv1;
+                uvs[index + 2] = uv2;
 
                 index += 3;
             }
