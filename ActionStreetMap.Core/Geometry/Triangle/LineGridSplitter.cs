@@ -7,7 +7,7 @@ using ActionStreetMap.Infrastructure.Utilities;
 
 namespace ActionStreetMap.Core.Geometry.Triangle
 {
-    /// <summary> Splits line to segments according to axis alignet grid. </summary>
+    /// <summary> Splits line to segments according to axis aligned grid. </summary>
     internal class LineGridSplitter
     {
         private const int CellSize = 1;

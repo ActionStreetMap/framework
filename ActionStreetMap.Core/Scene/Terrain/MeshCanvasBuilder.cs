@@ -126,6 +126,7 @@ namespace ActionStreetMap.Core.Scene.Terrain
                 _clipper.AddPaths(_carRoads.Shape, PolyType.ptClip, true);
                 _clipper.AddPaths(_walkRoads.Shape, PolyType.ptClip, true);
                 _clipper.AddPaths(_water.Shape, PolyType.ptClip, true);
+                // TODO affects perfomance 
                 _clipper.AddPaths(regions.SelectMany(r => r.Shape).ToList(), PolyType.ptClip, true);
                 _clipper.AddPaths(surfacesUnion, PolyType.ptSubject, true);
                 var surfacesResult = new Paths();
