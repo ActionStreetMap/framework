@@ -1,3 +1,6 @@
+<h1>Project status</h1>
+<p>Project is in maintenance mode: I decided to rewrite core logic using C++11 and add new features. That's why I started new project instead: https://github.com/reinterpretcat/utymap </p>
+
 <h2>Description</h2>
 <p>ActionStreetMap (ASM) is an engine for building real city environment dynamically using OSM data.</p>
 <img src="http://actionstreetmap.github.io/demo/images/Moscow_tower.png"/>
@@ -33,6 +36,3 @@
 <li><b>ActionStreetMap.Unity</b> contains platform specific code (uses conditional compilation symbols to implement platform specific features).</li>
 <li><b>ActionStreetMap.Tests</b> contains unit and integration tests. Also has Main function to run logic as console application (useful for profiling, debugging map specific code).</li>
 </ul>
-
-<h3>Current status</h3>
-<p>Project is under development. Rendering of OSM data can be considered as done with some major issues.</p>
