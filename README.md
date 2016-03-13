@@ -2,7 +2,7 @@
 <p>Project is in maintenance mode: I decided to rewrite core logic using C++11 and add new features. That's why I started new project instead: https://github.com/reinterpretcat/utymap </p>
 <h2>Description</h2>
 <p>ActionStreetMap (ASM) is an engine for building real city environment dynamically using OSM data.</p>
-<img src="http://actionstreetmap.github.io/demo/images/Moscow_tower.png"/>
+<img src="http://actionstreetmap.github.io/demo/images/current/scene_color_only_moscow1.png"/>
 <p>The main goal is to simulate a real city, including the following:</p>
 <ul>
 <li>rendering of different models (e.g. buildings, roads, parks, rivers, etc.) using OSM data for given location and using terrain tiling approach.</li>
@@ -16,7 +16,7 @@
 <p>Internally, framework is decoupled from Unity3D as much as it's possible taking into account related performance impact. In theory, it can be ported to other platforms to build map data visualization application.</p>
 
 <p>Used technologies: Unity3D, C# (JavaScript is possible for Unity scripting in Demo app), Reactive Extensions</p>
-<p>Used source code of: Triangle.NET, Clipper, UniRx.
+<p>Used source code of (If I missed something and you think is important to mention, let me know): Triangle.NET, Clipper, UniRx.
 			
 <h2>Structure</h2>
 <p>ActionStreetMap consists of two repositories:</p>
